@@ -231,7 +231,8 @@ public: // static variables
 		* soulSand,
 		* glowstone,
 		* web,
-		* fence;
+		* fence,
+		* redStoneDust;
 
 public:
 	int m_TextureFrame;

@@ -59,6 +59,7 @@ public:
 #ifndef ORIGINAL_CODE
 	bool tesselateFireInWorld(Tile*, const TilePos& pos);
 #endif
+	bool tesselateDustInWorld(Tile*, const TilePos& pos);
 #ifdef ENH_USE_OWN_AO
 	bool tesselateBlockInWorldWithAmbienceOcclusionV2(Tile*, const TilePos& pos, float r, float g, float b);
 #endif

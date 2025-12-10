@@ -24,8 +24,15 @@
     <ProjectGuid>{5f7cd8c1-413c-4855-a450-2c765f16c5a4}</ProjectGuid>
     <RootNamespace>World</RootNamespace>
     <ConfigurationType>StaticLibrary</ConfigurationType>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
@@ -191,6 +198,8 @@
     <ClCompile Include="$(MC_ROOT)\source\world\entity\Zombie.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\entity\EntityFactory.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\levelgen\chunk\DataLayer.cpp" />
+    <ClCompile Include="..\..\..\..\source\world\item\RedStoneItem.cpp" />
+    <ClCompile Include="..\..\..\..\source\world\tile\RedStoneDustTile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Entity.hpp" />
@@ -333,6 +342,8 @@
     <ClInclude Include="$(MC_ROOT)\source\world\level\levelgen\chunk\DataLayer.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\level\TileChange.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\level\LevelEvent.hpp" />
+    <ClInclude Include="..\..\..\..\source\world\item\RedStoneItem.hpp" />
+    <ClInclude Include="..\..\..\..\source\world\tile\RedStoneDustTile.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NBT\NBT.vcxproj">

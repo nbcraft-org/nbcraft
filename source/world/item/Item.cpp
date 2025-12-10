@@ -15,6 +15,7 @@
 #include "TileItem.hpp"
 #include "TilePlanterItem.hpp"
 #include "RocketItem.hpp"
+#include "RedStoneItem.hpp"
 
 #define ITEM(x) ((x) - 256)
 
@@ -416,7 +417,7 @@ void Item::initItems()
 		->setIcon(12, 2)
 		->setDescriptionId("doorIron");
 	
-	Item::redStone = NEW_ITEM(ITEM_REDSTONE)
+	Item::redStone = NEW_X_ITEMN(RedStoneItem, ITEM_REDSTONE)
 		->setIcon(8, 3)
 		->setDescriptionId("redstone");
 

@@ -1,7 +1,7 @@
 /********************************************************************
 	Minecraft: Pocket Edition - Decompilation Project
 	Copyright (C) 2023 iProgramInCpp
-	
+
 	The following code is licensed under the BSD 1 clause license.
 	SPDX-License-Identifier: BSD-1-Clause
  ********************************************************************/
@@ -14,7 +14,7 @@
 #include "world/item/ClothItem.hpp"
 #include "world/item/SlabItem.hpp"
 
-// Include tile definitions here
+ // Include tile definitions here
 #include "SandStoneTile.hpp"
 #include "SandTile.hpp"
 #include "HalfTransparentTile.hpp"
@@ -84,16 +84,17 @@
 //#include "PortalTile.hpp"
 //#include "RepeaterTile.hpp"
 //#include "Mushroom.hpp"
+#include "RedStoneDustTile.hpp"
 
 std::string Tile::TILE_DESCRIPTION_PREFIX = "tile.";
 
-Tile* Tile::tiles        [C_MAX_TILES];
-int   Tile::lightBlock   [C_MAX_TILES];
+Tile* Tile::tiles[C_MAX_TILES];
+int   Tile::lightBlock[C_MAX_TILES];
 int   Tile::lightEmission[C_MAX_TILES];
-bool  Tile::shouldTick   [C_MAX_TILES];
-bool  Tile::solid        [C_MAX_TILES];
-bool  Tile::translucent  [C_MAX_TILES];
-bool  Tile::isEntityTile [C_MAX_TILES];
+bool  Tile::shouldTick[C_MAX_TILES];
+bool  Tile::solid[C_MAX_TILES];
+bool  Tile::translucent[C_MAX_TILES];
+bool  Tile::isEntityTile[C_MAX_TILES];
 
 
 void Tile::_init()
@@ -216,7 +217,7 @@ eRenderShape Tile::getRenderShape() const
 
 void Tile::updateDefaultShape()
 {
-	
+
 }
 
 int Tile::getTexture(Facing::Name face) const
@@ -579,7 +580,7 @@ void Tile::initTiles()
 		->setDestroyTime(0.1f)
 		->setSoundType(Tile::SOUND_CLOTH)
 		->setDescriptionId("snow");
-	
+
 	Tile::ice = (new IceTile(TILE_ICE, TEXTURE_ICE, Material::ice))
 		->init()
 		->setDestroyTime(0.5f)
@@ -706,14 +707,14 @@ void Tile::initTiles()
 		->setDestroyTime(1.0f)
 		->setSoundType(Tile::SOUND_WOOD)
 		->setDescriptionId("pumpkin");
-	
+
 	Tile::pumpkinLantern = (new PumpkinTile(TILE_PUMPKIN_LIT, true))
 		->init()
 		->setDestroyTime(1.0f)
 		->setLightEmission(1.0f)
 		->setSoundType(Tile::SOUND_WOOD)
 		->setDescriptionId("litPumpkin");
-	
+
 	Tile::netherrack = (new Tile(TILE_NETHERRACK, TEXTURE_BLOODSTONE, Material::stone))
 		->init()
 		->setDestroyTime(0.4f)
@@ -739,6 +740,12 @@ void Tile::initTiles()
 		//->setLightBlock(1)
 		->setSoundType(Tile::SOUND_CLOTH)
 		->setDescriptionId("web");
+
+	Tile::redStoneDust = (new RedStoneDustTile(TILE_WIRE, TEXTURE_REDSTONE_DUST_CROSS))
+		->init()
+		->setDestroyTime(0.0f)
+		->setSoundType(Tile::SOUND_NORMAL)
+		->setDescriptionId("redstoneDust");
 
 	// Great
 	Item::items[Tile::cloth->m_ID] = (new ClothItem(Tile::cloth->m_ID - C_MAX_TILES))
@@ -775,9 +782,11 @@ TileID Tile::TransformToValidBlockId(TileID tileId, TilePos pos)
 	{
 		// Lifted from 0.2.1. Don't ask me what this is doing, or why it's doing it
 		if ((((int8_t)pos.y + (int8_t)pos.x + (int8_t)pos.z) & 1) != 0)
-			return Tile::info_updateGame1->m_ID;
+			//return Tile::info_updateGame1->m_ID;
+			return TILE_AIR;
 		else
-			return Tile::info_updateGame2->m_ID;
+			//return Tile::info_updateGame2->m_ID;
+			return TILE_AIR;
 	}
 	return tileId;
 }
@@ -887,7 +896,7 @@ bool Tile::mayPlace(const Level* pLevel, const TilePos& pos) const
 	TileID tile = pLevel->getTile(pos);
 	if (!tile)
 		return true; // we can definitely place something over air
-	
+
 	return Tile::tiles[tile]->m_pMaterial->isLiquid();
 }
 
@@ -1073,8 +1082,8 @@ void Tile::spawnResources(Level* pLevel, const TilePos& pos, TileData data, floa
 			continue;
 
 		Vec3 o((pLevel->m_random.nextFloat() * 0.7f) + (1.0f - 0.7f) * 0.5f,
-			   (pLevel->m_random.nextFloat() * 0.7f) + (1.0f - 0.7f) * 0.5f,
-			   (pLevel->m_random.nextFloat() * 0.7f) + (1.0f - 0.7f) * 0.5f);
+			(pLevel->m_random.nextFloat() * 0.7f) + (1.0f - 0.7f) * 0.5f,
+			(pLevel->m_random.nextFloat() * 0.7f) + (1.0f - 0.7f) * 0.5f);
 
 		ItemInstance* inst = new ItemInstance(id, 1, getSpawnResourcesAuxValue(data));
 		ItemEntity* pEntity = new ItemEntity(pLevel, Vec3(pos) + o, inst);
@@ -1140,88 +1149,89 @@ void Tile::playerWillDestroy(Player* player, const TilePos& pos, TileData data)
 }
 
 const Tile::SoundType
-	Tile::SOUND_NORMAL("stone",  1.0f, 1.0f),
-	Tile::SOUND_WOOD  ("wood",   1.0f, 1.0f),
-	Tile::SOUND_GRAVEL("gravel", 1.0f, 1.0f),
-	Tile::SOUND_GRASS ("grass",  0.5f, 1.0f),
-	Tile::SOUND_STONE ("stone",  1.0f, 1.0f),
-	Tile::SOUND_METAL ("stone",  1.0f, 1.5f),
-	Tile::SOUND_GLASS ("stone",  /*"glass",*/1.0f, 1.0f),
-	Tile::SOUND_CLOTH ("cloth",  1.0f, 1.0f),
-	Tile::SOUND_SAND  ("sand",  /*"gravel",*/ 1.0f, 1.0f),
-	Tile::SOUND_SILENT("",       1.0f, 1.0f);
+Tile::SOUND_NORMAL("stone", 1.0f, 1.0f),
+Tile::SOUND_WOOD("wood", 1.0f, 1.0f),
+Tile::SOUND_GRAVEL("gravel", 1.0f, 1.0f),
+Tile::SOUND_GRASS("grass", 0.5f, 1.0f),
+Tile::SOUND_STONE("stone", 1.0f, 1.0f),
+Tile::SOUND_METAL("stone", 1.0f, 1.5f),
+Tile::SOUND_GLASS("stone",  /*"glass",*/1.0f, 1.0f),
+Tile::SOUND_CLOTH("cloth", 1.0f, 1.0f),
+Tile::SOUND_SAND("sand",  /*"gravel",*/ 1.0f, 1.0f),
+Tile::SOUND_SILENT("", 1.0f, 1.0f);
 
 // @TODO: Refactor this so that Tile::fire is already a FireTile* etc
 Tile
-	*Tile::sand,
-	*Tile::sandStone,
-	*Tile::stoneBrick,
-	*Tile::redBrick,
-	*Tile::wood,
-	*Tile::glass,
-	*Tile::calmWater,
-	*Tile::calmLava,
-	*Tile::gravel,
-	*Tile::rock,
-	*Tile::unbreakable,
-	*Tile::dirt,
-	*Tile::grass,
-	*Tile::ice,
-	*Tile::snow,
-	*Tile::clay,
-	*Tile::farmland,
-	*Tile::stoneSlab,
-	*Tile::stoneSlabHalf,
-	*Tile::cloth,
-	*Tile::flower,
-	*Tile::rose,
-	*Tile::mushroom1,
-	*Tile::mushroom2,
-	*Tile::topSnow,
-	*Tile::treeTrunk,
-	*Tile::leaves,
-	*Tile::leaves_carried,
-	*Tile::info_reserved6,
-	*Tile::emeraldOre, //! actually diamond ore
-	*Tile::redStoneOre,
-	*Tile::redStoneOre_lit,
-	*Tile::goldOre,
-	*Tile::ironOre,
-	*Tile::coalOre,
-	*Tile::lapisOre,
-	*Tile::reeds,
-	*Tile::ladder,
-	*Tile::obsidian,
-	*Tile::tnt,
-	*Tile::torch,
-	*Tile::water,
-	*Tile::lava,
-	*Tile::fire,
-	*Tile::invisible_bedrock,
-	*Tile::goldBlock,
-	*Tile::ironBlock,
-	*Tile::emeraldBlock, //! actually diamond block
-	*Tile::stairs_wood,
-	*Tile::stairs_stone,
-	*Tile::door_wood,
-	*Tile::door_iron,
-	*Tile::info_updateGame1,
-	*Tile::info_updateGame2,
-	// custom additions here
-	*Tile::sapling,
-	*Tile::sponge,
-	*Tile::lapisBlock,
-	*Tile::bookshelf,
-	*Tile::mossStone,
-	*Tile::cryingObsidian,
-	*Tile::rocketLauncher,
-	*Tile::cactus,
-	*Tile::tallGrass,
-	*Tile::deadBush,
-	*Tile::pumpkin,
-	*Tile::pumpkinLantern,
-	*Tile::netherrack,
-	*Tile::soulSand,
-	*Tile::glowstone,
-	*Tile::web,
-	*Tile::fence;
+* Tile::sand,
+* Tile::sandStone,
+* Tile::stoneBrick,
+* Tile::redBrick,
+* Tile::wood,
+* Tile::glass,
+* Tile::calmWater,
+* Tile::calmLava,
+* Tile::gravel,
+* Tile::rock,
+* Tile::unbreakable,
+* Tile::dirt,
+* Tile::grass,
+* Tile::ice,
+* Tile::snow,
+* Tile::clay,
+* Tile::farmland,
+* Tile::stoneSlab,
+* Tile::stoneSlabHalf,
+* Tile::cloth,
+* Tile::flower,
+* Tile::rose,
+* Tile::mushroom1,
+* Tile::mushroom2,
+* Tile::topSnow,
+* Tile::treeTrunk,
+* Tile::leaves,
+* Tile::leaves_carried,
+* Tile::info_reserved6,
+* Tile::emeraldOre, //! actually diamond ore
+* Tile::redStoneOre,
+* Tile::redStoneOre_lit,
+* Tile::goldOre,
+* Tile::ironOre,
+* Tile::coalOre,
+* Tile::lapisOre,
+* Tile::reeds,
+* Tile::ladder,
+* Tile::obsidian,
+* Tile::tnt,
+* Tile::torch,
+* Tile::water,
+* Tile::lava,
+* Tile::fire,
+* Tile::invisible_bedrock,
+* Tile::goldBlock,
+* Tile::ironBlock,
+* Tile::emeraldBlock, //! actually diamond block
+* Tile::stairs_wood,
+* Tile::stairs_stone,
+* Tile::door_wood,
+* Tile::door_iron,
+* Tile::info_updateGame1,
+* Tile::info_updateGame2,
+// custom additions here
+* Tile::sapling,
+* Tile::sponge,
+* Tile::lapisBlock,
+* Tile::bookshelf,
+* Tile::mossStone,
+* Tile::cryingObsidian,
+* Tile::rocketLauncher,
+* Tile::cactus,
+* Tile::tallGrass,
+* Tile::deadBush,
+* Tile::pumpkin,
+* Tile::pumpkinLantern,
+* Tile::netherrack,
+* Tile::soulSand,
+* Tile::glowstone,
+* Tile::web,
+* Tile::fence,
+* Tile::redStoneDust;

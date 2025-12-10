@@ -93,6 +93,7 @@ void Inventory::prepareCreativeInventory()
 	addCreativeItem(Item::door_wood->m_itemID);
 	addCreativeItem(Item::door_iron->m_itemID);
 	addCreativeItem(Item::rocket->m_itemID);
+	addCreativeItem(Item::redStone->m_itemID);
 
 	// more stuff
 	addCreativeItem(Tile::cloth->m_ID, 0);
