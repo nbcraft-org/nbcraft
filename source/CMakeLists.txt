@@ -42,6 +42,7 @@ add_library(reminecraftpe-core STATIC
     client/renderer/entity/PigRenderer.cpp
     client/renderer/entity/ChickenRenderer.cpp
     client/renderer/entity/RocketRenderer.cpp
+	client/renderer/entity/SquidRenderer.cpp
     client/renderer/renderer/EntityShaderManager.cpp
     client/renderer/renderer/RenderMaterialGroup.cpp
     client/renderer/texture/ImageData.cpp
@@ -124,6 +125,7 @@ add_library(reminecraftpe-core STATIC
     client/model/models/CreeperModel.cpp
     client/model/models/CowModel.cpp
     client/model/models/ChickenModel.cpp
+	client/model/models/SquidModel.cpp
     client/multiplayer/MultiPlayerLevel.cpp
     client/multiplayer/MultiplayerLocalPlayer.cpp
     client/player/input/Controller.cpp
@@ -246,6 +248,8 @@ add_library(reminecraftpe-core STATIC
     world/entity/EntityType.cpp
     world/entity/EntityTypeDescriptor.cpp
     world/entity/MobCategory.cpp
+	world/entity/Squid.cpp
+	world/entity/Squid.hpp
     world/level/Dimension.cpp
     world/level/Material.cpp
     world/level/LevelListener.cpp
@@ -306,6 +310,7 @@ add_library(reminecraftpe-core STATIC
     world/item/AuxTileItem.cpp
     world/item/ClothItem.cpp
     world/item/SlabItem.cpp
+	world/item/RedStoneItem.cpp
     world/particle/RedDustParticle.cpp
     world/particle/TerrainParticle.cpp
     world/particle/BubbleParticle.cpp
@@ -362,6 +367,8 @@ add_library(reminecraftpe-core STATIC
     world/tile/GlowstoneTile.cpp
     world/tile/Web.cpp
     world/tile/FenceTile.cpp
+	world/tile/RedStoneDustTile.cpp
+	world/tile/LeverTile.cpp
     renderer/GL/GL.cpp
     renderer/Attribute.cpp
     renderer/ConstantBufferMetaData.cpp
