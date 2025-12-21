@@ -69,7 +69,7 @@
 #include "Web.hpp"
 //#include "SnowTile.hpp"
 //#include "SignTile.hpp"
-//#include "LeverTile.hpp"
+#include "LeverTile.hpp"
 //#include "PressurePlateTile.hpp"
 //#include "RailTile.hpp"
 //#include "DetectorRailTile.hpp"
@@ -747,6 +747,12 @@ void Tile::initTiles()
 		->setSoundType(Tile::SOUND_NORMAL)
 		->setDescriptionId("redstoneDust");
 
+	Tile::lever = (new LeverTile(TILE_LEVER, TEXTURE_LEVER))
+		->init()
+		->setDestroyTime(0.5f)
+		->setSoundType(Tile::SOUND_WOOD)
+		->setDescriptionId("lever");
+
 	// Great
 	Item::items[Tile::cloth->m_ID] = (new ClothItem(Tile::cloth->m_ID - C_MAX_TILES))
 		->setDescriptionId("cloth");
@@ -1234,4 +1240,5 @@ Tile
 * Tile::glowstone,
 * Tile::web,
 * Tile::fence,
-* Tile::redStoneDust;
+* Tile::redStoneDust,
+* Tile::lever;

@@ -108,3 +108,37 @@ bool Vec3::clipZ(const Vec3& a2, float a3, Vec3& a4) const
 	a4.z = z + (a2.z - z) * crap2;
 	return true;
 }
+
+void Vec3::xRot(float rot) {
+	float cos = Mth::cos(rot);
+	float sin = Mth::sin(rot);
+	float var4 = x;
+	float var6 = y * cos + z * sin;
+	float var8 = z * cos - y * sin;
+	x = var4;
+	y = var6;
+	z = var8;
+}
+
+void Vec3::yRot(float rot) {
+	float cos = Mth::cos(rot);
+	float sin = Mth::sin(rot);
+	float var4 = x * cos + z * sin;
+	float var6 = y;
+	float var8 = z * cos - x * sin;
+	x = var4;
+	y = var6;
+	z = var8;
+}
+
+void Vec3::zRot(float rot) {
+	float cos = Mth::cos(rot);
+	float sin = Mth::sin(rot);
+	float var4 = x * cos + y * sin;
+	float var6 = y * cos - x * sin;
+	float var8 = z;
+	x = var4;
+	y = var6;
+	z = var8;
+}
+

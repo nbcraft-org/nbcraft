@@ -19,6 +19,7 @@
 #include "client/model/models/SpiderModel.hpp"
 #include "client/model/models/SkeletonModel.hpp"
 #include "client/model/models/ZombieModel.hpp"
+#include "client/model/models/SquidModel.hpp"
 
 EntityRenderDispatcher* EntityRenderDispatcher::instance;
 Vec3 EntityRenderDispatcher::off;
@@ -33,6 +34,7 @@ EntityRenderDispatcher::EntityRenderDispatcher()
 	, m_SpiderRenderer()
 	, m_SkeletonRenderer(new SkeletonModel, 0.5f)
 	, m_ZombieRenderer(new ZombieModel, 0.5f)
+	, m_SquidRenderer(new SquidModel, 0.7f)
 	, m_ArrowRenderer()
 	, m_FallingTileRenderer()
 {
@@ -65,6 +67,7 @@ EntityRenderDispatcher::EntityRenderDispatcher()
 	m_CameraRenderer.init(this);
 	m_ItemRenderer.init(this);
 	m_RocketRenderer.init(this);
+	m_SquidRenderer.init(this);
 #ifdef ENH_ALLOW_SAND_GRAVITY
 	m_FallingTileRenderer.init(this);
 #endif
@@ -121,6 +124,8 @@ EntityRenderer* EntityRenderDispatcher::getRenderer(Entity::RenderType renderTyp
 			return &m_ArrowRenderer;
 		case Entity::RENDER_ROCKET:
 			return &m_RocketRenderer;
+		case Entity::RENDER_SQUID:
+			return &m_SquidRenderer;
 #ifdef ENH_ALLOW_SAND_GRAVITY
 		// TODO
 		case Entity::RENDER_FALLING_TILE:

@@ -414,9 +414,9 @@ void RedStoneDustTile::animateTick(Level* level, const TilePos& pos, Random* ran
 		float var7 = float(pos.x) + 0.5f + (random->nextFloat() - 0.5f) * 0.2f;
 		float var9 = float(pos.y) + 1.0f / 16.0f;
 		float var11 = float(pos.z) + 0.5f + (random->nextFloat() - 0.5f) * 0.2f;
-		float var13 = float(var6) / 15.0f;
+		/*float var13 = float(var6) / 15.0f;
 		float var14 = var13 * 0.6f + 0.4f;
-		if (var6 == 0)
+		if (var6 == 0) // either the java decompiler or notch shat itself
 		{
 			var14 = 0.0f;
 		}
@@ -432,8 +432,9 @@ void RedStoneDustTile::animateTick(Level* level, const TilePos& pos, Random* ran
 		{
 			var16 = 0.0f;
 		}
+		*/
 
-		level->addParticle("reddust", Vec3(var7, var9, var11), Vec3(var14, var15, var16));
+		level->addParticle("reddust", Vec3(var7, var9, var11), Vec3(0.0, 0.0, 0.0)); // var14, var15, var16
 	}
 }
 

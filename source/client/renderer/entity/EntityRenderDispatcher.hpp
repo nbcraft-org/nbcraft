@@ -22,6 +22,7 @@
 #include "SpiderRenderer.hpp"
 #include "ArrowRenderer.hpp"
 #include "RocketRenderer.hpp"
+#include "SquidRenderer.hpp"
 
 class Minecraft;
 class Font;
@@ -73,6 +74,7 @@ public:
 	FallingTileRenderer m_FallingTileRenderer;
 #endif
 	RocketRenderer m_RocketRenderer;
+	SquidRenderer m_SquidRenderer;
 
 	Textures* m_pTextures;
 	Level* m_pLevel;

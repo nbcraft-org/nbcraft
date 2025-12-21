@@ -539,6 +539,12 @@
     <ClInclude Include="$(MC_ROOT)\source\client\renderer\Fog.hpp">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\source\client\renderer\entity\SquidRenderer.hpp">
+      <Filter>Header Files\Renderer\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\source\client\model\models\SquidModel.hpp">
+      <Filter>Header Files\Model\Models</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\client\gui\components\AvailableGamesList.cpp">
@@ -945,6 +951,12 @@
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\client\renderer\Fog.cpp">
       <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\client\renderer\entity\SquidRenderer.cpp">
+      <Filter>Source Files\Renderer\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\client\model\models\SquidModel.cpp">
+      <Filter>Source Files\Model\Models</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

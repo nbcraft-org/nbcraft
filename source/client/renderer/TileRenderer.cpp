@@ -1243,6 +1243,184 @@ bool TileRenderer::tesselateTorchInWorld(Tile* tile, const TilePos& pos)
 	return true;
 }
 
+bool TileRenderer::tesselateLeverInWorld(Tile* tile, const TilePos& pos)
+{
+	int data = m_pTileSource->getData(pos);
+	int dir = data & 7;
+	bool flipped = (data & 8) > 0;
+	Tesselator& t = Tesselator::instance;
+	bool hadFixed = m_fixedTexture >= 0;
+	if (!hadFixed) {
+		m_fixedTexture = Tile::stoneBrick->m_TextureFrame;
+	}
+
+	float w1 = 0.25f;
+	float w2 = 0.1875f;
+	float h = 0.1875f;
+	if (dir == 5) {
+		tile->setShape(0.5f - w2, 0.0f, 0.5f - w1, 0.5f + w2, h, 0.5f + w1);
+	}
+	else if (dir == 6) {
+		tile->setShape(0.5f - w1, 0.0f, 0.5f - w2, 0.5f + w1, h, 0.5f + w2);
+	}
+	else if (dir == 4) {
+		tile->setShape(0.5f - w2, 0.5f - w1, 1.0f - h, 0.5f + w2, 0.5f + w1, 1.0f);
+	}
+	else if (dir == 3) {
+		tile->setShape(0.5f - w2, 0.5f - w1, 0.0f, 0.5f + w2, 0.5f + w1, h);
+	}
+	else if (dir == 2) {
+		tile->setShape(1.0f - h, 0.5f - w1, 0.5f - w2, 1.0f, 0.5f + w1, 0.5f + w2);
+	}
+	else if (dir == 1) {
+		tile->setShape(0.0f, 0.5f - w1, 0.5f - w2, h, 0.5f + w1, 0.5f + w2);
+	}
+
+	tesselateBlockInWorld(tile, pos);
+	if (!hadFixed) {
+		m_fixedTexture = -1;
+	}
+
+	float br = tile->getBrightness(m_pTileSource, pos);
+	if (Tile::lightEmission[tile->m_ID] > 0) {
+		br = 1.0f;
+	}
+
+	t.color(br, br, br);
+	int tex = tile->getTexture(Facing::DOWN);
+	if (m_fixedTexture >= 0) {
+		tex = m_fixedTexture;
+	}
+
+	int xt = (tex & 15) << 4;
+	int yt = tex & 240;
+	float u0 = (float)xt / 256.0f;
+	float u1 = ((float)xt + 15.99f) / 256.0f;
+	float v0 = (float)yt / 256.0f;
+	float v1 = ((float)yt + 15.99f) / 256.0f;
+	float xv = 0.0625f;
+	float zv = 0.0625f;
+	float yv = 0.625f;
+	Vec3 corners[8] = {
+		Vec3(-xv, 0.0f, -zv),
+		Vec3(xv, 0.0f, -zv),
+		Vec3(xv, 0.0f,  zv),
+		Vec3(-xv, 0.0f,  zv),
+		Vec3(-xv, yv, -zv),
+		Vec3(xv, yv, -zv),
+		Vec3(xv, yv,  zv),
+		Vec3(-xv, yv,  zv)
+	};
+
+	for (int i = 0; i < 8; ++i) {
+		if (flipped) {
+			corners[i].z -= 0.0625;
+			corners[i].xRot(float(M_PI) * 2.0f / 9.0f);
+		}
+		else {
+			corners[i].z += 0.0625;
+			corners[i].xRot(float(-M_PI) * 2.0f / 9.0f);
+		}
+
+		if (dir == 6) {
+			corners[i].yRot(float(M_PI / 2));
+		}
+
+		if (dir < 5) {
+			corners[i].y -= 0.375;
+			corners[i].xRot(float(M_PI / 2));
+			if (dir == 4) {
+				corners[i].yRot(0.0f);
+			}
+
+			if (dir == 3) {
+				corners[i].yRot(float(M_PI));
+			}
+
+			if (dir == 2) {
+				corners[i].yRot(float(M_PI / 2));
+			}
+
+			if (dir == 1) {
+				corners[i].yRot(float(-M_PI / 2));
+			}
+
+			corners[i].x += pos.x + 0.5;
+			corners[i].y += pos.y + 0.5f;
+			corners[i].z += pos.z + 0.5;
+		}
+		else {
+			corners[i].x += pos.x + 0.5;
+			corners[i].y += pos.y + 0.125f;
+			corners[i].z += pos.z + 0.5;
+		}
+	}
+
+	Vec3 c0;
+	Vec3 c1;
+	Vec3 c2;
+	Vec3 c3;
+
+	for (int i = 0; i < 6; ++i) {
+		if (i == 0) {
+			u0 = float(xt + 7) / 256.0f;
+			u1 = (float(xt + 9) - 0.01f) / 256.0f;
+			v0 = float(yt + 6) / 256.0f;
+			v1 = (float(yt + 8) - 0.01f) / 256.0f;
+		}
+		else if (i == 2) {
+			u0 = float(xt + 7) / 256.0f;
+			u1 = (float(xt + 9) - 0.01f) / 256.0f;
+			v0 = float(yt + 6) / 256.0f;
+			v1 = (float(yt + 16) - 0.01f) / 256.0f;
+		}
+
+		if (i == 0) {
+			c0 = corners[0];
+			c1 = corners[1];
+			c2 = corners[2];
+			c3 = corners[3];
+		}
+		else if (i == 1) {
+			c0 = corners[7];
+			c1 = corners[6];
+			c2 = corners[5];
+			c3 = corners[4];
+		}
+		else if (i == 2) {
+			c0 = corners[1];
+			c1 = corners[0];
+			c2 = corners[4];
+			c3 = corners[5];
+		}
+		else if (i == 3) {
+			c0 = corners[2];
+			c1 = corners[1];
+			c2 = corners[5];
+			c3 = corners[6];
+		}
+		else if (i == 4) {
+			c0 = corners[3];
+			c1 = corners[2];
+			c2 = corners[6];
+			c3 = corners[7];
+		}
+		else if (i == 5) {
+			c0 = corners[0];
+			c1 = corners[3];
+			c2 = corners[7];
+			c3 = corners[4];
+		}
+
+		t.vertexUV(c0.x, c0.y, c0.z, u0, v1);
+		t.vertexUV(c1.x, c1.y, c1.z, u1, v1);
+		t.vertexUV(c2.x, c2.y, c2.z, u1, v0);
+		t.vertexUV(c3.x, c3.y, c3.z, u0, v0);
+	}
+
+	return true;
+}
+
 bool TileRenderer::tesselateLadderInWorld(Tile* tile, const TilePos& pos)
 {
 	constexpr float C_RATIO = 1.0f / 256.0f;
@@ -1650,6 +1828,8 @@ bool TileRenderer::tesselateInWorld(Tile* tile, const TilePos& pos)
 			return tesselateStairsInWorld(tile, pos);
 		case SHAPE_FENCE:
 			return tesselateFenceInWorld(tile, pos);
+		case SHAPE_LEVER:
+			return tesselateLeverInWorld(tile, pos);
 		case SHAPE_CACTUS:
 			return tesselateBlockInWorld(tile, pos);
 	}

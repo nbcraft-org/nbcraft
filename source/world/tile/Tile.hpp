@@ -232,7 +232,8 @@ public: // static variables
 		* glowstone,
 		* web,
 		* fence,
-		* redStoneDust;
+		* redStoneDust,
+		* lever;
 
 public:
 	int m_TextureFrame;

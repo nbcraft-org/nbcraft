@@ -74,6 +74,9 @@ public:
     bool clipX(const Vec3& a2, float a3, Vec3& a4) const;
 	bool clipY(const Vec3& a2, float a3, Vec3& a4) const;
 	bool clipZ(const Vec3& a2, float a3, Vec3& a4) const;
+	void xRot(float rot);
+	void yRot(float rot);
+	void zRot(float rot);
 
 	Vec3 translate(float tx, float ty, float tz) const
 	{
