@@ -2904,6 +2904,7 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 			// This is a hack to accomodate the start menu screen procedurally generated title logo.
 #define IF_NEEDED(x) do { if (tile.data != 255) { (x); } } while (0)
 
+			tileType->updateDefaultShape(); // otherwise pressure plates and buttons in the inventory would look all wonky
 			t.addOffset(-0.5f, -0.5f, -0.5f);
 			t.begin(0);
 			SHADE_DEFINE;
