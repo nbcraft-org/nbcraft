@@ -119,6 +119,7 @@ void Inventory::prepareCreativeInventory()
 	addCreativeItem(Tile::pressurePlate_stone->m_ID);
 	addCreativeItem(Tile::pressurePlate_wood->m_ID);
 	addCreativeItem(Tile::notGate_on->m_ID);
+	addCreativeItem(Tile::button->m_ID);
 
 	for (int i = 0; i < C_MAX_HOTBAR_ITEMS; i++)
 		m_hotbar[i] = i;

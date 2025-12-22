@@ -28,11 +28,11 @@ eRenderShape LeverTile::getRenderShape() const
 
 bool LeverTile::mayPlace(const Level* level, const TilePos& pos) const
 {
-	if (level->isSolidTile(pos.below())) return true;
 	if (level->isSolidTile(pos.west())) return true;
 	if (level->isSolidTile(pos.east())) return true;
 	if (level->isSolidTile(pos.north())) return true;
 	if (level->isSolidTile(pos.south())) return true;
+	if (level->isSolidTile(pos.below())) return true;
 
 	return false;
 }

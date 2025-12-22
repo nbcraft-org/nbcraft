@@ -200,6 +200,7 @@
     <ClCompile Include="$(MC_ROOT)\source\world\level\levelgen\chunk\DataLayer.cpp" />
     <ClCompile Include="..\..\..\..\source\world\entity\Squid.cpp" />
     <ClCompile Include="..\..\..\..\source\world\item\RedStoneItem.cpp" />
+    <ClCompile Include="..\..\..\..\source\world\tile\ButtonTile.cpp" />
     <ClCompile Include="..\..\..\..\source\world\tile\LeverTile.cpp" />
     <ClCompile Include="..\..\..\..\source\world\tile\NotGateTile.cpp" />
     <ClCompile Include="..\..\..\..\source\world\tile\PressurePlateTile.cpp" />
@@ -348,6 +349,7 @@
     <ClInclude Include="$(MC_ROOT)\source\world\level\LevelEvent.hpp" />
     <ClInclude Include="..\..\..\..\source\world\entity\Squid.hpp" />
     <ClInclude Include="..\..\..\..\source\world\item\RedStoneItem.hpp" />
+    <ClInclude Include="..\..\..\..\source\world\tile\ButtonTile.hpp" />
     <ClInclude Include="..\..\..\..\source\world\tile\LeverTile.hpp" />
     <ClInclude Include="..\..\..\..\source\world\tile\NotGateTile.hpp" />
     <ClInclude Include="..\..\..\..\source\world\tile\PressurePlateTile.hpp" />

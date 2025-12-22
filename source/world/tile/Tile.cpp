@@ -73,7 +73,7 @@
 #include "PressurePlateTile.hpp"
 //#include "RailTile.hpp"
 //#include "DetectorRailTile.hpp"
-//#include "ButtonTile.hpp"
+#include "ButtonTile.hpp"
 //#include "MobSpawnerTile.hpp"
 #include "NotGateTile.hpp"
 //#include "CakeTile.hpp"
@@ -777,6 +777,12 @@ void Tile::initTiles()
 		->setSoundType(Tile::SOUND_WOOD)
 		->setDescriptionId("notGate");
 
+	Tile::button = (new ButtonTile(TILE_BUTTON_STONE, TEXTURE_STONE))
+		->init()
+		->setDestroyTime(0.5f)
+		->setSoundType(Tile::SOUND_STONE)
+		->setDescriptionId("button");
+
 	// Great
 	Item::items[Tile::cloth->m_ID] = (new ClothItem(Tile::cloth->m_ID - C_MAX_TILES))
 		->setDescriptionId("cloth");
@@ -1269,4 +1275,5 @@ Tile
 * Tile::pressurePlate_stone,
 * Tile::pressurePlate_wood,
 * Tile::notGate_off,
-* Tile::notGate_on;
+* Tile::notGate_on,
+* Tile::button;
