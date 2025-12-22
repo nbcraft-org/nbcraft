@@ -1,5 +1,6 @@
 #include "NotGateTile.hpp"
 #include "world/level/Level.hpp"
+#include <source\common\Logger.hpp>
 
 NotGateTile::NotGateTile(int ID, int texture, bool on) : TorchTile(ID, texture, Material::decoration)
 {
@@ -14,16 +15,17 @@ int NotGateTile::getTexture(Facing::Name face, TileData data) const
 
 bool NotGateTile::isToggledTooFrequently(Level* level, const TilePos& pos, bool add)
 {
-	if (add)
-	{
+	// commenting this out for now until i find a proper fix
+	//if (add)
+	//{
 		m_recentToggles.push_back(Toggle(pos, level->getTime()));
-	}
+	//}
 
 	int count = 0;
 
 	for (int var7 = 0; var7 < m_recentToggles.size(); var7++)
 	{
-		Toggle toggle = m_recentToggles[var7];
+		Toggle toggle = m_recentToggles.at(var7);
 		if (toggle.pos == pos)
 		{
 			count++;
@@ -112,7 +114,7 @@ bool NotGateTile::hasNeighborSignal(const Level* level, const TilePos& pos)
 	{
 		return true;
 	}
-	else if (data == 3 && level->getSignal(pos.north(), Facing::DOWN))
+	else if (data == 3 && level->getSignal(pos.north(), Facing::NORTH))
 	{
 		return true;
 	}
@@ -120,13 +122,13 @@ bool NotGateTile::hasNeighborSignal(const Level* level, const TilePos& pos)
 	{
 		return true;
 	}
-	else if (data == 1 && level->getSignal(pos.below(), Facing::WEST))
+	else if (data == 1 && level->getSignal(pos.west(), Facing::WEST))
 	{
 		return true;
 	}
 	else
 	{
-		return data == 2 && level->getSignal(pos.below(), Facing::EAST);
+		return data == 2 && level->getSignal(pos.east(), Facing::EAST);
 	}
 }
 
@@ -134,7 +136,7 @@ void NotGateTile::tick(Level* level, const TilePos& pos, Random* random)
 {
 	bool neighborSignal = hasNeighborSignal(level, pos);
 
-	while (m_recentToggles.size() > 0 && level->getTime() - m_recentToggles[0].when > 100L)
+	while (m_recentToggles.size() > 0 && level->getTime() - m_recentToggles.at(0).when > 100L)
 	{
 		m_recentToggles.erase(m_recentToggles.begin());
 	}
