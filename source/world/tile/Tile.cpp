@@ -70,7 +70,7 @@
 //#include "SnowTile.hpp"
 //#include "SignTile.hpp"
 #include "LeverTile.hpp"
-//#include "PressurePlateTile.hpp"
+#include "PressurePlateTile.hpp"
 //#include "RailTile.hpp"
 //#include "DetectorRailTile.hpp"
 //#include "ButtonTile.hpp"
@@ -753,6 +753,18 @@ void Tile::initTiles()
 		->setSoundType(Tile::SOUND_WOOD)
 		->setDescriptionId("lever");
 
+	Tile::pressurePlate_stone = (new PressurePlateTile(TILE_PLATE_STONE, TEXTURE_STONE, PressurePlateTile::Sensitivity::mobs))
+		->init()
+		->setDestroyTime(0.5f)
+		->setSoundType(Tile::SOUND_STONE)
+		->setDescriptionId("pressurePlate");
+
+	Tile::pressurePlate_wood = (new PressurePlateTile(TILE_PLATE_WOOD, TEXTURE_PLANKS, PressurePlateTile::Sensitivity::everything))
+		->init()
+		->setDestroyTime(0.5f)
+		->setSoundType(Tile::SOUND_WOOD)
+		->setDescriptionId("pressurePlate");
+
 	// Great
 	Item::items[Tile::cloth->m_ID] = (new ClothItem(Tile::cloth->m_ID - C_MAX_TILES))
 		->setDescriptionId("cloth");
@@ -1241,4 +1253,6 @@ Tile
 * Tile::web,
 * Tile::fence,
 * Tile::redStoneDust,
-* Tile::lever;
+* Tile::lever,
+* Tile::pressurePlate_stone,
+* Tile::pressurePlate_wood;

@@ -201,6 +201,7 @@
     <ClCompile Include="..\..\..\..\source\world\entity\Squid.cpp" />
     <ClCompile Include="..\..\..\..\source\world\item\RedStoneItem.cpp" />
     <ClCompile Include="..\..\..\..\source\world\tile\LeverTile.cpp" />
+    <ClCompile Include="..\..\..\..\source\world\tile\PressurePlateTile.cpp" />
     <ClCompile Include="..\..\..\..\source\world\tile\RedStoneDustTile.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -347,6 +348,7 @@
     <ClInclude Include="..\..\..\..\source\world\entity\Squid.hpp" />
     <ClInclude Include="..\..\..\..\source\world\item\RedStoneItem.hpp" />
     <ClInclude Include="..\..\..\..\source\world\tile\LeverTile.hpp" />
+    <ClInclude Include="..\..\..\..\source\world\tile\PressurePlateTile.hpp" />
     <ClInclude Include="..\..\..\..\source\world\tile\RedStoneDustTile.hpp" />
   </ItemGroup>
   <ItemGroup>

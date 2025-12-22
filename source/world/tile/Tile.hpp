@@ -233,7 +233,9 @@ public: // static variables
 		* web,
 		* fence,
 		* redStoneDust,
-		* lever;
+		* lever,
+		* pressurePlate_stone,
+		* pressurePlate_wood;
 
 public:
 	int m_TextureFrame;
