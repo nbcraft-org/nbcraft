@@ -1,6 +1,5 @@
 #include "NotGateTile.hpp"
 #include "world/level/Level.hpp"
-#include <source\common\Logger.hpp>
 
 NotGateTile::NotGateTile(int ID, int texture, bool on) : TorchTile(ID, texture, Material::decoration)
 {
