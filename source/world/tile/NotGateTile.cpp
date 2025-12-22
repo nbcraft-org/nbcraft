@@ -1,6 +1,8 @@
 #include "NotGateTile.hpp"
 #include "world/level/Level.hpp"
 
+std::vector<NotGateTile::Toggle> NotGateTile::m_recentToggles;
+
 NotGateTile::NotGateTile(int ID, int texture, bool on) : TorchTile(ID, texture, Material::decoration)
 {
 	m_bOn = on;
@@ -14,11 +16,10 @@ int NotGateTile::getTexture(Facing::Name face, TileData data) const
 
 bool NotGateTile::isToggledTooFrequently(Level* level, const TilePos& pos, bool add)
 {
-	// commenting this out for now until i find a proper fix
-	//if (add)
-	//{
+	if (add)
+	{
 		m_recentToggles.push_back(Toggle(pos, level->getTime()));
-	//}
+	}
 
 	int count = 0;
 

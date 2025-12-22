@@ -30,7 +30,7 @@ private:
 	bool isToggledTooFrequently(Level* level, const TilePos& pos, bool add);
 	bool hasNeighborSignal(const Level* level, const TilePos& pos);
 	bool m_bOn = false;
-	std::vector<Toggle> m_recentToggles;
+	static std::vector<Toggle> m_recentToggles;
 
 };
 
