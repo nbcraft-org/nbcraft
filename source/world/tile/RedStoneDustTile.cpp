@@ -189,10 +189,10 @@ void RedStoneDustTile::updatePowerStrength(Level* level, const TilePos& pos1, co
 			m_toUpdate.insert(pos1);
 			m_toUpdate.insert(TilePos(pos1.x - 1, pos1.y, pos1.z));
 			m_toUpdate.insert(TilePos(pos1.x + 1, pos1.y, pos1.z));
-			m_toUpdate.insert(TilePos(pos1.x - 1, pos1.y - 1, pos1.z));
-			m_toUpdate.insert(TilePos(pos1.x - 1, pos1.y + 1, pos1.z));
-			m_toUpdate.insert(TilePos(pos1.x - 1, pos1.y, pos1.z - 1));
-			m_toUpdate.insert(TilePos(pos1.x - 1, pos1.y, pos1.z + 1));
+			m_toUpdate.insert(TilePos(pos1.x, pos1.y - 1, pos1.z));
+			m_toUpdate.insert(TilePos(pos1.x, pos1.y + 1, pos1.z));
+			m_toUpdate.insert(TilePos(pos1.x, pos1.y, pos1.z - 1));
+			m_toUpdate.insert(TilePos(pos1.x, pos1.y, pos1.z + 1));
 		}
 	}
 }

@@ -235,7 +235,9 @@ public: // static variables
 		* redStoneDust,
 		* lever,
 		* pressurePlate_stone,
-		* pressurePlate_wood;
+		* pressurePlate_wood,
+		* notGate_off,
+		* notGate_on;
 
 public:
 	int m_TextureFrame;

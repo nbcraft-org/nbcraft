@@ -75,7 +75,7 @@
 //#include "DetectorRailTile.hpp"
 //#include "ButtonTile.hpp"
 //#include "MobSpawnerTile.hpp"
-//#include "RedstoneTorchTile.hpp"
+#include "NotGateTile.hpp"
 //#include "CakeTile.hpp"
 //#include "DispenserTile.hpp"
 //#include "MusicTile.hpp"
@@ -765,6 +765,18 @@ void Tile::initTiles()
 		->setSoundType(Tile::SOUND_WOOD)
 		->setDescriptionId("pressurePlate");
 
+	Tile::notGate_off = (new NotGateTile(TILE_NOT_GATE_OFF, TEXTURE_TORCH_RED_STONE_OFF, false))
+		->init()
+		->setDestroyTime(0.0f)
+		->setSoundType(Tile::SOUND_WOOD)
+		->setDescriptionId("notGate");
+
+	Tile::notGate_on = (new NotGateTile(TILE_NOT_GATE_ON, TEXTURE_TORCH_RED_STONE, true))
+		->init()
+		->setDestroyTime(0.0f)
+		->setSoundType(Tile::SOUND_WOOD)
+		->setDescriptionId("notGate");
+
 	// Great
 	Item::items[Tile::cloth->m_ID] = (new ClothItem(Tile::cloth->m_ID - C_MAX_TILES))
 		->setDescriptionId("cloth");
@@ -1255,4 +1267,6 @@ Tile
 * Tile::redStoneDust,
 * Tile::lever,
 * Tile::pressurePlate_stone,
-* Tile::pressurePlate_wood;
+* Tile::pressurePlate_wood,
+* Tile::notGate_off,
+* Tile::notGate_on;

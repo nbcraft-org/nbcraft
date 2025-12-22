@@ -370,6 +370,7 @@ add_library(reminecraftpe-core STATIC
 	world/tile/RedStoneDustTile.cpp
 	world/tile/LeverTile.cpp
 	world/tile/PressurePlateTile.cpp
+	world/tile/NotGateTile.cpp
     renderer/GL/GL.cpp
     renderer/Attribute.cpp
     renderer/ConstantBufferMetaData.cpp
