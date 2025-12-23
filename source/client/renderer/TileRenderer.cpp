@@ -18,6 +18,8 @@
 #include "world/tile/DiodeTile.hpp"
 #include "GameMods.hpp"
 
+#define DEFAULT_LIGHT_COLOR 16711935
+
 TileRenderer::Materials::Materials()
 {
 	MATERIAL_PTR(common, ui_item);
@@ -31,6 +33,7 @@ void TileRenderer::_init()
 	m_fixedTexture = -1;
 	m_bXFlipTexture = false;
 	m_bNoCulling = false;
+	m_bRenderingGui = false;
 	m_bAmbientOcclusion = false;
 
 	// AO stuff
@@ -81,6 +84,35 @@ TileRenderer::TileRenderer(Tesselator& tessellator, LevelSource* pLevelSource)
 {
 	_init();
 	m_pTileSource = pLevelSource;
+}
+
+// tex1 should be mandatory to keep opengl happy as there are no explicit padding available in glsl
+//   and also for the benefits of using vanilla shaders / modded shaders back in the day
+//
+// in terms of the content of tex1, it is a lookup table of light colors since JE b1.8/ PE 0.10
+//   this as a mod in the future, or tex1 influence can be oblterated from the shader for now
+//   so it falls back to the monochromatic lighting seen in old versions
+void TileRenderer::_tex1(const Vec2& uv)
+{
+	
+	//if (m_bRenderingGui)
+	//	return;
+
+	//constexpr float s = 0.0039062f;
+
+	m_tessellator.tex1(uv);
+}
+
+Vec2 TileRenderer::getLightColor(const Tile* tile, const TilePos& pos)
+{
+	if (m_bRenderingGui)
+		return Vec2::ONE;
+
+	if (pos.y > 127)
+		return Vec2(240.0f / 255.0f, 0);
+
+	float brightness = tile->getBrightness(m_pTileSource, pos);
+	return Vec2(brightness, brightness);
 }
 
 float TileRenderer::getWaterHeight(const TilePos& pos, const Material* pCheckMtl)
@@ -177,13 +209,21 @@ void TileRenderer::renderEast(Tile* tile, const Vec3& pos, int texture)
 	if (m_bAmbientOcclusion)
 	{
 		t.color(m_vtxRed[0], m_vtxGreen[0], m_vtxBlue[0]);
+		_tex1(m_vtxLightTex[0]);
 		t.vertexUV(aabb.max.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_l, texV_d);
+
 		t.color(m_vtxRed[1], m_vtxGreen[1], m_vtxBlue[1]);
+		_tex1(m_vtxLightTex[1]);
 		t.vertexUV(aabb.max.x + pos.x, aabb.min.y + pos.y, aabb.min.z + pos.z, texU_r, texV_d);
+
 		t.color(m_vtxRed[2], m_vtxGreen[2], m_vtxBlue[2]);
+		_tex1(m_vtxLightTex[2]);
 		t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.min.z + pos.z, texU_r, texV_u);
+
 		t.color(m_vtxRed[3], m_vtxGreen[3], m_vtxBlue[3]);
+		_tex1(m_vtxLightTex[3]);
 		t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_l, texV_u);
+
 		return;
 	}
 	
@@ -246,13 +286,21 @@ void TileRenderer::renderWest(Tile* tile, const Vec3& pos, int texture)
 	if (m_bAmbientOcclusion)
 	{
 		t.color(m_vtxRed[0], m_vtxGreen[0], m_vtxBlue[0]);
+		_tex1(m_vtxLightTex[0]);
 		t.vertexUV(aabb.min.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_r, texV_u);
+
 		t.color(m_vtxRed[1], m_vtxGreen[1], m_vtxBlue[1]);
+		_tex1(m_vtxLightTex[1]);
 		t.vertexUV(aabb.min.x + pos.x, aabb.max.y + pos.y, aabb.min.z + pos.z, texU_l, texV_u);
+
 		t.color(m_vtxRed[2], m_vtxGreen[2], m_vtxBlue[2]);
+		_tex1(m_vtxLightTex[2]);
 		t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.min.z + pos.z, texU_l, texV_d);
+
 		t.color(m_vtxRed[3], m_vtxGreen[3], m_vtxBlue[3]);
+		_tex1(m_vtxLightTex[3]);
 		t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_r, texV_d);
+
 		return;
 	}
 	
@@ -315,13 +363,21 @@ void TileRenderer::renderSouth(Tile* tile, const Vec3& pos, int texture)
 	if (m_bAmbientOcclusion)
 	{
 		t.color(m_vtxRed[0], m_vtxGreen[0], m_vtxBlue[0]);
+		_tex1(m_vtxLightTex[0]);
 		t.vertexUV(aabb.min.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_l, texV_u);
+
 		t.color(m_vtxRed[1], m_vtxGreen[1], m_vtxBlue[1]);
+		_tex1(m_vtxLightTex[1]);
 		t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_l, texV_d);
+
 		t.color(m_vtxRed[2], m_vtxGreen[2], m_vtxBlue[2]);
+		_tex1(m_vtxLightTex[2]);
 		t.vertexUV(aabb.max.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_r, texV_d);
+
 		t.color(m_vtxRed[3], m_vtxGreen[3], m_vtxBlue[3]);
+		_tex1(m_vtxLightTex[3]);
 		t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_r, texV_u);
+
 		return;
 	}
 
@@ -384,13 +440,21 @@ void TileRenderer::renderNorth(Tile* tile, const Vec3& pos, int texture)
 	if (m_bAmbientOcclusion)
 	{
 		t.color(m_vtxRed[0], m_vtxGreen[0], m_vtxBlue[0]);
+		_tex1(m_vtxLightTex[0]);
 		t.vertexUV(aabb.min.x + pos.x, aabb.max.y + pos.y, aabb.min.z + pos.z, texU_r, texV_u);
+
 		t.color(m_vtxRed[1], m_vtxGreen[1], m_vtxBlue[1]);
+		_tex1(m_vtxLightTex[1]);
 		t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.min.z + pos.z, texU_l, texV_u);
+
 		t.color(m_vtxRed[2], m_vtxGreen[2], m_vtxBlue[2]);
+		_tex1(m_vtxLightTex[2]);
 		t.vertexUV(aabb.max.x + pos.x, aabb.min.y + pos.y, aabb.min.z + pos.z, texU_l, texV_d);
+
 		t.color(m_vtxRed[3], m_vtxGreen[3], m_vtxBlue[3]);
+		_tex1(m_vtxLightTex[3]);
 		t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.min.z + pos.z, texU_r, texV_d);
+
 		return;
 	}
 
@@ -447,13 +511,21 @@ void TileRenderer::renderFaceDown(Tile* tile, const Vec3& pos, int texture)
 	if (m_bAmbientOcclusion)
 	{
 		t.color(m_vtxRed[0], m_vtxGreen[0], m_vtxBlue[0]);
+		_tex1(m_vtxLightTex[0]);
 		t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_2, texV_2);
+
 		t.color(m_vtxRed[1], m_vtxGreen[1], m_vtxBlue[1]);
+		_tex1(m_vtxLightTex[1]);
 		t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.min.z + pos.z, texU_2, texV_1);
+
 		t.color(m_vtxRed[2], m_vtxGreen[2], m_vtxBlue[2]);
+		_tex1(m_vtxLightTex[2]);
 		t.vertexUV(aabb.min.x + pos.x, aabb.max.y + pos.y, aabb.min.z + pos.z, texU_1, texV_1);
+
 		t.color(m_vtxRed[3], m_vtxGreen[3], m_vtxBlue[3]);
+		_tex1(m_vtxLightTex[3]);
 		t.vertexUV(aabb.min.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_1, texV_2);
+
 		return;
 	}
 
@@ -510,13 +582,21 @@ void TileRenderer::renderFaceUp(Tile* tile, const Vec3& pos, int texture)
 	if (m_bAmbientOcclusion)
 	{
 		t.color(m_vtxRed[0], m_vtxGreen[0], m_vtxBlue[0]);
+		_tex1(m_vtxLightTex[0]);
 		t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_1, texV_2);
+
 		t.color(m_vtxRed[1], m_vtxGreen[1], m_vtxBlue[1]);
+		_tex1(m_vtxLightTex[1]);
 		t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.min.z + pos.z, texU_1, texV_1);
+
 		t.color(m_vtxRed[2], m_vtxGreen[2], m_vtxBlue[2]);
+		_tex1(m_vtxLightTex[2]);
 		t.vertexUV(aabb.max.x + pos.x, aabb.min.y + pos.y, aabb.min.z + pos.z, texU_2, texV_1);
+
 		t.color(m_vtxRed[3], m_vtxGreen[3], m_vtxBlue[3]);
+		_tex1(m_vtxLightTex[3]);
 		t.vertexUV(aabb.max.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_2, texV_2);
+
 		return;
 	}
 
@@ -1892,6 +1972,8 @@ bool TileRenderer::tesselateInWorld(Tile* tile, const TilePos& pos)
 	int shape = tile->getRenderShape();
 	tile->updateShape(m_pTileSource, pos);
 
+	_tex1(getLightColor(tile, pos));
+
 	switch (shape)
 	{
 		// @NOTE: In the original Minecraft PE, if a shape is undefined, the tile is invisible.
@@ -3249,6 +3331,9 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 		for (int i = 0; i < 4; i++)
 			m_vtxRed[i] = m_vtxGreen[i] = m_vtxBlue[i] = 1.0f;
 
+		for (int i = 0; i < 4; i++)
+			m_vtxLightTex[i] = 1.0f;
+
 		const int* table = &massLUT[dir * 12];
 
 		for (int i = 0; i < 4; i++)
@@ -3264,6 +3349,7 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 			m_vtxRed[i]   = br;
 			m_vtxGreen[i] = br;
 			m_vtxBlue[i]  = br;
+			m_vtxLightTex[i] = br;
 		}
 
 		for (int i = 0; i < 4; i++)
