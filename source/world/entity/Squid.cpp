@@ -80,7 +80,7 @@ void Squid::aiStep()
 
 		var1 = Mth::sqrt(m_vel.x * m_vel.x + m_vel.z * m_vel.z);
 		field_E8 += (-(Mth::atan2(m_vel.x, m_vel.z)) * 180.0f / float(M_PI) - field_E8) * 0.1f; // field_E8 = yBodyRot
-		m_rot.y = field_E8;
+		m_rot.x = field_E8; // m_rot.x is supposed to be m_rot.y but brent inverted it?!
 		m_zBodyRot += float(M_PI) * m_rotateSpeed * 1.5f;
 		m_xBodyRot += (-(Mth::atan2(var1, m_vel.y)) * 180.0f / float(M_PI) - m_xBodyRot) * 0.1f;
 	}

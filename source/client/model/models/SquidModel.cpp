@@ -31,7 +31,7 @@ SquidModel::SquidModel() :
         m_tentacles[i]->m_pos.z = yo;
         m_tentacles[i]->m_pos.y = (31 + yoffs);
         angle = i * M_PI * -2.0 / 8 + M_PI_2;
-        m_tentacles[i]->m_rot.y = angle;
+        m_tentacles[i]->m_rot.x = angle; // m_rot.x is supposed to be m_rot.y but brent inverted it?!
     }
 }
 
@@ -56,6 +56,6 @@ void SquidModel::render(float time, float r, float bob, float yRot, float xRot, 
 void SquidModel::setupAnim(float time, float r, float bob, float yRot, float xRot, float scale)
 {
     for (int i = 0; i < 8; ++i) {
-        m_tentacles[i]->m_rot.x = bob;
+        m_tentacles[i]->m_rot.y = bob; // m_rot.y is supposed to be m_rot.x but brent inverted it?!
     }
 }
