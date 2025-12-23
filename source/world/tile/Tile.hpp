@@ -238,7 +238,9 @@ public: // static variables
 		* pressurePlate_wood,
 		* notGate_off,
 		* notGate_on,
-		* button;
+		* button,
+		* diode_off,
+		* diode_on;
 
 public:
 	int m_TextureFrame;

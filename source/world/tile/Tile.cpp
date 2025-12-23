@@ -82,7 +82,7 @@
 //#include "RecordPlayerTile.hpp"
 //#include "TrapDoorTile.hpp"
 //#include "PortalTile.hpp"
-//#include "RepeaterTile.hpp"
+#include "DiodeTile.hpp"
 //#include "Mushroom.hpp"
 #include "RedStoneDustTile.hpp"
 
@@ -774,6 +774,7 @@ void Tile::initTiles()
 	Tile::notGate_on = (new NotGateTile(TILE_NOT_GATE_ON, TEXTURE_TORCH_RED_STONE, true))
 		->init()
 		->setDestroyTime(0.0f)
+		->setLightEmission(0.5f)
 		->setSoundType(Tile::SOUND_WOOD)
 		->setDescriptionId("notGate");
 
@@ -782,6 +783,19 @@ void Tile::initTiles()
 		->setDestroyTime(0.5f)
 		->setSoundType(Tile::SOUND_STONE)
 		->setDescriptionId("button");
+
+	Tile::diode_off = (new DiodeTile(TILE_REPEATER_OFF, false))
+		->init()
+		->setDestroyTime(0.0f)
+		->setSoundType(Tile::SOUND_WOOD)
+		->setDescriptionId("diode");
+
+	Tile::diode_on = (new DiodeTile(TILE_REPEATER_ON, true))
+		->init()
+		->setDestroyTime(0.0f)
+		->setLightEmission(10.0f / 16.0f)
+		->setSoundType(Tile::SOUND_WOOD)
+		->setDescriptionId("diode");
 
 	// Great
 	Item::items[Tile::cloth->m_ID] = (new ClothItem(Tile::cloth->m_ID - C_MAX_TILES))
@@ -1276,4 +1290,6 @@ Tile
 * Tile::pressurePlate_wood,
 * Tile::notGate_off,
 * Tile::notGate_on,
-* Tile::button;
+* Tile::button,
+* Tile::diode_off,
+* Tile::diode_on;

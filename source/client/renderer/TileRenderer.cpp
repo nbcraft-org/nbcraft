@@ -15,6 +15,7 @@
 #include "world/tile/FireTile.hpp"
 #include "world/tile/RedStoneDustTile.hpp"
 #include "world/tile/LiquidTile.hpp"
+#include "world/tile/DiodeTile.hpp"
 #include "GameMods.hpp"
 
 TileRenderer::Materials::Materials()
@@ -1243,6 +1244,99 @@ bool TileRenderer::tesselateTorchInWorld(Tile* tile, const TilePos& pos)
 	return true;
 }
 
+bool TileRenderer::tesselateDiodeInWorld(Tile* tile, const TilePos& pos)
+{
+	int data = m_pTileSource->getData(pos); // var5
+	int dir = data & 3; // var6
+	int flipped = (data & 12) >> 2; // var7
+	tesselateBlockInWorld(tile, pos);
+	Tesselator& t = Tesselator::instance; // var8
+	float br = tile->getBrightness(m_pTileSource, pos); // var9
+	if (Tile::lightEmission[tile->m_ID] > 0) {
+		br = (br + 1.0f) * 0.5f;
+	}
+
+	t.color(br, br, br);
+	float var10 = -0.1875f;
+	float var12 = 0.0f;
+	float var14 = 0.0f;
+	float var16 = 0.0f;
+	float var18 = 0.0f;
+	switch (dir) {
+	case 0:
+		var18 = -0.3125f;
+		var14 = DiodeTile::unk_a[flipped];
+		break;
+	case 1:
+		var16 = 0.3125f;
+		var12 = -DiodeTile::unk_a[flipped];
+		break;
+	case 2:
+		var18 = 0.3125f;
+		var14 = -DiodeTile::unk_a[flipped];
+		break;
+	case 3:
+		var16 = -0.3125f;
+		var12 = DiodeTile::unk_a[flipped];
+	}
+
+	tesselateTorch(tile, Vec3(float(pos.x) + var12, float(pos.y) + var10, float(pos.z) + var14), 0.0f, 0.0f);
+	tesselateTorch(tile, Vec3(float(pos.x) + var16, float(pos.y) + var10, float(pos.z) + var18), 0.0f, 0.0f);
+	int var20 = tile->getTexture(Facing::UP);
+	int var21 = (var20 & 15) << 4;
+	int var22 = var20 & 240;
+	float var23 = float(var21) / 256.0f;
+	float var25 = (float(var21) + 15.99f) / 256.0f;
+	float var27 = float(var22) / 256.0f;
+	float var29 = (float(var22) + 15.99f) / 256.0f;
+	float var31 = 2.0f / 16.0f;
+	float var32 = float(pos.x + 1);
+	float var33 = float(pos.x + 1);
+	float var34 = float(pos.x + 0);
+	float var35 = float(pos.x + 0);
+	float var36 = float(pos.z + 0);
+	float var37 = float(pos.z + 1);
+	float var38 = float(pos.z + 1);
+	float var39 = float(pos.z + 0);
+	float var40 = float(pos.y) + var31;
+	if (dir == 2) {
+		var33 = float(pos.x + 0);
+		var32 = var33;
+		var35 = float(pos.x + 1);
+		var34 = var35;
+		var39 = float(pos.z + 1);
+		var36 = var39;
+		var38 = float(pos.z + 0);
+		var37 = var38;
+	}
+	else if (dir == 3) {
+		var35 = float(pos.x + 0);
+		var32 = var35;
+		var34 = float(pos.x + 1);
+		var33 = var34;
+		var37 = float(pos.z + 0);
+		var36 = var37;
+		var39 = float(pos.z + 1);
+		var38 = var39;
+	}
+	else if (dir == 1) {
+		var35 = float(pos.x + 1);
+		var32 = var35;
+		var34 = float(pos.x + 0);
+		var33 = var34;
+		var37 = float(pos.z + 1);
+		var36 = var37;
+		var39 = float(pos.z + 0);
+		var38 = var39;
+	}
+
+	t.vertexUV(var35, var40, var39, var23, var27);
+	t.vertexUV(var34, var40, var38, var23, var29);
+	t.vertexUV(var33, var40, var37, var25, var29);
+	t.vertexUV(var32, var40, var36, var25, var27);
+	return true;
+}
+
 bool TileRenderer::tesselateLeverInWorld(Tile* tile, const TilePos& pos)
 {
 	int data = m_pTileSource->getData(pos);
@@ -1830,6 +1924,8 @@ bool TileRenderer::tesselateInWorld(Tile* tile, const TilePos& pos)
 			return tesselateFenceInWorld(tile, pos);
 		case SHAPE_LEVER:
 			return tesselateLeverInWorld(tile, pos);
+		case SHAPE_DIODE:
+			return tesselateDiodeInWorld(tile, pos);
 		case SHAPE_CACTUS:
 			return tesselateBlockInWorld(tile, pos);
 	}

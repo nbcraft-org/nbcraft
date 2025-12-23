@@ -55,6 +55,7 @@ public:
 	bool tesselateFenceInWorld(Tile*, const TilePos& pos);
 	bool tesselateLadderInWorld(Tile*, const TilePos& pos);
 	bool tesselateTorchInWorld(Tile*, const TilePos& pos);
+	bool tesselateDiodeInWorld(Tile*, const TilePos& pos);
 	bool tesselateLeverInWorld(Tile*, const TilePos& pos);
 	bool tesselateDoorInWorld(Tile*, const TilePos& pos);
 #ifndef ORIGINAL_CODE

@@ -509,7 +509,7 @@ void Item::initItems()
 		->setIcon(13, 2)
 		->setDescriptionId("bed");
 
-	Item::diode = NEW_ITEM(ITEM_DIODE)
+	Item::diode = NEW_X_ITEM(TilePlanterItem, ITEM_DIODE, TILE_REPEATER_OFF)
 		->setIcon(6, 5)
 		->setDescriptionId("diode");
 
