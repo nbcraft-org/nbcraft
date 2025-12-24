@@ -162,6 +162,7 @@ void EntityRenderDispatcher::onGraphicsReset()
 	m_CameraRenderer.onGraphicsReset();
 	m_ItemRenderer.onGraphicsReset();
 	m_RocketRenderer.onGraphicsReset();
+	m_SquidRenderer.onGraphicsReset();
 #ifdef ENH_ALLOW_SAND_GRAVITY
 	m_FallingTileRenderer.onGraphicsReset();
 #endif

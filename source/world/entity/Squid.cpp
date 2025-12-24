@@ -87,13 +87,13 @@ void Squid::aiStep()
 	else {
 		m_tentacleAngle = Mth::abs(Mth::sin(m_tentacleMovement)) * float(M_PI) * 0.25f;
 		if (!interpolateOnly()) {
-			m_vel.x = 0.0;
-			m_vel.y -= 0.08;
-			m_vel.y *= 0.98;
-			m_vel.z = 0.0;
+			m_vel.x = 0.0f;
+			m_vel.y -= 0.08f;
+			m_vel.y *= 0.98f;
+			m_vel.z = 0.0f;
 		}
 
-		m_xBodyRot = (m_xBodyRot + (-90.0f - m_xBodyRot) * 0.02);
+		m_xBodyRot = (m_xBodyRot + (-90.0f - m_xBodyRot) * 0.02f);
 	}
 }
 

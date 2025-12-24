@@ -42,7 +42,7 @@ void ButtonTile::setPlacedOnFace(Level* level, const TilePos& pos, Facing::Name 
 	int var7 = data & 8;
 	data &= 7;
 
-	switch (face)
+	/*switch (face)
 	{
 	case Facing::NORTH:
 		if (level->isSolidTile(pos.south()))
@@ -62,7 +62,18 @@ void ButtonTile::setPlacedOnFace(Level* level, const TilePos& pos, Facing::Name 
 		break;
 	default:
 		data = unk_h(level, pos);
-	}
+	}*/
+
+	if (face == Facing::NORTH && level->isSolidTile(pos.south()))
+		data = 4;
+	else if (face == Facing::SOUTH && level->isSolidTile(pos.north()))
+		data = 3;
+	else if (face == Facing::WEST && level->isSolidTile(pos.east()))
+		data = 2;
+	else if (face == Facing::EAST && level->isSolidTile(pos.west()))
+		data = 1;
+	else
+		data = unk_h(level, pos);
 
 	level->setData(pos, data + var7);
 }

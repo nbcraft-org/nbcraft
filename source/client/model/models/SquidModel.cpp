@@ -11,9 +11,9 @@
 
 SquidModel::SquidModel() :
     Model(64, 32),
-    m_body(0, 0)
+    m_body(this, 0, 0)
 {
-    m_body.setModel(this);
+    //m_body.setModel(this);
 
     int yoffs = -16;
     m_body.addBox(-6.0F, -8.0F, -6.0F, 12, 16, 12);
@@ -21,8 +21,8 @@ SquidModel::SquidModel() :
 
     for (int i = 0; i < 8; ++i)
     {
-        m_tentacles[i] = new ModelPart(48, 0);
-        m_tentacles[i]->setModel(this);
+        m_tentacles[i] = new ModelPart(this, 48, 0);
+        //m_tentacles[i]->setModel(this);
         float angle = i * M_PI * 2.0 / 8;
         float xo = Mth::cos(angle) * 5.0F;
         float yo = Mth::sin(angle) * 5.0F;
@@ -31,7 +31,7 @@ SquidModel::SquidModel() :
         m_tentacles[i]->m_pos.z = yo;
         m_tentacles[i]->m_pos.y = (31 + yoffs);
         angle = i * M_PI * -2.0 / 8 + M_PI_2;
-        m_tentacles[i]->m_rot.x = angle; // m_rot.x is supposed to be m_rot.y but brent inverted it?!
+        m_tentacles[i]->m_rot.y = angle;
     }
 }
 
@@ -56,6 +56,6 @@ void SquidModel::render(float time, float r, float bob, float yRot, float xRot, 
 void SquidModel::setupAnim(float time, float r, float bob, float yRot, float xRot, float scale)
 {
     for (int i = 0; i < 8; ++i) {
-        m_tentacles[i]->m_rot.y = bob; // m_rot.y is supposed to be m_rot.x but brent inverted it?!
+        m_tentacles[i]->m_rot.x = bob;
     }
 }
