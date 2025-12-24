@@ -37,9 +37,9 @@ SquidModel::SquidModel() :
 
 SquidModel::~SquidModel()
 {
-    //for (int i = 0; i < 8; ++i) {
-        //delete m_tentacles[i];
-    //}
+    for (int i = 0; i < 8; ++i) {
+        delete m_tentacles[i];
+    }
 }
 
 void SquidModel::render(float time, float r, float bob, float yRot, float xRot, float scale)
