@@ -1,6 +1,9 @@
 #include "DiodeTile.hpp"
 #include "world/level/Level.hpp"
 
+const float DiodeTile::unk_a[4] = { -0.0625f, 1.0f / 16.0f, 0.1875f, 0.3125f };
+const int DiodeTile::unk_b[4] = { 1, 2, 3, 4 };
+
 DiodeTile::DiodeTile(TileID ID, bool on) : Tile(ID, TEXTURE_PUMPKIN_TOP, Material::decoration) // what the fuck? (this is like this in b1.3)
 {
 	m_renderLayer = RENDER_LAYER_ALPHATEST;

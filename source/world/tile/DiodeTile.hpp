@@ -5,7 +5,8 @@
 class DiodeTile : public Tile
 {
 public:
-	static const constexpr float unk_a[4] = { -0.0625f, 1.0f / 16.0f, 0.1875f, 0.3125f };
+	//static const constexpr float unk_a[4] = { -0.0625f, 1.0f / 16.0f, 0.1875f, 0.3125f };
+	static const float unk_a[4];
 
 	DiodeTile(TileID id, bool on);
 
@@ -29,7 +30,8 @@ public:
 	void animateTick(Level*, const TilePos& pos, Random*) override;
 
 private:
-	static const constexpr int unk_b[4] = { 1, 2, 3, 4 };
+	//static const constexpr int unk_b[4] = { 1, 2, 3, 4 };
+	static const int unk_b[4];
 	bool m_bOn;
 	bool shouldTurnOn(Level* level, const TilePos& pos, TileData data);
 };
