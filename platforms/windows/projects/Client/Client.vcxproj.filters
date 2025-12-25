@@ -548,6 +548,12 @@
     <ClInclude Include="..\..\..\..\source\client\renderer\entity\GiantMobRenderer.hpp">
       <Filter>Header Files\Renderer\Entity</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\source\client\model\models\SlimeModel.hpp">
+      <Filter>Header Files\Model\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\source\client\renderer\entity\SlimeRenderer.hpp">
+      <Filter>Header Files\Renderer\Entity</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\client\gui\components\AvailableGamesList.cpp">
@@ -962,6 +968,12 @@
       <Filter>Source Files\Model\Models</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\source\client\renderer\entity\GiantMobRenderer.cpp">
+      <Filter>Source Files\Renderer\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\client\model\models\SlimeModel.cpp">
+      <Filter>Source Files\Model\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\client\renderer\entity\SlimeRenderer.cpp">
       <Filter>Source Files\Renderer\Entity</Filter>
     </ClCompile>
   </ItemGroup>

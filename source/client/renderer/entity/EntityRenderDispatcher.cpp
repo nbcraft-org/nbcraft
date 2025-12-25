@@ -20,6 +20,7 @@
 #include "client/model/models/SkeletonModel.hpp"
 #include "client/model/models/ZombieModel.hpp"
 #include "client/model/models/SquidModel.hpp"
+#include "client/model/models/SlimeModel.hpp"
 
 EntityRenderDispatcher* EntityRenderDispatcher::instance;
 Vec3 EntityRenderDispatcher::off;
@@ -38,6 +39,8 @@ EntityRenderDispatcher::EntityRenderDispatcher()
 	, m_ArrowRenderer()
 	, m_FallingTileRenderer()
 	, m_GiantMobRenderer(new ZombieModel, 0.5f, 6.0f)
+	, m_SlimeRenderer(new SlimeModel(16), new SlimeModel(0), 0.25f)
+	, m_SnowballRenderer(Item::snowBall->getIcon(nullptr))
 {
 	m_pItemInHandRenderer = nullptr;
 	m_tileRenderer = new TileRenderer();
@@ -70,6 +73,8 @@ EntityRenderDispatcher::EntityRenderDispatcher()
 	m_RocketRenderer.init(this);
 	m_SquidRenderer.init(this);
 	m_GiantMobRenderer.init(this);
+	m_SlimeRenderer.init(this);
+	m_SnowballRenderer.init(this);
 #ifdef ENH_ALLOW_SAND_GRAVITY
 	m_FallingTileRenderer.init(this);
 #endif
@@ -130,6 +135,10 @@ EntityRenderer* EntityRenderDispatcher::getRenderer(Entity::RenderType renderTyp
 			return &m_SquidRenderer;
 		case Entity::RENDER_GIANT:
 			return &m_GiantMobRenderer;
+		case Entity::RENDER_SLIME:
+			return &m_SlimeRenderer;
+		case Entity::RENDER_SNOWBALL:
+			return &m_SnowballRenderer;
 #ifdef ENH_ALLOW_SAND_GRAVITY
 		// TODO
 		case Entity::RENDER_FALLING_TILE:
@@ -168,6 +177,8 @@ void EntityRenderDispatcher::onGraphicsReset()
 	m_RocketRenderer.onGraphicsReset();
 	m_SquidRenderer.onGraphicsReset();
 	m_GiantMobRenderer.onGraphicsReset();
+	m_SlimeRenderer.onGraphicsReset();
+	m_SnowballRenderer.onGraphicsReset();
 #ifdef ENH_ALLOW_SAND_GRAVITY
 	m_FallingTileRenderer.onGraphicsReset();
 #endif

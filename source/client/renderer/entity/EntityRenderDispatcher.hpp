@@ -13,6 +13,7 @@
 #include "TripodCameraRenderer.hpp"
 #include "TntRenderer.hpp"
 #include "ItemRenderer.hpp"
+#include "ItemSpriteRenderer.hpp"
 #include "FallingTileRenderer.hpp"
 #include "PigRenderer.hpp"
 #include "SheepRenderer.hpp"
@@ -24,6 +25,7 @@
 #include "RocketRenderer.hpp"
 #include "SquidRenderer.hpp"
 #include "GiantMobRenderer.hpp"
+#include "SlimeRenderer.hpp"
 
 class Minecraft;
 class Font;
@@ -71,12 +73,14 @@ public:
 	//SheepFurRenderer m_SheepFurRenderer;
 	TripodCameraRenderer m_CameraRenderer;
 	ArrowRenderer m_ArrowRenderer;
+	ItemSpriteRenderer m_SnowballRenderer;
 #ifdef ENH_ALLOW_SAND_GRAVITY
 	FallingTileRenderer m_FallingTileRenderer;
 #endif
 	RocketRenderer m_RocketRenderer;
 	SquidRenderer m_SquidRenderer;
 	GiantMobRenderer m_GiantMobRenderer;
+	SlimeRenderer m_SlimeRenderer;
 
 	Textures* m_pTextures;
 	Level* m_pLevel;

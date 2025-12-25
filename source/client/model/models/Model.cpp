@@ -22,6 +22,7 @@ Model::Materials::Materials()
 	MATERIAL_PTR(switchable, entity_color_overlay);
 	MATERIAL_PTR(switchable, entity_glint);
 	MATERIAL_PTR(switchable, entity_alphatest_glint);
+	MATERIAL_PTR(switchable, slime_outer);
 }
 
 Model::Model(int width, int height)

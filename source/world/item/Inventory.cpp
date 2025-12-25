@@ -97,6 +97,7 @@ void Inventory::prepareCreativeInventory()
 	addCreativeItem(Item::bucket_empty->m_itemID);
 	addCreativeItem(Item::milk->m_itemID);
 	addCreativeItem(Item::diode->m_itemID);
+	addCreativeItem(Item::snowBall->m_itemID);
 
 	// more stuff
 	addCreativeItem(Tile::cloth->m_ID, 0);

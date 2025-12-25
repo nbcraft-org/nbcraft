@@ -15,7 +15,7 @@ enum eParticleTexture
 {
 	PT_PARTICLES,
 	PT_TERRAIN,
-	PT_PARTICLES2,
+	PT_ITEM,
 	PT_PARTICLES3,
 };
 
@@ -137,4 +137,13 @@ public:
 
 public:
 	float field_104;
+};
+
+class BreakingItemParticle : public Particle
+{
+public:
+	BreakingItemParticle(Level*, const Vec3& pos, Item*);
+
+	int getParticleTexture() override;
+	void render(Tesselator&, float, float, float, float, float, float) override;
 };

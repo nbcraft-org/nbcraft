@@ -220,8 +220,10 @@
     <ClInclude Include="$(MC_ROOT)\source\client\model\geom\TextureOffset.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\renderer\renderer\EntityShaderManager.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\renderer\Fog.hpp" />
+    <ClInclude Include="..\..\..\..\source\client\model\models\SlimeModel.hpp" />
     <ClInclude Include="..\..\..\..\source\client\model\models\SquidModel.hpp" />
     <ClInclude Include="..\..\..\..\source\client\renderer\entity\GiantMobRenderer.hpp" />
+    <ClInclude Include="..\..\..\..\source\client\renderer\entity\SlimeRenderer.hpp" />
     <ClInclude Include="..\..\..\..\source\client\renderer\entity\SquidRenderer.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -360,8 +362,10 @@
     <ClCompile Include="$(MC_ROOT)\source\client\renderer\ScreenRenderer.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\renderer\renderer\EntityShaderManager.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\renderer\Fog.cpp" />
+    <ClCompile Include="..\..\..\..\source\client\model\models\SlimeModel.cpp" />
     <ClCompile Include="..\..\..\..\source\client\model\models\SquidModel.cpp" />
     <ClCompile Include="..\..\..\..\source\client\renderer\entity\GiantMobRenderer.cpp" />
+    <ClCompile Include="..\..\..\..\source\client\renderer\entity\SlimeRenderer.cpp" />
     <ClCompile Include="..\..\..\..\source\client\renderer\entity\SquidRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>

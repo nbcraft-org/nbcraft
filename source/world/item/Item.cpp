@@ -16,6 +16,7 @@
 #include "TilePlanterItem.hpp"
 #include "RocketItem.hpp"
 #include "RedStoneItem.hpp"
+#include "SnowballItem.hpp"
 
 #define ITEM(x) ((x) - 256)
 
@@ -26,6 +27,7 @@
 static bool g_bInittedItems = false;
 
 Item* Item::items[C_MAX_ITEMS];
+Random Item::m_random;
 
 Item::Item(int itemID)
 {
@@ -421,7 +423,7 @@ void Item::initItems()
 		->setIcon(8, 3)
 		->setDescriptionId("redstone");
 
-	Item::snowBall = NEW_ITEM(ITEM_SNOWBALL)
+	Item::snowBall = NEW_X_ITEMN(SnowballItem, ITEM_SNOWBALL)
 		->setIcon(14, 0)
 		->setDescriptionId("snowball");
 

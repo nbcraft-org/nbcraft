@@ -7,15 +7,15 @@
 #include "PrimedTnt.hpp"
 #include "FallingTile.hpp"
 #include "Arrow.hpp"
-//#include "Snowball.hpp"
+#include "Snowball.hpp"
 //#include "ThrownEgg.hpp"
 //#include "Painting.hpp"
 
 #define ENTS ENT(ITEM, ItemEntity) \
              ENT(PRIMED_TNT, PrimedTnt) \
              ENT(FALLING_TILE, FallingTile) \
-             ENT(ARROW, Arrow)
-             //ENT(SNOWBALL, Snowball)
+             ENT(ARROW, Arrow) \
+             ENT(SNOWBALL, Snowball)
              //ENT(THROWN_EGG, ThrownEgg)
              //ENT(PAINTING, Painting)
 

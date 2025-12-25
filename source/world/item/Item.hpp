@@ -13,6 +13,7 @@
 
 // needed for TileData and Tile IDs
 #include "common/Utils.hpp"
+#include "common/Random.hpp"
 
 #include "world/level/Material.hpp"
 #include "world/level/TilePos.hpp"
@@ -106,6 +107,7 @@ public: // Static declarations
 
 	// The item array.
 	static Item* items[C_MAX_ITEMS];
+	static Random m_random;
 
 	// Common item definitions
 	static Item
