@@ -211,6 +211,7 @@
     <ClCompile Include="..\..\..\..\source\world\tile\NotGateTile.cpp" />
     <ClCompile Include="..\..\..\..\source\world\tile\PressurePlateTile.cpp" />
     <ClCompile Include="..\..\..\..\source\world\tile\RedStoneDustTile.cpp" />
+    <ClCompile Include="..\..\..\..\source\world\tile\SnowTile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Entity.hpp" />
@@ -365,6 +366,7 @@
     <ClInclude Include="..\..\..\..\source\world\tile\NotGateTile.hpp" />
     <ClInclude Include="..\..\..\..\source\world\tile\PressurePlateTile.hpp" />
     <ClInclude Include="..\..\..\..\source\world\tile\RedStoneDustTile.hpp" />
+    <ClInclude Include="..\..\..\..\source\world\tile\SnowTile.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NBT\NBT.vcxproj">

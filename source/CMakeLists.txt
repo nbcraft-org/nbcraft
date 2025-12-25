@@ -380,6 +380,7 @@ add_library(reminecraftpe-core STATIC
 	world/tile/NotGateTile.cpp
 	world/tile/ButtonTile.cpp
 	world/tile/DiodeTile.cpp
+	world/tile/SnowTile.cpp
     renderer/GL/GL.cpp
     renderer/Attribute.cpp
     renderer/ConstantBufferMetaData.cpp

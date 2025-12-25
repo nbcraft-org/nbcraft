@@ -599,6 +599,9 @@
     <ClCompile Include="..\..\..\..\source\world\entity\Snowball.cpp">
       <Filter>Source Files\Entity</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\source\world\tile\SnowTile.cpp">
+      <Filter>Source Files\Tile</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Entity.hpp">
@@ -1056,6 +1059,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\source\world\entity\Snowball.hpp">
       <Filter>Header Files\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\source\world\tile\SnowTile.hpp">
+      <Filter>Header Files\Tile</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

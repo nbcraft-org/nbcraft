@@ -32,7 +32,7 @@ bool TopSnowTile::isSolidRender() const
 
 int TopSnowTile::getResource(TileData data, Random* random) const
 {
-	return 0;
+	return Item::snowBall->m_itemID;
 }
 
 int TopSnowTile::getResourceCount(Random* random) const
@@ -83,4 +83,17 @@ void TopSnowTile::tick(Level* level, const TilePos& pos, Random* random)
 		spawnResources(level, pos, level->getData(pos));
 		level->setTile(pos, TILE_AIR);
 	}
+}
+
+void TopSnowTile::playerDestroy(Level* level, Player* player, const TilePos& pos, TileData data)
+{
+	int var6 = Item::snowBall->m_itemID;
+	float var7 = 0.7f;
+	double var8 = (level->m_random.nextFloat() * var7) + (1.0f - var7) * 0.5f;
+	double var10 = (level->m_random.nextFloat() * var7) + (1.0f - var7) * 0.5f;
+	double var12 = (level->m_random.nextFloat() * var7) + (1.0f - var7) * 0.5f;
+	ItemEntity* var14 = new ItemEntity(level, Vec3(pos.x + var8, pos.y + var10, pos.z + var12), new ItemInstance(var6, 1, 0));
+	var14->m_throwTime = 10;
+	level->addEntity(var14);
+	level->setTile(pos, TILE_AIR);
 }

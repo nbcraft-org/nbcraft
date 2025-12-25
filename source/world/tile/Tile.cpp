@@ -67,7 +67,7 @@
 //#include "BedTile.hpp"
 //#include "CropsTile.hpp"
 #include "Web.hpp"
-//#include "SnowTile.hpp"
+#include "SnowTile.hpp"
 //#include "SignTile.hpp"
 #include "LeverTile.hpp"
 #include "PressurePlateTile.hpp"
@@ -588,8 +588,7 @@ void Tile::initTiles()
 		->setSoundType(Tile::SOUND_GLASS)
 		->setDescriptionId("ice");
 
-	// @TODO: SnowTile class
-	Tile::snow = (new Tile(TILE_SNOW, TEXTURE_SNOW, Material::snow))
+	Tile::snow = (new SnowTile(TILE_SNOW, TEXTURE_SNOW))
 		->init()
 		->setDestroyTime(0.2f)
 		->setSoundType(Tile::SOUND_CLOTH)
