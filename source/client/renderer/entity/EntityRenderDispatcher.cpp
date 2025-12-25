@@ -37,6 +37,7 @@ EntityRenderDispatcher::EntityRenderDispatcher()
 	, m_SquidRenderer(new SquidModel, 0.7f)
 	, m_ArrowRenderer()
 	, m_FallingTileRenderer()
+	, m_GiantMobRenderer(new ZombieModel, 0.5f, 6.0f)
 {
 	m_pItemInHandRenderer = nullptr;
 	m_tileRenderer = new TileRenderer();
@@ -68,6 +69,7 @@ EntityRenderDispatcher::EntityRenderDispatcher()
 	m_ItemRenderer.init(this);
 	m_RocketRenderer.init(this);
 	m_SquidRenderer.init(this);
+	m_GiantMobRenderer.init(this);
 #ifdef ENH_ALLOW_SAND_GRAVITY
 	m_FallingTileRenderer.init(this);
 #endif
@@ -126,6 +128,8 @@ EntityRenderer* EntityRenderDispatcher::getRenderer(Entity::RenderType renderTyp
 			return &m_RocketRenderer;
 		case Entity::RENDER_SQUID:
 			return &m_SquidRenderer;
+		case Entity::RENDER_GIANT:
+			return &m_GiantMobRenderer;
 #ifdef ENH_ALLOW_SAND_GRAVITY
 		// TODO
 		case Entity::RENDER_FALLING_TILE:
@@ -163,6 +167,7 @@ void EntityRenderDispatcher::onGraphicsReset()
 	m_ItemRenderer.onGraphicsReset();
 	m_RocketRenderer.onGraphicsReset();
 	m_SquidRenderer.onGraphicsReset();
+	m_GiantMobRenderer.onGraphicsReset();
 #ifdef ENH_ALLOW_SAND_GRAVITY
 	m_FallingTileRenderer.onGraphicsReset();
 #endif

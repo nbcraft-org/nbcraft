@@ -43,6 +43,7 @@ add_library(reminecraftpe-core STATIC
     client/renderer/entity/ChickenRenderer.cpp
     client/renderer/entity/RocketRenderer.cpp
 	client/renderer/entity/SquidRenderer.cpp
+	client/renderer/entity/GiantMobRenderer.cpp
     client/renderer/renderer/EntityShaderManager.cpp
     client/renderer/renderer/RenderMaterialGroup.cpp
     client/renderer/texture/ImageData.cpp
@@ -249,7 +250,7 @@ add_library(reminecraftpe-core STATIC
     world/entity/EntityTypeDescriptor.cpp
     world/entity/MobCategory.cpp
 	world/entity/Squid.cpp
-	world/entity/Squid.hpp
+	world/entity/Giant.cpp
     world/level/Dimension.cpp
     world/level/Material.cpp
     world/level/LevelListener.cpp

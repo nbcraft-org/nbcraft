@@ -104,6 +104,7 @@ const EntityTypeDescriptor* EntityTypeDescriptor::all[] = {
 		, &EntityTypeDescriptor::vindicator
 		, &EntityTypeDescriptor::phantom
 		, &EntityTypeDescriptor::ravager
+		, &EntityTypeDescriptor::giant
 		, &EntityTypeDescriptor::armorStand
 		, &EntityTypeDescriptor::tripodCamera
 		, &EntityTypeDescriptor::player
@@ -244,6 +245,7 @@ const EntityTypeDescriptor
 , EntityTypeDescriptor::vindicator                 = EntityTypeDescriptor(EntityType(EntityType::VINDICATOR, "vindicator"), EntityCategories(EntityCategories::MONSTER))
 , EntityTypeDescriptor::phantom                    = EntityTypeDescriptor(EntityType(EntityType::PHANTOM, "phantom"), EntityCategories(EntityCategories::MONSTER))
 , EntityTypeDescriptor::ravager                    = EntityTypeDescriptor(EntityType(EntityType::RAVAGER, "ravager"), EntityCategories(EntityCategories::MONSTER))
+, EntityTypeDescriptor::giant                      = EntityTypeDescriptor(EntityType(EntityType::GIANT, "giant"), EntityCategories(EntityCategories::MONSTER))
 , EntityTypeDescriptor::armorStand                 = EntityTypeDescriptor(EntityType(EntityType::ARMOR_STAND, "armor_stand"), EntityCategories(EntityCategories::MOB))
 , EntityTypeDescriptor::tripodCamera               = EntityTypeDescriptor(EntityType(EntityType::TRIPOD_CAMERA, "tripod_camera"), EntityCategories(EntityCategories::MOB))
 , EntityTypeDescriptor::player                     = EntityTypeDescriptor(EntityType(EntityType::PLAYER, "player"), EntityCategories(EntityCategories::MOB))

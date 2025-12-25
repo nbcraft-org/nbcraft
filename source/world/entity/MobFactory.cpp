@@ -10,6 +10,7 @@
 #include "Creeper.hpp"
 #include "Skeleton.hpp"
 #include "Spider.hpp"
+#include "Giant.hpp"
 //#include "PigZombie.hpp"
 #include "Squid.hpp"
 
@@ -21,6 +22,7 @@
              ENT(CREEPER, Creeper) \
              ENT(SKELETON, Skeleton) \
              ENT(SPIDER, Spider) \
+             ENT(GIANT, Giant) \
              ENT(SQUID, Squid) \
              //ENT(PIG_ZOMBIE, PigZombie)
 

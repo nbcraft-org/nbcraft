@@ -545,6 +545,9 @@
     <ClInclude Include="..\..\..\..\source\client\model\models\SquidModel.hpp">
       <Filter>Header Files\Model\Models</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\source\client\renderer\entity\GiantMobRenderer.hpp">
+      <Filter>Header Files\Renderer\Entity</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\client\gui\components\AvailableGamesList.cpp">
@@ -957,6 +960,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\source\client\model\models\SquidModel.cpp">
       <Filter>Source Files\Model\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\client\renderer\entity\GiantMobRenderer.cpp">
+      <Filter>Source Files\Renderer\Entity</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -86,6 +86,7 @@ public:
 		, vindicator
 		, phantom
 		, ravager
+		, giant
 		, armorStand
 		, tripodCamera
 		, player

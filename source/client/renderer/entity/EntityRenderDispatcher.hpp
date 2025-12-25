@@ -23,6 +23,7 @@
 #include "ArrowRenderer.hpp"
 #include "RocketRenderer.hpp"
 #include "SquidRenderer.hpp"
+#include "GiantMobRenderer.hpp"
 
 class Minecraft;
 class Font;
@@ -75,6 +76,7 @@ public:
 #endif
 	RocketRenderer m_RocketRenderer;
 	SquidRenderer m_SquidRenderer;
+	GiantMobRenderer m_GiantMobRenderer;
 
 	Textures* m_pTextures;
 	Level* m_pLevel;
