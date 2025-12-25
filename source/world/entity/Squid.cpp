@@ -7,6 +7,7 @@ Squid::Squid(Level* pLevel) : WaterAnimal(pLevel)
 	m_renderType = RENDER_SQUID;
 	m_texture = "mob/squid.png";
 	setSize(0.95f, 0.95f);
+	m_tentacleSpeed = 1.0f / (m_random.nextFloat() + 1.0f) * 0.2f;
 }
 
 void Squid::addAdditionalSaveData(CompoundTag& tag) const
@@ -35,7 +36,9 @@ bool Squid::interact(Player* player)
 
 bool Squid::isInWater()
 {
-	return m_pLevel->checkAndHandleWater(m_hitbox.grow(0.0f, -0.6f, 0.0f), Material::water, this);
+	AABB bb = m_hitbox;
+	bb.grow(0.0f, -0.6f, 0.0f);
+	return m_pLevel->checkAndHandleWater(bb, Material::water, this);
 }
 
 void Squid::aiStep()
