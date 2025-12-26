@@ -20,6 +20,9 @@ public:
 	eRenderShape getRenderShape() const override;
 	bool isCubeShaped() const override;
 	bool isSolidRender() const override;
+	bool isSignalSource() const override;
 	bool use(Level* pLevel, const TilePos& pos, Player* player) override;
+	void neighborChanged(Level*, const TilePos& pos, TileID newTile) override;
 	void tick(Level*, const TilePos& pos, Random*) override;
+	int getTickDelay() const override;
 };
