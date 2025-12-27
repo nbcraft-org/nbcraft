@@ -202,6 +202,8 @@
     <ClCompile Include="..\..\..\..\source\world\entity\Slime.cpp" />
     <ClCompile Include="..\..\..\..\source\world\entity\Snowball.cpp" />
     <ClCompile Include="..\..\..\..\source\world\entity\Squid.cpp" />
+    <ClCompile Include="..\..\..\..\source\world\entity\ThrownEgg.cpp" />
+    <ClCompile Include="..\..\..\..\source\world\item\EggItem.cpp" />
     <ClCompile Include="..\..\..\..\source\world\item\RedStoneItem.cpp" />
     <ClCompile Include="..\..\..\..\source\world\item\SnowballItem.cpp" />
     <ClCompile Include="..\..\..\..\source\world\particle\BreakingItemParticle.cpp" />
@@ -358,6 +360,8 @@
     <ClInclude Include="..\..\..\..\source\world\entity\Slime.hpp" />
     <ClInclude Include="..\..\..\..\source\world\entity\Snowball.hpp" />
     <ClInclude Include="..\..\..\..\source\world\entity\Squid.hpp" />
+    <ClInclude Include="..\..\..\..\source\world\entity\ThrownEgg.hpp" />
+    <ClInclude Include="..\..\..\..\source\world\item\EggItem.hpp" />
     <ClInclude Include="..\..\..\..\source\world\item\RedStoneItem.hpp" />
     <ClInclude Include="..\..\..\..\source\world\item\SnowballItem.hpp" />
     <ClInclude Include="..\..\..\..\source\world\tile\ButtonTile.hpp" />

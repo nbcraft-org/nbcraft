@@ -41,6 +41,7 @@ EntityRenderDispatcher::EntityRenderDispatcher()
 	, m_GiantMobRenderer(new ZombieModel, 0.5f, 6.0f)
 	, m_SlimeRenderer(new SlimeModel(16), new SlimeModel(0), 0.25f)
 	, m_SnowballRenderer(Item::snowBall->getIcon(nullptr))
+	, m_ThrownEggRenderer(Item::egg->getIcon(nullptr))
 {
 	m_pItemInHandRenderer = nullptr;
 	m_tileRenderer = new TileRenderer();
@@ -75,6 +76,7 @@ EntityRenderDispatcher::EntityRenderDispatcher()
 	m_GiantMobRenderer.init(this);
 	m_SlimeRenderer.init(this);
 	m_SnowballRenderer.init(this);
+	m_ThrownEggRenderer.init(this);
 #ifdef ENH_ALLOW_SAND_GRAVITY
 	m_FallingTileRenderer.init(this);
 #endif
@@ -139,6 +141,8 @@ EntityRenderer* EntityRenderDispatcher::getRenderer(Entity::RenderType renderTyp
 			return &m_SlimeRenderer;
 		case Entity::RENDER_SNOWBALL:
 			return &m_SnowballRenderer;
+		case Entity::RENDER_THROWN_EGG:
+			return &m_ThrownEggRenderer;
 #ifdef ENH_ALLOW_SAND_GRAVITY
 		// TODO
 		case Entity::RENDER_FALLING_TILE:
@@ -179,6 +183,7 @@ void EntityRenderDispatcher::onGraphicsReset()
 	m_GiantMobRenderer.onGraphicsReset();
 	m_SlimeRenderer.onGraphicsReset();
 	m_SnowballRenderer.onGraphicsReset();
+	m_ThrownEggRenderer.onGraphicsReset();
 #ifdef ENH_ALLOW_SAND_GRAVITY
 	m_FallingTileRenderer.onGraphicsReset();
 #endif

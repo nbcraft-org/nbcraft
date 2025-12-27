@@ -17,6 +17,7 @@
 #include "RocketItem.hpp"
 #include "RedStoneItem.hpp"
 #include "SnowballItem.hpp"
+#include "EggItem.hpp"
 
 #define ITEM(x) ((x) - 256)
 
@@ -460,7 +461,7 @@ void Item::initItems()
 		->setIcon(14, 1)
 		->setDescriptionId("slimeball");
 
-	Item::egg = NEW_ITEM(ITEM_EGG)
+	Item::egg = NEW_X_ITEMN(EggItem, ITEM_EGG)
 		->setIcon(12, 0)
 		->setDescriptionId("egg");
 

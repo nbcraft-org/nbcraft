@@ -74,6 +74,7 @@ public:
 	TripodCameraRenderer m_CameraRenderer;
 	ArrowRenderer m_ArrowRenderer;
 	ItemSpriteRenderer m_SnowballRenderer;
+	ItemSpriteRenderer m_ThrownEggRenderer;
 #ifdef ENH_ALLOW_SAND_GRAVITY
 	FallingTileRenderer m_FallingTileRenderer;
 #endif

@@ -255,6 +255,7 @@ add_library(reminecraftpe-core STATIC
 	world/entity/Giant.cpp
 	world/entity/Slime.cpp
 	world/entity/Snowball.cpp
+	world/entity/ThrownEgg.cpp
     world/level/Dimension.cpp
     world/level/Material.cpp
     world/level/LevelListener.cpp
@@ -317,6 +318,7 @@ add_library(reminecraftpe-core STATIC
     world/item/SlabItem.cpp
 	world/item/RedStoneItem.cpp
 	world/item/SnowballItem.cpp
+	world/item/EggItem.cpp
     world/particle/RedDustParticle.cpp
     world/particle/TerrainParticle.cpp
     world/particle/BubbleParticle.cpp
