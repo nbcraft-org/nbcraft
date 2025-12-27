@@ -248,10 +248,11 @@ void Mob::baseTick()
         hurt(nullptr, 1);
 
     // Java
-    /*if (m_bFireImmune || m_pLevel->m_bIsClientSide)
+	// uncommenting this because otherwise pigmen will burn
+    if (m_bFireImmune || m_pLevel->m_bIsClientSide)
     {
         m_fireTicks = 0;
-    }*/
+    }
 
 
     if (isAlive() && isUnderLiquid(Material::water) && !isWaterMob())

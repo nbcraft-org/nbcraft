@@ -199,6 +199,7 @@
     <ClCompile Include="$(MC_ROOT)\source\world\entity\EntityFactory.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\levelgen\chunk\DataLayer.cpp" />
     <ClCompile Include="..\..\..\..\source\world\entity\Giant.cpp" />
+    <ClCompile Include="..\..\..\..\source\world\entity\PigZombie.cpp" />
     <ClCompile Include="..\..\..\..\source\world\entity\Slime.cpp" />
     <ClCompile Include="..\..\..\..\source\world\entity\Snowball.cpp" />
     <ClCompile Include="..\..\..\..\source\world\entity\Squid.cpp" />
@@ -357,6 +358,7 @@
     <ClInclude Include="$(MC_ROOT)\source\world\level\TileChange.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\level\LevelEvent.hpp" />
     <ClInclude Include="..\..\..\..\source\world\entity\Giant.hpp" />
+    <ClInclude Include="..\..\..\..\source\world\entity\PigZombie.hpp" />
     <ClInclude Include="..\..\..\..\source\world\entity\Slime.hpp" />
     <ClInclude Include="..\..\..\..\source\world\entity\Snowball.hpp" />
     <ClInclude Include="..\..\..\..\source\world\entity\Squid.hpp" />

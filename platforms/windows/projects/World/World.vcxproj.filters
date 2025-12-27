@@ -608,6 +608,9 @@
     <ClCompile Include="..\..\..\..\source\world\item\EggItem.cpp">
       <Filter>Source Files\Item</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\source\world\entity\PigZombie.cpp">
+      <Filter>Source Files\Entity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Entity.hpp">
@@ -1074,6 +1077,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\source\world\item\EggItem.hpp">
       <Filter>Header Files\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\source\world\entity\PigZombie.hpp">
+      <Filter>Header Files\Entity</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

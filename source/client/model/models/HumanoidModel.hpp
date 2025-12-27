@@ -23,7 +23,7 @@ public:
 
 public:
 	bool field_20;
-	ModelPart m_head, m_body, m_arm1, m_arm2, m_leg1, m_leg2;
+	ModelPart m_head, m_hair, m_body, m_arm1, m_arm2, m_leg1, m_leg2;
 	bool m_bHoldingLeftHand;
 	bool m_bHoldingRightHand;
 	bool m_bSneaking;

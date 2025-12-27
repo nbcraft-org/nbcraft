@@ -12,12 +12,15 @@
 HumanoidModel::HumanoidModel(float a, float b):
 	Model(64, 32),
 	m_head(this, 0,  0),
+	m_hair(this, 32, 0),
 	m_body(this, 16, 16),
 	m_arm1(this, 40, 16),
 	m_arm2(this, 40, 16),
 	m_leg1(this, 0,  16),
 	m_leg2(this, 0,  16)
 {
+	m_pMaterial = &m_materials.entity_alphatest;
+
 	field_20 = false;
 	m_bHoldingLeftHand = false;
 	m_bHoldingRightHand = false;
@@ -26,6 +29,9 @@ HumanoidModel::HumanoidModel(float a, float b):
 
 	m_head.addBox(-4, -8, -4, 8, 8, 8, a);
 	m_head.setPos(0, b, 0);
+
+	m_hair.addBox(-4, -8, -4, 8, 8, 8, a + 0.5f);
+	m_hair.setPos(0, b + 0, 0);
 
 	m_body.addBox(-4, 0, -2, 8, 12, 4);
 	m_body.setPos(0, b, 0);
@@ -48,6 +54,7 @@ HumanoidModel::HumanoidModel(float a, float b):
 void HumanoidModel::onGraphicsReset()
 {
 	m_head.m_bCompiled = false;
+	m_hair.m_bCompiled = false;
 	m_body.m_bCompiled = false;
 	m_arm1.m_bCompiled = false;
 	m_arm2.m_bCompiled = false;
@@ -64,6 +71,7 @@ void HumanoidModel::render(float a, float b, float c, float d, float e, float f)
 	m_arm2.render(f);
 	m_leg1.render(f);
 	m_leg2.render(f);
+	m_hair.render(f);
 }
 
 void HumanoidModel::setupAnim(float a2, float a3, float a4, float a5, float a6, float a7)
@@ -75,6 +83,8 @@ void HumanoidModel::setupAnim(float a2, float a3, float a4, float a5, float a6, 
 		m_head.m_rot.x = -1.0f;
 	if (m_head.m_rot.x > 1.0f)
 		m_head.m_rot.x = 1.0f;
+	m_hair.m_rot.y = m_head.m_rot.y;
+	m_hair.m_rot.x = m_head.m_rot.x;
 	float v12 = (a2 * 0.6662f) + 3.1416f;
 	m_arm1.m_rot.x = (Mth::cos(v12) * 2.0f * a3) * 0.5f;
 	m_arm2.m_rot.x = Mth::cos(a2 * 0.6662f) * 2.0f * a3 * 0.5f; // @HUH: multiplying by 2 and also by 1/2
@@ -156,4 +166,5 @@ void HumanoidModel::setBrightness(float f)
 	m_leg2.setBrightness(f);
 	m_body.setBrightness(f);
 	m_head.setBrightness(f);
+	m_hair.setBrightness(f);
 }

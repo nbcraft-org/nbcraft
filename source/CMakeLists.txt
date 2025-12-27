@@ -256,6 +256,7 @@ add_library(reminecraftpe-core STATIC
 	world/entity/Slime.cpp
 	world/entity/Snowball.cpp
 	world/entity/ThrownEgg.cpp
+	world/entity/PigZombie.cpp
     world/level/Dimension.cpp
     world/level/Material.cpp
     world/level/LevelListener.cpp
