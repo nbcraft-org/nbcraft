@@ -19,7 +19,7 @@ HumanoidModel::HumanoidModel(float a, float b):
 	m_leg1(this, 0,  16),
 	m_leg2(this, 0,  16)
 {
-	m_pMaterial = &m_materials.entity_alphatest;
+	//m_pMaterial = &m_materials.entity_alphatest;
 
 	field_20 = false;
 	m_bHoldingLeftHand = false;
@@ -71,7 +71,7 @@ void HumanoidModel::render(float a, float b, float c, float d, float e, float f)
 	m_arm2.render(f);
 	m_leg1.render(f);
 	m_leg2.render(f);
-	m_hair.render(f);
+	m_hair.render(f, &m_materials.entity_alphatest);
 }
 
 void HumanoidModel::setupAnim(float a2, float a3, float a4, float a5, float a6, float a7)
