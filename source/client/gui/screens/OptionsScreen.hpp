@@ -9,25 +9,50 @@
 #pragma once
 
 #include "../Screen.hpp"
+#include "client/gui/components/Button.hpp"
 
 #ifndef OLD_OPTIONS_SCREEN
 
 #include "../components/OptionList.hpp"
+enum OptionsCategory
+{
+	OC_GAMEPLAY,
+	OC_CONTROLS,
+	OC_VIDEO,
+
+	OC_MIN = OC_GAMEPLAY,
+	OC_MAX = OC_VIDEO,
+	OC_COUNT
+};
 
 class OptionsScreen : public Screen
 {
 public:
-	OptionsScreen();
+	OptionsScreen(Screen*);
 	~OptionsScreen();
+
+protected:
+	bool _nextTab() override;
+	bool _prevTab() override;
+
+public:
 	void init() override;
-	void render(int, int, float) override;
+	void render(float f) override;
 	void removed() override;
-	void buttonClicked(Button* pButton) override;
+	void _buttonClicked(Button* pButton) override;
 	bool handleBackEvent(bool b) override;
-	void handleScroll(bool down) override;
+	void handleScrollWheel(float force) override;
 
 private:
+	void setCategory(OptionsCategory category);
+
+	Screen* m_pParent;
 	OptionList* m_pList;
+	OptionsCategory m_currentCategory;
+
+	Button m_gameplayButton;
+	Button m_controlsButton;
+	Button m_videoButton;
 
 	Button m_backButton;
 };
@@ -39,11 +64,11 @@ class OptionsScreen : public Screen
 public:
 	OptionsScreen();
 	void init() override;
-	void render(int, int, float) override;
+	void render(float) override;
 	void removed() override;
 
 #ifndef ORIGINAL_CODE
-	void buttonClicked(Button* pButton) override;
+	void _buttonClicked(Button* pButton) override;
 
 	void setWidthAllButtons(int width);
 	void updateTexts();

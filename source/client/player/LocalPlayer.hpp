@@ -26,6 +26,7 @@ public:
 public:
 	void reset() override;
 	void animateRespawn() override;
+	void die(Entity* pCulprit) override;
 	void aiStep() override;
 	bool isSneaking() const override;
 	void move(const Vec3& pos) override;
@@ -34,16 +35,19 @@ public:
 	void addAdditionalSaveData(CompoundTag& tag) const override;
 	void readAdditionalSaveData(const CompoundTag& tag) override;
 	bool isLocalPlayer() const override { return true; }
-	void drop(const ItemInstance& item, bool randomly = false) override;
-	bool isImmobile() const override;
 	bool interpolateOnly() const override { return false; }
 	void setPlayerGameType(GameType gameType) override;
 	void swing() override;
+	void startCrafting(const TilePos&) override;
+	//void openFurnace(FurnaceTileEntity* furnace) override;
+	void openContainer(Container* container) override;
+	void closeContainer() override;
+	//void openTrap(DispenserTileEntity* tileEntity) override;
+	//void openTextEdit(SignTileEntity* tileEntity) override;
 
 	virtual void hurtTo(int newHealth);
 
 	void calculateFlight(const Vec3& pos);
-	void closeContainer(); //@HUH: oddly enough not a virtual/override
 	void respawn();
 	void sendPosition();
 
@@ -67,7 +71,7 @@ public:
 	float field_C18;
 	float field_C1C;
 	int m_nAutoJumpFrames;
-	int field_C38;
+	int m_lastSelectedSlot;
 	Minecraft* m_pMinecraft;
 	IMoveInput* m_pMoveInput;
 	Vec2 m_renderArmRot;

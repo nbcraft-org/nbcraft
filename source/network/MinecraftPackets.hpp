@@ -17,6 +17,7 @@
 #include "packets/StartGamePacket.hpp"
 #include "packets/AddMobPacket.hpp"
 #include "packets/AddPlayerPacket.hpp"
+#include "packets/AddEntityPacket.hpp"
 #include "packets/RemoveEntityPacket.hpp"
 #include "packets/AddItemEntityPacket.hpp"
 #include "packets/TakeItemEntityPacket.hpp"
@@ -26,22 +27,34 @@
 #include "packets/PlaceBlockPacket.hpp"
 #include "packets/RemoveBlockPacket.hpp"
 #include "packets/UpdateBlockPacket.hpp"
+#include "packets/ExplodePacket.hpp"
 #include "packets/LevelEventPacket.hpp"
+#include "packets/TileEventPacket.hpp"
 #include "packets/EntityEventPacket.hpp"
 #include "packets/RequestChunkPacket.hpp"
 #include "packets/ChunkDataPacket.hpp"
 #include "packets/PlayerEquipmentPacket.hpp"
 #include "packets/InteractPacket.hpp"
 #include "packets/UseItemPacket.hpp"
+#include "packets/PlayerActionPacket.hpp"
 #include "packets/SetEntityDataPacket.hpp"
+#include "packets/SetEntityMotionPacket.hpp"
 #include "packets/SetHealthPacket.hpp"
 #include "packets/AnimatePacket.hpp"
 #include "packets/RespawnPacket.hpp"
+#include "packets/SendInventoryPacket.hpp"
+#include "packets/DropItemPacket.hpp"
+#include "packets/ContainerOpenPacket.hpp"
+#include "packets/ContainerClosePacket.hpp"
+#include "packets/ContainerSetSlotPacket.hpp"
+#include "packets/ContainerSetDataPacket.hpp"
+#include "packets/ContainerSetContentPacket.hpp"
+#include "packets/ContainerAckPacket.hpp"
 #include "packets/LevelDataPacket.hpp"
 
 class MinecraftPackets
 {
 public:
-	static Packet* createPacket(int type);
+	static Packet* createPacket(MinecraftPacketIds id);
 };
 

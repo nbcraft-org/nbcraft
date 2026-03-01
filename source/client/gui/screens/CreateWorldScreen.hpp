@@ -9,23 +9,36 @@
 #pragma once
 
 #include "../Screen.hpp"
+#include "client/gui/components/Button.hpp"
+#include "client/gui/components/TextBox.hpp"
 
 #ifndef ORIGINAL_CODE
 
 class CreateWorldScreen : public Screen
 {
 public:
-	CreateWorldScreen();
+	CreateWorldScreen(Screen*);
 
-	void init() override;
-	void buttonClicked(Button* pButton) override;
-	void render(int mouseX, int mouseY, float f) override;
+protected:
+	void _buttonClicked(Button* pButton) override;
 
 public:
-	TextInputBox m_textName;
-	TextInputBox m_textSeed;
+	void init() override;
+	void render(float f) override;
+	bool handleBackEvent(bool b) override;
+
+	static std::string GetUniqueLevelName(LevelStorageSource* pSource, const std::string& in);
+
+private:
+	Screen* m_pParent;
+
+public:
+	TextBox m_textName;
+	TextBox m_textSeed;
+	Button m_btnGameMode;
 	Button m_btnBack;
 	Button m_btnCreate;
+	GameType m_gameMode;
 };
 
 #endif

@@ -8,17 +8,15 @@
 
 #include "ChatScreen.hpp"
 
-// @NOTE: This is unused.
-
-ChatScreen::ChatScreen(bool slash) : m_textChat(this, 1, 0, 0), m_btnSend(2, 0, 0, "Send")
+ChatScreen::ChatScreen(bool slash) : m_textChat(this, 0, 0), m_btnSend(0, 0, "Send")
 {
 	if (slash)
-		m_textChat.setText("/");
+		m_textChat.setTextboxText("/");
 }
 
-void ChatScreen::buttonClicked(Button* pButton)
+void ChatScreen::_buttonClicked(Button* pButton)
 {
-	if (pButton->m_buttonId == m_btnSend.m_buttonId)
+	if (pButton->getId() == m_btnSend.getId())
 		sendMessageAndExit();
 }
 
@@ -35,10 +33,12 @@ void ChatScreen::init()
 	
 	// set focus directly on the chat text box
 	m_textChat.init(m_pFont);
+	m_textChat.setSelected(true);
 	m_textChat.setFocused(true);
+	m_pSelectedElement = &m_textChat;
 
-	m_buttons.push_back(&m_btnSend);
-	m_textInputs.push_back(&m_textChat);
+	_addElement(m_textChat);
+	_addElement(m_btnSend);
 }
 
 void ChatScreen::removed()
@@ -47,7 +47,7 @@ void ChatScreen::removed()
 	m_pMinecraft->m_pGui->m_bRenderMessages = true;
 }
 
-void ChatScreen::render(int mouseX, int mouseY, float f)
+void ChatScreen::render(float f)
 {
 	renderBackground();
 
@@ -55,15 +55,26 @@ void ChatScreen::render(int mouseX, int mouseY, float f)
 	m_pMinecraft->m_pGui->m_bRenderMessages = false;
 	m_pMinecraft->m_pGui->renderMessages(true);
 
-	Screen::render(mouseX, mouseY, f);
+	Screen::render(f);
 }
 
 void ChatScreen::keyPressed(int keyCode)
 {
-	if (m_pMinecraft->getOptions()->isKey(KM_MENU_OK, keyCode))
-		sendMessageAndExit();
+	if (!_useController())
+	{
+		if (m_pMinecraft->getOptions()->isKey(KM_MENU_OK, keyCode))
+			sendMessageAndExit();
+	}
 
 	Screen::keyPressed(keyCode);
+}
+
+void ChatScreen::handleKeyboardClosed()
+{
+	if (_useController())
+		sendMessageAndExit();
+	else
+		Screen::handleKeyboardClosed();
 }
 
 void ChatScreen::sendMessageAndExit()

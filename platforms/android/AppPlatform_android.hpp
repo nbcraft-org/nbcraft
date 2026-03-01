@@ -23,7 +23,6 @@ public:
 	void buyGame() override;
 	void saveScreenshot(const std::string& fileName, int width, int height) override;
 	int checkLicense() override;
-	void createUserInput() override;
 	std::vector<std::string> getUserInput() override;
 	int getUserInputStatus() override;
 	int getScreenWidth() const override;
@@ -41,13 +40,13 @@ public:
 	// Also add these to allow proper text input within the game.
 	bool shiftPressed() override;
 	void setShiftPressed(bool b);
-	void showKeyboard(int x, int y, int w, int h) override;
-	void hideKeyboard() override;
-	int getKeyboardUpOffset() override;
+	void showKeyboard(LocalPlayerID playerId, const VirtualKeyboard& keyboard) override;
+	void hideKeyboard(LocalPlayerID playerId) override;
+	unsigned int getKeyboardUpOffset() const override;
 	
 	bool hasFileSystemAccess() override;	
 
-	SoundSystem* const getSoundSystem() const override;
+	SoundSystem* getSoundSystem() const override;
 	void initSoundSystem() override;
 	bool isTouchscreen() const override;
 

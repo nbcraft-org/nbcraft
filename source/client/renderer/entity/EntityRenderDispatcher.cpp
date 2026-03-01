@@ -11,6 +11,20 @@
 #include "renderer/ShaderConstants.hpp"
 #include "../ItemInHandRenderer.hpp"
 
+#include "HumanoidMobRenderer.hpp"
+#include "TripodCameraRenderer.hpp"
+#include "TntRenderer.hpp"
+#include "ItemRenderer.hpp"
+#include "FallingTileRenderer.hpp"
+#include "PigRenderer.hpp"
+#include "SheepRenderer.hpp"
+#include "CowRenderer.hpp"
+#include "ChickenRenderer.hpp"
+#include "CreeperRenderer.hpp"
+#include "SpiderRenderer.hpp"
+#include "ArrowRenderer.hpp"
+#include "RocketRenderer.hpp"
+
 #include "client/model/models/PigModel.hpp"
 #include "client/model/models/SheepModel.hpp"
 #include "client/model/models/CowModel.hpp"
@@ -26,22 +40,6 @@ EntityRenderDispatcher* EntityRenderDispatcher::instance;
 Vec3 EntityRenderDispatcher::off;
 
 EntityRenderDispatcher::EntityRenderDispatcher()
-	: m_HumanoidMobRenderer(new HumanoidModel(0.0f, 0.0f), 0.5f)
-	, m_PigRenderer(new PigModel(0.0f), /*new PigModel(0.5f),*/ 0.7f)
-	, m_SheepRenderer(new SheepModel(false), new SheepModel(true), 0.7f)
-	, m_CowRenderer(new CowModel, 0.7f)
-	, m_ChickenRenderer(new ChickenModel, 0.3f)
-	, m_CreeperRenderer(new CreeperModel, 0.5f)
-	, m_SpiderRenderer()
-	, m_SkeletonRenderer(new SkeletonModel, 0.5f)
-	, m_ZombieRenderer(new ZombieModel, 0.5f)
-	, m_SquidRenderer(new SquidModel, 0.7f)
-	, m_ArrowRenderer()
-	, m_FallingTileRenderer()
-	, m_GiantMobRenderer(new ZombieModel, 0.5f, 6.0f)
-	, m_SlimeRenderer(new SlimeModel(16), new SlimeModel(0), 0.25f)
-	, m_SnowballRenderer(Item::snowBall->getIcon(nullptr))
-	, m_ThrownEggRenderer(Item::egg->getIcon(nullptr))
 {
 	m_pItemInHandRenderer = nullptr;
 	m_tileRenderer = new TileRenderer();
@@ -53,33 +51,44 @@ EntityRenderDispatcher::EntityRenderDispatcher()
 	m_pOptions = nullptr;
 	m_pFont = nullptr;
 
-	// @TODO: Put these in an array or something
-	m_HumanoidMobRenderer.init(this);
-	m_PigRenderer.init(this);
-	m_SheepRenderer.init(this);
-	m_SpiderRenderer.init(this);
-	m_SkeletonRenderer.init(this);
-	m_CowRenderer.init(this);
-	m_ChickenRenderer.init(this);
-	m_CreeperRenderer.init(this);
-	m_ZombieRenderer.init(this);
-	m_ArrowRenderer.init(this);
-	m_FallingTileRenderer.init(this);
-	
-	// TODO
-
-	m_TntRenderer.init(this);
-	m_CameraRenderer.init(this);
-	m_ItemRenderer.init(this);
-	m_RocketRenderer.init(this);
-	m_SquidRenderer.init(this);
-	m_GiantMobRenderer.init(this);
-	m_SlimeRenderer.init(this);
-	m_SnowballRenderer.init(this);
-	m_ThrownEggRenderer.init(this);
+	_addRenderer(Entity::RENDER_HUMANOID,     new HumanoidMobRenderer(new HumanoidModel, 0.5f));
+	_addRenderer(Entity::RENDER_PIG,          new PigRenderer(        new PigModel(0.0f), /*new PigModel(0.5f),*/ 0.7f));
+	_addRenderer(Entity::RENDER_SHEEP,        new SheepRenderer(      new SheepModel(false), new SheepModel(true), 0.7f));
+	_addRenderer(Entity::RENDER_COW,          new CowRenderer(        new CowModel,      0.7f));
+	_addRenderer(Entity::RENDER_CHICKEN,      new ChickenRenderer(    new ChickenModel,  0.3f));
+	_addRenderer(Entity::RENDER_SQUID,        new SquidRenderer(      new SquidModel,    0.7f));
+	_addRenderer(Entity::RENDER_CREEPER,      new CreeperRenderer(    new CreeperModel,  0.5f));
+	_addRenderer(Entity::RENDER_SPIDER,       new SpiderRenderer());
+	_addRenderer(Entity::RENDER_SKELETON,     new HumanoidMobRenderer(new SkeletonModel, 0.5f));
+	_addRenderer(Entity::RENDER_ZOMBIE,       new HumanoidMobRenderer(new ZombieModel,   0.5f));
+	_addRenderer(Entity::RENDER_GIANT,        new GiantMobRenderer(   new ZombieModel,   0.5f, 6.0f));
+	_addRenderer(Entity::RENDER_SLIME,        new SlimeRenderer(      new SlimeModel(16), new SlimeModel(0), 0.25f));
+	_addRenderer(Entity::RENDER_ARROW,        new ArrowRenderer());
 #ifdef ENH_ALLOW_SAND_GRAVITY
-	m_FallingTileRenderer.init(this);
+	_addRenderer(Entity::RENDER_FALLING_TILE, new FallingTileRenderer());
 #endif
+	_addRenderer(Entity::RENDER_TNT,          new TntRenderer());
+	_addRenderer(Entity::RENDER_CAMERA,       new TripodCameraRenderer());
+	_addRenderer(Entity::RENDER_ITEM,         new ItemRenderer());
+	_addRenderer(Entity::RENDER_ROCKET,       new RocketRenderer());
+	_addRenderer(Entity::RENDER_SNOWBALL,     new SnowballRenderer(   Item::snowBall->getIcon(nullptr)));
+	_addRenderer(Entity::RENDER_THROWN_EGG,   new ThrownEggRenderer(  Item::egg->getIcon(nullptr)));
+}
+
+EntityRenderDispatcher::~EntityRenderDispatcher()
+{
+	for (size_t i = 0; i < m_entityRenderers.size(); i++)
+	{
+		delete m_entityRenderers[i];
+	}
+}
+
+void EntityRenderDispatcher::_addRenderer(Entity::RenderType renderType, EntityRenderer* pRenderer)
+{
+	pRenderer->init(this);
+
+	m_entityRenderers.push_back(pRenderer);
+	m_entityRendererMap[renderType] = pRenderer;
 }
 
 float EntityRenderDispatcher::distanceToSqr(const Vec3& pos)
@@ -102,55 +111,7 @@ EntityRenderDispatcher* EntityRenderDispatcher::getInstance()
 
 EntityRenderer* EntityRenderDispatcher::getRenderer(Entity::RenderType renderType)
 {
-	// @HAL @TODO: make map
-	switch (renderType)
-	{
-		case Entity::RENDER_TNT:
-			return &m_TntRenderer;
-		case Entity::RENDER_HUMANOID:
-			return &m_HumanoidMobRenderer;
-		case Entity::RENDER_ITEM:
-			return &m_ItemRenderer;
-		case Entity::RENDER_CAMERA:
-			return &m_CameraRenderer;
-		case Entity::RENDER_CHICKEN:
-			return &m_ChickenRenderer;
-		case Entity::RENDER_COW:
-			return &m_CowRenderer;
-		case Entity::RENDER_PIG:
-			return &m_PigRenderer;
-		case Entity::RENDER_SHEEP:
-			return &m_SheepRenderer;
-		case Entity::RENDER_SPIDER:
-			return &m_SpiderRenderer;
-		case Entity::RENDER_SKELETON:
-			return &m_SkeletonRenderer;
-		case Entity::RENDER_CREEPER:
-			return &m_CreeperRenderer;
-		case Entity::RENDER_ZOMBIE:
-			return &m_ZombieRenderer;
-		case Entity::RENDER_ARROW:
-			return &m_ArrowRenderer;
-		case Entity::RENDER_ROCKET:
-			return &m_RocketRenderer;
-		case Entity::RENDER_SQUID:
-			return &m_SquidRenderer;
-		case Entity::RENDER_GIANT:
-			return &m_GiantMobRenderer;
-		case Entity::RENDER_SLIME:
-			return &m_SlimeRenderer;
-		case Entity::RENDER_SNOWBALL:
-			return &m_SnowballRenderer;
-		case Entity::RENDER_THROWN_EGG:
-			return &m_ThrownEggRenderer;
-#ifdef ENH_ALLOW_SAND_GRAVITY
-		// TODO
-		case Entity::RENDER_FALLING_TILE:
-			return &m_FallingTileRenderer;
-#endif
-	}
-
-	return nullptr;
+	return m_entityRendererMap[renderType];
 }
 
 EntityRenderer* EntityRenderDispatcher::getRenderer(const Entity& entity)
@@ -164,29 +125,10 @@ EntityRenderer* EntityRenderDispatcher::getRenderer(const Entity& entity)
 
 void EntityRenderDispatcher::onGraphicsReset()
 {
-	m_HumanoidMobRenderer.onGraphicsReset();
-	m_PigRenderer.onGraphicsReset();
-	m_SheepRenderer.onGraphicsReset();
-	m_SpiderRenderer.onGraphicsReset();
-	m_SkeletonRenderer.onGraphicsReset();
-	m_CowRenderer.onGraphicsReset();
-	m_ChickenRenderer.onGraphicsReset();
-	m_CreeperRenderer.onGraphicsReset();
-	m_ZombieRenderer.onGraphicsReset();
-	m_ArrowRenderer.onGraphicsReset();
-	
-	m_TntRenderer.onGraphicsReset();
-	m_CameraRenderer.onGraphicsReset();
-	m_ItemRenderer.onGraphicsReset();
-	m_RocketRenderer.onGraphicsReset();
-	m_SquidRenderer.onGraphicsReset();
-	m_GiantMobRenderer.onGraphicsReset();
-	m_SlimeRenderer.onGraphicsReset();
-	m_SnowballRenderer.onGraphicsReset();
-	m_ThrownEggRenderer.onGraphicsReset();
-#ifdef ENH_ALLOW_SAND_GRAVITY
-	m_FallingTileRenderer.onGraphicsReset();
-#endif
+	for (size_t i = 0; i < m_entityRenderers.size(); i++)
+	{
+		m_entityRenderers[i]->onGraphicsReset();
+	}
 }
 
 void EntityRenderDispatcher::prepare(Level* level, Textures* textures, Font* font, const Mob* camera, Options* options, float f)

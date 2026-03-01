@@ -10,7 +10,7 @@
 
 #include "client/app/AppPlatformListener.hpp"
 #include "client/renderer/renderer/EntityShaderManager.hpp"
-#include "world/item/ItemInstance.hpp"
+#include "world/item/ItemStack.hpp"
 #include "TileRenderer.hpp"
 
 class Minecraft;
@@ -24,6 +24,7 @@ protected:
 		mce::MaterialPtr entity;
 		mce::MaterialPtr entity_alphatest;
 		mce::MaterialPtr item_in_hand;
+		mce::MaterialPtr item_in_hand_color;
 		mce::MaterialPtr entity_glint;
 		mce::MaterialPtr entity_alphatest_glint;
 		mce::MaterialPtr item_in_hand_glint;
@@ -36,8 +37,9 @@ public:
 	void itemPlaced();
 	void itemUsed();
 	void render(float a);
-	void renderItem(const Entity& entity, const ItemInstance& item, float a);
+	void renderItem(const Entity& entity, const ItemStack& item, float a);
 	void renderScreenEffect(float a);
+	void renderWater(float a);
 	void renderFire(float a);
 	void renderTex(float a, int tex);
 	void tick();
@@ -45,7 +47,7 @@ public:
 
 private:
 	int m_lastSlot;
-	ItemInstance m_selectedItem;
+	ItemStack m_selectedItem;
 	Minecraft* m_pMinecraft;
 	int field_18;
 	float m_height;

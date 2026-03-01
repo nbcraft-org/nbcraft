@@ -35,13 +35,6 @@ void* OGL::GetProcAddress(const char* name)
     return result;
 }
 
-#ifdef MC_GL_DEBUG_OUTPUT
-void APIENTRY OGL::DebugMessage(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, GLvoid* userParam)
-{
-	LOG_I("GL CALLBACK: type = 0x%x, severity = 0x%x, message = %s\n", type, severity, message);
-}
-#endif
-
 #if defined(_WIN32) || defined(__DREAMCAST__)
 
 #include <unordered_map>
@@ -841,8 +834,10 @@ void xglBufferData(GLenum target, GLsizeiptr size, const GLvoid* data, GLenum us
 		pBuf->m_pBufferData = nullptr;
 	}
 
-	pBuf->m_pBufferData = (GLvoid*)malloc(size);
-	xglAssert(pBuf->m_pBufferData != nullptr);
+	GLVoid* mem = (GLvoid*)malloc(size);
+	if (!mem)
+		throw std::bad_alloc();
+	pBuf->m_pBufferData = mem;
 
 	memcpy(pBuf->m_pBufferData, data, size);
 

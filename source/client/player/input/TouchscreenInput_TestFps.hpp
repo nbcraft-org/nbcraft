@@ -36,7 +36,7 @@ private:
 	RectangleArea m_rectArea;
 	bool field_30[10];
 	Options* m_pOptions;
-	bool field_40;
+	bool m_bForwardBeingHeld;
 	bool m_bJumpBeingHeld;
 	TouchAreaModel m_touchAreaModel;
 	Minecraft* m_pMinecraft;
@@ -45,8 +45,10 @@ private:
 	PolygonArea* m_pAreaForward;
 	PolygonArea* m_pAreaBackward;
 	PolygonArea* m_pAreaJump;
+#ifdef ENH_NEW_TOUCH_CONTROLS
 	PolygonArea* m_pAreaForwardLeft;
 	PolygonArea* m_pAreaForwardRight;
+#endif
 	bool field_6C[8];
 };
 

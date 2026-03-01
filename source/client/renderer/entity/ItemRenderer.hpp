@@ -10,7 +10,7 @@
 
 #include "EntityRenderer.hpp"
 #include "../TileRenderer.hpp"
-#include "world/item/ItemInstance.hpp"
+#include "world/item/ItemStack.hpp"
 
 class ItemRenderer : public EntityRenderer
 {
@@ -18,7 +18,9 @@ protected:
 	class Materials
 	{
 	public:
+		mce::MaterialPtr item_entity;
 		mce::MaterialPtr ui_fill_color;
+		mce::MaterialPtr ui_fill_gradient;
 		mce::MaterialPtr ui_textured;
 		mce::MaterialPtr ui_texture_and_color;
 		mce::MaterialPtr ui_item; // only supposed to be in TileRenderer
@@ -39,8 +41,8 @@ public:
 	void blitRect(Tesselator&, int, int, int, int, int);
 
 	void blit(int dx, int dy, int sx, int sy, int tw, int th);
-	void renderGuiItem(Font*, Textures*, ItemInstance*, int, int, bool);
-	void renderGuiItemOverlay(Font*, Textures*, ItemInstance*, int, int);
+	void renderGuiItem(Font*, Textures*, ItemStack&, int, int, bool);
+	void renderGuiItemOverlay(Font*, Textures*, ItemStack&, int, int);
 
 private:
 	TileRenderer* m_pTileRenderer;

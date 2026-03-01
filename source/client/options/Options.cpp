@@ -6,164 +6,213 @@
 	SPDX-License-Identifier: BSD-1-Clause
  ********************************************************************/
 
+// for SDL 1.2 controller buttons
+
 #include <fstream>
 
-// for SDL 1.2 controller buttons
 #include "thirdparty/SDL/SDL_gamecontroller.h"
 
 #include "Options.hpp"
 #include "common/Logger.hpp"
 #include "compat/KeyCodes.hpp"
 #include "client/app/Minecraft.hpp"
+#include "client/player/input/GameController.hpp"
 
 #include "client/renderer/PatchManager.hpp"
 #include "client/renderer/GrassColor.hpp"
 #include "client/renderer/FoliageColor.hpp"
+#include "client/resources/ResourcePackRepository.hpp"
+#include "client/locale/Language.hpp"
+#include "client/gui/components/SmallButton.hpp"
+#include "client/gui/components/SliderButton.hpp"
+#include "client/gui/components/SwitchButton.hpp"
+#include "client/gui/components/SwitchValuesButton.hpp"
+#include "client/gui/components/TickBox.hpp"
+#include "client/renderer/LogoRenderer.hpp"
 
-Options::Option
-	Options::Option::MUSIC            (0,  "options.music",          true,  false),
-	Options::Option::SOUND            (1,  "options.sound",          true,  false),
-	Options::Option::INVERT_MOUSE     (2,  "options.invertMouse",    false, true),
-	Options::Option::SENSITIVITY      (3,  "options.sensitivity",    true,  false),
-	Options::Option::RENDER_DISTANCE  (4,  "options.renderDistance", false, false),
-	Options::Option::VIEW_BOBBING     (5,  "options.viewBobbing",    false, true),
-	Options::Option::ANAGLYPH         (6,  "options.anaglyph",       false, true),
-	Options::Option::LIMIT_FRAMERATE  (7,  "options.limitFramerate", false, true),
-	Options::Option::DIFFICULTY       (8,  "options.difficulty",     false, false),
-	Options::Option::GRAPHICS         (9,  "options.graphics",       false, false),
-	Options::Option::AMBIENT_OCCLUSION(10, "options.ao",             false, true),
-	Options::Option::GUI_SCALE        (11, "options.guiScale",       false, false);
 
 void Options::_initDefaultValues()
 {
-	m_difficulty = 2;
 	field_244 = 1.0f;
-	m_bDontRenderGui = false;
 	field_248 = 1.0f;
-	m_bThirdPerson = false;
-	m_fMusicVolume = 1.0f;
 	field_23E = 0;
-	m_fMasterVolume = 1.0f;
-	m_bFlyCheat = false;
 	field_241 = false;
-	m_fSensitivity   = 0.5f;
 	field_24C = 0;
-	m_bInvertMouse = false;
-	m_bAnaglyphs = false;
 	field_16  = 0;
-	m_bAmbientOcclusion = Minecraft::useAmbientOcclusion;
 	field_240 = 1;
-	m_iViewDistance = 2;
-	m_bViewBobbing  = 1;
-	m_bAutoJump = true;
-	m_bFancyGraphics = true;
 	field_1C = "Default";
-	m_playerName = "Steve";
-	m_bServerVisibleDefault = true;
-	m_bDebugText = false;
-	m_bBlockOutlines = false;
-	m_bFancyGrass = false;
-	m_bBiomeColors = false;
-	m_bSplitControls = false;
-	m_bUseController = false;
-	m_bDynamicHand = false;
-	m_bOldTitleLogo = false;
-	m_bMenuPanorama = false;
 	field_19 = 1;
-
 #ifdef ORIGINAL_CODE
-	m_iViewDistance = 2;
-	m_bThirdPerson = 0;
+	m_viewDistance.set(2);
+	m_thirdPerson.set(0);
 	field_19 = 0;
 #endif
+
+	// Force this on until we get a proper UI
+	_tryAddResourcePack(C_DEFAULT_RESOURCE_PACK, m_resourcePacks);
 
 	loadControls();
 }
 
-Options::Options()
+static UITheme GetDefaultUiTheme(Minecraft* mc)
 {
-	_initDefaultValues();
+#if MC_PLATFORM_XBOX360
+	return UI_CONSOLE;
+#else
+	return mc->platform()->isTouchscreen() ? UI_POCKET : UI_JAVA;
+#endif
 }
 
-Options::Options(const std::string& folderPath)
+Options::Options(Minecraft* mc, const std::string& folderPath) :
+	m_pMinecraft(mc)
+	, m_musicVolume("audio_music", "options.music", 1.0f)
+	, m_masterVolume("audio_master", "options.sound", 1.0f)
+	, m_sensitivity("ctrl_sensitivity", "options.sensitivity", 0.5f)
+	, m_invertMouse("ctrl_invertmouse", "options.invertMouse", false)
+	, m_viewDistance("gfx_viewdistance", "options.renderDistance", 1, ValuesBuilder().add("options.renderDistance.far").add("options.renderDistance.normal").add("options.renderDistance.short").add("options.renderDistance.tiny"))
+	, m_viewBobbing("gfx_bobview", "options.viewBobbing", true)
+	, m_anaglyphs("gfx_3danaglyphs", "options.anaglyph", false)
+	, m_fancyGraphics("gfx_fancygraphics", "options.fancyGraphics", true)
+	, m_ambientOcclusion("gfx_smoothlighting", "options.ao", Minecraft::useAmbientOcclusion)
+	, m_difficulty("misc_difficulty", "options.difficulty", 2, ValuesBuilder().add("options.difficulty.peaceful").add("options.difficulty.easy").add("options.difficulty.normal").add("options.difficulty.hard"))
+	, m_hideGui("gfx_hidegui", "options.hideGui", false)
+	, m_thirdPerson("gfx_thirdperson", "options.thirdPerson", false)
+	, m_flightHax("misc_flycheat", "options.flightHax", false)
+	, m_playerName("mp_username", "options.username", "Steve")
+	, m_serverVisibleDefault("mp_server_visible_default", "options.serverVisibleDefault", true)
+	, m_autoJump("ctrl_autojump", "options.autoJump", mc->platform()->isTouchscreen())
+	, m_debugText("info_debugtext", "options.debugText", false)
+	, m_blockOutlines("gfx_blockoutlines", "options.blockOutlines", false)
+	, m_fancyGrass("gfx_fancygrass", "options.fancyGrass", true)
+	, m_biomeColors("gfx_biomecolors", "options.biomeColors", true)
+	, m_splitControls("ctrl_split", "options.splitControls", false)
+	, m_bUseController("ctrl_usecontroller", "options.useController", false)
+	, m_dynamicHand("gfx_dynamichand", "options.dynamicHand", false)
+	, m_menuPanorama("misc_menupano", "options.menuPanorama", true)
+	, m_guiScale("gfx_guiscale", "options.guiScale", 0, ValuesBuilder().add("options.guiScale.auto").add("options.guiScale.small").add("options.guiScale.normal").add(("options.guiScale.large")))
+	, m_lang("gfx_lang", "options.lang", "en_us")
+	, m_uiTheme("gfx_uitheme", "options.uiTheme", GetDefaultUiTheme(m_pMinecraft), ValuesBuilder().add("options.uiTheme.pocket").add("options.uiTheme.java").add("options.uiTheme.console"))
+	, m_logoType("gfx_logotype", "options.logoType", LOGO_AUTO, ValuesBuilder().add("options.logoType.auto").add("options.logoType.pocket").add("options.logoType.java").add("options.logoType.console").add("options.logoType.xbox360").add("options.logoType.logo3d"))
+	, m_hudSize("gfx_hudsize", "options.hudSize", HUD_SIZE_2)
+	, m_classicCrafting("gfx_classiccrafting", "options.classicCrafting", true)
+	//, m_limitFramerate("gfx_fpslimit", "options.framerateLimit", 0, ValuesBuilder().add(performance.max").add("performance.balanced").add("performance.powersaver"))
+	//, m_bMipmaps("gfx_mipmaps", "options.mipmaps")
+	//, m_moreWorldOptions("misc_moreworldoptions", "options.moreWorldOptions", true)
+	//, m_vSync("enableVsync", "options.enableVsync")
 {
-	m_filePath = folderPath + "/options.txt";
+	add(m_musicVolume);
+	add(m_masterVolume);
+	add(m_invertMouse);
+	add(m_difficulty);
+	add(m_splitControls);
+	add(m_sensitivity);
+	add(m_viewDistance);
+	add(m_viewBobbing);
+	add(m_anaglyphs);
+	add(m_fancyGraphics);
+	add(m_fancyGrass);
+	add(m_biomeColors);
+	add(m_ambientOcclusion);
+	add(m_guiScale);
+	//add(m_limitFramerate);
+	add(m_autoJump);
+	//add(m_bMipmaps);
+	//add(m_moreWorldOptions);
+	add(m_blockOutlines);
+	add(m_dynamicHand);
+	add(m_menuPanorama);
+	add(m_thirdPerson);
+	add(m_hideGui);
+	add(m_playerName);
+	add(m_debugText);
+	add(m_lang);
+	add(m_uiTheme);
+	add(m_logoType);
+	add(m_hudSize);
+	add(m_classicCrafting);
 	_initDefaultValues();
+	if (folderPath.empty()) return;
+	m_filePath = folderPath + "/options.txt";
 	_load();
 }
 
-std::string getMessage(const Options::Option& option)
+void Options::add(OptionEntry& entry)
 {
-	return "Options::getMessage - Not implemented";
+	entry.m_pMinecraft = m_pMinecraft;
+	m_options[entry.getKey()] = &entry;
 }
 
 void Options::_load()
 {
 	std::vector<std::string> strings = readPropertiesFromFile(m_filePath);
 
-	for (int i = 0; i < strings.size(); i += 2)
+	bool logo3d = false;
+
+	for (size_t i = 0; i < strings.size(); i += 2)
 	{
 		std::string key = strings[i], value = strings[i + 1];
 
-		if (key == "mp_username")
-			m_playerName = value;
-		else if (key == "ctrl_invertmouse")
-			m_bInvertMouse = readBool(value);
-		else if (key == "ctrl_autojump")
-			m_bAutoJump = readBool(value);
-		else if (key == "ctrl_split")
-			m_bSplitControls = readBool(value);
-		else if (key == "gfx_fancygraphics")
-			m_bFancyGraphics = readBool(value);
-		else if (key == "mp_server_visible_default")
-			m_bServerVisibleDefault = readBool(value);
-		else if (key == "gfx_smoothlighting")
-			Minecraft::useAmbientOcclusion = m_bAmbientOcclusion = readBool(value);
-		else if (key == "gfx_viewdistance")
-			m_iViewDistance = readInt(value);
-		else if (key == "gfx_blockoutlines")
-			m_bBlockOutlines = readBool(value);
-		else if (key == "gfx_fancygrass")
-		{
-			if (!(GetPatchManager()->IsGrassSidesTinted()))
-				m_bFancyGrass = false;
-			else
-				m_bFancyGrass = readBool(value);
-		}
-		else if (key == "gfx_biomecolors")
-		{
-			if (!GrassColor::isAvailable() && !FoliageColor::isAvailable())
-				m_bBiomeColors = false;
-			else
-				m_bBiomeColors = readBool(value);
-		}
-		else if (key == "gfx_hidegui")
-			m_bDontRenderGui = readBool(value);
-		else if (key == "gfx_thirdperson")
-			m_bThirdPerson = readBool(value);
-		else if (key == "gfx_3danaglyphs")
-			m_bAnaglyphs = readBool(value);
-		else if (key == "gfx_dynamichand")
-			m_bDynamicHand = readBool(value);
+		std::map<std::string, OptionEntry*>::iterator opt = m_options.find(key);
+		if (opt != m_options.end())
+			opt->second->load(value);
 		else if (key == "misc_oldtitle")
-			m_bOldTitleLogo = readBool(value);
-		else if (key == "info_debugtext")
-			m_bDebugText = readBool(value);
-		else if (key == "misc_menupano")
+			logo3d = !readBool(value);
+		else if (key == "gfx_resourcepacks")
+			readPackArray(value, m_resourcePacks);
+	}
+
+	if (logo3d)
+		m_logoType.set(LOGO_3D);
+}
+
+AsyncTask Options::_saveAsync()
+{
+	return AsyncTask(savePropertiesToFileAsync(m_filePath, getOptionStrings()));
+}
+
+const AsyncTask& Options::save()
+{
+	if (!m_saveTask.isRunning())
+		m_saveTask = _saveAsync();
+
+	return m_saveTask;
+}
+
+bool Options::_hasResourcePack(const ResourcePack& pack, ResourcePackStack& packs)
+{
+	for (size_t i = 0; i < packs.size(); i++)
+	{
+		if (packs[i] == pack)
+			return true;
+	}
+
+	return false;
+}
+
+void Options::_tryAddResourcePack(const std::string& name, ResourcePackStack& packs)
+{
+	ResourceLocation location(ResourcePackRepository::RESOURCE_PACKS_PATH + "/" + name);
+
+	// Search internally (within assets) first
+	location.fileSystem = ResourceLocation::APP_PACKAGE;
+
+	std::string fullPath = location.getFullPath();
+	if (!isDirectory(fullPath.c_str()))
+	{
+		// Search externally (within user-writable external storage dir)
+		location.fileSystem = ResourceLocation::EXTERNAL_DIR;
+
+		fullPath = location.getFullPath();
+		if (!isDirectory(fullPath.c_str()))
 		{
-			m_bMenuPanorama = !Screen::isMenuPanoramaAvailable() ? false : readBool(value);
+			LOG_W("Failed to find resource pack: %s", fullPath.c_str());
+			return;
 		}
 	}
-}
 
-void Options::save()
-{
-	savePropertiesToFile(m_filePath, getOptionStrings());
-}
-
-std::string Options::getMessage(const Options::Option& option)
-{
-	return "Options::getMessage - Not implemented";
+	ResourcePack resourcePack(name, location.fileSystem);
+	if (!_hasResourcePack(resourcePack, packs))
+		packs.push_back(resourcePack);
 }
 
 bool Options::readBool(const std::string& str)
@@ -187,6 +236,38 @@ int Options::readInt(const std::string& str)
 	return f;
 }
 
+float Options::readFloat(const std::string& str)
+{
+	float f;
+
+	if (!sscanf(str.c_str(), "%f", &f))
+		f = 0;
+
+	return f;
+}
+
+void Options::readArray(const std::string& str, std::vector<std::string>& array)
+{
+	std::istringstream ss(str);
+	std::string element;
+
+	while (std::getline(ss, element, ','))
+		array.push_back(element);
+}
+
+void Options::readPackArray(const std::string& str, ResourcePackStack& array)
+{
+	// We create a new array instead of modifying the existing one
+	// because erasing elements from a vector doesn't free the memory.
+	std::vector<std::string> fullarray;
+	readArray(str, fullarray);
+	ResourceLocation location;
+	for (size_t i = 0; i < fullarray.size(); ++i)
+	{
+		_tryAddResourcePack(fullarray[i], array);
+	}
+}
+
 std::string Options::saveBool(bool b)
 {
 	return b ? "true" : "false";
@@ -199,17 +280,64 @@ std::string Options::saveInt(int i)
 	return ss.str();
 }
 
+std::string Options::saveFloat(float f)
+{
+	std::stringstream ss;
+	ss << f;
+	return ss.str();
+}
+
+std::string Options::saveArray(const std::vector<std::string>& arr)
+{
+	if (arr.empty())
+		return "";
+	std::string ret;
+	bool done = false;
+	size_t i = 0;
+	while (!done)
+	{
+		ret += arr[i++];
+		size_t size = arr.size();
+		if (i < size)
+			ret += ",";
+		else
+			done = true;
+	}
+	return ret;
+}
+
+std::string Options::savePackArray(const ResourcePackStack& arr)
+{
+	if (arr.empty())
+		return "";
+
+	std::vector<std::string> array;
+	for (ResourcePackStack::const_iterator it = arr.begin(); it != arr.end(); it++)
+	{
+		array.push_back(it->m_name);
+	}
+
+	return saveArray(array);
+}
+
 std::vector<std::string> Options::readPropertiesFromFile(const std::string& filePath)
 {
 	std::vector<std::string> o;
+	AppPlatform& platform = *AppPlatform::singleton();
 
-	const char* const path = filePath.c_str();
+	std::string nativePath(filePath);
+	platform.makeNativePath(nativePath);
+
+	const char* const path = nativePath.c_str();
 	LOG_I("Loading options from %s", path);
+
+	platform.beginProfileDataRead(0);
 
 	std::ifstream ifs(path);
 	if (!ifs.is_open())
 	{
 		LOG_W("%s doesn't exist, resetting to defaults", path);
+		platform.endProfileDataRead(0);
 		return o;
 	}
 
@@ -233,25 +361,40 @@ std::vector<std::string> Options::readPropertiesFromFile(const std::string& file
 		}
 	}
 
+	ifs.close();
+
+	platform.endProfileDataRead(0);
+
 	return o;
 }
 
-void Options::savePropertiesToFile(const std::string& filePath, std::vector<std::string> properties)
+void Options::savePropertiesToFile(const std::string& filePath, const std::vector<std::string>& properties)
 {
 	assert(properties.size() % 2 == 0);
 
+	AppPlatform& platform = *AppPlatform::singleton();
+
+	std::string nativePath(filePath);
+	platform.makeNativePath(nativePath);
+
+	platform.beginProfileDataWrite(0);
+
 	std::ofstream os;
-	os.open(filePath.c_str());
+	os.open(nativePath.c_str());
 	if (!os.is_open())
 	{
-		LOG_E("Failed to read %s", filePath.c_str());
+		LOG_E("Failed to save to: %s", nativePath.c_str());
 		return;
 	}
 
-	os << "#Config file for Minecraft PE.  The # at the start denotes a comment, removing it makes it a command.\n\n";
+	os << "#Config file for " C_GAME_NAME ".  The # at the start denotes a comment, removing it makes it a command.\n\n";
 
-	for (int i = 0; i < properties.size(); i += 2)
+	for (size_t i = 0; i < properties.size(); i += 2)
 		os << properties[i] << ':' << properties[i + 1] << '\n';
+
+	os.close();
+
+	platform.endProfileDataWrite(0);
 }
 
 std::vector<std::string> Options::getOptionStrings()
@@ -260,24 +403,14 @@ std::vector<std::string> Options::getOptionStrings()
 
 #define SO(optname, value) do { vec.push_back(optname); vec.push_back(value); } while (0)
 
-	SO("mp_username", m_playerName);
-	SO("ctrl_invertmouse",          saveBool(m_bInvertMouse));
-	SO("ctrl_autojump",             saveBool(m_bAutoJump));
-	SO("ctrl_split",                saveBool(m_bSplitControls));
-	SO("mp_server_visible_default", saveBool(m_bServerVisibleDefault));
-	SO("gfx_fancygraphics",         saveBool(m_bFancyGraphics));
-	SO("gfx_smoothlighting",        saveBool(m_bAmbientOcclusion));
-	SO("gfx_hidegui",               saveBool(m_bDontRenderGui));
-	SO("gfx_thirdperson",           saveBool(m_bThirdPerson));
-	SO("gfx_3danaglyphs",           saveBool(m_bAnaglyphs));
-	SO("gfx_viewdistance",          saveInt (m_iViewDistance));
-	SO("gfx_blockoutlines",         saveBool(m_bBlockOutlines));
-	SO("gfx_fancygrass", 			saveBool(m_bFancyGrass));
-	SO("gfx_biomecolors",           saveBool(m_bBiomeColors));
-	SO("gfx_dynamichand",           saveBool(m_bDynamicHand));
-	SO("misc_oldtitle",             saveBool(m_bOldTitleLogo));
-	SO("info_debugtext",            saveBool(m_bDebugText));
-	SO("misc_menupano",			    saveBool(m_bMenuPanorama));
+	std::stringstream ss;
+	for (std::map<std::string, OptionEntry*>::iterator it = m_options.begin(); it != m_options.end(); ++it)
+	{
+		ss.str("");
+		it->second->save(ss);
+		SO(it->first, ss.str());
+	}
+	SO("gfx_resourcepacks", savePackArray(m_resourcePacks));
 
 	return vec;
 }
@@ -296,12 +429,17 @@ void Options::loadControls()
 	KM(KM_CHAT,         "key.chat",          'T');
 	KM(KM_FOG,          "key.fog",           'F');
 	KM(KM_SNEAK,        "key.sneak",         0x10); // VK_SHIFT. In original, it's 10 (misspelling?)
-	KM(KM_DESTROY,      "key.destroy",       'K'); // was 'X'
-	KM(KM_PLACE,        "key.place",         'L'); // was 'C'
-	KM(KM_MENU_NEXT,    "key.menu.next",     0x28); // VK_DOWN
-	KM(KM_MENU_PREVIOUS,"key.menu.previous", 0x26); // VK_UP
+	KM(KM_DESTROY,      "key.destroy",       'K');  // was 'X'
+	KM(KM_PLACE,        "key.place",         'L');  // was 'C'
+	KM(KM_MENU_UP,      "key.menu.up",       0x26); // VK_UP
+	KM(KM_MENU_DOWN,    "key.menu.down",     0x28); // VK_DOWN
+	KM(KM_MENU_LEFT,    "key.menu.left",     0x25); // VK_LEFT
+	KM(KM_MENU_RIGHT,   "key.menu.right",    0x27); // VK_RIGHT
+	KM(KM_MENU_TAB_LEFT,"key.menu.tab.left", 0x25);	// VK_LEFT
+	KM(KM_MENU_TAB_RIGHT, "key.menu.tab.right", 0x27);// VK_RIGHT
 	KM(KM_MENU_OK,      "key.menu.ok",       0x0D); // VK_RETURN
 	KM(KM_MENU_CANCEL,  "key.menu.cancel",   0x1B); // VK_ESCAPE, was 0x08 = VK_BACK
+	KM(KM_MENU_PAUSE,	"key.menu.pause",	 0x1B); // VK_ESCAPE
 	KM(KM_SLOT_1,       "key.slot.1",        '1');
 	KM(KM_SLOT_2,       "key.slot.2",        '2');
 	KM(KM_SLOT_3,       "key.slot.3",        '3');
@@ -313,6 +451,8 @@ void Options::loadControls()
 	KM(KM_SLOT_9,       "key.slot.9",        '9');
 	KM(KM_SLOT_L,       "key.slot.left",     'Y');
 	KM(KM_SLOT_R,       "key.slot.right",    'U');
+	KM(KM_CONTAINER_QUICKMOVE, "key.container.quickmove", 0x10); // VK_SHIFT
+	KM(KM_CONTAINER_SPLIT,     "key.container.split",     0xBF); // VK_OEM_2 (keymap is unused on mouse & keyboard)
 	KM(KM_TOGGLEGUI,    "key.fn.gui",        0x70); // VK_F1
 	KM(KM_SCREENSHOT,   "key.fn.screenshot", 0x71); // VK_F2
 	KM(KM_TOGGLEDEBUG,  "key.fn.debug",      0x72); // VK_F3
@@ -334,10 +474,15 @@ void Options::loadControls()
 	KM(KM_JUMP,          SDLVK_SPACE);
 	KM(KM_DESTROY,       SDLVK_x);
 	KM(KM_PLACE,         SDLVK_c);
-	KM(KM_MENU_NEXT,     SDLVK_DOWN);
-	KM(KM_MENU_PREVIOUS, SDLVK_UP);
+	KM(KM_MENU_UP,       SDLVK_UP);
+	KM(KM_MENU_DOWN,     SDLVK_DOWN);
+	KM(KM_MENU_LEFT,     SDLVK_LEFT);
+	KM(KM_MENU_RIGHT,    SDLVK_RIGHT);
+	KM(KM_MENU_TAB_LEFT, SDLVK_LEFT);
+	KM(KM_MENU_TAB_RIGHT, SDLVK_RIGHT);
 	KM(KM_MENU_OK,       SDLVK_RETURN);
 	KM(KM_MENU_CANCEL,   SDLVK_ESCAPE);
+	KM(KM_MENU_PAUSE,	 SDLVK_ESCAPE);
 	KM(KM_DROP,          SDLVK_q);
 	KM(KM_CHAT,          SDLVK_t);
 	KM(KM_FOG,           SDLVK_f);
@@ -352,6 +497,7 @@ void Options::loadControls()
 	KM(KM_SLOT_7,        SDLVK_7);
 	KM(KM_SLOT_8,        SDLVK_8);
 	KM(KM_SLOT_9,        SDLVK_9);
+	KM(KM_CONTAINER_QUICKMOVE, SDLVK_LSHIFT);
 	KM(KM_TOGGLEGUI,     SDLVK_F1);
 	KM(KM_SCREENSHOT,    SDLVK_F2);
 	KM(KM_TOGGLEDEBUG,   SDLVK_F3);
@@ -371,8 +517,10 @@ void Options::loadControls()
 	//KM(KM_JUMP,          AKEYCODE_DPAD_CENTER);
 	//KM(KM_DESTROY,       AKEYCODE_BUTTON_L1);
 	//KM(KM_PLACE,         AKEYCODE_BUTTON_R1);
-	//KM(KM_MENU_NEXT,     AKEYCODE_DPAD_DOWN);
-	//KM(KM_MENU_PREVIOUS, AKEYCODE_DPAD_UP);
+	//KM(KM_MENU_UP,       AKEYCODE_DPAD_UP);
+	//KM(KM_MENU_DOWN,     AKEYCODE_DPAD_DOWN);
+	//KM(KM_MENU_LEFT,     AKEYCODE_DPAD_LEFT);
+	//KM(KM_MENU_RIGHT,    AKEYCODE_DPAD_RIGHT);
 	//KM(KM_MENU_OK,       AKEYCODE_DPAD_CENTER);
 	//KM(KM_MENU_CANCEL,   AKEYCODE_BACK);
 	//custom
@@ -390,10 +538,15 @@ void Options::loadControls()
 	KM(KM_JUMP,			 AKEYCODE_BUTTON_A);
 	KM(KM_DESTROY,       AKEYCODE_X);
 	KM(KM_PLACE,         AKEYCODE_C);
-	KM(KM_MENU_NEXT,     AKEYCODE_DPAD_DOWN);
-	KM(KM_MENU_PREVIOUS, AKEYCODE_DPAD_UP);
+	KM(KM_MENU_UP,       AKEYCODE_DPAD_UP);
+	KM(KM_MENU_DOWN,     AKEYCODE_DPAD_DOWN);
+	KM(KM_MENU_LEFT,     AKEYCODE_DPAD_LEFT);
+	KM(KM_MENU_RIGHT,    AKEYCODE_DPAD_RIGHT);
+	KM(KM_MENU_TAB_LEFT, AKEYCODE_BUTTON_L1);
+	KM(KM_MENU_TAB_RIGHT, AKEYCODE_BUTTON_R1);
 	KM(KM_MENU_OK,       AKEYCODE_ENTER);
-	KM(KM_MENU_CANCEL,	 AKEYCODE_BUTTON_START);
+	KM(KM_MENU_CANCEL,	 AKEYCODE_BUTTON_B);
+	KM(KM_MENU_PAUSE,	 AKEYCODE_BUTTON_START);
 	// custom
 	KM(KM_SLOT_L,		 AKEYCODE_BUTTON_L1);
 	KM(KM_SLOT_R,		 AKEYCODE_BUTTON_R1);
@@ -411,6 +564,8 @@ void Options::loadControls()
 	KM(KM_SLOT_7,        AKEYCODE_7);
 	KM(KM_SLOT_8,        AKEYCODE_8);
 	KM(KM_SLOT_9,        AKEYCODE_9);
+	KM(KM_CONTAINER_QUICKMOVE, AKEYCODE_BUTTON_Y);
+	KM(KM_CONTAINER_SPLIT,     AKEYCODE_BUTTON_X);
 	KM(KM_TOGGLEGUI,     AKEYCODE_F1);
 	KM(KM_SCREENSHOT,    AKEYCODE_F2);
 	KM(KM_TOGGLEDEBUG,   AKEYCODE_F3);
@@ -422,26 +577,229 @@ void Options::loadControls()
 #endif
 #undef KM
 
-	if (m_bUseController)
+	if (m_bUseController.get())
 	{
 #define KM(idx,code) m_keyMappings[idx].value = code
 #ifdef USE_SDL
 		KM(KM_TOGGLEDEBUG,   SDL_CONTROLLER_BUTTON_GUIDE);
 		KM(KM_JUMP,          SDL_CONTROLLER_BUTTON_A);
-		KM(KM_MENU_NEXT,     SDL_CONTROLLER_BUTTON_DPAD_DOWN);
-		KM(KM_MENU_PREVIOUS, SDL_CONTROLLER_BUTTON_DPAD_UP);
+		KM(KM_MENU_UP,       SDL_CONTROLLER_BUTTON_DPAD_UP);
+		KM(KM_MENU_DOWN,     SDL_CONTROLLER_BUTTON_DPAD_DOWN);
+		KM(KM_MENU_LEFT,     SDL_CONTROLLER_BUTTON_DPAD_LEFT);
+		KM(KM_MENU_RIGHT,    SDL_CONTROLLER_BUTTON_DPAD_RIGHT);
+		KM(KM_MENU_TAB_LEFT, SDL_CONTROLLER_BUTTON_LEFTSHOULDER);
+		KM(KM_MENU_TAB_RIGHT, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
 		KM(KM_MENU_OK,       SDL_CONTROLLER_BUTTON_A);
 		KM(KM_MENU_CANCEL,   SDL_CONTROLLER_BUTTON_B);
 		KM(KM_DROP,          SDL_CONTROLLER_BUTTON_B);
 		KM(KM_CHAT,          SDL_CONTROLLER_BUTTON_BACK);
 		KM(KM_INVENTORY,     SDL_CONTROLLER_BUTTON_Y);
 		KM(KM_SNEAK,         SDL_CONTROLLER_BUTTON_RIGHTSTICK);
+		KM(KM_CONTAINER_QUICKMOVE, SDL_CONTROLLER_BUTTON_Y);
+		KM(KM_CONTAINER_SPLIT,     SDL_CONTROLLER_BUTTON_X);
 		KM(KM_TOGGLE3RD,     SDL_CONTROLLER_BUTTON_LEFTSTICK);
 		KM(KM_SLOT_L,        SDL_CONTROLLER_BUTTON_LEFTSHOULDER);
 		KM(KM_SLOT_R,        SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
 		KM(KM_FLY_UP,        SDL_CONTROLLER_BUTTON_A);
 		KM(KM_FLY_DOWN,      SDL_CONTROLLER_BUTTON_RIGHTSTICK);
+#else
+		KM(KM_TOGGLEDEBUG,   GameController::BUTTON_GUIDE);
+		KM(KM_JUMP,          GameController::BUTTON_A);
+		KM(KM_MENU_UP,       GameController::BUTTON_DPAD_UP);
+		KM(KM_MENU_DOWN,     GameController::BUTTON_DPAD_DOWN);
+		KM(KM_MENU_LEFT,     GameController::BUTTON_DPAD_LEFT);
+		KM(KM_MENU_RIGHT,    GameController::BUTTON_DPAD_RIGHT);
+		KM(KM_MENU_TAB_LEFT, GameController::BUTTON_LEFTSHOULDER);
+		KM(KM_MENU_TAB_RIGHT, GameController::BUTTON_RIGHTSHOULDER);
+		KM(KM_MENU_OK,       GameController::BUTTON_A);
+		KM(KM_MENU_CANCEL,   GameController::BUTTON_B);
+		KM(KM_MENU_PAUSE,	 GameController::BUTTON_START);
+		KM(KM_DROP,          GameController::BUTTON_B);
+		KM(KM_CHAT,          GameController::BUTTON_BACK);
+		KM(KM_INVENTORY,     GameController::BUTTON_Y);
+		KM(KM_SNEAK,         GameController::BUTTON_RIGHTSTICK);
+		KM(KM_CONTAINER_QUICKMOVE, GameController::BUTTON_Y);
+		KM(KM_CONTAINER_SPLIT,     GameController::BUTTON_X);
+		KM(KM_TOGGLE3RD,     GameController::BUTTON_LEFTSTICK);
+		KM(KM_SLOT_L,        GameController::BUTTON_LEFTSHOULDER);
+		KM(KM_SLOT_R,        GameController::BUTTON_RIGHTSHOULDER);
+		KM(KM_FLY_UP,        GameController::BUTTON_A);
+		KM(KM_FLY_DOWN,      GameController::BUTTON_RIGHTSTICK);
 #endif
 #undef KM
+	}
+}
+
+void Options::reset()
+{
+	for (std::map<std::string, OptionEntry*>::iterator it = m_options.begin(); it != m_options.end(); ++it)
+	{
+		it->second->reset();
+	}
+}
+
+UITheme Options::getUiTheme() const
+{
+	return UITheme(m_uiTheme.get());
+}
+
+LogoType Options::getLogoType() const
+{
+	if (m_logoType.get() == LOGO_AUTO)
+	{
+		switch (m_uiTheme.get())
+		{
+		case UI_POCKET:
+			return LOGO_POCKET;
+		case UI_JAVA:
+			return LOGO_JAVA;
+		case UI_CONSOLE:
+#if MC_PLATFORM_XBOX360
+			return LOGO_XBOX360;
+#else
+			return LOGO_CONSOLE;
+#endif
+		default:
+			return (LogoType) m_logoType.get();
+		}
+	}
+	else
+		return (LogoType) m_logoType.get();
+}
+
+void Options::initResourceDependentOptions()
+{
+	if (!GrassColor::isAvailable() && !FoliageColor::isAvailable())
+		m_biomeColors.set(false);
+
+	if (!Screen::isMenuPanoramaAvailable())
+		m_menuPanorama.set(false);
+}
+
+const std::string& OptionEntry::getDisplayName() const
+{
+	return Language::get(getName());
+}
+
+std::string OptionEntry::getDisplayValue() const
+{
+	std::stringstream ss;
+	save(ss);
+	return ss.str();
+}
+
+std::string OptionEntry::getMessage() const
+{
+	return Util::format(Language::get("options.value").c_str(), getDisplayName().c_str(), getDisplayValue().c_str());
+}
+
+void OptionEntry::addGuiElement(std::vector<GuiElement*>& elements, UITheme uiTheme)
+{
+	elements.push_back(new SmallButton(0, 0, this, getMessage()));
+}
+
+void AOOption::apply()
+{
+	Minecraft::useAmbientOcclusion = get();
+	if (m_pMinecraft->m_pLevelRenderer)
+		m_pMinecraft->m_pLevelRenderer->allChanged();
+}
+
+void GuiScaleOption::apply()
+{
+	m_pMinecraft->sizeUpdate(Minecraft::width, Minecraft::height);
+}
+
+void FloatOption::load(const std::string& value)
+{
+	set(Options::readFloat(value));
+}
+
+std::string FloatOption::getDisplayValue() const
+{
+	return get() == 0.0f ? Language::get("options.off") : Options::saveInt(get() * 100) + "%";
+}
+
+void FloatOption::addGuiElement(std::vector<GuiElement*>& elements, UITheme uiTheme)
+{
+	elements.push_back(new SliderButton(0, 0, 200, uiTheme == UI_CONSOLE ? 32 : 20, this, getMessage(), toFloat()));
+}
+
+void BoolOption::load(const std::string& value)
+{
+	set(Options::readBool(value));
+}
+
+void BoolOption::save(std::stringstream& ss) const
+{
+	ss << Options::saveBool(get());
+}
+
+std::string BoolOption::getDisplayValue() const
+{
+	return Language::get(get() ? "options.on" : "options.off");
+}
+
+void BoolOption::addGuiElement(std::vector<GuiElement*>& elements, UITheme uiTheme)
+{
+	if (uiTheme == UI_CONSOLE)
+		elements.push_back(new TickBox(0, 0, this, getDisplayName()));
+	else
+		elements.push_back(new SwitchButton(0, 0, this, getDisplayName()));
+}
+
+std::string ValuesOption::getDisplayValue() const
+{
+	return Language::get(getValue());
+}
+
+void MinMaxOption::addGuiElement(std::vector<GuiElement*>& elements, UITheme uiTheme)
+{
+	if (uiTheme == UI_CONSOLE)
+		elements.push_back(new SliderButton(0, 0, 200, 32, this, getMessage(), toFloat()));
+	else
+		elements.push_back(new SwitchValuesButton(0, 0, this, getDisplayName()));
+}
+
+void GraphicsOption::apply()
+{
+	if (m_pMinecraft->m_pLevelRenderer)
+		m_pMinecraft->m_pLevelRenderer->allChanged();
+}
+
+std::string FancyGraphicsOption::getMessage() const
+{
+	return Util::format(Language::get("options.value").c_str(), Language::get("options.graphics").c_str(), Language::get(get() ? "options.graphics.fancy" : "options.graphics.fast").c_str());
+}
+
+std::string SensitivityOption::getDisplayValue() const
+{
+	return get() == 0.0f ? Language::get("options.sensitivity.min") : get() == 1.0f ? Language::get("options.sensitivity.max") : Options::saveInt(get() * 200) + "%";
+}
+
+void IntOption::load(const std::string& value)
+{
+	set(Options::readInt(value));
+}
+
+void LogoTypeOption::apply()
+{
+	if (m_pMinecraft->getOptions())
+	{
+		LogoRenderer::singleton().init(m_pMinecraft);
+		LogoRenderer::singleton().build();
+	}
+}
+
+std::string HUDSizeOption::getDisplayValue() const
+{
+	return Options::saveInt(get() - 1);
+}
+
+void UIThemeOption::apply()
+{
+	if (m_pMinecraft->getOptions() && m_pMinecraft->getOptions()->m_logoType.get() == LOGO_AUTO)
+	{
+		m_pMinecraft->getOptions()->m_logoType.apply();
 	}
 }

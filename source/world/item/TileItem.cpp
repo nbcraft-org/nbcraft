@@ -7,6 +7,8 @@
  ********************************************************************/
 
 #include "TileItem.hpp"
+#include "network/RakNetInstance.hpp"
+#include "network/packets/PlaceBlockPacket.hpp"
 #include "world/level/Level.hpp"
 #include "world/tile/Tile.hpp"
 
@@ -22,12 +24,12 @@ std::string TileItem::getDescriptionId() const
 	return Tile::tiles[m_tile]->getDescriptionId();
 }
 
-std::string TileItem::getDescriptionId(ItemInstance* instance) const
+std::string TileItem::getDescriptionId(ItemStack* instance) const
 {
 	return Tile::tiles[m_tile]->getDescriptionId();
 }
 
-bool TileItem::useOn(ItemInstance* instance, Player* player, Level* level, const TilePos& pos, Facing::Name face) const
+bool TileItem::useOn(ItemStack* instance, Player* player, Level* level, const TilePos& pos, Facing::Name face) const
 {
 	TilePos tp(pos);
 
@@ -65,6 +67,9 @@ bool TileItem::useOn(ItemInstance* instance, Player* player, Level* level, const
 		(pTile->m_pSound->volume + 1.0f) * 0.5f,
 		pTile->m_pSound->pitch * 0.8f
 	);
+
+	if (level->m_pRakNetInstance)
+		level->m_pRakNetInstance->send(new PlaceBlockPacket(player->m_EntityID, tp, (TileID)m_tile, face, instance->getAuxValue()));
 
 	player->useItem(*instance);
 	return true;

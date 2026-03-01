@@ -14,7 +14,7 @@ PathfinderMob::PathfinderMob(Level* pLevel) : Mob(pLevel)
 {
 	m_pAttackTarget = nullptr;
 	m_bHoldGround = false;
-	field_BA4 = 0;
+	m_goCrazyTicks = 0;
 }
 
 Entity* PathfinderMob::getAttackTarget()
@@ -85,7 +85,7 @@ float PathfinderMob::getWalkingSpeedModifier() const
 {
 	float mod = Mob::getWalkingSpeedModifier();
 
-	if (field_BA4 > 0)
+	if (m_goCrazyTicks > 0)
 		mod *= 2.0f;
 
 	return mod;
@@ -101,8 +101,8 @@ bool PathfinderMob::canSpawn()
 
 void PathfinderMob::updateAi()
 {
-	if (field_BA4 > 0)
-		field_BA4--;
+	if (m_goCrazyTicks > 0)
+		m_goCrazyTicks--;
 
 	m_bHoldGround = shouldHoldGround();
 
@@ -133,7 +133,7 @@ void PathfinderMob::updateAi()
 	{
 		m_pLevel->findPath(&m_path, this, m_pAttackTarget, 16.0f);
 	}
-	else if (!m_bHoldGround && ((m_path.empty() && m_random.nextInt(180) == 0) || field_BA4 > 0 || m_random.nextInt(120) == 0))
+	else if (!m_bHoldGround && ((m_path.empty() && m_random.nextInt(180) == 0) || m_goCrazyTicks > 0 || m_random.nextInt(120) == 0))
 	{
 		if (m_noActionTime < 100)
 			findRandomStrollLocation();
@@ -179,7 +179,7 @@ void PathfinderMob::updateAi()
 		float ang = Mth::atan2(nodePos.z - m_pos.z, nodePos.x - m_pos.x) * 180.0f / float(M_PI) - 90.0f;
 		float heightDiff = nodePos.y - Mth::floor(m_hitbox.min.y + 0.5f ); // +0.5f is not present on b1.2_02, but is present on 0.12.1
 
-		field_B00.y = m_runSpeed;
+		m_moveVelocity.y = m_runSpeed;
 
 		float angDiff = ang - m_rot.x;
 		while (angDiff < -180.0f) angDiff += 360.0f;
@@ -199,9 +199,9 @@ void PathfinderMob::updateAi()
 
 			float thing = ((((angDiff + oldYaw) - ang2) + 90.0f) * float(M_PI)) / 180.0f;
 
-			// @NOTE: Using old field_B00.y value. This is intentional and consistent with b1.2_02.
-			field_B00.x = -field_B00.y * Mth::sin(thing);
-			field_B00.y =  field_B00.y * Mth::cos(thing);
+			// @NOTE: Using old m_moveVelocity.y value. This is intentional and consistent with b1.2_02.
+			m_moveVelocity.x = -m_moveVelocity.y * Mth::sin(thing);
+			m_moveVelocity.y =  m_moveVelocity.y * Mth::cos(thing);
 		}
 
 		if (heightDiff > 0.0f)

@@ -9,6 +9,8 @@
 #include "NinecraftApp.hpp"
 #include "world/item/Item.hpp"
 #include "world/entity/MobCategory.hpp"
+#include "world/entity/MobFactory.hpp"
+#include "client/player/input/GameControllerHandler.hpp"
 #include "client/player/input/Multitouch.hpp"
 #include "client/gui/screens/StartMenuScreen.hpp"
 #include "client/renderer/FoliageColor.hpp"
@@ -16,12 +18,18 @@
 #include "client/renderer/Lighting.hpp"
 #include "client/renderer/PatchManager.hpp"
 #include "client/renderer/renderer/RenderMaterialGroup.hpp"
+#include "client/resources/Resource.hpp"
+#include "client/resources/AppResourceLoader.hpp"
+#include "client/resources/ResourcePackManager.hpp"
+#include "client/locale/Language.hpp"
 #include "renderer/GlobalConstantBufferManager.hpp"
 #include "renderer/GlobalConstantBuffers.hpp"
 #include "renderer/ConstantBufferMetaDataManager.hpp"
 #include "renderer/RenderContextImmediate.hpp"
 #include "renderer/RenderMaterial.hpp"
-#include "renderer/platform/ogl/Extensions.hpp"
+#include "client/resources/LoadingTipManager.hpp"
+#include "client/renderer/LogoRenderer.hpp"
+#include "client/resources/SplashManager.hpp"
 
 #ifdef DEMO
 #include "world/level/storage/MemoryLevelStorageSource.hpp"
@@ -31,21 +39,38 @@
 
 bool NinecraftApp::_hasInitedStatics;
 
+void NinecraftApp::_initResourceLoaders()
+{
+	Resource::registerLoader(new AppResourceLoader(ResourceLocation::APP_PACKAGE));
+	//Resource::registerLoader(ResourceLocation::DATA_DIR, new AppResourceLoader(platform()->getDataUrl()));
+	//Resource::registerLoader(ResourceLocation::USER_DIR, new AppResourceLoader(dontevenknow));
+	//Resource::registerLoader(ResourceLocation::SETTINGS_DIR, new AppResourceLoader(dontevenknow));
+	Resource::registerLoader(new AppResourceLoader(ResourceLocation::EXTERNAL_DIR));
+	Resource::registerLoader(new AppResourceLoader(ResourceLocation::RAW_PATH));
+	//Resource::registerLoader(ResourceLocation::WORLD_DIR, new ScreenshotLoader(this));
+	m_pResourceLoader = new ResourcePackManager();
+	Resource::registerLoader(m_pResourceLoader);
+}
+
 void NinecraftApp::_initOptions()
 {
 	// Must be loaded before options, certain options states are forced based on this
-	_reloadOptionalFeatures();
 	_reloadPatchData();
 
 	if (platform()->hasFileSystemAccess())
-		m_pOptions = new Options(m_externalStorageDir);
+		m_pOptions = new Options(this, platform()->m_externalStorageDir);
 	else
-		m_pOptions = new Options();
+		m_pOptions = new Options(this);
+
+	// kind of a hack, just so we can keep everything centralized in options
+	m_pResourceLoader->m_pPacks = &m_pOptions->m_resourcePacks;
+	_reloadOptionalFeatures();
+	m_pOptions->initResourceDependentOptions();
 }
 
 void NinecraftApp::_initTextures()
 {
-	m_pTextures = new Textures(getOptions(), platform());
+	m_pTextures = new Textures();
 
 	m_pTextures->addDynamicTexture(new WaterTexture);
 	m_pTextures->addDynamicTexture(new WaterSideTexture);
@@ -60,28 +85,24 @@ void NinecraftApp::_initTextures()
 
 	_reloadTextures();
 
-	if (GrassColor::isAvailable())
-	{
-        TextureData textureData = m_pPlatform->loadTexture("misc/grasscolor.png", true);
-		GrassColor::init(textureData);
-	}
-	if (FoliageColor::isAvailable())
-	{
-        TextureData textureData = m_pPlatform->loadTexture("misc/foliagecolor.png", true);
-		FoliageColor::init(textureData);
-	}
+	if (GrassColor::isAvailable()) GrassColor::init();
+	if (FoliageColor::isAvailable()) FoliageColor::init();
+
+	LogoRenderer::singleton().init(this);
 }
 
-void NinecraftApp::_initMaterials()
+void NinecraftApp::_initRenderMaterials()
 {
+	mce::RenderMaterial::InitContext();
+
 	mce::RenderMaterialGroup::common.loadList("materials/common.json");
-	_reloadFancy(getOptions()->m_bFancyGraphics);
+	_reloadFancy(getOptions()->m_fancyGraphics.get());
 }
 
 void NinecraftApp::_initInput()
 {
 	m_bIsTouchscreen = platform()->isTouchscreen();
-	getOptions()->m_bUseController = platform()->hasGamepad();
+	getOptions()->m_bUseController.set(platform()->hasGamepad());
 	getOptions()->loadControls();
 	_reloadInput();
 }
@@ -113,9 +134,9 @@ void NinecraftApp::_updateStats()
 void NinecraftApp::_reloadTextures()
 {
 	TextureData* pTexture;
-	pTexture = m_pTextures->loadAndBindTexture(C_TERRAIN_NAME);
+	pTexture = m_pTextures->loadAndBindTexture(C_TERRAIN_NAME, true);
 	GetPatchManager()->PatchTextures(*pTexture, TYPE_TERRAIN);
-	pTexture = m_pTextures->loadAndBindTexture(C_ITEMS_NAME);
+	pTexture = m_pTextures->loadAndBindTexture(C_ITEMS_NAME, true);
 	GetPatchManager()->PatchTextures(*pTexture, TYPE_ITEMS);
 
 	GetPatchManager()->PatchTiles();
@@ -130,18 +151,73 @@ void NinecraftApp::_reloadFancy(bool isFancy)
 void NinecraftApp::_reloadOptionalFeatures()
 {
 	// Optional features that you really should be able to get away with not including.
-	Screen::setIsMenuPanoramaAvailable(platform()->doesTextureExist("gui/background/panorama_0.png"));
-	LevelRenderer::setAreCloudsAvailable(platform()->doesTextureExist("environment/clouds.png"));
-	LevelRenderer::setArePlanetsAvailable(platform()->doesTextureExist("terrain/sun.png") && platform()->doesTextureExist("terrain/moon.png"));
-	GrassColor::setIsAvailable(platform()->doesTextureExist("misc/grasscolor.png"));
-	FoliageColor::setIsAvailable(platform()->doesTextureExist("misc/foliagecolor.png"));
-	Gui::setIsVignetteAvailable(platform()->doesTextureExist("misc/vignette.png"));
-	EntityRenderer::setAreShadowsAvailable(platform()->doesTextureExist("misc/shadow.png"));
+	Screen::setIsMenuPanoramaAvailable(Resource::hasTexture("gui/background/panorama_0.png"));
+	LevelRenderer::setAreCloudsAvailable(Resource::hasTexture("environment/clouds.png"));
+	LevelRenderer::setArePlanetsAvailable(Resource::hasTexture("terrain/sun.png") && Resource::hasTexture("terrain/moon.png"));
+	GrassColor::setIsAvailable(Resource::hasTexture("misc/grasscolor.png"));
+	FoliageColor::setIsAvailable(Resource::hasTexture("misc/foliagecolor.png"));
+	Gui::setIsVignetteAvailable(Resource::hasTexture("misc/vignette.png"));
+	EntityRenderer::setAreShadowsAvailable(Resource::hasTexture("misc/shadow.png"));
 }
 
 void NinecraftApp::_reloadPatchData()
 {
-	GetPatchManager()->LoadPatchData(platform()->getPatchData());
+	std::string patchData;
+	Resource::load("patches/patch_data.txt", patchData);
+	GetPatchManager()->LoadPatchData(patchData);
+}
+
+void NinecraftApp::_initAll()
+{
+	Mth::initMth();
+	_initResourceLoaders();
+
+	if (!_hasInitedStatics)
+	{
+		_hasInitedStatics = true;
+		Material::initMaterials();
+		EntityTypeDescriptor::initDescriptors(); // custom
+		MobCategory::initMobCategories();
+		MobFactory::initMobLists();
+		Tile::initTiles();
+		Item::initItems();
+		Biome::initBiomes();
+		//TileEntity::initTileEntities();
+	}
+
+	_initOptions();
+	setupRenderer();
+	_initRenderMaterials();
+	_initTextures();
+	Minecraft::init();
+	Tesselator::instance.init();
+
+#ifdef DEMO
+	m_pLevelStorageSource = new MemoryLevelStorageSource;
+#else
+	m_pLevelStorageSource = new ExternalFileLevelStorageSource(platform()->m_externalStorageDir);
+#endif
+
+	_initInput();
+
+	m_pGui = new Gui(this);
+	m_pFont = new Font(getOptions(), "font/default.png", m_pTextures);
+	m_pLevelRenderer = new LevelRenderer(this, m_pTextures);
+	m_pGameRenderer = new GameRenderer(this);
+	m_pParticleEngine = new ParticleEngine(m_pLevel, m_pTextures);
+	m_pUser = new User(getOptions()->m_playerName.get(), "");
+
+	platform()->initSoundSystem();
+	m_pSoundEngine = new SoundEngine(platform()->getSoundSystem(), 20.0f); // 20.0f on 0.7.0
+	m_pSoundEngine->init(getOptions());
+
+	Language::singleton().init(getOptions());
+	LoadingTipManager::singleton().init();
+	SplashManager::singleton().init(m_pUser->m_name);
+
+	field_D9C = 0;
+
+	gotoMainMenu();
 }
 
 bool NinecraftApp::handleBack(bool b)
@@ -154,7 +230,7 @@ bool NinecraftApp::handleBack(bool b)
 		if (!m_pScreen)
 			return false;
 
-		return m_pScreen->handleBackEvent(b);
+		return m_pScreen->onBack(b);
 	}
 
 	if (b)
@@ -166,7 +242,7 @@ bool NinecraftApp::handleBack(bool b)
 		return false;
 	}
 
-	if (m_pScreen->handleBackEvent(b))
+	if (m_pScreen->onBack(b))
 		return true;
 
 	if (isGamePaused())
@@ -175,8 +251,7 @@ bool NinecraftApp::handleBack(bool b)
 		return true;
 	}
 
-
-	setScreen(nullptr);
+	m_pScreen->onClose();
 	return true;
 }
 
@@ -224,55 +299,20 @@ void NinecraftApp::onAppSuspended()
 
 void NinecraftApp::init()
 {
-	Mth::initMth();
-
-	if (!_hasInitedStatics)
+	// We have no way to debug with libXenon, and aborting will kill our logs
+#ifdef XENON
+	try
 	{
-		_hasInitedStatics = true;
-		Material::initMaterials();
-		EntityTypeDescriptor::initDescriptors(); // custom
-		MobCategory::initMobCategories();
-		Tile::initTiles();
-		Item::initItems();
-		Biome::initBiomes();
-		//TileEntity::initTileEntities();
+		_initAll();
 	}
-
-	_initOptions();
-	setupRenderer();
-	_initTextures();
-	Minecraft::init();
-	mce::RenderMaterial::InitContext();
-	Tesselator::instance.init();
-
-#ifdef DEMO
-	m_pLevelStorageSource = new MemoryLevelStorageSource;
+	catch (...)
+	{
+		LOG_E("NinecraftApp encountered an exception during initialization!");
+		exit(EXIT_FAILURE);
+	}
 #else
-	m_pLevelStorageSource = new ExternalFileLevelStorageSource(m_externalStorageDir);
+	_initAll();
 #endif
-
-	_initMaterials();
-
-	m_pGui = new Gui(this);
-	// "Default.png" for the launch image overwrites "default.png" for the font during app packaging
-	std::string font = "font/default8.png";
-	if (!platform()->doesTextureExist(font))
-		font = "font/default.png";
-	m_pFont = new Font(getOptions(), font, m_pTextures);
-	m_pLevelRenderer = new LevelRenderer(this, m_pTextures);
-	m_pGameRenderer = new GameRenderer(this);
-	m_pParticleEngine = new ParticleEngine(m_pLevel, m_pTextures);
-	m_pUser = new User(getOptions()->m_playerName, "");
-	
-	_initInput();
-
-	platform()->initSoundSystem();
-	m_pSoundEngine = new SoundEngine(platform()->getSoundSystem(), 20.0f); // 20.0f on 0.7.0
-	m_pSoundEngine->init(getOptions(), platform());
-
-	field_D9C = 0;
-
-	setScreen(new StartMenuScreen);
 }
 
 void NinecraftApp::setupRenderer()
@@ -283,7 +323,8 @@ void NinecraftApp::setupRenderer()
 	{
 #ifdef FEATURE_GFX_SHADERS
 		mce::ConstantBufferMetaDataManager& metaDataManager = mce::ConstantBufferMetaDataManager::getInstance();
-		std::string fileContents = AppPlatform::singleton()->readAssetFileStr("shaders/uniforms.json", false);
+		std::string fileContents;
+		Resource::load("shaders/uniforms.json", fileContents);
 		metaDataManager.loadJsonFile(fileContents);
 #endif
 	}
@@ -300,6 +341,9 @@ void NinecraftApp::onGraphicsReset()
 void NinecraftApp::teardown()
 {
 	teardownRenderer();
+	Resource::teardownLoaders();
+	// Stop our SoundSystem before we nuke our sound buffers and cause it to implode
+	platform()->getSoundSystem()->stopEngine();
 }
 
 void NinecraftApp::teardownRenderer()
@@ -318,9 +362,22 @@ void NinecraftApp::reloadFancy(bool isFancy)
 void NinecraftApp::update()
 {
 	++m_fps;
+
 	Multitouch::commit();
+
+	if (getOptions()->m_bUseController.get())
+	{
+		GameControllerHandler* pControllerHandler = platform()->getGameControllerHandler();
+		if (pControllerHandler)
+		{
+			pControllerHandler->refresh();
+		}
+	}
+
 	Minecraft::update();
+
 	Mouse::reset2();
+
 	_updateStats();
 }
 

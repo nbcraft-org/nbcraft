@@ -6,6 +6,9 @@
 	SPDX-License-Identifier: BSD-1-Clause
  ********************************************************************/
 
+#include <math.h>
+#include <limits>
+
 #include "Random.hpp"
 
 /* Period parameters */
@@ -125,7 +128,7 @@ float Random::nextGaussian()
 		s = v1 * v1 + v2 * v2;
 	}
 	while (s >= 1 || s == 0);
-	float mult = sqrtf(-2 * log(s) / s);
+	float mult = sqrtf(-2 * logf(s) / s);
 	nextNextGaussian = v2 * mult;
 	return v1 * mult;
 }

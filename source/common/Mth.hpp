@@ -10,7 +10,11 @@
 
 #include <cmath>
 
+#include "compat/LegacyCPP.hpp"
 #include "Random.hpp"
+
+// M_PI / 180
+#define MTH_DEG_TO_RAD 0.017453f
 
 class Mth
 {
@@ -29,7 +33,9 @@ public:
 	static float atan2(float y, float x);
 	static float cos(float);
 	static float clamp(float x, float min, float max);
+	static int clamp(int x, int min, int max);
 	static int floor(float);
+	static int round(float);
 	static void initMth();
 	static int intFloorDiv(int, int);
 	static float invSqrt(float);
@@ -42,8 +48,14 @@ public:
 	{
 		return sqrtf(f);
 	}
+
+	template <typename T>
+	static int signum(T val)
+	{
+		return (T(0) < val) - (val < T(0));
+	}
     
-	static inline constexpr float Lerp(float a, float b, float progress)
+	static inline CONSTEXPR float Lerp(float a, float b, float progress)
 	{
 		return a + progress * (b - a);
 	}

@@ -9,15 +9,16 @@
 #pragma once
 
 #include "../Screen.hpp"
+#include "client/gui/components/Button.hpp"
 
 class InvalidLicenseScreen : public Screen
 {
 public:
 	InvalidLicenseScreen(int error, bool bHasQuitButton);
-	void buttonClicked(Button* pButton) override;
+	void _buttonClicked(Button* pButton) override;
 	void init() override;
 	void tick() override;
-	void render(int mouseX, int mouseY, float f) override;
+	void render(float f) override;
 
 private:
 	int m_error;

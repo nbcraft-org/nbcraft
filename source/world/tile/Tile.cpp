@@ -13,6 +13,7 @@
 #include "world/item/AuxTileItem.hpp"
 #include "world/item/ClothItem.hpp"
 #include "world/item/SlabItem.hpp"
+//#include "world/item/PistonItem.hpp"
 
  // Include tile definitions here
 #include "SandStoneTile.hpp"
@@ -53,7 +54,7 @@
 #include "WireTile.hpp"
 #include "RocketLauncherTile.hpp"
 //#include "RedStoneDustTile.hpp"
-//#include "CraftingTableTile.hpp"
+#include "CraftingTableTile.hpp"
 //#include "FurnaceTile.hpp"
 #include "TallGrass.hpp"
 #include "DeadBush.hpp"
@@ -65,7 +66,7 @@
 #include "GlowstoneTile.hpp"
 #include "FenceTile.hpp"
 //#include "BedTile.hpp"
-//#include "CropsTile.hpp"
+#include "CropsTile.hpp"
 #include "Web.hpp"
 #include "SnowTile.hpp"
 //#include "SignTile.hpp"
@@ -101,7 +102,7 @@ void Tile::_init()
 {
 	m_TextureFrame = 1;
 	m_pSound = nullptr;
-	field_28 = 1.0f;
+	m_gravity = 1.0f;
 	m_friction = 0.6f;
 	m_hardness = 0.0f;
 	m_blastResistance = 0.0f;
@@ -120,7 +121,7 @@ void Tile::_init(TileID ID, Material* pMaterial, int texture)
 	m_aabb = m_aabbReturned = AABB(0, 0, 0, 1, 1, 1);
 
 	if (tiles[m_ID])
-		// @BUG: Printing &tiles[m_ID], but probably supposed to print tiles[m_ID]
+		// @BUG: Printing &tiles[id], but probably supposed to print tiles[id]
 		LOG_W("Slot %d is already occupied by %p when adding %p", m_ID, &tiles[m_ID], this);
 }
 
@@ -207,6 +208,9 @@ Tile* Tile::init()
 	translucent[m_ID] = m_pMaterial->blocksLight();
 	isEntityTile[m_ID] = 0;
 
+	m_toolMask = Tool::NONE;
+	m_requiredToolLevel = 0;
+
 	return this;
 }
 
@@ -273,6 +277,25 @@ int Tile::getResourceCount(Random* pRandom) const
 int Tile::getSpawnResourcesAuxValue(int x) const
 {
 	return 0;
+}
+
+Tile* Tile::setToolTypes(unsigned int toolMask)
+{
+	m_toolMask |= toolMask;
+	return this;
+}
+
+Tile* Tile::setToolLevel(int toolLevel)
+{
+	m_requiredToolLevel = toolLevel;
+	return this;
+}
+
+Tile* Tile::setToolTypesAndLevel(unsigned int toolMask, int toolLevel)
+{
+	setToolTypes(toolMask);
+	setToolLevel(toolLevel);
+	return this;
 }
 
 void Tile::initTiles()
@@ -359,6 +382,7 @@ void Tile::initTiles()
 		->init()
 		->setDestroyTime(3.0f)
 		->setExplodeable(5.0f)
+		->setToolTypesAndLevel(Tool::PICKAXE, 2)
 		->setSoundType(Tile::SOUND_STONE)
 		->setDescriptionId("oreGold");
 
@@ -366,6 +390,7 @@ void Tile::initTiles()
 		->init()
 		->setDestroyTime(3.0f)
 		->setExplodeable(5.0f)
+		->setToolTypesAndLevel(Tool::PICKAXE, 1)
 		->setSoundType(Tile::SOUND_STONE)
 		->setDescriptionId("oreIron");
 
@@ -399,6 +424,7 @@ void Tile::initTiles()
 		->init()
 		->setDestroyTime(3.0f)
 		->setExplodeable(5.0f)
+		->setToolTypesAndLevel(Tool::PICKAXE, 1)
 		->setSoundType(Tile::SOUND_STONE)
 		->setDescriptionId("oreLapis");
 
@@ -406,6 +432,7 @@ void Tile::initTiles()
 		->init()
 		->setDestroyTime(3.0f)
 		->setExplodeable(10.0f)
+		->setToolTypesAndLevel(Tool::PICKAXE, 1)
 		->setSoundType(Tile::SOUND_METAL)
 		->setDescriptionId("blockLapis");
 
@@ -450,6 +477,7 @@ void Tile::initTiles()
 		->init()
 		->setDestroyTime(3.0f)
 		->setExplodeable(10.0f)
+		->setToolTypesAndLevel(Tool::PICKAXE, 2)
 		->setSoundType(Tile::SOUND_METAL)
 		->setDescriptionId("blockGold");
 
@@ -457,6 +485,7 @@ void Tile::initTiles()
 		->init()
 		->setDestroyTime(5.0f)
 		->setExplodeable(10.0f)
+		->setToolTypesAndLevel(Tool::PICKAXE, 1)
 		->setSoundType(Tile::SOUND_METAL)
 		->setDescriptionId("blockIron");
 
@@ -504,6 +533,7 @@ void Tile::initTiles()
 		->init()
 		->setDestroyTime(10.0f)
 		->setExplodeable(2000.0f)
+		->setToolTypesAndLevel(Tool::PICKAXE, 3)
 		->setSoundType(Tile::SOUND_STONE)
 		->setDescriptionId("obsidian");
 
@@ -522,6 +552,7 @@ void Tile::initTiles()
 		->init()
 		->setDestroyTime(3.0f)
 		->setExplodeable(5.0f)
+		->setToolTypesAndLevel(Tool::PICKAXE, 2)
 		->setSoundType(Tile::SOUND_STONE)
 		->setDescriptionId("oreDiamond");
 
@@ -529,8 +560,9 @@ void Tile::initTiles()
 		->init()
 		->setDestroyTime(5.0f)
 		->setExplodeable(10.0f)
+		->setToolTypesAndLevel(Tool::PICKAXE, 2)
 		->setSoundType(Tile::SOUND_METAL)
-		->setDescriptionId("blockEmerald");
+		->setDescriptionId("blockDiamond");
 
 	Tile::farmland = (new FarmTile(TILE_FARMLAND, Material::dirt))
 		->init()
@@ -564,6 +596,7 @@ void Tile::initTiles()
 		->init()
 		->setDestroyTime(3.0f)
 		->setExplodeable(5.0f)
+		->setToolTypesAndLevel(Tool::PICKAXE, 2)
 		->setSoundType(Tile::SOUND_STONE)
 		->setDescriptionId("oreRedstone");
 
@@ -572,6 +605,7 @@ void Tile::initTiles()
 		->setDestroyTime(3.0f)
 		->setLightEmission(0.625f)
 		->setExplodeable(5.0f)
+		->setToolTypesAndLevel(Tool::PICKAXE, 2)
 		->setSoundType(Tile::SOUND_STONE)
 		->setDescriptionId("oreRedstone");
 
@@ -689,13 +723,13 @@ void Tile::initTiles()
 		->setSoundType(Tile::SOUND_STONE)
 		->setDescriptionId("rocketLauncher");
 
-	Tile::tallGrass = (new TallGrass(TILE_TALLGRASS, TEXTURE_NONE39))
+	Tile::tallGrass = (new TallGrass(TILE_TALL_GRASS, TEXTURE_TALL_GRASS))
 		->init()
 		->setSoundType(Tile::SOUND_GRASS)
 		->setDestroyTime(0.0f)
 		->setDescriptionId("tallGrass");
 
-	Tile::deadBush = (new DeadBush(TILE_DEAD_BUSH, TEXTURE_NONE55))
+	Tile::deadBush = (new DeadBush(TILE_DEAD_BUSH, TEXTURE_DEAD_BUSH))
 		->init()
 		->setSoundType(Tile::SOUND_GRASS)
 		->setDestroyTime(0.0f)
@@ -712,8 +746,8 @@ void Tile::initTiles()
 		->setDestroyTime(1.0f)
 		->setLightEmission(1.0f)
 		->setSoundType(Tile::SOUND_WOOD)
-		->setDescriptionId("litPumpkin");
-
+		->setDescriptionId("litpumpkin");
+	
 	Tile::netherrack = (new Tile(TILE_NETHERRACK, TEXTURE_BLOODSTONE, Material::stone))
 		->init()
 		->setDestroyTime(0.4f)
@@ -736,7 +770,7 @@ void Tile::initTiles()
 	Tile::web = (new Web(TILE_COBWEB, TEXTURE_COBWEB))
 		->init()
 		->setDestroyTime(4.0f)
-		//->setLightBlock(1)
+		->setLightBlock(1)
 		->setSoundType(Tile::SOUND_CLOTH)
 		->setDescriptionId("web");
 
@@ -796,6 +830,18 @@ void Tile::initTiles()
 		->setSoundType(Tile::SOUND_WOOD)
 		->setDescriptionId("diode");
 
+	Tile::craftingTable = (new CraftingTableTile(TILE_WORKBENCH))
+		->init()
+		->setDestroyTime(2.5f)
+		->setSoundType(Tile::SOUND_WOOD)
+		->setDescriptionId("workbench");
+
+	Tile::crops = (new CropsTile(TILE_WHEAT, TEXTURE_WHEAT_0))
+		->init()
+		->setDestroyTime(0.0f)
+		->setSoundType(Tile::SOUND_GRASS)
+		->setDescriptionId("crops");
+
 	// Great
 	Item::items[Tile::cloth->m_ID] = (new ClothItem(Tile::cloth->m_ID - C_MAX_TILES))
 		->setDescriptionId("cloth");
@@ -811,6 +857,10 @@ void Tile::initTiles()
 
 	Item::items[Tile::sapling->m_ID] = (new AuxTileItem(Tile::sapling->m_ID - C_MAX_TILES))
 		->setDescriptionId("sapling");
+
+	//Item::items[Tile::piston->id] = (new PistonItem(Tile::piston->id - C_MAX_TILES));
+
+	//Item::items[Tile::stickyPiston->id] = (new PistonItem(Tile::stickyPiston->id - C_MAX_TILES));
 
 	for (int i = 0; i < C_MAX_TILES; i++)
 	{
@@ -1084,7 +1134,7 @@ int Tile::getDirectSignal(const Level* pLevel, const TilePos& pos, Facing::Name 
 	return 0;
 }
 
-void Tile::triggerEvent(Level* pLevel, const TilePos& pos, int a, int b)
+void Tile::triggerEvent(Level* pLevel, const TileEvent& event)
 {
 
 }
@@ -1101,13 +1151,16 @@ void Tile::handleEntityInside(Level* pLevel, const TilePos& pos, const Entity* p
 
 float Tile::getDestroyProgress(Player* player) const
 {
+	if (player->isCreative())
+		return 1.0f;
+
 	if (m_hardness < 0.0f)
 		return 0.0f;
 
 	if (!player->canDestroy(this))
 		return 1.0f / m_hardness / 100.0f;
 
-	return player->getDestroySpeed() / m_hardness / 30.0f;
+	return player->getDestroySpeed(this) / m_hardness / 30.0f;
 }
 
 void Tile::spawnResources(Level* pLevel, const TilePos& pos, TileData data)
@@ -1134,8 +1187,8 @@ void Tile::spawnResources(Level* pLevel, const TilePos& pos, TileData data, floa
 			(pLevel->m_random.nextFloat() * 0.7f) + (1.0f - 0.7f) * 0.5f,
 			(pLevel->m_random.nextFloat() * 0.7f) + (1.0f - 0.7f) * 0.5f);
 
-		ItemInstance* inst = new ItemInstance(id, 1, getSpawnResourcesAuxValue(data));
-		ItemEntity* pEntity = new ItemEntity(pLevel, Vec3(pos) + o, inst);
+		ItemStack item(id, 1, getSpawnResourcesAuxValue(data));
+		ItemEntity* pEntity = new ItemEntity(pLevel, Vec3(pos) + o, item);
 		pEntity->m_throwTime = 10;
 
 		pLevel->addEntity(pEntity);
@@ -1211,84 +1264,86 @@ Tile::SOUND_SILENT("", 1.0f, 1.0f);
 
 // @TODO: Refactor this so that Tile::fire is already a FireTile* etc
 Tile
-* Tile::sand,
-* Tile::sandStone,
-* Tile::stoneBrick,
-* Tile::redBrick,
-* Tile::wood,
-* Tile::glass,
-* Tile::calmWater,
-* Tile::calmLava,
-* Tile::gravel,
-* Tile::rock,
-* Tile::unbreakable,
-* Tile::dirt,
-* Tile::grass,
-* Tile::ice,
-* Tile::snow,
-* Tile::clay,
-* Tile::farmland,
-* Tile::stoneSlab,
-* Tile::stoneSlabHalf,
-* Tile::cloth,
-* Tile::flower,
-* Tile::rose,
-* Tile::mushroom1,
-* Tile::mushroom2,
-* Tile::topSnow,
-* Tile::treeTrunk,
-* Tile::leaves,
-* Tile::leaves_carried,
-* Tile::info_reserved6,
-* Tile::emeraldOre, //! actually diamond ore
-* Tile::redStoneOre,
-* Tile::redStoneOre_lit,
-* Tile::goldOre,
-* Tile::ironOre,
-* Tile::coalOre,
-* Tile::lapisOre,
-* Tile::reeds,
-* Tile::ladder,
-* Tile::obsidian,
-* Tile::tnt,
-* Tile::torch,
-* Tile::water,
-* Tile::lava,
-* Tile::fire,
-* Tile::invisible_bedrock,
-* Tile::goldBlock,
-* Tile::ironBlock,
-* Tile::emeraldBlock, //! actually diamond block
-* Tile::stairs_wood,
-* Tile::stairs_stone,
-* Tile::door_wood,
-* Tile::door_iron,
-* Tile::info_updateGame1,
-* Tile::info_updateGame2,
-// custom additions here
-* Tile::sapling,
-* Tile::sponge,
-* Tile::lapisBlock,
-* Tile::bookshelf,
-* Tile::mossStone,
-* Tile::cryingObsidian,
-* Tile::rocketLauncher,
-* Tile::cactus,
-* Tile::tallGrass,
-* Tile::deadBush,
-* Tile::pumpkin,
-* Tile::pumpkinLantern,
-* Tile::netherrack,
-* Tile::soulSand,
-* Tile::glowstone,
-* Tile::web,
-* Tile::fence,
-* Tile::redStoneDust,
-* Tile::lever,
-* Tile::pressurePlate_stone,
-* Tile::pressurePlate_wood,
-* Tile::notGate_off,
-* Tile::notGate_on,
-* Tile::button,
-* Tile::diode_off,
-* Tile::diode_on;
+	*Tile::sand,
+	*Tile::sandStone,
+	*Tile::stoneBrick,
+	*Tile::redBrick,
+	*Tile::wood,
+	*Tile::glass,
+	*Tile::calmWater,
+	*Tile::calmLava,
+	*Tile::gravel,
+	*Tile::rock,
+	*Tile::unbreakable,
+	*Tile::dirt,
+	*Tile::grass,
+	*Tile::ice,
+	*Tile::snow,
+	*Tile::clay,
+	*Tile::farmland,
+	*Tile::stoneSlab,
+	*Tile::stoneSlabHalf,
+	*Tile::cloth,
+	*Tile::flower,
+	*Tile::rose,
+	*Tile::mushroom1,
+	*Tile::mushroom2,
+	*Tile::topSnow,
+	*Tile::treeTrunk,
+	*Tile::leaves,
+	*Tile::leaves_carried,
+	*Tile::info_reserved6,
+	*Tile::emeraldOre, //! actually diamond ore
+	*Tile::redStoneOre,
+	*Tile::redStoneOre_lit,
+	*Tile::goldOre,
+	*Tile::ironOre,
+	*Tile::coalOre,
+	*Tile::lapisOre,
+	*Tile::reeds,
+	*Tile::ladder,
+	*Tile::obsidian,
+	*Tile::tnt,
+	*Tile::torch,
+	*Tile::water,
+	*Tile::lava,
+	*Tile::fire,
+	*Tile::invisible_bedrock,
+	*Tile::goldBlock,
+	*Tile::ironBlock,
+	*Tile::emeraldBlock, //! actually diamond block
+	*Tile::stairs_wood,
+	*Tile::stairs_stone,
+	*Tile::door_wood,
+	*Tile::door_iron,
+	*Tile::info_updateGame1,
+	*Tile::info_updateGame2,
+	// custom additions here
+	*Tile::sapling,
+	*Tile::sponge,
+	*Tile::lapisBlock,
+	*Tile::bookshelf,
+	*Tile::mossStone,
+	*Tile::cryingObsidian,
+	*Tile::rocketLauncher,
+	*Tile::cactus,
+	*Tile::tallGrass,
+	*Tile::deadBush,
+	*Tile::pumpkin,
+	*Tile::pumpkinLantern,
+	*Tile::netherrack,
+	*Tile::soulSand,
+	*Tile::glowstone,
+	*Tile::web,
+	*Tile::fence,
+	*Tile::redStoneDust,
+	*Tile::lever,
+	*Tile::pressurePlate_stone,
+	*Tile::pressurePlate_wood,
+	*Tile::notGate_off,
+	*Tile::notGate_on,
+	*Tile::button,
+	*Tile::diode_off,
+	*Tile::diode_on;
+	*Tile::craftingTable,
+	*Tile::crops;

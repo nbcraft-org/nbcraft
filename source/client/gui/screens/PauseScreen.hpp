@@ -9,6 +9,7 @@
 #pragma once
 
 #include "../Screen.hpp"
+#include "client/gui/components/Button.hpp"
 
 class PauseScreen : public Screen
 {
@@ -16,8 +17,8 @@ public:
 	PauseScreen();
 	virtual void init() override;
 	virtual void tick() override;
-	virtual void render(int a, int b, float c) override;
-	virtual void buttonClicked(Button*) override;
+	virtual void render(float f) override;
+	virtual void _buttonClicked(Button*) override;
 	
 	void updateServerVisibilityText();
 

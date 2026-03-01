@@ -23,13 +23,11 @@ Random Entity::sharedRandom;
 void Entity::_init()
 {
 	m_bInAChunk = false;
-	field_20 = 0;
-	field_24 = 0;
-	field_28 = 0;
-	field_30 = 1.0f;
-	m_dimensionId = DIMENSION_NORMAL;
+	m_viewScale = 1.0f;
+	m_dimensionId = DIMENSION_OVERWORLD;
     m_bBlocksBuilding = false;
 	m_pLevel = nullptr;
+	m_tintColor = Color::WHITE;
 	m_bOnGround = false;
 	m_bHorizontalCollision = false;
 	m_bCollision = false;
@@ -43,7 +41,7 @@ void Entity::_init()
 	m_heightOffset = 0.0f;
 	m_bbWidth = 0.6f;
 	m_bbHeight = 1.8f;
-	field_90 = 0.0f;
+	m_walkDistO = 0.0f;
 	m_walkDist = 0.0f;
 	m_bMakeStepSound = true;
 	m_ySlideOffset = 0.0f;
@@ -63,6 +61,7 @@ void Entity::_init()
 	m_bFireImmune = false;
 	m_bFirstTick = true;
 	m_nextStep = 1;
+	m_minBrightness = 0.0f;
 	m_pDescriptor = &EntityTypeDescriptor::unknown;
 }
 
@@ -186,23 +185,23 @@ void Entity::move(const Vec3& pos)
 
 		AABBVector* cubes = m_pLevel->getCubes(this, AABB(m_hitbox).expand(newPos.x, newPos.y, newPos.z));
 
-		for (int i = 0; i < int(cubes->size()); ++i)
+		for (size_t i = 0; i < cubes->size(); ++i)
 			newPos.y = cubes->at(i).clipYCollide(m_hitbox, newPos.y);
 
 		m_hitbox.move(0.0f, newPos.y, 0.0f);
 		if (!m_bSlide && cPosY != newPos.y)
 			newPos = Vec3::ZERO;
 
-		bool lastsOnGround = m_bOnGround || cPosY != newPos.y && cPosY < 0.0;
+		bool lastsOnGround = m_bOnGround || (cPosY != newPos.y && cPosY < 0.0);
 
-		for (int i = 0; i < int(cubes->size()); ++i)
+		for (size_t i = 0; i < cubes->size(); ++i)
 			newPos.x = cubes->at(i).clipXCollide(m_hitbox, newPos.x);
 	
 		m_hitbox.move(newPos.x, 0.0f, 0.0f);
 		if (!m_bSlide && cPosX != newPos.x)
 			newPos = Vec3::ZERO;
 
-		for (int i = 0; i < int(cubes->size()); ++i)
+		for (size_t i = 0; i < cubes->size(); ++i)
 			newPos.z = cubes->at(i).clipZCollide(m_hitbox, newPos.z);
 
 		m_hitbox.move(0.0f, 0.0f, newPos.z);
@@ -219,21 +218,21 @@ void Entity::move(const Vec3& pos)
 			m_hitbox = lastHit;
 			cubes = m_pLevel->getCubes(this, AABB(m_hitbox).expand(cPosX, newPos.y, cPosZ));
 
-			for (int i = 0; i < int(cubes->size()); ++i)
+			for (size_t i = 0; i < cubes->size(); ++i)
 				newPos.y = cubes->at(i).clipYCollide(m_hitbox, newPos.y);
 
 			m_hitbox.move(0.0f, newPos.y, 0.0f);
 			if (!m_bSlide && cPosY != newPos.y)
 				newPos = Vec3::ZERO;
 
-			for (int i = 0; i < int(cubes->size()); ++i)
+			for (size_t i = 0; i < cubes->size(); ++i)
 				newPos.x = cubes->at(i).clipXCollide(m_hitbox, newPos.x);
 
 			m_hitbox.move(newPos.x, 0.0f, 0.0f);
 			if (!m_bSlide && cPosX != newPos.x)
 				newPos = Vec3::ZERO;
 
-			for (int i = 0; i < int(cubes->size()); ++i)
+			for (size_t i = 0; i < cubes->size(); ++i)
 				newPos.z = cubes->at(i).clipZCollide(m_hitbox, newPos.z);
 
 			m_hitbox.move(0.0f, 0.0f, newPos.z);
@@ -468,7 +467,7 @@ void Entity::baseTick()
 {
 	//@TODO: untangle the gotos
 
-	field_90 = m_walkDist;
+	m_walkDistO = m_walkDist;
 	m_oPos = m_pos;
     m_tickCount++;
 	m_oRot = m_rot;
@@ -648,7 +647,7 @@ float Entity::getBrightness(float f) const
 	if (!m_pLevel->hasChunksAt(tileMin, tileMax))
 		return 0;
 
-	return m_pLevel->getBrightness(tilePos);
+	return Mth::Max(m_minBrightness, m_pLevel->getBrightness(tilePos));
 }
 
 // renamed to getInterpolatedPosition in 0.12.1
@@ -675,26 +674,35 @@ Vec2 Entity::getRot(float f) const
 
 Vec3 Entity::getViewVector(float f) const
 {
-	constexpr float C_180_OVER_PI = 0.017453f;
 	constexpr float C_PI = 3.1416f; // @HUH: Why not just use M_PI here?
 
 	if (f == 1.0)
 	{
-		Vec3 x(Mth::cos(-(m_rot.x * C_180_OVER_PI) - C_PI),
-			Mth::sin(-(m_rot.x * C_180_OVER_PI) - C_PI),
-			-Mth::cos(-(m_rot.y * C_180_OVER_PI)));
+		Vec3 x(Mth::cos(-(m_rot.x * MTH_DEG_TO_RAD) - C_PI),
+			Mth::sin(-(m_rot.x * MTH_DEG_TO_RAD) - C_PI),
+			-Mth::cos(-(m_rot.y * MTH_DEG_TO_RAD)));
 
-		return Vec3(x.x * x.z, Mth::sin(-(m_rot.y * C_180_OVER_PI)), x.y * x.z);
+		return Vec3(x.x * x.z, Mth::sin(-(m_rot.y * MTH_DEG_TO_RAD)), x.y * x.z);
 	}
 
 	float x1 = m_oRot.y + (m_rot.y - m_oRot.y) * f;
-	float x2 = -((m_oRot.x + (m_rot.x - m_oRot.x) * f) * C_180_OVER_PI) - C_PI;
+	float x2 = -((m_oRot.x + (m_rot.x - m_oRot.x) * f) * MTH_DEG_TO_RAD) - C_PI;
 	float x3 = Mth::cos(x2);
 	float x4 = Mth::sin(x2);
-	float x5 = -(x1 * C_180_OVER_PI);
+	float x5 = -(x1 * MTH_DEG_TO_RAD);
 	float x6 = -Mth::cos(x5);
 
 	return Vec3(x4 * x6, Mth::sin(x5), x3 * x6);
+}
+
+Entity::AuxValue Entity::getAuxValue() const
+{
+	return 0;
+}
+
+void Entity::setAuxValue(AuxValue value)
+{
+
 }
 
 float Entity::distanceTo(const Entity* pEnt) const
@@ -717,9 +725,9 @@ float Entity::distanceToSqr(const Vec3& pos) const
 	return m_pos.distanceToSqr(pos);
 }
 
-int Entity::interactPreventDefault()
+bool Entity::interactPreventDefault() const
 {
-	return 0;
+	return false;
 }
 
 bool Entity::interact(Player* player)
@@ -767,7 +775,7 @@ bool Entity::shouldRender(Vec3& camPos) const
 
 bool Entity::shouldRenderAtSqrDistance(float distSqr) const
 {
-	float maxDist = (field_30 * 64.0f) * (((m_hitbox.max.z - m_hitbox.min.z) + (m_hitbox.max.x - m_hitbox.min.x) + (m_hitbox.max.y - m_hitbox.min.y)) / 3.0f);
+	float maxDist = (m_viewScale * 64.0f) * (((m_hitbox.max.z - m_hitbox.min.z) + (m_hitbox.max.x - m_hitbox.min.x) + (m_hitbox.max.y - m_hitbox.min.y)) / 3.0f);
 
 	return maxDist * maxDist > distSqr;
 }
@@ -783,9 +791,9 @@ void Entity::animateHurt()
 
 }
 
-ItemEntity* Entity::spawnAtLocation(ItemInstance* itemInstance, float y)
+ItemEntity* Entity::spawnAtLocation(const ItemStack& itemStack, float y)
 {
-	ItemEntity *itemEntity = new ItemEntity(m_pLevel, Vec3(m_pos.x, m_pos.y + y, m_pos.z), itemInstance);
+	ItemEntity *itemEntity = new ItemEntity(m_pLevel, Vec3(m_pos.x, m_pos.y + y, m_pos.z), itemStack);
 	// @TODO: not sure what this does, or is for
 	itemEntity->m_oPos.x = 10;
 	m_pLevel->addEntity(itemEntity);
@@ -800,8 +808,7 @@ ItemEntity* Entity::spawnAtLocation(int itemID, int amount)
 
 ItemEntity* Entity::spawnAtLocation(int itemID, int amount, float y)
 {
-	ItemInstance* itemInstance = new ItemInstance(itemID, amount, 0);
-	return spawnAtLocation(itemInstance, y);
+	return spawnAtLocation(ItemStack(itemID, amount, 0), y);
 }
 
 void Entity::awardKillScore(Entity* pKilled, int score)

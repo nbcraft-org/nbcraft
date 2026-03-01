@@ -45,7 +45,7 @@ void WorldSelectionList::tick()
 {
 	RolledSelectionList::tick();
 	field_D0++;
-	if (Mouse::isButtonDown(BUTTON_LEFT) || !field_28)
+	if (Mouse::isButtonDown(MOUSE_BUTTON_LEFT) || !field_28)
 		return;
 
 	m_selectedIndex = -1;
@@ -107,7 +107,7 @@ void WorldSelectionList::selectItem(int index, bool b)
 {
 	if (m_selectedIndex >= 0 && m_selectedIndex == index && !field_90)
 	{
-		field_90 = 1;
+		field_90 = true;
 		m_levelSummary = m_items[index];
 	}
 }
@@ -179,7 +179,7 @@ void WorldSelectionList::renderBackground()
 
 void WorldSelectionList::commit()
 {
-	for (int i = 0; i < int(m_items.size()); i++)
+	for (size_t i = 0; i < m_items.size(); i++)
 	{
 		LevelSummary& item = m_items[i];
 
@@ -188,7 +188,7 @@ void WorldSelectionList::commit()
 		/*std::stringstream ss;
 		ss << item.m_levelName << "/preview.png";*/
 
-		m_previewImages.push_back("gui/default_world.png");
+		m_previewImages.push_back("pack.png");
 
 		std::vector<std::string> vs;
 		vs.push_back(item.m_levelName);

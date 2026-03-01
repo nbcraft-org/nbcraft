@@ -9,6 +9,8 @@
 #pragma once
 
 #include "../Screen.hpp"
+#include "client/gui/components/Button.hpp"
+#include "world/item/ItemStack.hpp"
 
 class Inventory;
 
@@ -17,6 +19,8 @@ class IngameBlockSelectionScreen : public Screen
 public:
 	IngameBlockSelectionScreen();
 
+	void addCreativeItem(int itemID, int auxValue = 0);
+
 	Inventory* getInventory();
 	int getBottomY();
 	int getSelectedSlot(int x, int y);
@@ -24,21 +28,26 @@ public:
 	int getSlotPosY(int y);
 	int getSlotsHeight();
 	bool isAllowed(int slot);
+	bool isInsideSelectionArea(int x, int y);
 	void renderSlots();
 	void renderDemoOverlay();
 	void renderSlot(int index, int x, int y, float f);
 	void selectSlotAndClose();
 
-	virtual void init() override;
-	virtual void render(int x, int y, float f) override;
-    virtual void buttonClicked(Button*) override;
-	virtual void mouseClicked(int x, int y, int type) override;
-	virtual void mouseReleased(int x, int y, int type) override;
-	virtual void removed() override;
+	void init() override;
+	void render(float f) override;
+    void _buttonClicked(Button*) override;
+	void pointerPressed(const MenuPointer& pointer, MouseButtonType btn) override;
+	void pointerReleased(const MenuPointer& pointer, MouseButtonType btn) override;
+	void removed() override;
+    void keyPressed(int key) override;
 
 private:
-	int m_selectedSlot;
-    Button m_btnPause;
-	Button m_btnChat;
+	SlotID m_selectedSlot;
+	bool m_bReleased;
+	bool m_bClickedOnSlot;
+	Button m_btnCraft;
+	Button m_btnArmor;
+	std::vector<ItemStack> m_items;
 };
 

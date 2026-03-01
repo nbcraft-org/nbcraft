@@ -9,11 +9,12 @@
 #pragma once
 
 #include "App.hpp"
-#include "common/CThread.hpp"
+#include "common/threading/CThread.hpp"
 #include "common/Mth.hpp"
 #include "common/Timer.hpp"
 #include "client/gui/Gui.hpp"
 #include "client/gui/Screen.hpp"
+#include "client/gui/ScreenChooser.hpp"
 #include "network/RakNetInstance.hpp"
 #include "network/NetEventCallback.hpp"
 #include "client/player/input/IInputHolder.hpp"
@@ -23,6 +24,7 @@
 #include "client/renderer/GameRenderer.hpp"
 #include "client/renderer/LevelRenderer.hpp"
 #include "client/renderer/entity/EntityRenderDispatcher.hpp"
+#include "client/resources/ResourcePackManager.hpp"
 #include "client/sound/SoundEngine.hpp"
 #include "world/level/Level.hpp"
 #include "world/gamemode/GameMode.hpp"
@@ -50,9 +52,11 @@ public:
 	void setScreen(Screen * pScreen);
 	void releaseMouse();
 	void grabMouse();
+	void recenterMouse();
 	void tick();
 	void tickInput();
 	void saveOptions();
+	void saveOptionsAsync();
 	void handleBuildAction(const BuildActionIntention& action);
 	bool isLevelGenerated() const;
     void selectLevel(const LevelSummary& ls, bool forceConversion = false);
@@ -61,6 +65,7 @@ public:
 	bool pauseGame();
 	bool resumeGame();
 	void leaveGame(bool bCopyMap);
+	void gotoMainMenu();
 	void hostMultiplayer();
 	void joinMultiplayer(const PingedCompatibleServer& serverInfo);
 	void cancelLocateMultiplayer();
@@ -69,6 +74,10 @@ public:
 	void handleCharInput(char chr);
 	void handleTextPaste(const std::string& text);
 	void handleTextPaste();
+	void handlePointerLocation(MenuPointer::Unit x, MenuPointer::Unit y);
+	void handlePointerPressedButtonPress();
+	void handlePointerPressedButtonRelease();
+	void handleKeyboardClosed();
 	void resetInput();
 	void sendMessage(const std::string& message);
 	void respawnPlayer();
@@ -83,6 +92,7 @@ public:
 	void update() override;
 	void init() override;
 	void sizeUpdate(int newWidth, int newHeight) override;
+	void setTextboxText(const std::string& text) override;
 
 	virtual void reloadFancy(bool isFancy);
 	virtual int getFpsIntlCounter();
@@ -99,8 +109,10 @@ public:
 
 	const char* getProgressMessage();
 	LevelStorageSource* getLevelSource();
-	ItemInstance* getSelectedItem();
+	ItemStack& getSelectedItem();
 	Options* getOptions() const { return m_pOptions; }
+	ScreenChooser* getScreenChooser();
+	UITheme getUiTheme();
 	//const Entity& getCameraEntity() const { return *m_pCameraEntity; }
 
 private:
@@ -118,11 +130,13 @@ public:
 	static int customDebugId;
 
 protected:
-	Options *m_pOptions;
+	Options* m_pOptions;
+	ScreenChooser* m_pScreenChooser;
 
 public:
 	bool field_18;
 	bool m_bIsGamePaused;
+	ResourcePackManager* m_pResourceLoader;
 	LevelRenderer* m_pLevelRenderer;
 	GameRenderer* m_pGameRenderer;
 	ParticleEngine* m_pParticleEngine;
@@ -150,7 +164,6 @@ public:
 	bool m_bIsTouchscreen;
 	HitResult m_hitResult;
 	int m_progressPercent;
-	std::string m_externalStorageDir;
 	Timer m_timer;
 	bool m_bPreparingLevel;
 	LevelStorageSource* m_pLevelStorageSource; // TODO
@@ -163,7 +176,7 @@ public:
 	bool m_bHasQueuedScreen;
 	Screen* m_pQueuedScreen;
 	int m_licenseID;
-	ItemInstance m_CurrItemInstance;
+	ItemStack m_CurrItemStack;
 
 	// in 0.8. Offset 3368
 	double m_fDeltaTime, m_fLastUpdated;

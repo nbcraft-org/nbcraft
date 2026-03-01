@@ -14,8 +14,10 @@
 #include "client/renderer/renderer/RenderMaterialGroup.hpp"
 #include "world/tile/FireTile.hpp"
 #include "world/tile/RedStoneDustTile.hpp"
+#include "world/tile/GrassTile.hpp"
 #include "world/tile/LiquidTile.hpp"
 #include "world/tile/DiodeTile.hpp"
+#include "world/tile/LeafTile.hpp"
 #include "GameMods.hpp"
 
 #define DEFAULT_LIGHT_COLOR 16711935
@@ -34,7 +36,7 @@ void TileRenderer::_init()
 	m_bXFlipTexture = false;
 	m_bNoCulling = false;
 	m_bRenderingGui = false;
-	m_bAmbientOcclusion = false;
+	m_ambientOcclusion = false;
 
 	// AO stuff
 	field_C = 0;
@@ -206,7 +208,7 @@ void TileRenderer::renderEast(Tile* tile, const Vec3& pos, int texture)
 
 	Tesselator& t = Tesselator::instance;
 
-	if (m_bAmbientOcclusion)
+	if (m_ambientOcclusion)
 	{
 		t.color(m_vtxRed[0], m_vtxGreen[0], m_vtxBlue[0]);
 		_tex1(m_vtxLightTex[0]);
@@ -283,7 +285,7 @@ void TileRenderer::renderWest(Tile* tile, const Vec3& pos, int texture)
 
 	Tesselator& t = Tesselator::instance;
 
-	if (m_bAmbientOcclusion)
+	if (m_ambientOcclusion)
 	{
 		t.color(m_vtxRed[0], m_vtxGreen[0], m_vtxBlue[0]);
 		_tex1(m_vtxLightTex[0]);
@@ -360,7 +362,7 @@ void TileRenderer::renderSouth(Tile* tile, const Vec3& pos, int texture)
 
 	Tesselator& t = Tesselator::instance;
 
-	if (m_bAmbientOcclusion)
+	if (m_ambientOcclusion)
 	{
 		t.color(m_vtxRed[0], m_vtxGreen[0], m_vtxBlue[0]);
 		_tex1(m_vtxLightTex[0]);
@@ -437,7 +439,7 @@ void TileRenderer::renderNorth(Tile* tile, const Vec3& pos, int texture)
 
 	Tesselator& t = Tesselator::instance;
 
-	if (m_bAmbientOcclusion)
+	if (m_ambientOcclusion)
 	{
 		t.color(m_vtxRed[0], m_vtxGreen[0], m_vtxBlue[0]);
 		_tex1(m_vtxLightTex[0]);
@@ -508,7 +510,7 @@ void TileRenderer::renderFaceDown(Tile* tile, const Vec3& pos, int texture)
 
 	Tesselator& t = Tesselator::instance;
 
-	if (m_bAmbientOcclusion)
+	if (m_ambientOcclusion)
 	{
 		t.color(m_vtxRed[0], m_vtxGreen[0], m_vtxBlue[0]);
 		_tex1(m_vtxLightTex[0]);
@@ -579,7 +581,7 @@ void TileRenderer::renderFaceUp(Tile* tile, const Vec3& pos, int texture)
 
 	Tesselator& t = Tesselator::instance;
 
-	if (m_bAmbientOcclusion)
+	if (m_ambientOcclusion)
 	{
 		t.color(m_vtxRed[0], m_vtxGreen[0], m_vtxBlue[0]);
 		_tex1(m_vtxLightTex[0]);
@@ -674,6 +676,64 @@ void TileRenderer::tesselateCrossTexture(const FullTile& tile, const Vec3& pos, 
 	}
 }
 
+void TileRenderer::tesselateRowTexture(Tile* tile, int data, const Vec3& pos)
+{
+	static constexpr float C_RATIO = 1.0f / 256.0f;
+
+	int texture = m_fixedTexture;
+	if (texture < 0)
+		texture = tile->getTexture(Facing::DOWN, data);
+
+	float texX = float(16 * (texture % 16));
+	float texY = float(16 * (texture / 16));
+
+	// calculate U and V coordinates
+	float u0 = texX * C_RATIO, u1 = (texX + 15.99f) * C_RATIO;
+	float v0 = texY * C_RATIO, v1 = (texY + 15.99f) * C_RATIO;
+
+
+	float x0 = pos.x + 0.25f, x1 = pos.x + 0.75f;
+	float z0 = pos.z, z1 = pos.z + 1.0f;
+
+	Tesselator& t = Tesselator::instance;
+	t.vertexUV(x0, pos.y + 1.0, z0, u0, v0);
+	t.vertexUV(x0, pos.y + 0.0, z0, u0, v1);
+	t.vertexUV(x0, pos.y + 0.0, z1, u1, v1);
+	t.vertexUV(x0, pos.y + 1.0, z1, u1, v0);
+	t.vertexUV(x0, pos.y + 1.0, z1, u0, v0);
+	t.vertexUV(x0, pos.y + 0.0, z1, u0, v1);
+	t.vertexUV(x0, pos.y + 0.0, z0, u1, v1);
+	t.vertexUV(x0, pos.y + 1.0, z0, u1, v0);
+	t.vertexUV(x1, pos.y + 1.0, z1, u0, v0);
+	t.vertexUV(x1, pos.y + 0.0, z1, u0, v1);
+	t.vertexUV(x1, pos.y + 0.0, z0, u1, v1);
+	t.vertexUV(x1, pos.y + 1.0, z0, u1, v0);
+	t.vertexUV(x1, pos.y + 1.0, z0, u0, v0);
+	t.vertexUV(x1, pos.y + 0.0, z0, u0, v1);
+	t.vertexUV(x1, pos.y + 0.0, z1, u1, v1);
+	t.vertexUV(x1, pos.y + 1.0, z1, u1, v0);
+	x0 = pos.x + 0.5 - 0.5;
+	x1 = pos.x + 0.5 + 0.5;
+	z0 = pos.z + 0.5 - 0.25;
+	z1 = pos.z + 0.5 + 0.25;
+	t.vertexUV(x0, pos.y + 1.0, z0, u0, v0);
+	t.vertexUV(x0, pos.y + 0.0, z0, u0, v1);
+	t.vertexUV(x1, pos.y + 0.0, z0, u1, v1);
+	t.vertexUV(x1, pos.y + 1.0, z0, u1, v0);
+	t.vertexUV(x1, pos.y + 1.0, z0, u0, v0);
+	t.vertexUV(x1, pos.y + 0.0, z0, u0, v1);
+	t.vertexUV(x0, pos.y + 0.0, z0, u1, v1);
+	t.vertexUV(x0, pos.y + 1.0, z0, u1, v0);
+	t.vertexUV(x1, pos.y + 1.0, z1, u0, v0);
+	t.vertexUV(x1, pos.y + 0.0, z1, u0, v1);
+	t.vertexUV(x0, pos.y + 0.0, z1, u1, v1);
+	t.vertexUV(x0, pos.y + 1.0, z1, u1, v0);
+	t.vertexUV(x0, pos.y + 1.0, z1, u0, v0);
+	t.vertexUV(x0, pos.y + 0.0, z1, u0, v1);
+	t.vertexUV(x1, pos.y + 0.0, z1, u1, v1);
+	t.vertexUV(x1, pos.y + 1.0, z1, u1, v0);
+}
+
 bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, float r, float g, float b)
 {
 	float topR = r, topG = g, topB = b;
@@ -724,7 +784,7 @@ bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, float r
 		if (m_bFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
 		{
 			t.color(topR * 0.8f * fLight, topG * 0.8f * fLight, topB * 0.8f * fLight);
-			renderNorth(tile, pos, TEXTURE_NONE84);
+			renderNorth(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
 		}
 	}
 
@@ -743,7 +803,7 @@ bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, float r
 		if (m_bFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
 		{
 			t.color(topR * 0.8f * fLight, topG * 0.8f * fLight, topB * 0.8f * fLight);
-			renderSouth(tile, pos, TEXTURE_NONE84);
+			renderSouth(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
 		}
 	}
 
@@ -762,7 +822,7 @@ bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, float r
 		if (m_bFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
 		{
 			t.color(topR * 0.6f * fLight, topG * 0.6f * fLight, topB * 0.6f * fLight);
-			renderWest(tile, pos, TEXTURE_NONE84);
+			renderWest(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
 		}
 	}
 
@@ -781,7 +841,7 @@ bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, float r
 		if (m_bFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
 		{
 			t.color(topR * 0.6f * fLight, topG * 0.6f * fLight, topB * 0.6f * fLight);
-			renderEast(tile, pos, TEXTURE_NONE84);
+			renderEast(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
 		}
 	}
 
@@ -824,6 +884,19 @@ bool TileRenderer::tesselateCrossInWorld(Tile* tile, const TilePos& pos)
 	t.color(r, g, b);
 
 	tesselateCrossTexture(FullTile(tile, m_pTileSource->getData(pos)), pos);
+
+	return true;
+}
+
+bool TileRenderer::tesselateRowInWorld(Tile* tile, const TilePos& pos)
+{
+	Tesselator& t = Tesselator::instance;
+
+	Color color = getTileColor(tile, pos);
+	color.a = 1.0f;
+	t.color(color * ((0.85f * tile->getBrightness(m_pTileSource, pos)) + 0.15f));
+
+	tesselateRowTexture(tile, m_pTileSource->getData(pos), pos);
 
 	return true;
 }
@@ -941,7 +1014,7 @@ bool TileRenderer::tesselateWaterInWorld(Tile* tile1, const TilePos& pos)
 
 label_8:
 	bFlag2 = bFlag1;
-	bool bRenderedSides = false;
+	//bool bRenderedSides = false;
 
 	for (int dir = 0; dir < 4; dir++)
 	{
@@ -1013,7 +1086,7 @@ label_8:
 		texV_2 = C_RATIO * (float(texY) + (1.0f - height2) * 16.0f);
 		texV_3 = C_RATIO * (float(texY + 16.0f) - 0.01f);
 		bFlag2 = true;
-		bRenderedSides = true;
+		//bRenderedSides = true;
 
 		float brightMul = dir >= Facing::WEST ? 0.6f : 0.8f;
 		float bright = tile->getBrightness(m_pTileSource, TilePos(checkX, pos.y, checkZ));
@@ -1161,7 +1234,7 @@ bool TileRenderer::tesselateDoorInWorld(Tile* tile, const TilePos& pos)
 	t.color(fBright, fBright, fBright);
 	renderFaceDown(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::UP));
 
-	fBright = tile->getBrightness(m_pTileSource, pos - 1);
+	fBright = tile->getBrightness(m_pTileSource, pos.north());
 	if (tile->m_aabb.min.z > 0.0f)       fBright = fBrightHere;
 	if (Tile::lightEmission[tile->m_ID]) fBright = 1.0f;
 	t.color(fBright * 0.8f, fBright * 0.8f, fBright * 0.8f);
@@ -1170,7 +1243,7 @@ bool TileRenderer::tesselateDoorInWorld(Tile* tile, const TilePos& pos)
 	renderNorth(tile, pos, texture);
 	m_bXFlipTexture = false;
 
-	fBright = tile->getBrightness(m_pTileSource, pos + 1);
+	fBright = tile->getBrightness(m_pTileSource, pos.south());
 	if (tile->m_aabb.max.z < 1.0f)       fBright = fBrightHere;
 	if (Tile::lightEmission[tile->m_ID]) fBright = 1.0f;
 	t.color(fBright * 0.8f, fBright * 0.8f, fBright * 0.8f);
@@ -1992,6 +2065,8 @@ bool TileRenderer::tesselateInWorld(Tile* tile, const TilePos& pos)
 		case SHAPE_CROSS:
 		case SHAPE_RANDOM_CROSS:
 			return tesselateCrossInWorld(tile, pos);
+		case SHAPE_CROPS:
+			return tesselateRowInWorld(tile, pos);
 		case SHAPE_TORCH:
 			return tesselateTorchInWorld(tile, pos);
 		case SHAPE_DUST:
@@ -2245,7 +2320,7 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusion(Tile* a2, const Ti
 	int v221; // [sp+28h] [bp-40h]
 	int v222; // [sp+2Ch] [bp-3Ch]
 
-	this->m_bAmbientOcclusion = true;
+	this->m_ambientOcclusion = true;
 	v12 = a2->getBrightness(this->m_pTileSource, pos);
 	v13 = this->m_pTileSource;
 	this->field_C = v12;
@@ -3018,7 +3093,7 @@ LABEL_101:
 	renderEast(a2, pos, v193);
 LABEL_102:
 	result = v69;
-	this->m_bAmbientOcclusion = false;
+	this->m_ambientOcclusion = false;
 	return result;
 }
 
@@ -3037,9 +3112,9 @@ LABEL_102:
 	red = bright, grn = bright, blu = bright; \
 	if (GetPatchManager()->IsGrassTinted()) {           \
 		if (tileType->m_ID == Tile::leaves->m_ID)           \
-			red *= 0.35f, grn *= 0.65f, blu *= 0.25f;   \
+			red *= LeafTile::DEFAULT_COLOR.r, grn *= LeafTile::DEFAULT_COLOR.g, blu *= LeafTile::DEFAULT_COLOR.b;   \
 		if (tileType->m_ID == Tile::grass->m_ID) \
-			red *= 0.25f, grn *= 0.60f, blu *= 0.25f;   \
+			red *= GrassTile::DEFAULT_COLOR.r, grn *= GrassTile::DEFAULT_COLOR.g, blu *= GrassTile::DEFAULT_COLOR.b;   \
 	}                                                   \
 } while (0)
 
@@ -3239,7 +3314,7 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 		ETILE_FACE_DNE,// -Y+X-Z
 		ETILE_FACE_DSW,// -Y-X+Z
 		ETILE_FACE_DSE,// -Y+X+Z
-		ETILE_FACE_COUNT,
+		ETILE_FACE_COUNT
 	};
 
 	// for Facing::Name directions
@@ -3359,7 +3434,7 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 			m_vtxBlue [i] *= fB * lightingMult[dir];
 		}
 
-		m_bAmbientOcclusion = true;
+		m_ambientOcclusion = true;
 
 		switch (dir) 
 		{
@@ -3413,27 +3488,27 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 			switch (dir) 
 			{
 				case Facing::DOWN:
-					renderFaceUp(tile, pos, TEXTURE_NONE84);
+					renderFaceUp(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
 					break;
 				case Facing::UP:
-					renderFaceDown(tile, pos, TEXTURE_NONE84);
+					renderFaceDown(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
 					break;
 				case Facing::NORTH:
-					renderNorth(tile, pos, TEXTURE_NONE84);
+					renderNorth(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
 					break;
 				case Facing::SOUTH:
-					renderSouth(tile, pos, TEXTURE_NONE84);
+					renderSouth(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
 					break;
 				case Facing::WEST:
-					renderWest(tile, pos, TEXTURE_NONE84);
+					renderWest(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
 					break;
 				case Facing::EAST:
-					renderEast(tile, pos, TEXTURE_NONE84);
+					renderEast(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
 					break;
 			}
 		}
 
-		m_bAmbientOcclusion = false;
+		m_ambientOcclusion = false;
 	}
 
 	return true;

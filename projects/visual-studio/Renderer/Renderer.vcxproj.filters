@@ -1,0 +1,602 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\GL">
+      <UniqueIdentifier>{d0427062-3ac3-4eda-9d1e-4454bca70cea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GL">
+      <UniqueIdentifier>{417c33a0-5b00-4ff5-8d82-2bc6df0d2581}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\HAL">
+      <UniqueIdentifier>{33126d95-4e32-489d-b319-894160e6b7d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\HAL">
+      <UniqueIdentifier>{7e3a7c9b-073f-46a4-9b4e-558e95661660}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\HAL\Base">
+      <UniqueIdentifier>{00effb28-b6df-4580-b320-9ca792c62b40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\HAL\Base">
+      <UniqueIdentifier>{1010641c-8953-4985-bade-84563c94150f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\HAL\Enums">
+      <UniqueIdentifier>{05343a63-1e1c-428f-b30d-0290f0423c41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\HAL\Enums">
+      <UniqueIdentifier>{bc39047f-ff86-4b7f-9c56-b8f2f21e1969}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\HAL\Helpers">
+      <UniqueIdentifier>{37981f99-afb1-454c-b6a1-713257aab854}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\HAL\Helpers">
+      <UniqueIdentifier>{458bfe8e-ecfd-4bbe-a0d2-d80f3b97393a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\HAL\Interface">
+      <UniqueIdentifier>{7816802e-84ac-4098-a982-295af4938dc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\HAL\Interface">
+      <UniqueIdentifier>{3e87f138-1f9d-4fae-8949-29daac0d7c04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\HAL\Null">
+      <UniqueIdentifier>{d8de1dcd-c91a-46a0-94ce-63c0d0b32491}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\HAL\Null">
+      <UniqueIdentifier>{d1d2f648-6a5d-4700-b21c-30831ad9f50c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\GL\GL.hpp">
+      <Filter>Header Files\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\base\BlendStateBase.hpp">
+      <Filter>Header Files\HAL\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\base\BufferBase.hpp">
+      <Filter>Header Files\HAL\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\base\ConstantBufferBase.hpp">
+      <Filter>Header Files\HAL\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\base\ConstantBufferConstantsBase.hpp">
+      <Filter>Header Files\HAL\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\base\ConstantBufferContainerBase.hpp">
+      <Filter>Header Files\HAL\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\base\DepthStencilStateBase.hpp">
+      <Filter>Header Files\HAL\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\base\FixedPipelineStateBase.hpp">
+      <Filter>Header Files\HAL\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\base\FogStateBase.hpp">
+      <Filter>Header Files\HAL\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\base\FrameBufferObjectBase.hpp">
+      <Filter>Header Files\HAL\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\base\ImmediateBufferBase.hpp">
+      <Filter>Header Files\HAL\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\base\RasterizerStateBase.hpp">
+      <Filter>Header Files\HAL\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\base\RenderContextBase.hpp">
+      <Filter>Header Files\HAL\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\base\RenderContextStateBase.hpp">
+      <Filter>Header Files\HAL\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\base\RenderDeviceBase.hpp">
+      <Filter>Header Files\HAL\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\base\ShaderBase.hpp">
+      <Filter>Header Files\HAL\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\base\ShaderConstantBase.hpp">
+      <Filter>Header Files\HAL\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\base\ShaderConstantWithDataBase.hpp">
+      <Filter>Header Files\HAL\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\base\ShaderContextBase.hpp">
+      <Filter>Header Files\HAL\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\base\ShaderProgramBase.hpp">
+      <Filter>Header Files\HAL\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\base\TextureBase.hpp">
+      <Filter>Header Files\HAL\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\enums\BlendTarget.hpp">
+      <Filter>Header Files\HAL\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\enums\BufferType.hpp">
+      <Filter>Header Files\HAL\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\enums\ColorWriteMask.hpp">
+      <Filter>Header Files\HAL\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\enums\ComparisonFunc.hpp">
+      <Filter>Header Files\HAL\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\enums\CullMode.hpp">
+      <Filter>Header Files\HAL\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\enums\DepthWriteMask.hpp">
+      <Filter>Header Files\HAL\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\enums\FogMode.hpp">
+      <Filter>Header Files\HAL\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\enums\PrimitiveMode.hpp">
+      <Filter>Header Files\HAL\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\enums\RenderState.hpp">
+      <Filter>Header Files\HAL\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\enums\ShadeMode.hpp">
+      <Filter>Header Files\HAL\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\enums\ShaderPrimitiveTypes.hpp">
+      <Filter>Header Files\HAL\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\enums\ShaderStagesBits.hpp">
+      <Filter>Header Files\HAL\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\enums\ShaderType.hpp">
+      <Filter>Header Files\HAL\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\enums\StencilMask.hpp">
+      <Filter>Header Files\HAL\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\enums\StencilOp.hpp">
+      <Filter>Header Files\HAL\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\enums\TextureFiltering.hpp">
+      <Filter>Header Files\HAL\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\enums\TextureFormat.hpp">
+      <Filter>Header Files\HAL\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\enums\VertexField.hpp">
+      <Filter>Header Files\HAL\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\enums\VertexFieldType.hpp">
+      <Filter>Header Files\HAL\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\helpers\TextureHelper.hpp">
+      <Filter>Header Files\HAL\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\interface\BlendState.hpp">
+      <Filter>Header Files\HAL\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\interface\Buffer.hpp">
+      <Filter>Header Files\HAL\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\interface\ConstantBuffer.hpp">
+      <Filter>Header Files\HAL\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\interface\ConstantBufferConstants.hpp">
+      <Filter>Header Files\HAL\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\interface\ConstantBufferContainer.hpp">
+      <Filter>Header Files\HAL\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\interface\DepthStencilState.hpp">
+      <Filter>Header Files\HAL\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\interface\FixedPipelineState.hpp">
+      <Filter>Header Files\HAL\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\interface\FogState.hpp">
+      <Filter>Header Files\HAL\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\interface\ImmediateBuffer.hpp">
+      <Filter>Header Files\HAL\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\interface\RasterizerState.hpp">
+      <Filter>Header Files\HAL\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\interface\RenderContext.hpp">
+      <Filter>Header Files\HAL\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\interface\RenderDevice.hpp">
+      <Filter>Header Files\HAL\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\interface\Shader.hpp">
+      <Filter>Header Files\HAL\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\interface\ShaderConstant.hpp">
+      <Filter>Header Files\HAL\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\interface\ShaderConstantWithData.hpp">
+      <Filter>Header Files\HAL\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\interface\ShaderProgram.hpp">
+      <Filter>Header Files\HAL\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\interface\Texture.hpp">
+      <Filter>Header Files\HAL\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\null\FixedPipelineStateNull.hpp">
+      <Filter>Header Files\HAL\Null</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\null\FogStateNull.hpp">
+      <Filter>Header Files\HAL\Null</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\BlendStateDescription.hpp">
+      <Filter>Header Files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\DepthStencilStateDescription.hpp">
+      <Filter>Header Files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\FixedPipelineStateDescription.hpp">
+      <Filter>Header Files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\FogStateDescription.hpp">
+      <Filter>Header Files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\ImageDescription.hpp">
+      <Filter>Header Files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\RasterizerStateDescription.hpp">
+      <Filter>Header Files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\ShaderStage.hpp">
+      <Filter>Header Files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\StencilFaceDescription.hpp">
+      <Filter>Header Files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\TextureDescription.hpp">
+      <Filter>Header Files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\Attribute.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\ConstantBufferMetaData.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\ConstantBufferMetaDataManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\EnableScissorTest.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\EntityConstants.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\GlobalConstantBufferManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\GlobalConstantBuffers.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\MaterialPtr.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\MatrixStack.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\Mesh.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\PerFrameConstants.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\PlatformDefinitions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\QuadIndexBuffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\RenderChunkConstants.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\RenderContextImmediate.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\RenderMaterial.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\ShaderConstants.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\ShaderGroupBase.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\StencilRefObject.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\TextureGroup.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\TexturePtr.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\UniformMetaData.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\VertexFormat.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\WeatherConstants.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\WorldConstants.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\enums\MapType.hpp">
+      <Filter>Header Files\HAL\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\ViewportOrigin.hpp">
+      <Filter>Header Files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\VertexFieldFormat.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\GL\GL.cpp">
+      <Filter>Source Files\GL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\base\BlendStateBase.cpp">
+      <Filter>Source Files\HAL\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\base\BufferBase.cpp">
+      <Filter>Source Files\HAL\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\base\ConstantBufferBase.cpp">
+      <Filter>Source Files\HAL\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\base\ConstantBufferConstantsBase.cpp">
+      <Filter>Source Files\HAL\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\base\ConstantBufferContainerBase.cpp">
+      <Filter>Source Files\HAL\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\base\DepthStencilStateBase.cpp">
+      <Filter>Source Files\HAL\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\base\FixedPipelineStateBase.cpp">
+      <Filter>Source Files\HAL\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\base\FogStateBase.cpp">
+      <Filter>Source Files\HAL\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\base\FrameBufferObjectBase.cpp">
+      <Filter>Source Files\HAL\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\base\ImmediateBufferBase.cpp">
+      <Filter>Source Files\HAL\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\base\RasterizerStateBase.cpp">
+      <Filter>Source Files\HAL\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\base\RenderContextBase.cpp">
+      <Filter>Source Files\HAL\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\base\RenderContextStateBase.cpp">
+      <Filter>Source Files\HAL\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\base\RenderDeviceBase.cpp">
+      <Filter>Source Files\HAL\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\base\ShaderBase.cpp">
+      <Filter>Source Files\HAL\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\base\ShaderConstantBase.cpp">
+      <Filter>Source Files\HAL\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\base\ShaderConstantWithDataBase.cpp">
+      <Filter>Source Files\HAL\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\base\ShaderContextBase.cpp">
+      <Filter>Source Files\HAL\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\base\ShaderProgramBase.cpp">
+      <Filter>Source Files\HAL\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\base\TextureBase.cpp">
+      <Filter>Source Files\HAL\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\enums\BlendTarget_JsonParser.cpp">
+      <Filter>Source Files\HAL\Enums</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\enums\RenderState_JsonParser.hpp">
+      <Filter>Header Files\HAL\Enums</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\enums\ComparisonFunc_JsonParser.cpp">
+      <Filter>Source Files\HAL\Enums</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\enums\PrimitiveMode_JsonParser.cpp">
+      <Filter>Source Files\HAL\Enums</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\enums\RenderState_JsonParser.cpp">
+      <Filter>Source Files\HAL\Enums</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\enums\ShaderPrimitiveTypes.cpp">
+      <Filter>Source Files\HAL\Enums</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\enums\ShaderStagesBits_JsonParser.cpp">
+      <Filter>Source Files\HAL\Enums</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\enums\StencilOp_JsonParser.cpp">
+      <Filter>Source Files\HAL\Enums</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\enums\TextureFiltering_JsonParser.cpp">
+      <Filter>Source Files\HAL\Enums</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\enums\VertexField.cpp">
+      <Filter>Source Files\HAL\Enums</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\enums\VertexField_JsonParser.cpp">
+      <Filter>Source Files\HAL\Enums</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\helpers\TextureHelper.cpp">
+      <Filter>Source Files\HAL\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\interface\BlendState.cpp">
+      <Filter>Source Files\HAL\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\interface\Buffer.cpp">
+      <Filter>Source Files\HAL\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\interface\ConstantBuffer.cpp">
+      <Filter>Source Files\HAL\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\interface\ConstantBufferContainer.cpp">
+      <Filter>Source Files\HAL\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\interface\DepthStencilState.cpp">
+      <Filter>Source Files\HAL\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\interface\FixedPipelineState.cpp">
+      <Filter>Source Files\HAL\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\interface\FogState.cpp">
+      <Filter>Source Files\HAL\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\interface\ImmediateBuffer.cpp">
+      <Filter>Source Files\HAL\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\interface\RasterizerState.cpp">
+      <Filter>Source Files\HAL\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\interface\RenderContext.cpp">
+      <Filter>Source Files\HAL\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\interface\RenderDevice.cpp">
+      <Filter>Source Files\HAL\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\interface\Shader.cpp">
+      <Filter>Source Files\HAL\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\interface\ShaderConstantWithData.cpp">
+      <Filter>Source Files\HAL\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\interface\ShaderProgram.cpp">
+      <Filter>Source Files\HAL\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\interface\Texture.cpp">
+      <Filter>Source Files\HAL\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\null\FixedPipelineStateNull.cpp">
+      <Filter>Source Files\HAL\Null</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\null\FogStateNull.cpp">
+      <Filter>Source Files\HAL\Null</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\BlendStateDescription.cpp">
+      <Filter>Source Files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\DepthStencilStateDescription.cpp">
+      <Filter>Source Files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\FixedPipelineStateDescription.cpp">
+      <Filter>Source Files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\FogStateDescription.cpp">
+      <Filter>Source Files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\ImageDescription.cpp">
+      <Filter>Source Files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\RasterizerStateDescription.cpp">
+      <Filter>Source Files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\StencilFaceDescription.cpp">
+      <Filter>Source Files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\TextureDescription.cpp">
+      <Filter>Source Files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\Attribute.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\ConstantBufferMetaData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\ConstantBufferMetaDataManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\EnableScissorTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\EntityConstants.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\GlobalConstantBufferManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\GlobalConstantBuffers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\MaterialPtr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\MatrixStack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\Mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\PerFrameConstants.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\QuadIndexBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\RenderChunkConstants.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\RenderContextImmediate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\RenderMaterial.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\ShaderConstants.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\ShaderGroupBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\StencilRefObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\TextureGroup.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\TexturePtr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\UniformMetaData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\VertexFormat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\WeatherConstants.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\WorldConstants.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\ViewportOrigin.cpp">
+      <Filter>Source Files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\VertexFieldFormat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

@@ -24,7 +24,7 @@ public:
 	void shoot(Vec3 pos, float speed, float r);
 	
 	void lerpMotion(float x, float y, float z) { lerpMotion(Vec3(x, y, z)); };
-	void lerpMotion(const Vec3& vel);
+	void lerpMotion(const Vec3& vel) override;
 
 	void tick() override;
 	void playerTouch(Player* pPlayer) override;
@@ -32,6 +32,8 @@ public:
 	void readAdditionalSaveData(const CompoundTag& tag) override;
 
 	float getShadowHeightOffs() const override { return 0.0f; }
+	AuxValue getAuxValue() const override;
+	void setAuxValue(AuxValue value) override;
 
 private:
 	TilePos m_tilePos;

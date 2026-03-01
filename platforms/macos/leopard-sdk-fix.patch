@@ -1,0 +1,26 @@
+--- a/System/Library/Frameworks/CoreServices.framework/Frameworks/OSServices.framework/Headers/OSServices.h
++++ b/System/Library/Frameworks/CoreServices.framework/Frameworks/OSServices.framework/Headers/OSServices.h
+@@ -62,11 +62,11 @@
+ #endif
+ 
+ 
+-#if !__LP64__
+ #ifndef __POWER__
+ #include <OSServices/Power.h>
+ #endif
+ 
++#if !__LP64__
+ #ifndef __SCSI__
+ #include <OSServices/SCSI.h>
+ #endif
+--- a/usr/include/sys/signal.h
++++ b/usr/include/sys/signal.h
+@@ -121,7 +121,7 @@
+ #define SIGUSR1 30	/* user defined signal 1 */
+ #define SIGUSR2 31	/* user defined signal 2 */
+ 
+-#if defined(_ANSI_SOURCE) || __DARWIN_UNIX03 || defined(__cplusplus)
++#if 1
+ /*
+  * Language spec sez we must list exactly one parameter, even though we
+  * actually supply three.  Ugh!

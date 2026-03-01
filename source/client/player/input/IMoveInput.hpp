@@ -21,7 +21,7 @@ enum
 	INPUT_JUMP,
 	INPUT_SNEAK,
 	INPUT_FORWARDLEFT,
-	INPUT_FORWARDRIGHT,
+	INPUT_FORWARDRIGHT
 };
 
 class IMoveInput
@@ -41,6 +41,7 @@ public:
 	float m_vertInput;
 	bool m_bWasJumping;
 	bool m_bJumping;
+	bool m_bFlyUp;
 	bool m_bSneaking;
 };
 

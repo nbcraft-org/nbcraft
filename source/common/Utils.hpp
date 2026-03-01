@@ -35,20 +35,22 @@
 
 #ifdef _WIN32
 
-// Do we even need all this WinSock stuff anymore?
 #if MC_PLATFORM_WINPC
 
 #define WIN32_LEAN_AND_MEAN
+#ifndef NOMINMAX
+#define NOMINMAX /* don't define min() and max(). */
+#endif
 #include <windows.h>
-#include <direct.h>
-#include <io.h>
 
-#elif MC_PLATFORM_XBOX360
+#elif defined(_XBOX)
 
 #include <xtl.h>
-#include <winsockx.h>
 
 #endif
+
+#include <io.h> // for _access
+#include <direct.h> // for _mkdir
 
 // XPL means "Cross PLatform"
 #define XPL_ACCESS _access
@@ -75,6 +77,10 @@ struct DIR
 DIR* opendir(const char* name);
 dirent* readdir(DIR* dir);
 void closedir(DIR* dir);
+
+#ifdef _WIN32
+#define _CRT_INTERNAL_NONSTDC_NAMES 1 // gives us the stat struct we need
+#endif
 
 #include <sys/stat.h>
 
@@ -104,9 +110,6 @@ void closedir(DIR* dir);
 // don't know where to declare these:
 
 #define C_MAX_TILES (256)
-
-#define C_DEFAULT_PORT (19132)
-#define C_MAX_CONNECTIONS (4) // pitiful
 
 constexpr int C_MIN_X = -32000000, C_MAX_X = 32000000;
 constexpr int C_MIN_Z = -32000000, C_MAX_Z = 32000000;
@@ -153,7 +156,7 @@ enum eTileID
 	TILE_RAIL_ACTIVATOR,
 	TILE_PISTON_STICKY,
 	TILE_COBWEB,
-	TILE_TALLGRASS,
+	TILE_TALL_GRASS,
 	TILE_DEAD_BUSH,
 	TILE_PISTON,
 	TILE_PISTON_HEAD,
@@ -223,7 +226,7 @@ enum eTileID
 	TILE_STONE_BRICKS,
 	TILE_MUSHROOM1_BLOCK,
 	TILE_MUSHROOM2_BLOCK,
-	TILE_CLOTH_00 = 101, // @TODO: make these save on newer worlds
+	TILE_CLOTH_00 = 101,
 	TILE_CLOTH_10,
 	TILE_CLOTH_20,
 	TILE_CLOTH_30,
@@ -348,13 +351,15 @@ enum eTileID
 	ITEM_BED,
 	ITEM_DIODE,
 	ITEM_COOKIE,
+	ITEM_MAP,
+	ITEM_SHEARS,
 	ITEM_RECORD_01,
 	ITEM_RECORD_02,
 	ITEM_CAMERA = 456,
 
 	// Custom items
 	ITEM_ROCKET = 470,
-	ITEM_QUIVER = 484,
+	ITEM_QUIVER = 484
 };
 
 enum // Textures
@@ -389,7 +394,7 @@ enum // Textures
 	TEXTURE_CHEST_ONE_FRONT,
 	TEXTURE_MUSHROOM_RED,
 	TEXTURE_MUSHROOM_BROWN,
-	TEXTURE_NONE30,
+	TEXTURE_OBSIDIAN_CRYING,
 	TEXTURE_FIRE1,
 	TEXTURE_ORE_GOLD,
 	TEXTURE_ORE_IRON,
@@ -397,8 +402,8 @@ enum // Textures
 	TEXTURE_BOOKSHELF,
 	TEXTURE_MOSSY_STONE,
 	TEXTURE_OBSIDIAN,
-	TEXTURE_OBSIDIAN_CRYING, // would become grass side overlay after removel
-	TEXTURE_NONE39, // tall grass
+	TEXTURE_GRASS_SIDE_OVERLAY,
+	TEXTURE_TALL_GRASS,
 	TEXTURE_NONE40,
 	TEXTURE_CHEST_TWO_FRONT_LEFT,
 	TEXTURE_CHEST_TWO_FRONT_RIGHT,
@@ -414,7 +419,7 @@ enum // Textures
 	TEXTURE_LEAVES_TRANSPARENT,
 	TEXTURE_LEAVES_OPAQUE,
 	TEXTURE_NONE54,
-	TEXTURE_NONE55, // dead bush
+	TEXTURE_DEAD_BUSH,
 	TEXTURE_NONE56,
 	TEXTURE_CHEST_TWO_BACK_LEFT,
 	TEXTURE_CHEST_TWO_BACK_RIGHT,
@@ -443,7 +448,7 @@ enum // Textures
 	TEXTURE_DOOR_TOP,
 	TEXTURE_DOOR_IRON_TOP,
 	TEXTURE_LADDER,
-	TEXTURE_NONE84,
+	TEXTURE_TRAPDOOR,
 	TEXTURE_NONE85,
 	TEXTURE_FARMLAND,
 	TEXTURE_FARMLAND_DRY,
@@ -465,8 +470,8 @@ enum // Textures
 	TEXTURE_BLOODSTONE,
 	TEXTURE_SOULSAND,
 	TEXTURE_GLOWSTONE,
-	TEXTURE_NONE106,
-	TEXTURE_NONE107,
+	TEXTURE_STICKY_PISTON,
+	TEXTURE_PISTON,
 	TEXTURE_NONE108,
 	TEXTURE_NONE109,
 	TEXTURE_NONE110,
@@ -487,9 +492,13 @@ enum // Textures
 	TEXTURE_NONE125,
 	TEXTURE_NONE126,
 	TEXTURE_NONE127,
+	TEXTURE_RAIL,
 
 	TEXTURE_LAPIS = 144,
 	TEXTURE_ORE_LAPIS = 160,
+	TEXTURE_POWERED_RAIL = 163,
+	TEXTURE_REDSTONE_DUST,
+	TEXTURE_DETECTOR_RAIL = 195,
 
 	TEXTURE_REDSTONE_DUST_CROSS = 164,
 	TEXTURE_REDSTONE_DUST_LINE = 165,
@@ -501,10 +510,13 @@ enum // Textures
 
 	TEXTURE_LAVA = 237,
 
+	// If the "more items" texture was to be utilized
+	//TEXTURE_SLOT_MORE = 222,
+
 	TEXTURE_INFO_UPDATEGAME1 = 252,
 	TEXTURE_INFO_UPDATEGAME2 = 253,
 
-	TEXTURE_LAVA_PLACEHOLDER = 255,
+	TEXTURE_LAVA_PLACEHOLDER = 255
 };
 
 enum eRenderShape
@@ -516,7 +528,7 @@ enum eRenderShape
 	SHAPE_FIRE,
 	SHAPE_WATER,
 	SHAPE_DUST,
-	SHAPE_ROW,
+	SHAPE_CROPS,
 	SHAPE_DOOR,
 	SHAPE_LADDER,
 	SHAPE_RAIL,
@@ -526,6 +538,8 @@ enum eRenderShape
 	SHAPE_CACTUS,
 	SHAPE_BED,
 	SHAPE_DIODE,
+	SHAPE_PISTON,
+	SHAPE_PISTON_HEAD,
 	SHAPE_RANDOM_CROSS
 };
 
@@ -534,6 +548,8 @@ typedef uint8_t TileID;
 // Rename "Tile" to "TileType"
 // Rename "FullTile" to "Tile"
 typedef uint8_t TileData;
+
+typedef uint16_t SlotID;
 
 #define SAFE_DELETE(ptr) do { if (ptr) delete ptr; } while (0)
 #define SAFE_DELETE_ARRAY(ptr) do { if (ptr) delete[] ptr; } while (0)
@@ -549,8 +565,14 @@ int getTimeMs();
 
 void sleepMs(int ms);
 
+#ifdef _WIN32
+void toDosPath(char* path);
+#endif
+
 bool createFolderIfNotExists(const char* pDir);
 bool DeleteDirectory(const std::string& name, bool unused);
+bool isRegularFile(const char *path);
+bool isDirectory(const char *path);
 
 // compress and decompress stuff with zlib: ( you must SAFE_DELETE_ARRAY what it returns )
 uint8_t* ZlibInflateToMemory(uint8_t* pInput, size_t compressedSize, size_t decompressedSize);

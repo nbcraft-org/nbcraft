@@ -8,13 +8,11 @@
 
 #include "JoinGameScreen.hpp"
 #include "DirectConnectScreen.hpp"
-#include "ProgressScreen.hpp"
-#include "StartMenuScreen.hpp"
 
 JoinGameScreen::JoinGameScreen() :
-	m_btnJoin(2, "Join Game"),
-	m_btnDirectConnect(3, "Direct Connect"),
-	m_btnBack(4, "Back"),
+	m_btnJoin("Join Game"),
+	m_btnDirectConnect("Direct Connect"),
+	m_btnBack("Back"),
 	m_pAvailableGamesList(nullptr)
 {
 }
@@ -24,29 +22,29 @@ JoinGameScreen::~JoinGameScreen()
 	SAFE_DELETE(m_pAvailableGamesList);
 }
 
-void JoinGameScreen::buttonClicked(Button* pButton)
+void JoinGameScreen::_buttonClicked(Button* pButton)
 {
-	if (pButton->m_buttonId == m_btnJoin.m_buttonId)
+	if (pButton->getId() == m_btnJoin.getId())
 	{
 		if (isIndexValid(m_pAvailableGamesList->m_selectedIndex))
 		{
 			m_pMinecraft->joinMultiplayer(m_pAvailableGamesList->m_games[m_pAvailableGamesList->m_selectedIndex]);
-			m_pMinecraft->setScreen(new ProgressScreen);
+			m_pMinecraft->getScreenChooser()->pushProgressScreen();
 
-			m_btnJoin.m_bEnabled = false;
-			m_btnDirectConnect.m_bEnabled = false;
-			m_btnBack.m_bEnabled = false;
+			m_btnJoin.setEnabled(false);
+			m_btnDirectConnect.setEnabled(false);
+			m_btnBack.setEnabled(false);
 		}
 	}
 
-	if (pButton->m_buttonId == m_btnDirectConnect.m_buttonId)
+	if (pButton->getId() == m_btnDirectConnect.getId())
 	{
 		m_pMinecraft->setScreen(new DirectConnectScreen);
 	}
 
-	if (pButton->m_buttonId == m_btnBack.m_buttonId)
+	if (pButton->getId() == m_btnBack.getId())
 	{
-		m_pMinecraft->setScreen(new StartMenuScreen);
+		m_pMinecraft->getScreenChooser()->pushStartScreen();
 	}
 }
 
@@ -55,7 +53,7 @@ bool JoinGameScreen::handleBackEvent(bool b)
 	if (!b)
 	{
 		m_pMinecraft->cancelLocateMultiplayer();
-		m_pMinecraft->setScreen(new StartMenuScreen);
+		m_pMinecraft->getScreenChooser()->pushStartScreen();
 	}
 
 	return true;
@@ -74,18 +72,14 @@ void JoinGameScreen::init()
 
 	m_btnDirectConnect.m_width = BUTTON_WIDTH;
 
-	m_buttons.push_back(&m_btnJoin);
-	m_buttons.push_back(&m_btnDirectConnect);
-	m_buttons.push_back(&m_btnBack);
+	_addElement(m_btnJoin);
+	_addElement(m_btnDirectConnect);
+	_addElement(m_btnBack);
 	
 	if (m_pMinecraft->m_pRakNetInstance)
 		m_pMinecraft->m_pRakNetInstance->clearServerList();
 
 	m_pAvailableGamesList = new AvailableGamesList(m_pMinecraft, m_width, m_height, 24, m_height - 30, 28);
-
-	m_buttonTabList.push_back(&m_btnJoin);
-	m_buttonTabList.push_back(&m_btnDirectConnect);
-	m_buttonTabList.push_back(&m_btnBack);
 }
 
 bool JoinGameScreen::isInGameScreen()
@@ -93,11 +87,11 @@ bool JoinGameScreen::isInGameScreen()
 	return false;
 }
 
-void JoinGameScreen::render(int mouseX, int mouseY, float f)
+void JoinGameScreen::render(float f)
 {
 	renderBackground();
-	m_pAvailableGamesList->render(mouseX, mouseY, f);
-	Screen::render(mouseX, mouseY, f);
+	m_pAvailableGamesList->render(m_menuPointer, f);
+	Screen::render(f);
 
 	drawCenteredString(*m_pMinecraft->m_pFont, "Scanning for Games...", m_width / 2, 8, 0xFFFFFFFF);
 }
@@ -107,7 +101,7 @@ void JoinGameScreen::tick()
 	std::vector<PingedCompatibleServer> *serverList, serverListFiltered;
 	serverList = m_pMinecraft->m_pRakNetInstance->getServerList();
 
-	for (int i = 0; i < int(serverList->size()); i++)
+	for (size_t i = 0; i < serverList->size(); i++)
 	{
 		const PingedCompatibleServer& pcs = (*serverList)[i];
 		if (pcs.m_name.GetLength())
@@ -126,7 +120,7 @@ void JoinGameScreen::tick()
 			m_pAvailableGamesList->selectItem(-1, false);
 
 			// relocate the new list item, if possible
-			for (int i = 0; i < int(serverListFiltered.size()); i++)
+			for (size_t i = 0; i < serverListFiltered.size(); i++)
 			{
 				if (serverListFiltered[i].m_address == selectedItem.m_address)
 				{
@@ -149,8 +143,8 @@ void JoinGameScreen::tick()
 		std::vector<PingedCompatibleServer>* pGames = &m_pAvailableGamesList->m_games;
 		for (int i = int(pGames->size() - 1); i >= 0; i--)
 		{
-			int j = 0;
-			for (; j < int(serverListFiltered.size()); j++)
+			size_t j = 0;
+			for (; j < serverListFiltered.size(); j++)
 			{
 				if (serverListFiltered[j].m_address == (*pGames)[i].m_address)
 					break;
@@ -163,7 +157,7 @@ void JoinGameScreen::tick()
 		}
 	}
 
-	m_btnJoin.m_bEnabled = isIndexValid(m_pAvailableGamesList->m_selectedIndex);
+	m_btnJoin.setEnabled(isIndexValid(m_pAvailableGamesList->m_selectedIndex));
 }
 
 bool JoinGameScreen::isIndexValid(int idx)

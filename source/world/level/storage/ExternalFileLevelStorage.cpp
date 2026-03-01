@@ -251,7 +251,7 @@ LevelChunk* ExternalFileLevelStorage::load(Level* level, const ChunkPos& pos)
 
 	pBitStream->Read((char*)pChunk->m_updateMap, sizeof pChunk->m_updateMap);
 	
-	delete pBitStream->GetData();
+	delete[] pBitStream->GetData();
 	delete pBitStream;
 
 	pChunk->recalcHeightmap();
@@ -271,21 +271,46 @@ void ExternalFileLevelStorage::loadEntities(Level* level, LevelChunk* chunk)
 		return;
 
 	char formatId[4];
-	fread(formatId, 1, 4, pFile);
+	if (fread(formatId, 1, 4, pFile) != 4)
+	{
+		fclose(pFile);
+		return;
+	}
 	int formatVersion;
-	fread(&formatVersion, 4, 1, pFile);
+	if (fread(&formatVersion, 4, 1, pFile) != 1)
+	{
+		fclose(pFile);
+		return;
+	}
 	unsigned int size;
-	fread(&size, 4, 1, pFile);
+	if (fread(&size, 4, 1, pFile) != 1)
+	{
+		fclose(pFile);
+		return;
+	}
 	
 	long v6 = ftell(pFile);
-	fseek(pFile, 0, 2);
+	if (fseek(pFile, 0, 2) != 0)
+	{
+		fclose(pFile);
+		return;
+	}
 	long v7 = ftell(pFile);
-	fseek(pFile, v6, 0);
+	if (fseek(pFile, v6, 0) != 0)
+	{
+		fclose(pFile);
+		return;
+	}
 
-	if (size <= v7 - v6 && size > 0)
+	if (size <= (unsigned int)(v7 - v6) && size > 0)
 	{
 		uint8_t* data = new uint8_t[size];
-		fread(data, 1, size, pFile);
+		if (fread(data, 1, size, pFile) != size)
+		{
+			fclose(pFile);
+			delete[] data;
+			return;
+		}
 
 		RakNet::BitStream bs(data, size, false);
 		RakDataInput dis = RakDataInput(bs);
@@ -412,7 +437,7 @@ bool ExternalFileLevelStorage::readLevelData(const std::string& path, LevelData&
 
 	uint8_t* data = new uint8_t[length];
 
-	if (fread(data, sizeof(uint8_t), length, pFile) != length)
+	if (fread(data, sizeof(uint8_t), length, pFile) != (size_t)length)
 	{
 		SAFE_DELETE_ARRAY(data);
 		goto _cleanup;
@@ -423,7 +448,7 @@ bool ExternalFileLevelStorage::readLevelData(const std::string& path, LevelData&
 	{
 		levelData.v1_read(bs, version);
 	}
-	else if (version == 2)
+	else if (version >= 2)
 	{
 		levelData.read(bs, version);
 	}
@@ -451,7 +476,7 @@ bool ExternalFileLevelStorage::readPlayerData(const std::string& path, LevelData
 	if (nPlayers != 1)
 		goto _cleanup;
 
-	if (fread(&levelData.m_LocalPlayerData, 1, sizeof levelData.m_LocalPlayerData, pFile) == size)
+	if (fread(&levelData.m_LocalPlayerData, 1, sizeof levelData.m_LocalPlayerData, pFile) == (size_t)size)
 		levelData.m_nPlayers = nPlayers;
 
 	fclose(pFile);

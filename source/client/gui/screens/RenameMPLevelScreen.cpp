@@ -19,7 +19,7 @@ void RenameMPLevelScreen::init()
 	m_pMinecraft->platform()->createUserInput();
 }
 
-void RenameMPLevelScreen::render(int mouseX, int mouseY, float f)
+void RenameMPLevelScreen::render(float f)
 {
 	int userInputStatus = m_pMinecraft->platform()->getUserInputStatus();
 	if (userInputStatus < 0)
@@ -34,5 +34,5 @@ void RenameMPLevelScreen::render(int mouseX, int mouseY, float f)
 		}
 	}
 
-	m_pMinecraft->setScreen(new StartMenuScreen);
+	m_pMinecraft->getScreenChooser()->pushStartScreen();
 }

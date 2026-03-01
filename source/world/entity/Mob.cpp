@@ -11,13 +11,14 @@
 #include "nbt/CompoundTag.hpp"
 #include "network/RakNetInstance.hpp"
 #include "network/packets/MoveEntityPacket_PosRot.hpp"
+#include "network/packets/SetEntityMotionPacket.hpp"
 
 void Mob::_init()
 {
 	// only sets 19 fields on 0.2.1
-	m_invulnerableDuration = 10;
-	field_E8 = 0.0f;
-	field_EC = 0.0f;
+	m_invulnerableDuration = 20;
+	m_yBodyRot = 0.0f;
+	m_yBodyRotO = 0.0f;
 	m_oAttackAnim = 0.0f;
 	m_attackAnim = 0.0f;
 	m_health = getMaxHealth();
@@ -29,27 +30,26 @@ void Mob::_init()
 	m_attackTime = 0;
 	m_oTilt = 0.0f;
 	m_tilt = 0.0f;
-	field_120 = 0;
-	field_124 = 0;
-	field_128 = 0.0f;
+	m_lookTime = 0;
+	m_modelNum = -1;
+	m_walkAnimSpeedO = 0.0f;
 	m_walkAnimSpeed = 0.0f;
-	field_130 = 0.0f;
+	m_walkAnimPos = 0.0f;
 	m_noActionTime = 0;
-	field_B00 = Vec2::ZERO;
-	field_B08 = 0.0f;
+	m_moveVelocity = Vec2::ZERO;
+	m_yRotA = 0.0f;
 	m_bJumping = false;
-	field_B10 = 0;
+	m_defaultLookAngle = 0;
 	m_runSpeed = 0.7f;
-	field_B48 = 0;
-	field_B4C = 0.0f;
-	field_B50 = 0.0f;
-	field_B54 = 0.0f;
-	field_B58 = 0.0f;
+	m_flyingFriction = 0.02f;
+	m_deathScore = 0;
+	m_oRun = 0.0f;
+	m_run = 0.0f;
+	m_animStep = 0.0f;
+	m_animStepO = 0.0f;
 	m_rotOffs = 0.0f;
-	field_B60 = 1.0f;
-	field_B64 = 0;
-	field_B68 = 1;
-	field_B69 = 0;
+	m_bobStrength = 1.0f;
+	m_bDead = false;
 	m_lSteps = 0;
 	m_lPos = Vec3::ZERO;
 	m_lRot = Vec2::ZERO;
@@ -69,9 +69,9 @@ Mob::Mob(Level* pLevel) : Entity(pLevel)
 
     m_bBlocksBuilding = true;
 
-	field_E4 = (Mth::random() + 1.0f) * 0.01f;
+	m_rotA = (Mth::random() + 1.0f) * 0.01f;
 	setPos(m_pos);
-	field_E0 = Mth::random() * 12398.0f;
+	m_timeOffs = Mth::random() * 12398.0f;
 	m_rot.x = float(Mth::random() * M_PI);
 	m_footSize = 0.5f;
 }
@@ -125,15 +125,15 @@ void Mob::tick()
 	updateWalkAnim();
 
 	//@TODO: untangle this variable mess
-	float dist, x1, x2, x3, x4, x5, x6, x7, field_E8_2, field_E8_new, v36;
+	float dist, x1, x2, x3, x4, x5, x6, x7, yBodyRot, yBodyRotLerped, v36;
 	bool angleOOB = false;
 
 	Vec3 delta = m_pos - m_oPos;
 	dist = Mth::sqrt(delta.z * delta.z + delta.x * delta.x);
-	field_E8_2 = field_E8;
-	x1 = field_E8_2;
+	yBodyRot = m_yBodyRot;
+	x1 = yBodyRot;
 
-	field_B4C = field_B50;
+	m_oRun = m_run;
 
 	if (dist > 0.05f)
 	{
@@ -141,7 +141,7 @@ void Mob::tick()
 		v36 = Mth::atan2(delta.z, delta.x);
 		x3 = 1.0f;
 		x1 = ((v36 * 180.0f) / float(M_PI)) - 90.0f;
-		field_E8_2 = this->field_E8;
+		yBodyRot = this->m_yBodyRot;
 	}
 	else
 	{
@@ -158,21 +158,21 @@ void Mob::tick()
 	if (!m_bOnGround)
 		x3 = 0.0f;
 
-	field_B50 += (x3 - field_B50) * 0.3f;
+	m_run += (x3 - m_run) * 0.3f;
 	
 
 	// Similar to rotlerp
 	// I'm pretty sure this is super inefficient and its trying to do what I have it doing in setRot already.
-	x5 = x1 - field_E8_2;
+	x5 = x1 - yBodyRot;
 	while (x5 < -180.0f)
 		x5 += 360.0f;
 	while (x5 >= 180.0f)
 		x5 -= 360.0f;
 
-	field_E8_new = field_E8_2 + (float)(x5 * 0.3);
-	this->field_E8 = field_E8_new;
+	yBodyRotLerped = yBodyRot + (float)(x5 * 0.3);
+	this->m_yBodyRot = yBodyRotLerped;
 
-	x6 = x4 - field_E8_new;
+	x6 = x4 - yBodyRotLerped;
 
 
 	// Similar to rotlerp
@@ -189,21 +189,21 @@ void Mob::tick()
 	{
 		x7 = x4 + 75.0f;
 		x6 = -75.0f;
-		field_E8 = x4 + 75.0f;
+		m_yBodyRot = x4 + 75.0f;
 		goto LABEL_30;
 	}
 	if (x6 >= 75.0f)
 	{
 		x7 = x4 - 75.0f;
 		x6 = 75.0f;
-		field_E8 = x4 - 75.0f;
+		m_yBodyRot = x4 - 75.0f;
 	LABEL_30:
-		field_E8 = x7 + (x6 * 0.2f);
+		m_yBodyRot = x7 + (x6 * 0.2f);
 		goto LABEL_31;
 	}
 
 	x7 = x4 - x6;
-	field_E8 = x4 - x6;
+	m_yBodyRot = x4 - x6;
 	if (x6 * x6 > 2500.0f)
 		goto LABEL_30;
 
@@ -219,11 +219,11 @@ LABEL_31:
 	while (x4 - m_oRot.x >= 180.0f)
 		m_oRot.x += 360.0f;
 
-	while (field_E8 - field_EC < -180.0f)
-		field_EC -= 360.0f;
+	while (m_yBodyRot - m_yBodyRotO < -180.0f)
+		m_yBodyRotO -= 360.0f;
 
-	while (field_E8 - field_EC >= 180.0f)
-		field_EC += 360.0f;
+	while (m_yBodyRot - m_yBodyRotO >= 180.0f)
+		m_yBodyRotO += 360.0f;
 	
 	while (m_rot.y - m_oRot.y < -180.0f)
 		m_oRot.y -= 360.0f;
@@ -231,7 +231,7 @@ LABEL_31:
 	while (m_rot.y - m_oRot.y >= 180.0f)
 		m_oRot.y += 360.0f;
 
-	field_B54 += x2;
+	m_animStep += x2;
 }
 
 void Mob::baseTick()
@@ -313,8 +313,8 @@ void Mob::baseTick()
         }
     }
 
-    field_B58 = field_B54;
-    field_EC = field_E8;
+    m_animStepO = m_animStep;
+    m_yBodyRotO = m_yBodyRot;
     m_oRot = m_rot;
 
 	// @TODO: check ServerSideNetworkHandler::canReplicateEntity()
@@ -330,6 +330,14 @@ void Mob::baseTick()
 			m_lastSentPos = m_pos;
 			m_lastSentRot = m_rot;
 		}
+#if NETWORK_PROTOCOL_VERSION >= 5
+		float diff = fabsf(m_vel.x - m_lastSentVel.x) + fabsf(m_vel.y - m_lastSentVel.y) + fabsf(m_vel.z - m_lastSentVel.z);
+		if (diff > 0.1f || (diff > 0.0f && m_vel == Vec3::ZERO))
+		{
+			m_pLevel->m_pRakNetInstance->send(new SetEntityMotionPacket(m_EntityID, m_vel));
+			m_lastSentVel = m_vel;
+		}
+#endif
 	}
 }
 
@@ -394,11 +402,16 @@ bool Mob::hurt(Entity *pAttacker, int damage)
                 zd = 0.01f * (Mth::random() - Mth::random());
             }
 
-            float ang = atan2f(zd, xd);
-            v020_field_104 = ang * (180.0f / float(M_PI)) - m_rot.x;
+            float ang = Mth::atan2(zd, xd);
+            m_hurtDir = ang * (180.0f / float(M_PI)) - m_rot.x;
 
             knockback(pAttacker, damage, xd, zd);
         }
+		else
+		{
+			// b1.2, might not be present in PE
+			m_hurtDir = (Mth::random() * 2.0f) * 180.0f;
+		}
     }
 
     if (m_health <= 0)
@@ -421,9 +434,8 @@ bool Mob::hurt(Entity *pAttacker, int damage)
 
 void Mob::animateHurt()
 {
-	m_hurtDuration = 10;
+	m_hurtTime = m_hurtDuration = 10;
 	m_hurtDir = 0;
-	m_hurtTime = 10;
 }
 
 void Mob::setSize(float rad, float height)
@@ -564,8 +576,8 @@ void Mob::heal(int health)
 		return;
 
 	m_health += health;
-	if (m_health > C_MAX_MOB_HEALTH)
-		m_health = C_MAX_MOB_HEALTH;
+	if (m_health > getMaxHealth())
+		m_health = getMaxHealth();
 
 	m_invulnerableTime = m_invulnerableDuration / 2;
 }
@@ -586,7 +598,7 @@ void Mob::travel(const Vec2& pos)
 
 	float x2, dragFactor;
 	float oldYPos = m_pos.y;
-	if (isInWater() || isInLava())
+	if (isSlowedByLiquids() && (isInWater() || isInLava()))
 	{
 		moveRelative(Vec3(pos.x, 0.02f, pos.y));
 		move(m_vel);
@@ -603,7 +615,7 @@ void Mob::travel(const Vec2& pos)
 
 	if (!m_bOnGround)
 	{
-		x2 = 0.02f;
+		x2 = m_flyingFriction;
 	}
 	else
 	{
@@ -677,10 +689,10 @@ void Mob::travel(const Vec2& pos)
 
 void Mob::die(Entity* pCulprit)
 {
-	if (pCulprit && field_B48 > 0)
-		pCulprit->awardKillScore(pCulprit, field_B48);
+	if (pCulprit && m_deathScore > 0)
+		pCulprit->awardKillScore(pCulprit, m_deathScore);
 
-	field_B69 = true;
+	m_bDead = true;
 
 	if (!m_pLevel->m_bIsClientSide)
 	{
@@ -701,7 +713,7 @@ bool Mob::canSee(Entity* pEnt) const
 
 void Mob::updateWalkAnim()
 {
-	field_128 = m_walkAnimSpeed;
+	m_walkAnimSpeedO = m_walkAnimSpeed;
 
 	float diffX = m_pos.x - m_oPos.x;
 	float diffZ = m_pos.z - m_oPos.z;
@@ -711,7 +723,7 @@ void Mob::updateWalkAnim()
 		spd = 1.0f;
 
 	m_walkAnimSpeed += (spd - m_walkAnimSpeed) * 0.4f;
-	field_130 += m_walkAnimSpeed;
+	m_walkAnimPos += m_walkAnimSpeed;
 }
 
 void Mob::aiStep()
@@ -719,7 +731,7 @@ void Mob::aiStep()
 	if (isImmobile())
 	{
 		m_bJumping = 0;
-		field_B00 = Vec2::ZERO;
+		m_moveVelocity = Vec2::ZERO;
 	}
 	else if (!interpolateOnly())
 	{
@@ -735,11 +747,11 @@ void Mob::aiStep()
 			jumpFromGround();
 	}
 
-	field_B00.x *= 0.98f;
-	field_B00.y *= 0.98f;
-	field_B08 *= 0.9f;
+	m_moveVelocity.x *= 0.98f;
+	m_moveVelocity.y *= 0.98f;
+	m_yRotA *= 0.9f;
 
-	travel(field_B00);
+	travel(m_moveVelocity);
 
 	AABB aabb = m_hitbox;
 	aabb.grow(0.2f, 0.2f, 0.2f);
@@ -816,7 +828,7 @@ void Mob::updateAi()
 
 	checkDespawn();
 
-	field_B00 = Vec2::ZERO;
+	m_moveVelocity = Vec2::ZERO;
 
 	if (m_random.nextFloat() < 0.02f)
 	{
@@ -825,33 +837,35 @@ void Mob::updateAi()
 		{
 			m_pEntLookedAt = nearestPlayer;
 
-			field_120 = m_random.nextInt(20) + 10;
+			m_lookTime = m_random.nextInt(20) + 10;
 		}
 		else
 		{
-			field_B08 = (m_random.nextFloat() - 0.5f) * 20.0f;
+			m_yRotA = (m_random.nextFloat() - 0.5f) * 20.0f;
 		}
 	}
 
+	// @TODO: we get a crash here when a Player leaves
 	if (m_pEntLookedAt)
 	{
 		lookAt(m_pEntLookedAt, 10.0f, getMaxHeadXRot());
 
 		// gaze timer
-		field_120--;
+		m_lookTime--;
 
 		// if the entity was removed, or we're too far away, or our gaze timer is up
-		if (field_120 < 0 || m_pEntLookedAt->m_bRemoved || m_pEntLookedAt->distanceToSqr(this) > 64.0f)
+		if (m_lookTime < 0 || m_pEntLookedAt->m_bRemoved || m_pEntLookedAt->distanceToSqr(this) > 64.0f)
 			// stop staring
 			m_pEntLookedAt = nullptr;
 	}
 	else
 	{
 		if (m_random.nextFloat() < 0.05f)
-			field_B08 = (m_random.nextFloat() - 0.5f) * 20.0f;
+			m_yRotA = (m_random.nextFloat() - 0.5f) * 20.0f;
 
-		m_rot.x += field_B08;
-		m_rot.y = field_B10;
+		// oh my god, our X and Y rot are mixed around
+		m_rot.x += m_yRotA;
+		m_rot.y = m_defaultLookAngle;
 	}
 
 	if (isInWater() || isInLava())
@@ -871,12 +885,10 @@ void Mob::checkDespawn(Mob* nearestMob)
 		if (remWhenFar && distSqr > 9216.0f)
 			remove();
 
-		if (m_noActionTime <= 600)
-            m_noActionTime = 0;
-		else if (m_random.nextInt(800) == 0 && remWhenFar && distSqr >= 1024.0f)
+		if (m_noActionTime > 600 && m_random.nextInt(800) == 0 && distSqr > 1024.0f && remWhenFar)
 			remove();
-		else
-            m_noActionTime = 0;
+		else if (distSqr < 1024.0f)
+			m_noActionTime = 0;
 	}
 }
 

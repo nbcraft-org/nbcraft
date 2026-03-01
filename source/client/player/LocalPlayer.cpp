@@ -11,6 +11,8 @@
 #include "nbt/CompoundTag.hpp"
 #include "network/packets/MovePlayerPacket.hpp"
 #include "network/packets/PlayerEquipmentPacket.hpp"
+#include "client/gui/screens/inventory/CraftingScreen.hpp"
+#include "client/gui/screens/inventory/ChestScreen.hpp"
 
 int dword_250ADC, dword_250AE0;
 
@@ -24,7 +26,7 @@ void LocalPlayer::_init()
 
 	m_renderArmRot = Vec2::ZERO;
 	m_lastRenderArmRot = Vec2::ZERO;
-	field_C38 = m_pInventory->getSelectedItemId();
+	m_lastSelectedSlot = m_pInventory->getSelectedItemId();
 }
 
 LocalPlayer::LocalPlayer(Minecraft* pMinecraft, Level* pLevel, User* pUser, GameType playerGameType, int dimensionId) : Player(pLevel, playerGameType)
@@ -40,11 +42,11 @@ LocalPlayer::LocalPlayer(Minecraft* pMinecraft, Level* pLevel, User* pUser, Game
 	field_C14 = 0.0f;
 	field_C18 = 0.0f;
 	field_C1C = 0.0f;
-	field_C38 = 0;
+	m_lastSelectedSlot = 0;
 	m_pMoveInput = nullptr;
 
 	m_pMinecraft = pMinecraft;
-	m_name = pUser->field_0;
+	m_name = pUser->m_name;
 
 	m_dimension = dimensionId;
 	_init();
@@ -54,9 +56,20 @@ LocalPlayer::~LocalPlayer()
 {
 }
 
+void LocalPlayer::die(Entity* pCulprit)
+{
+#if NETWORK_PROTOCOL_VERSION >= 4
+	m_pInventory->dropAll();
+#endif
+
+	Player::die(pCulprit);
+}
+
 void LocalPlayer::aiStep()
 {
+	bool wasJumping = m_pMoveInput->m_bJumping;
 	m_pMoveInput->tick(this);
+
 	if (m_pMoveInput->m_bSneaking && m_ySlideOffset < 0.2f)
 		m_ySlideOffset = 0.2f;
 
@@ -64,35 +77,40 @@ void LocalPlayer::aiStep()
 	m_renderArmRot.x = Mth::Lerp(m_renderArmRot.x, m_rot.x, 0.5f);
 	m_renderArmRot.y = Mth::Lerp(m_renderArmRot.y, m_rot.y, 0.5f);
 
+	// timer for switching flight states
+	if (m_abilities.bCanFly && m_pMoveInput->m_bJumping && !wasJumping)
+	{
+		if (m_jumpTriggerTime == 0)
+			m_jumpTriggerTime = 7;
+		else
+		{
+			m_bFlying = !m_bFlying;
+			m_jumpTriggerTime = 0;
+		}
+	}
+
+	// up/down movement while flying
+	if (m_bFlying)
+	{
+		int yChange = 0;
+		
+		if (m_pMoveInput->m_bSneaking)
+			--yChange;
+		if (m_pMoveInput->m_bFlyUp)
+			++yChange;
+
+		if (yChange != 0)
+			m_vel.y += yChange * 0.15;
+	}
+
 	Mob::aiStep();
 	Player::aiStep();
 
+	if ((m_bFlying && m_bOnGround) || !m_abilities.bCanFly)
+		m_bFlying = false;
+
 	if (interpolateOnly())
 		updateAi();
-}
-
-void LocalPlayer::drop(const ItemInstance& item, bool randomly)
-{
-	if (m_pMinecraft->isOnlineClient())
-	{
-		// @TODO: Replicate DropItemPacket to server
-	}
-	else
-	{
-		Player::drop(item, randomly);
-	}
-}
-
-bool LocalPlayer::isImmobile() const
-{
-	// The player should never move if they aren't focused on the game.
-	// i.e. they're in a menu or the window is unfocused.
-	
-	// @BUG: This causes the player's hand to pause mid-swing while in menus, only when on gamepad.
-	// There does not seem to be a way to get around this without implementing another layer to handle input, which Mojang did later on.
-
-	// This more or less signifies that the game has focus. No GUI Screens, no other windows, just gameplay.
-	return Player::isImmobile() || (m_pMinecraft->useController() && m_pMinecraft->m_pScreen); //!m_pMinecraft->m_bGrabbedMouse; // this works if we still set this when not using a mouse
 }
 
 void LocalPlayer::setPlayerGameType(GameType gameType)
@@ -110,6 +128,40 @@ void LocalPlayer::swing()
 
 	m_pMinecraft->m_pRakNetInstance->send(new AnimatePacket(m_EntityID, AnimatePacket::SWING));
 }
+
+void LocalPlayer::startCrafting(const TilePos& pos)
+{
+	m_pMinecraft->getScreenChooser()->pushCraftingScreen(this, pos);
+}
+
+/*void LocalPlayer::openFurnace(FurnaceTileEntity* furnace)
+{
+	// PE 0.3.2 doesn't let you cook in creative mode
+	m_pMinecraft->setScreen(new FurnaceScreen(m_pInventory, furnace));
+}*/
+
+void LocalPlayer::openContainer(Container* container)
+{
+	// PE 0.3.2 doesn't let you open chests in creative mode
+	m_pMinecraft->getScreenChooser()->pushChestScreen(this, container);
+}
+
+void LocalPlayer::closeContainer()
+{
+	Player::closeContainer();
+	m_pMinecraft->m_pGameMode->handleCloseInventory(m_pContainerMenu->m_containerId, this);
+	m_pMinecraft->setScreen(nullptr);
+}
+
+/*void LocalPlayer::openTrap(DispenserTileEntity* tileEntity)
+{
+	m_pMinecraft->setScreen(new TrapScreen(m_pInventory, tileEntity));
+}*/
+
+/*void LocalPlayer::openTextEdit(SignTileEntity* tileEntity)
+{
+	m_pMinecraft->setScreen(new TextEditScreen(tileEntity));
+}*/
 
 void LocalPlayer::reset()
 {
@@ -154,7 +206,7 @@ void LocalPlayer::calculateFlight(const Vec3& pos)
 		y1 = f1 * -0.2f;
 
 	field_BFC += x1;
-	float f2 = m_pMinecraft->getOptions()->m_fSensitivity * 0.35f;
+	float f2 = m_pMinecraft->getOptions()->m_sensitivity.get() * 0.35f;
 	float f3 = f2 * (field_BFC - field_C00);
 	float f4 = field_C04 + 0.5f * (f3 - field_C04);
 	field_C04 = f4;
@@ -182,12 +234,6 @@ void LocalPlayer::calculateFlight(const Vec3& pos)
 	field_BF0.z = f8 * 10.0f;
 }
 
-void LocalPlayer::closeContainer()
-{
-	Player::closeContainer();
-	m_pMinecraft->setScreen(nullptr);
-}
-
 void LocalPlayer::respawn()
 {
 	m_pMinecraft->respawnPlayer();
@@ -195,13 +241,13 @@ void LocalPlayer::respawn()
 
 bool LocalPlayer::isSneaking() const
 {
-	return m_pMoveInput->m_bSneaking;
+	return m_pMoveInput->m_bSneaking && !m_bFlying;
 }
 
 void LocalPlayer::move(const Vec3& pos)
 {
 	LocalPlayer* pLP = m_pMinecraft->m_pLocalPlayer;
-	if (Minecraft::DEADMAU5_CAMERA_CHEATS && pLP == this && m_pMinecraft->getOptions()->m_bFlyCheat)
+	if (Minecraft::DEADMAU5_CAMERA_CHEATS && pLP == this && m_pMinecraft->getOptions()->m_flightHax.get())
 	{
 		//@HUH: Using m_pMinecraft->m_pLocalPlayer instead of this, even though they're the same
 		pLP->m_bNoPhysics = true;
@@ -235,11 +281,9 @@ void LocalPlayer::move(const Vec3& pos)
 
 		float posX = m_pos.x;
 		float posY = m_pos.y;
+		float posZ = m_pos.z;
 
 		Entity::move(pos);
-
-		//@BUG: backing up posZ too late
-		float posZ = m_pos.z;
 
 		if (m_nAutoJumpFrames <= 0)
 		{
@@ -267,7 +311,10 @@ void LocalPlayer::move(const Vec3& pos)
 				return;
 
 			// are we trying to walk into stairs or a slab?
-			if (tileOnTop != Tile::stairs_stone->m_ID && tileOnTop != Tile::stairs_wood->m_ID && tileOnTop != Tile::stoneSlabHalf->m_ID && m_pMinecraft->getOptions()->m_bAutoJump)
+			if (tileOnTop != Tile::stairs_stone->m_ID &&
+				tileOnTop != Tile::stairs_wood->m_ID &&
+				tileOnTop != Tile::stoneSlabHalf->m_ID &&
+				m_pMinecraft->getOptions()->m_autoJump.get())
 				// Nope, we're walking towards a full block. Trigger an auto jump.
 				m_nAutoJumpFrames = 1;
 		}
@@ -282,10 +329,11 @@ void LocalPlayer::tick()
 	{
 		sendPosition();
 
-		if (field_C38 != m_pInventory->getSelectedItemId())
+		if (m_lastSelectedSlot != m_pInventory->m_selectedSlot)
 		{
-			field_C38 = m_pInventory->getSelectedItemId();
-			m_pMinecraft->m_pRakNetInstance->send(new PlayerEquipmentPacket(m_EntityID, field_C38));
+			m_lastSelectedSlot = m_pInventory->m_selectedSlot;
+			const ItemStack& item = m_pInventory->getSelectedItem();
+			m_pMinecraft->m_pRakNetInstance->send(new PlayerEquipmentPacket(m_EntityID, item.getId(), item.getAuxValue()));
 		}
 	}
 }
@@ -294,10 +342,18 @@ void LocalPlayer::updateAi()
 {
 	Player::updateAi();
 
-	field_B00.x = m_pMoveInput->m_horzInput;
-	field_B00.y = m_pMoveInput->m_vertInput;
+	if (m_pMinecraft->m_pScreen)
+	{
+		m_moveVelocity = Vec2::ZERO;
+		m_bJumping = false;
+	}
+	else
+	{
+		m_moveVelocity.x = m_pMoveInput->m_horzInput;
+		m_moveVelocity.y = m_pMoveInput->m_vertInput;
 
-	m_bJumping = m_pMoveInput->m_bJumping || m_nAutoJumpFrames > 0;
+		m_bJumping = m_pMoveInput->m_bJumping || m_nAutoJumpFrames > 0;
+	}
 }
 
 void LocalPlayer::addAdditionalSaveData(CompoundTag& tag) const

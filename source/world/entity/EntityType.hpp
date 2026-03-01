@@ -154,7 +154,7 @@ public:
 
 		TRADER_LLAMA = 157,
 
-		CHEST_BOAT = 218,
+		CHEST_BOAT = 218
 	};
 	typedef const std::string& Name;
 

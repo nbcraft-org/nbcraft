@@ -10,6 +10,8 @@
 #include "world/level/Level.hpp"
 #include "client/renderer/PatchManager.hpp"
 
+const Color GrassTile::DEFAULT_COLOR = Color(0.25f, 0.60f, 0.25f);
+
 GrassTile::GrassTile(TileID id, Material* c) : Tile(id, c)
 {
 	m_TextureFrame = TEXTURE_GRASS_SIDE;
@@ -53,6 +55,8 @@ int GrassTile::getTexture(const LevelSource* level, const TilePos& pos, Facing::
 		return TEXTURE_GRASS_TOP;
 	case Facing::DOWN:
 		return TEXTURE_DIRT;
+	default:
+		break;
 	}
 
 	Material* pMat = level->getMaterial(pos.above());
@@ -86,7 +90,7 @@ void GrassTile::tick(Level* level, const TilePos& pos, Random* random)
 			level->getRawBrightness(tp.above()) > 3 &&
 			!level->getMaterial(tp.above())->blocksLight())
 		{
-			//@NOTE: not this->m_ID
+			//@NOTE: not this->id
 			level->setTile(tp, Tile::grass->m_ID);
 		}
 	}

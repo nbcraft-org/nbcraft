@@ -6,6 +6,8 @@
 	SPDX-License-Identifier: BSD-1-Clause
  ********************************************************************/
 
+#include <stdio.h>
+#include <cstdlib>
 #include "Util.hpp"
 
 const std::string Util::EMPTY_STRING = "";
@@ -68,7 +70,7 @@ std::string Util::format(const char *fmt, ...)
 
 bool Util::isValidPath(const std::string& path)
 {
-	for (int i = 0; i < path.size(); i++)
+	for (size_t i = 0; i < path.size(); i++)
 	{
 		switch (path.at(i))
 		{
@@ -106,4 +108,54 @@ std::string Util::getExtension(const std::string& path)
 	}
 
 	return path.substr(dotPos + 1);
+}
+
+std::string Util::toString(int value)
+{
+	std::string str;
+
+	// Handle zero explicitly
+	if (value == 0)
+	{
+		str = "0";
+		return str;
+	}
+
+	// Use unsigned to safely handle INT_MIN
+	uint32_t uval = static_cast<uint32_t>((value < 0) ? -value : value);
+
+	// Build the string backwards (more efficient than calculating powers of 10)
+	while (uval > 0)
+	{
+		str.push_back('0' + (uval % 10));
+		uval /= 10;
+	}
+
+	// Add sign and reverse
+	if (value < 0)
+		str.push_back('-');
+
+	std::reverse(str.begin(), str.end());
+	return str;
+}
+
+std::string Util::toString(const wchar_t* str)
+{
+	std::string result(wcslen(str), 0);
+	wcstombs((char*)result.data(), str, result.size());
+	return result;
+}
+
+std::string Util::toString(const std::wstring& str)
+{
+	std::string result(str.size(), 0);
+	wcstombs((char*)result.data(), str.c_str(), str.size());
+	return result;
+}
+
+std::wstring Util::toWideString(const std::string& str)
+{
+	std::wstring result(str.size(), 0);
+	mbstowcs((wchar_t*)result.data(), str.c_str(), str.size());
+	return result;
 }

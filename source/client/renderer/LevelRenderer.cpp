@@ -250,7 +250,7 @@ void LevelRenderer::_buildStarsMesh()
 			{
 				float ___xo = 0.0f;
 				float ___yo = ((c & 2) - 1) * ss;
-				float ___zo = ((c + 1 & 2) - 1) * ss;
+				float ___zo = (((c + 1) & 2) - 1) * ss;
 				float __yo = ___yo * zCos - ___zo * zSin;
 				float __zo = ___zo * zCos + ___yo * zSin;
 				float _yo = __yo * xSin + ___xo * xCos;
@@ -476,15 +476,15 @@ void LevelRenderer::_updateViewArea(const Entity& camera)
 
 void LevelRenderer::_startFrame(FrustumCuller& culler, float renderDistance, float f)
 {
-	mce::GlobalConstantBuffers& globalBuffers = mce::GlobalConstantBuffers::getInstance();
-	mce::PerFrameConstants& frame = globalBuffers.m_perFrameConstants;
-
 	const Entity& camera = *m_pMinecraft->m_pCameraEntity;
 	m_viewPos = camera.getPos(f);
 
 	_setupFog(camera, 1);
 
 #ifdef FEATURE_GFX_SHADERS
+	mce::GlobalConstantBuffers& globalBuffers = mce::GlobalConstantBuffers::getInstance();
+	mce::PerFrameConstants& frame = globalBuffers.m_perFrameConstants;
+
 	Vec3 viewVector = camera.getViewVector(f);
 	frame.VIEW_DIRECTION->setData(&viewVector);
 
@@ -576,7 +576,7 @@ void LevelRenderer::cull(Culler* pCuller, float f)
 		if (pChunk->isEmpty())
 			continue;
 
-		if (!pChunk->m_bVisible || (i + m_cullStep & 15) == 0)
+		if (!pChunk->m_bVisible || ((i + m_cullStep) & 15) == 0)
 		{
 			pChunk->cull(pCuller);
 		}
@@ -591,13 +591,13 @@ void LevelRenderer::allChanged()
 
 	LeafTile* pLeaves = (LeafTile*)Tile::leaves;
 
-	pLeaves->m_bTransparent = m_pMinecraft->getOptions()->m_bFancyGraphics;
+	pLeaves->m_bTransparent = m_pMinecraft->getOptions()->m_fancyGraphics.get();
 	pLeaves->m_TextureFrame = !pLeaves->m_bTransparent + pLeaves->field_74;
 
-	TileRenderer::m_bFancyGrass = m_pMinecraft->getOptions()->m_bFancyGrass;
-	TileRenderer::m_bBiomeColors = m_pMinecraft->getOptions()->m_bBiomeColors;
+	TileRenderer::m_bFancyGrass = m_pMinecraft->getOptions()->m_fancyGrass.get();
+	TileRenderer::m_bBiomeColors = m_pMinecraft->getOptions()->m_biomeColors.get();
 
-	m_lastViewDistance = m_pMinecraft->getOptions()->m_iViewDistance;
+	m_lastViewDistance = m_pMinecraft->getOptions()->m_viewDistance.get();
 
 	int dist = 64 << (3 - m_lastViewDistance);
 	if (dist > 400)
@@ -784,6 +784,8 @@ void LevelRenderer::renderLineBox(const AABB& aabb, const mce::MaterialPtr& mate
 	glLineWidth(lineWidth);
 #endif
 
+	// @TODO: cache this as a mesh, then translate matrix
+
 	Tesselator& t = Tesselator::instance;
 
 	t.begin(mce::PRIMITIVE_MODE_LINE_STRIP, 5);
@@ -863,7 +865,7 @@ int LevelRenderer::renderChunks(int start, int end, Tile::RenderLayer layer, flo
 	m_renderList.clear();
 	m_renderList.init(fPos);
 
-	for (int i = 0; i < int(field_24.size()); i++)
+	for (size_t i = 0; i < field_24.size(); i++)
 	{
 		Chunk* pChk = field_24[i];
 		m_renderList.addR(pChk->getRenderChunk(layer), renderLayerToTerrainLayerMap[layer], fog);
@@ -890,13 +892,13 @@ void LevelRenderer::render(const Entity& camera, Tile::RenderLayer layer, float 
 		m_dirtyChunks.push_back(pChunk);
 	}
 
-	if (m_pMinecraft->getOptions()->m_iViewDistance != m_lastViewDistance)
+	if (m_pMinecraft->getOptions()->m_viewDistance.get() != m_lastViewDistance)
 		allChanged();
 
 	if (layer == Tile::RENDER_LAYER_OPAQUE)
 		m_totalChunks = m_offscreenChunks = m_occludedChunks = m_renderedChunks = m_emptyChunks = 0;
 
-	Vec3 cameraPos = camera.m_posPrev + (camera.m_pos - camera.m_posPrev) * alpha;
+	//Vec3 cameraPos = camera.m_posPrev + (camera.m_pos - camera.m_posPrev) * alpha;
 
 	float dX = camera.m_pos.x - m_posPrev.x, dY = camera.m_pos.y - m_posPrev.y, dZ = camera.m_pos.z - m_posPrev.z;
 
@@ -915,7 +917,7 @@ void LevelRenderer::render(const Entity& camera, Tile::RenderLayer layer, float 
 	}
 
 	// @NOTE: m_bOcclusionCheck is always false
-	if (m_bOcclusionCheck && layer == Tile::RENDER_LAYER_OPAQUE && !m_pMinecraft->getOptions()->m_bAnaglyphs)
+	if (m_bOcclusionCheck && layer == Tile::RENDER_LAYER_OPAQUE && !m_pMinecraft->getOptions()->m_anaglyphs.get())
 	{
 		assert(false);
 		/*int c = 16;
@@ -1001,7 +1003,7 @@ const Color& LevelRenderer::setupClearColor(float f)
 	Level& level = *mc.m_pLevel;
 	const Entity& camera = *mc.m_pCameraEntity;
 
-	float x1 = 1.0f - powf(1.0f / float(4 - options.m_iViewDistance), 0.25f);
+	float x1 = 1.0f - powf(1.0f / float(4 - options.m_viewDistance.get()), 0.25f);
 
 	Vec3 skyColor = level.getSkyColor(camera, f), fogColorVec = level.getFogColor(f);
 
@@ -1025,7 +1027,7 @@ const Color& LevelRenderer::setupClearColor(float f)
 
 	fogColor *= x2;
 
-	if (options.m_bAnaglyphs)
+	if (options.m_anaglyphs.get())
 	{
 		fogColor.r = (fogColor.r * 30.0f + fogColor.g * 59.0f + fogColor.b * 11.0f) / 100.0f;
 		fogColor.g = (fogColor.r * 30.0f + fogColor.g * 70.0f) / 100.0f;
@@ -1123,7 +1125,7 @@ void LevelRenderer::tick()
 	m_fogBrO = m_fogBr;
 
 	float bright = level.getBrightness(camera.m_pos);
-	float x3 = float(3 - options.m_iViewDistance);
+	float x3 = float(3 - options.m_viewDistance.get());
 	float x4 = x3 / 3.0f;
 	float x5 = (x4 + bright * (1.0f - x4) - m_fogBr) * 0.1f;
 
@@ -1142,9 +1144,8 @@ bool LevelRenderer::updateDirtyChunks(const Entity& camera, bool b)
 	Chunk* pChunks[C_MAX] = { nullptr };
 	ChunkVector* nearChunks = nullptr;
 
-	int pendingChunkRemoved = 0;
-	int pendingChunkSize = int(m_dirtyChunks.size());
-	for (int i = 0; i < pendingChunkSize; i++)
+	size_t pendingChunkSize = m_dirtyChunks.size(), pendingChunkRemoved = 0;
+	for (size_t i = 0; i < pendingChunkSize; i++)
 	{
 		Chunk* pChunk = m_dirtyChunks[i];
 		if (!b)
@@ -1215,9 +1216,8 @@ bool LevelRenderer::updateDirtyChunks(const Entity& camera, bool b)
 		nr2++;
 	}
 
-	int nr3 = 0;
-	int nr4 = 0;
-	for (; nr4 < int(m_dirtyChunks.size()); nr4++)
+	size_t nr3 = 0, nr4 = 0;
+	for (; nr4 < m_dirtyChunks.size(); nr4++)
 	{
 		Chunk* pChunk = m_dirtyChunks[nr4];
 		if (!pChunk)
@@ -1245,7 +1245,7 @@ bool LevelRenderer::updateDirtyChunks(const Entity& camera, bool b)
 	return pendingChunkRemoved + nr2 == pendingChunkSize;
 }
 
-void LevelRenderer::renderCracks(const Entity& camera, const HitResult& hr, int mode, const ItemInstance* inventoryItem, float a)
+void LevelRenderer::renderCracks(const Entity& camera, const HitResult& hr, int mode, const ItemStack* inventoryItem, float a)
 {
 	// @BUG: possible leftover from Minecraft Classic? This is overridden anyways
 	//currentShaderColor = Color(1.0f, 1.0f, 1.0f, (Mth::sin(float(getTimeMs()) / 100.0f) * 0.2f + 0.4f) * 0.5f);
@@ -1283,16 +1283,16 @@ void LevelRenderer::renderCracks(const Entity& camera, const HitResult& hr, int 
 			t.setOffset(0, 0, 0);
 		}
 	}
-    else if (inventoryItem != nullptr)
+    /*else if (inventoryItem != nullptr)
 	{
          float br = Mth::sin((float)getTimeMs() / 100.0f) * 0.2f + 0.8f;
 		 currentShaderColor = Color(br, br, br, Mth::sin((float)getTimeMs() / 200.0f) * 0.2f + 0.5f);
 		 m_pTextures->loadAndBindTexture(C_TERRAIN_NAME);
          TilePos tp = hr.m_tilePos.relative(hr.m_hitSide);
-	}
+	}*/
 }
 
-void LevelRenderer::renderHitSelect(const Entity& camera, const HitResult& hr, int mode, const ItemInstance* inventoryItem, float a)
+void LevelRenderer::renderHitSelect(const Entity& camera, const HitResult& hr, int mode, const ItemStack* inventoryItem, float a)
 {
 	if (mode != 0) return;
 
@@ -1304,6 +1304,7 @@ void LevelRenderer::renderHitSelect(const Entity& camera, const HitResult& hr, i
 		pTile = Tile::tiles[tileID];
 
 	currentShaderColor = Color(0.65f, 0.65f, 0.65f, 0.65f);
+	currentShaderDarkColor = Color::WHITE;
 
 	MatrixStack::Ref matrix = MatrixStack::World.push();
 
@@ -1327,13 +1328,15 @@ void LevelRenderer::renderHitSelect(const Entity& camera, const HitResult& hr, i
 	t.setOffset(0, 0, 0);
 }
 
-void LevelRenderer::renderHitOutline(const Entity& camera, const HitResult& hr, int mode, const ItemInstance* inventoryItem, float a)
+void LevelRenderer::renderHitOutline(const Entity& camera, const HitResult& hr, int mode, const ItemStack* inventoryItem, float a)
 {
 	if (mode != 0 || hr.m_hitType != 0)
 		return;
 
 	currentShaderColor = Color(0.0f, 0.0f, 0.0f, 0.4f);
+	currentShaderDarkColor = Color::WHITE;
 
+	constexpr float distance = 0.002f;
 	float lineWidth = 2.0f * Minecraft::getRenderScaleMultiplier();
 
 	TileID tile = m_pLevel->getTile(hr.m_tilePos);
@@ -1346,12 +1349,12 @@ void LevelRenderer::renderHitOutline(const Entity& camera, const HitResult& hr, 
 		float posY = camera.m_posPrev.y + ((camera.m_pos.y - camera.m_posPrev.y) * a);
 		float posZ = camera.m_posPrev.z + ((camera.m_pos.z - camera.m_posPrev.z) * a);
 		AABB aabb, tileAABB = Tile::tiles[tile]->getTileAABB(m_pLevel, hr.m_tilePos);
-		aabb.min.y = tileAABB.min.y - 0.002f - posY;
-		aabb.max.y = tileAABB.max.y + 0.002f - posY;
-		aabb.min.z = tileAABB.min.z - 0.002f - posZ;
-		aabb.max.z = tileAABB.max.z + 0.002f - posZ;
-		aabb.min.x = tileAABB.min.x - 0.002f - posX;
-		aabb.max.x = tileAABB.max.x + 0.002f - posX;
+		aabb.min.y = tileAABB.min.y - distance - posY;
+		aabb.max.y = tileAABB.max.y + distance - posY;
+		aabb.min.z = tileAABB.min.z - distance - posZ;
+		aabb.max.z = tileAABB.max.z + distance - posZ;
+		aabb.min.x = tileAABB.min.x - distance - posX;
+		aabb.max.x = tileAABB.max.x + distance - posX;
 		renderLineBox(aabb, m_materials.selection_box, lineWidth);
 	}
 }
@@ -1361,13 +1364,11 @@ void LevelRenderer::tileChanged(const TilePos& pos)
 	setDirty(pos - 1, pos + 1);
 }
 
-extern int t_keepPic;
-
 void LevelRenderer::takePicture(TripodCamera* pCamera, Entity* pOwner)
 {
 	Mob* pOldMob = m_pMinecraft->m_pCameraEntity;
-	bool bOldDontRenderGui = m_pMinecraft->getOptions()->m_bDontRenderGui;
-	bool bOldThirdPerson = m_pMinecraft->getOptions()->m_bThirdPerson;
+	bool bOldDontRenderGui = m_pMinecraft->getOptions()->m_hideGui.get();
+	bool bOldThirdPerson = m_pMinecraft->getOptions()->m_thirdPerson.get();
 
 #ifdef ENH_CAMERA_NO_PARTICLES
 	extern bool g_bDisableParticles;
@@ -1375,23 +1376,23 @@ void LevelRenderer::takePicture(TripodCamera* pCamera, Entity* pOwner)
 #endif
 
 	m_pMinecraft->m_pCameraEntity = pCamera;
-	m_pMinecraft->getOptions()->m_bDontRenderGui = true;
-	m_pMinecraft->getOptions()->m_bThirdPerson = false; // really from the perspective of the camera
-	m_pMinecraft->m_pGameRenderer->render(0.0f);
+	m_pMinecraft->getOptions()->m_hideGui.set(true);
+	m_pMinecraft->getOptions()->m_thirdPerson.set(false); // really from the perspective of the camera
+	m_pMinecraft->m_pGameRenderer->render(m_pMinecraft->m_timer);
 	m_pMinecraft->m_pCameraEntity = pOldMob;
-	m_pMinecraft->getOptions()->m_bDontRenderGui = bOldDontRenderGui;
-	m_pMinecraft->getOptions()->m_bThirdPerson = bOldThirdPerson;
+	m_pMinecraft->getOptions()->m_hideGui.set(bOldDontRenderGui);
+	m_pMinecraft->getOptions()->m_thirdPerson.set(bOldThirdPerson);
 
 #ifdef ENH_CAMERA_NO_PARTICLES
 	g_bDisableParticles = false;
 #endif
 
-	t_keepPic = -1;
+	m_pMinecraft->m_pGameRenderer->m_keepPic = -1;
 
 	static char str[256];
 	// @HUH: This has the potential to overwrite a file
 #ifdef ORIGINAL_CODE
-	sprintf(str, "%s/games/com.mojang/img_%.4d.jpg", m_pMinecraft->m_externalStorageDir.c_str(), getTimeMs());
+	sprintf(str, "%s" C_HOME_PATH "img_%.4d.jpg", m_pMinecraft->platform()->m_externalStorageDir.c_str(), getTimeMs());
 #else
 	sprintf(str, "img_%.4d.png", getTimeMs());
 #endif
@@ -1599,7 +1600,7 @@ void LevelRenderer::renderEntities(Vec3 pos, Culler* culler, float f)
 		if (!culler->isVisible(entity->m_hitbox))
 			continue;
 
-		if (m_pMinecraft->m_pCameraEntity == entity && !m_pMinecraft->getOptions()->m_bThirdPerson)
+		if (m_pMinecraft->m_pCameraEntity == entity && !m_pMinecraft->getOptions()->m_thirdPerson.get())
 			continue;
 
 		if (m_pLevel->hasChunkAt(entity->m_pos))
@@ -1656,7 +1657,7 @@ void LevelRenderer::renderSky(const Entity& camera, float alpha)
 		return;
 
 	Vec3 sc = m_pLevel->getSkyColor(camera, alpha);
-	if (m_pMinecraft->getOptions()->m_bAnaglyphs)
+	if (m_pMinecraft->getOptions()->m_anaglyphs.get())
 	{
 		sc.x = (((sc.x * 30.0f) + (sc.y * 59.0f)) + (sc.z * 11.0f)) / 100.0f;
 		sc.y = ((sc.x * 30.0f) + (sc.y * 70.0f)) / 100.0f;
@@ -1665,8 +1666,6 @@ void LevelRenderer::renderSky(const Entity& camera, float alpha)
 
 	// called again a few lines down, no min in Java, why is it here?
 	//currentShaderColor = Color(sc.x, sc.y, Mth::Min(1.0f, sc.z), 1.0f);
-
-	Tesselator& t = Tesselator::instance;
 
 	{
 		Fog::enable();
@@ -1701,7 +1700,10 @@ void LevelRenderer::prepareAndRenderClouds(const Entity& camera, float f)
 	float fov = gameRenderer.getFov(f);
 
 	MatrixStack::Ref projMtx = MatrixStack::Projection.pushIdentity();
-	projMtx->setPerspective(fov, float(Minecraft::width) / float(Minecraft::height), 0.05f, renderDistance * 512.0f);
+	// Java
+	//projMtx->setPerspective(fov, float(Minecraft::width) / float(Minecraft::height), 0.05f, renderDistance * 512.0f);
+	// PE (0.12.1)
+	projMtx->setPerspective(fov, float(Minecraft::width) / float(Minecraft::height), 2.0f, renderDistance * 5120.0f);
 
 	MatrixStack::Ref viewMtx = MatrixStack::View.push();
 	_setupFog(camera, 0);
@@ -1726,7 +1728,7 @@ void LevelRenderer::renderClouds(const Entity& camera, float alpha)
 	if (!areCloudsAvailable())
 		return;
 
-	if (m_pMinecraft->getOptions()->m_bFancyGraphics)
+	if (m_pMinecraft->getOptions()->m_fancyGraphics.get())
 	{
 		renderAdvancedClouds(alpha);
 		return;
@@ -1828,7 +1830,7 @@ void LevelRenderer::renderAdvancedClouds(float alpha)
     float vo;
     float scale;
     
-	if (m_pMinecraft->getOptions()->m_bAnaglyphs)
+	if (m_pMinecraft->getOptions()->m_anaglyphs.get())
 	{
         uo = (cr * 30.0f + cg * 59.0f + cb * 11.0f) / 100.0f;
         vo = (cr * 30.0f + cg * 70.0f) / 100.0f;
@@ -1984,9 +1986,9 @@ void LevelRenderer::skyColorChanged()
 	}
 }
 
-void LevelRenderer::levelEvent(Player* pPlayer, LevelEvent::ID eventId, const TilePos& pos, LevelEvent::Data data)
+void LevelRenderer::levelEvent(const LevelEvent& event)
 {
-	switch (eventId)
+	switch (event.id)
 	{
 	case LevelEvent::SOUND_DOOR:
 		std::string snd;
@@ -1995,7 +1997,7 @@ void LevelRenderer::levelEvent(Player* pPlayer, LevelEvent::ID eventId, const Ti
 		else
 			snd = "random.door_close";
 
-		m_pLevel->playSound(Vec3(pos) + 0.5f, snd, 1.0f, 0.9f + 0.1f * m_pLevel->m_random.nextFloat());
+		m_pLevel->playSound(Vec3(event.pos) + 0.5f, snd, 1.0f, 0.9f + 0.1f * m_pLevel->m_random.nextFloat());
 		break;
 	}
 }

@@ -1,0 +1,416 @@
+name: 'Build Artifacts'
+
+on:
+  push:
+    branches: [ 'master' ]
+
+jobs:
+    linux:
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                  - name: x86_64 SDL 2 (OGL)
+                    flags: '-DNBC_PLATFORM=sdl2 -DNBC_GFX_API=OGL'
+                    packages: 'libsdl2-dev libopenal-dev zlib1g-dev'
+                    runner: ubuntu-24.04
+                  - name: x86_64 SDL 2 (OGL + Shaders)
+                    flags: '-DNBC_PLATFORM=sdl2 -DNBC_GFX_API=OGL_SHADERS'
+                    packages: 'libsdl2-dev libopenal-dev zlib1g-dev'
+                    runner: ubuntu-24.04
+                  - name: i686 SDL 2 (OGL)
+                    flags: '-DNBC_PLATFORM=sdl2 -DNBC_GFX_API=OGL -DCMAKE_C_FLAGS=-m32 -DCMAKE_CXX_FLAGS=-m32'
+                    packages: 'gcc-multilib g++-multilib libsdl2-dev:i386 libopenal-dev:i386 zlib1g-dev:i386'
+                    runner: ubuntu-22.04
+                    i386: true
+                  - name: i686 SDL 2 (OGL + Shaders)
+                    flags: '-DNBC_PLATFORM=sdl2 -DNBC_GFX_API=OGL -DCMAKE_C_FLAGS=-m32 -DCMAKE_CXX_FLAGS=-m32'
+                    packages: 'gcc-multilib g++-multilib libsdl2-dev:i386 libopenal-dev:i386 zlib1g-dev:i386'
+                    runner: ubuntu-22.04
+                    i386: true
+                  - name: aarch64 SDL 2 (OGL)
+                    flags: '-DNBC_PLATFORM=sdl2 -DNBC_GFX_API=OGL'
+                    packages: 'libsdl2-dev libopenal-dev zlib1g-dev'
+                    runner: ubuntu-24.04-arm
+                  - name: aarch64 SDL 2 (OGL + Shaders)
+                    flags: '-DNBC_PLATFORM=sdl2 -DNBC_GFX_API=OGL_SHADERS'
+                    packages: 'libsdl2-dev libopenal-dev zlib1g-dev'
+                    runner: ubuntu-24.04-arm
+        name: Linux (${{ matrix.name }})
+        runs-on: ${{ matrix.runner }}
+        steps:
+          - name: Get Time
+            id: get-time
+            run: echo "time=$(date -u '+%Y-%m-%d-%H:%M:%S')" >> $GITHUB_OUTPUT
+          - uses: actions/cache@v5
+            with:
+              path: ~/ccache.tar.xz
+              key: linux-artifact-${{ matrix.name }}-${{ steps.get-time.outputs.time }}
+              restore-keys: linux-artifact-${{ matrix.name }}-
+          - name: Unpack cache
+            run: cd ~ && [ -f ccache.tar.xz ] && tar xf ccache.tar.xz || true
+          - name: Checkout Repository
+            uses: actions/checkout@v6
+            with:
+                submodules: true
+          - name: Enable i386 packages
+            if: ${{ matrix.i386 }}
+            run: sudo dpkg --add-architecture i386
+          - name: Install Dependencies
+            run: |
+                sudo apt-get update
+                sudo apt-get install --no-install-recommends -y \
+                    build-essential \
+                    cmake ninja-build \
+                    ccache \
+                    ${{ matrix.packages }}
+          - name: Build
+            run: |
+                mkdir build
+                cd build
+                cmake .. -GNinja \
+                    -DCMAKE_BUILD_TYPE=Release \
+                    -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
+                    -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+                    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+                    ${{ matrix.flags }}
+                cmake --build .
+          - uses: actions/upload-artifact@v6
+            with:
+              name: Linux (${{ matrix.name }})
+              path: |
+                build/nbcraft
+                build/assets
+          - name: Pack cache
+            run: cd ~ && tar cJf ccache.tar.xz .cache/ccache
+
+    # flatpak:
+    #     strategy:
+    #         fail-fast: false
+    #         matrix:
+    #             include:
+    #               - name: x86_64 SDL 2 (OGL)
+    #                 gfx-api: OGL
+    #                 arch: x86_64
+    #                 runner: ubuntu-24.04
+    #               - name: x86_64 SDL 2 (OGL + Shaders)
+    #                 gfx-api: OGL_SHADERS
+    #                 arch: x86_64
+    #                 runner: ubuntu-24.04
+    #               - name: aarch64 SDL 2 (OGL)
+    #                 gfx-api: OGL
+    #                 arch: aarch64
+    #                 runner: ubuntu-24.04-arm
+    #               - name: aarch64 SDL 2 (OGL + Shaders)
+    #                 gfx-api: OGL_SHADERS
+    #                 arch: aarch64
+    #                 runner: ubuntu-24.04-arm
+    #     name: Flatpak (${{ matrix.name }})
+    #     runs-on: ${{ matrix.runner }}
+    #     steps:
+    #       - name: Get Time
+    #         id: get-time
+    #         run: echo "time=$(date -u '+%Y-%m-%d-%H:%M:%S')" >> $GITHUB_OUTPUT
+    #       - uses: actions/cache@v5
+    #         with:
+    #           path: ~/ccache.tar.xz
+    #           key: flatpak-artifact-${{ matrix.name }}-${{ steps.get-time.outputs.time }}
+    #           restore-keys: flatpak-artifact-${{ matrix.name }}-
+    #       - name: Unpack cache
+    #         run: cd ~ && [ -f ccache.tar.xz ] && tar xf ccache.tar.xz || true
+    #       - name: Checkout Repository
+    #         uses: actions/checkout@v6
+    #         with:
+    #             submodules: true
+    #       - name: Install Dependencies
+    #         run: |
+    #             sudo apt-get update
+    #             sudo apt-get install --no-install-recommends -y flatpak
+    #             flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+    #             flatpak --user install -y \
+    #                 org.freedesktop.Platform/${{ matrix.arch }}/25.08 \
+    #                 org.freedesktop.Sdk/${{ matrix.arch }}/25.08
+    #       - name: Build
+    #         run: ./platforms/linux/build-flatpak.sh
+    #         env:
+    #           NOSTRIP: 1
+    #           ARCH: ${{ matrix.arch }}
+    #           NBC_GFX_API: ${{ matrix.gfx }}
+    #       - uses: actions/upload-artifact@v6
+    #         with:
+    #           name: Flatpak (${{ matrix.name }})
+    #           path: platforms/linux/build-flatpak/ReMCPE-${{ matrix.arch }}.flatpak
+    #       - name: Pack cache
+    #         run: cd ~ && tar cJf ccache.tar.xz .cache/ccache
+
+    macos:
+        strategy:
+            fail-fast: false
+        name: macOS
+        runs-on: macos-15
+        steps:
+          - name: Checkout Repository
+            uses: actions/checkout@v6
+            with:
+                submodules: true
+          - name: Get Time
+            id: get-time
+            run: echo "time=$(date -u '+%Y-%m-%d-%H:%M:%S')" >> $GITHUB_OUTPUT
+          - uses: actions/cache@v5
+            with:
+              path: ~/ccache.tar.xz
+              key: macos-artifact-${{ steps.get-time.outputs.time }}
+              restore-keys: macos-artifact-
+          - name: Unpack cache
+            run: |
+              cd ~
+              [ -f ccache.tar.xz ] && tar xf ccache.tar.xz || true
+              [ -f workspacecache.tar ] && mv workspacecache.tar ${{ github.workspace }} || true
+          - name: Install Dependencies
+            run: |
+              brew install llvm@21 ccache gmp mpfr mpc
+              # current homebrew cmake segfaults when building the ppc binary
+              wget -O- https://github.com/Kitware/CMake/releases/download/v4.2.3/cmake-4.2.3-macos-universal.tar.gz | tar -xz
+          - name: Build
+            run: |
+              [ -f workspacecache.tar ] && tar xf workspacecache.tar || true
+              LLVM_CONFIG="$(brew --prefix)/opt/llvm@21/bin/llvm-config" \
+                  GMP="$(brew --prefix)" \
+                  MPFR="$(brew --prefix)" \
+                  MPC="$(brew --prefix)" \
+                  PATH="$PWD/cmake-4.2.3-macos-universal/CMake.app/Contents/bin:$PATH" \
+                  ./platforms/macos/build.sh
+              tar cf workspacecache.tar platforms/macos/build/work/toolchain platforms/macos/build/work/toolchain-ppc
+              mv workspacecache.tar ~
+            env:
+              NOSTRIP: 1
+          - uses: actions/upload-artifact@v6
+            with:
+              name: macOS
+              path: platforms/macos/build/ReMCPE
+          - name: Pack cache
+            run: cd ~ && tar cJf ccache.tar.xz Library/Caches/ccache workspacecache.tar
+
+    ios:
+        strategy:
+            fail-fast: false
+        name: iOS
+        runs-on: ubuntu-24.04
+        steps:
+          - name: Checkout Repository
+            uses: actions/checkout@v6
+            with:
+                submodules: true
+          - name: Get Time
+            id: get-time
+            run: echo "time=$(date -u '+%Y-%m-%d-%H:%M:%S')" >> $GITHUB_OUTPUT
+          - uses: actions/cache@v5
+            with:
+              path: ~/ccache.tar.xz
+              key: ios-artifact-${{ steps.get-time.outputs.time }}
+              restore-keys: ios-artifact-
+          - name: Unpack cache
+            run: |
+              cd ~
+              [ -f ccache.tar.xz ] && tar xf ccache.tar.xz || true
+              [ -f workspacecache.tar ] && mv workspacecache.tar ${{ github.workspace }} || true
+          - name: Install Dependencies
+            run: |
+                wget https://apt.llvm.org/llvm.sh
+                sudo bash llvm.sh 21
+                sudo apt-get update
+                sudo apt-get install --no-install-recommends -y \
+                    cmake \
+                    ccache \
+                    clang-21 \
+                    libplist-utils \
+                    libplist-dev \
+                    libssl-dev
+          - name: Build
+            run: |
+              [ -f workspacecache.tar ] && tar xf workspacecache.tar || true
+              ./platforms/ios/build.sh
+              tar cf workspacecache.tar platforms/ios/build/work/toolchain
+              mv workspacecache.tar ~
+            env:
+              CLANG: clang-21
+              AR: llvm-ar-21
+              RANLIB: llvm-ranlib-21
+              LLVM_CONFIG: llvm-config-21
+              NOSTRIP: 1
+          - uses: actions/upload-artifact@v6
+            with:
+              name: iOS
+              path: platforms/ios/build/ReMCPE.ipa
+          - name: Pack cache
+            run: cd ~ && tar cJf ccache.tar.xz .cache/ccache workspacecache.tar
+
+    android:
+        strategy:
+            fail-fast: false
+            matrix:
+                include: # TODO: switch to exclusively native android once it's fixed.
+                  # - name: Native
+                  #   directory: platforms/android/project
+                  - name: SDL 2
+                    directory: platforms/sdl/sdl2/android
+        name: Android (${{ matrix.name }})
+        runs-on: ubuntu-24.04
+        steps:
+          - name: Get Time
+            id: get-time
+            run: echo "time=$(date -u '+%Y-%m-%d-%H:%M:%S')" >> $GITHUB_OUTPUT
+          - uses: actions/cache@v5
+            with:
+              path: ~/ccache.tar.xz
+              key: android-artifact-${{ steps.get-time.outputs.time }}
+              restore-keys: android-artifact-
+          - name: Unpack cache
+            run: cd ~ && [ -f ccache.tar.xz ] && tar xf ccache.tar.xz || true
+          - name: Checkout Repository
+            uses: actions/checkout@v6
+            with:
+                submodules: true
+          - name: Setup JDK
+            uses: actions/setup-java@v4
+            with:
+                java-version: '17'
+                distribution: 'temurin'
+                cache: gradle
+          - name: Install Dependencies
+            run: sudo apt-get install --no-install-recommends -y ccache
+          - name: Build
+            run: |
+                cd ${{ matrix.directory }}
+                ./gradlew assembleRelease
+            env:
+                USE_CCACHE: 1
+                CCACHE_COMPILERCHECK: "%compiler% -v"
+          - uses: upup-company/apksigner-android@v1
+            id: sign_apk
+            env:
+              ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
+              BUILD_TOOLS_VERSION: 36.1.0
+            if: ${{ env.ANDROID_KEYSTORE }}
+            with:
+              releaseDirectory: ${{ matrix.directory }}/app/build/outputs/apk/release
+              signingKeyBase64: ${{ secrets.ANDROID_KEYSTORE }}
+              keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+              alias: remcpe
+          - name: Rename APK
+            env:
+              ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
+            if: ${{ env.ANDROID_KEYSTORE }}
+            run: mv ${{ steps.sign_apk.outputs.signedReleaseFile }} ReMCPE.apk
+          - name: Rename APK
+            env:
+              ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
+            if: ${{ !env.ANDROID_KEYSTORE }}
+            run: mv ${{ matrix.directory }}/app/build/outputs/apk/release/app-release-unsigned.apk ReMCPE.apk
+          - uses: actions/upload-artifact@v6
+            with:
+              name: Android (${{ matrix.name }})
+              path: ReMCPE.apk
+          - name: Pack cache
+            run: cd ~ && tar cJf ccache.tar.xz .cache/ccache
+
+    mingw:
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                  - name: Win32 (OGL)
+                    flags: '-DNBC_PLATFORM=windows -DNBC_GFX_API=OGL -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw-w64-toolchain.cmake'
+                  - name: Win32 (OGL + Shaders)
+                    flags: '-DNBC_PLATFORM=windows -DNBC_GFX_API=OGL_SHADERS -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw-w64-toolchain.cmake'
+                  - name: Win32 (OGL) 32-bit
+                    flags: '-DNBC_PLATFORM=windows -DNBC_GFX_API=OGL -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw-w64-toolchain-32bit.cmake'
+                  - name: Win32 (OGL + Shaders) 32-bit
+                    flags: '-DNBC_PLATFORM=windows -DNBC_GFX_API=OGL_SHADERS -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw-w64-toolchain-32bit.cmake'
+        name: MinGW-w64 (${{ matrix.name }})
+        runs-on: ubuntu-24.04
+        steps:
+          - name: Get Time
+            id: get-time
+            run: echo "time=$(date -u '+%Y-%m-%d-%H:%M:%S')" >> $GITHUB_OUTPUT
+          - uses: actions/cache@v5
+            with:
+              path: ~/ccache.tar.xz
+              key: mingw-artifact-${{ matrix.name }}-${{ steps.get-time.outputs.time }}
+              restore-keys: mingw-artifact-${{ matrix.name }}-
+          - name: Unpack cache
+            run: cd ~ && [ -f ccache.tar.xz ] && tar xf ccache.tar.xz || true
+          - name: Checkout Repository
+            uses: actions/checkout@v6
+            with:
+                submodules: true
+          - name: Install Dependencies
+            run: |
+                sudo apt-get update
+                sudo apt-get install --no-install-recommends -y \
+                    build-essential \
+                    cmake ninja-build \
+                    ccache \
+                    mingw-w64
+          - name: Build
+            run: |
+                mkdir build
+                cd build
+                cmake .. -GNinja \
+                    -DCMAKE_BUILD_TYPE=Release \
+                    -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
+                    -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+                    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+                    ${{ matrix.flags }}
+                cmake --build .
+          - uses: actions/upload-artifact@v6
+            with:
+              name: Windows (${{ matrix.name }})
+              path: |
+                build/nbcraft.exe
+                build/assets
+          - name: Pack cache
+            run: cd ~ && tar cJf ccache.tar.xz .cache/ccache
+
+    switch:
+        name: Nintendo Switch
+        runs-on: ubuntu-24.04
+        container:
+            image: devkitpro/devkita64@sha256:a52e05e06951c025fe23127252555e2f94d944458ff4f19028ba297e5ffc99fd
+        steps:
+          - name: Get Time
+            id: get-time
+            run: echo "time=$(date -u '+%Y-%m-%d-%H:%M:%S')" >> $GITHUB_OUTPUT
+          - uses: actions/cache@v5
+            with:
+              path: ~/ccache.tar.xz
+              key: switch-artifact-${{ steps.get-time.outputs.time }}
+              restore-keys: switch-artifact-
+          - name: Unpack cache
+            run: cd ~ && [ -f ccache.tar.xz ] && tar xf ccache.tar.xz || true
+          - name: Checkout Repository
+            uses: actions/checkout@v6
+            with:
+                submodules: true
+          - name: Install Dependencies
+            run: apt-get install --no-install-recommends -y ccache
+          - name: Build Switch binary
+            run: |
+                mkdir build
+                cd build
+                /opt/devkitpro/portlibs/switch/bin/aarch64-none-elf-cmake .. -GNinja \
+                    -DCMAKE_BUILD_TYPE=Release \
+                    -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
+                    -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+                    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+                /opt/devkitpro/portlibs/switch/bin/aarch64-none-elf-cmake --build .
+                mv platforms/sdl/sdl2/nbcraft.nro .
+          - uses: actions/upload-artifact@v6
+            with:
+              name: Nintendo Switch
+              path: |
+                build/nbcraft.nro
+                build/nbcraft.elf
+                build/assets
+          - name: Pack cache
+            run: cd ~ && tar cJf ccache.tar.xz .cache/ccache

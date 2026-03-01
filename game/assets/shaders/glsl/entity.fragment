@@ -1,26 +1,10 @@
 // __multiversion__
+#include "ShaderConstants.h"
+#include "entity.h"
+
 uniform sampler2D TEXTURE_0;
 uniform sampler2D TEXTURE_1;
 uniform vec4 TILE_LIGHT_COLOR;
-
-varying vec4 light;
-varying vec4 fogColor;
-
-#ifndef COLOR_BASED
-	varying vec2 uv;
-#endif
-#ifdef USE_OVERLAY
-	varying vec4 overlayColor;
-#endif
-
-#ifdef USE_COLOR_MASK
-	varying vec4 changeColor;
-#endif
-
-#ifdef GLINT
-	varying vec2 layer1UV;
-	varying vec2 layer2UV;
-#endif
 
 vec4 glintBlend(vec4 dest, vec4 source) {
 	// glBlendFuncSeparate(GL_SRC_COLOR, GL_ONE, GL_ONE, GL_ZERO)
@@ -67,6 +51,8 @@ void main()
 #ifdef USE_EMISSIVE
 	//make glowy stuff
 	color *= mix(vec4(1.0), light, color.a );
+#elif defined(USE_VERTEX_COLORS)
+    color *= vertexColor;
 #else
 	color *= light;
 #endif

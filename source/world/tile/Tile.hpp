@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "common/Random.hpp"
+#include "world/item/Tool.hpp"
 #include "world/phys/AABB.hpp"
 #include "world/level/storage/LevelSource.hpp"
 #include "world/level/Material.hpp"
@@ -19,6 +20,7 @@
 #include "world/level/levelgen/chunk/LevelChunk.hpp"
 #include "world/Facing.hpp"
 #include "world/level/TilePos.hpp"
+#include "world/level/TileEvent.hpp"
 #include "world/phys/Vec3.hpp"
 #include "world/phys/HitResult.hpp"
 
@@ -56,7 +58,10 @@ public: // virtual functions
 	virtual ~Tile();
 	virtual bool isCubeShaped() const;
 	virtual eRenderShape getRenderShape() const;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 	virtual Tile* setShape(float, float, float, float, float, float);
+#pragma GCC diagnostic pop
 	virtual void updateShape(const LevelSource*, const TilePos& pos);
 	virtual void updateDefaultShape();
 	virtual void addLights(Level*, const TilePos& pos);
@@ -108,7 +113,7 @@ public: // virtual functions
 	virtual std::string getName() const;
 	virtual std::string getDescriptionId() const;
 	virtual Tile* setDescriptionId(std::string const&);
-	virtual void triggerEvent(Level*, const TilePos& pos, int, int);
+	virtual void triggerEvent(Level*, const TileEvent& event);
 	virtual Tile* setSoundType(Tile::SoundType const&);
 	virtual Tile* setLightBlock(int);
 	virtual Tile* setLightEmission(float);
@@ -116,6 +121,9 @@ public: // virtual functions
 	virtual Tile* setDestroyTime(float);
 	virtual Tile* setTicking(bool);
 	virtual int getSpawnResourcesAuxValue(int) const;
+	Tile* setToolTypes(unsigned int toolMask);
+	Tile* setToolLevel(int toolLevel);
+	Tile* setToolTypesAndLevel(unsigned int toolMask, int toolLevel = 0);
 
 private:
 	void _init();
@@ -241,17 +249,22 @@ public: // static variables
 		* button,
 		* diode_off,
 		* diode_on;
+		* fence,
+		* craftingTable,
+		* crops;
 
 public:
 	int m_TextureFrame;
 	TileID m_ID;
 	AABB m_aabb;
 	const SoundType* m_pSound;
-	float field_28;
+	float m_gravity; // only affects particle gravity at the moment
 	Material* m_pMaterial;
 	float m_friction;
 	float m_hardness;
 	float m_blastResistance;
+	unsigned int m_toolMask;
+	int m_requiredToolLevel;
 	AABB m_aabbReturned;
 	std::string m_descriptionID;
 

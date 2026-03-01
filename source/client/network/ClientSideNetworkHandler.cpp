@@ -15,16 +15,18 @@
 #include "client/multiplayer/MultiplayerLocalPlayer.hpp"
 #include "network/MinecraftPackets.hpp"
 #include "world/entity/MobFactory.hpp"
+#include "world/entity/EntityFactory.hpp"
+#include "world/entity/PrimedTnt.hpp"
+#include "world/level/Explosion.hpp"
+#include "world/inventory/SimpleContainer.hpp"
 
 // This lets you make the client shut up and not log events in the debug console.
 //#define VERBOSE_CLIENT
 
 #if defined(ORIGINAL_CODE) || defined(VERBOSE_CLIENT)
 #define puts_ignorable(str) LOG_I(str)
-#define printf_ignorable(str, ...) LOG_I(str, __VA_ARGS__)
 #else
 #define puts_ignorable(str)
-#define printf_ignorable(str, ...)
 #endif
 
 ClientSideNetworkHandler::ClientSideNetworkHandler(Minecraft* pMinecraft, RakNetInstance* pRakNetInstance)
@@ -58,13 +60,15 @@ void ClientSideNetworkHandler::levelGenerated(Level* level)
 
 void ClientSideNetworkHandler::onConnect(const RakNet::RakNetGUID& rakGuid) // server guid
 {
-	RakNet::RakNetGUID localGuid = ((RakNet::RakPeer*)m_pServerPeer)->GetMyGUID(); // iOS 0.2.1 crashes right here after loading chunks
-	printf_ignorable("onConnect, server guid: %s, local guid: %s", rakGuid.ToString(), localGuid.ToString());
+#ifdef VERBOSE_CLIENT
+	RakNet::RakNetGUID localGuid = ((RakNet::RakPeer*)m_pServerPeer)->GetMyGUID();
+	LOG_I("onConnect, server guid: %s, local guid: %s", rakGuid.ToString(), localGuid.ToString());
+#endif
 
 	m_serverGUID = rakGuid;
 
 	clearChunksLoaded();
-	LoginPacket* pLoginPkt = new LoginPacket(m_pMinecraft->m_pUser->field_0, NETWORK_PROTOCOL_VERSION);
+	LoginPacket* pLoginPkt = new LoginPacket(m_pMinecraft->m_pUser->m_name, NETWORK_PROTOCOL_VERSION);
 	m_pRakNetInstance->send(pLoginPkt);
 }
 
@@ -105,6 +109,8 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, LoginSt
 	case LoginStatusPacket::STATUS_SERVER_OUTDATED:
 		m_pMinecraft->setScreen(new DisconnectionScreen("Could not connect: Outdated server!"));
 		break;
+	case LoginStatusPacket::STATUS_SUCCESS:
+		break;
 	}
 }
 
@@ -139,7 +145,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, StartGa
 
 	m_pLevel->m_bIsClientSide = true;
 
-	MultiplayerLocalPlayer *pLocalPlayer = new MultiplayerLocalPlayer(m_pMinecraft, m_pLevel, m_pMinecraft->m_pUser, settings.m_gameType, m_pLevel->m_pDimension->field_50);
+	MultiplayerLocalPlayer *pLocalPlayer = new MultiplayerLocalPlayer(m_pMinecraft, m_pLevel, m_pMinecraft->m_pUser, settings.m_gameType, m_pLevel->m_pDimension->m_id);
 	pLocalPlayer->m_guid = ((RakNet::RakPeer*)m_pServerPeer)->GetMyGUID();
 	pLocalPlayer->m_EntityID = pStartGamePkt->m_entityId;
 	
@@ -186,11 +192,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, AddPlay
 	else
 		pPlayer->m_pInventory->prepareSurvivalInventory();
 
-	ItemInstance* pItem = pPlayer->getSelectedItem();
-	if (pItem)
-	{
-		*pItem = ItemInstance(pAddPlayerPkt->m_itemId, pAddPlayerPkt->m_itemAuxValue, 63);
-	}
+	pPlayer->m_pInventory->setSelectedItem(ItemStack(pAddPlayerPkt->m_itemId, pAddPlayerPkt->m_itemAuxValue, 63));
 
 	m_pMinecraft->m_pGui->addMessage(pPlayer->m_name + " joined the game");
 }
@@ -227,6 +229,50 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, AddMobP
 	m_pLevel->addEntity(entity);
 }
 
+void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, AddEntityPacket* packet)
+{
+	puts_ignorable("AddEntityPacket");
+
+	if (!m_pLevel)
+	{
+		LOG_W("Trying to add an entity with no level!");
+		return;
+	}
+
+	EntityType::ID entityTypeId = (EntityType::ID)packet->m_entityTypeId;
+	if (entityTypeId == EntityType::UNKNOWN)
+	{
+		LOG_E("Trying to add an entity without a type id");
+		return;
+	}
+
+	Entity* entity = EntityFactory::CreateEntity(entityTypeId, m_pLevel);
+	if (!entity)
+	{
+		LOG_E("Server tried to add an unknown entity type! :%d", entityTypeId);
+		return;
+	}
+
+	entity->m_EntityID = packet->m_entityId;
+	entity->setPos(packet->m_pos);
+	
+	if (packet->m_auxValue > 0)
+	{
+		entity->setAuxValue(packet->m_auxValue);
+
+		entity->m_vel = packet->m_vel;
+	}
+
+	// @HACK 0.3.3 did this
+	if (entity->getDescriptor().isType(EntityType::PRIMED_TNT))
+	{
+		PrimedTnt& tnt = (PrimedTnt&)*entity;
+		tnt.m_fuseTimer = 1000;
+	}
+
+	m_pLevel->putEntity(packet->m_entityId, entity);
+}
+
 void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, RemoveEntityPacket* pRemoveEntityPkt)
 {
 	if (!m_pLevel) return;
@@ -243,15 +289,14 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, AddItem
 
 	if (!m_pLevel) return;
 
-	ItemInstance* pItemInstance = new ItemInstance(packet->m_itemId, packet->m_itemCount, packet->m_auxValue);
-	if (pItemInstance->isNull())
+	ItemStack itemStack(packet->m_itemId, packet->m_itemCount, packet->m_auxValue);
+	if (itemStack.isEmpty())
 	{
-		delete pItemInstance;
-		LOG_E("Received invalid or null ItemInstance from server!");
+		LOG_E("Received empty ItemStack from server!");
 		return;
 	}
 
-	ItemEntity* pItemEntity = new ItemEntity(m_pLevel, packet->m_pos, pItemInstance);
+	ItemEntity* pItemEntity = new ItemEntity(m_pLevel, packet->m_pos, itemStack);
 
 	pItemEntity->m_vel.x = packet->m_velX * (1.f / 128.f);
 	pItemEntity->m_vel.y = packet->m_velY * (1.f / 128.f);
@@ -279,12 +324,19 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, TakeIte
 
 	if (m_pMinecraft->m_pLocalPlayer->m_EntityID == pkt->m_sourceId)
 	{
-		if (pItemEntity->m_pItemInstance)
+		if (!pItemEntity->m_itemStack.isEmpty())
 		{
-			if (m_pMinecraft->m_pLocalPlayer->m_pInventory->addItem(*pItemEntity->m_pItemInstance))
+			if (m_pMinecraft->m_pLocalPlayer->m_pInventory->add(pItemEntity->m_itemStack))
 			{
 				m_pLevel->playSound(pItemEntity, "random.pop", 0.3f,
 					((Entity::sharedRandom.nextFloat() - Entity::sharedRandom.nextFloat()) * 0.7f + 1.0f) * 2.0f);
+			}
+			else
+			{
+				if (m_serverProtocolVersion >= 4)
+				{
+					m_pRakNetInstance->send(new DropItemPacket(pkt->m_sourceId, pItemEntity->m_itemStack));
+				}
 			}
 		}
 	}
@@ -413,12 +465,28 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, UpdateB
 	handleBlockUpdate(update);
 }
 
+void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, ExplodePacket* pkt)
+{
+	if (!m_pLevel) return;
+
+	Explosion explosion(m_pLevel, nullptr, pkt->m_pos, pkt->m_range);
+	explosion.addParticles(); // @TODO: have addParticles pick random spots to throw particles
+}
+
 void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, LevelEventPacket* pkt)
 {
 	//puts_ignorable("LevelEventPacket");
 	if (!m_pLevel) return;
 
-	m_pLevel->levelEvent(nullptr, pkt->m_eventId, pkt->m_pos, pkt->m_data);
+	m_pLevel->levelEvent(LevelEvent(pkt->m_eventId, pkt->m_pos, pkt->m_data));
+}
+
+void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, TileEventPacket* pkt)
+{
+	//puts_ignorable("TileEventPacket");
+	if (!m_pLevel) return;
+
+	m_pLevel->tileEvent(TileEvent(pkt->m_pos, pkt->m_b0, pkt->m_b1));
 }
 
 void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, EntityEventPacket* pkt)
@@ -480,7 +548,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, ChunkDa
 					m_pLevel->setTileNoUpdate(TilePos(x16 + (k & 0xF), yPos + i, z16 + (k >> 4)), tiles[i]);
 				}
 
-				int idx = ((k & 0xF) << 11) | ((k >> 4) << 7) + yPos;
+				int idx = ((k & 0xF) << 11) | (((k >> 4) << 7) + yPos);
 				memcpy(&pChunk->m_tileData.m_data[idx >> 1], datas, sizeof datas);
 			}
 
@@ -532,7 +600,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, PlayerE
 		return;
 	}
 
-	pPlayer->m_pInventory->selectItemById(pPlayerEquipmentPkt->m_itemID, C_MAX_HOTBAR_ITEMS);
+	pPlayer->m_pInventory->pickItem(pPlayerEquipmentPkt->m_itemID, pPlayerEquipmentPkt->m_itemAuxValue, C_MAX_HOTBAR_ITEMS);
 }
 
 void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, InteractPacket* pkt)
@@ -577,6 +645,16 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, SetEnti
 		return;
 
 	pEntity->getEntityData().assignValues(pkt->getUnpackedData());
+}
+
+void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, SetEntityMotionPacket* pkt)
+{
+	if (!m_pLevel) return;
+
+	Entity* pEntity = m_pLevel->getEntity(pkt->m_entityId);
+	if (!pEntity) return;
+
+	pEntity->m_vel = pkt->m_vel;
 }
 
 void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, SetHealthPacket* pkt)
@@ -636,9 +714,116 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, RespawnPac
 	NetEventCallback::handle(*m_pLevel, guid, packet);
 }
 
+void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ContainerOpenPacket* packet)
+{
+	if (!m_pMinecraft)
+		return;
+
+	LocalPlayer* pLocalPlayer = m_pMinecraft->m_pLocalPlayer;
+	if (!pLocalPlayer)
+		return;
+
+	switch (packet->m_type)
+	{
+	case Container::CONTAINER:
+		pLocalPlayer->openContainer(new SimpleContainer(packet->m_size, packet->m_title.C_String()));
+		break;
+	case Container::FURNACE:
+		//pLocalPlayer->openFurnace(new FurnaceTileEntity());
+		break;
+	case Container::DISPENSER:
+		//pLocalPlayer->openTrap(new DispenserTileEntity());
+		break;
+	case Container::CRAFTING:
+		pLocalPlayer->startCrafting(pLocalPlayer->m_pos);
+		break;
+	default:
+		return;
+	}
+
+	pLocalPlayer->m_pContainerMenu->m_containerId = packet->m_containerId;
+}
+
+void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ContainerClosePacket* packet)
+{
+	puts_ignorable("ContainerClosePacket");
+
+	if (!m_pMinecraft)
+		return;
+
+	LocalPlayer* pLocalPlayer = m_pMinecraft->m_pLocalPlayer;
+	if (!pLocalPlayer)
+		return;
+
+	pLocalPlayer->closeContainer();
+}
+
+void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ContainerSetSlotPacket* packet)
+{
+	puts_ignorable("ContainerSetSlotPacket");
+
+	if (!m_pMinecraft)
+		return;
+
+	LocalPlayer* pLocalPlayer = m_pMinecraft->m_pLocalPlayer;
+	if (!pLocalPlayer)
+		return;
+
+	ContainerMenu* pContainerMenu = pLocalPlayer->m_pContainerMenu;
+	if (!pContainerMenu)
+		return;
+
+	if (pContainerMenu->m_containerId != packet->m_containerId)
+		return;
+	
+	pContainerMenu->setItem(packet->m_slot, packet->m_item);
+}
+
+void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ContainerSetDataPacket* packet)
+{
+	puts_ignorable("ContainerSetDataPacket");
+
+	if (!m_pMinecraft)
+		return;
+
+	LocalPlayer* pLocalPlayer = m_pMinecraft->m_pLocalPlayer;
+	if (!pLocalPlayer)
+		return;
+
+	ContainerMenu* pContainerMenu = pLocalPlayer->m_pContainerMenu;
+	if (!pContainerMenu)
+		return;
+
+	if (pContainerMenu->m_containerId != packet->m_containerId)
+		return;
+
+	pContainerMenu->setData(packet->m_slot, packet->m_value);
+}
+
+void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ContainerSetContentPacket* packet)
+{
+	puts_ignorable("ContainerSetContentPacket");
+
+	if (!m_pMinecraft)
+		return;
+
+	LocalPlayer* pLocalPlayer = m_pMinecraft->m_pLocalPlayer;
+	if (!pLocalPlayer)
+		return;
+
+	ContainerMenu* pContainerMenu = pLocalPlayer->m_pContainerMenu;
+	if (!pContainerMenu)
+		return;
+
+	if (pContainerMenu->m_containerId != packet->m_containerId)
+		return;
+
+	pContainerMenu->setAll(packet->m_items);
+}
+
 void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, LevelDataPacket* packet)
 {
-	if (!m_pLevel) return;
+	/*if (!m_pLevel) return;
 
 	const int uncompMagic = 12847812, compMagic = 58712758, chunkSepMagic = 284787658;
 	RakNet::BitStream* bs = &packet->m_data, bs2;
@@ -655,7 +840,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, LevelDataP
 	if (magicNum == compMagic)
 	{
 		// Decompress it before we handle it.
-		int uncompSize = 0, compSize = 0;
+		uint32_t uncompSize = 0, compSize = 0;
 		bs->Read(uncompSize);
 		bs->Read(compSize);
 
@@ -688,7 +873,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, LevelDataP
 		bs->Read(magicNum);
 	}
 
-	int chunksX = 0, chunksZ = 0;
+	uint32_t chunksX = 0, chunksZ = 0;
 	bs->Read(chunksX);
 	bs->Read(chunksZ);
 
@@ -714,7 +899,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, LevelDataP
 			uint8_t ptype = 0;
 
 			// read the data size. This'll let us know how much to read.
-			int dataSize = 0;
+			uint32_t dataSize = 0;
 			bs->Read(dataSize);
 
 			LevelChunk* pChunk = m_pLevel->getChunk(cp);
@@ -747,12 +932,12 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, LevelDataP
 
 	// All chunks are loaded. Also flush all the updates we've buffered.
 	m_chunksRequested = C_MAX_CHUNKS;
-	flushAllBufferedUpdates();
+	flushAllBufferedUpdates();*/
 }
 
 bool ClientSideNetworkHandler::areAllChunksLoaded()
 {
-	return m_chunksRequested > C_MAX_CHUNKS;
+	return m_chunksRequested >= C_MAX_CHUNKS;
 }
 
 bool ClientSideNetworkHandler::isChunkLoaded(const ChunkPos& cp)
@@ -831,7 +1016,7 @@ void ClientSideNetworkHandler::requestNextChunk()
 
 void ClientSideNetworkHandler::flushAllBufferedUpdates()
 {
-	for (int i = 0; i < int(m_bufferedBlockUpdates.size()); i++)
+	for (size_t i = 0; i < m_bufferedBlockUpdates.size(); i++)
 	{
 		handleBlockUpdate(m_bufferedBlockUpdates[i]);
 	}

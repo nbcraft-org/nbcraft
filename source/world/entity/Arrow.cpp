@@ -237,12 +237,11 @@ void Arrow::playerTouch(Player* pPlayer)
 {
     if (!m_pLevel->m_bIsClientSide)
     {
-        // had m_owner == pPlayer, but this logic breaks when loaded from a save, and m_owner is null
+        // had m_pPlayer == pPlayer, but this logic breaks when loaded from a save, and m_pPlayer is null
         if (m_bInGround && m_bIsPlayerOwned && m_shakeTime <= 0)
         {
-            ItemInstance arrow(Item::arrow, 1);
-            // they use ->add here in b1.2_02
-            if (pPlayer->m_pInventory->addItem(arrow))
+            ItemStack arrow(Item::arrow, 1);
+            if (pPlayer->m_pInventory->add(arrow))
             {
                 m_pLevel->playSound(this, "random.pop", 0.2f, ((sharedRandom.nextFloat() - sharedRandom.nextFloat()) * 0.7f + 1.0f) * 2.0f);
                 pPlayer->take(this, 1);
@@ -274,4 +273,16 @@ void Arrow::readAdditionalSaveData(const CompoundTag& tag)
     m_shakeTime = tag.getInt8("shake") & 255;
     m_bInGround = tag.getBoolean("inGround");
     m_bIsPlayerOwned = tag.getBoolean("player");
+}
+
+Entity::AuxValue Arrow::getAuxValue() const
+{
+    return m_owner ? m_owner->m_EntityID : 0;
+}
+
+void Arrow::setAuxValue(Entity::AuxValue value)
+{
+    Entity* pOwner = m_pLevel->getEntity(value);
+    if (pOwner && pOwner->isMob())
+        m_owner = (Mob*)pOwner;
 }

@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.16.0)
-project(reminecraftpe-core)
+project(nbcraft-core)
 
 # Build
-add_library(reminecraftpe-core STATIC
-    common/CThread.cpp
+add_library(nbcraft-core STATIC
+    common/threading/CThread.cpp
+    common/threading/AsyncTask.cpp
     common/DataIO.cpp
     common/Logger.cpp
     common/math/Color.cpp
@@ -21,6 +22,16 @@ add_library(reminecraftpe-core STATIC
     client/app/AppPlatformListener.cpp
     client/app/Minecraft.cpp
     client/app/NinecraftApp.cpp
+    client/resources/AppResourceLoader.cpp
+    client/resources/Resource.cpp
+    client/resources/ResourceLoader.cpp
+    client/resources/ResourceLocation.cpp
+    client/resources/ResourcePack.cpp
+    client/resources/ResourcePackManager.cpp
+    client/resources/ResourcePackManifest.cpp
+    client/resources/ResourcePackRepository.cpp
+    client/resources/SplashManager.cpp
+    client/resources/LoadingTipManager.cpp
     client/options/Options.cpp
     client/renderer/LevelRenderer.cpp
     client/renderer/Culler.cpp
@@ -47,8 +58,11 @@ add_library(reminecraftpe-core STATIC
 	client/renderer/entity/SlimeRenderer.cpp
     client/renderer/renderer/EntityShaderManager.cpp
     client/renderer/renderer/RenderMaterialGroup.cpp
+    client/renderer/renderer/ShaderGroup.cpp
+    client/renderer/renderer/Tesselator.cpp
     client/renderer/texture/ImageData.cpp
     client/renderer/texture/TextureData.cpp
+    client/renderer/texture/TextureAtlas.cpp
     client/renderer/RenderList.cpp
     client/renderer/ScreenRenderer.cpp
     client/renderer/Chunk.cpp
@@ -63,7 +77,6 @@ add_library(reminecraftpe-core STATIC
     client/renderer/Fog.cpp
     client/renderer/Font.cpp
     client/renderer/WaterSideTexture.cpp
-    client/renderer/Tesselator.cpp
     client/renderer/TileRenderer.cpp
     client/renderer/LightLayer.cpp
     client/renderer/Lighting.cpp
@@ -74,6 +87,7 @@ add_library(reminecraftpe-core STATIC
     client/renderer/FireTexture.cpp
     client/renderer/FoliageColor.cpp
     client/renderer/GrassColor.cpp
+    client/renderer/LogoRenderer.cpp
     client/sound/SoundData.cpp
     client/sound/SoundPathRepository.cpp
     client/sound/SoundStream.cpp
@@ -81,13 +95,20 @@ add_library(reminecraftpe-core STATIC
     client/sound/SoundRepository.cpp
     client/sound/SoundEngine.cpp
     client/gui/Screen.cpp
+    client/gui/ScreenChooser.cpp
+    client/gui/ScreenChooser_Console.cpp
+    client/gui/screens/CreditsScreen.cpp
     client/gui/screens/OptionsScreen.cpp
+    client/gui/screens/OptionsScreen_Console.cpp
     client/gui/screens/StartMenuScreen.cpp
+    client/gui/screens/StartMenuScreen_Console.cpp
     client/gui/screens/ConvertWorldScreen.cpp
     client/gui/screens/CreateWorldScreen.cpp
+    client/gui/screens/CreateWorldScreen_Console.cpp
     client/gui/screens/DirectConnectScreen.cpp
     client/gui/screens/DisconnectionScreen.cpp
     client/gui/screens/SelectWorldScreen.cpp
+    client/gui/screens/SelectWorldScreen_Console.cpp
     client/gui/screens/SavingWorldScreen.cpp
     client/gui/screens/InvalidLicenseScreen.cpp
     client/gui/screens/ConfirmScreen.cpp
@@ -96,21 +117,38 @@ add_library(reminecraftpe-core STATIC
     client/gui/screens/ChatScreen.cpp
     client/gui/screens/RenameMPLevelScreen.cpp
     client/gui/screens/ProgressScreen.cpp
+    client/gui/screens/ProgressScreen_Console.cpp
     client/gui/screens/JoinGameScreen.cpp
     client/gui/screens/IngameBlockSelectionScreen.cpp
     client/gui/screens/PauseScreen.cpp
+    client/gui/screens/PauseScreen_Console.cpp
     client/gui/screens/DeathScreen.cpp
+    client/gui/screens/PanelScreen_Console.cpp
+    client/gui/screens/inventory/ContainerScreen.cpp
+    client/gui/screens/inventory/InventoryScreen.cpp
+    client/gui/screens/inventory/CraftingScreen.cpp
+    client/gui/screens/inventory/ClassicCraftingScreen_Console.cpp
+    client/gui/screens/inventory/ChestScreen.cpp
     client/gui/components/ScrolledSelectionList.cpp
     client/gui/components/AvailableGamesList.cpp
     client/gui/components/RolledSelectionList.cpp
     client/gui/components/Button.cpp
-    client/gui/components/TextInputBox.cpp
+    client/gui/components/TextBox.cpp
     client/gui/components/SmallButton.cpp
+    client/gui/components/SliderButton.cpp
+    client/gui/components/SwitchButton.cpp
+    client/gui/components/SwitchValuesButton.cpp
+    client/gui/components/TickBox.cpp
     client/gui/components/WorldSelectionList.cpp
     client/gui/components/OptionList.cpp
+    client/gui/components/ScrollRenderer_Console.cpp
+    client/locale/Language.cpp
     client/gui/Gui.cpp
     client/gui/GuiComponent.cpp
     client/gui/GuiElement.cpp
+    client/gui/MenuPointer.cpp
+    client/gui/VerticalLayout.cpp
+    client/gui/AreaNavigation.cpp
     client/model/geom/PolygonQuad.cpp
     client/model/geom/Cube.cpp
     client/model/geom/ModelPart.cpp
@@ -131,7 +169,6 @@ add_library(reminecraftpe-core STATIC
 	client/model/models/SlimeModel.cpp
     client/multiplayer/MultiPlayerLevel.cpp
     client/multiplayer/MultiplayerLocalPlayer.cpp
-    client/player/input/Controller.cpp
     client/player/input/ControllerBuildInput.cpp
     client/player/input/ControllerMoveInput.cpp
     client/player/input/ControllerTurnInput.cpp
@@ -140,6 +177,9 @@ add_library(reminecraftpe-core STATIC
     client/player/input/MouseBuildInput.cpp
     client/player/input/MouseTurnInput.cpp
     client/player/input/KeyboardInput.cpp
+    client/player/input/GameController.cpp
+    client/player/input/GameControllerHandler.cpp
+    client/player/input/GameControllerManager.cpp
     client/player/input/ITurnInput.cpp
     client/player/input/IBuildInput.cpp
     client/player/input/IncludeExcludeArea.cpp
@@ -173,35 +213,48 @@ add_library(reminecraftpe-core STATIC
     nbt/NbtIo.cpp
     nbt/StringTag.cpp
     nbt/Tag.cpp
-    network/packets/UpdateBlockPacket.cpp
-    network/packets/RequestChunkPacket.cpp
-    network/packets/PlayerEquipmentPacket.cpp
-    network/packets/InteractPacket.cpp
-    network/packets/UseItemPacket.cpp
-    network/packets/SetEntityDataPacket.cpp
-    network/packets/SetHealthPacket.cpp
-    network/packets/ChunkDataPacket.cpp
-    network/packets/LevelDataPacket.cpp
-    network/packets/PlaceBlockPacket.cpp
     network/packets/LoginPacket.cpp
     network/packets/LoginStatusPacket.cpp
     network/packets/ReadyPacket.cpp
+    network/packets/MessagePacket.cpp
     network/packets/SetTimePacket.cpp
     network/packets/StartGamePacket.cpp
+    network/packets/AddMobPacket.cpp
+    network/packets/AddPlayerPacket.cpp
+    network/packets/AddEntityPacket.cpp
     network/packets/RemoveEntityPacket.cpp
     network/packets/AddItemEntityPacket.cpp
     network/packets/TakeItemEntityPacket.cpp
-    network/packets/AddPlayerPacket.cpp
-    network/packets/AddMobPacket.cpp
-    network/packets/RemoveBlockPacket.cpp
-    network/packets/MovePlayerPacket.cpp
     network/packets/MoveEntityPacket.cpp
     network/packets/MoveEntityPacket_PosRot.cpp
+    network/packets/MovePlayerPacket.cpp
+    network/packets/PlaceBlockPacket.cpp
+    network/packets/RemoveBlockPacket.cpp
+    network/packets/UpdateBlockPacket.cpp
+    network/packets/ExplodePacket.cpp
     network/packets/LevelEventPacket.cpp
+    network/packets/TileEventPacket.cpp
     network/packets/EntityEventPacket.cpp
-    network/packets/MessagePacket.cpp
+    network/packets/RequestChunkPacket.cpp
+    network/packets/ChunkDataPacket.cpp
+    network/packets/PlayerEquipmentPacket.cpp
+    network/packets/InteractPacket.cpp
+    network/packets/UseItemPacket.cpp
+    network/packets/PlayerActionPacket.cpp
+    network/packets/SetEntityDataPacket.cpp
+    network/packets/SetEntityMotionPacket.cpp
+    network/packets/SetHealthPacket.cpp
     network/packets/AnimatePacket.cpp
     network/packets/RespawnPacket.cpp
+    network/packets/SendInventoryPacket.cpp
+    network/packets/DropItemPacket.cpp
+    network/packets/ContainerOpenPacket.cpp
+    network/packets/ContainerClosePacket.cpp
+    network/packets/ContainerSetSlotPacket.cpp
+    network/packets/ContainerSetDataPacket.cpp
+    network/packets/ContainerSetContentPacket.cpp
+    network/packets/ContainerAckPacket.cpp
+    network/packets/LevelDataPacket.cpp
     network/RakIO.cpp
     network/RakNetInstance.cpp
     network/MinecraftPackets.cpp
@@ -240,6 +293,7 @@ add_library(reminecraftpe-core STATIC
     world/entity/Monster.cpp
     world/entity/Rocket.cpp
     world/entity/EntityFactory.cpp
+    world/entity/MobSpawner.cpp
     world/entity/MobFactory.cpp
     world/entity/Chicken.cpp
     world/entity/Cow.cpp
@@ -280,6 +334,7 @@ add_library(reminecraftpe-core STATIC
     world/level/path/BinaryHeap.cpp
     world/level/levelgen/feature/BirchFeature.cpp
     world/level/levelgen/feature/LargeFeature.cpp
+    world/level/levelgen/feature/FancyTreeFeature.cpp
     world/level/levelgen/feature/Feature.cpp
     world/level/levelgen/feature/LargeCaveFeature.cpp
     world/level/levelgen/feature/SpringFeature.cpp
@@ -310,12 +365,39 @@ add_library(reminecraftpe-core STATIC
     world/item/CameraItem.cpp
     world/item/TileItem.cpp
     world/item/Inventory.cpp
+    world/item/crafting/Recipes.cpp
+    world/item/crafting/FurnaceRecipes.cpp
+    world/item/crafting/SingleInputRecipe.cpp
+    world/item/crafting/ShapedRecipe.cpp
+    world/item/crafting/ShapelessRecipe.cpp
+    world/ContainerListener.cpp
+    world/inventory/ContainerMenu.cpp
+    world/inventory/InventoryMenu.cpp
+    world/inventory/CraftingMenu.cpp
+    world/inventory/ChestMenu.cpp
+    world/inventory/Slot.cpp
+    world/inventory/ResultSlot.cpp
+    world/inventory/ArmorSlot.cpp
+    world/inventory/CraftingContainer.cpp
+    world/inventory/ResultContainer.cpp
+    world/inventory/SimpleContainer.cpp
+    world/CompoundContainer.cpp
     world/item/DoorItem.cpp
-    world/item/ItemInstance.cpp
+    world/item/ItemStack.cpp
     world/item/RocketItem.cpp
     world/item/Item.cpp
+    world/item/FoodItem.cpp
+    world/item/SeedItem.cpp
+    world/item/ArmorItem.cpp
+    world/item/HoeItem.cpp
+    world/item/DyePowderItem.cpp
+    world/item/CoalItem.cpp
+    world/item/ToolItem.cpp
+    world/item/WeaponItem.cpp
+    world/item/BowItem.cpp
     world/item/AuxTileItem.cpp
     world/item/ClothItem.cpp
+    world/item/DyeColor.cpp
     world/item/SlabItem.cpp
 	world/item/RedStoneItem.cpp
 	world/item/SnowballItem.cpp
@@ -368,6 +450,7 @@ add_library(reminecraftpe-core STATIC
     world/tile/ObsidianTile.cpp
     world/tile/FarmTile.cpp
     world/tile/DoorTile.cpp
+    world/tile/CropsTile.cpp
     world/tile/RocketLauncherTile.cpp
     world/tile/CactusTile.cpp
     world/tile/TallGrass.cpp
@@ -384,6 +467,7 @@ add_library(reminecraftpe-core STATIC
 	world/tile/ButtonTile.cpp
 	world/tile/DiodeTile.cpp
 	world/tile/SnowTile.cpp
+    world/tile/CraftingTableTile.cpp
     renderer/GL/GL.cpp
     renderer/Attribute.cpp
     renderer/ConstantBufferMetaData.cpp
@@ -401,12 +485,12 @@ add_library(reminecraftpe-core STATIC
     renderer/RenderContextImmediate.cpp
     renderer/RenderMaterial.cpp
     renderer/ShaderConstants.cpp
-    renderer/ShaderGroup.cpp
     renderer/ShaderGroupBase.cpp
     renderer/StencilRefObject.cpp
     renderer/TextureGroup.cpp
     renderer/TexturePtr.cpp
     renderer/UniformMetaData.cpp
+    renderer/VertexFieldFormat.cpp
     renderer/VertexFormat.cpp
     renderer/WeatherConstants.cpp
     renderer/WorldConstants.cpp
@@ -418,6 +502,7 @@ add_library(reminecraftpe-core STATIC
     renderer/hal/RasterizerStateDescription.cpp
     renderer/hal/StencilFaceDescription.cpp
     renderer/hal/TextureDescription.cpp
+    renderer/hal/ViewportOrigin.cpp
     renderer/hal/base/BlendStateBase.cpp
     renderer/hal/base/BufferBase.cpp
     renderer/hal/base/ConstantBufferBase.cpp
@@ -447,11 +532,11 @@ add_library(reminecraftpe-core STATIC
     renderer/hal/enums/ShaderStagesBits_JsonParser.cpp
     renderer/hal/enums/StencilOp_JsonParser.cpp
     renderer/hal/enums/TextureFiltering_JsonParser.cpp
+    renderer/hal/enums/VertexField.cpp
     renderer/hal/enums/VertexField_JsonParser.cpp
-    renderer/hal/helpers/ErrorHandler.cpp
     renderer/hal/helpers/TextureHelper.cpp
-	renderer/hal/null/FixedPipelineStateNull.cpp
-	renderer/hal/null/FogStateNull.cpp
+    renderer/hal/null/FixedPipelineStateNull.cpp
+    renderer/hal/null/FogStateNull.cpp
     renderer/hal/interface/BlendState.cpp
     renderer/hal/interface/Buffer.cpp
     renderer/hal/interface/ConstantBuffer.cpp
@@ -468,70 +553,96 @@ add_library(reminecraftpe-core STATIC
     renderer/hal/interface/ShaderProgram.cpp
     renderer/hal/interface/Texture.cpp
 )
-target_include_directories(reminecraftpe-core PUBLIC . ..)
+target_include_directories(nbcraft-core PUBLIC . ..)
 
-if(NOT DEFINED REMCPE_GFX_API)
-	message(STATUS "No GFX API specified, defaulting to OGL...")
-	set(REMCPE_GFX_API "OGL" CACHE STRING "HAL GFX API")
+# OGL Shader variant build hack
+if(NBC_GFX_API STREQUAL "OGL_SHADERS")
+    target_compile_definitions(nbcraft-core PUBLIC FEATURE_GFX_SHADERS)
+    unset(NBC_GFX_API CACHE)
+    set(NBC_GFX_API "OGL" CACHE STRING "HAL GFX API")
 endif()
 
-message(STATUS "Selected GFX API: ${REMCPE_GFX_API}")
-
-if(REMCPE_GFX_API STREQUAL "OGL")
-    target_compile_options(reminecraftpe-core PRIVATE -DMCE_GFX_API_OGL=1)
-	target_sources(reminecraftpe-core PRIVATE
-		renderer/hal/ogl/API_OGL.cpp
-		renderer/hal/ogl/BlendStateOGL.cpp
-		renderer/hal/ogl/BufferOGL.cpp
-		renderer/hal/ogl/ConstantBufferContainerOGL.cpp
-		renderer/hal/ogl/DepthStencilStateOGL.cpp
-		renderer/hal/ogl/FixedPipelineStateOGL.cpp
-		renderer/hal/ogl/FogStateOGL.cpp
-		renderer/hal/ogl/GPUEventsOGL.cpp
-		renderer/hal/ogl/ImmediateBufferOGL.cpp
-		renderer/hal/ogl/ProfileSectionOGL.cpp
-		renderer/hal/ogl/RasterizerStateOGL.cpp
-		renderer/hal/ogl/RenderContextOGL.cpp
-		renderer/hal/ogl/RenderDeviceOGL.cpp
-		renderer/hal/ogl/ResourceOGL.cpp
-		renderer/hal/ogl/ShaderConstantOGL.cpp
-		renderer/hal/ogl/ShaderConstantWithDataOGL.cpp
-		renderer/hal/ogl/ShaderOGL.cpp
-		renderer/hal/ogl/ShaderProgramOGL.cpp
-		renderer/hal/ogl/ShaderResourceOGL.cpp
-		renderer/hal/ogl/ShaderUniformOGL.cpp
-		renderer/hal/ogl/TextureOGL.cpp
-		renderer/platform/ogl/Extensions.cpp
-		renderer/platform/ogl/ShaderPrecision.cpp
-	)
-elseif((NOT DEFINED REMCPE_GFX_API) OR (REMCPE_GFX_API STREQUAL "Null"))
-    target_compile_options(reminecraftpe-core PRIVATE -DMCE_GFX_API_NULL=1)
-	target_sources(reminecraftpe-core PRIVATE
-		renderer/hal/null/BlendStateNull.cpp
-		renderer/hal/null/BufferNull.cpp
-		renderer/hal/null/ConstantBufferContainerNull.cpp
-		renderer/hal/null/DepthStencilStateNull.cpp
-		renderer/hal/null/ImmediateBufferNull.cpp
-		renderer/hal/null/RasterizerStateNull.cpp
-		renderer/hal/null/RenderContextNull.cpp
-		renderer/hal/null/RenderDeviceNull.cpp
-		renderer/hal/null/ShaderConstantNull.cpp
-		renderer/hal/null/ShaderConstantWithDataNull.cpp
-		renderer/hal/null/ShaderNull.cpp
-		renderer/hal/null/ShaderProgramNull.cpp
-		renderer/hal/null/TextureNull.cpp
-	)
+if(NBC_GFX_API STREQUAL "OGL")
+    target_compile_definitions(nbcraft-core PUBLIC MCE_GFX_API_OGL=1)
+    target_sources(nbcraft-core PRIVATE
+        renderer/hal/ogl/API_OGL.cpp
+        renderer/hal/ogl/BlendStateOGL.cpp
+        renderer/hal/ogl/BufferOGL.cpp
+        renderer/hal/ogl/ConstantBufferContainerOGL.cpp
+        renderer/hal/ogl/DepthStencilStateOGL.cpp
+        renderer/hal/ogl/FixedPipelineStateOGL.cpp
+        renderer/hal/ogl/FogStateOGL.cpp
+        renderer/hal/ogl/GPUEventsOGL.cpp
+        renderer/hal/ogl/ImmediateBufferOGL.cpp
+        renderer/hal/ogl/ProfileSectionOGL.cpp
+        renderer/hal/ogl/RasterizerStateOGL.cpp
+        renderer/hal/ogl/RenderContextOGL.cpp
+        renderer/hal/ogl/RenderDeviceOGL.cpp
+        renderer/hal/ogl/ResourceOGL.cpp
+        renderer/hal/ogl/ShaderConstantOGL.cpp
+        renderer/hal/ogl/ShaderConstantWithDataOGL.cpp
+        renderer/hal/ogl/ShaderOGL.cpp
+        renderer/hal/ogl/ShaderProgramOGL.cpp
+        renderer/hal/ogl/ShaderResourceOGL.cpp
+        renderer/hal/ogl/ShaderUniformOGL.cpp
+        renderer/hal/ogl/TextureOGL.cpp
+        renderer/hal/ogl/helpers/ErrorHandlerOGL.cpp
+        renderer/platform/ogl/Extensions.cpp
+        renderer/platform/ogl/ShaderPrecision.cpp
+    )
+elseif(NBC_GFX_API STREQUAL "D3D11")
+    target_compile_definitions(nbcraft-core PUBLIC MCE_GFX_API_D3D11=1 FEATURE_GFX_SHADERS)
+    target_sources(nbcraft-core PRIVATE
+        renderer/hal/d3d11/API_D3D11.cpp
+        renderer/hal/d3d11/BlendStateD3D11.cpp
+        renderer/hal/d3d11/BufferD3D11.cpp
+        renderer/hal/d3d11/ConstantBufferContainerD3D11.cpp
+        renderer/hal/d3d11/DepthStencilStateD3D11.cpp
+        renderer/hal/d3d11/GPUEventsD3D11.cpp
+        renderer/hal/d3d11/ImmediateBufferD3D11.cpp
+        renderer/hal/d3d11/ProfileSectionD3D11.cpp
+        renderer/hal/d3d11/RasterizerStateD3D11.cpp
+        renderer/hal/d3d11/RenderContextD3D11.cpp
+        renderer/hal/d3d11/RenderDeviceD3D11.cpp
+        renderer/hal/d3d11/ShaderConstantD3D11.cpp
+        renderer/hal/d3d11/ShaderConstantWithDataD3D11.cpp
+        renderer/hal/d3d11/ShaderD3D11.cpp
+        renderer/hal/d3d11/ShaderProgramD3D11.cpp
+        renderer/hal/d3d11/ShaderResourceD3D11.cpp
+        renderer/hal/d3d11/TextureD3D11.cpp
+        renderer/hal/d3d11/helpers/TextureHelperD3D11.cpp
+        renderer/hal/dxgi/API_DXGI.cpp
+        renderer/hal/dxgi/helpers/ErrorHandlerDXGI.cpp
+        renderer/hal/dxgi/helpers/TextureHelperDXGI.cpp
+    )
+elseif((NOT DEFINED NBC_GFX_API) OR (NBC_GFX_API STREQUAL "Null"))
+    target_compile_definitions(nbcraft-core PUBLIC MCE_GFX_API_NULL=1)
+    target_sources(nbcraft-core PRIVATE
+        renderer/hal/null/BlendStateNull.cpp
+        renderer/hal/null/BufferNull.cpp
+        renderer/hal/null/ConstantBufferContainerNull.cpp
+        renderer/hal/null/DepthStencilStateNull.cpp
+        renderer/hal/null/ImmediateBufferNull.cpp
+        renderer/hal/null/RasterizerStateNull.cpp
+        renderer/hal/null/RenderContextNull.cpp
+        renderer/hal/null/RenderDeviceNull.cpp
+        renderer/hal/null/ShaderConstantNull.cpp
+        renderer/hal/null/ShaderConstantWithDataNull.cpp
+        renderer/hal/null/ShaderNull.cpp
+        renderer/hal/null/ShaderProgramNull.cpp
+        renderer/hal/null/TextureNull.cpp
+    )
 else()
-	message(FATAL_ERROR "An unknown or unsupported GFX API was specified: ${REMCPE_GFX_API}")
+    message(FATAL_ERROR "An unknown or unsupported GFX API was specified: ${NBC_GFX_API}")
 endif()
 
 # RakNet
 add_subdirectory(../thirdparty/raknet raknet)
-target_link_libraries(reminecraftpe-core PUBLIC raknet)
+target_link_libraries(nbcraft-core PUBLIC raknet)
 
 # zlib
 add_library(zlib-interface INTERFACE)
-if(MCPE_WIN32)
+if(NBC_WIN32 OR XENON) # @TODO: libXenon has zlib included, how do we get to it?
     # Compile Vendored ZLib
     add_subdirectory(../thirdparty/zlib zlib)
     target_link_libraries(zlib-interface INTERFACE zlib)
@@ -545,7 +656,7 @@ else()
     find_package(ZLIB REQUIRED)
     target_link_libraries(zlib-interface INTERFACE ZLIB::ZLIB)
 endif()
-target_link_libraries(reminecraftpe-core PUBLIC zlib-interface)
+target_link_libraries(nbcraft-core PUBLIC zlib-interface)
 
 # OGG Support
-target_link_libraries(reminecraftpe-core PUBLIC stb_vorbis)
+target_link_libraries(nbcraft-core PUBLIC stb_vorbis)

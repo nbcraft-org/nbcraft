@@ -15,7 +15,9 @@
 #include "network/RakNetInstance.hpp"
 #include "network/packets/EntityEventPacket.hpp"
 #include "network/packets/SetEntityDataPacket.hpp"
+#include "network/packets/ExplodePacket.hpp"
 #include "world/level/levelgen/chunk/ChunkCache.hpp"
+#include "world/entity/MobSpawner.hpp"
 
 #include "Explosion.hpp"
 #include "Region.hpp"
@@ -62,6 +64,7 @@ Level::Level(LevelStorage* pStor, const std::string& name, const LevelSettings& 
 	m_pDimension->init(this);
 
 	m_pPathFinder = new PathFinder();
+	m_pMobSpawner = new MobSpawner();
 
 	m_pChunkSource = createChunkSource();
 	updateSkyBrightness();
@@ -72,9 +75,10 @@ Level::~Level()
 	SAFE_DELETE(m_pChunkSource);
 	SAFE_DELETE(m_pDimension);
 	SAFE_DELETE(m_pPathFinder);
+	SAFE_DELETE(m_pMobSpawner);
 
 	const size_t size = m_entities.size();
-	for (int i = 0; i < size; i++)
+	for (size_t i = 0; i < size; i++)
 	{
 		Entity* pEnt = m_entities.at(i);
 		
@@ -315,6 +319,15 @@ Entity* Level::getEntity(Entity::ID id) const
 	return nullptr;
 }
 
+unsigned int Level::getEntityCount(const EntityCategories& category) const
+{
+	EntityCategories::CategoriesMask mask = category.getCategoryMask();
+	std::map<EntityCategories::CategoriesMask, int>::const_iterator it = m_entityCountsByCategory.find(mask);
+	if (it == m_entityCountsByCategory.end())
+		return 0;
+	return it->second;
+}
+
 const EntityVector* Level::getAllEntities() const
 {
 	return &m_entities;
@@ -491,7 +504,7 @@ void Level::updateLight(const LightLayer& ll, const TilePos& tilePos1, const Til
 {
 	static int nUpdateLevels;
 
-	if ((m_pDimension->field_E && &ll == &LightLayer::Sky) || !m_bUpdateLights)
+	if ((m_pDimension->m_bHasCeiling && &ll == &LightLayer::Sky) || !m_bUpdateLights)
 		return;
 
 	nUpdateLevels++;
@@ -543,7 +556,7 @@ void Level::updateLight(const LightLayer& ll, const TilePos& tilePos1, const Til
 
 void Level::updateLightIfOtherThan(const LightLayer& ll, const TilePos& tilePos, int bright)
 {
-	if (m_pDimension->field_E && &ll == &LightLayer::Sky)
+	if (m_pDimension->m_bHasCeiling && &ll == &LightLayer::Sky)
 		return;
 
 	if (!hasChunkAt(tilePos))
@@ -586,7 +599,7 @@ bool Level::isSkyLit(const TilePos& pos) const
 
 bool Level::setTileAndDataNoUpdate(const TilePos& pos, TileID tile, TileData data)
 {
-	return setTileAndData(pos, tile, data, TileChange::UPDATE_SILENT);
+	return setTileAndData(pos, tile, data, TileChange::UPDATE_LISTENERS);
 }
 
 int Level::getHeightmap(const TilePos& pos)
@@ -770,6 +783,15 @@ void Level::setTilesDirty(const TilePos& min, const TilePos& max)
 
 void Level::entityAdded(Entity* pEnt)
 {
+	// @TODO: change this check (and the matching entityRemoved check) to a BST at some point. this works for now
+	const EntityCategories& categories = pEnt->getDescriptor().getCategories();
+	for (unsigned int i = 0; i < EntityCategories::allCount; i++) 
+	{
+		EntityCategories::CategoriesMask category = EntityCategories::all[i];
+		if (categories.contains(category))
+			m_entityCountsByCategory[category]++;
+	}
+
 	for (std::vector<LevelListener*>::iterator it = m_levelListeners.begin(); it != m_levelListeners.end(); it++)
 	{
 		LevelListener* pListener = *it;
@@ -779,6 +801,14 @@ void Level::entityAdded(Entity* pEnt)
 
 void Level::entityRemoved(Entity* pEnt)
 {
+	const EntityCategories& categories = pEnt->getDescriptor().getCategories();
+	for (unsigned int i = 0; i < EntityCategories::allCount; i++) 
+	{
+		EntityCategories::CategoriesMask category = EntityCategories::all[i];
+		if (categories.contains(category))
+			m_entityCountsByCategory[category]--;
+	}
+
 	for (std::vector<LevelListener*>::iterator it = m_levelListeners.begin(); it != m_levelListeners.end(); it++)
 	{
 		LevelListener* pListener = *it;
@@ -786,12 +816,25 @@ void Level::entityRemoved(Entity* pEnt)
 	}
 }
 
-void Level::levelEvent(Player* pPlayer, LevelEvent::ID eventId, const TilePos& pos, LevelEvent::Data data)
+void Level::levelEvent(const LevelEvent& event)
 {
 	for (std::vector<LevelListener*>::iterator it = m_levelListeners.begin(); it != m_levelListeners.end(); it++)
 	{
 		LevelListener* pListener = *it;
-		pListener->levelEvent(pPlayer, eventId, pos, data);
+		pListener->levelEvent(event);
+	}
+}
+
+void Level::tileEvent(const TileEvent& event)
+{
+	TileID tile = getTile(event.pos);
+	if (tile > TILE_AIR)
+		Tile::tiles[tile]->triggerEvent(this, event);
+
+	for (std::vector<LevelListener*>::iterator it = m_levelListeners.begin(); it != m_levelListeners.end(); it++)
+	{
+		LevelListener* pListener = *it;
+		pListener->tileEvent(event);
 	}
 }
 
@@ -1443,9 +1486,42 @@ bool Level::mayPlace(TileID tile, const TilePos& pos, bool b) const
 	return pTile->mayPlace(this, pos);
 }
 
+void Level::broadcastAll(Packet* packet)
+{
+	assert(!m_bIsClientSide);
+
+	if (m_pRakNetInstance)
+	{
+		m_pRakNetInstance->send(packet);
+	}
+}
+
+void Level::broadcastToAllInRange(Packet* packet, const Vec3& pos, float range, Player* avoid)
+{
+	assert(!m_bIsClientSide);
+
+	if (m_pRakNetInstance)
+	{
+		for (size_t i = 0; i < m_players.size(); i++)
+		{
+			Player* pPlayer = m_players[i];
+			if (!pPlayer)
+				continue;
+
+			if (pPlayer != avoid)
+			{
+				Vec3 diff = pos - pPlayer->m_pos;
+				if (diff.lengthSqr() < range * range)
+					m_pRakNetInstance->send(pPlayer->m_guid, *packet);
+			}
+		}
+	}
+	delete packet;
+}
+
 void Level::broadcastEntityEvent(const Entity& entity, Entity::EventType::ID eventId)
 {
-	if (m_bIsClientSide)
+	if (m_bIsClientSide || !m_pRakNetInstance)
 		return;
 
 	m_pRakNetInstance->send(new EntityEventPacket(entity.m_EntityID, eventId));
@@ -1472,14 +1548,14 @@ void Level::tickPendingTicks(bool b)
 	for (int i = 0; i < size; i++)
 	{
 		const TickNextTickData& t = *m_pendingTicks.begin();
-		if (!b && t.m_delay > m_pLevelData->getTime())
+		if (!b && t.delay > m_pLevelData->getTime())
 			break;
 
-		if (hasChunksAt(t.field_4 - 8, t.field_4 + 8))
+		if (hasChunksAt(t.tilePos - 8, t.tilePos + 8))
 		{
-			TileID tile = getTile(t.field_4);
-			if (tile == t.field_10 && tile > 0)
-				Tile::tiles[tile]->tick(this, t.field_4, &m_random);
+			TileID tile = getTile(t.tilePos);
+			if (tile == t.tileId && tile > 0)
+				Tile::tiles[tile]->tick(this, t.tilePos, &m_random);
 		}
 
 		m_pendingTicks.erase(m_pendingTicks.begin());
@@ -1513,7 +1589,7 @@ void Level::tickTiles()
 
 		for (int i = 0; i < 80; i++)
 		{
-			m_randValue = m_randValue * 3 + m_addend;
+			m_randValue = (int64_t)m_randValue * 3 + m_addend;
 			int rand = m_randValue >> 2;
 
 			TilePos tilePos(
@@ -1590,6 +1666,7 @@ int LASTTICKED = 0;
 
 void Level::tick()
 {
+	m_pMobSpawner->tick(*this, m_difficulty > 0, true);
 	m_pChunkSource->tick();
 
 #ifdef ENH_RUN_DAY_NIGHT_CYCLE
@@ -1609,7 +1686,7 @@ void Level::tickEntities()
 	// inlined in the original
 	removeAllPendingEntityRemovals();
 
-	for (int i = 0; i<int(m_entities.size()); i++)
+	for (size_t i = 0; i < m_entities.size(); i++)
 	{
 		Entity* pEnt = m_entities[i];
 
@@ -1742,9 +1819,9 @@ void Level::addToTickNextTick(const TilePos& tilePos, int d, int delay)
 		if (!hasChunksAt(tilePos, 8))
 			return;
 
-		TileID tile = getTile(tntd.field_4);
-		if (tile > 0 && tile == tntd.field_10)
-			Tile::tiles[tntd.field_10]->tick(this, tntd.field_4, &m_random);
+		TileID tile = getTile(tntd.tilePos);
+		if (tile > 0 && tile == tntd.tileId)
+			Tile::tiles[tntd.tileId]->tick(this, tntd.tilePos, &m_random);
 	}
 	else
 	{
@@ -1853,6 +1930,13 @@ void Level::explode(Entity* entity, const Vec3& pos, float power, bool bIsFiery)
 	expl.setFiery(bIsFiery);
 	expl.explode();
 	expl.addParticles();
+
+#if NETWORK_PROTOCOL_VERSION >= 3
+	if (!m_bIsClientSide)
+	{
+		broadcastToAllInRange(new ExplodePacket(pos, power), pos, 64.0f);
+	}
+#endif
 }
 
 void Level::addEntities(const EntityVector& entities)

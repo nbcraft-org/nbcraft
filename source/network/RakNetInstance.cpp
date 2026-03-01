@@ -16,11 +16,20 @@
 
 //#define LOG_PACKETS
 
-#ifdef LOG_PACKETS
-#define LOG_PACKET(str, ...) LOG_I(str, __VA_ARGS__)
-#else
-#define LOG_PACKET(str, ...)
+/* !! FOR XBOX 360 !!
+    To enable "unsecure" sockets on a copy of RakNet that supports the Xbox 360, do the following:
+	1. Enable sockpatch in DashLauncher
+	2. Add the following code to RNS2_Berkley::SetSocketOptions():
+	```
+#if defined(_XBOX) || defined(_XBOX_720_WITH_XBOX_LIVE) || defined(X360)
+	// MCPE: Required to allow for "insecure" sockets on Xbox 360, which allows for cross-platform multiplayer
+	// https://discord.com/channels/436450658531672064/761636912485105684/1425512825237012532
+	#define SO_MARKINSECURE        0x5801
+	BOOL opt_true = TRUE;
+	setsockopt__( rns2Socket, SOL_SOCKET, SO_MARKINSECURE, (PCSTR) & opt_true, sizeof( BOOL ) );
 #endif
+    ```
+*/
 
 RakNetInstance::RakNetInstance()
 {
@@ -37,6 +46,22 @@ RakNetInstance::~RakNetInstance()
 		RakNet::RakPeerInterface::DestroyInstance(m_pRakPeerInterface);
 		m_pRakPeerInterface = nullptr;
 	}
+}
+
+bool RakNetInstance::_startup(RakNet::SocketDescriptor& socketDesc, int maxConnections)
+{
+	return m_pRakPeerInterface->Startup(C_MAX_CONNECTIONS, &socketDesc, 1) != RakNet::RAKNET_STARTED;
+}
+
+bool RakNetInstance::_tryStartup()
+{
+	if (!m_pRakPeerInterface->IsActive())
+	{
+		RakNet::SocketDescriptor sd;
+		return _startup(sd);
+	}
+
+	return false;
 }
 
 void RakNetInstance::announceServer(const std::string& name)
@@ -65,7 +90,7 @@ bool RakNetInstance::connect(const char* host, int port)
 
 	disconnect();
 	
-	if (m_pRakPeerInterface->Startup(4, &sd, 1) != RakNet::RAKNET_STARTED)
+	if (_startup(sd))
 		return false;
     
     LOG_I("Connecting to %s", host);
@@ -101,7 +126,7 @@ bool RakNetInstance::host(const std::string& name, int port, int maxConnections)
 	RakNet::SocketDescriptor sd(port, nullptr);
 
 	m_pRakPeerInterface->SetMaximumIncomingConnections(maxConnections);
-	int result = m_pRakPeerInterface->Startup(maxConnections, &sd, 1);
+	int result = _startup(sd, maxConnections);
 	
 	m_bIsHost = true;
 	m_bPingingForHosts = false;
@@ -119,11 +144,7 @@ bool RakNetInstance::isMyLocalGuid(const RakNet::RakNetGUID& guid)
 
 void RakNetInstance::pingForHosts(int port)
 {
-	if (!m_pRakPeerInterface->IsActive())
-	{
-		RakNet::SocketDescriptor sd;
-		m_pRakPeerInterface->Startup(4, &sd, 1);
-	}
+	_tryStartup();
 
 	m_hostPingPort = port;
 	m_bPingingForHosts = true;
@@ -145,16 +166,20 @@ void RakNetInstance::runEvents(NetEventCallback& callback)
 
 		RakNet::BitStream* pBitStream = new RakNet::BitStream(pPacket->data + 1, pPacket->length - 1, 0);
         
-        LOG_PACKET("Recieved packet from %s (id: %d bitStream: 0x%x length: %u)", pPacket->systemAddress.ToString(), packetType, pBitStream, pPacket->length);
+#ifdef LOG_PACKETS
+        LOG_I("Recieved packet from %s (id: %d bitStream: 0x%x length: %u)", pPacket->systemAddress.ToString(), packetType, pBitStream, pPacket->length);
+#endif
 
 		// @NOTE: why -1?
 		if (packetType >= PACKET_LOGIN - 1)
 		{
-			Packet* pUserPacket = MinecraftPackets::createPacket(packetType);
+			Packet* pUserPacket = MinecraftPackets::createPacket((MinecraftPacketIds)packetType);
 			if (pUserPacket)
 			{
 				pUserPacket->read(*pBitStream);
-				//LOG_PACKET("Packet: %d", packetType);
+// #ifdef LOG_PACKETS
+// 				LOG_I("Packet: %d", packetType);
+// #endif
 				pUserPacket->handle(pPacket->guid, callback);
 				delete pUserPacket;
 			}
@@ -175,6 +200,12 @@ void RakNetInstance::runEvents(NetEventCallback& callback)
 			}
 			case ID_CONNECTION_ATTEMPT_FAILED:
 			{
+				callback.onUnableToConnect();
+				break;
+			}
+			case ID_INCOMPATIBLE_PROTOCOL_VERSION:
+			{
+				LOG_E("Unable to connect, server has invalid RakNet protocol version!");
 				callback.onUnableToConnect();
 				break;
 			}
@@ -205,7 +236,7 @@ void RakNetInstance::runEvents(NetEventCallback& callback)
 					break;
 
 				// update the info of a pinged compatible server, if possible.
-				for (int i = 0; i < m_servers.size(); i++)
+				for (size_t i = 0; i < m_servers.size(); i++)
 				{
 					PingedCompatibleServer& server = m_servers.at(i);
 					if (server.m_address == pPacket->systemAddress)
@@ -260,11 +291,23 @@ void RakNetInstance::runEvents(NetEventCallback& callback)
 	}
 }
 
-// this broadcasts a packet to all other connected peers
 void RakNetInstance::send(Packet* packet)
 {
+	send(*packet);
+	delete packet;
+}
+
+void RakNetInstance::send(const RakNet::RakNetGUID& guid, Packet* packet)
+{
+	send(guid, *packet);
+	delete packet;
+}
+
+// this broadcasts a packet to all other connected peers
+void RakNetInstance::send(Packet& packet)
+{
 	RakNet::BitStream bs;
-	packet->write(bs);
+	packet.write(bs);
 
     uint32_t result;
 	if (m_bIsHost)
@@ -282,27 +325,22 @@ void RakNetInstance::send(Packet* packet)
 #ifdef LOG_PACKETS
     uint8_t packetId;
     bs.Read(packetId);
-    LOG_PACKET("Sent packet (id: %d guid: %s)", packetId, m_bIsHost ? "UNASSIGNED_SYSTEM_ADDRESS" : m_guid.ToString());
+    LOG_I("Sent packet (id: %d guid: %s)", packetId, m_bIsHost ? "UNASSIGNED_SYSTEM_ADDRESS" : m_guid.ToString());
 #endif
     }
     else
     {
         LOG_E("Failed to send packet!");
     }
-
-	delete packet;
 }
 
 // this sends a specific peer a message
-void RakNetInstance::send(const RakNet::RakNetGUID& guid, Packet* packet)
+void RakNetInstance::send(const RakNet::RakNetGUID& guid, Packet& packet)
 {
 	RakNet::BitStream bs;
-	packet->write(bs);
+	packet.write(bs);
 
 	m_pRakPeerInterface->Send(&bs, HIGH_PRIORITY, RELIABLE, 0, guid, false);
-
-	delete packet;
-	// return 1300; --- ida tells me this returns 1300. Huh
 }
 
 void RakNetInstance::stopPingForHosts()

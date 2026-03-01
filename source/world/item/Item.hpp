@@ -19,11 +19,11 @@
 #include "world/level/TilePos.hpp"
 #include "world/Facing.hpp"
 
-#include "ItemInstance.hpp"
+#include "ItemStack.hpp"
 
 #define C_MAX_ITEMS (C_MAX_TILES * 2)
 
-class ItemInstance; // in case we're included from ItemInstance.hpp
+class ItemStack; // in case we're included from ItemStack.hpp
 
 class Level;
 class Entity;
@@ -35,22 +35,13 @@ class CompoundTag;
 class Item
 {
 public: // Sub structures
-	struct Tier
+	enum EquipmentSlot
 	{
-		int   field_0;
-		int   m_Durability;
-		float m_HitStrength;
-		int   field_C;
-
-		Tier(int a, int b, float c, int d) :
-			field_0(a),
-			m_Durability(b),
-			m_HitStrength(c),
-			field_C(d)
-		{}
-
-		// Item tiers
-		static Tier WOOD, STONE, IRON, EMERALD, GOLD;
+		SLOT_NONE = -1,
+		SLOT_FEET,
+		SLOT_LEGS,
+		SLOT_CHEST,
+		SLOT_HEAD
 	};
 
 public: // Methods
@@ -61,34 +52,44 @@ public: // Methods
 	virtual Item* setIcon(int icon);
 	virtual Item* setMaxStackSize(int mss);
 	virtual Item* setIcon(int ix, int iy);
-	virtual int getIcon(const ItemInstance*) const;
-	virtual bool useOn(ItemInstance*, Level*, const TilePos& pos, Facing::Name face) const;
-	virtual bool useOn(ItemInstance*, Player*, Level*, const TilePos& pos, Facing::Name face) const;
-	virtual float getDestroySpeed(ItemInstance*, Tile*) const;
-	virtual ItemInstance* use(ItemInstance*, Level*, Player*) const;
+	virtual int getIcon(const ItemStack*) const;
+	virtual bool useOn(ItemStack*, Level*, const TilePos& pos, Facing::Name face) const;
+	virtual bool useOn(ItemStack*, Player*, Level*, const TilePos& pos, Facing::Name face) const;
+	virtual float getDestroySpeed(ItemStack*, const Tile*) const;
+	virtual ItemStack* use(ItemStack*, Level*, Mob*) const;
+	virtual void releaseUsing(ItemStack&, Level&, Mob&, int durationLeft) const;
 	virtual int getMaxStackSize() const;
 	virtual TileData getLevelDataForAuxValue(int x) const;
 	virtual bool isStackedByData() const;
 	virtual int getMaxDamage() const;
-	virtual void hurtEnemy(ItemInstance*, Mob*) const;
-	virtual void mineBlock(ItemInstance*, const TilePos& pos, Facing::Name face) const;
+	virtual Item* setMaxDamage(int);
+	virtual void hurtEnemy(ItemStack*, Mob*) const;
+	virtual void mineBlock(ItemStack*, const TilePos& pos, Facing::Name face, Mob* mob) const;
 	virtual int getAttackDamage(Entity*) const;
-	virtual bool canDestroySpecial(Tile*) const;
-	virtual void interactEnemy(ItemInstance*, Mob*) const;
+	virtual bool canDestroySpecial(const Tile*) const;
+	virtual void interactEnemy(ItemStack*, Mob*) const;
 	virtual Item* handEquipped();
 	virtual bool isHandEquipped() const;
 	virtual bool isMirroredArt() const;
 	virtual Item* setDescriptionId(const std::string& desc);
 	virtual std::string getDescription() const;
-	virtual std::string getDescription(ItemInstance*) const;
+	virtual std::string getDescription(ItemStack*) const;
 	virtual std::string getDescriptionId() const;
-	virtual std::string getDescriptionId(ItemInstance*) const;
+	virtual std::string getDescriptionId(ItemStack*) const;
 	virtual Item* setCraftingRemainingItem(Item*);
 	virtual Item* getCraftingRemainingItem() const;
 	virtual bool hasCraftingRemainingItem() const;
 	virtual std::string getName() const;
 	virtual std::string getHovertextName() const;
+	virtual void onCraftedBy(ItemStack*, Player*, Level*);
+	virtual void inventoryTick(ItemStack*, Level*, Entity*, int, bool);
+	virtual bool isDamageable() const;
 	virtual int buildIdAux(int16_t auxValue, const CompoundTag* userData = nullptr) const;
+
+	// Armor/defense methods
+	virtual EquipmentSlot getEquipmentSlot() const;
+	virtual const std::string& getArmorTexture() const;
+	virtual int getDefense() const;
 
 	static void initItems();
 	
@@ -157,6 +158,10 @@ public: // Static declarations
 		*chestplate_cloth,
 		*leggings_cloth,
 		*boots_cloth,
+		*helmet_chain,
+		*chestplate_chain,
+		*leggings_chain,
+		*boots_chain,
 		*helmet_iron,
 		*chestplate_iron,
 		*leggings_iron,
@@ -209,6 +214,8 @@ public: // Static declarations
 		*bed,
 		*diode,
 		*cookie,
+		*map,
+		*shears,
 		*record_01,
 		*record_02,
 		*camera,

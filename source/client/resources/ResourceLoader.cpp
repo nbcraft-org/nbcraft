@@ -1,0 +1,33 @@
+#include "ResourceLoader.hpp"
+#include "client/app/AppPlatform.hpp"
+
+ResourceLoader::ResourceLoader(ResourceLocation::FileSystem fileSystem)
+	: m_fileSystem(fileSystem)
+{
+}
+
+ResourceLoader::~ResourceLoader()
+{
+}
+
+std::string ResourceLoader::GetPath(ResourceLocation::FileSystem fileSystem, const std::string& path)
+{
+	AppPlatform& platform = *AppPlatform::singleton();
+	switch (fileSystem)
+	{
+	case ResourceLocation::APP_PACKAGE:  return platform.getAssetPath(path);
+	case ResourceLocation::EXTERNAL_DIR: return platform.getExternalStoragePath(path);
+	case ResourceLocation::RAW_PATH:     return path;
+	default:
+		LOG_E("Unsupported Resource FileSystem: %d", fileSystem);
+		throw std::bad_cast();
+	}
+}
+
+std::string ResourceLoader::getPath(const std::string& path) const
+{
+	std::string p = path;
+	if (!p.empty() && p[0] == '/')
+		p = p.substr(1, p.size() - 1);
+	return GetPath(getFileSystem(), p);
+}

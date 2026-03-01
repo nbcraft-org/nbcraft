@@ -13,11 +13,21 @@
 #include "world/entity/Mob.hpp"
 #include "world/entity/ItemEntity.hpp"
 #include "world/gamemode/GameType.hpp"
+#include "world/inventory/InventoryMenu.hpp"
+
+#define C_PLAYER_FLAG_USING_ITEM (4)
 
 class Inventory; // in case we're included from Inventory.hpp
 
 class Player : public Mob
 {
+public:
+	struct Abilities
+	{
+		bool bCanFly;
+		bool bInvulnerable;
+	};
+
 private:
 	GameType _playerGameType;
 
@@ -30,8 +40,6 @@ public:
 
 protected:
 	virtual void reallyDrop(ItemEntity* pEnt);
-	bool getSharedFlag(SharedFlag flag) const override { return false; }
-	void setSharedFlag(SharedFlag flag, bool value) override {}
 
 public:
 	void reset() override;
@@ -41,35 +49,46 @@ public:
 	bool isShootable() const override { return true; }
 	bool isPlayer() const override { return true; }
 	bool isCreativeModeAllowed() const override { return true; }
+	bool isSlowedByLiquids() const override { return !m_bFlying; }
 	bool hurt(Entity*, int) override;
+	void actuallyHurt(int) override;
 	void awardKillScore(Entity* pKilled, int score) override;
 	void resetPos(bool respawn = false) override;
 	void die(Entity* pCulprit) override;
 	void aiStep() override;
-	ItemInstance* getCarriedItem() const override;
+	void tick() override;
+	const ItemStack& getCarriedItem() const override;
 	bool isImmobile() const override { return m_health <= 0; }
 	void updateAi() override;
 	void addAdditionalSaveData(CompoundTag& tag) const override;
 	void readAdditionalSaveData(const CompoundTag& tag) override;
+	void travel(const Vec2& pos) override;
+	void causeFallDamage(float level) override;
 
 	virtual void animateRespawn();
-	virtual void drop();
-	virtual void drop(const ItemInstance& item, bool randomly = false);
+	//virtual void drop(); // see definition
+	virtual void drop(const ItemStack& item, bool randomly = false);
 	virtual void startCrafting(const TilePos& pos);
 	virtual void startStonecutting(const TilePos& pos);
 	virtual void startDestroying();
 	virtual void stopDestroying();
+	//virtual void openFurnace(FurnaceTileEntity* tileEntity);
+	virtual void openContainer(Container* container) {}
+	virtual void closeContainer() {}
+	//virtual void openTrap(DispenserTileEntity* tileEntity);
+	//virtual void openTextEdit(SignTileEntity* tileEntity);
 	virtual bool isLocalPlayer() const { return false; }
 	virtual void take(Entity* pEnt, int count) {}
 
 	int addResource(int);
 	void animateRespawn(Player*, Level*);
 	void attack(Entity* pEnt);
-	void useItem(ItemInstance& item) const;
+	void useItem(ItemStack& item) const;
+	void releaseUsingItem();
+	void stopUsingItem();
 	bool canDestroy(const Tile*) const;
-	void closeContainer();
 	void displayClientMessage(const std::string& msg);
-	float getDestroySpeed() const { return 1.0f; }
+	float getDestroySpeed(const Tile* tile) const;
 	int getInventorySlot(int x) const;
 	TilePos getRespawnPosition() const { return m_respawnPos; }
 	int getScore() const { return m_score; }
@@ -79,15 +98,17 @@ public:
 	void rideTick();
 	void setDefaultHeadHeight();
 	void setRespawnPos(const TilePos& pos);
+	inline const Abilities& getAbilities() const { return m_abilities; }
 
 	void touch(Entity* pEnt);
 	GameType getPlayerGameType() const { return _playerGameType; }
-	virtual void setPlayerGameType(GameType playerGameType) { _playerGameType = playerGameType; }
+	virtual void setPlayerGameType(GameType playerGameType);
 	bool isSurvival() const { return getPlayerGameType() == GAME_TYPE_SURVIVAL; }
 	bool isCreative() const { return getPlayerGameType() == GAME_TYPE_CREATIVE; }
-	ItemInstance* getSelectedItem() const;
+	ItemStack& getSelectedItem() const;
 	void removeSelectedItem();
-	bool isUsingItem() const { return !ItemInstance::isNull(getSelectedItem()); }
+	// whether or not they're holding right-click, like drawing back a bow or eating
+	bool isUsingItem() const { return getSharedFlag(C_PLAYER_FLAG_USING_ITEM); }
 
 	// QUIRK: Yes, I did mean it like that, as did Mojang.
 #pragma GCC diagnostic push
@@ -95,21 +116,27 @@ public:
 	void interact(Entity* pEnt);
 #pragma GCC diagnostic pop
 
+protected:
+	Abilities m_abilities;
+	ItemStack m_itemInUse;
+	int32_t m_itemInUseDuration;
+
 public:
-	//TODO
 	Inventory* m_pInventory;
-	uint8_t field_B94;
+	InventoryMenu* m_pInventoryMenu;
+	ContainerMenu* m_pContainerMenu;
+	int8_t m_userType; // Classic leftover? possibly for a player rank?
+	int m_jumpTriggerTime;
 	int m_score;
-	float m_oBob; // field_B9C
+	float m_oBob;
 	float m_bob;
+	int m_dmgSpill;
 	std::string m_name;
 	int m_dimension;
 	RakNet::RakNetGUID m_guid;
-	//TODO
+	bool m_bFlying;
 	TilePos m_respawnPos;
-	//TODO
 	bool m_bHasRespawnPos;
-	//TODO
 	bool m_destroyingBlock;
 };
 

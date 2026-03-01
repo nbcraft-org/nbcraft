@@ -19,12 +19,12 @@ LevelChunk::~LevelChunk()
 	SAFE_DELETE_ARRAY(m_tileData.m_data);
 }
 
-constexpr int MakeBlockDataIndex(const ChunkTilePos& pos)
+CONSTEXPR int MakeBlockDataIndex(const ChunkTilePos& pos)
 {
 	return (pos.x << 11) | (pos.z << 7) | pos.y;
 }
 
-constexpr int MakeHeightMapIndex(const ChunkTilePos& pos)
+CONSTEXPR int MakeHeightMapIndex(const ChunkTilePos& pos)
 {
 	return pos.x | (pos.z * 16);
 }
@@ -139,7 +139,7 @@ void LevelChunk::recalcHeightmap()
 				x1 = x2;
 			m_heightMap[MakeHeightMapIndex(pos)] = x2;
 
-			if (!m_pLevel->m_pDimension->field_E)
+			if (!m_pLevel->m_pDimension->m_bHasCeiling)
 			{
 				int x4 = 15;
 				for (int x3 = 127; x3 > 0; x3--)
@@ -270,8 +270,8 @@ void LevelChunk::setBrightness(const LightLayer& ll, const ChunkTilePos& pos, in
 int LevelChunk::getRawBrightness(const ChunkTilePos& pos, int skySubtract)
 {
 	CheckPosition(pos);
-	int bitIdx = MakeBlockDataIndex(pos);
-	int index = bitIdx >> 1, offs = bitIdx & 1;
+	//int bitIdx = MakeBlockDataIndex(pos);
+	//int index = bitIdx >> 1, offs = bitIdx & 1;
 
 	uint8_t bSky = m_lightSky.get(pos);
 	if (bSky > 0)
@@ -643,7 +643,7 @@ bool LevelChunk::setTileAndData(const ChunkTilePos& pos, TileID tile, TileData d
 	tilePos.x += pos.x;
 	tilePos.z += pos.z;
 	m_pBlockData[index] = tile;
-	if (oldTile)
+	if (oldTile && Tile::tiles[oldTile])
 	{
 		Tile::tiles[oldTile]->onRemove(m_pLevel, tilePos);
 	}
@@ -651,7 +651,7 @@ bool LevelChunk::setTileAndData(const ChunkTilePos& pos, TileID tile, TileData d
 	// update the data value of the block
 	m_tileData.set(pos, data);
 
-	if (m_pLevel->m_pDimension->field_E)
+	if (m_pLevel->m_pDimension->m_bHasCeiling)
 	{
 		m_pLevel->updateLight(LightLayer::Block, tilePos, tilePos);
 		lightGaps(pos);

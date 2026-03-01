@@ -6,6 +6,7 @@
 	SPDX-License-Identifier: BSD-1-Clause
  ********************************************************************/
 #include "ModelPart.hpp"
+#include "common/Utils.hpp"
 #include "../models/Model.hpp"
 
 #define MUL_DEG_TO_RAD (180.0f / float(M_PI))  // formerly known as Cube::c
@@ -15,10 +16,9 @@ void ModelPart::_init()
 	m_textureWidth = 64.0f;
 	m_textureHeight = 32.0f;
 	m_pMaterial = nullptr;
-	field_4C = 0;
 	m_bMirror = false;
-	field_48 = true;
-	field_49 = false;
+	m_bVisible = true;
+	m_bNeverRender = false;
 	m_bCompiled = false;
 	m_pModel = nullptr;
 }
@@ -128,10 +128,10 @@ void ModelPart::translateRotTo(Matrix& matrix, float scale)
 
 void ModelPart::render(float scale, const mce::MaterialPtr* materialOverride)
 {
-	if (field_49)
+	if (m_bNeverRender)
 		return;
 
-	if (!field_48)
+	if (!m_bVisible)
 		return;
 
 	if (!m_bCompiled)

@@ -1,8 +1,8 @@
 #include "DeathScreen.hpp"
 
 DeathScreen::DeathScreen() :
-	m_btnRespawn(1, "Respawn!"),
-	m_btnTitle  (2, "Main menu")
+	m_btnRespawn("Respawn!"),
+	m_btnTitle  ("Main menu")
 {
 	m_tickCounter = 0;
 }
@@ -15,20 +15,18 @@ void DeathScreen::init()
 
 	m_btnRespawn.m_yPos = m_btnTitle.m_yPos = m_height / 2;
 
-	m_buttons.push_back(&m_btnRespawn);
-	m_buttons.push_back(&m_btnTitle);
-	m_buttonTabList.push_back(&m_btnRespawn);
-	m_buttonTabList.push_back(&m_btnTitle);
+	_addElement(m_btnRespawn);
+	_addElement(m_btnTitle);
 }
 
-void DeathScreen::buttonClicked(Button* pButton)
+void DeathScreen::_buttonClicked(Button* pButton)
 {
-	if (pButton->m_buttonId == m_btnRespawn.m_buttonId)
+	if (pButton->getId() == m_btnRespawn.getId())
 	{
 		m_pMinecraft->m_pLocalPlayer->respawn();
 		m_pMinecraft->setScreen(nullptr);
 	}
-	if (pButton->m_buttonId == m_btnTitle.m_buttonId)
+	else if (pButton->getId() == m_btnTitle.getId())
 	{
 		m_pMinecraft->leaveGame(false);
 	}
@@ -39,11 +37,7 @@ void DeathScreen::tick()
 	m_tickCounter++;
 }
 
-void DeathScreen::keyPressed(int key)
-{
-}
-
-void DeathScreen::render(int x, int y, float f)
+void DeathScreen::render(float f)
 {
 	fillGradient(0, 0, m_width, m_height, 0xA0303080, 0x60000050);
 
@@ -55,5 +49,5 @@ void DeathScreen::render(int x, int y, float f)
 
 	// render the buttons after 1.5 seconds
 	if (m_tickCounter >= 30)
-		Screen::render(x, y, f);
+		Screen::render(f);
 }

@@ -16,20 +16,33 @@
 #include "client/renderer/texture/TextureData.hpp"
 #include "client/sound/SoundSystem.hpp"
 #include "AssetFile.hpp"
+#include "VirtualKeyboard.hpp"
 
 #include "GameMods.hpp"
+#include "compat/PlatformDefinitions.h"
 
-#ifndef MOD_USE_BIGGER_SCREEN_SIZE
-#define C_DEFAULT_SCREEN_WIDTH  (854)
-#define C_DEFAULT_SCREEN_HEIGHT (480)
+#ifdef MOD_USE_BIGGER_SCREEN_SIZE
+#define C_DEFAULT_SCREEN_WIDTH  (1280)
+#define C_DEFAULT_SCREEN_HEIGHT (720)
 #elif defined(__DREAMCAST__)
 #define C_DEFAULT_SCREEN_WIDTH  (800)
 #define C_DEFAULT_SCREEN_HEIGHT (600)
-#else
+#elif MC_PLATFORM_XBOX360
 #define C_DEFAULT_SCREEN_WIDTH  (1280)
 #define C_DEFAULT_SCREEN_HEIGHT (720)
+#else
+#define C_DEFAULT_SCREEN_WIDTH  (854)
+#define C_DEFAULT_SCREEN_HEIGHT (480)
 #endif
 
+#define C_GAME_NAME "NBCraft"
+#define C_HOME_PATH "/games/org.nbcraft/"
+#define C_STORAGE_DIR "nbcraft"
+#define C_MAX_LOCAL_PLAYERS 4
+
+typedef unsigned int LocalPlayerID;
+
+class GameControllerHandler;
 class AppPlatformListener;
 
 class AppPlatform
@@ -44,25 +57,20 @@ public:
 		DLG_CREATE_WORLD,
 		DLG_CHAT,
 		DLG_OPTIONS,
-		DLG_RENAME_MP_WORLD,
+		DLG_RENAME_MP_WORLD
 	};
 
 private:
 	static AppPlatform* m_singleton;
 public:
-	static AppPlatform* const singleton();
+	static AppPlatform* singleton();
 
 public:
 	AppPlatform();
 	virtual ~AppPlatform();
 
-private:
-	virtual void _tick();
-
-protected:
-	std::string _getPatchDataPath() const { return "patches/patch_data.txt"; }
-
 public:
+	virtual void tick();
 	virtual void buyGame();
 	virtual int checkLicense();
 	virtual void createUserInput();
@@ -77,11 +85,12 @@ public:
 	virtual void showDialog(eDialogType);
 	virtual void uploadPlatformDependentData(int, void*);
 	virtual void loadImage(ImageData& data, const std::string& path);
-	TextureData loadTexture(const std::string& path, bool bIsRequired = false);
+	TextureData loadTexture(const std::string& path);
 	virtual bool doesTextureExist(const std::string& path) const;
 	// From v0.1.1. Also add these to determine touch screen use within the game.
 	virtual bool isTouchscreen() const;
 	virtual bool hasGamepad() const;
+	virtual GameControllerHandler* getGameControllerHandler();
 	// Also add these to allow proper turning within the game.
 	virtual void recenterMouse();
 	virtual void setMouseGrabbed(bool b);
@@ -92,15 +101,11 @@ public:
 	virtual bool controlPressed();
 	virtual bool shiftPressed();
 	// On-screen keyboard
-	virtual void showKeyboard(int x, int y, int w, int h);
-	virtual void showKeyboard();
-	virtual void showKeyboard(bool bShown); // @TODO: Why on earth is this here?
-	// virtual void showKeyboard(std::string const &currentText, int maxLength, bool limitInput);
-	virtual void hideKeyboard();
+	virtual void showKeyboard(LocalPlayerID playerId, const VirtualKeyboard& keyboard);
+	virtual void hideKeyboard(LocalPlayerID playerId);
 	virtual void onHideKeyboard(); // called by the runner, not the game
-  #ifdef USE_NATIVE_ANDROID
-	virtual int getKeyboardUpOffset();
-  #endif
+	virtual const std::string& getKeyboardText() const;
+	virtual unsigned int getKeyboardUpOffset() const;
 	virtual void vibrate(int milliSeconds);
     virtual bool getRecenterMouseEveryTick();
 	virtual std::string getClipboardText();
@@ -113,17 +118,25 @@ public:
 	void _fireAppTerminated();
 
 	virtual bool hasFileSystemAccess();
-	// Also add this to allow dynamic patching.
-	virtual std::string getPatchData();
 	virtual void initSoundSystem();
-	virtual SoundSystem* const getSoundSystem() const;
+	virtual SoundSystem* getSoundSystem() const;
 	// Used For Sounds
 	virtual std::string getAssetPath(const std::string& path) const;
+	virtual std::string getExternalStoragePath(const std::string& path) const;
+	virtual bool hasAssetFile(const std::string& path) const;
 	virtual AssetFile readAssetFile(const std::string& path, bool quiet) const;
 	virtual std::string readAssetFileStr(const std::string& path, bool quiet) const;
+	virtual void makeNativePath(std::string& path) const;
+
+	// For getting a handle on the save device for consoles
+	virtual void beginProfileDataRead(LocalPlayerID playerId);
+	virtual void endProfileDataRead(LocalPlayerID playerId);
+	virtual void beginProfileDataWrite(LocalPlayerID playerId);
+	virtual void endProfileDataWrite(LocalPlayerID playerId);
 
 public:
 	ListenerMap m_listeners;
-	void* m_hWND; // the Mojang solution
+	std::string m_externalStorageDir;
+	void* m_hWnd; // the Mojang solution
 };
 

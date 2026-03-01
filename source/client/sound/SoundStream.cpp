@@ -1,4 +1,5 @@
 #include "SoundStream.hpp"
+#include "client/resources/Resource.hpp"
 
 SoundStream::SoundStream()
 {
@@ -36,7 +37,7 @@ bool SoundStream::_stream(int bufferId)
 
     while (size < m_tempPcmBuffer.m_dataSize)
     {
-        result = stb_vorbis_get_samples_short_interleaved(m_decoder, m_info.channels, (short*)m_tempPcmBuffer.m_pData + size, m_tempPcmBuffer.m_dataSize - size);
+        result = stb_vorbis_get_samples_short_interleaved(m_decoder, m_info.channels, (int16_t *)m_tempPcmBuffer.m_pData + size, m_tempPcmBuffer.m_dataSize - size);
         if (result > 0) size += result * m_info.channels;
         else break;
     }
@@ -79,12 +80,16 @@ bool SoundStream::open(const std::string& fileName)
         close();
     }
 
-    m_decoder = stb_vorbis_open_filename(fileName.c_str(), NULL, NULL);
+    std::string path;
+    if (!Resource::getResourcePath(ResourceLocation(fileName), path))
+        return false;
+
+    m_decoder = stb_vorbis_open_filename(path.c_str(), NULL, NULL);
     if (!m_decoder) return false;
     // Get file info
     m_info = stb_vorbis_get_info(m_decoder);
     
-    if (!_open(fileName)) return false;
+    if (!_open(path)) return false;
 
     setPausedState(false);
 

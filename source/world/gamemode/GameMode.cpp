@@ -11,9 +11,9 @@
 #include "network/packets/RemoveBlockPacket.hpp"
 
 GameMode::GameMode(Minecraft* pMinecraft, Level& level) :
-	m_pMinecraft(pMinecraft),
 	_level(level),
-	field_8(0)
+	m_pMinecraft(pMinecraft),
+	m_bInstaBuild(0)
 {
 }
 
@@ -100,7 +100,7 @@ float GameMode::getEntityReachDistance() const
 
 LocalPlayer* GameMode::createPlayer(Level* pLevel)
 {
-	return new LocalPlayer(m_pMinecraft, pLevel, m_pMinecraft->m_pUser, pLevel->getDefaultGameType(), _level.m_pDimension->field_50);
+	return new LocalPlayer(m_pMinecraft, pLevel, m_pMinecraft->m_pUser, pLevel->getDefaultGameType(), _level.m_pDimension->m_id);
 }
 
 void GameMode::initPlayer(Player* pPlayer)
@@ -126,27 +126,45 @@ void GameMode::attack(Player* player, Entity* entity)
 	player->attack(entity);
 }
 
-int GameMode::handleInventoryMouseClick(int a, int b, int c, Player* player)
+ItemStack GameMode::handleInventoryMouseClick(int containerId, int slotNum, MouseButtonType button, bool quick, Player* player)
 {
-	return 0;
+	return player->m_pContainerMenu->clicked(slotNum, button, quick, player);
 }
 
 void GameMode::handleCloseInventory(int a, Player* player)
 {
+	player->m_pContainerMenu->removed(player);
+	if (player->m_pContainerMenu != player->m_pInventoryMenu)
+	{
+		delete player->m_pContainerMenu;
+		player->m_pContainerMenu = player->m_pInventoryMenu;
+	}
 }
 
-bool GameMode::useItem(Player* player, Level* level, ItemInstance* instance)
+bool GameMode::useItem(Player* player, Level* level, ItemStack& item)
 {
-	int oldCount = instance->m_count;
+	int oldCount = item.m_count;
+	ItemStack* result = item.use(level, player);
 
-	if (instance == instance->use(level, player))
-		return instance->m_count != oldCount;
+	if (level->m_bIsClientSide)
+	{
+		_level.m_pRakNetInstance->send(new UseItemPacket(TilePos::ZERO, 255, player->m_EntityID, item));
+	}
+
+	if (&item == result)
+		return item.m_count != oldCount;
 
 	return true;
 }
 
-bool GameMode::useItemOn(Player* player, Level* level, ItemInstance* instance, const TilePos& pos, Facing::Name face)
+bool GameMode::useItemOn(Player* player, Level* level, ItemStack& item, const TilePos& pos, Facing::Name face)
 {
+	// Sending this packet regardless is intentional. PE does this, Java does this.
+	if (level->m_bIsClientSide)
+	{
+		_level.m_pRakNetInstance->send(new UseItemPacket(pos, face, player->m_EntityID, item));
+	}
+
 	TileID tile = level->getTile(pos);
 	if (tile == Tile::invisible_bedrock->m_ID)
 		return false;
@@ -157,16 +175,22 @@ bool GameMode::useItemOn(Player* player, Level* level, ItemInstance* instance, c
 	{
 		success = true;
 	}
-	else if (instance)
+	else if (!item.isEmpty())
 	{
-		success = instance->useOn(player, level, pos, face);
-	}
-
-	if (success)
-	{
-		_level.m_pRakNetInstance->send(new UseItemPacket(pos, face, player->m_EntityID, instance));
+		success = item.useOn(player, level, pos, face);
 	}
 
 	return success;
 }
 
+void GameMode::releaseUsingItem(Player* player)
+{
+#if NETWORK_PROTOCOL_VERSION >= 6
+	if (m_pMinecraft->isOnlineClient())
+	{
+		m_pMinecraft->m_pRakNetInstance->send(new PlayerActionPacket(player->m_EntityID, PlayerActionPacket::STOP_USING_ITEM));
+	}
+#endif
+
+	player->releaseUsingItem();
+}

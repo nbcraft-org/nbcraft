@@ -9,6 +9,7 @@
 #pragma once
 
 #include <set>
+#include <map>
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #endif
@@ -33,6 +34,8 @@ class Dimension;
 class Level;
 class LevelListener;
 class RakNetInstance;
+class Packet;
+class MobSpawner;
 
 typedef std::vector<Entity*> EntityVector;
 typedef std::vector<AABB> AABBVector;
@@ -106,7 +109,8 @@ public:
 	void setTilesDirty(const TilePos& min, const TilePos& max);
 	void entityAdded(Entity* pEnt);
 	void entityRemoved(Entity* pEnt);
-	void levelEvent(Player* pPlayer, LevelEvent::ID eventId, const TilePos& pos, LevelEvent::Data data = 0);
+	void levelEvent(const LevelEvent& event);
+	void tileEvent(const TileEvent& event);
 	void lightColumnChanged(int x, int z, int y1, int y2);
 	bool containsFireTile(const AABB&);
 	bool containsAnyLiquid(const AABB&);
@@ -140,6 +144,8 @@ public:
 	bool isUnobstructed(AABB*) const;
 	bool mayInteract(Player* player, const TilePos& pos) const;
 	bool mayPlace(TileID tid, const TilePos& pos, bool b) const;
+	void broadcastAll(Packet* packet);
+	void broadcastToAllInRange(Packet* packet, const Vec3& pos, float range, Player* avoid = nullptr);
 	void broadcastEntityEvent(const Entity& entity, Entity::EventType::ID eventId);
 	void removeListener(LevelListener*);
 	void addListener(LevelListener*);
@@ -171,6 +177,7 @@ public:
 	HitResult clip(const Vec3& a, const Vec3& b) const;
 	HitResult clip(Vec3 a, Vec3 b, bool c) const;
 	Entity* getEntity(Entity::ID id) const;
+	unsigned int getEntityCount(const EntityCategories&) const;
 	const EntityVector* getAllEntities() const;
 	EntityVector getEntities(Entity* pAvoid, const AABB&) const;
 	BiomeSource* getBiomeSource() const override;
@@ -227,5 +234,8 @@ public:
 	uint8_t field_B0C;
 	int field_B10;
 	PathFinder* m_pPathFinder;
+	MobSpawner* m_pMobSpawner;
+
+	std::map<EntityCategories::CategoriesMask, int> m_entityCountsByCategory;
 };
 

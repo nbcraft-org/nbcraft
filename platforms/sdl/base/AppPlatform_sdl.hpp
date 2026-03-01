@@ -37,8 +37,7 @@ public:
 	int checkLicense() override;
 	int getUserInputStatus() override;
 	void saveScreenshot(const std::string& fileName, int width, int height) override;
-	bool doesTextureExist(const std::string& path) const override;
-	SoundSystem* const getSoundSystem() const override { return m_pSoundSystem; }
+	SoundSystem* getSoundSystem() const override { return m_pSoundSystem; }
 
 	// Also add these to allow proper turning within the game.
 	void setMouseGrabbed(bool b) override;
@@ -61,6 +60,7 @@ public:
 	void handleControllerAxisEvent(SDL_JoystickID controllerIndex, uint8_t axis, int16_t value);
 
 	// Needed for Android
+	bool hasAssetFile(const std::string& path) const override;
 	AssetFile readAssetFile(const std::string&, bool) const override;
 
 protected:

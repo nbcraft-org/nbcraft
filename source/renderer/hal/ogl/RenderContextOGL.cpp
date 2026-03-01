@@ -1,23 +1,31 @@
 #include <stdexcept>
-#include "RenderContextOGL.hpp"
 #include "common/Logger.hpp"
 #include "renderer/hal/interface/DepthStencilState.hpp"
-#include "renderer/hal/helpers/ErrorHandler.hpp"
 #include "world/phys/Vec3.hpp"
+#include "RenderContextOGL.hpp"
+#include "helpers/ErrorHandlerOGL.hpp"
 
 using namespace mce;
 
-RenderContextOGL::VertexFieldFormat RenderContextOGL::vertexFieldFormats[] = {
-    { GL_FLOAT,          3, GL_FALSE }, // VERTEX_FIELD_POSITION
-    { GL_UNSIGNED_BYTE,  4, GL_TRUE  }, // VERTEX_FIELD_COLOR
-    { GL_BYTE,           4, GL_FALSE }, // VERTEX_FIELD_NORMAL
+// @TODO: have this use mce::VertexFieldFormat
+const RenderContextOGL::VertexFieldFormat RenderContextOGL::vertexFieldFormats[] = {
+    { GL_FLOAT,          3, GL_FALSE }, // VERTEX_FIELD_POSITION : VERTEX_FIELD_TYPE_FLOAT32_3
+    { GL_UNSIGNED_BYTE,  4, GL_TRUE  }, // VERTEX_FIELD_COLOR    : VERTEX_FIELD_TYPE_UINT8_4_N
+    { GL_BYTE,           4, GL_FALSE }, // VERTEX_FIELD_NORMAL   : VERTEX_FIELD_TYPE_SINT8_4
 #ifdef ENH_GFX_COMPACT_UVS
-    { GL_UNSIGNED_SHORT, 2, GL_TRUE  }, // VERTEX_FIELD_UV0
-    { GL_UNSIGNED_SHORT, 2, GL_TRUE  }  // VERTEX_FIELD_UV1
+#ifdef FEATURE_GFX_SHADERS
+    // supports16BitUnsignedUVs()
+    { GL_UNSIGNED_SHORT, 2, GL_TRUE  }, // VERTEX_FIELD_UV0      : VERTEX_FIELD_TYPE_UINT16_2_N
+    { GL_UNSIGNED_SHORT, 2, GL_TRUE  }  // VERTEX_FIELD_UV1      : VERTEX_FIELD_TYPE_UINT16_2_N
 #else
-    { GL_FLOAT,          2, GL_TRUE  }, // VERTEX_FIELD_UV0
-    { GL_FLOAT,          2, GL_TRUE  }  // VERTEX_FIELD_UV1
-#endif
+    // !supports16BitUnsignedUVs()
+    { GL_SHORT,          2, GL_TRUE  }, // VERTEX_FIELD_UV0      : VERTEX_FIELD_TYPE_SINT16_2_N
+    { GL_SHORT,          2, GL_TRUE  }  // VERTEX_FIELD_UV1      : VERTEX_FIELD_TYPE_SINT16_2_N
+#endif // FEATURE_GFX_SHADERS
+#else
+    { GL_FLOAT,          2, GL_FALSE  }, // VERTEX_FIELD_UV0      : VERTEX_FIELD_TYPE_FLOAT32_2
+    { GL_FLOAT,          2, GL_FALSE  }  // VERTEX_FIELD_UV1      : VERTEX_FIELD_TYPE_FLOAT32_2
+#endif // ENH_GFX_COMPACT_UVS
 };
 
 RenderContextOGL::RenderContextOGL()
@@ -70,7 +78,7 @@ void RenderContextOGL::setVertexState(const VertexFormat& vertexFormat)
         const VertexFieldFormat& field = vertexFieldFormats[VERTEX_FIELD_POSITION];
         xglVertexPointer(field.components, field.componentsType, vertexSize, vertexFormat.getFieldOffset(VERTEX_FIELD_POSITION));
         xglEnableClientState(GL_VERTEX_ARRAY);
-        ErrorHandler::checkForErrors();
+        ErrorHandlerOGL::checkForErrors();
     }
 
     if (vertexFormat.hasField(VERTEX_FIELD_UV0))
@@ -78,7 +86,7 @@ void RenderContextOGL::setVertexState(const VertexFormat& vertexFormat)
         const VertexFieldFormat& field = vertexFieldFormats[VERTEX_FIELD_UV0];
         xglTexCoordPointer(field.components, field.componentsType, vertexSize, vertexFormat.getFieldOffset(VERTEX_FIELD_UV0));
         xglEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        ErrorHandler::checkForErrors();
+        ErrorHandlerOGL::checkForErrors();
     }
 
     if (vertexFormat.hasField(VERTEX_FIELD_COLOR))
@@ -86,7 +94,7 @@ void RenderContextOGL::setVertexState(const VertexFormat& vertexFormat)
         const VertexFieldFormat& field = vertexFieldFormats[VERTEX_FIELD_COLOR];
         xglColorPointer(field.components, field.componentsType, vertexSize, vertexFormat.getFieldOffset(VERTEX_FIELD_COLOR));
         xglEnableClientState(GL_COLOR_ARRAY);
-        ErrorHandler::checkForErrors();
+        ErrorHandlerOGL::checkForErrors();
     }
 
 #ifdef USE_GL_NORMAL_LIGHTING
@@ -95,7 +103,7 @@ void RenderContextOGL::setVertexState(const VertexFormat& vertexFormat)
         const VertexFieldFormat& field = vertexFieldFormats[VERTEX_FIELD_NORMAL];
         xglNormalPointer(field.componentsType, vertexSize, vertexFormat.getFieldOffset(VERTEX_FIELD_NORMAL));
         xglEnableClientState(GL_NORMAL_ARRAY);
-        ErrorHandler::checkForErrors();
+        ErrorHandlerOGL::checkForErrors();
     }
 #endif
 #endif
@@ -140,8 +148,8 @@ void RenderContextOGL::enableFixedLighting(bool init)
 #ifdef USE_GL_NORMAL_LIGHTING
         glEnable(GL_LIGHT0);
         glEnable(GL_LIGHT1);
-#if !defined(__EMSCRIPTEN__) && !defined(USE_GLES)
         glEnable(GL_COLOR_MATERIAL);
+#if !defined(__EMSCRIPTEN__) && !defined(USE_GLES)
         glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 #endif
 
@@ -215,7 +223,7 @@ void RenderContextOGL::drawIndexed(PrimitiveMode primitiveMode, unsigned int cou
 
 void RenderContextOGL::drawIndexed(PrimitiveMode primitiveMode, unsigned int count, unsigned int startOffset, uint8_t indexSize)
 {
-    glDrawElements(modeMap[primitiveMode], count, indexType[indexSize], (const GLvoid*)(startOffset * indexSize));
+    glDrawElements(modeMap[primitiveMode], count, indexType[indexSize], (const GLvoid*)((uintptr_t)startOffset * indexSize));
 }
 
 void RenderContextOGL::setDepthRange(float nearVal, float farVal)
@@ -223,9 +231,9 @@ void RenderContextOGL::setDepthRange(float nearVal, float farVal)
     glDepthRange(nearVal, farVal);
 }
 
-void RenderContextOGL::setViewport(int topLeftX, int topLeftY, unsigned int width, unsigned int height, float nearVal, float farVal)
+void RenderContextOGL::setViewport(unsigned int width, unsigned int height, float nearVal, float farVal, const ViewportOrigin& origin)
 {
-    glViewport(topLeftX, topLeftY, width, height);
+    glViewport(origin.leftX, origin.bottomLeftY, width, height);
     setDepthRange(nearVal, farVal);
 }
 
@@ -252,6 +260,7 @@ void RenderContextOGL::clearDepthStencilBuffer()
 
 void RenderContextOGL::clearContextState()
 {
+    // Doesn't call RenderContextBase::clearContextState() on 0.12.1
     m_activeTexture = GL_NONE;
     m_activeBuffer[0] = GL_NONE;
     m_activeBuffer[1] = GL_NONE;
@@ -259,7 +268,7 @@ void RenderContextOGL::clearContextState()
 #ifdef MC_GL_DEBUG_OUTPUT
     glEnable(GL_DEBUG_OUTPUT);
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
-    xglDebugMessageCallback(&mce::Platform::OGL::DebugMessage, nullptr);
+    xglDebugMessageCallback(&mce::ErrorHandlerOGL::debugMessageCallbackOpenGL, nullptr);
 #endif
 
 #ifdef GL_PERSPECTIVE_CORRECTION_HINT
@@ -279,14 +288,19 @@ void RenderContextOGL::swapBuffers()
 {
 }
 
-int RenderContextOGL::getMaxVertexCount()
+int RenderContextOGL::getMaxVertexCount() const
 {
     return gl::getMaxVertexCount();
 }
 
-bool RenderContextOGL::supports32BitIndices()
+bool RenderContextOGL::supports32BitIndices() const
 {
     return gl::supports32BitIndices();
+}
+
+bool RenderContextOGL::supports16BitUnsignedUVs() const
+{
+    return gl::supports16BitUnsignedUVs();
 }
 
 GLuint& RenderContextOGL::getActiveBuffer(BufferType bufferType)

@@ -7,6 +7,7 @@
 #include "thirdparty/rapidjson/document.h"
 
 #include "client/app/AppPlatformListener.hpp"
+#include "client/resources/ResourceLocation.hpp"
 #include "renderer/MaterialPtr.hpp"
 
 namespace mce
@@ -19,7 +20,7 @@ namespace mce
     public:
         std::map<const std::string, RenderMaterial> m_materials;
         std::set<MaterialPtr*> m_references;
-        std::string m_listPath;
+        ResourceLocation m_listPath;
 
     public:
         RenderMaterialGroup();
@@ -29,7 +30,7 @@ namespace mce
         void _fireGroupReloaded();
         void _fireGroupDestroyed();
         RenderMaterial& _material(const std::string& fileName, const std::string& tag);
-        void _loadMaterialSet(const rapidjson::Value& root, RenderMaterial& groupBaseParent, const std::string& materialIdentifier);
+        void _loadMaterialSet(const rapidjson::Value::ConstObject& root, RenderMaterial& groupBaseParent, const std::string& materialIdentifier);
         void _loadList();
 
     // These are public despite being prefixed with underscores
@@ -41,7 +42,8 @@ namespace mce
         RenderMaterial& _getMaterialOrDefault(const std::string& name, RenderMaterial& defaultMaterial);
 
         MaterialPtr getMaterial(const std::string& name);
-        void loadList(const std::string listPath);
+        void loadList(const ResourceLocation& listPath);
+        void compileMaterials();
 
         void onAppResumed() override;
         void onAppSuspended() override;

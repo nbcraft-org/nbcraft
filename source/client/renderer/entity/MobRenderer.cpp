@@ -89,7 +89,7 @@ void MobRenderer::render(const Entity& entity, const Vec3& pos, float rot, float
 	{
 		MatrixStack::Ref matrix = MatrixStack::World.push();
 
-		m_pModel->field_4 = getAttackAnim(mob, a);
+		m_pModel->m_attackTime = getAttackAnim(mob, a);
 		m_pModel->m_bRiding = false;
 		m_pModel->m_bIsBaby = mob.isBaby();
 
@@ -97,12 +97,13 @@ void MobRenderer::render(const Entity& entity, const Vec3& pos, float rot, float
 		{
 			m_pArmorModel->m_bRiding = m_pModel->m_bRiding;
 			m_pArmorModel->m_bIsBaby = m_pModel->m_bIsBaby;
+			m_pArmorModel->m_attackTime = m_pModel->m_attackTime;
 		}
 
 		float aYaw = mob.m_oRot.x + (mob.m_rot.x - mob.m_oRot.x) * a;
 		float aPitch = mob.m_oRot.y + (mob.m_rot.y - mob.m_oRot.y) * a;
 		float fBob = getBob(mob, a);
-		float fSmth = mob.field_EC + (mob.field_E8 - mob.field_EC) * a;
+		float fSmth = mob.m_yBodyRotO + (mob.m_yBodyRot - mob.m_yBodyRotO) * a;
 
 		setupPosition(mob, Vec3(pos.x, pos.y - mob.m_heightOffset, pos.z), matrix);
 		setupRotations(mob, fBob, fSmth, matrix, a);
@@ -112,10 +113,10 @@ void MobRenderer::render(const Entity& entity, const Vec3& pos, float rot, float
 		scale(mob, matrix, a);
 		matrix->translate(Vec3(0.0f, -24.0f * fScale - (1.0f / 128.0f), 0.0f));
 
-		float x1 = mob.field_128 + (mob.m_walkAnimSpeed - mob.field_128) * a;
+		float x1 = mob.m_walkAnimSpeedO + (mob.m_walkAnimSpeed - mob.m_walkAnimSpeedO) * a;
 		if (x1 > 1.0f)
 			x1 = 1.0f;
-		float x2 = mob.field_130 - mob.m_walkAnimSpeed * (1.0f - a);
+		float x2 = mob.m_walkAnimPos - mob.m_walkAnimSpeed * (1.0f - a);
 
 		_setupShaderParameters(entity, a);
 
@@ -182,7 +183,7 @@ void MobRenderer::renderName(const Mob& mob, const Vec3& pos)
 	}
 	else
 	{
-		if (m_pDispatcher->m_pOptions->m_bDebugText)
+		if (m_pDispatcher->m_pOptions->m_debugText.get())
 		{
 			std::stringstream ss;
 			ss << mob.m_EntityID;

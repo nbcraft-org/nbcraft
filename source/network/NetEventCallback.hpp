@@ -18,7 +18,9 @@ public:
 	virtual ~NetEventCallback() {}
 
 protected:
-	Player* _findPlayer(Level& level, Entity::ID entityId = -1, const RakNet::RakNetGUID* guid = nullptr);
+	Player* _findPlayer(Level& level, Entity::ID entityId);
+	Player* _findPlayer(Level& level, const RakNet::RakNetGUID& guid);
+	Player* _findPlayer(Level& level, Entity::ID entityId, const RakNet::RakNetGUID& guid);
 
 public:
 	virtual void levelGenerated(Level*) {}
@@ -36,6 +38,7 @@ public:
 	virtual void handle(const RakNet::RakNetGUID&, StartGamePacket*) {}
 	virtual void handle(const RakNet::RakNetGUID&, AddMobPacket*) {}
 	virtual void handle(const RakNet::RakNetGUID&, AddPlayerPacket*) {}
+	virtual void handle(const RakNet::RakNetGUID&, AddEntityPacket*) {}
 	virtual void handle(const RakNet::RakNetGUID&, RemoveEntityPacket*) {}
 	virtual void handle(const RakNet::RakNetGUID&, AddItemEntityPacket*) {}
 	virtual void handle(const RakNet::RakNetGUID&, TakeItemEntityPacket*) {}
@@ -44,17 +47,29 @@ public:
 	virtual void handle(const RakNet::RakNetGUID&, PlaceBlockPacket*) {}
 	virtual void handle(const RakNet::RakNetGUID&, RemoveBlockPacket*) {}
 	virtual void handle(const RakNet::RakNetGUID&, UpdateBlockPacket*) {}
+	virtual void handle(const RakNet::RakNetGUID&, ExplodePacket*) {}
 	virtual void handle(const RakNet::RakNetGUID&, LevelEventPacket*) {}
+	virtual void handle(const RakNet::RakNetGUID&, TileEventPacket*) {}
 	virtual void handle(const RakNet::RakNetGUID&, EntityEventPacket*) {}
 	virtual void handle(const RakNet::RakNetGUID&, RequestChunkPacket*) {}
 	virtual void handle(const RakNet::RakNetGUID&, ChunkDataPacket*) {}
 	virtual void handle(const RakNet::RakNetGUID&, PlayerEquipmentPacket*) {}
 	virtual void handle(const RakNet::RakNetGUID&, InteractPacket*) {}
 	virtual void handle(const RakNet::RakNetGUID&, UseItemPacket*) {}
+	virtual void handle(const RakNet::RakNetGUID&, PlayerActionPacket*) {}
 	virtual void handle(const RakNet::RakNetGUID&, SetEntityDataPacket*) {}
+	virtual void handle(const RakNet::RakNetGUID&, SetEntityMotionPacket*) {}
 	virtual void handle(const RakNet::RakNetGUID&, SetHealthPacket*) {}
 	virtual void handle(const RakNet::RakNetGUID&, AnimatePacket*) {}
 	virtual void handle(const RakNet::RakNetGUID&, RespawnPacket*) {}
+	virtual void handle(const RakNet::RakNetGUID&, SendInventoryPacket*) {}
+	virtual void handle(const RakNet::RakNetGUID&, DropItemPacket*) {}
+	virtual void handle(const RakNet::RakNetGUID&, ContainerOpenPacket*) {}
+	virtual void handle(const RakNet::RakNetGUID&, ContainerClosePacket*) {}
+	virtual void handle(const RakNet::RakNetGUID&, ContainerSetSlotPacket*) {}
+	virtual void handle(const RakNet::RakNetGUID&, ContainerSetDataPacket*) {}
+	virtual void handle(const RakNet::RakNetGUID&, ContainerSetContentPacket*) {}
+	virtual void handle(const RakNet::RakNetGUID&, ContainerAckPacket*) {}
 	virtual void handle(const RakNet::RakNetGUID&, LevelDataPacket*) {}
 
 	virtual void handle(Level&, const RakNet::RakNetGUID&, RespawnPacket*);

@@ -7,176 +7,17 @@
  ********************************************************************/
 
 #include "OptionList.hpp"
+#include "client/gui/components/Button.hpp"
 #include "client/options/Options.hpp"
-#include "client/renderer/FoliageColor.hpp"
-#include "client/renderer/GrassColor.hpp"
-#include "client/renderer/PatchManager.hpp"
-#include "renderer/ShaderConstants.hpp"
 
-#define C_OPTION_ITEM_HEIGHT (20)
-
-#define C_ON_OFF_SWITCH_WIDTH (32)
-#define C_ON_OFF_SWITCH_HEIGHT (18)
-
-#define C_DISTANCE_SWITCH_WIDTH (60)
-#define C_DISTANCE_SWITCH_HEIGHT (18)
-
-BooleanOptionItem::BooleanOptionItem(bool* pValue, const std::string& text)
-{
-	m_text = text;
-	m_pValue = pValue;
-	m_bDisabled = false;
-}
-
-void BooleanOptionItem::onClick(OptionList* pList, int mouseX, int mouseY)
-{
-	if (m_bDisabled)
-		return;
-
-	int itemX = pList->field_18 / 2 - (C_SCROLLED_LIST_ITEM_WIDTH - 4) / 2;
-
-	if (mouseX <= itemX + C_SCROLLED_LIST_ITEM_WIDTH - C_ON_OFF_SWITCH_WIDTH - 6)
-		return;
-	if (mouseX > itemX + C_SCROLLED_LIST_ITEM_WIDTH - 6)
-		return;
-
-	// Toggle the value
-	toggleState(pList);
-}
-
-void BooleanOptionItem::render(OptionList* pList, int x, int y)
-{
-	pList->drawString(
-		*pList->m_pMinecraft->m_pFont,
-		m_text,
-		x + 22,
-		y + (C_OPTION_ITEM_HEIGHT - 8) / 2 - 2,
-		m_bDisabled ? 0x777777 : 0xCCCCCC);
-
-	pList->drawOnOffSwitch(
-		x + C_SCROLLED_LIST_ITEM_WIDTH - C_ON_OFF_SWITCH_WIDTH - 6,
-		y + (C_OPTION_ITEM_HEIGHT - C_ON_OFF_SWITCH_HEIGHT) / 2 - 2,
-		*m_pValue,
-		m_bDisabled);
-}
-
-void BooleanOptionItem::toggleState(OptionList* pList)
-{
-	*m_pValue ^= 1;
-}
-
-RenderOptionItem::RenderOptionItem(bool* pValue, const std::string& text) :
-	BooleanOptionItem(pValue, text)
-{
-}
-
-void RenderOptionItem::toggleState(OptionList* pList)
-{
-	BooleanOptionItem::toggleState(pList);
-	pList->m_pMinecraft->m_pLevelRenderer->allChanged();
-}
-
-
-AORenderOptionItem::AORenderOptionItem(bool* pValue, const std::string& text) :
-	RenderOptionItem(pValue, text)
-{
-}
-
-void AORenderOptionItem::toggleState(OptionList* pList)
-{
-	BooleanOptionItem::toggleState(pList);
-	Minecraft::useAmbientOcclusion = *m_pValue;
-	pList->m_pMinecraft->m_pLevelRenderer->allChanged();
-}
-
-
-FancyRenderOptionItem::FancyRenderOptionItem(bool* pValue, const std::string& text) :
-	RenderOptionItem(pValue, text)
-{
-}
-
-void FancyRenderOptionItem::toggleState(OptionList* pList)
-{
-	BooleanOptionItem::toggleState(pList);
-	pList->m_pMinecraft->reloadFancy(*m_pValue);
-}
-
-HeaderOptionItem::HeaderOptionItem(const std::string& text)
-{
-	m_text = text;
-}
-
-void HeaderOptionItem::render(OptionList* pList, int x, int y)
-{
-	pList->drawString(
-		*pList->m_pMinecraft->m_pFont,
-		m_text,
-		x + 2,
-		y + (C_OPTION_ITEM_HEIGHT - 8) / 2 - 2,
-		Color::WHITE);
-}
-
-DistanceOptionItem::DistanceOptionItem(int* pValue, const std::string& text)
-{
-	m_text = text;
-	m_pValue = pValue;
-}
-
-void DistanceOptionItem::onClick(OptionList* pList, int mouseX, int mouseY)
-{
-	int itemX = pList->field_18 / 2 - (C_SCROLLED_LIST_ITEM_WIDTH - 4) / 2;
-
-	if (mouseX <= itemX + C_SCROLLED_LIST_ITEM_WIDTH - C_DISTANCE_SWITCH_WIDTH - 6)
-		return;
-	if (mouseX > itemX + C_SCROLLED_LIST_ITEM_WIDTH - 6)
-		return;
-
-	int oldValue = *m_pValue;
-	*m_pValue = (oldValue + 1) % RD_COUNT;
-	
-	// If the old render distance was bigger than the current one
-	if (oldValue < *m_pValue)
-		pList->m_pMinecraft->m_pLevelRenderer->allChanged();
-}
-
-void DistanceOptionItem::render(OptionList* pList, int x, int y)
-{
-	pList->drawString(
-		*pList->m_pMinecraft->m_pFont,
-		m_text,
-		x + 22,
-		y + (C_OPTION_ITEM_HEIGHT - 8) / 2 - 2,
-		Color(204, 204, 204));
-
-	const char* distanceText = "???";
-	switch (*m_pValue)
-	{
-		case RD_EXTREME: distanceText = "EXTREME"; break;
-		case RD_FAR:     distanceText = "FAR";     break;
-		case RD_NORMAL:  distanceText = "NORMAL";  break;
-		case RD_SHORT:   distanceText = "SHORT";   break;
-	}
-
-	std::string distanceTextStr(distanceText);
-
-	x += C_SCROLLED_LIST_ITEM_WIDTH - C_DISTANCE_SWITCH_WIDTH - 6;
-	y += (C_OPTION_ITEM_HEIGHT - C_DISTANCE_SWITCH_HEIGHT) / 2 - 2;
-
-	pList->fill(x + 0, y + 0, x + C_DISTANCE_SWITCH_WIDTH - 0, y + C_DISTANCE_SWITCH_HEIGHT - 0, 0xFF444444);
-	pList->fill(x + 1, y + 1, x + C_DISTANCE_SWITCH_WIDTH - 1, y + C_DISTANCE_SWITCH_HEIGHT - 1, 0xFF111111);
-	pList->drawCenteredString(
-		*pList->m_pMinecraft->m_pFont,
-		distanceTextStr,
-		x + C_DISTANCE_SWITCH_WIDTH / 2,
-		y + (C_DISTANCE_SWITCH_HEIGHT - 8) / 2,
-		0xFFFFFF
-	);
-}
+#define C_OPTION_ITEM_HEIGHT (22)
 
 OptionList::OptionList(Minecraft* pMinecraft, int width, int height, int something, int something2) :
 	ScrolledSelectionList(pMinecraft, width, height, something, something2, C_OPTION_ITEM_HEIGHT)
 {
 	m_selectedItem = -1;
+	m_bRenderScrollbar = false;
+	m_bRenderSelection = false;
 }
 
 OptionList::~OptionList()
@@ -194,7 +35,7 @@ void OptionList::selectItem(int index, bool b)
 {
 	if (index >= 0 && index < getNumberOfItems())
 	{
-		if (!m_items[index]->maySelect())
+		if (!m_items[index]->isVisible() || !m_items[index]->isEnabled())
 			return;
 	}
 
@@ -206,25 +47,16 @@ bool OptionList::isSelectedItem(int index)
 	return m_selectedItem == index;
 }
 
-void OptionList::drawOnOffSwitch(int x, int y, bool state, bool disabled)
+void OptionList::renderItem(int index, int x, int y, int height, const MenuPointer& pointer, Tesselator& t)
 {
-	currentShaderColor = Color::WHITE;
+	GuiElement* pItem = m_items[index];
 
-	// Obs: The color setting that affected disabled items' texts will also affect this.
+	pItem->m_xPos = x;
+	pItem->m_yPos = y;
+	pItem->m_width = C_SCROLLED_LIST_ITEM_WIDTH;
+	pItem->m_height = height;
 
-	m_pMinecraft->m_pTextures->loadAndBindTexture("gui/gui_custom.png");
-	
-	blit(x, y, 0, state ? 0 : 18, C_ON_OFF_SWITCH_WIDTH, C_ON_OFF_SWITCH_HEIGHT, C_ON_OFF_SWITCH_WIDTH, C_ON_OFF_SWITCH_HEIGHT);
-
-	m_pMinecraft->m_pTextures->loadAndBindTexture("gui/gui.png");// bind the old texture back
-}
-
-void OptionList::renderItem(int index, int x, int y, int height, Tesselator& t)
-{
-	Font* f = m_pMinecraft->m_pFont;
-	OptionItem* pItem = m_items[index];
-
-	pItem->render(this, x, y);
+	pItem->render(m_pMinecraft, pointer);
 }
 
 void OptionList::renderBackground(float f)
@@ -239,25 +71,13 @@ void OptionList::renderHoleBackground(float a, float b, int c, int d)
 	t.begin(4);
 	t.color(0x202020, 0xC0);
 	t.vertexUV(0.0f, b, 0.0f, 0.0f, b / 32.0f);
-	t.vertexUV(float(field_18), b, 0.0f, field_18 / 32.0f, b / 32.0f);
-	t.vertexUV(float(field_18), a, 0.0f, field_18 / 32.0f, a / 32.0f);
+	t.vertexUV(float(m_width), b, 0.0f, m_width / 32.0f, b / 32.0f);
+	t.vertexUV(float(m_width), a, 0.0f, m_width / 32.0f, a / 32.0f);
 	t.vertexUV(0.0f, a, 0.0f, 0.0f, a / 32.0f);
 	t.draw(m_materials.ui_fill_gradient);
 }
 
-void OptionList::renderScrollBackground()
-{
-	Tesselator& t = Tesselator::instance;
-	t.begin(4);
-	t.color(0x202020, 0x90);
-	t.vertexUV(field_24, field_10, 0.0f, field_24 / 32.0f, (field_10 + float(int(field_34))) / 32.0f);
-	t.vertexUV(field_20, field_10, 0.0f, field_20 / 32.0f, (field_10 + float(int(field_34))) / 32.0f);
-	t.vertexUV(field_20, field_C,  0.0f, field_20 / 32.0f, (field_C  + float(int(field_34))) / 32.0f);
-	t.vertexUV(field_24, field_C,  0.0f, field_24 / 32.0f, (field_C  + float(int(field_34))) / 32.0f);
-	t.draw(m_materials.ui_fill_gradient);
-}
-
-void OptionList::onClickItem(int index, int mouseX, int mouseY)
+void OptionList::onReleaseItem(int index, const MenuPointer& pointer)
 {
 	if (index >= getNumberOfItems())
 		index = -1;
@@ -265,12 +85,51 @@ void OptionList::onClickItem(int index, int mouseX, int mouseY)
 	selectItem(index, false);
 
 	if (index >= 0)
-		m_items[index]->onClick(this, mouseX, mouseY);
+	{
+		GuiElement* pItem = m_items[index];
+
+		if (pItem->getType() != GuiElement::TYPE_BUTTON) return;
+
+		((Button*)pItem)->released(pointer);
+	}
+}
+
+void OptionList::renderScrollBackground()
+{
+	Tesselator& t = Tesselator::instance;
+	t.begin(4);
+	t.color(0x202020, 0x90);
+	t.vertexUV(m_x1, m_y1, 0.0f, m_x1 / 32.0f, (m_y1 + float(int(m_scrollAmount))) / 32.0f);
+	t.vertexUV(m_x0, m_y1, 0.0f, m_x0 / 32.0f, (m_y1 + float(int(m_scrollAmount))) / 32.0f);
+	t.vertexUV(m_x0, m_y0,  0.0f, m_x0 / 32.0f, (m_y0  + float(int(m_scrollAmount))) / 32.0f);
+	t.vertexUV(m_x1, m_y0,  0.0f, m_x1 / 32.0f, (m_y0  + float(int(m_scrollAmount))) / 32.0f);
+	t.draw(m_materials.ui_fill_gradient);
+}
+
+void OptionList::onClickItem(int index, const MenuPointer& pointer, int relMouseX, int relPointerY, bool doubleClick)
+{
+	if (index >= getNumberOfItems())
+		index = -1;
+
+	selectItem(index, false);
+
+	if (index >= 0)
+	{
+		GuiElement* pItem = m_items[index];
+
+		if (pItem->getType() != GuiElement::TYPE_BUTTON) return;
+		
+		Button* button = ((Button*)pItem);
+
+		if (!button->isHovered(m_pMinecraft, pointer)) return;
+
+		button->pressed(m_pMinecraft, pointer);
+	}
 }
 
 void OptionList::clear()
 {
-	for (std::vector<OptionItem*>::iterator iter = m_items.begin();
+	for (GuiElementList::iterator iter = m_items.begin();
 		iter != m_items.end();
 		++iter)
 	{
@@ -282,72 +141,66 @@ void OptionList::clear()
 
 void OptionList::initDefaultMenu()
 {
-	Options* pOptions = m_pMinecraft->getOptions();
+	initVideoMenu();
+}
 
+#define HEADER(text) do { m_items.push_back(new OptionHeader(text)); currentIndex++; } while (0)
+#define OPTION(name) do { pOptions->name.addGuiElement(m_items, UI_POCKET); currentIndex++; } while (0)
+
+void OptionList::initGameplayMenu()
+{
+	Options* pOptions = m_pMinecraft->getOptions();
 	int currentIndex = -1;
 
-#define HEADER(text) do { m_items.push_back(new HeaderOptionItem(text)); currentIndex++; } while (0)
-#define OPTION(type, name, text) do { m_items.push_back(new type ## OptionItem(&pOptions->name, text)); currentIndex++; } while (0)
+	OPTIONS_LIST_GAMEPLAY_GAME;
+	OPTIONS_LIST_GAMEPLAY_AUDIO;
 
-	int idxLM = -1, idxGrass = -1, idxBiome = -1, idxSplit = -1, idxController = -1, idxPano = -1;
-
-	HEADER("Video");
-	{
-		OPTION(Distance, m_iViewDistance,         "Render Distance");
-		OPTION(Boolean,  m_bThirdPerson,          "Third Person View");
-		OPTION(AORender, m_bAmbientOcclusion,     "Smooth Lighting");
-		OPTION(FancyRender,   m_bFancyGraphics,        "Fancy Graphics");
-		OPTION(Boolean,  m_bViewBobbing,          "View Bobbing");
-		OPTION(Boolean,  m_bAnaglyphs,            "3D Anaglyph");
-		OPTION(Boolean,  m_bBlockOutlines,        "Block Outlines");
-		OPTION(Render,   m_bFancyGrass,           "Fancy Grass");   idxGrass = currentIndex; // renders colored grass side overlay
-		OPTION(Render,   m_bBiomeColors,          "Biome Colors");  idxBiome = currentIndex; // colors the grass based on the current biome
-		OPTION(Boolean,  m_bDontRenderGui,        "Hide GUI");
-		OPTION(Boolean,  m_bDynamicHand,          "Dynamic Hand Movement");
-	}
-
-	HEADER("Controls");
-	{
-		OPTION(Boolean,  m_bAutoJump,             "Auto Jump");
-		OPTION(Boolean,  m_bInvertMouse,          "Invert Y-axis");
-		OPTION(Boolean,  m_bSplitControls,        "Split Controls"); idxSplit = currentIndex;
-		OPTION(Boolean,  m_bUseController,        "Use Controller"); idxController = currentIndex;
-		OPTION(Boolean,  m_bFlyCheat,             "Flight Hax");
-	}
-
-	HEADER("Multiplayer");
-	{
-		OPTION(Boolean, m_bServerVisibleDefault,  "Local Server Multiplayer"); idxLM = currentIndex;
-	}
-
-	HEADER("Miscellaneous");
-	{
-		OPTION(Boolean, m_bDebugText,			  "Debug Text");
-		OPTION(Boolean, m_bOldTitleLogo,		  "Old Title Logo");
-#ifdef ENH_MENU_BACKGROUND
-		OPTION(Boolean, m_bMenuPanorama,		  "Menu Panorama"); idxPano = currentIndex; // renders a spinning panorama on the main menu
+#ifndef FEATURE_NETWORKING
+	m_items[currentIndex]->setEnabled(false);
 #endif
-	}
+	(void)currentIndex; // compiler will warn about an unused variable sometimes if this isn't here
+}
 
-#ifdef __EMSCRIPTEN
-	m_items[idxLM]->setDisabled(true);
-#endif
+void OptionList::initControlsMenu()
+{
+	Options* pOptions = m_pMinecraft->getOptions();
+	int currentIndex = -1;
+	int idxSplit = -1, idxController = -1;
 
-	if (!GetPatchManager()->IsGrassSidesTinted())
-		m_items[idxGrass]->setDisabled(true);
+	OPTIONS_LIST_CONTROLS_CONTROLS;
+	OPTIONS_LIST_CONTROLS_FEEDBACK;
+	OPTIONS_LIST_CONTROLS_EXPERIMENTAL;
 
-	if (!GrassColor::isAvailable() || !FoliageColor::isAvailable())
-		m_items[idxBiome]->setDisabled(true);
+	if (!m_pMinecraft->isTouchscreen())
+		m_items[idxSplit]->setEnabled(false);
+	m_items[idxController]->setEnabled(false);
+}
+
+void OptionList::initVideoMenu()
+{
+	Options* pOptions = m_pMinecraft->getOptions();
+	int currentIndex = -1;
+	int idxPano = -1;
+
+	OPTIONS_LIST_VIDEO_GRAPHICS;
+	OPTIONS_LIST_VIDEO_EXPERIMENTAL;
 
 #ifdef ENH_MENU_BACKGROUND
 	if (!Screen::isMenuPanoramaAvailable())
-		m_items[idxPano]->setDisabled(true);
+		m_items[idxPano]->setEnabled(false);
 #endif
+}
 
-	if (!m_pMinecraft->isTouchscreen())
-		m_items[idxSplit]->setDisabled(true);
+OptionHeader::OptionHeader(const std::string& text)
+	: m_text(text)
+{
+}
 
-	// Currently just used as a status indicator + prevents need to re-compile to get input mapped for controller
-	//if (!m_pMinecraft->platform()->hasGamepad())
-		m_items[idxController]->setDisabled(true);
+void OptionHeader::render(Minecraft* pMinecraft, const MenuPointer& pointer)
+{
+	pMinecraft->m_pFont->draw(
+		m_text,
+		m_xPos + 2,
+		m_yPos + (C_OPTION_ITEM_HEIGHT - 8) / 2 - 2,
+		Color::WHITE);
 }

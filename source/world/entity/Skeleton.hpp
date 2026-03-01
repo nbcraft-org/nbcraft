@@ -6,11 +6,12 @@
 class Skeleton : public Monster
 {
 private:
-	static ItemInstance* bow;
+	static ItemStack bow;
 
 public:
 	Skeleton(Level* pLevel);
 
+public:
 	std::string getAmbientSound() const override { return "mob.skeleton"; }
 	std::string getDeathSound() const override { return "mob.skeletonhurt"; }
 	std::string getHurtSound() const override { return "mob.skeletonhurt"; }
@@ -23,5 +24,5 @@ public:
 	
 	void dropDeathLoot() override;
 	
-	ItemInstance* getCarriedItem() const override;
+	const ItemStack& getCarriedItem() const override;
 };

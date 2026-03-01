@@ -8,14 +8,22 @@
 
 #pragma once
 
+#include <vector>
+#include <map>
+
 #include "renderer/MaterialPtr.hpp"
+#include "client/app/Minecraft.hpp"
 #include "client/player/input/Mouse.hpp"
 #include "client/player/input/Keyboard.hpp"
-#include "components/Button.hpp"
-#include "components/TextInputBox.hpp"
+#include "client/player/input/GameController.hpp"
+#include "GuiElement.hpp"
+#include "MenuPointer.hpp"
+#include "AreaNavigation.hpp"
 
 class Button;
-class TextInputBox;
+class VerticalLayout;
+
+typedef std::vector<GuiElement*> GuiElementList;
 
 class Screen : public GuiComponent
 {
@@ -46,18 +54,57 @@ public:
 	Screen();
 	virtual ~Screen();
 
-	void init(Minecraft*, int, int);
-	void updateTabButtonSelection();
-	void setSize(int width, int height);
-	void onRender(int mouseX, int mouseY, float f);
-	int getYOffset();
+protected:
+	void _addElement(GuiElement& element, bool navigable = true);
+	void _selectCurrentElement();
+	void _deselectCurrentElement();
+	void _playSelectSound();
+	void _renderPointer();
+	GuiElement* _getElement(GuiElement::ID id);
+	GuiElement* _getSelectedElement();
+	bool _useController() const;
 
-	virtual void render(int, int, float);
+public:
+	void init(Minecraft*, int, int);
+	void setSize(int width, int height);
+	void onRender(float f);
+	bool onBack(bool b);
+	bool selectElementById(GuiElement::ID id);
+	void selectElement(GuiElement*);
+	bool nextTab();
+	bool prevTab();
+	int getYOffset();
+	unsigned int getCursorMoveThrottle() const { return 65; }
+	bool doElementTabbing() const;
+	void controllerEvent(GameController::StickID stickId, double deltaTime = 0.0);
+
+protected:
+	virtual bool _areaNavigation(AreaNavigation::Direction);
+	virtual void _processControllerDirection(GameController::StickID stickId);
+	virtual void _controllerDirectionChanged(GameController::StickID stickId, GameController::StickState stickState);
+	virtual void _controllerDirectionHeld(GameController::StickID stickId, GameController::StickState stickState);
+	virtual void _buttonClicked(Button* pButton);
+	virtual void _guiElementClicked(GuiElement& element);
+	virtual void _updateTabButtonSelection();
+	virtual bool _nextTab();
+	virtual bool _prevTab();
+
+public:
+	virtual void render(float a);
 	virtual void init() {};
+	virtual void initMenuPointer();
 	virtual void updateEvents();
 	virtual void mouseEvent();
 	virtual void keyboardEvent();
-	virtual bool handleBackEvent(bool b) { return false; }
+	virtual void controllerEvent();
+	virtual void checkForPointerEvent(MouseButtonType button);
+	virtual bool handleBackEvent(bool b);
+	virtual void onClose();
+	virtual void handlePointerLocation(MenuPointer::Unit x, MenuPointer::Unit y);
+	virtual void handlePointerPressed(bool isPressed);
+	virtual void handlePointerAction(const MenuPointer& pointer, MouseButtonType button);
+	virtual void handleScrollWheel(float force);
+	virtual void handleControllerStickEvent(const GameController::StickEvent& stick, double deltaTime);
 	virtual void tick();
 	virtual void removed() {};
 	virtual void renderBackground(int vo);
@@ -68,34 +115,63 @@ public:
 	virtual bool isInGameScreen() { return true; }
 	virtual void confirmResult(bool b, int i) {};
 	virtual void onTextBoxUpdated(int id) {};
-	virtual void buttonClicked(Button* pButton) {};
-	virtual void mouseClicked(int, int, int);
-	virtual void mouseReleased(int, int, int);
+	virtual void pointerPressed(const MenuPointer& pointer, MouseButtonType btn);
+	virtual void pointerReleased(const MenuPointer& pointer, MouseButtonType btn);
 	virtual void keyPressed(int);
-	virtual void keyboardNewChar(char);
+	virtual void handleTextChar(char);
 	virtual void keyboardTextPaste(const std::string& text);
-	virtual void handleScroll(bool down);
+	virtual float getScale(int width, int height);
+	static float GetConsoleScale(int height);
+	virtual void setTextboxText(const std::string& text);
+	virtual void handleKeyboardClosed();
 
 	// ported from 0.8
 	virtual void renderMenuBackground(float f);
-
-public:
-	int m_width;
-	int m_height;
-	bool field_10;
-	Minecraft* m_pMinecraft;
-	std::vector<Button*> m_buttons;
-	std::vector<Button*> m_buttonTabList; 
-	int m_tabButtonIndex;
-	Font* m_pFont;
-	Button* m_pClickedButton;
-
-#ifndef ORIGINAL_CODE
-	std::vector<TextInputBox*> m_textInputs;
-	int m_yOffset;
-#endif
+	void renderConsolePanorama(bool isNight);
+	void renderConsolePanorama();
+	void renderConsoleLoading(int x, int y, int blockSize = 42, int blockDistance = 12);
 
 protected:
 	Materials m_screenMaterials;
+	MenuPointer m_menuPointer;
+	bool m_bLastPointerPressedState;
+
+public:
+	friend class VerticalLayout;
+
+	class Navigation : public AreaNavigation
+	{
+	public:
+		Navigation(Screen*);
+
+		bool next(int& x, int& y, bool invert) override;
+
+		bool isValid(ID) override;
+
+	private:
+		Screen* m_pScreen;
+	};
+
+	int m_width;
+	int m_height;
+	bool m_bPassEvents;
+	//@NOTE: This should be enabled only if the the actual screen handles the deletion of the previous screen, otherwise, there will be a memory leak!
+	bool m_bDeletePrevious;
+	Minecraft* m_pMinecraft;
+	GuiElementList m_elements;
+	GuiElement* m_pSelectedElement;
+	Font* m_pFont;
+	GuiElement* m_pClickedElement;
+	UITheme m_uiTheme;
+
+#ifndef ORIGINAL_CODE
+	int m_yOffset;
+#endif
+
+	bool m_bRenderPointer;
+
+	unsigned int m_lastTimeMoved;
+	unsigned int m_cursorTick;
+	std::map<GameController::StickID, GameController::StickState> m_lastStickState;
 };
 

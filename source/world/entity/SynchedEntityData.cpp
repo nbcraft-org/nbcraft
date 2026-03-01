@@ -1,4 +1,6 @@
 #include <limits.h>
+#define __STDC_LIMIT_MACROS
+#include <stdint.h>
 
 #include "SynchedEntityData.hpp"
 
@@ -10,7 +12,7 @@ MAP(int16_t,      TYPE_INT16,        0)
 MAP(int32_t,      TYPE_INT32,        0)
 MAP(float,        TYPE_FLOAT,        0.0f) // float because VS2010 was bitching about float_t not existing despite including math.h or cmath
 MAP(std::string,  TYPE_STRING,       Util::EMPTY_STRING)
-MAP(ItemInstance, TYPE_ITEMINSTANCE, ItemInstance())
+MAP(ItemStack,    TYPE_ITEMSTACK,    ItemStack())
 MAP(TilePos,      TYPE_TILEPOS,      TilePos())
 MAP(int64_t,      TYPE_INT64,        0)
 MAP(Vec3,         TYPE_VEC3,         Vec3())
@@ -20,7 +22,7 @@ MAP(Vec3,         TYPE_VEC3,         Vec3())
 SynchedEntityData::SynchedEntityData()
 {
     m_itemsArray = ItemsArray();
-    m_minIdxDirty = INT_MAX;
+    m_minIdxDirty = UINT16_MAX;
     m_maxIdxDirty = 0;
 }
 
@@ -64,7 +66,7 @@ bool SynchedEntityData::isDirty() const
 
 void SynchedEntityData::clear()
 {
-    for (int i = 0; i < m_itemsArray.size(); i++)
+    for (size_t i = 0; i < m_itemsArray.size(); i++)
     {
         DataItem* item = m_itemsArray[i];
         SAFE_DELETE(item);
@@ -72,7 +74,7 @@ void SynchedEntityData::clear()
 
     m_itemsArray.clear();
     // Mark as clean
-    m_minIdxDirty = INT_MAX;
+    m_minIdxDirty = UINT16_MAX;
     m_maxIdxDirty = 0;
 }
 
@@ -91,7 +93,7 @@ SynchedEntityData::ItemsArray SynchedEntityData::packDirty()
     }
 
     // Mark as clean
-    m_minIdxDirty = INT_MAX;
+    m_minIdxDirty = UINT16_MAX;
     return result;
 }
 
@@ -102,7 +104,7 @@ void SynchedEntityData::packAll(IDataOutput& dos) const
 
 void SynchedEntityData::assignValues(const ItemsArray& items)
 {
-    for (int i = 0; i < items.size(); i++)
+    for (size_t i = 0; i < items.size(); i++)
     {
         DataItem* newItem = items[i];
         DataID itemId = newItem->getId();
@@ -113,37 +115,35 @@ void SynchedEntityData::assignValues(const ItemsArray& items)
         if (!oldItem)
             continue;
 
-        bool result = false;
-
         // ugly
         switch (newItem->getType())
         {
         case TYPE_INT8:
-            result = set<int8_t>(itemId, newItem->getData<int8_t>());
+            set<int8_t>(itemId, newItem->getData<int8_t>());
             break;
         case TYPE_INT16:
-            result = set<int16_t>(itemId, newItem->getData<int16_t>());
+            set<int16_t>(itemId, newItem->getData<int16_t>());
             break;
         case TYPE_INT32:
-            result = set<int32_t>(itemId, newItem->getData<int32_t>());
+            set<int32_t>(itemId, newItem->getData<int32_t>());
             break;
         case TYPE_FLOAT:
-            result = set<float>(itemId, newItem->getData<float>());
+            set<float>(itemId, newItem->getData<float>());
             break;
         case TYPE_STRING:
-            result = set<std::string>(itemId, newItem->getData<std::string>());
+            set<std::string>(itemId, newItem->getData<std::string>());
             break;
-        case TYPE_ITEMINSTANCE:
-            result = set<ItemInstance>(itemId, newItem->getData<ItemInstance>());
+        case TYPE_ITEMSTACK:
+            set<ItemStack>(itemId, newItem->getData<ItemStack>());
             break;
         case TYPE_TILEPOS:
-            result = set<TilePos>(itemId, newItem->getData<TilePos>());
+            set<TilePos>(itemId, newItem->getData<TilePos>());
             break;
         case TYPE_INT64:
-            result = set<int64_t>(itemId, newItem->getData<int64_t>());
+            set<int64_t>(itemId, newItem->getData<int64_t>());
             break;
         case TYPE_VEC3:
-            result = set<Vec3>(itemId, newItem->getData<Vec3>());
+            set<Vec3>(itemId, newItem->getData<Vec3>());
             break;
         default:
             continue;
@@ -153,7 +153,7 @@ void SynchedEntityData::assignValues(const ItemsArray& items)
 
 void SynchedEntityData::_WriteDataItem(IDataOutput& dos, const DataItem& dataItem)
 {
-    int8_t var2 = dataItem.getType() << C_ENTITYDATA_TYPE_SHIFT | dataItem.getId() & C_ENTITYDATA_MAX_ID_VALUE;
+    int8_t var2 = dataItem.getType() << C_ENTITYDATA_TYPE_SHIFT | (dataItem.getId() & C_ENTITYDATA_MAX_ID_VALUE);
     dos.writeInt8(var2);
     switch (dataItem.getType())
     {
@@ -172,9 +172,9 @@ void SynchedEntityData::_WriteDataItem(IDataOutput& dos, const DataItem& dataIte
         case TYPE_STRING:
             dos.writeString(dataItem.getData<std::string>());
             break;
-        case TYPE_ITEMINSTANCE:
+        case TYPE_ITEMSTACK:
         {
-            ItemInstance item = dataItem.getData<ItemInstance>();
+            ItemStack item = dataItem.getData<ItemStack>();
             dos.writeInt16(item.getItem()->m_itemID);
             dos.writeInt8(item.m_count);
             dos.writeInt16(item.getAuxValue());
@@ -204,7 +204,7 @@ void SynchedEntityData::_WriteDataItem(IDataOutput& dos, const DataItem& dataIte
 
 void SynchedEntityData::Pack(const ItemsArray& items, IDataOutput& dos)
 {
-    for (int i = 0; i < items.size(); i++)
+    for (size_t i = 0; i < items.size(); i++)
     {
         const DataItem* item = items[i];
         if (item)
@@ -241,12 +241,12 @@ SynchedEntityData::ItemsArray SynchedEntityData::Unpack(IDataInput& dis)
             case TYPE_STRING:
                 dataItem = new DataItem2<std::string>(dataType, dataId, dis.readString());
                 break;
-            case TYPE_ITEMINSTANCE:
+            case TYPE_ITEMSTACK:
             {
                 int16_t itemId = dis.readInt16();
                 int8_t amount = dis.readInt8();
                 int16_t auxValue = dis.readInt16();
-                dataItem = new DataItem2<ItemInstance>(dataType, dataId, ItemInstance(itemId, amount, auxValue));
+                dataItem = new DataItem2<ItemStack>(dataType, dataId, ItemStack(itemId, amount, auxValue));
                 break;
             }
             case TYPE_TILEPOS:

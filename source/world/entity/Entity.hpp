@@ -16,17 +16,13 @@
 #include "world/level/Material.hpp"
 #include "world/level/levelgen/chunk/ChunkPos.hpp"
 #include "world/tile/Tile.hpp"
-#include "world/item/ItemInstance.hpp"
+#include "world/item/ItemStack.hpp"
 #include "SynchedEntityData.hpp"
 #include "EntityTypeDescriptor.hpp"
 
-#define C_ENTITY_FLAG_ONFIRE (0)
-#define C_ENTITY_FLAG_SNEAKING (1)
-#define C_ENTITY_FLAG_RIDING (2)
-
 class Level;
 class Player;
-class ItemInstance;
+class ItemStack;
 class ItemEntity;
 
 struct EntityPos
@@ -66,6 +62,7 @@ protected:
 	typedef int8_t SharedFlag;
 public:
 	typedef int32_t ID;
+	typedef int32_t AuxValue;
 public:
 	class EventType
 	{
@@ -81,6 +78,7 @@ public:
 			STOP_ATTACKING
 		};
 	};
+	// Was called EntityRendererId in PE
 	enum RenderType
 	{
 		RENDER_NONE,
@@ -107,7 +105,16 @@ public:
 		RENDER_SQUID,
 
 		// custom
-		RENDER_FALLING_TILE = 50,
+		RENDER_FALLING_TILE = 50
+	};
+	enum Flags
+	{
+		FLAG_ON_FIRE,
+		FLAG_SNEAKING,
+		FLAG_RIDING,
+		FLAG_SPRINTING,
+		FLAG_USING_ITEM,
+		FLAGS_COUNT
 	};
 
 private:
@@ -154,22 +161,27 @@ public:
 	virtual Vec3 getPos(float f) const;
 	virtual Vec2 getRot(float f) const;
 	virtual Vec3 getViewVector(float f) const;
+	virtual AuxValue getAuxValue() const;
+	virtual void setAuxValue(AuxValue value);
 	virtual float distanceTo(const Entity*) const;
 	virtual float distanceToSqr(const Vec3& pos) const;
 	virtual float distanceTo(const Vec3& pos) const;
 	virtual float distanceToSqr(const Entity*) const;
-	virtual int interactPreventDefault();
+	virtual bool interactPreventDefault() const;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 	virtual bool interact(Player*);
+#pragma GCC diagnostic pop
 	virtual void playerTouch(Player*);
 	virtual void push(Entity*);
 	virtual void push(const Vec3& pos);
 	virtual bool isPickable() const { return false; }
 	virtual bool isPushable() const { return false; }
 	virtual bool isShootable() const { return false; }
-	virtual bool isOnFire() const { return m_fireTicks > 0 || getSharedFlag(C_ENTITY_FLAG_ONFIRE); }
-	virtual bool isRiding() const { return /*m_pRiding != nullptr ||*/ getSharedFlag(C_ENTITY_FLAG_RIDING); }
-	virtual bool isSneaking() const { return getSharedFlag(C_ENTITY_FLAG_SNEAKING); }
-	virtual void setSneaking(bool value) { setSharedFlag(C_ENTITY_FLAG_SNEAKING, value); }
+	virtual bool isOnFire() const { return m_fireTicks > 0 || getSharedFlag(FLAG_ON_FIRE); }
+	virtual bool isRiding() const { return /*m_pRiding != nullptr ||*/ getSharedFlag(FLAG_RIDING); }
+	virtual bool isSneaking() const { return getSharedFlag(FLAG_SNEAKING); }
+	virtual void setSneaking(bool value) { setSharedFlag(FLAG_SNEAKING, value); }
 	virtual bool isAlive() const { return m_bRemoved; }
 	virtual bool isPlayer() const { return false; }
 	virtual bool isMob() const { return false; }
@@ -180,7 +192,7 @@ public:
 	virtual bool hurt(Entity*, int);
 	virtual void animateHurt();
 	virtual float getPickRadius() const { return 0.1f; }
-	virtual ItemEntity* spawnAtLocation(ItemInstance*, float);
+	virtual ItemEntity* spawnAtLocation(const ItemStack&, float);
 	virtual ItemEntity* spawnAtLocation(int, int);
 	virtual ItemEntity* spawnAtLocation(int, int, float);
 	virtual void awardKillScore(Entity* pKilled, int score);
@@ -235,11 +247,8 @@ public:
 	bool m_bInAChunk;
 	ChunkPos m_chunkPos;
 	int m_chunkPosY;
-	int field_20; // unused Vec3?
-	int field_24;
-	int field_28;
 	Entity::ID m_EntityID;
-	float field_30;
+	float m_viewScale;
 	//TileSource* m_pTileSource;
 	DimensionId m_dimensionId;
 	bool m_bBlocksBuilding;
@@ -263,7 +272,7 @@ public:
 	float m_heightOffset;
 	float m_bbWidth;
 	float m_bbHeight;
-	float field_90;
+	float m_walkDistO;
 	float m_walkDist;
 	Vec3 m_posPrev;
 	float m_ySlideOffset;
@@ -282,6 +291,7 @@ public:
 	bool m_bFireImmune;
 	bool m_bFirstTick;
 	int m_nextStep;
+	float m_minBrightness;
 
 public:
 	static Entity::ID entityCounter;

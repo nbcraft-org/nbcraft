@@ -10,23 +10,23 @@
 
 InvalidLicenseScreen::InvalidLicenseScreen(int error, bool bHasQuitButton) :
 	m_error(error),
-	m_btnOk (1, "Ok"),
-	m_btnBuy(2, "Buy"),
+	m_btnOk ("Ok"),
+	m_btnBuy("Buy"),
 	m_bHasQuitButton(bHasQuitButton),
 	field_E4(0)
 {
 	if (bHasQuitButton)
-		m_btnOk.m_text = "Quit";
+		m_btnOk.setMessage("Quit");
 }
 
-void InvalidLicenseScreen::buttonClicked(Button* pButton)
+void InvalidLicenseScreen::_buttonClicked(Button* pButton)
 {
-	if (pButton->m_buttonId == m_btnOk.m_buttonId)
+	if (pButton->getId() == m_btnOk.getId())
 	{
 		m_pMinecraft->quit();
 	}
 
-	if (pButton->m_buttonId == m_btnBuy.m_buttonId)
+	if (pButton->getId() == m_btnBuy.getId())
 	{
 		m_pMinecraft->platform()->buyGame();
 	}
@@ -51,20 +51,18 @@ void InvalidLicenseScreen::init()
 	m_btnOk.m_yPos  = field_E4 + 60;
 	m_btnBuy.m_yPos = field_E4 + 88;
 
-	m_buttons.push_back(&m_btnOk);
-	m_buttons.push_back(&m_btnBuy);
-	m_buttonTabList.push_back(&m_btnOk);
-	m_buttonTabList.push_back(&m_btnBuy);
+	_addElement(m_btnOk);
+	_addElement(m_btnBuy);
 }
 
 void InvalidLicenseScreen::tick()
 {
 }
 
-void InvalidLicenseScreen::render(int mouseX, int mouseY, float f)
+void InvalidLicenseScreen::render(float f)
 {
 	renderDirtBackground(0);
 	drawCenteredString(*m_pMinecraft->m_pFont, m_textLine1, m_width / 2, field_E4, 0xFFFFFF);
 	drawCenteredString(*m_pMinecraft->m_pFont, m_textLine2, m_width / 2, field_E4 + 24, 0xFFFFFF);
-	Screen::render(mouseX, mouseY, f);
+	Screen::render(f);
 }

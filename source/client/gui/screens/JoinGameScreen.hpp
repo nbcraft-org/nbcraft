@@ -9,6 +9,7 @@
 #pragma once
 
 #include "../Screen.hpp"
+#include "../components/Button.hpp"
 #include "../components/AvailableGamesList.hpp"
 
 class JoinGameScreen : public Screen
@@ -16,11 +17,15 @@ class JoinGameScreen : public Screen
 public:
 	JoinGameScreen();
 	~JoinGameScreen();
-	void buttonClicked(Button* pButton) override;
+
+protected:
+	void _buttonClicked(Button* pButton) override;
+
+public:
 	bool handleBackEvent(bool b) override;
 	void init() override;
 	bool isInGameScreen() override;
-	void render(int mouseX, int mouseY, float f) override;
+	void render(float f) override;
 	void tick() override;
 
 	virtual bool isIndexValid(int idx);

@@ -76,16 +76,16 @@ float Animal::getWalkTargetValue(const TilePos& pos) const
 	return m_pLevel->getBrightness(pos) - 0.5f;
 }
 
-bool Animal::hurt(Entity* pCulprit, int damage)
+/*bool Animal::hurt(Entity* pCulprit, int damage)
 {
 	// Run around erratically for three seconds.
-	field_BA4 = 60;
+	m_goCrazyTicks = 60;
 
 	m_pAttackTarget = nullptr;
 	field_BB4 = 0;
 
 	return Mob::hurt(pCulprit, damage);
-}
+}*/
 
 bool Animal::removeWhenFarAway() const
 {

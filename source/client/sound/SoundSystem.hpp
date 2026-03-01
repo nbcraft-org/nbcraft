@@ -26,6 +26,7 @@ class SoundSystem
 public:
 	virtual ~SoundSystem();
 
+public:
 	virtual bool isAvailable();
 	virtual void setListenerPos(const Vec3& pos);
 	virtual void setListenerAngle(const Vec2& rot);
@@ -46,7 +47,7 @@ public:
 	virtual void stopMusic();
 	virtual void pauseMusic(bool state);
 
-	virtual void update(float elapsedTime);
+	virtual void update();
     
     // Be prepared for these to be called regardless of engine state
     virtual void startEngine(); // called init in 0.10.0
@@ -55,4 +56,3 @@ public:
     virtual void muteAudio();
     virtual void unMuteAudio();
 };
-

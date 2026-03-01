@@ -13,6 +13,9 @@
 class LeafTile : public TransparentTile
 {
 public:
+	static const Color DEFAULT_COLOR;
+
+public:
 	LeafTile(TileID id);
 	~LeafTile();
 
@@ -32,6 +35,7 @@ public:
 
 	void die(Level*, const TilePos& pos);
 
+public:
 	int* m_checkBuffer;
 	int field_74;
 };

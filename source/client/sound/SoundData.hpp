@@ -9,10 +9,10 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include <stdint.h>
-#include "client/app/AssetFile.hpp"
 
-class AppPlatform;
+struct ResourceLocation;
 
 class AudioCodec
 {
@@ -35,7 +35,7 @@ struct PCMSoundHeader
 
 struct SoundBuffer
 {
-	void* m_pData;
+	int16_t *m_pData;
 	int m_dataSize;
 };
 
@@ -50,20 +50,21 @@ struct AudioDescriptor
 
 struct SoundDesc : AudioDescriptor
 {
-	static std::string dirs[SOUND_DIRS_SIZE];
+	static const std::string DIRS[SOUND_DIRS_SIZE];
 
-	AssetFile m_file;
+	std::string m_stream;
 	SoundBuffer m_buffer;
-	unsigned char* m_fileData;
 
-	bool _load(const AppPlatform* platform, const char* category, const char *name);
-	bool _loadPcm(const AppPlatform* platform, const char *name);
-	bool _loadOgg(const AppPlatform* platform, const char* category, const char *name);
+	bool _load(const char* category, const char *name);
+	bool _loadPcm(const ResourceLocation& location);
+	bool _loadOgg(const ResourceLocation& location);
 	void _unload();
-	static void _loadAll(const AppPlatform*);
+	static void _loadAll();
 	static void _unloadAll();
 };
 
-#define SOUND(category, name, number) extern SoundDesc SA_##name##number;
+#define SOUND(category, name) extern SoundDesc SA_##name;
+#define SOUND_NUM(category, name, number) extern SoundDesc SA_##name##number;
 #include "sound_list.h"
 #undef SOUND
+#undef SOUND_NUM

@@ -2,6 +2,7 @@
 
 #include "common/Logger.hpp"
 #include "client/app/AppPlatform.hpp"
+#include "client/resources/Resource.hpp"
 #include "world/tile/Tile.hpp"
 #include "world/item/Item.hpp"
 #include "renderer/RenderContextImmediate.hpp"
@@ -156,16 +157,6 @@ void PatchManager::LoadPatchData(const std::string& patchData)
 			ReadInt(lineStream, m_nMetalSideYOffset);
 			continue;
 		}
-		if (command == "grass_sides_tint")
-		{
-			ReadBool(lineStream, m_bGrassSidesTinted);
-
-			if (m_bGrassSidesTinted)
-				// push a magic value so we can determine whether to disable it if the file doesn't exist
-				m_patchData.push_back(PatchData(TYPE_TERRAIN, 100, 100, "grass_side_transparent.png"));
-
-			continue;
-		}
 
 		LOG_W("Unknown command %s from patch data.", command.c_str());
 	}
@@ -175,48 +166,34 @@ void PatchManager::PatchTextures(TextureData& texture, ePatchType patchType)
 {
 	mce::RenderContext& renderContext = mce::RenderContextImmediate::get();
 
+	texture.m_texture.enableWriteMode(renderContext);
+
 	// Use glTexSubImage2D to patch the terrain.png texture on the fly.
-	for (int i = 0; i < int(m_patchData.size()); i++)
+	for (size_t i = 0; i < m_patchData.size(); i++)
 	{
 		PatchData& pd = m_patchData[i];
 		if (pd.m_type != patchType)
 			continue;
 
-		bool bDisableFancyGrassIfFailed = false;
-
-		// got the magic value, we can determine whether to disable fancy pants grass if the file doesn't exist
-		if (pd.m_destX == 1600 && pd.m_destY == 1600 && pd.m_type == TYPE_TERRAIN)
-		{
-			pd.m_destX = 4 * 16;
-			pd.m_destY = 5 * 16;
-
-			bDisableFancyGrassIfFailed = true;
-		}
-
 		// N.B. Well, in some cases, you do want things to fail nicely.
-		ImageData image;
-		AppPlatform::singleton()->loadImage(image, "patches/" + pd.m_filename);
-		if (image.isEmpty())
+		TextureData patchTex = Resource::loadTexture("patches/" + pd.m_filename);
+		if (patchTex.isEmpty())
 		{
 			LOG_W("Image %s was not found?! Skipping", pd.m_filename.c_str());
-			if (bDisableFancyGrassIfFailed)
-				m_bGrassSidesTinted = false;
 			continue;
 		}
 
-		if (image.m_colorSpace != COLOR_SPACE_RGBA)
-		{
-			LOG_E("Patch textures must be RGBA");
-			throw std::bad_cast();
-		}
+		patchTex.m_imageData.forceRGBA();
 
-		texture.m_texture.subBuffer(renderContext, image.m_data, pd.m_destX, pd.m_destY, image.m_width, image.m_height, 0);
+		texture.m_texture.subBuffer(renderContext, patchTex.getData(), pd.m_destX, pd.m_destY, patchTex.m_imageData.m_width, patchTex.m_imageData.m_height, 0);
 	}
+
+	texture.m_texture.disableWriteMode(renderContext);
 }
 
 void PatchManager::PatchTiles()
 {
-	for (int i = 0; i < int(m_patchData.size()); i++)
+	for (size_t i = 0; i < m_patchData.size(); i++)
 	{
 		PatchData& pd = m_patchData[i];
 		if (pd.m_type != TYPE_FRAME)
@@ -251,11 +228,6 @@ int PatchManager::GetMetalSideYOffset()
 bool PatchManager::IsGlassSemiTransparent()
 {
 	return m_bGlassSemiTransparent;
-}
-
-bool PatchManager::IsGrassSidesTinted()
-{
-	return m_bGrassSidesTinted;
 }
 
 void PatchManager::ReadBool(std::istream& is, bool& b)

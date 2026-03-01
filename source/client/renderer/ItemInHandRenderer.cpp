@@ -9,6 +9,7 @@
 #include "ItemInHandRenderer.hpp"
 #include "common/Mth.hpp"
 #include "client/app/Minecraft.hpp"
+#include "client/renderer/entity/HumanoidMobRenderer.hpp"
 #include "client/renderer/renderer/RenderMaterialGroup.hpp"
 #include "renderer/ShaderConstants.hpp"
 #include "Lighting.hpp"
@@ -18,6 +19,7 @@ ItemInHandRenderer::Materials::Materials()
     MATERIAL_PTR(switchable, entity);
     MATERIAL_PTR(switchable, entity_alphatest);
     MATERIAL_PTR(switchable, item_in_hand);
+    MATERIAL_PTR(switchable, item_in_hand_color);
     MATERIAL_PTR(switchable, entity_glint);
     MATERIAL_PTR(switchable, entity_alphatest_glint);
     MATERIAL_PTR(switchable, item_in_hand_glint);
@@ -61,7 +63,7 @@ void ItemInHandRenderer::render(float a)
 
     MatrixStack::Ref matrix = MatrixStack::World.push();
 
-	if (m_pMinecraft->getOptions()->m_bDynamicHand && m_pMinecraft->m_pCameraEntity == pLP)
+	if (m_pMinecraft->getOptions()->m_dynamicHand.get() && m_pMinecraft->m_pCameraEntity == pLP)
 	{
 		float rYaw   = Mth::Lerp(pLP->m_lastRenderArmRot.x, pLP->m_renderArmRot.x, a);
 		float rPitch = Mth::Lerp(pLP->m_lastRenderArmRot.y, pLP->m_renderArmRot.y, a);
@@ -73,10 +75,11 @@ void ItemInHandRenderer::render(float a)
     currentShaderColor = Color::WHITE;
 	currentShaderDarkColor = Color(fBright, fBright, fBright);
 
-	ItemInstance* pItem = &m_selectedItem;
+	ItemStack* pItem = &m_selectedItem;
 	/*if (pLP->m_fishing != null)
     {
-		pItem = new ItemInstance(Item::stick);
+        // We shouldn't do this, make this static or something
+		pItem = new ItemStack(Item::stick);
 	}*/
     
     float swing2, swing3;
@@ -84,7 +87,7 @@ void ItemInHandRenderer::render(float a)
     float h = m_oHeight + (m_height - m_oHeight) * a;
     constexpr float d = 0.8f;
     
-	if (!ItemInstance::isNull(pItem))
+	if (!ItemStack::isEmpty(pItem))
 	{
         matrix->translate(Vec3(-0.4f * Mth::sin(float(M_PI) * Mth::sqrt(fAnim)), 0.2f * Mth::sin(2.0f * float(M_PI) * Mth::sqrt(fAnim)), -0.2f * Mth::sin(float(M_PI) * fAnim)));
         matrix->translate(Vec3(0.7f * d, -0.65f * d - (1.0f - h) * 0.6f, -0.9f * d));
@@ -147,28 +150,21 @@ void ItemInHandRenderer::render(float a)
 #define SHADE_IF_NEEDED(col)
 #endif
 
-void ItemInHandRenderer::renderItem(const Entity& entity, const ItemInstance& item, float a)
+void ItemInHandRenderer::renderItem(const Entity& entity, const ItemStack& item, float a)
 {
-    if (item.isNull())
+    if (item.isEmpty())
         return;
 
 #ifdef ENH_SHADE_HELD_TILES
     float bright = entity.getBrightness(a);
 #endif
-    
+
     _setupShaderParameters(entity, Color::NIL, a);
 
     Tile* pTile = item.getTile();
     if (pTile && TileRenderer::canRender(pTile->getRenderShape()))
     {
-        Color color = Color::WHITE;
-        
-        if (pTile == Tile::leaves)
-        {
-            color = Color(0.35f, 0.65f, 0.25f);
-        }
-
-        currentShaderColor = color;
+        currentShaderColor = Color::WHITE;
         currentShaderDarkColor = Color::WHITE;
         
         m_pMinecraft->m_pTextures->loadAndBindTexture(C_TERRAIN_NAME);
@@ -179,7 +175,7 @@ void ItemInHandRenderer::renderItem(const Entity& entity, const ItemInstance& it
 #	define ARGPATCH
 #endif
         
-        m_tileRenderer.renderTile(FullTile(pTile, item.getAuxValue()), m_materials.item_in_hand ARGPATCH);
+        m_tileRenderer.renderTile(FullTile(pTile, item.getAuxValue()), m_materials.item_in_hand_color ARGPATCH);
         
 #ifdef ARGPATCH
 #	undef ARGPATCH
@@ -188,6 +184,7 @@ void ItemInHandRenderer::renderItem(const Entity& entity, const ItemInstance& it
     }
     else
     {
+
         MatrixStack::Ref matrix = MatrixStack::World.push();
 
         std::string toBind;
@@ -238,7 +235,7 @@ void ItemInHandRenderer::renderItem(const Entity& entity, const ItemInstance& it
         t.vertexUV(1.0f, 0.0f, -C_ONE_PIXEL, texU_1, texV_2);
         t.vertexUV(0.0f, 0.0f, -C_ONE_PIXEL, texU_2, texV_2);
         
-        SHADE_IF_NEEDED(0.8f);
+        SHADE_IF_NEEDED(1.0f);
         t.normal(Vec3::NEG_UNIT_X);
         for (int i = 0; i < 16; i++)
         {
@@ -255,7 +252,7 @@ void ItemInHandRenderer::renderItem(const Entity& entity, const ItemInstance& it
             t.vertexUV((i + 1) * C_ONE_PIXEL, 0.0f, -C_ONE_PIXEL, Mth::Lerp(texU_2, texU_1, i * C_ONE_PIXEL) - C_RATIO_2, texV_2);
         }
         
-        SHADE_IF_NEEDED(0.6f);
+        SHADE_IF_NEEDED(1.0f);
         for (int i = 0; i < 16; i++)
         {
             t.vertexUV(0.0f, (i + 1) * C_ONE_PIXEL, 0.0f,         texU_2, Mth::Lerp(texV_2, texV_1, i * C_ONE_PIXEL));
@@ -271,7 +268,11 @@ void ItemInHandRenderer::renderItem(const Entity& entity, const ItemInstance& it
             t.vertexUV(1.0f, i * C_ONE_PIXEL, -C_ONE_PIXEL, texU_1, Mth::Lerp(texV_2, texV_1, i * C_ONE_PIXEL));
         }
         
+#ifdef ENH_SHADE_HELD_TILES
+        t.draw(m_materials.item_in_hand_color);
+#else
         t.draw(m_materials.item_in_hand);
+#endif
     }
 }
 
@@ -287,7 +288,7 @@ void ItemInHandRenderer::renderScreenEffect(float a)
         renderFire(a);
     }
 
-    if (player->isInWall() && !m_pMinecraft->getOptions()->m_bFlyCheat)
+    if (player->isInWall() && !m_pMinecraft->getOptions()->m_flightHax.get())
     {
         textures->loadAndBindTexture(C_TERRAIN_NAME);
 
@@ -298,6 +299,41 @@ void ItemInHandRenderer::renderScreenEffect(float a)
             renderTex(a, texture);
         }
     }
+
+    if (player->isUnderLiquid(Material::water))
+    {
+        if (textures->loadAndBindTexture("misc/water.png", false))
+        {
+            renderWater(a);
+        }
+    }
+}
+
+void ItemInHandRenderer::renderWater(float a)
+{
+    ScreenRenderer& screenRenderer = ScreenRenderer::singleton();
+    LocalPlayer& player = *m_pMinecraft->m_pLocalPlayer;
+
+    float br = player.getBrightness(a);
+    currentShaderColor = Color(br, br, br, 0.5f);
+    currentShaderDarkColor = Color::WHITE;
+    MatrixStack::Ref matrix = MatrixStack::World.push();
+
+    constexpr float size = 4.0f;
+    constexpr float x0  = -1.0f;
+    constexpr float x1  =  1.0f;
+    constexpr float y0  = -1.0f;
+    constexpr float y1  =  1.0f;
+    constexpr float z0  = -0.5f;
+    float uo = -player.m_rot.x / 64.0f;
+    float vo = player.m_rot.y / 64.0f;
+    Tesselator& t = Tesselator::instance;
+    t.begin(4);
+    t.vertexUV(x0, y0, z0, (size + uo), (size + vo));
+    t.vertexUV(x1, y0, z0, (0.0f + uo), (size + vo));
+    t.vertexUV(x1, y1, z0, (0.0f + uo), (0.0f + vo));
+    t.vertexUV(x0, y1, z0, (size + uo), (0.0f + vo));
+	t.draw(screenRenderer.m_materials.ui_textured_and_glcolor);
 }
 
 void ItemInHandRenderer::renderFire(float a)
@@ -329,7 +365,7 @@ void ItemInHandRenderer::renderTex(float a, int texture)
 
 	//m_pMinecraft->m_pLocalPlayer->getBrightness(a);
     constexpr float br = 0.1f; // 0.3f on PE 0.12.1
-    currentShaderColor = Color(br, br, br, 0.5f); // 1.0f on PE 0.12.1
+    currentShaderColor = Color(br, br, br); // Java passed 0.5f for transparency, but this never actually worked
     currentShaderDarkColor = Color::WHITE;
     MatrixStack::Ref matrix = MatrixStack::World.push();
 
@@ -358,22 +394,22 @@ void ItemInHandRenderer::tick()
 {
 	m_oHeight = m_height;
 
-	ItemInstance* item = m_pMinecraft->m_pLocalPlayer->m_pInventory->getSelectedItem();
+	ItemStack& item = m_pMinecraft->m_pLocalPlayer->m_pInventory->getSelectedItem();
 
-	bool bSameItem = m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedHotbarSlot == m_lastSlot && ItemInstance::matches(&m_selectedItem, item);
+	bool bSameItem = m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedSlot == m_lastSlot && m_selectedItem == item;
 
-	if (ItemInstance::isNull(item) && ItemInstance::isNull(&m_selectedItem))
+	if (item.isEmpty() && m_selectedItem.isEmpty())
 		bSameItem = true;
 
-	// without this, the player hand remains hidden
-	if (!ItemInstance::isNull(item) && !ItemInstance::isNull(&m_selectedItem))
-	{
-        if (item != &m_selectedItem && *item == m_selectedItem)
-        {
-            bSameItem = true;
-            m_selectedItem = *item;
-        }
-	}
+    // This isn't really needed anymore
+    //if (!item.isEmpty() && !m_selectedItem.isEmpty())
+    //{
+    //    if (&item != &m_selectedItem && item.getId() == m_selectedItem.getId() && item.getAuxValue() == m_selectedItem.getAuxValue())
+    //    {
+    //        bSameItem = true;
+    //        m_selectedItem = ItemStack(item);
+    //    }
+    //}
 
 	float b = bSameItem ? 1.0f : 0.0f;
 
@@ -387,12 +423,8 @@ void ItemInHandRenderer::tick()
 
 	if (m_height < 0.1f)
 	{
-		if (ItemInstance::isNull(item))
-			m_selectedItem.setNull();
-		else
-			m_selectedItem = *item;
-
-		m_lastSlot = m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedHotbarSlot;
+		m_selectedItem = ItemStack(item);
+		m_lastSlot = m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedSlot;
 	}
 }
 

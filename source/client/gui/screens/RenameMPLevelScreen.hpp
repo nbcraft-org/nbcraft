@@ -14,8 +14,10 @@ class RenameMPLevelScreen : public Screen
 {
 public:
 	RenameMPLevelScreen(const std::string& levelName);
+
+public:
 	void init() override;
-	void render(int mouseX, int mouseY, float f) override;
+	void render(float f) override;
 
 private:
 	std::string m_levelName;

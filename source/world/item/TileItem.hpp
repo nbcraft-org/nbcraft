@@ -14,9 +14,10 @@ class TileItem : public Item
 public:
 	TileItem(int id);
 
+public:
 	std::string getDescriptionId() const override;
-	std::string getDescriptionId(ItemInstance*) const override;
-	bool useOn(ItemInstance*, Player*, Level*, const TilePos& pos, Facing::Name face) const override;
+	std::string getDescriptionId(ItemStack*) const override;
+	bool useOn(ItemStack*, Player*, Level*, const TilePos& pos, Facing::Name face) const override;
 
 public:
 	int m_tile;

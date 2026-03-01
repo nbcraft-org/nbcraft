@@ -21,9 +21,10 @@ public:
 	virtual ~NinecraftApp();
 
 private:
+	void _initResourceLoaders();
 	void _initOptions();
 	void _initTextures();
-	void _initMaterials();
+	void _initRenderMaterials();
 	void _initInput();
 	void _updateStats();
 
@@ -32,6 +33,7 @@ protected:
 	void _reloadFancy(bool isFancy);
 	void _reloadOptionalFeatures();
 	void _reloadPatchData();
+	void _initAll();
 
 public:
 	bool handleBack(bool) override;

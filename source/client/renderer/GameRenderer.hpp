@@ -9,10 +9,12 @@
 #pragma once
 
 #include "ItemInHandRenderer.hpp"
+#include "client/gui/MenuPointer.hpp"
 #include "renderer/MatrixStack.hpp"
 #include "renderer/hal/interface/DepthStencilState.hpp"
 
 class Minecraft;
+class Timer;
 class Entity;
 
 class LevelRenderer;
@@ -27,6 +29,8 @@ public:
 	~GameRenderer();
 
 private:
+	void _buildPointerMesh();
+	void _initResources();
 	void _clearFrameBuffer();
 	void _renderItemInHand(float, int);
 	void _renderDebugOverlay(float a);
@@ -45,8 +49,9 @@ public:
 
 	void renderLevel(float);
 	void renderFramedItems(const Vec3& camPos, LevelRenderer& levelRenderer, const Entity& camera, float f, ParticleEngine& particleEngine, float i);
-	void render(float);
+	void render(const Timer&);
 	void renderWeather(float f);
+	void renderPointer(const MenuPointer& pointer);
 	void setLevel(Level* pLevel, Dimension* pDimension);
 	void tick();
 	void setupGuiScreen();
@@ -54,17 +59,11 @@ public:
 	void zoomRegion(float zoom, const Vec2& region);
 	void unZoomRegion();
 	void pick(float);
+	void applyTurnDelta(const Vec2& turnDelta);
 
 	float getFov(float f);
 
-public:
-	ItemInHandRenderer* m_pItemInHandRenderer;
-	Minecraft* m_pMinecraft;
-	Level* m_pLevel;
-
-	float m_renderDistance;
-	int field_C;
-	Entity* m_pHovered;
+protected:
 	float field_14;
 	float field_18;
 	float field_1C;
@@ -83,16 +82,27 @@ public:
 	float field_54;
 	float field_58;
 	float field_5C;
-	float field_74;
-	float field_78;
-	float field_7C;
-	float field_80;
+	Vec2 m_smoothTurnDelta;
+	Vec2 m_turnDelta;
 	float field_84;
+	mce::Mesh m_pointerMesh;
+
+public:
+	ItemInHandRenderer* m_pItemInHandRenderer;
+	Minecraft* m_pMinecraft;
+	Level* m_pLevel;
+
+	float m_renderDistance;
+	int field_C;
+	Entity* m_pHovered;
+	// protected fields
 
 	Matrix m_mtxProj;
 	Matrix m_mtxView;
 
 	int m_shownFPS, m_shownChunkUpdates, m_lastUpdatedMS;
+
+	int m_keepPic;
 
 	int m_envTexturePresence;
 	Random m_random;

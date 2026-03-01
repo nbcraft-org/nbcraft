@@ -9,30 +9,14 @@
 #include "ExternalFileLevelStorageSource.hpp"
 #include "ExternalFileLevelStorage.hpp"
 #include "common/Logger.hpp"
+#include "client/app/AppPlatform.hpp"
 
 #ifndef DEMO
 
 ExternalFileLevelStorageSource::ExternalFileLevelStorageSource(const std::string& path)
 {
-	m_worldsPath = path;
-
-	m_worldsPath += "/games";
-	if (createFolderIfNotExists(m_worldsPath.c_str()))
-	{
-		m_worldsPath += "/com.mojang";
-		if (createFolderIfNotExists(m_worldsPath.c_str()))
-		{
-			m_worldsPath += "/minecraftWorlds";
-			if (createFolderIfNotExists(m_worldsPath.c_str()))
-			{
-                // @WTF: why?
-				std::vector<LevelSummary> vls;
-				getLevelList(vls);
-			}
-		}
-	}
-
-	m_worldsPath = path + "/games" + "/com.mojang" + "/minecraftWorlds";
+	m_worldsPath = path + C_HOME_PATH + "worlds";
+	createFolderIfNotExists(m_worldsPath.c_str());
 }
 
 std::string ExternalFileLevelStorageSource::getName() const
@@ -112,7 +96,7 @@ void ExternalFileLevelStorageSource::renameLevel(const std::string& oldName, con
 		return;
 
 	std::string levelName = Util::stringTrim(newName);
-	for (int i = 0; i < sizeof(g_EFLSSFilterArray); i++)
+	for (size_t i = 0; i < sizeof(g_EFLSSFilterArray); i++)
 	{
 		std::string str;
 		str.push_back(g_EFLSSFilterArray[i]);
@@ -125,7 +109,7 @@ void ExternalFileLevelStorageSource::renameLevel(const std::string& oldName, con
 	std::set<std::string> maps;
 
 	const size_t size = vls.size();
-	for (int i = 0; i < size; i++)
+	for (size_t i = 0; i < size; i++)
 		maps.insert(vls.at(i).m_fileName);
 
 	std::string levelUniqueName = levelName;

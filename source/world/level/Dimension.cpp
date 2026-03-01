@@ -23,9 +23,9 @@ Dimension* Dimension::createNew(DimensionId type)
 {
 	switch (type)
 	{
-	case DIMENSION_NORMAL:
+	case DIMENSION_OVERWORLD:
 		return new Dimension;
-	/*case DIMENSION_HELL:
+	/*case DIMENSION_NETHER:
 		return new HellDimension;*/
 	default: // type not supported
 		return nullptr;
@@ -162,9 +162,9 @@ Dimension::Dimension()
 	m_pLevel = nullptr;
 	m_pBiomeSource = nullptr;
 	m_bFoggy = false;
-	field_D = false;
-	field_E = false;
-	field_50 = 0;
+	m_bUltraWarm = false;
+	m_bHasCeiling = false;
+	m_id = 0;
 }
 
 Dimension::~Dimension()

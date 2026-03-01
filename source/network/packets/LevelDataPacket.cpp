@@ -24,14 +24,14 @@ void LevelDataPacket::write(RakNet::BitStream& bs)
 	// send a crapton of them in a raw packet(why? Laziness)
 	int chunksX = C_MAX_CHUNKS_X;
 	int chunksZ = C_MAX_CHUNKS_Z;
-	int minus9999 = -9999;
+	//int minus9999 = -9999;
 	RakNet::BitStream bs2;
 	bs.Write((unsigned char)PACKET_LEVEL_DATA);
 
 	int uncompMagic = 12847812, compMagic = 58712758, chunkSepMagic = 284787658;
 	bs2.Write(uncompMagic);
-	bs2.Write(chunksX);
-	bs2.Write(chunksZ);
+	bs2.Write<uint32_t>(chunksX);
+	bs2.Write<uint32_t>(chunksZ);
 	ChunkPos chunkPos(0, 0);
 	for (chunkPos.x = 0; chunkPos.x < chunksX; chunkPos.x++)
 	{
@@ -44,7 +44,7 @@ void LevelDataPacket::write(RakNet::BitStream& bs)
 			ChunkDataPacket cdp(chunkPos, pChunk);
 			cdp.write(bs3);
 
-			int dataSize = int(bs3.GetNumberOfBytesUsed());
+			uint32_t dataSize = bs3.GetNumberOfBytesUsed();
 			bs2.Write(dataSize);
 			bs2.Write((const char*)bs3.GetData(), dataSize);
 		}
@@ -64,10 +64,10 @@ void LevelDataPacket::write(RakNet::BitStream& bs)
 
 	if (pCompressedData)
 	{
-		float ratio = 100.0f * float(compSize) / float(uncompSize);
+		//float ratio = 100.0f * float(compSize) / float(uncompSize);
 		//LOG_I("Compression ratio: %.2f (%d comp, %d uncomp)", ratio, int(compSize), int(uncompSize));
 
-		int cs2 = int(compSize), us2 = int(uncompSize);
+		uint32_t cs2 = compSize, us2 = uncompSize;
 		bs2.Reset();
 		bs2.Write(compMagic);
 		bs2.Write(us2);

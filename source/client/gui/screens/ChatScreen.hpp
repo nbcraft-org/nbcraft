@@ -9,21 +9,28 @@
 #pragma once
 
 #include "../Screen.hpp"
+#include "client/gui/components/Button.hpp"
+#include "client/gui/components/TextBox.hpp"
 
 class ChatScreen : public Screen
 {
 public:
 	ChatScreen(bool slash = false);
-	void buttonClicked(Button*) override;
+
+protected:
+	void _buttonClicked(Button*) override;
+
+public:
 	void init() override;
 	void removed() override;
-	void render(int mouseX, int mouseY, float f) override;
+	void render(float f) override;
 	void keyPressed(int keyCode) override;
+	void handleKeyboardClosed() override;
 
 	void sendMessageAndExit();
 
 private:
-	TextInputBox m_textChat;
+	TextBox m_textChat;
 	Button m_btnSend;
 };
 

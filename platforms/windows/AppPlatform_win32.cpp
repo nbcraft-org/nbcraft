@@ -15,9 +15,15 @@
 
 #include "GameMods.hpp"
 #include "common/Logger.hpp"
+#include "common/Utils.hpp"
+#include "renderer/RenderContextImmediate.hpp"
+
+#if MCE_GFX_API_OGL
+#include "renderer/platform/ogl/Extensions.hpp"
 
 // needed for screenshots
 #include "thirdparty/GL/GL.hpp"
+#endif
 
 #include "thirdparty/stb_image/include/stb_image.h"
 #include "thirdparty/stb_image/include/stb_image_write.h"
@@ -26,20 +32,25 @@
 #define _STR(x) #x
 #define STR(x) _STR(x)
 
+LPCTSTR g_WindowClassName = TEXT("MCPEClass");
+
 AppPlatform_win32::AppPlatform_win32()
 {
 	m_cursor = NULL;
 
+#if MCE_GFX_API_OGL
 	m_hDC = NULL;
 	m_hRC = NULL;
+#endif
 
-	m_WindowTitle = "ReMinecraftPE";
+	m_WindowTitle = C_GAME_NAME;
 	// just assume an 854x480 window for now:
 	m_ScreenWidth = C_DEFAULT_SCREEN_WIDTH;
 	m_ScreenHeight = C_DEFAULT_SCREEN_HEIGHT;
 	m_UserInputStatus = -1;
 	m_DialogType = DLG_NONE;
 
+	m_bHasGraphics = false;
 	m_bIsFocused = false;
 	m_bGrabbedMouse = false;
 	m_bActuallyGrabbedMouse = false;
@@ -81,6 +92,7 @@ void AppPlatform_win32::buyGame()
 
 void AppPlatform_win32::saveScreenshot(const std::string& fileName, int width, int height)
 {
+#if MCE_GFX_API_OGL
 	int npixels = width * height;
 	uint32_t* pixels = new uint32_t[npixels];
 	glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
@@ -105,8 +117,6 @@ void AppPlatform_win32::saveScreenshot(const std::string& fileName, int width, i
 		sprintf(str, "%s\\%s", ".", "Screenshots");
 
 	// https://stackoverflow.com/a/8233867
-	DWORD ftyp = GetFileAttributesA(str);
-
 	DWORD error = GetLastError();
 	if (error == ERROR_PATH_NOT_FOUND || error == ERROR_FILE_NOT_FOUND || error == ERROR_INVALID_NAME)
 	{
@@ -120,6 +130,7 @@ void AppPlatform_win32::saveScreenshot(const std::string& fileName, int width, i
 	stbi_write_png(fullpath, width, height, 4, pixels, width * 4);
 
 	delete[] pixels;
+#endif
 }
 
 void AppPlatform_win32::createUserInput()
@@ -137,6 +148,8 @@ void AppPlatform_win32::createUserInput()
 			m_UserInputStatus = 1;
 			break;
 		}
+		default:
+			break;
 	}
 }
 
@@ -162,10 +175,7 @@ std::string AppPlatform_win32::getDateString(int time)
 
 bool AppPlatform_win32::doesTextureExist(const std::string& path) const
 {
-	// Get Full Path
-	std::string realPath = getAssetPath(path);
-
-	return XPL_ACCESS(realPath.c_str(), 0) == 0;
+	return isRegularFile(path.c_str());
 }
 
 bool AppPlatform_win32::isTouchscreen() const
@@ -173,14 +183,23 @@ bool AppPlatform_win32::isTouchscreen() const
 	return false;
 }
 
+bool AppPlatform_win32::hasGamepad() const
+{
+	return m_gameControllerHandler.hasController();
+}
+
+GameControllerHandler* AppPlatform_win32::getGameControllerHandler()
+{
+	return &m_gameControllerHandler;
+}
+
 bool AppPlatform_win32::hasFileSystemAccess()
 {
 	return true;
 }
 
-AssetFile AppPlatform_win32::readAssetFile(const std::string& str, bool quiet) const
+AssetFile AppPlatform_win32::readAssetFile(const std::string& path, bool quiet) const
 {
-	std::string path = getAssetPath(str);
 	std::ifstream ifs(path, std::ios::binary | std::ios::ate);
 	if (!ifs.is_open())
 		return AssetFile();
@@ -198,6 +217,9 @@ void AppPlatform_win32::setScreenSize(int width, int height)
 {
 	m_ScreenWidth = width;
 	m_ScreenHeight = height;
+
+	if (m_bHasGraphics)
+		createWindowSizeDependentResources(Vec2(width, height), Vec2::ONE);
 }
 
 void AppPlatform_win32::recenterMouse()
@@ -323,15 +345,49 @@ std::string AppPlatform_win32::getClipboardText()
 	return text;
 }
 
+HWND AppPlatform_win32::createWindow(HINSTANCE hInstance, WNDPROC wndProc, LPVOID lpParam, WORD iconId)
+{
+	UINT wStyle = 0x0;
+
+#if MCE_GFX_API_OGL
+	wStyle |= CS_OWNDC;
+#endif
+
+	WNDCLASS wc;
+	wc.style = wStyle;
+	wc.lpfnWndProc = wndProc;
+	wc.cbClsExtra = 0;
+	wc.cbWndExtra = 0;
+	wc.hInstance = hInstance;
+	wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(iconId));
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+	wc.lpszMenuName = NULL;
+	wc.lpszClassName = g_WindowClassName;
+
+	RECT wr = { 0,0, getScreenWidth(), getScreenHeight() };
+	AdjustWindowRect(&wr, WS_OVERLAPPEDWINDOW, false);
+	int w = wr.right - wr.left;
+	int h = wr.bottom - wr.top;
+
+	const char* windowTitle = getWindowTitle();
+
+	if (!RegisterClass(&wc))
+	{
+		MessageBox(NULL, TEXT("Could not register Minecraft class"), windowTitle, MB_ICONERROR | MB_OK);
+		return NULL;
+	}
+
+	return CreateWindowEx(0, g_WindowClassName, windowTitle, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, w, h, NULL, NULL, hInstance, lpParam);
+}
+
 void AppPlatform_win32::initializeWindow(HWND hWnd, int nCmdShow)
 {
-	m_hWND = hWnd;
+	m_hWnd = hWnd;
 
 	centerWindow();
 	ShowWindow(hWnd, nCmdShow);
-
-	// enable OpenGL for the window
-	enableOpenGL(hWnd);
+	enableGraphics(hWnd);
 }
 
 void AppPlatform_win32::destroyWindow(HWND hWnd)
@@ -356,8 +412,14 @@ void AppPlatform_win32::centerWindow(HWND hWnd)
 	SetWindowPos(hWnd, NULL, wb - wa, hb - ha, r.right - r.left, r.bottom - r.top, 0);
 }
 
-void AppPlatform_win32::enableOpenGL(HWND hWnd)
+void AppPlatform_win32::enableGraphics(HWND hWnd)
 {
+#if MCE_GFX_API_OGL
+	DWORD flags = PFD_DRAW_TO_WINDOW | PFD_DOUBLEBUFFER;
+#if MCE_GFX_API_OGL
+	flags |= PFD_SUPPORT_OPENGL;
+#endif
+
 	PIXELFORMATDESCRIPTOR pfd;
 	int iFormat;
 
@@ -369,7 +431,7 @@ void AppPlatform_win32::enableOpenGL(HWND hWnd)
 
 	pfd.nSize = sizeof(pfd);
 	pfd.nVersion = 1;
-	pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+	pfd.dwFlags = flags;
 	pfd.iPixelType = PFD_TYPE_RGBA;
 	pfd.cColorBits = 24;
 	pfd.cDepthBits = 8;
@@ -377,24 +439,70 @@ void AppPlatform_win32::enableOpenGL(HWND hWnd)
 
 	iFormat = ChoosePixelFormat(m_hDC, &pfd);
 
-	SetPixelFormat(m_hDC, iFormat, &pfd);
+	BOOL success = SetPixelFormat(m_hDC, iFormat, &pfd);
+	assert(success);
+	(void)success; /* silence unused variable warn */
 
 	/* create and enable the render context (RC) */
 	m_hRC = wglCreateContext(m_hDC);
 
 	wglMakeCurrent(m_hDC, m_hRC);
+#endif
 }
 
-void AppPlatform_win32::disableOpenGL(HWND hWnd)
+void AppPlatform_win32::disableGraphics(HWND hWnd)
 {
+#if MCE_GFX_API_OGL
 	wglMakeCurrent(NULL, NULL);
 	wglDeleteContext(m_hRC);
+
 	ReleaseDC(hWnd, m_hDC);
+#endif
+}
+
+bool AppPlatform_win32::initGraphics(int width, int height)
+{
+#if MCE_GFX_API_OGL
+	if (!mce::Platform::OGL::InitBindings())
+	{
+		const char* const GL_ERROR_MSG = "Error initializing GL extensions. OpenGL 2.0 or later is required. Update your graphics drivers!";
+		LOG_E(GL_ERROR_MSG);
+		MessageBoxA((HWND)m_hWnd, GL_ERROR_MSG, "OpenGL Error", MB_OK);
+
+		return false;
+	}
+
+	xglSwapIntervalEXT(1);
+#endif
+
+	m_bHasGraphics = true;
+
+	// D3D9 needs the RenderContext in order to create the D3DDevice using the width and height
+	mce::RenderDevice::createInstance();
+	setScreenSize(width, height);
+
+	return true;
+}
+
+void AppPlatform_win32::createWindowSizeDependentResources(const Vec2& logicalSize, const Vec2& compositionScale)
+{
+#if MCE_GFX_API_D3D9
+	mce::RenderContext& renderContext = mce::RenderContextImmediate::get();
+	renderContext.createWindowSizeDependentResources((HWND)m_hWnd, logicalSize.x, logicalSize.y);
+#elif MCE_GFX_API_D3D11
+	mce::RenderContext& renderContext = mce::RenderContextImmediate::get();
+	renderContext.createWindowSizeDependentResources((HWND)m_hWnd, logicalSize, compositionScale);
+#endif
 }
 
 void AppPlatform_win32::swapBuffers()
 {
+#if MCE_GFX_API_OGL
 	SwapBuffers(m_hDC);
+#endif
+
+	mce::RenderContext& renderContext = mce::RenderContextImmediate::get();
+	renderContext.swapBuffers();
 }
 
 MouseButtonType AppPlatform_win32::GetMouseButtonType(UINT iMsg)
@@ -403,17 +511,17 @@ MouseButtonType AppPlatform_win32::GetMouseButtonType(UINT iMsg)
 	{
 	case WM_LBUTTONUP:
 	case WM_LBUTTONDOWN:
-		return BUTTON_LEFT;
+		return MOUSE_BUTTON_LEFT;
 	case WM_RBUTTONUP:
 	case WM_RBUTTONDOWN:
-		return BUTTON_RIGHT;
+		return MOUSE_BUTTON_RIGHT;
 	case WM_MBUTTONUP:
 	case WM_MBUTTONDOWN:
-		return BUTTON_MIDDLE;
+		return MOUSE_BUTTON_MIDDLE;
 	case WM_MOUSEWHEEL:
-		return BUTTON_SCROLLWHEEL;
+		return MOUSE_BUTTON_SCROLLWHEEL;
 	default:
-		return BUTTON_NONE;
+		return MOUSE_BUTTON_NONE;
 	}
 }
 

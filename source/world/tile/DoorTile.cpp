@@ -46,7 +46,7 @@ bool DoorTile::use(Level* level, const TilePos& pos, Player* player)
 		// @BUG: marking the wrong tiles as dirty? No problem because setData sends an update immediately anyways
 		level->setTilesDirty(pos.below(), pos);
 
-		level->levelEvent(player, LevelEvent::SOUND_DOOR, pos);
+		level->levelEvent(LevelEvent(LevelEvent::SOUND_DOOR, pos, 0, player));
 	}
 
 	return true;
@@ -93,15 +93,15 @@ eRenderShape DoorTile::getRenderShape() const
 
 int DoorTile::getResource(TileData data, Random* random) const
 {
-	// breaking the top of the tile doesn't drop anything.
-	// In JE, it probably fixed a certain dupe glitch with doors
-	if (isTop(data))
-		return 0;
+	// breaking the top of the tile doesn't drop anything in JE.
+	// It probably fixed a certain dupe glitch with doors
+	// if (isTop(data))
+	// 	return 0;
 
 	if (m_pMaterial == Material::metal)
-		return Item::door_wood->m_itemID;
+		return Item::door_iron->m_itemID;
 
-	return Item::door_iron->m_itemID;
+	return Item::door_wood->m_itemID;
 }
 
 int DoorTile::getTexture(Facing::Name face, TileData data) const
@@ -205,7 +205,10 @@ void DoorTile::neighborChanged(Level* level, const TilePos& pos, TileID newTile)
 	if (isTop)
 	{
 		if (level->getTile(pos.below()) != m_ID)
+		{
 			level->setTile(pos, TILE_AIR);
+			spawnResources(level, pos, level->getData(pos));
+		}
 
 		if (newTile > 0)
 		{
@@ -226,7 +229,10 @@ void DoorTile::neighborChanged(Level* level, const TilePos& pos, TileID newTile)
 	{
 		level->setTile(pos, TILE_AIR);
 		if (level->getTile(pos.above()) == m_ID)
+		{
 			level->setTile(pos.above(), TILE_AIR);
+			spawnResources(level, pos, level->getData(pos));
+		}
 	}
 
 	if (!isTop && newTile > 0 && Tile::tiles[newTile]->isSignalSource())

@@ -32,19 +32,34 @@ float SoundEngine::_getVolumeMult(const Vec3& pos)
     return Mth::clamp(distance, -1.0f, 1.0f);
 }
 
-void SoundEngine::init(Options* options, AppPlatform* platform)
+void SoundEngine::_playMusic(bool resetDelay)
+{
+    std::string songPath;
+    if (m_songs.any(songPath))
+    {
+		if (resetDelay)
+			m_noMusicDelay = m_random.nextInt(12000) + 12000;
+
+        m_pSoundSystem->setMusicVolume(m_pOptions->m_musicVolume.get());
+        m_pSoundSystem->playMusic(songPath);
+    }
+}
+
+void SoundEngine::init(Options* options)
 {
     // TODO: Who's the genius who decided it'd be better to check a name string rather than an enum?
     m_pOptions = options;
     // Load Sounds
-    SoundDesc::_loadAll(platform);
+    SoundDesc::_loadAll();
 
-#define SOUND(category, name, number) m_sounds.add(#category "." #name, SA_##name##number);
+#define SOUND(category, name) m_sounds.add(#category "." #name, SA_##name);
+#define SOUND_NUM(category, name, number) m_sounds.add(#category "." #name, SA_##name##number);
 #include "sound_list.h"
 #undef SOUND
+#undef SOUND_NUM
 
-#define MUSIC(name, number) m_songs.add(#name, platform->getAssetPath("music/" #name #number ".ogg"));
-#define NEWMUSIC(name, number) m_songs.add(#name, platform->getAssetPath("newmusic/" #name #number ".ogg"));
+#define MUSIC(name, number) m_songs.add(#name, "music/" #name #number ".ogg");
+#define NEWMUSIC(name, number) m_songs.add(#name, "newmusic/" #name #number ".ogg");
 #include "music_list.h"
 #undef MUSIC
 }
@@ -73,9 +88,17 @@ void SoundEngine::destroy()
     SoundDesc::_unloadAll();
 }
 
+void SoundEngine::playMusic(bool resetDelay)
+{
+    if (m_pOptions->m_musicVolume.get() <= 0.0f || m_pSoundSystem->isPlayingMusic())
+        return;
+    
+    _playMusic(resetDelay);
+}
+
 void SoundEngine::playMusicTick()
 {
-    if (m_pOptions->m_fMusicVolume <= 0.0f)
+    if (m_pOptions->m_musicVolume.get() <= 0.0f)
         return;
 
     if (!m_pSoundSystem->isPlayingMusic()/* && !soundSystem.playing("streaming")*/)
@@ -86,20 +109,29 @@ void SoundEngine::playMusicTick()
             return;
         }
 
-        std::string songPath;
-        if (m_songs.any(songPath))
-        {
-            m_noMusicDelay = m_random.nextInt(12000) + 12000;
-            m_pSoundSystem->setMusicVolume(m_pOptions->m_fMusicVolume);
-            m_pSoundSystem->playMusic(songPath);
-        }
+		_playMusic(true);
     }
 }
 
-
-void SoundEngine::update(const Mob* player, float elapsedTime)
+void SoundEngine::forcePlayMusic()
 {
-    if (m_pOptions->m_fMasterVolume > 0.0f)
+	// we're still not playing music if you can't hear it, fuck that
+    if (m_pOptions->m_musicVolume.get() <= 0.0f)
+        return;
+    
+    if (m_pSoundSystem->isPlayingMusic())
+	{
+        m_pSoundSystem->stopMusic();
+	}
+
+	_playMusic();
+}
+
+void SoundEngine::updateListener(const Mob* player, float elapsedTime)
+{
+	  assert(m_pSoundSystem->isAvailable());
+
+    if (m_pOptions->m_masterVolume.get() > 0.0f)
     {
         if (player != nullptr)
         {
@@ -113,15 +145,17 @@ void SoundEngine::update(const Mob* player, float elapsedTime)
             m_pSoundSystem->setListenerAngle(rot);
         }
     }
+}
 
+void SoundEngine::update()
+{
     assert(m_pSoundSystem->isAvailable());
-
-    m_pSoundSystem->update(elapsedTime);
+    m_pSoundSystem->update();
 }
 
 void SoundEngine::play(const std::string& name, const Vec3& pos, float volume, float pitch)
 {
-    float vol = m_pOptions->m_fMasterVolume * volume;
+    float vol = m_pOptions->m_masterVolume.get() * volume;
     if (vol <= 0.0f)
         return;
     Vec3 nPos;
@@ -150,8 +184,8 @@ void SoundEngine::play(const std::string& name, const Vec3& pos, float volume, f
 
 void SoundEngine::playUI(const std::string& name, float volume, float pitch)
 {
-    volume *= 0.25F; // present on Java b1.2_02, but not Pocket for some reason
-    float vol = m_pOptions->m_fMasterVolume * volume;
+    volume *= 0.25f; // present on Java b1.2_02, but not Pocket for some reason
+    float vol = m_pOptions->m_masterVolume.get() * volume;
     if (vol <= 0.0f)
         return;
 
@@ -166,7 +200,7 @@ void SoundEngine::playUI(const std::string& name, float volume, float pitch)
 
 void SoundEngine::playMusic(const std::string& name)
 {
-    float vol = m_pOptions->m_fMusicVolume;
+    float vol = m_pOptions->m_musicVolume.get();
     if (vol <= 0.0f)
         return;
 

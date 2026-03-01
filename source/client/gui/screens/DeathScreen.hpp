@@ -9,17 +9,20 @@
 #pragma once
 
 #include "../Screen.hpp"
+#include "client/gui/components/Button.hpp"
 
 class DeathScreen : public Screen
 {
 public:
 	DeathScreen();
 
-	virtual void init() override;
-	virtual void buttonClicked(Button* pButton) override;
-	virtual void tick() override;
-	virtual void keyPressed(int key) override;
-	virtual void render(int x, int y, float f) override;
+protected:
+	void _buttonClicked(Button* pButton) override;
+
+public:
+	void init() override;
+	void tick() override;
+	void render(float f) override;
 
 private:
 	int m_tickCounter;

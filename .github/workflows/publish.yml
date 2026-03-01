@@ -1,0 +1,290 @@
+name: 'Build Artifacts'
+
+on:
+  release:
+    types: [created]
+
+jobs:
+    linux:
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                  - name: x86_64 SDL 2
+                    flags: '-DNBC_PLATFORM=sdl2 -DNBC_GFX_API=OGL'
+                    packages: 'libsdl2-dev libopenal-dev zlib1g-dev'
+                    runner: ubuntu-24.04
+                    arch: x86_64
+                  - name: i686 SDL 2
+                    flags: '-DNBC_PLATFORM=sdl2 -DNBC_GFX_API=OGL -DCMAKE_C_FLAGS=-m32 -DCMAKE_CXX_FLAGS=-m32'
+                    packages: 'gcc-multilib g++-multilib libsdl2-dev:i386 libopenal-dev:i386 zlib1g-dev:i386'
+                    runner: ubuntu-22.04
+                    arch: i686
+                  - name: aarch64 SDL 2
+                    flags: '-DNBC_PLATFORM=sdl2 -DNBC_GFX_API=OGL'
+                    packages: 'libsdl2-dev libopenal-dev zlib1g-dev'
+                    runner: ubuntu-24.04-arm
+                    arch: aarch64
+        name: Linux (${{ matrix.name }})
+        runs-on: ${{ matrix.runner }}
+        steps:
+          - name: Checkout Repository
+            uses: actions/checkout@v6
+            with:
+                submodules: true
+          - name: Enable i386 packages
+            if: ${{ matrix.arch == 'i686' }}
+            run: sudo dpkg --add-architecture i386
+          - name: Install Dependencies
+            run: |
+                sudo apt-get update
+                sudo apt-get install --no-install-recommends -y \
+                    build-essential \
+                    cmake ninja-build \
+                    ${{ matrix.packages }}
+          - name: Build
+            run: |
+                mkdir build
+                cd build
+                cmake .. -GNinja \
+                    -DCMAKE_BUILD_TYPE=Release \
+                    -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
+                    ${{ matrix.flags }}
+                cmake --build .
+                strip nbcraft
+          - name: Pack release
+            run: |
+                mkdir NBCraft
+                mv game/assets build/nbcraft NBCraft
+                tar -czf NBCraft-Linux-${{ matrix.arch }}.tar.gz NBCraft
+          - uses: alexellis/upload-assets@0.4.1
+            env:
+              GITHUB_TOKEN: ${{ github.token }}
+            with:
+              asset_paths: '["NBCraft-Linux-${{ matrix.arch }}.tar.gz"]'
+
+    # flatpak:
+    #     strategy:
+    #         fail-fast: false
+    #         matrix:
+    #             include:
+    #               - name: x86_64 SDL 2
+    #                 gfx: OGL
+    #                 arch: x86_64
+    #                 runner: ubuntu-24.04
+    #               - name: aarch64 SDL 2
+    #                 gfx: OGL
+    #                 arch: aarch64
+    #                 runner: ubuntu-24.04-arm
+    #     name: Flatpak (${{ matrix.name }})
+    #     runs-on: ${{ matrix.runner }}
+    #     steps:
+    #       - name: Checkout Repository
+    #         uses: actions/checkout@v6
+    #         with:
+    #             submodules: true
+    #       - name: Install Dependencies
+    #         run: |
+    #             sudo apt-get update
+    #             sudo apt-get install --no-install-recommends -y flatpak
+    #             flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+    #             flatpak --user install -y \
+    #                 org.freedesktop.Platform/${{ matrix.arch }}/25.08 \
+    #                 org.freedesktop.Sdk/${{ matrix.arch }}/25.08
+    #       - name: Build
+    #         run: ./platforms/linux/build-flatpak.sh
+    #         env:
+    #           ARCH: ${{ matrix.arch }}
+    #           NBC_GFX_API: ${{ matrix.gfx }}
+    #       - uses: alexellis/upload-assets@0.4.1
+    #         env:
+    #           GITHUB_TOKEN: ${{ github.token }}
+    #         with:
+    #           asset_paths: '["platforms/linux/build-flatpak/NBCraft-Linux-${{ matrix.arch }}.flatpak"]'
+
+    macos:
+        strategy:
+            fail-fast: false
+        name: macOS
+        runs-on: macos-15
+        steps:
+          - name: Checkout Repository
+            uses: actions/checkout@v6
+            with:
+                submodules: true
+          - name: Install Dependencies
+            run: |
+              brew install llvm@21 gmp mpfr mpc
+              # current homebrew cmake segfaults when building the ppc binary
+              wget -O- https://github.com/Kitware/CMake/releases/download/v4.2.3/cmake-4.2.3-macos-universal.tar.gz | tar -xz
+          - name: Build
+            run: |
+              LLVM_CONFIG="$(brew --prefix)/opt/llvm@21/bin/llvm-config" \
+                  GMP="$(brew --prefix)" \
+                  MPFR="$(brew --prefix)" \
+                  MPC="$(brew --prefix)" \
+                  PATH="$PWD/cmake-4.2.3-macos-universal/CMake.app/Contents/bin:$PATH" \
+                  ./platforms/macos/build.sh
+          - name: Pack release
+            run: |
+                mv platforms/macos/build/NBCraft .
+                zip -r NBCraft-macOS.zip NBCraft
+          - uses: alexellis/upload-assets@0.4.1
+            env:
+              GITHUB_TOKEN: ${{ github.token }}
+            with:
+              asset_paths: '["NBCraft-macOS.zip"]'
+
+    ios:
+        name: iOS
+        runs-on: ubuntu-24.04
+        steps:
+          - name: Checkout Repository
+            uses: actions/checkout@v6
+            with:
+                submodules: true
+          - name: Install Dependencies
+            run: |
+                wget https://apt.llvm.org/llvm.sh
+                sudo bash llvm.sh 21
+                sudo apt-get update
+                sudo apt-get install --no-install-recommends -y \
+                    cmake \
+                    clang-21 \
+                    libplist-utils \
+                    libplist-dev \
+                    libssl-dev
+
+          - name: Build
+            run: |
+              ./platforms/ios/build.sh
+              mv platforms/ios/build/NBCraft.ipa NBCraft-iOS.ipa
+            env:
+              CLANG: clang-21
+              AR: llvm-ar-21
+              RANLIB: llvm-ranlib-21
+              LLVM_CONFIG: llvm-config-21
+          - uses: alexellis/upload-assets@0.4.1
+            env:
+              GITHUB_TOKEN: ${{ github.token }}
+            with:
+              asset_paths: '["NBCraft-iOS.ipa"]'
+
+    android:
+        strategy:
+            fail-fast: false
+            matrix:
+                include: # TODO: switch to exclusively native android once it's fixed.
+                  # - name: Native
+                  #   directory: platforms/android/project
+                  - name: SDL 2
+                    directory: platforms/sdl/sdl2/android
+        name: Android (${{ matrix.name }})
+        runs-on: ubuntu-24.04
+        steps:
+          - name: Checkout Repository
+            uses: actions/checkout@v6
+            with:
+                submodules: true
+          - name: Setup JDK
+            uses: actions/setup-java@v4
+            with:
+                java-version: '17'
+                distribution: 'temurin'
+                cache: gradle
+          - name: Build
+            run: |
+                cd ${{ matrix.directory }}
+                ./gradlew assembleRelease
+          - uses: upup-company/apksigner-android@v1
+            id: sign_apk
+            with:
+              releaseDirectory: ${{ matrix.directory }}/app/build/outputs/apk/release
+              signingKeyBase64: ${{ secrets.ANDROID_KEYSTORE }}
+              keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+              alias: NBCraft
+            env:
+              BUILD_TOOLS_VERSION: 36.1.0
+          - name: Rename APK
+            run: mv ${{ steps.sign_apk.outputs.signedReleaseFile }} NBCraft-Android.apk
+          - uses: alexellis/upload-assets@0.4.1
+            env:
+              GITHUB_TOKEN: ${{ github.token }}
+            with:
+              asset_paths: '["NBCraft.apk"]'
+
+    mingw:
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                  - name: Win32 (OGL)
+                    flags: '-DNBC_PLATFORM=windows -DNBC_GFX_API=OGL -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw-w64-toolchain.cmake'
+                    arch: x86_64
+                  - name: Win32 (OGL) 32-bit
+                    flags: '-DNBC_PLATFORM=windows -DNBC_GFX_API=OGL -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw-w64-toolchain-32bit.cmake'
+                    arch: x86
+        name: MinGW-w64 (${{ matrix.name }})
+        runs-on: ubuntu-24.04
+        steps:
+          - name: Checkout Repository
+            uses: actions/checkout@v6
+            with:
+                submodules: true
+          - name: Install Dependencies
+            run: |
+                sudo apt-get update
+                sudo apt-get install --no-install-recommends -y \
+                    build-essential \
+                    cmake ninja-build \
+                    mingw-w64
+          - name: Build
+            run: |
+                mkdir build
+                cd build
+                cmake .. -GNinja \
+                    -DCMAKE_BUILD_TYPE=Release \
+                    -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
+                    ${{ matrix.flags }}
+                cmake --build .
+                x86_64-w64-mingw32-strip nbcraft.exe
+          - name: Pack release
+            run: |
+                mkdir NBCraft
+                mv game/assets build/nbcraft.exe NBCraft
+                zip -r NBCraft-Windows-${{ matrix.arch }}.zip NBCraft
+          - uses: alexellis/upload-assets@0.4.1
+            env:
+              GITHUB_TOKEN: ${{ github.token }}
+            with:
+              asset_paths: '["NBCraft-Windows-${{ matrix.arch }}.zip"]'
+
+    switch:
+        name: Nintendo Switch
+        runs-on: ubuntu-24.04
+        container:
+            image: devkitpro/devkita64@sha256:a52e05e06951c025fe23127252555e2f94d944458ff4f19028ba297e5ffc99fd
+        steps:
+          - name: Checkout Repository
+            uses: actions/checkout@v6
+            with:
+                submodules: true
+          - name: Build Switch binary
+            run: |
+                mkdir build
+                cd build
+                /opt/devkitpro/portlibs/switch/bin/aarch64-none-elf-cmake .. -GNinja \
+                    -DCMAKE_BUILD_TYPE=Release \
+                    -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON
+                /opt/devkitpro/portlibs/switch/bin/aarch64-none-elf-cmake --build .
+                mv platforms/sdl/sdl2/nbcraft.nro .
+          - name: Pack release
+            run: |
+                mkdir NBCraft
+                mv game/assets build/nbcraft.nro NBCraft
+                zip -r NBCraft-Switch.zip NBCraft
+          - uses: alexellis/upload-assets@0.4.1
+            env:
+              GITHUB_TOKEN: ${{ github.token }}
+            with:
+              asset_paths: '["NBCraft-Switch.zip"]'
