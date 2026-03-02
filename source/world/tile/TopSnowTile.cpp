@@ -92,7 +92,7 @@ void TopSnowTile::playerDestroy(Level* level, Player* player, const TilePos& pos
 	double var8 = (level->m_random.nextFloat() * var7) + (1.0f - var7) * 0.5f;
 	double var10 = (level->m_random.nextFloat() * var7) + (1.0f - var7) * 0.5f;
 	double var12 = (level->m_random.nextFloat() * var7) + (1.0f - var7) * 0.5f;
-	ItemEntity* var14 = new ItemEntity(level, Vec3(pos.x + var8, pos.y + var10, pos.z + var12), new ItemInstance(var6, 1, 0));
+	ItemEntity* var14 = new ItemEntity(level, Vec3(pos.x + var8, pos.y + var10, pos.z + var12), ItemStack(var6, 1, 0));
 	var14->m_throwTime = 10;
 	level->addEntity(var14);
 	level->setTile(pos, TILE_AIR);

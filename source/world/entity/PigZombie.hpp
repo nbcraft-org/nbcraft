@@ -20,12 +20,12 @@ public:
 	Entity* findAttackTarget() override;
 	void aiStep() override;
 	bool hurt(Entity*, int) override;
-	ItemInstance* getCarriedItem() const override;
+	ItemStack& getCarriedItem() const override;
 
 private:
 	void alert(Entity*);
 
 	int m_angerTime = 0;
 	int m_playAngrySoundIn = 0;
-	static ItemInstance* m_sword;
+	static ItemStack m_sword;
 };

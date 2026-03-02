@@ -15,7 +15,7 @@ RedStoneItem::RedStoneItem(int id) : Item(id)
 {
 }
 
-bool RedStoneItem::useOn(ItemInstance* instance, Player* player, Level* level, const TilePos& pos, Facing::Name face) const
+bool RedStoneItem::useOn(ItemStack* instance, Player* player, Level* level, const TilePos& pos, Facing::Name face) const
 {
 	TilePos tp(pos);
 

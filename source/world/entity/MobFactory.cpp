@@ -56,7 +56,7 @@ void MobFactory::initMobLists()
     monsterList.insert(std::make_pair(EntityType::ZOMBIE,   10));
     monsterList.insert(std::make_pair(EntityType::SKELETON, 10));
     monsterList.insert(std::make_pair(EntityType::CREEPER,  10));
-    //monsterList.insert(std::make_pair(EntityType::SLIME,    10));
+    monsterList.insert(std::make_pair(EntityType::SLIME,    10));
 
     mobListsByCategory.insert(std::make_pair(EntityCategories::ANIMAL, &creatureList));
     creatureList.insert(std::make_pair(EntityType::SHEEP,   12));

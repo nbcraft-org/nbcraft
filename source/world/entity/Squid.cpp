@@ -24,7 +24,7 @@ void Squid::dropDeathLoot() {
 	int var1 = m_random.nextInt(3) + 1;
 
 	for (int var2 = 0; var2 < var1; ++var2) {
-		spawnAtLocation(new ItemInstance(Item::dye_powder, 1, 0), 0.0f);
+		spawnAtLocation(ItemStack(Item::dye_powder, 1, 0), 0.0f);
 	}
 
 }
@@ -82,8 +82,8 @@ void Squid::aiStep()
 		}
 
 		var1 = Mth::sqrt(m_vel.x * m_vel.x + m_vel.z * m_vel.z);
-		field_E8 += (-(Mth::atan2(m_vel.x, m_vel.z)) * 180.0f / float(M_PI) - field_E8) * 0.1f; // field_E8 = yBodyRot
-		m_rot.x = field_E8; // m_rot.x is supposed to be m_rot.y but brent inverted it?!
+		m_yBodyRot += (-(Mth::atan2(m_vel.x, m_vel.z)) * 180.0f / float(M_PI) - m_yBodyRot) * 0.1f; // field_E8 = yBodyRot
+		m_rot.x = m_yBodyRot; // m_rot.x is supposed to be m_rot.y but it's inverted?!
 		m_zBodyRot += float(M_PI) * m_rotateSpeed * 1.5f;
 		m_xBodyRot += (-(Mth::atan2(var1, m_vel.y)) * 180.0f / float(M_PI) - m_xBodyRot) * 0.1f;
 	}

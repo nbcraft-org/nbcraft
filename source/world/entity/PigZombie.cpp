@@ -1,7 +1,7 @@
 #include "PigZombie.hpp"
 #include "nbt/CompoundTag.hpp"
 
-ItemInstance* PigZombie::m_sword = nullptr;
+ItemStack PigZombie::m_sword;
 
 PigZombie::PigZombie(Level* pLevel) : Zombie(pLevel)
 {
@@ -76,8 +76,8 @@ void PigZombie::alert(Entity* ent)
 	m_playAngrySoundIn = m_random.nextInt(40);
 }
 
-ItemInstance* PigZombie::getCarriedItem() const
+ItemStack& PigZombie::getCarriedItem() const
 {
-	if (!m_sword) m_sword = new ItemInstance(Item::sword_gold, 1);
+	if (!m_sword) m_sword = ItemStack(Item::sword_gold, 1);
 	return m_sword;
 }

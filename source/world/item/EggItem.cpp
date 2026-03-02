@@ -8,7 +8,7 @@ EggItem::EggItem(int id) : Item(id)
 	m_maxStackSize = 16;
 }
 
-ItemInstance* EggItem::use(ItemInstance* inst, Level* level, Player* player) const
+ItemStack* EggItem::use(ItemStack* inst, Level* level, Mob* player) const
 {
 	--inst->m_count;
 	level->playSound(player, "random.bow", 0.5f, 0.4f / (m_random.nextFloat() * 0.4f + 0.8f));

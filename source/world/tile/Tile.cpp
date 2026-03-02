@@ -1344,6 +1344,6 @@ Tile
 	*Tile::notGate_on,
 	*Tile::button,
 	*Tile::diode_off,
-	*Tile::diode_on;
+	*Tile::diode_on,
 	*Tile::craftingTable,
 	*Tile::crops;

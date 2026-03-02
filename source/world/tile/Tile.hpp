@@ -248,8 +248,7 @@ public: // static variables
 		* notGate_on,
 		* button,
 		* diode_off,
-		* diode_on;
-		* fence,
+		* diode_on,
 		* craftingTable,
 		* crops;
 

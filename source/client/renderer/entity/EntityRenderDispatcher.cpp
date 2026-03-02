@@ -24,6 +24,10 @@
 #include "SpiderRenderer.hpp"
 #include "ArrowRenderer.hpp"
 #include "RocketRenderer.hpp"
+#include "SquidRenderer.hpp"
+#include "GiantMobRenderer.hpp"
+#include "SlimeRenderer.hpp"
+#include "ItemSpriteRenderer.hpp"
 
 #include "client/model/models/PigModel.hpp"
 #include "client/model/models/SheepModel.hpp"
@@ -71,8 +75,8 @@ EntityRenderDispatcher::EntityRenderDispatcher()
 	_addRenderer(Entity::RENDER_CAMERA,       new TripodCameraRenderer());
 	_addRenderer(Entity::RENDER_ITEM,         new ItemRenderer());
 	_addRenderer(Entity::RENDER_ROCKET,       new RocketRenderer());
-	_addRenderer(Entity::RENDER_SNOWBALL,     new SnowballRenderer(   Item::snowBall->getIcon(nullptr)));
-	_addRenderer(Entity::RENDER_THROWN_EGG,   new ThrownEggRenderer(  Item::egg->getIcon(nullptr)));
+	_addRenderer(Entity::RENDER_SNOWBALL,     new ItemSpriteRenderer( Item::snowBall->getIcon(nullptr)));
+	_addRenderer(Entity::RENDER_THROWN_EGG,   new ItemSpriteRenderer( Item::egg->getIcon(nullptr)));
 }
 
 EntityRenderDispatcher::~EntityRenderDispatcher()

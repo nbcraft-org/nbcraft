@@ -141,7 +141,7 @@ bool DiodeTile::isSignalSource() const
 
 void DiodeTile::setPlacedBy(Level* level, const TilePos& pos, Mob* mob)
 {
-	int var6 = ((Mth::floor(float(mob->m_rot.x * 4.0f / 360.0f) + 0.5f) & 3) + 2) % 4; // m_rot.x is supposed to be m_rot.y but brent inverted it?!
+	int var6 = ((Mth::floor(float(mob->m_rot.x * 4.0f / 360.0f) + 0.5f) & 3) + 2) % 4; // m_rot.x is supposed to be m_rot.y but it's inverted?!
 	level->setData(pos, var6);
 	bool bShouldTurnOn = shouldTurnOn(level, pos, var6);
 	if (bShouldTurnOn) {

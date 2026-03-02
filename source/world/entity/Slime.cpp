@@ -83,15 +83,15 @@ void Slime::updateAi()
 		}
 
 		m_squish = 1.0f;
-		field_B00.x = 1.0f - m_random.nextFloat() * 2.0f; // this.xxa
-		field_B00.y = float(1 * m_size); // this.yya
+		m_moveVelocity.x = 1.0f - m_random.nextFloat() * 2.0f; // this.xxa
+		m_moveVelocity.y = float(1 * m_size); // this.yya
 	}
 	else
 	{
 		m_bJumping = false;
 		if (m_bOnGround)
 		{
-			field_B00.x = field_B00.y = 0.0f; // this.xxa, this.yya
+			m_moveVelocity.x = m_moveVelocity.y = 0.0f; // this.xxa, this.yya
 		}
 	}
 }
