@@ -56,6 +56,8 @@ add_library(nbcraft-core STATIC
 	client/renderer/entity/SquidRenderer.cpp
 	client/renderer/entity/GiantMobRenderer.cpp
 	client/renderer/entity/SlimeRenderer.cpp
+	client/renderer/entity/FireballRenderer.cpp
+	client/renderer/entity/GhastRenderer.cpp
     client/renderer/renderer/EntityShaderManager.cpp
     client/renderer/renderer/RenderMaterialGroup.cpp
     client/renderer/renderer/ShaderGroup.cpp
@@ -167,6 +169,7 @@ add_library(nbcraft-core STATIC
     client/model/models/ChickenModel.cpp
 	client/model/models/SquidModel.cpp
 	client/model/models/SlimeModel.cpp
+	client/model/models/GhastModel.cpp
     client/multiplayer/MultiPlayerLevel.cpp
     client/multiplayer/MultiplayerLocalPlayer.cpp
     client/player/input/ControllerBuildInput.cpp
@@ -311,6 +314,9 @@ add_library(nbcraft-core STATIC
 	world/entity/Snowball.cpp
 	world/entity/ThrownEgg.cpp
 	world/entity/PigZombie.cpp
+	world/entity/Fireball.cpp
+	world/entity/FlyingMob.cpp
+	world/entity/Ghast.cpp
     world/level/Dimension.cpp
     world/level/Material.cpp
     world/level/LevelListener.cpp
