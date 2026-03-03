@@ -58,6 +58,7 @@ add_library(nbcraft-core STATIC
 	client/renderer/entity/SlimeRenderer.cpp
 	client/renderer/entity/FireballRenderer.cpp
 	client/renderer/entity/GhastRenderer.cpp
+	client/renderer/entity/FishingHookRenderer.cpp
     client/renderer/renderer/EntityShaderManager.cpp
     client/renderer/renderer/RenderMaterialGroup.cpp
     client/renderer/renderer/ShaderGroup.cpp
@@ -317,6 +318,7 @@ add_library(nbcraft-core STATIC
 	world/entity/Fireball.cpp
 	world/entity/FlyingMob.cpp
 	world/entity/Ghast.cpp
+	world/entity/FishingHook.cpp
     world/level/Dimension.cpp
     world/level/Material.cpp
     world/level/LevelListener.cpp
@@ -408,6 +410,7 @@ add_library(nbcraft-core STATIC
 	world/item/RedStoneItem.cpp
 	world/item/SnowballItem.cpp
 	world/item/EggItem.cpp
+	world/item/FishingRodItem.cpp
     world/particle/RedDustParticle.cpp
     world/particle/TerrainParticle.cpp
     world/particle/BubbleParticle.cpp

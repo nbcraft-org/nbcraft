@@ -701,6 +701,9 @@
     <ClInclude Include="..\..\..\source\client\renderer\entity\GhastRenderer.hpp">
       <Filter>Header Files\Renderer\Entity</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\source\client\renderer\entity\FishingHookRenderer.hpp">
+      <Filter>Header Files\Renderer\Entity</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\client\gui\components\AvailableGamesList.cpp">
@@ -1250,6 +1253,9 @@
       <Filter>Source Files\Model\Models</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\client\renderer\entity\GhastRenderer.cpp">
+      <Filter>Source Files\Renderer\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\client\renderer\entity\FishingHookRenderer.cpp">
       <Filter>Source Files\Renderer\Entity</Filter>
     </ClCompile>
   </ItemGroup>

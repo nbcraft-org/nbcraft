@@ -14,6 +14,7 @@
 #include "world/entity/ItemEntity.hpp"
 #include "world/gamemode/GameType.hpp"
 #include "world/inventory/InventoryMenu.hpp"
+#include "world/entity/FishingHook.hpp"
 
 #define C_PLAYER_FLAG_USING_ITEM (4)
 
@@ -138,5 +139,6 @@ public:
 	TilePos m_respawnPos;
 	bool m_bHasRespawnPos;
 	bool m_destroyingBlock;
+	FishingHook* m_fishing = nullptr;
 };
 

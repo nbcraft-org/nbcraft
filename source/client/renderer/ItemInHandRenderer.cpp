@@ -76,11 +76,11 @@ void ItemInHandRenderer::render(float a)
 	currentShaderDarkColor = Color(fBright, fBright, fBright);
 
 	ItemStack* pItem = &m_selectedItem;
-	/*if (pLP->m_fishing != null)
+	if (pLP->m_fishing)
     {
         // We shouldn't do this, make this static or something
-		pItem = new ItemStack(Item::stick);
-	}*/
+		pItem = &ItemStack(Item::stick);
+	}
     
     float swing2, swing3;
     float fAnim = pLP->getAttackAnim(a);

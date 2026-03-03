@@ -29,6 +29,7 @@
 #include "SnowballItem.hpp"
 #include "EggItem.hpp"
 #include "WeaponItem.hpp"
+#include "FishingRodItem.hpp"
 
 #define ITEM(x) ((x) - 256)
 
@@ -509,7 +510,7 @@ void Item::initItems()
 		->setIcon(6, 3)
 		->setDescriptionId("compass");
 
-	Item::fishingRod = NEW_ITEM(ITEM_FISHING_ROD)
+	Item::fishingRod = NEW_X_ITEMN(FishingRodItem, ITEM_FISHING_ROD)
 		->setIcon(5, 4)
 		->setDescriptionId("fishingRod");
 

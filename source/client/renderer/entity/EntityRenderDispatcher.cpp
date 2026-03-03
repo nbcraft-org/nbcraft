@@ -30,6 +30,7 @@
 #include "ItemSpriteRenderer.hpp"
 #include "FireballRenderer.hpp"
 #include "GhastRenderer.hpp"
+#include "FishingHookRenderer.hpp"
 
 #include "client/model/models/PigModel.hpp"
 #include "client/model/models/SheepModel.hpp"
@@ -81,6 +82,7 @@ EntityRenderDispatcher::EntityRenderDispatcher()
 	_addRenderer(Entity::RENDER_SNOWBALL,     new ItemSpriteRenderer( Item::snowBall->getIcon(nullptr)));
 	_addRenderer(Entity::RENDER_THROWN_EGG,   new ItemSpriteRenderer( Item::egg->getIcon(nullptr)));
 	_addRenderer(Entity::RENDER_FIREBALL,     new FireballRenderer());
+	_addRenderer(Entity::RENDER_FISHING_HOOK, new FishingHookRenderer());
 }
 
 EntityRenderDispatcher::~EntityRenderDispatcher()
