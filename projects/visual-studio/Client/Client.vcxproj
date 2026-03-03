@@ -258,8 +258,11 @@
     <ClInclude Include="$(MC_ROOT)\source\client\gui\ScreenChooser.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\resources\LoadingTipManager.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\resources\SplashManager.hpp" />
+    <ClInclude Include="..\..\..\source\client\model\models\GhastModel.hpp" />
     <ClInclude Include="..\..\..\source\client\model\models\SlimeModel.hpp" />
     <ClInclude Include="..\..\..\source\client\model\models\SquidModel.hpp" />
+    <ClInclude Include="..\..\..\source\client\renderer\entity\FireballRenderer.hpp" />
+    <ClInclude Include="..\..\..\source\client\renderer\entity\GhastRenderer.hpp" />
     <ClInclude Include="..\..\..\source\client\renderer\entity\GiantMobRenderer.hpp" />
     <ClInclude Include="..\..\..\source\client\renderer\entity\SlimeRenderer.hpp" />
     <ClInclude Include="..\..\..\source\client\renderer\entity\SquidRenderer.hpp" />
@@ -439,8 +442,11 @@
     <ClCompile Include="$(MC_ROOT)\source\client\gui\ScreenChooser.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\resources\LoadingTipManager.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\resources\SplashManager.cpp" />
+    <ClCompile Include="..\..\..\source\client\model\models\GhastModel.cpp" />
     <ClCompile Include="..\..\..\source\client\model\models\SlimeModel.cpp" />
     <ClCompile Include="..\..\..\source\client\model\models\SquidModel.cpp" />
+    <ClCompile Include="..\..\..\source\client\renderer\entity\FireballRenderer.cpp" />
+    <ClCompile Include="..\..\..\source\client\renderer\entity\GhastRenderer.cpp" />
     <ClCompile Include="..\..\..\source\client\renderer\entity\GiantMobRenderer.cpp" />
     <ClCompile Include="..\..\..\source\client\renderer\entity\SlimeRenderer.cpp" />
     <ClCompile Include="..\..\..\source\client\renderer\entity\SquidRenderer.cpp" />

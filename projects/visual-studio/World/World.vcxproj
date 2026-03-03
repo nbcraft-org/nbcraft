@@ -230,6 +230,9 @@
     <ClCompile Include="$(MC_ROOT)\source\world\item\WeaponItem.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\item\DyePowderItem.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\item\CoalItem.cpp" />
+    <ClCompile Include="..\..\..\source\world\entity\Fireball.cpp" />
+    <ClCompile Include="..\..\..\source\world\entity\FlyingMob.cpp" />
+    <ClCompile Include="..\..\..\source\world\entity\Ghast.cpp" />
     <ClCompile Include="..\..\..\source\world\entity\Giant.cpp" />
     <ClCompile Include="..\..\..\source\world\entity\PigZombie.cpp" />
     <ClCompile Include="..\..\..\source\world\entity\Slime.cpp" />
@@ -417,6 +420,9 @@
     <ClInclude Include="$(MC_ROOT)\source\world\item\WeaponItem.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\item\DyePowderItem.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\item\CoalItem.hpp" />
+    <ClInclude Include="..\..\..\source\world\entity\Fireball.hpp" />
+    <ClInclude Include="..\..\..\source\world\entity\FlyingMob.hpp" />
+    <ClInclude Include="..\..\..\source\world\entity\Ghast.hpp" />
     <ClInclude Include="..\..\..\source\world\entity\Giant.hpp" />
     <ClInclude Include="..\..\..\source\world\entity\PigZombie.hpp" />
     <ClInclude Include="..\..\..\source\world\entity\Slime.hpp" />

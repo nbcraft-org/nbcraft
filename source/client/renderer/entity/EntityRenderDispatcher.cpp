@@ -28,6 +28,8 @@
 #include "GiantMobRenderer.hpp"
 #include "SlimeRenderer.hpp"
 #include "ItemSpriteRenderer.hpp"
+#include "FireballRenderer.hpp"
+#include "GhastRenderer.hpp"
 
 #include "client/model/models/PigModel.hpp"
 #include "client/model/models/SheepModel.hpp"
@@ -67,6 +69,7 @@ EntityRenderDispatcher::EntityRenderDispatcher()
 	_addRenderer(Entity::RENDER_ZOMBIE,       new HumanoidMobRenderer(new ZombieModel,   0.5f));
 	_addRenderer(Entity::RENDER_GIANT,        new GiantMobRenderer(   new ZombieModel,   0.5f, 6.0f));
 	_addRenderer(Entity::RENDER_SLIME,        new SlimeRenderer(      new SlimeModel(16), new SlimeModel(0), 0.25f));
+	_addRenderer(Entity::RENDER_GHAST,        new GhastRenderer());
 	_addRenderer(Entity::RENDER_ARROW,        new ArrowRenderer());
 #ifdef ENH_ALLOW_SAND_GRAVITY
 	_addRenderer(Entity::RENDER_FALLING_TILE, new FallingTileRenderer());
@@ -77,6 +80,7 @@ EntityRenderDispatcher::EntityRenderDispatcher()
 	_addRenderer(Entity::RENDER_ROCKET,       new RocketRenderer());
 	_addRenderer(Entity::RENDER_SNOWBALL,     new ItemSpriteRenderer( Item::snowBall->getIcon(nullptr)));
 	_addRenderer(Entity::RENDER_THROWN_EGG,   new ItemSpriteRenderer( Item::egg->getIcon(nullptr)));
+	_addRenderer(Entity::RENDER_FIREBALL,     new FireballRenderer());
 }
 
 EntityRenderDispatcher::~EntityRenderDispatcher()

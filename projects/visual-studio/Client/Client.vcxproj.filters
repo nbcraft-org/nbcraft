@@ -692,6 +692,15 @@
     <ClInclude Include="..\..\..\source\client\model\models\SquidModel.hpp">
       <Filter>Header Files\Model\Models</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\source\client\renderer\entity\FireballRenderer.hpp">
+      <Filter>Header Files\Renderer\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\client\model\models\GhastModel.hpp">
+      <Filter>Header Files\Model\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\client\renderer\entity\GhastRenderer.hpp">
+      <Filter>Header Files\Renderer\Entity</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\client\gui\components\AvailableGamesList.cpp">
@@ -1233,6 +1242,15 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\client\model\models\SquidModel.cpp">
       <Filter>Source Files\Model\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\client\renderer\entity\FireballRenderer.cpp">
+      <Filter>Source Files\Renderer\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\client\model\models\GhastModel.cpp">
+      <Filter>Source Files\Model\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\client\renderer\entity\GhastRenderer.cpp">
+      <Filter>Source Files\Renderer\Entity</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

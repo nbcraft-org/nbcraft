@@ -14,6 +14,7 @@
 #include "Giant.hpp"
 #include "PigZombie.hpp"
 #include "Squid.hpp"
+#include "Ghast.hpp"
 
 #define ENTS ENT(CHICKEN, Chicken) \
              ENT(COW, Cow) \
@@ -25,6 +26,7 @@
              ENT(SPIDER, Spider) \
              ENT(GIANT, Giant) \
              ENT(SLIME, Slime) \
+             ENT(GHAST, Ghast) \
              ENT(PIG_ZOMBIE, PigZombie) \
              ENT(SQUID, Squid)
 

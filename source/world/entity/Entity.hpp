@@ -101,6 +101,8 @@ public:
 		RENDER_GIANT,
 		RENDER_SNOWBALL,
 		RENDER_SLIME,
+		RENDER_GHAST,
+		RENDER_FIREBALL,
 		RENDER_THROWN_EGG,
 		RENDER_SQUID,
 
@@ -192,6 +194,7 @@ public:
 	virtual bool hurt(Entity*, int);
 	virtual void animateHurt();
 	virtual float getPickRadius() const { return 0.1f; }
+	virtual Vec3 getLookAngle() const { return Vec3::ZERO; }
 	virtual ItemEntity* spawnAtLocation(const ItemStack&, float);
 	virtual ItemEntity* spawnAtLocation(int, int);
 	virtual ItemEntity* spawnAtLocation(int, int, float);
