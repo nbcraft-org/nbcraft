@@ -6,6 +6,8 @@
 	SPDX-License-Identifier: BSD-1-Clause
  ********************************************************************/
 
+#define __STDC_LIMIT_MACROS
+#include <stdint.h>
 #include "GameRenderer.hpp"
 #include "GameMods.hpp"
 #include "client/app/Minecraft.hpp"
@@ -877,6 +879,9 @@ void GameRenderer::setLevel(Level* pLevel, Dimension* pDimension)
 
 void GameRenderer::setGamma(float gamma)
 {
+	if (!mce::RenderContextImmediate::hasDevice())
+		return;
+
 	mce::RenderContext& renderContext = mce::RenderContextImmediate::get();
 	renderContext.setGamma(gamma * (INT16_MAX+1));
 }

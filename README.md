@@ -71,7 +71,12 @@ Once your code is tested and ready, [submit a pull request](https://github.com/n
 Prepare a copy of minecraft.jar from Beta 1.7.3.
 Then, copy the assets (including sounds and textures) into the "minecraft" resource pack within the project.<br>
    Do this by performing the following:
-   - Open minecraft.jar as if it were a ZIP file, either by renaming it to "minecraft.jar.zip", or by opening it with an unarchiver.
+   - If you have [Python](https://www.python.org/) installed:
+     - Run the script in `tools/extract_jar.py`.
+     - Click and drag the "minecraft.jar" file onto the window.
+     - Hit enter, and the script should extract the JAR's assets into the "minecraft" resource pack.<br>
+   - If you do not have [Python](https://www.python.org/) installed, or do not wish to use the script, you can extract the assets manually by doing the following:
+     - Open minecraft.jar as if it were a ZIP file, either by renaming it to "minecraft.jar.zip", or by opening it with an unarchiver.
      - Locate the the following files/folders in minecraft.jar, and copy them into the `game/assets/resource_packs/minecraft` directory of the project:
 	   ```
 	   armor
@@ -87,8 +92,8 @@ Then, copy the assets (including sounds and textures) into the "minecraft" resou
 	   pack.png
 	   particles.png
 	   terrain.png
-	   ```
-     - Any Pocket Edition assets will need to be manually extracted from _Pocket Edition_.
+	   ```<br>
+   - Any Pocket Edition assets will need to be manually extracted from _Pocket Edition_.
    - **To retrieve the sounds**, locate the `resources` directory in the `.minecraft` folder
      - Copy the contents (e.g. `music`, `sound`, etc.) into the `game/assets/resource_packs/minecraft` directory of the project.
 <br>
@@ -108,11 +113,6 @@ This fetches the project's necessary dependencies.
 ## How to Build
 
 ### Windows
-
-Click the thumbnail below to watch a video guide showcasing how to build NBCraft.
-<a href="https://youtu.be/Tx1u7C2DCPI" target="_blank">
-  <img alt="How to Compile NBCraft for Windows" src="http://i.ytimg.com/vi/Tx1u7C2DCPI/maxresdefault.jpg" />
-</a>
 
 The project is configured to target Windows XP by default by using "v141_xp" build tools. If you would like
 to build with Windows XP support, please follow the guide [here](https://learn.microsoft.com/en-us/cpp/build/configuring-programs-for-windows-xp?view=msvc-170#install-the-windows-xp-platform-toolset)
@@ -140,54 +140,74 @@ Once you have the proper build tools installed (v140_xp or newer), you can now b
 After building, place the `assets` folder you have prepared in the working directory of the output executable.
 (if running from VS, it's in `game/`, otherwise, where your executable is)
 
-### WebAssembly
+### Unix-like systems (Linux, *BSD, Haiku)
 
-**Make sure you have CMake and Ninja installed. On Windows, the ninja executable must be in your PATH.**
-On Linux, the package names are `cmake` and `ninja-build` respectively if you are using apt.
-
-The game will use the assets from within the `game/` directory. So put your assets there if you want to build
-for wasm. Then run the `build-wasm` script corresponding to your platform (`-.sh` on linux/WSL, `-.bat` on
-windows).
-
-The output files will be in `./wasm/dist`, but you need to upload them to a web host (localhost works too) to
-use. (problem with Emscripten)
-
-**NOTE:** If you are using nginx, make sure the `*.wasm` file is served as `application/wasm`, and not
-`application/octet-stream`. This can be done by opening `/etc/nginx/mime.types` as root and adding
-`application/wasm wasm;` to the types block.
-
-### Linux
-
-This project uses CMake on Linux. Just like WebAssembly, the game assets must be placed in the `game/` directory.
+This project uses CMake on Unix-like systems.
 
 #### Dependencies (Ubuntu/Debian)
 
 - `build-essential` (C/C++ Toolchain)
 - `cmake` (CMake)
-- `ninja-build` (Ninja)
 - `libsdl2-dev` (SDL2)
 - `libopenal-dev` (OpenAL)
 - `zlib1g-dev` (ZLib)
+
+#### Dependencies (Haiku)
+
+- `libsdl2_devel` (SDL2)
+- `glu_devel mesa_devel` (Mesa)
+- `cmake` (CMake)
 
 #### How To Build
 
 ```sh
 mkdir build && cd build
-cmake -GNinja ..
+cmake ..
 cmake --build .
 # Run
 ./nbcraft
 ```
 
-### HaikuOS
+### macOS
 
-Dependencies:
-- `libsdl2_devel` (SDL2)
-- `glu_devel mesa_devel` (Mesa)
-- `cmake` (CMake)
-- `ninja` (Ninja)
+There are 3 ways to build on macOS, Xcode, CMake, or the universal build script.
 
-To build, perform the same steps as on Linux.
+#### Xcode
+
+Open the Xcode project at projects/xcode/NBCraft.xcodeproj and build either the NBCraftClient.SDL1 or NBCraftClient.SDL2 targets. You must have SDL 1.2 or SDL 2 installed from homebrew or macports.
+
+#### CMake
+
+You can build with CMake as detailed in the Unix-like systems section above.  You do not need to have SDL 2 installed.
+
+#### Universal build script
+
+There is a script to easily create a version of NBCraft that works on all versions of macOS since 10.4 tiger, and on PowerPC.
+
+You will need to install the following dependencies, in addition to the Xcode command line tools:
+
+- `cmake` (CMake) (The homebrew version of CMake currently has a bug that causes the build to fail, MacPorts is recommended)
+- `wget` (Wget)
+- `gmp mpfr mpc` (GCC dependencies)
+
+Then run
+
+```sh
+# if gmp, mpfr, and mpc were installed from homebrew
+export GMP="$(brew --prefix)"
+export MPFR="$(brew --prefix)"
+export MPC="$(brew --prefix)"
+# if gmp, mpfr, and mpc were installed from macports
+export GMP='/opt/local'
+export MPFR='/opt/local'
+export MPC='/opt/local'
+
+./platforms/macos/build.sh
+
+# run
+cd platforms/macos/build/NBCraft
+./nbcraft
+```
 
 ### iOS
 

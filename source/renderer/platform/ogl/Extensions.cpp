@@ -4,6 +4,16 @@
 
 using namespace mce::Platform;
 
+#ifdef FEATURE_GFX_SHADERS
+#define MIN_GL_VERSION "2.0"
+#define ERROR_MSG_EXTRA " Try switching to a non-shader build, or update your graphics drivers!"
+#else
+#define MIN_GL_VERSION "1.5"
+#define ERROR_MSG_EXTRA " Update your graphics drivers!"
+#endif
+
+const char* OGL::ERROR_MSG = "Error initializing GL extensions. OpenGL " MIN_GL_VERSION " or later is required." ERROR_MSG_EXTRA;
+
 bool OGL::InitBindings()
 {
     bool result = true;
@@ -24,7 +34,7 @@ void* OGL::GetProcAddress(const char* name)
     result = (void*)wglGetProcAddress(name);
     if (result == nullptr)
     {
-        HMODULE handle = GetModuleHandle("opengl32.dll");
+        static HMODULE handle = GetModuleHandle("opengl32.dll");
         if (handle != NULL)
         {
             result = (void*)GetProcAddress(handle, name);
@@ -132,8 +142,8 @@ bool xglInitted()
 		&& p_glDeleteBuffers
 		&& p_glBufferSubData
 #if GL_VERSION_2_0
-		&& p_glStencilFuncSeparate
-		&& p_glStencilOpSeparate
+		/*&& p_glStencilFuncSeparate
+		&& p_glStencilOpSeparate*/
 #ifdef FEATURE_GFX_SHADERS
 		&& p_glUniform1i
 		&& p_glUniform1fv
@@ -305,6 +315,47 @@ void xglInit()
 
 #ifdef USE_HARDWARE_GL_BUFFERS
 
+#if GL_VERSION_1_1
+
+void xglEnableClientState(GLenum _array)
+{
+	glEnableClientState(_array);
+}
+
+void xglDisableClientState(GLenum _array)
+{
+	glDisableClientState(_array);
+}
+
+void xglTexCoordPointer(GLint size, GLenum type, GLsizei stride, const GLvoid* pointer)
+{
+	glTexCoordPointer(size, type, stride, pointer);
+}
+
+void xglColorPointer(GLint size, GLenum type, GLsizei stride, const GLvoid* pointer)
+{
+	glColorPointer(size, type, stride, pointer);
+}
+
+void xglNormalPointer(GLenum type, GLsizei stride, const GLvoid* pointer)
+{
+#ifdef USE_GL_NORMAL_LIGHTING
+	glNormalPointer(type, stride, pointer);
+#endif
+}
+
+void xglVertexPointer(GLint size, GLenum type, GLsizei stride, const GLvoid* pointer)
+{
+	glVertexPointer(size, type, stride, pointer);
+}
+
+void xglDrawArrays(GLenum mode, GLint first, GLsizei count)
+{
+	glDrawArrays(mode, first, count);
+}
+
+#endif // GL_VERSION_1_1
+
 #if GL_VERSION_1_3
 
 void xglActiveTexture(GLenum texture)
@@ -347,11 +398,17 @@ void xglBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const GLv
 
 void xglStencilFuncSeparate(GLenum face, GLenum func, GLint ref, GLuint mask)
 {
+	if (!p_glStencilFuncSeparate)
+		return;
+
 	p_glStencilFuncSeparate(face, func, ref, mask);
 }
 
 void xglStencilOpSeparate(GLenum face, GLenum sfail, GLenum dpfail, GLenum dppass)
 {
+	if (!p_glStencilOpSeparate)
+		return;
+
 	p_glStencilOpSeparate(face, sfail, dpfail, dppass);
 }
 
@@ -547,43 +604,7 @@ void xglDebugMessageCallback(DEBUGPROC callback, GLvoid* userParam)
 }
 #endif
 
-void xglEnableClientState(GLenum _array)
-{
-	glEnableClientState(_array);
-}
-
-void xglDisableClientState(GLenum _array)
-{
-	glDisableClientState(_array);
-}
-
-void xglTexCoordPointer(GLint size, GLenum type, GLsizei stride, const GLvoid* pointer)
-{
-	glTexCoordPointer(size, type, stride, pointer);
-}
-
-void xglColorPointer(GLint size, GLenum type, GLsizei stride, const GLvoid* pointer)
-{
-	glColorPointer(size, type, stride, pointer);
-}
-
-void xglNormalPointer(GLenum type, GLsizei stride, const GLvoid* pointer)
-{
-#ifdef USE_GL_NORMAL_LIGHTING
-	glNormalPointer(type, stride, pointer);
-#endif
-}
-
-void xglVertexPointer(GLint size, GLenum type, GLsizei stride, const GLvoid* pointer)
-{
-	glVertexPointer(size, type, stride, pointer);
-}
-
-void xglDrawArrays(GLenum mode, GLint first, GLsizei count)
-{
-	glDrawArrays(mode, first, count);
-}
-#endif
+#endif // USE_HARDWARE_GL_BUFFERS
 
 #ifndef xglOrthof
 
