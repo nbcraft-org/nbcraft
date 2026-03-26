@@ -99,35 +99,12 @@ void AppPlatform_win32::saveScreenshot(const std::string& fileName, int width, i
 
 	stbi_flip_vertically_on_write(true);
 
-	// Verify if the folder exists for saving screenshots and
-	// create it if it doesn't 
-	// Kinda inefficient but I didn't want to be too intrusive 
-	// -Vruk
-	// https://stackoverflow.com/a/22182041
-
-	// https://stackoverflow.com/a/8901001
-	CHAR mypicturespath[MAX_PATH];
-	HRESULT result = SHGetFolderPathA(NULL, CSIDL_MYPICTURES, NULL, SHGFP_TYPE_CURRENT, mypicturespath);
-
-	static char str[MAX_PATH];
-
-	if (result == S_OK)
-		sprintf(str, "%s\\%s", mypicturespath, "MCPE");
-	else
-		sprintf(str, "%s\\%s", ".", "Screenshots");
-
-	// https://stackoverflow.com/a/8233867
-	DWORD error = GetLastError();
-	if (error == ERROR_PATH_NOT_FOUND || error == ERROR_FILE_NOT_FOUND || error == ERROR_INVALID_NAME)
-	{
-		// https://stackoverflow.com/a/22182041
-		CreateDirectoryA(str, NULL);
-	}
+	std::string screenshot_path = m_externalStorageDir + "/screenshots";
+	createFolderIfNotExists(screenshot_path.c_str());
 	
-	char fullpath[MAX_PATH];
-	sprintf(fullpath, "%s\\%s", str, fileName.c_str());
+	screenshot_path += fileName;
 
-	stbi_write_png(fullpath, width, height, 4, pixels, width * 4);
+	stbi_write_png(screenshot_path.c_str(), width, height, 4, pixels, width * 4);
 
 	delete[] pixels;
 #endif
