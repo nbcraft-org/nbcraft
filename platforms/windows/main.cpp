@@ -157,7 +157,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	// Storage Directory
 	{
-		std::string storagePath = getenv("APPDATA");
+		std::string storagePath;
+		const char *appdata = getenv("APPDATA");
+		if (!appdata) {
+			const char *windir = getenv("WINDIR");
+			if (windir)
+				storagePath = (std::string)windir + "\\Application Data";
+			else
+				storagePath = ".";
+		} else
+			storagePath = appdata;
 		storagePath += "/" C_STORAGE_DIR;
 
 		if (!storagePath.empty())
