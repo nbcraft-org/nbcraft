@@ -39,7 +39,7 @@ if [ "$(cat "toolchain-$arch/toolchainver" 2>/dev/null)" != "$toolchainver" ]; t
 
     case $arch in
         (i?86)
-            winnt=0x0500 # Windows 2000
+            winnt=0x0400 # Windows NT 4.0
         ;;
         (x86_64)
             winnt=0x0501 # Windows XP
