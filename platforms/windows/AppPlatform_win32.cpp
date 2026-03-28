@@ -99,7 +99,7 @@ void AppPlatform_win32::saveScreenshot(const std::string& fileName, int width, i
 
 	stbi_flip_vertically_on_write(true);
 
-	std::string screenshot_path = m_externalStorageDir + "/screenshots";
+	std::string screenshot_path = m_externalStorageDir + "\\screenshots";
 	createFolderIfNotExists(screenshot_path.c_str());
 	
 	screenshot_path += '\\' + fileName;
