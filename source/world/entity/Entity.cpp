@@ -1007,7 +1007,7 @@ void Entity::load(const CompoundTag& tag)
 	m_airSupply = tag.getInt16("Air");
 	m_bOnGround = tag.getBoolean("OnGround");
 	setPos(m_pos);
-	setRot(m_rot);
+	setRot(m_rot, true);
 	readAdditionalSaveData(tag);
 }
 
