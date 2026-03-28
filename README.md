@@ -24,7 +24,7 @@ The decompilation was performed primarily using [IDA](https://hex-rays.com/ida-p
   certain versions of the game, such as the 0.1.0 touch prototype/debug build)
 * To add support for as many platforms as possible, such as the PlayStation 3, Wii, and more.
   Currently, the following platforms are supported:
-	* Windows (2000 and above; thanks to [iProgramInCpp](https://github.com/iProgramMC))
+	* Windows (95 and above; thanks to [iProgramInCpp](https://github.com/iProgramMC))
 	* Android (thanks to [Stom](https://github.com/Stommm) for the help)
 	* Linux
 	* WebGL
