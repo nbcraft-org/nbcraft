@@ -1,3 +1,4 @@
+#include <cstring>
 #include "RenderContextBase.hpp"
 
 using namespace mce;
