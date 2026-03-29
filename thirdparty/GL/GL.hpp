@@ -114,6 +114,7 @@ typedef void (APIENTRY* DEBUGPROC)(GLenum source,
 #ifdef _WIN32
 void xglInit();
 bool xglInitted();
+bool xglVBOsBound();
 #endif
 
 #if defined(USE_OPENGL_2_FEATURES) && !defined(_WIN32) && !defined(__DREAMCAST__)

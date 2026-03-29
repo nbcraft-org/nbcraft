@@ -137,11 +137,7 @@ bool xglInitted()
 #ifdef USE_HARDWARE_GL_BUFFERS
 	return true
 		//&& p_glActiveTexture
-		/* && p_glBindBuffer
-		&& p_glBufferData
-		&& p_glGenBuffers
-		&& p_glDeleteBuffers
-		&& p_glBufferSubData*/
+		/* && xglVBOsBound()*/
 #if GL_VERSION_2_0
 		/*&& p_glStencilFuncSeparate
 		&& p_glStencilOpSeparate*/
@@ -312,6 +308,15 @@ void xglInit()
 #ifndef USE_OPENGL_2_FEATURES
 	p_wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC)OGL::GetProcAddress("wglSwapIntervalEXT");
 #endif
+}
+
+bool xglVBOsBound()
+{
+	return p_glBindBuffer
+		&& p_glBufferData
+		&& p_glGenBuffers
+		&& p_glDeleteBuffers
+		&& p_glBufferSubData;
 }
 
 #ifdef USE_HARDWARE_GL_BUFFERS

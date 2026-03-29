@@ -50,6 +50,7 @@ void BufferBase::_createClientBuffer(RenderContext& context, const void* data, B
 
 void BufferBase::_bindClientBuffer(RenderContext& context)
 {
+    assert(m_clientData != nullptr);
     void*& activeBuffer = context.getActiveClientBuffer(m_bufferType);
     if (activeBuffer == m_clientData)
         return;
