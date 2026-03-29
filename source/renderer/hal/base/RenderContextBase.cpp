@@ -11,8 +11,8 @@ RenderContextBase::RenderContextBase()
 
 void RenderContextBase::_clearArrays()
 {
-    memset(m_lastShaderPrograms, NULL, sizeof(ShaderProgram*) * SHADER_TYPES_COUNT);
-    memset(m_activeClientBuffers, NULL, sizeof(void*) * BUFFER_TYPES_COUNT);
+    memset(m_lastShaderPrograms, 0, sizeof(ShaderProgram*) * SHADER_TYPES_COUNT);
+    memset(m_activeClientBuffers, 0, sizeof(void*) * BUFFER_TYPES_COUNT);
 }
 
 bool RenderContextBase::setShadeMode(ShadeMode mode)
