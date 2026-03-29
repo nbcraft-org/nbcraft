@@ -216,8 +216,9 @@ bool gl::supportsServerBuffers()
     if (isSupported < 0)
     {
         const gl::Version& glVersion = gl::Version::singleton();
+        const std::string& glExtensions = gl::getOpenGLExtensions();
         // OpenGL ES || OpenGL 1.5+
-        if (glVersion.gles || glVersion.major > 1 || glVersion.minor >= 5)
+        if (glVersion.gles || glExtensions.find("GL_ARB_vertex_buffer_object") || (glVersion.major > 1 || glVersion.minor >= 5))
             isSupported = 1;
     }
     return isSupported == 1;
