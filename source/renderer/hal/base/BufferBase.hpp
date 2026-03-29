@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdint.h>
+
 #include "compat/LegacyCPP.hpp"
 #include "renderer/hal/enums/BufferType.hpp"
 

@@ -1,5 +1,6 @@
 #include <utility>
 #include <assert.h>
+#include <cstring>
 #include "BufferBase.hpp"
 #include "compat/LegacyCPP.hpp"
 #include "renderer/hal/interface/RenderContext.hpp"
