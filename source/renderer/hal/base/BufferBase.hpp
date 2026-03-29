@@ -22,7 +22,6 @@ namespace mce
 		void _init(BufferBase& other);
 		void _move(BufferBase& other);
         void _createClientBuffer(RenderContext& context, const void* data, BufferType bufferType);
-        void _createBuffer(RenderContext& context, const void* data, BufferType bufferType);
         void _bindClientBuffer(RenderContext& context);
         void _resizeClientBuffer(RenderContext& context, const void* data, unsigned int size);
         void _updateClientBuffer(RenderContext& context, unsigned int stride, void*& data, unsigned int count);
