@@ -51,4 +51,5 @@ namespace gl
     bool supportsImmediateMode();
     bool supports32BitIndices();
     bool supports16BitUnsignedUVs();
+    bool supportsServerBuffers();
 }

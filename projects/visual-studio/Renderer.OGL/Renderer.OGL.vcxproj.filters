@@ -114,7 +114,7 @@
       <Filter>Header Files\Platform\OGL</Filter>
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\renderer\hal\ogl\AlphaStateOGL.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\HAL\OGL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

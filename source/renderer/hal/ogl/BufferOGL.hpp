@@ -20,7 +20,7 @@ namespace mce
         ~BufferOGL();
 
     protected:
-        void _createBuffer(RenderContext& context, unsigned int stride, const void* data, unsigned int count, BufferType bufferType);
+        void _createBuffer(RenderContext& context, const void* data, BufferType bufferType);
 
     public:
 		void _move(BufferOGL& other);
@@ -30,7 +30,7 @@ namespace mce
 		void createDynamicBuffer(RenderContext& context, unsigned int stride, const void* data, unsigned int count, BufferType bufferType);
         void resizeBuffer(RenderContext& context, const void* data, unsigned int size);
         void updateBuffer(RenderContext& context, unsigned int stride, void*& data, unsigned int count);
-        bool isValid() const { return m_bufferName != GL_NONE; }
+        bool isValid() const { return m_bufferName != GL_NONE || m_clientData != nullptr; }
 
         MC_FUNC_MOVE(BufferOGL);
 	};

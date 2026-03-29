@@ -15,6 +15,6 @@ namespace mce
         void createDynamicBuffer(RenderContext& context, unsigned int stride, const void* data, unsigned int count, BufferType bufferType);
         void updateBuffer(RenderContext& context, unsigned int stride, void*& data, unsigned int count);
         
-        bool isValid() const;
+        bool isValid() const { return BufferOGL::isValid(); } // { return m_target != GL_NONE; }
     };
 }

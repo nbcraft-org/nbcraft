@@ -28,9 +28,9 @@ void ImmediateBufferOGL::updateBuffer(RenderContext& context, unsigned int strid
 {
     if (gl::supportsImmediateMode())
     {
-        // See supportsImmediateMode() definition for explanation on what this is doing
+        // @NOTE: This is not unbinding the buffer, see supportsImmediateMode() definition for explanation on what this is doing
         xglBindBuffer(m_target, GL_NONE);
-        GLuint& activeBuffer = context.getActiveBuffer(m_bufferType);
+        GLuint& activeBuffer = context.getActiveBufferUnit(m_bufferType);
         activeBuffer = GL_NONE;
 
         // @0.16.1: set *(context + 0x164) to 0
@@ -53,9 +53,4 @@ void ImmediateBufferOGL::updateBuffer(RenderContext& context, unsigned int strid
         m_bufferOffset += count * stride;
         */
     }
-}
-
-bool ImmediateBufferOGL::isValid() const
-{
-    return m_target != GL_NONE;
 }

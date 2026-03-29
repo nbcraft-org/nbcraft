@@ -32,19 +32,28 @@ BufferOGL::~BufferOGL()
     releaseBuffer();
 }
 
-void BufferOGL::_createBuffer(RenderContext& context, unsigned int stride, const void* data, unsigned int count, BufferType bufferType)
+void BufferOGL::_createBuffer(RenderContext& context, const void* data, BufferType bufferType)
 {
+    // catch any uncaught errors
     ErrorHandlerOGL::checkForErrors();
+
+    if (!context.supportsServerBuffers())
+    {
+        _createClientBuffer(context, data, bufferType);
+        return;
+    }
 
     m_target = mce::glTargetFromBufferType(bufferType);
 
+    assert(m_bufferName == GL_NONE);
     xglGenBuffers(1, &m_bufferName);
     xglBindBuffer(m_target, m_bufferName);
 
     // Set active buffer
-    GLuint& activeBuffer = context.getActiveBuffer(m_bufferType);
+    GLuint& activeBuffer = context.getActiveBufferUnit(m_bufferType);
     activeBuffer = m_bufferName;
 
+    // Creates and initializes the buffer object's data store
     xglBufferData(m_target, m_internalSize, data, m_usage);
 
     ErrorHandlerOGL::checkForErrors();
@@ -54,15 +63,19 @@ void BufferOGL::_move(BufferOGL& other)
 {
     if (this != &other)
     {
-        this->releaseBuffer();
-		
-        this->m_target = other.m_target;
-        this->m_bufferName = other.m_bufferName;
-        this->m_usage = other.m_usage;
-        
-        other.m_bufferName = GL_NONE;
-        other.m_target = GL_NONE;
-        other.m_usage = GL_NONE;
+        if (!_isClientBuffer())
+        {
+            // sacrafice the current buffer to the GPU gods
+            this->releaseBuffer();
+
+            this->m_target = other.m_target;
+            this->m_bufferName = other.m_bufferName;
+            this->m_usage = other.m_usage;
+
+            other.m_bufferName = GL_NONE;
+            other.m_target = GL_NONE;
+            other.m_usage = GL_NONE;
+        }
     }
 	
     BufferBase::_move(other);
@@ -70,21 +83,30 @@ void BufferOGL::_move(BufferOGL& other)
 
 void BufferOGL::releaseBuffer()
 {
-    if (isValid())
-        xglDeleteBuffers(1, &m_bufferName);
+    if (!_isClientBuffer())
+    {
+        if (isValid())
+            xglDeleteBuffers(1, &m_bufferName);
 
-    m_bufferName = GL_NONE;
-    m_target = GL_NONE;
+        m_bufferName = GL_NONE;
+        m_target = GL_NONE;
+    }
 
     BufferBase::releaseBuffer();
 }
 
 void BufferOGL::bindBuffer(RenderContext& context)
 {
-    GLuint& activeBuffer = context.getActiveBuffer(m_bufferType);
+    if (_isClientBuffer())
+    {
+        _bindClientBuffer(context);
+        return;
+    }
+
+    GLuint& activeBuffer = context.getActiveBufferUnit(m_bufferType);
     if (activeBuffer == m_bufferName)
         return;
-    
+
     xglBindBuffer(m_target, m_bufferName);
     activeBuffer = m_bufferName;
 }
@@ -94,7 +116,7 @@ void BufferOGL::createBuffer(RenderContext& context, unsigned int stride, const 
     BufferBase::createBuffer(context, stride, data, count, bufferType);
     
     m_usage = GL_STATIC_DRAW;
-    _createBuffer(context, stride, data, count, bufferType);
+    _createBuffer(context, data, bufferType);
 }
 
 void BufferOGL::createDynamicBuffer(RenderContext& context, unsigned int stride, const void* data, unsigned int count, BufferType bufferType)
@@ -107,38 +129,53 @@ void BufferOGL::createDynamicBuffer(RenderContext& context, unsigned int stride,
 #else // GLES 1
     m_usage = GL_DYNAMIC_DRAW;
 #endif
-    _createBuffer(context, stride, data, count, bufferType);
+    _createBuffer(context, data, bufferType);
 }
 
 void BufferOGL::resizeBuffer(RenderContext& context, const void* data, unsigned int size)
 {
+    if (_isClientBuffer())
+    {
+        _resizeClientBuffer(context, data, size);
+        return;
+    }
+
+    // @TODO: this can get called without bindBuffer being called first
     xglBufferData(m_target, size, data, m_usage);
     m_internalSize = size;
 }
 
 void BufferOGL::updateBuffer(RenderContext& context, unsigned int stride, void*& data, unsigned int count)
 {
-    bindBuffer(context);
+    if (_isClientBuffer())
+    {
+        _updateClientBuffer(context, stride, data, count);
+        _bindClientBuffer(context);
+    }
+    else
+    {
+        bindBuffer(context);
 
-    // https://community.khronos.org/t/vbo-test-glbufferdata-vs-glbuffersubdata-vs-glmapbufferoes/2748
-    // Summary: Calling glBufferData is significantly faster than calling glBufferSubData
-    // because whoever did the GLES 1 implementation at Apple is retarded.
-    // This may be fixed by acquiring a GLES 2 context, but doing that causes nothing to
-    // to be rendered, so perhaps some day...
-    // Additionally, we could try holding the vertex buffer data in memory and pass
-    // it in the draw call, as supposedly not even using buffers is faster.
+        // https://community.khronos.org/t/vbo-test-glbufferdata-vs-glbuffersubdata-vs-glmapbufferoes/2748
+        // Summary: Calling glBufferData is significantly faster than calling glBufferSubData
+        // because whoever did the GLES 1 implementation at Apple is retarded.
+        // This may be fixed by acquiring a GLES 2 context, but doing that causes nothing to
+        // to be rendered, so perhaps some day...
+        // Additionally, we could try holding the vertex buffer data in memory and pass
+        // it in the draw call, as supposedly not even using buffers is faster.
 #if defined(GL_VERSION_ES_CM_1_0) || (!defined(FEATURE_GFX_SHADERS) && defined(__APPLE__) && defined(__aarch64__))
 #define GLES1_WORKAROUND true
 #else
 #define GLES1_WORKAROUND false
 #endif
-    
-    const unsigned int size = count * stride;
 
-    if (!GLES1_WORKAROUND && size <= m_internalSize)
-        xglBufferSubData(m_target, m_bufferOffset, size, data);
-    else
-        resizeBuffer(context, data, size);
+        const unsigned int size = count * stride;
+
+        if (!GLES1_WORKAROUND && size <= m_internalSize)
+            xglBufferSubData(m_target, m_bufferOffset, size, data);
+        else
+            resizeBuffer(context, data, size);
+    }
         
     BufferBase::updateBuffer(context, stride, data, count);
 }

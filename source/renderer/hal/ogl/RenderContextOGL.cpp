@@ -68,15 +68,15 @@ void RenderContextOGL::loadMatrix(MatrixType matrixType, const Matrix& matrix)
 
 void RenderContextOGL::setVertexState(const VertexFormat& vertexFormat)
 {
-    RenderContextBase::setVertexState(vertexFormat);
-
+    // @TODO: make this state-based, we have a lot of back-to-back calls of these
 #ifndef FEATURE_GFX_SHADERS
+    void* vertexData = getActiveClientBuffer(BUFFER_TYPE_VERTEX);
     unsigned int vertexSize = vertexFormat.getVertexSize();
 
     if (vertexFormat.hasField(VERTEX_FIELD_POSITION))
     {
         const VertexFieldFormat& field = vertexFieldFormats[VERTEX_FIELD_POSITION];
-        xglVertexPointer(field.components, field.componentsType, vertexSize, vertexFormat.getFieldOffset(VERTEX_FIELD_POSITION));
+        xglVertexPointer(field.components, field.componentsType, vertexSize, vertexFormat.getFieldOffset(VERTEX_FIELD_POSITION, vertexData));
         xglEnableClientState(GL_VERTEX_ARRAY);
         ErrorHandlerOGL::checkForErrors();
     }
@@ -84,7 +84,7 @@ void RenderContextOGL::setVertexState(const VertexFormat& vertexFormat)
     if (vertexFormat.hasField(VERTEX_FIELD_UV0))
     {
         const VertexFieldFormat& field = vertexFieldFormats[VERTEX_FIELD_UV0];
-        xglTexCoordPointer(field.components, field.componentsType, vertexSize, vertexFormat.getFieldOffset(VERTEX_FIELD_UV0));
+        xglTexCoordPointer(field.components, field.componentsType, vertexSize, vertexFormat.getFieldOffset(VERTEX_FIELD_UV0, vertexData));
         xglEnableClientState(GL_TEXTURE_COORD_ARRAY);
         ErrorHandlerOGL::checkForErrors();
     }
@@ -92,7 +92,7 @@ void RenderContextOGL::setVertexState(const VertexFormat& vertexFormat)
     if (vertexFormat.hasField(VERTEX_FIELD_COLOR))
     {
         const VertexFieldFormat& field = vertexFieldFormats[VERTEX_FIELD_COLOR];
-        xglColorPointer(field.components, field.componentsType, vertexSize, vertexFormat.getFieldOffset(VERTEX_FIELD_COLOR));
+        xglColorPointer(field.components, field.componentsType, vertexSize, vertexFormat.getFieldOffset(VERTEX_FIELD_COLOR, vertexData));
         xglEnableClientState(GL_COLOR_ARRAY);
         ErrorHandlerOGL::checkForErrors();
     }
@@ -101,12 +101,14 @@ void RenderContextOGL::setVertexState(const VertexFormat& vertexFormat)
     if (vertexFormat.hasField(VERTEX_FIELD_NORMAL))
     {
         const VertexFieldFormat& field = vertexFieldFormats[VERTEX_FIELD_NORMAL];
-        xglNormalPointer(field.componentsType, vertexSize, vertexFormat.getFieldOffset(VERTEX_FIELD_NORMAL));
+        xglNormalPointer(field.componentsType, vertexSize, vertexFormat.getFieldOffset(VERTEX_FIELD_NORMAL, vertexData));
         xglEnableClientState(GL_NORMAL_ARRAY);
         ErrorHandlerOGL::checkForErrors();
     }
 #endif
 #endif
+
+    RenderContextBase::setVertexState(vertexFormat);
 }
 
 void RenderContextOGL::clearVertexState(const VertexFormat& vertexFormat)
@@ -218,12 +220,14 @@ void RenderContextOGL::draw(PrimitiveMode primitiveMode, unsigned int startOffse
 
 void RenderContextOGL::drawIndexed(PrimitiveMode primitiveMode, unsigned int count, uint8_t indexSize)
 {
-    glDrawElements(modeMap[primitiveMode], count, indexType[indexSize], nullptr);
+    void* indices = getActiveClientBuffer(BUFFER_TYPE_INDEX);
+    glDrawElements(modeMap[primitiveMode], count, indexType[indexSize], indices);
 }
 
 void RenderContextOGL::drawIndexed(PrimitiveMode primitiveMode, unsigned int count, unsigned int startOffset, uint8_t indexSize)
 {
-    glDrawElements(modeMap[primitiveMode], count, indexType[indexSize], (const GLvoid*)((uintptr_t)startOffset * indexSize));
+    int8_t* indices = (int8_t*)getActiveClientBuffer(BUFFER_TYPE_INDEX);
+    glDrawElements(modeMap[primitiveMode], count, indexType[indexSize], (const GLvoid*)(indices + ((uintptr_t)startOffset * indexSize)));
 }
 
 void RenderContextOGL::setDepthRange(float nearVal, float farVal)
@@ -261,9 +265,11 @@ void RenderContextOGL::clearDepthStencilBuffer()
 void RenderContextOGL::clearContextState()
 {
     // Doesn't call RenderContextBase::clearContextState() on 0.12.1
+    RenderContextBase::clearContextState();
+
     m_activeTexture = GL_NONE;
-    m_activeBuffer[0] = GL_NONE;
-    m_activeBuffer[1] = GL_NONE;
+    m_activeBufferUnits[0] = GL_NONE;
+    m_activeBufferUnits[1] = GL_NONE;
 
 #ifdef MC_GL_DEBUG_OUTPUT
     glEnable(GL_DEBUG_OUTPUT);
@@ -280,58 +286,43 @@ void RenderContextOGL::clearContextState()
 #endif
 }
 
-void RenderContextOGL::setRenderTarget()
+GLuint& RenderContextOGL::getActiveBufferUnit(BufferType bufferType)
 {
-}
-
-void RenderContextOGL::swapBuffers()
-{
-}
-
-int RenderContextOGL::getMaxVertexCount() const
-{
-    return gl::getMaxVertexCount();
-}
-
-bool RenderContextOGL::supports32BitIndices() const
-{
-    return gl::supports32BitIndices();
-}
-
-bool RenderContextOGL::supports16BitUnsignedUVs() const
-{
-    return gl::supports16BitUnsignedUVs();
-}
-
-GLuint& RenderContextOGL::getActiveBuffer(BufferType bufferType)
-{
+#ifdef _DEBUG
     if (bufferType < BUFFER_TYPES_MIN || bufferType > BUFFER_TYPES_MAX)
-        throw std::out_of_range("m_activeBuffer[]");
-    
-    return m_activeBuffer[bufferType];
+        throw std::out_of_range("m_activeBufferUnits[]");
+#endif
+
+    return m_activeBufferUnits[bufferType];
 }
 
-GLuint RenderContextOGL::getActiveBuffer(BufferType bufferType) const
+GLuint RenderContextOGL::getActiveBufferUnit(BufferType bufferType) const
 {
+#ifdef _DEBUG
     if (bufferType < BUFFER_TYPES_MIN || bufferType > BUFFER_TYPES_MAX)
-        throw std::out_of_range("m_activeBuffer[]");
-    
-    return m_activeBuffer[bufferType];
+        throw std::out_of_range("m_activeBufferUnits[]");
+#endif
+
+    return m_activeBufferUnits[bufferType];
 }
 
 RenderContextOGL::ActiveTextureUnit& RenderContextOGL::getActiveTextureUnit(unsigned int index)
 {
+#ifdef _DEBUG
     if (index >= 8)
         throw std::out_of_range("m_activeTextureUnits[]");
-    
+#endif
+
     return m_activeTextureUnits[index];
 }
 
 const RenderContextOGL::ActiveTextureUnit& RenderContextOGL::getActiveTextureUnit(unsigned int index) const
 {
+#ifdef _DEBUG
     if (index >= 8)
         throw std::out_of_range("m_activeTextureUnits[]");
-    
+#endif
+
     return m_activeTextureUnits[index];
 }
 

@@ -209,3 +209,16 @@ bool gl::supports16BitUnsignedUVs()
     return false;
 #endif
 }
+
+bool gl::supportsServerBuffers()
+{
+    static int isSupported = -1;
+    if (isSupported < 0)
+    {
+        const gl::Version& glVersion = gl::Version::singleton();
+        // OpenGL ES || OpenGL 1.5+
+        if (glVersion.gles || glVersion.major > 1 || glVersion.minor >= 5)
+            isSupported = 1;
+    }
+    return isSupported == 1;
+}

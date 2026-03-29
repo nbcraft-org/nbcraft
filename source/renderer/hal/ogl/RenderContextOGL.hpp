@@ -56,14 +56,14 @@ namespace mce
         static const VertexFieldFormat vertexFieldFormats[];
 
     private:
-        GLuint m_activeBuffer[2]; // indexed by BufferType
+        GLuint m_activeBufferUnits[BUFFER_TYPES_COUNT];
         ActiveTextureUnit m_activeTextureUnits[8];
         DepthStencilState* m_emptyDepthStencilState;
 
     public:
         GLuint m_activeTexture;
         GLuint m_activeShaderProgram;
-        //GLuint m_activeBuffer[2];
+        //GLuint m_activeBufferUnits[2];
         //ActiveTextureUnit m_activeTextureUnits[8];
         std::vector<const GLvoid *> m_activePixels;
 
@@ -87,15 +87,14 @@ namespace mce
         void clearStencilBuffer();
         void clearDepthStencilBuffer();
         void clearContextState();
-        void setRenderTarget();
-        void swapBuffers();
         
-        int getMaxVertexCount() const;
-        bool supports32BitIndices() const;
-        bool supports16BitUnsignedUVs() const;
+        int getMaxVertexCount() const { return gl::getMaxVertexCount(); }
+        bool supports32BitIndices() const { return gl::supports32BitIndices(); }
+        bool supports16BitUnsignedUVs() const { return gl::supports16BitUnsignedUVs(); }
+        bool supportsServerBuffers() const { return gl::supportsServerBuffers(); }
 
-        GLuint& getActiveBuffer(BufferType bufferType);
-        GLuint getActiveBuffer(BufferType bufferType) const;
+        GLuint& getActiveBufferUnit(BufferType bufferType);
+        GLuint getActiveBufferUnit(BufferType bufferType) const;
 
         ActiveTextureUnit& getActiveTextureUnit(unsigned int index);
         const ActiveTextureUnit& getActiveTextureUnit(unsigned int index) const;
