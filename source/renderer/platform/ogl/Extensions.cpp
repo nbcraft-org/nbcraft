@@ -8,7 +8,7 @@ using namespace mce::Platform;
 #define MIN_GL_VERSION "2.0"
 #define ERROR_MSG_EXTRA " Try switching to a non-shader build, or update your graphics drivers!"
 #else
-#define MIN_GL_VERSION "1.3"
+#define MIN_GL_VERSION "1.0"
 #define ERROR_MSG_EXTRA " Update your graphics drivers!"
 #endif
 
@@ -135,7 +135,8 @@ PFNWGLSWAPINTERVALEXTPROC p_wglSwapIntervalEXT;
 bool xglInitted()
 {
 #ifdef USE_HARDWARE_GL_BUFFERS
-	return p_glActiveTexture
+	return true
+		//&& p_glActiveTexture
 		/* && p_glBindBuffer
 		&& p_glBufferData
 		&& p_glGenBuffers
@@ -360,6 +361,9 @@ void xglDrawArrays(GLenum mode, GLint first, GLsizei count)
 
 void xglActiveTexture(GLenum texture)
 {
+	if (!p_glActiveTexture)
+		return;
+
 	p_glActiveTexture(texture);
 }
 
