@@ -8,7 +8,7 @@ using namespace mce::Platform;
 #define MIN_GL_VERSION "2.0"
 #define ERROR_MSG_EXTRA " Try switching to a non-shader build, or update your graphics drivers!"
 #else
-#define MIN_GL_VERSION "1.0"
+#define MIN_GL_VERSION "1.1"
 #define ERROR_MSG_EXTRA " Update your graphics drivers!"
 #endif
 
