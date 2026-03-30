@@ -69,12 +69,10 @@ SoundSystemDS::~SoundSystemDS()
 {
 	LOG_I("Destroying SoundSystemDS");
 
-	delete m_musicStream;
-
 	if (!isAvailable())
-	{
 		return;
-	}
+
+	delete m_musicStream;
 
 	m_directsound->Release();
 }
