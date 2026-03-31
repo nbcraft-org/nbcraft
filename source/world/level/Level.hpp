@@ -15,6 +15,7 @@
 #endif
 #include <math.h>
 
+#include "world/level/TilePos.hpp"
 #include "client/renderer/LightUpdate.hpp"
 #include "world/tile/Tile.hpp"
 #include "world/entity/Entity.hpp"
@@ -197,13 +198,16 @@ public:
 	bool hasDirectSignal(const TilePos& pos) const;
 	bool hasNeighborSignal(const TilePos& pos) const;
 
+	void setTileEntity(int x, int y, int z, TileEntity* te);
+	TileEntity* getTileEntity(int x, int y, int z);
+	void removeTileEntity(int x, int y, int z);
+
 #ifdef ENH_IMPROVED_SAVING
 	void saveUnsavedChunks();
 #endif
 
 private:
 	LevelData* m_pLevelData;
-
 protected:
 	int m_randValue;
 	int m_addend;

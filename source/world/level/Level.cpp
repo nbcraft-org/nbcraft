@@ -1607,6 +1607,8 @@ void Level::tickTiles()
 			if (Tile::shouldTick[tile])
 				Tile::tiles[tile]->tick(this, tilePos + pos, &m_random);
 		}
+
+		pChunk->tickTileEntities();
 	}
 }
 
@@ -2029,3 +2031,20 @@ float Level::getSunAngle(float f) const
 {
 	return (float(M_PI) * getTimeOfDay(f)) * 2;
 }
+
+void Level::setTileEntity(int x, int y, int z, TileEntity* te) {
+	LevelChunk* chunk = getChunkAt(TilePos(x, y, z));
+	if (chunk) chunk->addTileEntity(te);
+}
+
+TileEntity* Level::getTileEntity(int x, int y, int z) {
+	LevelChunk* chunk = getChunkAt(TilePos(x, y, z));
+	if (!chunk) return nullptr;
+	return chunk->getTileEntity(ChunkTilePos(TilePos(x, y, z)));
+}
+
+void Level::removeTileEntity(int x, int y, int z) {
+	LevelChunk* chunk = getChunkAt(TilePos(x, y, z));
+	if (chunk) chunk->removeTileEntity(TilePos(x, y, z));
+}
+

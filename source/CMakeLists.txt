@@ -533,6 +533,16 @@ add_library(nbcraft-core STATIC
     renderer/hal/interface/ShaderConstantWithData.cpp
     renderer/hal/interface/ShaderProgram.cpp
     renderer/hal/interface/Texture.cpp
+    world/tile/FurnaceTile.cpp
+    world/tile/FurnaceTile.hpp
+    client/gui/screens/inventory/FurnaceScreen.cpp
+    client/gui/screens/inventory/FurnaceScreen.hpp
+    world/inventory/FurnaceMenu.cpp
+    world/inventory/FurnaceMenu.h
+    world/inventory/FurnaceTileEntity.cpp
+    world/inventory/FurnaceTileEntity.h
+    world/level/tileentity/TileEntity.cpp
+    world/level/tileentity/TileEntity.h
 )
 target_include_directories(nbcraft-core PUBLIC . ..)
 

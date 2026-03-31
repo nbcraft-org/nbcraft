@@ -124,10 +124,10 @@ Recipes::Recipes()
     //                        "# #",
     //                        "###", ItemStack(Tile::chest))
     //    .add('#', Tile::wood));
-    //add(ShapedRecipeBuilder("###",
-    //                        "# #",
-    //                        "###", ItemStack(Tile::furnace))
-    //    .add('#', Tile::stoneBrick));
+    add(ShapedRecipeBuilder("###",
+                            "# #",
+                            "###", ItemStack(Tile::furnace))
+        .add('#', Tile::stoneBrick));
 
     add(ShapedRecipeBuilder("##",
                             "##", ItemStack(Tile::craftingTable))

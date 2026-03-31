@@ -12,7 +12,9 @@
 
 #include "common/Logger.hpp"
 #include "nbt/CompoundTag.hpp"
+#include "nbt/ListTag.hpp"
 #include "nbt/NbtIo.hpp"
+#include "world/level/levelgen/chunk/LevelChunk.hpp"
 #include "network/RakIO.hpp"
 #include "world/entity/EntityFactory.hpp"
 #include "world/level/Level.hpp"
@@ -250,7 +252,19 @@ LevelChunk* ExternalFileLevelStorage::load(Level* level, const ChunkPos& pos)
 	}
 
 	pBitStream->Read((char*)pChunk->m_updateMap, sizeof pChunk->m_updateMap);
-	
+
+	// Load tile entities if present (saves from newer versions append them here)
+	if (pBitStream->GetWriteOffset() > pBitStream->GetReadOffset()) {
+		RakDataInput dis(*pBitStream);
+		CompoundTag* teTag = NbtIo::read(dis);
+		if (teTag) {
+			const ListTag* list = teTag->getList("TileEntities");
+			if (list) pChunk->loadTileEntities(*list);
+			teTag->deleteChildren();
+			delete teTag;
+		}
+	}
+
 	delete[] pBitStream->GetData();
 	delete pBitStream;
 
@@ -373,6 +387,15 @@ void ExternalFileLevelStorage::save(Level* level, LevelChunk* chunk)
 	}
 
 	bs.Write((const char*)chunk->m_updateMap, sizeof chunk->m_updateMap);
+
+	// Save tile entities (furnaces, etc.) appended after the block data
+	CompoundTag teTag;
+	chunk->saveTileEntities(teTag);
+	if (!teTag.isEmpty()) {
+		RakDataOutput dos(bs);
+		NbtIo::write(teTag, dos);
+		teTag.deleteChildren();
+	}
 
 	m_pRegionFile->writeChunk(chunk->m_chunkPos, bs);
 }

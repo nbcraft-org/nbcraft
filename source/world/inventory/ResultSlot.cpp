@@ -41,16 +41,18 @@ void ResultSlot::onTake(ItemStack& item)
 	//else if (item.getId() == Item::woodSword->getId())
 	//	m_pPlayer->awardStat(Achievements::buildSword);
 
-    for (int i = 0; i < m_pCraftSlots->getContainerSize(); ++i)
-	{
-		ItemStack& containerItem = m_pCraftSlots->getItem(i);
-        if (!containerItem.isEmpty())
-		{
-			Item* item = containerItem.getItem();
-            m_pCraftSlots->removeItem(i, 1);
+    if (m_pCraftSlots) {
+        for (int i = 0; i < m_pCraftSlots->getContainerSize(); ++i)
+        {
+            ItemStack& containerItem = m_pCraftSlots->getItem(i);
+            if (!containerItem.isEmpty())
+            {
+                Item* item = containerItem.getItem();
+                m_pCraftSlots->removeItem(i, 1);
 
-            if (item->hasCraftingRemainingItem())
-                m_pCraftSlots->setItem(i, ItemStack(item->getCraftingRemainingItem()));
+                if (item->hasCraftingRemainingItem())
+                    m_pCraftSlots->setItem(i, ItemStack(item->getCraftingRemainingItem()));
+            }
         }
     }
 }

@@ -13,6 +13,7 @@
 #include "world/entity/Mob.hpp"
 #include "world/entity/ItemEntity.hpp"
 #include "world/gamemode/GameType.hpp"
+#include "world/inventory/FurnaceTileEntity.h"
 #include "world/inventory/InventoryMenu.hpp"
 
 #define C_PLAYER_FLAG_USING_ITEM (4)
@@ -69,6 +70,12 @@ public:
 	//virtual void drop(); // see definition
 	virtual void drop(const ItemStack& item, bool randomly = false);
 	virtual void startCrafting(const TilePos& pos);
+
+	void openFurnace(const TilePos &pos);
+	virtual void openFurnace(FurnaceTileEntity* furnace) {}
+
+	void startSmelting(const TilePos &pos);
+
 	virtual void startStonecutting(const TilePos& pos);
 	virtual void startDestroying();
 	virtual void stopDestroying();

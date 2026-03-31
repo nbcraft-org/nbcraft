@@ -23,6 +23,7 @@
 #include "world/level/TileEvent.hpp"
 #include "world/phys/Vec3.hpp"
 #include "world/phys/HitResult.hpp"
+#include "world/level/tileentity/TileEntity.h"
 
 class Level;
 class Entity;
@@ -84,6 +85,7 @@ public: // virtual functions
 	virtual void neighborChanged(Level*, const TilePos& pos, TileID tile);
 	virtual void onPlace(Level*, const TilePos& pos);
 	virtual void onRemove(Level*, const TilePos& pos);
+	virtual TileEntity* createTileEntity(const TilePos& pos) { return nullptr; }
 	virtual int getResource(TileData, Random*) const;
 	virtual int getResourceCount(Random*) const;
 	virtual float getDestroyProgress(Player*) const;
@@ -241,6 +243,8 @@ public: // static variables
 		* web,
 		* fence,
 		* craftingTable,
+		* furnace,
+		* furnaceLit,
 		* crops;
 
 public:
@@ -291,3 +295,5 @@ public:
 	TileID getTypeId() const { return _tileType->m_ID; }
 	Tile* getType() const { return _tileType; }
 };
+
+

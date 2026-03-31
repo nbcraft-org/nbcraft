@@ -17,6 +17,7 @@
 #include "world/level/levelgen/chunk/ChunkPos.hpp"
 #include "world/level/levelgen/chunk/ChunkTilePos.hpp"
 #include "world/level/levelgen/chunk/DataLayer.hpp"
+#include "world/level/tileentity/TileEntity.h"
 
 class Level;
 class AABB;
@@ -26,6 +27,7 @@ class LevelChunk
 {
 private:
 	void _init();
+	std::map<TilePos, TileEntity*> m_tileEntities;
 protected:
 	LevelChunk() { _init(); }
 public:
@@ -72,6 +74,17 @@ public:
 	virtual Random getRandom(int32_t l);
 	virtual void recalcHeight(const ChunkTilePos& pos);
 	virtual bool isEmpty();
+	void addTileEntity(TileEntity* te);
+	void removeTileEntity(const TilePos &pos);
+	TileEntity* getTileEntity(const ChunkTilePos& pos);
+
+	// For the heartbeat
+	void tickTileEntities();
+
+	void loadTileEntities(const ListTag &list);
+
+	void saveTileEntities(CompoundTag &chunkTag);
+
 	//...
 
 public:

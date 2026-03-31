@@ -557,9 +557,16 @@ void Player::drop(const ItemStack& item, bool randomly)
 	reallyDrop(pItemEntity);
 }
 
-void Player::startCrafting(const TilePos& pos)
-{
+void Player::startCrafting(const TilePos& pos) {
+}
 
+void Player::openFurnace(const TilePos& pos)
+{
+	TileEntity* te = m_pLevel->getTileEntity(pos.x, pos.y, pos.z);
+	if (te != nullptr)
+	{
+		this->openFurnace(static_cast<FurnaceTileEntity*>(te));
+	}
 }
 
 void Player::startStonecutting(const TilePos& pos)

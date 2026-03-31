@@ -9,16 +9,22 @@
 #include "common/Logger.hpp"
 #include "world/level/Level.hpp"
 #include "world/phys/AABB.hpp"
+#include "world/tile/Tile.hpp"
 
 bool LevelChunk::touchedSky = false;
 
 LevelChunk::~LevelChunk()
 {
+	// Clean up Tile Entities
+	for (std::map<TilePos, TileEntity*>::iterator it = m_tileEntities.begin(); it != m_tileEntities.end(); ++it) {
+		delete it->second;
+	}
+	m_tileEntities.clear();
+
 	SAFE_DELETE_ARRAY(m_lightBlk.m_data);
 	SAFE_DELETE_ARRAY(m_lightSky.m_data);
 	SAFE_DELETE_ARRAY(m_tileData.m_data);
 }
-
 CONSTEXPR int MakeBlockDataIndex(const ChunkTilePos& pos)
 {
 	return (pos.x << 11) | (pos.z << 7) | pos.y;
@@ -627,35 +633,26 @@ bool LevelChunk::setTileAndData(const ChunkTilePos& pos, TileID tile, TileData d
 	CheckPosition(pos);
 
 	int index = MakeBlockDataIndex(pos);
-
 	TileID oldTile = m_pBlockData[index];
-
 	uint8_t height = m_heightMap[MakeHeightMapIndex(pos)];
 
-	if (oldTile == tile)
-	{
-		// make sure we're at least updating the data. If not, simply return false
-		if (getData(pos) == data)
-			return false;
-	}
+	if (oldTile == tile && getData(pos) == data)
+		return false;
 
 	TilePos tilePos(m_chunkPos, pos.y);
 	tilePos.x += pos.x;
 	tilePos.z += pos.z;
+
 	m_pBlockData[index] = tile;
+
 	if (oldTile && Tile::tiles[oldTile])
 	{
+		if (Tile::isEntityTile[oldTile])
+			removeTileEntity(tilePos);
 		Tile::tiles[oldTile]->onRemove(m_pLevel, tilePos);
 	}
 
-	// update the data value of the block
 	m_tileData.set(pos, data);
-
-	if (m_pLevel->m_pDimension->m_bHasCeiling)
-	{
-		m_pLevel->updateLight(LightLayer::Block, tilePos, tilePos);
-		lightGaps(pos);
-	}
 
 	if (Tile::lightBlock[tile])
 	{
@@ -671,10 +668,15 @@ bool LevelChunk::setTileAndData(const ChunkTilePos& pos, TileID tile, TileData d
 	m_pLevel->updateLight(LightLayer::Block, tilePos, tilePos);
 
 	lightGaps(pos);
-	if (tile)
+
+	if (tile && !m_pLevel->m_bIsClientSide)
 	{
-		if (!m_pLevel->m_bIsClientSide)
-			Tile::tiles[tile]->onPlace(m_pLevel, tilePos);
+		Tile::tiles[tile]->onPlace(m_pLevel, tilePos);
+		if (Tile::isEntityTile[tile])
+		{
+			TileEntity* te = Tile::tiles[tile]->createTileEntity(tilePos);
+			if (te) addTileEntity(te);
+		}
 	}
 
 	m_bUnsaved = true;
@@ -917,4 +919,78 @@ Random LevelChunk::getRandom(int32_t l)
 bool LevelChunk::isEmpty()
 {
 	return false;
+}
+
+void LevelChunk::addTileEntity(TileEntity* te) {
+	// Stick to TilePos for the map key to match Level.cpp logic
+	TilePos localPos(te->pos.x, te->pos.y, te->pos.z);
+
+	removeTileEntity(localPos);
+	m_tileEntities[localPos] = te;
+	te->level = m_pLevel;
+}
+
+void LevelChunk::removeTileEntity(const TilePos& pos) {
+	if (m_tileEntities.find(pos) != m_tileEntities.end()) {
+		delete m_tileEntities[pos];
+		m_tileEntities.erase(pos);
+	}
+}
+
+void LevelChunk::tickTileEntities() {
+	// Ensure the iterator type matches the map declaration exactly
+	for (std::map<TilePos, TileEntity*>::iterator it = m_tileEntities.begin(); it != m_tileEntities.end(); ++it) {
+		it->second->tick();
+	}
+}
+
+void LevelChunk::loadTileEntities(const ListTag& list)
+{
+	const std::vector<Tag*>& tags = list.rawView();
+
+	for (unsigned int i = 0; i < tags.size(); i++)
+	{
+		const CompoundTag* teTag = list.getCompound(i);
+		if (!teTag) continue;
+
+		std::string teId = teTag->getString("id");
+
+		TilePos globalPos(
+			teTag->getInt32("x"),
+			teTag->getInt32("y"),
+			teTag->getInt32("z")
+		);
+
+		TileEntity* te = TileEntity::createId(teId, globalPos);
+		if (te)
+		{
+			te->load(*teTag);
+			addTileEntity(te);
+		}
+	}
+}
+TileEntity* LevelChunk::getTileEntity(const ChunkTilePos& pos)
+{
+	TilePos globalPos(m_chunkPos, pos.y);
+	globalPos.x += pos.x;
+	globalPos.z += pos.z;
+
+	std::map<TilePos, TileEntity*>::iterator it = m_tileEntities.find(globalPos);
+	if (it != m_tileEntities.end())
+		return it->second;
+	return nullptr;
+}
+
+void LevelChunk::saveTileEntities(CompoundTag& chunkTag)
+{
+	if (m_tileEntities.empty()) return;
+
+	ListTag* list = new ListTag();
+	for (std::map<TilePos, TileEntity*>::iterator it = m_tileEntities.begin(); it != m_tileEntities.end(); ++it)
+	{
+		CompoundTag* teTag = new CompoundTag();
+		it->second->save(*teTag);
+		list->add(teTag);
+	}
+	chunkTag.put("TileEntities", list);
 }

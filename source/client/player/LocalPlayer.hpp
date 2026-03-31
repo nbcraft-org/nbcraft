@@ -11,6 +11,7 @@
 #include "world/entity/Player.hpp"
 #include "client/player/input/IMoveInput.hpp"
 #include "client/player/input/User.hpp"
+#include "world/inventory/FurnaceTileEntity.h"
 
 class Minecraft;
 
@@ -39,6 +40,8 @@ public:
 	void setPlayerGameType(GameType gameType) override;
 	void swing() override;
 	void startCrafting(const TilePos&) override;
+	void openFurnace(FurnaceTileEntity *furnace);
+
 	//void openFurnace(FurnaceTileEntity* furnace) override;
 	void openContainer(Container* container) override;
 	void closeContainer() override;

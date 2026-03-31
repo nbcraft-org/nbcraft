@@ -21,7 +21,6 @@ bool CraftingTableTile::use(Level* level, const TilePos& pos, Player* player)
 		return true;
 	}
 }
-
 int CraftingTableTile::getTexture(Facing::Name face) const
 {
 	switch (face) {
@@ -31,3 +30,4 @@ int CraftingTableTile::getTexture(Facing::Name face) const
 	default: return m_TextureFrame;
 	}
 }
+
