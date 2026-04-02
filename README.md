@@ -145,7 +145,7 @@ Then run
 export ARCH=x86_64
 # for pentium pro or newer
 export ARCH=i686
-# CPUs older than the pentium pro will likely have unplayable performance but will build
+# CPUs older than the pentium pro will likely have unplayable performance but will build.
 # for pentium or newer
 export ARCH=i586
 # for i486 or newer
