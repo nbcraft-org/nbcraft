@@ -64,8 +64,7 @@ if [ "$(cat "toolchain-$arch/toolchainver" 2>/dev/null)" != "$toolchainver" ]; t
     ./configure \
         --prefix="$workdir/toolchain-$arch" \
         --target="$target" \
-        --disable-multilib \
-        CFLAGS='-Wno-discarded-qualifiers'
+        --disable-multilib
     make -j"$ncpus"
     make -j"$ncpus" install-strip
     cd ..
