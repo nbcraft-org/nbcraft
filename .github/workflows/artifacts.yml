@@ -343,7 +343,7 @@ jobs:
             with:
               path: ~/ccache.tar.xz
               key: windows-artifact-${{ matrix.name }}-${{ steps.get-time.outputs.time }}
-              restore-keys: mingw-artifact-${{ matrix.name }}-
+              restore-keys: windows-artifact-${{ matrix.name }}-
           - name: Unpack cache
             run: |
               cd ~
