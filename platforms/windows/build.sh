@@ -62,11 +62,22 @@ if [ "$(cat "toolchain-$arch/toolchainver" 2>/dev/null)" != "$toolchainver" ]; t
     rm -rf binutils-*
     wget -O- "https://ftp.gnu.org/gnu/binutils/binutils-$binutils_version.tar.xz" | tar -xJ
 
+    # The '-Wno-discarded-qualifiers' flag is unsupported on clang but required on gcc 15 to build binutils.
+    # This will probably be fixed when binutils is updated.
+    if command -v gcc >/dev/null; then
+        cc=gcc
+    else
+        cc=cc
+    fi
+    printf 'int nothing;\n' | "$cc" -xc - -c -o /dev/null -Wno-discarded-qualifiers &&
+        warn='-Wno-discarded-qualifiers'
+
     cd "binutils-$binutils_version"
     ./configure \
         --prefix="$workdir/toolchain-$arch" \
         --target="$target" \
-        --disable-multilib
+        --disable-multilib \
+        CFLAGS="-O2 $warn"
     make -j"$ncpus"
     make -j"$ncpus" install-strip
     cd ..
