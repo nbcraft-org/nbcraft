@@ -365,6 +365,7 @@ jobs:
                     libmpc-dev
           - name: Build
             run: |
+              [ -f workspacecache.tar ] && tar xf workspacecache.tar || true
               ./platforms/windows/build.sh
               tar cf workspacecache.tar platforms/windows/build/work/toolchain-${{ matrix.arch }}
               mv workspacecache.tar ~
