@@ -138,7 +138,9 @@ void TextureAtlas::blitSprite(uint8_t* src, int srcWidth, int srcHeight, int des
 
 bool TextureAtlas::grow()
 {
-    int newWidth = getWidth() + DEFAULT_ATLAS_SIZE;
+    // Some GPUs don't support non-power-of-two textures
+    //int newWidth = getWidth() + DEFAULT_ATLAS_SIZE;
+    int newWidth = getWidth() * 2;
 
     if (newWidth > MAX_ATLAS_SIZE)
         return false;

@@ -47,6 +47,8 @@ void TextureData::_move(TextureData& other)
     this->m_texture.move(other.m_texture);
 }
 
+#define IS_POWER_OF_TWO(x) ((x & (x - 1)) == 0)
+
 void TextureData::_loadTexData(mce::Texture& texture, bool enableFiltering, bool wrap)
 {
     mce::TextureDescription desc;
@@ -54,6 +56,12 @@ void TextureData::_loadTexData(mce::Texture& texture, bool enableFiltering, bool
     desc.bWrap = wrap;
     desc.width = m_imageData.m_width;
     desc.height = m_imageData.m_height;
+
+    // @NOTE: Some GPUs don't support non-power-of-two textures
+    // GL_INVALID_VALUE is generated if non-power-of-two textures are not supported and the width or height cannot be represented as 2k+2(border) for some integer value of k.
+    // @TODO: enable these once we start forcing conformance of texture sizes
+    //assert(IS_POWER_OF_TWO(desc.width));
+    //assert(IS_POWER_OF_TWO(desc.height));
 
     m_imageData.forceRGBA();
     
