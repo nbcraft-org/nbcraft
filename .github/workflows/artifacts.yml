@@ -180,7 +180,7 @@ jobs:
                   MPC="$(brew --prefix)" \
                   PATH="$PWD/cmake-4.2.3-macos-universal/CMake.app/Contents/bin:$PATH" \
                   ./platforms/macos/build.sh
-              tar cf workspacecache.tar platforms/macos/build/work/toolchain platforms/macos/build/work/toolchain-ppc
+              tar cf workspacecache.tar platforms/macos/build/work/toolchain platforms/macos/build/work/toolchain-ppc platforms/macos/build/work/lastworkdir
               mv workspacecache.tar ~
             env:
               NOSTRIP: 1
