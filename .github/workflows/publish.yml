@@ -106,7 +106,7 @@ jobs:
         strategy:
             fail-fast: false
         name: macOS
-        runs-on: macos-15
+        runs-on: macos-26
         steps:
           - name: Checkout Repository
             uses: actions/checkout@v6

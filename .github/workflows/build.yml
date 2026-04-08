@@ -97,7 +97,7 @@ jobs:
                     backend_name: 'SDL1'
                     packages: 'sdl12-compat'
         name: macOS (${{ matrix.name }})
-        runs-on: macos-15
+        runs-on: macos-26
         steps:
           - name: Checkout Repository
             uses: actions/checkout@v6
