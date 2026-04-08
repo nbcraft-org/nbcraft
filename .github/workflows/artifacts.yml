@@ -182,12 +182,16 @@ jobs:
                   ./platforms/macos/build.sh
               tar cf workspacecache.tar platforms/macos/build/work/toolchain platforms/macos/build/work/toolchain-ppc platforms/macos/build/work/lastworkdir
               mv workspacecache.tar ~
+              # workaround stupid upload-artifacts bs semantics
+              # if you point it at a folder the zip will have the contents of that folder instead of the folder itself
+              mkdir upload
+              mv platforms/macos/build/NBCraft.app upload
             env:
               NOSTRIP: 1
           - uses: actions/upload-artifact@v6
             with:
               name: macOS
-              path: platforms/macos/build/NBCraft.app
+              path: upload
           - name: Pack cache
             run: cd ~ && tar cJf ccache.tar.xz Library/Caches/ccache workspacecache.tar
 
