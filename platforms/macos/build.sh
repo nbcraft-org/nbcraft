@@ -446,7 +446,7 @@ lipo -create arch-* -output ../NBCraft.app/Contents/MacOS/libexec/arch
 
 cp -a "$platformdir/../../game/assets" ../NBCraft.app/Contents/MacOS
 cp "$platformdir/launchscript.sh" "../NBCraft.app/Contents/MacOS/$bin"
-mv ../NBCraft.app/Contents/MacOS/assets/app/icons/icon.png ../NBCraft.app/Contents/Resources
+mv ../NBCraft.app/Contents/MacOS/assets/app/icons/icon.icns ../NBCraft.app/Contents/Resources
 rm -rf ../NBCraft.app/Contents/MacOS/assets/app
 
 for target in $targets; do

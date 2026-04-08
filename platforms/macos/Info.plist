@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>nbcraft</string>
 	<key>CFBundleIconFile</key>
-	<string>icon.png</string>
+	<string>icon.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>org.nbcraft</string>
 	<key>CFBundleInfoDictionaryVersion</key>
