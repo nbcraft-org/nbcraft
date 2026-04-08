@@ -18,7 +18,5 @@
 	<string>APPL</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
-	<key>LSRequiresNativeExecution</key>
-	<true/>
 </dict>
 </plist>

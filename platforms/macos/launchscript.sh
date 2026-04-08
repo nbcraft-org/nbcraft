@@ -22,7 +22,12 @@ if [ "$arch" = "x86_64" ]; then
             exec ./libexec/nbcraft-i386 "$@"
         ;;
         (*)
-            exec ./libexec/nbcraft-x86_64 "$@"
+            if [ "$(sysctl -n sysctl.proc_translated 2>/dev/null)" = "1" ]; then
+                # i hate rosetta
+                exec ./libexec/nbcraft-arm64 "$@"
+            else
+                exec ./libexec/nbcraft-x86_64 "$@"
+            fi
         ;;
     esac
 fi
