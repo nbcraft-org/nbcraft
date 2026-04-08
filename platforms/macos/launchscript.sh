@@ -7,23 +7,24 @@
 # and we need to run other binaries at a relative location
 # from this script.
 
-execdir="${0%/*}"
+[ "${0%/*}" = "$0" ] && scriptroot="." || scriptroot="${0%/*}"
+cd "$scriptroot" || exit 1
 
 [ "$(arch)" = "ppc" ] &&
-    exec "$execdir/libexec/nbcraft-powerpc" "$@"
+    exec ./libexec/nbcraft-powerpc "$@"
 
-arch="$("$execdir/libexec/arch")"
+arch="$(./libexec/arch)"
 
 if [ "$arch" = "x86_64" ]; then
     case $(uname -r) in
         (8.*|9.*|10.*)
             # Tiger, Leopard, or Snow Leopard
-            exec "$execdir/libexec/nbcraft-i386" "$@"
+            exec ./libexec/nbcraft-i386 "$@"
         ;;
         (*)
-            exec "$execdir/libexec/nbcraft-x86_64" "$@"
+            exec ./libexec/nbcraft-x86_64 "$@"
         ;;
     esac
 fi
 
-exec "$execdir/libexec/nbcraft-$arch" "$@"
+exec "./libexec/nbcraft-$arch" "$@"

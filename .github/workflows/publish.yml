@@ -127,8 +127,8 @@ jobs:
                   ./platforms/macos/build.sh
           - name: Pack release
             run: |
-                mv platforms/macos/build/NBCraft .
-                zip -r NBCraft-macOS.zip NBCraft
+                mv platforms/macos/build/NBCraft.app .
+                zip -r NBCraft-macOS.zip NBCraft.app
           - uses: alexellis/upload-assets@0.4.1
             env:
               GITHUB_TOKEN: ${{ github.token }}

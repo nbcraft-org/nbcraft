@@ -187,7 +187,7 @@ jobs:
           - uses: actions/upload-artifact@v6
             with:
               name: macOS
-              path: platforms/macos/build/NBCraft
+              path: platforms/macos/build/NBCraft.app
           - name: Pack cache
             run: cd ~ && tar cJf ccache.tar.xz Library/Caches/ccache workspacecache.tar
 
