@@ -412,6 +412,7 @@ void SoundSystemOAL::startEngine()
 	}
 	catch (const std::runtime_error& e)
 	{
+		LOG_E("Failed to init audio");
 		return;
 	}
     
