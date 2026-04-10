@@ -368,6 +368,7 @@ for target in $targets; do
                     --prefix="${PWD%/*}/sdl" \
                     --disable-shared \
                     --disable-video-x11 \
+                    --disable-altivec \
                     CC="$cc" \
                     CXX="$cxx" \
                     CFLAGS="$opt $target_cflags" \
