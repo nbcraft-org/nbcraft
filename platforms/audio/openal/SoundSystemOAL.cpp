@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdexcept>
 
 #include "CustomSoundSystem.hpp"
 
@@ -405,7 +406,14 @@ void SoundSystemOAL::startEngine()
 	alListenerfv(AL_VELOCITY, velocity);
 	AL_ERROR_CHECK();*/
 
-	m_musicStream = new SoundStreamOAL();
+	try
+	{
+		m_musicStream = new SoundStreamOAL();
+	}
+	catch (const std::runtime_error& e)
+	{
+		return;
+	}
     
 	// Mark As loaded
 	m_bInitialized = true;

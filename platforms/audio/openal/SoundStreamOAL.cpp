@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdexcept>
 
 #include "SoundStreamOAL.hpp"
 #include "common/Logger.hpp"
@@ -6,6 +7,9 @@
 SoundStreamOAL::SoundStreamOAL()
 {
     _createSource();
+    ALCenum err = alGetError();
+    if (err != AL_NO_ERROR)
+        throw std::runtime_error("audio init failed");
     _createBuffers();
     m_alFormat = AL_NONE;
 
