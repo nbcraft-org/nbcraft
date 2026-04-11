@@ -146,11 +146,11 @@ jobs:
           - name: Install Dependencies
             run: |
                 wget https://apt.llvm.org/llvm.sh
-                sudo bash llvm.sh 21
+                sudo bash llvm.sh 22
                 sudo apt-get update
                 sudo apt-get install --no-install-recommends -y \
                     cmake \
-                    clang-21 \
+                    clang-22 \
                     libplist-utils \
                     libplist-dev \
                     libssl-dev
@@ -160,10 +160,10 @@ jobs:
               ./platforms/ios/build.sh
               mv platforms/ios/build/NBCraft.ipa NBCraft-iOS.ipa
             env:
-              CLANG: clang-21
-              AR: llvm-ar-21
-              RANLIB: llvm-ranlib-21
-              LLVM_CONFIG: llvm-config-21
+              CLANG: clang-22
+              AR: llvm-ar-22
+              RANLIB: llvm-ranlib-22
+              LLVM_CONFIG: llvm-config-22
           - uses: alexellis/upload-assets@0.4.1
             env:
               GITHUB_TOKEN: ${{ github.token }}

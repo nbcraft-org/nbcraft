@@ -221,12 +221,12 @@ jobs:
           - name: Install Dependencies
             run: |
                 wget https://apt.llvm.org/llvm.sh
-                sudo bash llvm.sh 21
+                sudo bash llvm.sh 22
                 sudo apt-get update
                 sudo apt-get install --no-install-recommends -y \
                     cmake \
                     ccache \
-                    clang-21 \
+                    clang-22 \
                     libplist-utils \
                     libplist-dev \
                     libssl-dev
@@ -237,10 +237,10 @@ jobs:
               tar cf workspacecache.tar platforms/ios/build/work/toolchain
               mv workspacecache.tar ~
             env:
-              CLANG: clang-21
-              AR: llvm-ar-21
-              RANLIB: llvm-ranlib-21
-              LLVM_CONFIG: llvm-config-21
+              CLANG: clang-22
+              AR: llvm-ar-22
+              RANLIB: llvm-ranlib-22
+              LLVM_CONFIG: llvm-config-22
               NOSTRIP: 1
           - uses: actions/upload-artifact@v6
             with:
