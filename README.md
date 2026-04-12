@@ -26,7 +26,7 @@ The decompilation was performed primarily using [IDA](https://hex-rays.com/ida-p
   Currently, the following platforms are supported:
 	* Windows (95 and above; thanks to [iProgramInCpp](https://github.com/iProgramMC))
 	* Android (thanks to [Stom](https://github.com/Stommm) for the help)
-	* Linux (basically anything with POSIX, SDL, and OpenGL support should also work)
+	* Linux (basically anything with POSIX.1-2001, C++98, SDL, and OpenGL support should also work without too much trouble)
 	* WebGL
 	* macOS (10.4 and above; thanks to [BrentDaMage](https://github.com/BrentDaMage))
 	* iOS (3.1 and above; thanks to [BrentDaMage](https://github.com/BrentDaMage))
