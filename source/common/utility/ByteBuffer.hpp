@@ -21,7 +21,8 @@ public:
 
 public:
 	void swap(ByteBuffer& other) { assert(other.isEmpty() || other.isOrphaned()); return _move(other); }
-
+    void assign(ByteBuffer& other);
+    
 	void clear();
 	bool resize(size_t newSize);
 	void reserve(size_t size) { resize(size); }
@@ -46,5 +47,6 @@ private:
 	uint8_t* m_data;
 	size_t m_size;
 	bool m_bIsOrphaned; // indicates whether or not the buffer has a parent or guardian
+    bool m_bIsReference;
 };
 

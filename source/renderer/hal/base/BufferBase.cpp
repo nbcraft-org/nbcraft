@@ -86,8 +86,9 @@ void BufferBase::_updateClientBuffer(RenderContext& context, unsigned int stride
 
     assert(m_bufferOffset == 0);
     assert(!data.isEmpty());
-
-    m_clientBuffer.swap(data);
+    
+    m_clientBuffer.assign(data);
+    
     m_internalSize = size;
 
     /*if (size <= m_internalSize)

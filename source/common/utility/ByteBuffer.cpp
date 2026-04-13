@@ -9,6 +9,7 @@ ByteBuffer::ByteBuffer()
     m_data = nullptr;
     m_size = 0;
     m_bIsOrphaned = false;
+    m_bIsReference = false;
 }
 
 ByteBuffer::~ByteBuffer()
@@ -28,9 +29,22 @@ void ByteBuffer::_move(ByteBuffer& other)
     std::swap(this->m_size, other.m_size);
 }
 
+void ByteBuffer::assign(ByteBuffer& other)
+{
+    if (other.isOrphaned())
+    {
+        swap(other);
+        return;
+    }
+    
+    m_data = other.m_data;
+    m_size = other.m_size;
+    m_bIsReference = true;
+}
+
 void ByteBuffer::clear()
 {
-    if (m_data)
+    if (m_data && !m_bIsReference)
     {
         delete[] m_data;
         m_data = nullptr;
@@ -38,6 +52,7 @@ void ByteBuffer::clear()
 
     m_size = 0;
     m_bIsOrphaned = false;
+    m_bIsReference = false;
 }
 
 bool ByteBuffer::resize(size_t newSize)
