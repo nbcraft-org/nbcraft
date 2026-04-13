@@ -9,7 +9,7 @@ CFLAGS := -O2 -DNDEBUG
 CXXFLAGS := -O2 -DNDEBUG
 
 DEFINES := -DHANDLE_CHARS_SEPARATELY -DRAPIDJSON_NO_THREAD_LOCAL -DSTBI_NO_THREAD_LOCALS
-INCLUDES := -I. -Isource -Ithirdparty -Ithirdparty/zlib -Ithirdparty/raknet -Ithirdparty/rapidjson -Ithirdparty/stb_image/include
+INCLUDES := -I. -Isource -Ithirdparty/zlib -Ithirdparty/raknet -Ithirdparty/rapidjson -Ithirdparty/stb_image/include
 
 C_SRCS := $(wildcard thirdparty/zlib/*.c) thirdparty/stb_image/src/stb_image_impl.c thirdparty/stb_image/include/stb_vorbis.c
 CXX_SRCS := $(shell find source \
