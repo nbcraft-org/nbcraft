@@ -36,29 +36,29 @@ endif
 CXX_SRCS += platforms/sdl/$(PLATFORM)/main.cpp $(wildcard platforms/sdl/base/*.cpp) $(wildcard platforms/sdl/$(PLATFORM)/base/*.cpp) $(wildcard platforms/sdl/$(PLATFORM)/desktop/*.cpp)
 ifeq ($(GFX_API),OGL)
 DEFINES += -DMCE_GFX_API_OGL=1
-CXX_SRCS += $(wildcard renderer/hal/ogl/*.cpp) $(wildcard renderer/platform/ogl/*.cpp)
+CXX_SRCS += $(shell find source/renderer/hal/ogl -name '*.cpp') $(wildcard source/renderer/platform/ogl/*.cpp)
 else
 ifeq ($(GFX_API),OGL_SHADERS)
 DEFINES += -DMCE_GFX_API_OGL=1 -DFEATURE_GFX_SHADERS
-CXX_SRCS += $(wildcard renderer/hal/ogl/*.cpp) $(wildcard renderer/platform/ogl/*.cpp)
+CXX_SRCS += $(shell find source/renderer/hal/ogl -name '*.cpp') $(wildcard source/renderer/platform/ogl/*.cpp)
 else
 ifeq ($(GFX_API),NULL)
 DEFINES += -DMCE_GFX_API_NULL=1
 # why does the null hal have to have some sources included by default its so dumb
 CXX_SRCS += \
-    renderer/hal/null/BlendStateNull.cpp \
-    renderer/hal/null/BufferNull.cpp \
-    renderer/hal/null/ConstantBufferContainerNull.cpp \
-    renderer/hal/null/DepthStencilStateNull.cpp \
-    renderer/hal/null/ImmediateBufferNull.cpp \
-    renderer/hal/null/RasterizerStateNull.cpp \
-    renderer/hal/null/RenderContextNull.cpp \
-    renderer/hal/null/RenderDeviceNull.cpp \
-    renderer/hal/null/ShaderConstantNull.cpp \
-    renderer/hal/null/ShaderConstantWithDataNull.cpp \
-    renderer/hal/null/ShaderNull.cpp \
-    renderer/hal/null/ShaderProgramNull.cpp \
-    renderer/hal/null/TextureNull.cpp
+    source/renderer/hal/null/BlendStateNull.cpp \
+    source/renderer/hal/null/BufferNull.cpp \
+    source/renderer/hal/null/ConstantBufferContainerNull.cpp \
+    source/renderer/hal/null/DepthStencilStateNull.cpp \
+    source/renderer/hal/null/ImmediateBufferNull.cpp \
+    source/renderer/hal/null/RasterizerStateNull.cpp \
+    source/renderer/hal/null/RenderContextNull.cpp \
+    source/renderer/hal/null/RenderDeviceNull.cpp \
+    source/renderer/hal/null/ShaderConstantNull.cpp \
+    source/renderer/hal/null/ShaderConstantWithDataNull.cpp \
+    source/renderer/hal/null/ShaderNull.cpp \
+    source/renderer/hal/null/ShaderProgramNull.cpp \
+    source/renderer/hal/null/TextureNull.cpp
 endif
 endif
 endif
@@ -79,7 +79,8 @@ build/assets: build
 	rm -rf build/assets/app
 
 build/nbcraft: $(OBJS) build
-	$(CXX) $(LDFLAGS) $(OBJS) -o build/nbcraft
+	$(AR) rcs build/nbcraft.a $(OBJS)
+	$(CXX) $(LDFLAGS) build/nbcraft.a -o build/nbcraft
 
 build/%.cpp.o: %.cpp
 	@mkdir -p $(dir $@)
