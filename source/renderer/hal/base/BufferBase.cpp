@@ -31,7 +31,7 @@ void BufferBase::_init(BufferBase& other)
 
 void BufferBase::_move(BufferBase& other)
 {
-    std::swap(this->m_clientBuffer, other.m_clientBuffer);
+    this->m_clientBuffer = other.m_clientBuffer; // forces a swap
     std::swap(this->m_bufferType, other.m_bufferType);
     std::swap(this->m_stride, other.m_stride);
     std::swap(this->m_count, other.m_count);

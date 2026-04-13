@@ -836,6 +836,8 @@
 		84DAF5982F34650500D67310 /* SetEntityMotionPacket.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84DAF5862F34650500D67310 /* SetEntityMotionPacket.hpp */; };
 		84DAF5992F34650500D67310 /* TileEventPacket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84DAF5872F34650500D67310 /* TileEventPacket.cpp */; };
 		84DAF59A2F34650500D67310 /* TileEventPacket.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84DAF5882F34650500D67310 /* TileEventPacket.hpp */; };
+		84DEAB542F8CBB0D00BD9701 /* ByteBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84DEAB522F8CBB0D00BD9701 /* ByteBuffer.cpp */; };
+		84DEAB552F8CBB0D00BD9701 /* ByteBuffer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84DEAB532F8CBB0D00BD9701 /* ByteBuffer.hpp */; };
 		84DED1982F3095B8004001C5 /* CraftingScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84DED1962F3095B8004001C5 /* CraftingScreen.cpp */; };
 		84DED1992F3095B8004001C5 /* CraftingScreen.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84DED1972F3095B8004001C5 /* CraftingScreen.hpp */; };
 		84DED19C2F3095FD004001C5 /* CraftingMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84DED19A2F3095FD004001C5 /* CraftingMenu.cpp */; };
@@ -2604,6 +2606,8 @@
 		84DAF5862F34650500D67310 /* SetEntityMotionPacket.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SetEntityMotionPacket.hpp; sourceTree = "<group>"; };
 		84DAF5872F34650500D67310 /* TileEventPacket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TileEventPacket.cpp; sourceTree = "<group>"; };
 		84DAF5882F34650500D67310 /* TileEventPacket.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TileEventPacket.hpp; sourceTree = "<group>"; };
+		84DEAB522F8CBB0D00BD9701 /* ByteBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ByteBuffer.cpp; path = utility/ByteBuffer.cpp; sourceTree = "<group>"; };
+		84DEAB532F8CBB0D00BD9701 /* ByteBuffer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ByteBuffer.hpp; path = utility/ByteBuffer.hpp; sourceTree = "<group>"; };
 		84DED1962F3095B8004001C5 /* CraftingScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CraftingScreen.cpp; sourceTree = "<group>"; };
 		84DED1972F3095B8004001C5 /* CraftingScreen.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CraftingScreen.hpp; sourceTree = "<group>"; };
 		84DED19A2F3095FD004001C5 /* CraftingMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CraftingMenu.cpp; sourceTree = "<group>"; };
@@ -3573,6 +3577,8 @@
 		840DD6252AC810620006A435 /* common */ = {
 			isa = PBXGroup;
 			children = (
+				84DEAB522F8CBB0D00BD9701 /* ByteBuffer.cpp */,
+				84DEAB532F8CBB0D00BD9701 /* ByteBuffer.hpp */,
 				84CCBC3D2E6183F300E251AF /* DataIO.cpp */,
 				84CCBC3E2E6183F300E251AF /* DataIO.hpp */,
 				840DD6282AC810620006A435 /* Logger.cpp */,
@@ -6110,6 +6116,7 @@
 				8406FD3B2AF1823700B09C1D /* Utils.hpp in Headers */,
 				84E001B92AF3A3CB009B9555 /* SmoothFloat.hpp in Headers */,
 				84C0D8032B15A1D0007E1E76 /* PlatformDefinitions.h in Headers */,
+				84DEAB552F8CBB0D00BD9701 /* ByteBuffer.hpp in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7239,6 +7246,7 @@
 				84EB0E102EE2D4D4008FB007 /* JsonParser.cpp in Sources */,
 				84E4BFB62AE9869A0023E16A /* Logger.cpp in Sources */,
 				84E4BFB82AE9869A0023E16A /* Mth.cpp in Sources */,
+				84DEAB542F8CBB0D00BD9701 /* ByteBuffer.cpp in Sources */,
 				84E4BFB92AE9869A0023E16A /* Random.cpp in Sources */,
 				84E4BFBB2AE9869A0023E16A /* Timer.cpp in Sources */,
 				84E058FC2F383E9200F1E829 /* AsyncTask.cpp in Sources */,

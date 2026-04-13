@@ -212,7 +212,8 @@ bool gl::supports16BitUnsignedUVs()
 
 bool gl::supportsServerBuffers()
 {
-    static int isSupported = -1;
+    return false;
+    /*static int isSupported = -1;
     if (isSupported < 0)
     {
         const gl::Version& glVersion = gl::Version::singleton();
@@ -225,5 +226,5 @@ bool gl::supportsServerBuffers()
             )
             isSupported = 1;
     }
-    return isSupported == 1;
+    return isSupported == 1;*/
 }
