@@ -97,8 +97,7 @@ void BufferD3D9::_createBuffer(RenderContext& context, unsigned int stride, Byte
 
     if (data)
     {
-        void* pData = (void*)data;
-        updateBuffer(context, stride, pData, count);
+        updateBuffer(context, stride, data, count);
     }
 }
 
@@ -187,7 +186,7 @@ void BufferD3D9::updateBuffer(RenderContext& context, unsigned int stride, ByteB
     }
 
     // 360 requires that we lock the entire buffer
-    memcpy((int8_t*)pData + m_bufferOffset, data, stride * count);
+    memcpy((int8_t*)pData + m_bufferOffset, data.getData(), stride * count);
  
     switch (m_bufferType)
     {
