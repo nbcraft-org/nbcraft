@@ -30,17 +30,21 @@ PLATFORM := sdl2
 GFX_API := OGL
 ifeq ($(PLATFORM),sdl2)
 DEFINES += -DUSE_SDL -DUSE_SDL2
+LIBS += -lSDL2
 else
 DEFINES += -DUSE_SDL -DUSE_SDL1
+LIBS += -lSDL
 endif
 CXX_SRCS += platforms/sdl/$(PLATFORM)/main.cpp $(wildcard platforms/sdl/base/*.cpp) $(wildcard platforms/sdl/$(PLATFORM)/base/*.cpp) $(wildcard platforms/sdl/$(PLATFORM)/desktop/*.cpp)
 ifeq ($(GFX_API),OGL)
 DEFINES += -DMCE_GFX_API_OGL=1
 CXX_SRCS += $(shell find source/renderer/hal/ogl -name '*.cpp') $(wildcard source/renderer/platform/ogl/*.cpp)
+LIBS += -lGL
 else
 ifeq ($(GFX_API),OGL_SHADERS)
 DEFINES += -DMCE_GFX_API_OGL=1 -DFEATURE_GFX_SHADERS
 CXX_SRCS += $(shell find source/renderer/hal/ogl -name '*.cpp') $(wildcard source/renderer/platform/ogl/*.cpp)
+LIBS += -lGL
 else
 ifeq ($(GFX_API),NULL)
 DEFINES += -DMCE_GFX_API_NULL=1
@@ -66,6 +70,9 @@ endif
 AUDIO_LIBRARY := openal
 INCLUDES += -Iplatforms/audio/$(AUDIO_LIBRARY)
 CXX_SRCS += $(wildcard platforms/audio/$(AUDIO_LIBRARY)/*.cpp)
+ifeq ($(AUDIO_LIBRARY),openal)
+LIBS += -lopenal
+endif
 
 OBJS := $(addprefix build/,$(C_SRCS:.c=.c.o)) $(addprefix build/,$(CXX_SRCS:.cpp=.cpp.o))
 
@@ -80,7 +87,7 @@ build/assets: build
 
 build/nbcraft: $(OBJS) build
 	$(AR) rcs build/nbcraft.a $(OBJS)
-	$(CXX) $(LDFLAGS) build/nbcraft.a -o build/nbcraft
+	$(CXX) $(LDFLAGS) build/nbcraft.a $(LIBS) -o build/nbcraft
 
 build/%.cpp.o: %.cpp
 	@mkdir -p $(dir $@)
