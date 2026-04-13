@@ -23,7 +23,7 @@ public:
 	void swap(ByteBuffer& other) { assert(other.isEmpty() || other.isOrphaned()); return _move(other); }
 
 	void clear();
-	void resize(size_t newSize);
+	bool resize(size_t newSize);
 	void reserve(size_t size) { resize(size); }
 
 	void orphan() { m_bIsOrphaned = true; }

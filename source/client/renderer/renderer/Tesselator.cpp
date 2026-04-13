@@ -437,11 +437,15 @@ void Tesselator::vertex(float x, float y, float z)
 
 	if (m_pendingVertices > 0)
 	{
-		m_indices.reserve(vertexSize * m_pendingVertices);
+		m_indices.reserve(m_pendingVertices * vertexSize);
 		m_pendingVertices = 0;
 	}
 
-	m_indices.resize((m_vertices+1) * vertexSize);
+	bool didResize = m_indices.resize((m_vertices+1) * vertexSize);
+
+	// useful for finding improperly pre-allocated Tesselator calls, reducing these reduces memcpy calls,
+	// which provides SUBSTANTIAL performace gains
+	//assert(!didResize);
 
 	// Make sure m_indices front pointer hasn't changed from reallocation as a result of reserve or resize
 	if (isFormatFixed() && oldIndicesPtr == m_indices.getData())

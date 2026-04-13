@@ -39,13 +39,13 @@ void ByteBuffer::clear()
     m_size = 0;
 }
 
-void ByteBuffer::resize(size_t newSize)
+bool ByteBuffer::resize(size_t newSize)
 {
     if (m_size >= newSize)
-        return;
+        return false;
 
     /*if (m_size == newSize)
-        return;*/
+        return false;*/
 
     uint8_t* newData = new uint8_t[newSize];
 
@@ -57,6 +57,8 @@ void ByteBuffer::resize(size_t newSize)
 
     m_data = newData;
     m_size = newSize;
+
+    return true;
 }
 
 /*void ByteBuffer::reserve(size_t size)

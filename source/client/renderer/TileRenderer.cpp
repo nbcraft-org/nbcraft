@@ -2711,7 +2711,7 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 #define IF_NEEDED(x) do { if (tile.data != 255) { (x); } } while (0)
 
 			t.addOffset(-0.5f, -0.5f, -0.5f);
-			t.begin(0);
+			t.begin(24); // 4 to 24
 			SHADE_DEFINE;
 			SHADE_PREPARE;
 			SHADE_IF_NEEDED(1.0f);
