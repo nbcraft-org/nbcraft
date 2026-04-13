@@ -302,7 +302,7 @@ void LevelRenderer::_renderSunrise(float alpha)
 
 		int steps = 16;
 
-		t.begin(mce::PRIMITIVE_MODE_TRIANGLE_STRIP, steps * 2);
+		t.begin(mce::PRIMITIVE_MODE_TRIANGLE_STRIP, (steps * 2) + 2);
 
 		for (int i = 0; i <= steps; i++)
 		{

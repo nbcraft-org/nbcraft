@@ -78,7 +78,7 @@ void BufferD3D11::_createBuffer(RenderContext& context, unsigned int stride, Byt
     {
         subResourceData.SysMemPitch = 0;
         subResourceData.SysMemSlicePitch = 0;
-        subResourceData.pSysMem = data;
+        subResourceData.pSysMem = data.getData();
     }
 
     D3DDevice d3dDevice = context.getD3DDevice();

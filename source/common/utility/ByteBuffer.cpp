@@ -37,6 +37,7 @@ void ByteBuffer::clear()
     }
 
     m_size = 0;
+    m_bIsOrphaned = false;
 }
 
 bool ByteBuffer::resize(size_t newSize)

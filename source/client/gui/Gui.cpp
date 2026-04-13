@@ -195,7 +195,7 @@ void Gui::render(float f, bool bHaveScreen, int mouseX, int mouseY)
 		textures.loadAndBindTexture("gui/icons.png");
 
 		Tesselator& t = Tesselator::instance;
-		t.begin(0);
+		t.begin(160);
 		t.voidBeginAndEndCalls(true);
 
 		renderHearts(isPocket);
