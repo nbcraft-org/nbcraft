@@ -176,7 +176,7 @@ void BufferD3D11::updateBuffer(RenderContext& context, unsigned int stride, Byte
     }
     else
     {
-        memcpy((int8_t*)subResource.pData + m_bufferOffset, data, stride * count);
+        memcpy((int8_t*)subResource.pData + m_bufferOffset, data.getData(), stride * count);
         d3dDeviceContext->Unmap(**m_buffer, 0);
     }
         
