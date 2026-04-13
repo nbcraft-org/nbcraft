@@ -1,0 +1,93 @@
+# Makefile build
+# meant to be extremely portable to weird unix-like systems
+
+CC := cc
+CXX := c++
+AR := ar
+
+CFLAGS := -O2 -DNDEBUG
+CXXFLAGS := -O2 -DNDEBUG
+
+DEFINES := -DHANDLE_CHARS_SEPARATELY -DRAPIDJSON_NO_THREAD_LOCAL -DSTBI_NO_THREAD_LOCALS
+INCLUDES := -I. -Isource -Ithirdparty -Ithirdparty/zlib -Ithirdparty/raknet -Ithirdparty/rapidjson -Ithirdparty/stb_image/include
+
+C_SRCS := $(wildcard thirdparty/zlib/*.c) thirdparty/stb_image/src/stb_image_impl.c thirdparty/stb_image/include/stb_vorbis.c
+CXX_SRCS := $(shell find source \
+    -path source/renderer/platform -prune -o \
+    -path source/renderer/hal/ogl -prune -o \
+    -path source/renderer/hal/d3d11 -prune -o \
+    -path source/renderer/hal/d3d9 -prune -o \
+    -path source/renderer/hal/dxgi -prune -o \
+    -path source/renderer/hal/null -prune -o \
+    -name '*.cpp' -print) \
+    source/renderer/hal/null/AlphaStateNull.cpp \
+    source/renderer/hal/null/RenderStateNull.cpp \
+    source/renderer/hal/null/FogStateNull.cpp \
+    $(wildcard thirdparty/raknet/*.cpp)
+
+# Makefile only supports SDL1 or SDL2 for now, and desktop only
+PLATFORM := sdl2
+GFX_API := OGL
+ifeq ($(PLATFORM),sdl2)
+DEFINES += -DUSE_SDL -DUSE_SDL2
+else
+DEFINES += -DUSE_SDL -DUSE_SDL1
+endif
+CXX_SRCS += platforms/sdl/$(PLATFORM)/main.cpp $(wildcard platforms/sdl/base/*.cpp) $(wildcard platforms/sdl/$(PLATFORM)/base/*.cpp) $(wildcard platforms/sdl/$(PLATFORM)/desktop/*.cpp)
+ifeq ($(GFX_API),OGL)
+DEFINES += -DMCE_GFX_API_OGL=1
+CXX_SRCS += $(wildcard renderer/hal/ogl/*.cpp) $(wildcard renderer/platform/ogl/*.cpp)
+else
+ifeq ($(GFX_API),OGL_SHADERS)
+DEFINES += -DMCE_GFX_API_OGL=1 -DFEATURE_GFX_SHADERS
+CXX_SRCS += $(wildcard renderer/hal/ogl/*.cpp) $(wildcard renderer/platform/ogl/*.cpp)
+else
+ifeq ($(GFX_API),NULL)
+DEFINES += -DMCE_GFX_API_NULL=1
+# why does the null hal have to have some sources included by default its so dumb
+CXX_SRCS += \
+    renderer/hal/null/BlendStateNull.cpp \
+    renderer/hal/null/BufferNull.cpp \
+    renderer/hal/null/ConstantBufferContainerNull.cpp \
+    renderer/hal/null/DepthStencilStateNull.cpp \
+    renderer/hal/null/ImmediateBufferNull.cpp \
+    renderer/hal/null/RasterizerStateNull.cpp \
+    renderer/hal/null/RenderContextNull.cpp \
+    renderer/hal/null/RenderDeviceNull.cpp \
+    renderer/hal/null/ShaderConstantNull.cpp \
+    renderer/hal/null/ShaderConstantWithDataNull.cpp \
+    renderer/hal/null/ShaderNull.cpp \
+    renderer/hal/null/ShaderProgramNull.cpp \
+    renderer/hal/null/TextureNull.cpp
+endif
+endif
+endif
+
+AUDIO_LIBRARY := openal
+INCLUDES += -Iplatforms/audio/$(AUDIO_LIBRARY)
+CXX_SRCS += $(wildcard platforms/audio/$(AUDIO_LIBRARY)/*.cpp)
+
+OBJS := $(addprefix build/,$(C_SRCS:.c=.c.o)) $(addprefix build/,$(CXX_SRCS:.cpp=.cpp.o))
+
+all: build/nbcraft build/assets
+
+build:
+	mkdir build
+
+build/assets: build
+	cp -r game/assets build
+	rm -rf build/assets/app
+
+build/nbcraft: $(OBJS) build
+	$(CXX) $(LDFLAGS) $(OBJS) -o build/nbcraft
+
+build/%.cpp.o: %.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(DEFINES) $(INCLUDES) $(CXXFLAGS) -c $< -o $@
+
+build/%.c.o: %.c
+	@mkdir -p $(dir $@)
+	$(CC) $(DEFINES) $(INCLUDES) $(CFLAGS) -c $< -o $@
+
+clean:
+	rm -rf build
