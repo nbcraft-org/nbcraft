@@ -204,7 +204,6 @@ This project uses CMake on Unix-like systems.
 - `cmake` (CMake)
 - `libsdl2-dev` (SDL2)
 - `libopenal-dev` (OpenAL)
-- `zlib1g-dev` (ZLib)
 
 #### Dependencies (Haiku)
 
@@ -219,6 +218,18 @@ mkdir build && cd build
 cmake ..
 cmake --build .
 # Run
+./nbcraft
+```
+
+#### Makefile
+
+For systems where cmake is not available, there is a GNU Makefile available. The dependencies are the same except without CMake.
+You should ***ALWAYS*** try to use CMake if you can, the Makefile is very limited and only intended for old or obscure systems that cannot run CMake.
+
+```sh
+make
+# Run
+cd build
 ./nbcraft
 ```
 
