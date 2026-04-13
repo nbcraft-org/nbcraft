@@ -12,6 +12,7 @@
 #include <map>
 #include <vector>
 #include "common/math/Color.hpp"
+#include "common/utility/ByteBuffer.hpp"
 #include "client/renderer/RenderChunk.hpp"
 #include "renderer/VertexFormat.hpp"
 #include "renderer/hal/enums/PrimitiveMode.hpp"
@@ -106,7 +107,7 @@ public:
 private:
 	CurrentVertexPointers m_currentVertex;
 
-	std::vector<uint8_t> m_indices;
+	ByteBuffer m_indices;
 	bool m_bHasIndices;
 
 	uint8_t m_indexSize;

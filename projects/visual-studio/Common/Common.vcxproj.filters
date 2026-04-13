@@ -71,6 +71,9 @@
     <ClCompile Include="$(MC_ROOT)\source\common\threading\AsyncTask.cpp">
       <Filter>Source Files\Threading</Filter>
     </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\common\utility\ByteBuffer.cpp">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\common\Logger.hpp">
@@ -126,6 +129,9 @@
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\common\threading\AsyncTask.hpp">
       <Filter>Header Files\Threading</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\common\utility\ByteBuffer.hpp">
+      <Filter>Header Files\Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

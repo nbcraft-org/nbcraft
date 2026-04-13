@@ -20,17 +20,17 @@ namespace mce
         ~BufferOGL();
 
     protected:
-        void _createBuffer(RenderContext& context, const void* data, BufferType bufferType);
+        void _createBuffer(RenderContext& context, ByteBuffer& data, BufferType bufferType);
 
     public:
 		void _move(BufferOGL& other);
         void releaseBuffer();
         void bindBuffer(RenderContext& context);
-		void createBuffer(RenderContext& context, unsigned int stride, const void *data, unsigned int count, BufferType bufferType);
-		void createDynamicBuffer(RenderContext& context, unsigned int stride, const void* data, unsigned int count, BufferType bufferType);
-        void resizeBuffer(RenderContext& context, const void* data, unsigned int size);
-        void updateBuffer(RenderContext& context, unsigned int stride, void*& data, unsigned int count);
-        bool isValid() const { return m_bufferName != GL_NONE || m_clientData != nullptr; }
+		void createBuffer(RenderContext& context, unsigned int stride, ByteBuffer& data, unsigned int count, BufferType bufferType);
+		void createDynamicBuffer(RenderContext& context, unsigned int stride, ByteBuffer& data, unsigned int count, BufferType bufferType);
+        void resizeBuffer(RenderContext& context, ByteBuffer& data, unsigned int size);
+        void updateBuffer(RenderContext& context, unsigned int stride, ByteBuffer& data, unsigned int count);
+        bool isValid() const { return m_bufferName != GL_NONE || !m_clientBuffer.isEmpty(); }
 
         MC_FUNC_MOVE(BufferOGL);
 	};

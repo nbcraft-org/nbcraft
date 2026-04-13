@@ -1,7 +1,7 @@
 #include <stdint.h>
-#include <vector>
 #include <typeinfo>
 #include "QuadIndexBuffer.hpp"
+#include "common/utility/ByteBuffer.hpp"
 #include "RenderContextImmediate.hpp"
 
 using namespace mce;
@@ -27,7 +27,7 @@ void QuadIndexBuffer::onAppSuspended()
 }
 
 template <typename T>
-void _makeIndexBuffer(std::vector<uint8_t>& indices, unsigned int vertexCount)
+void _makeIndexBuffer(ByteBuffer& indices, unsigned int vertexCount)
 {
     constexpr unsigned int indexSize = sizeof(T) * 6;
     const unsigned int quadCount = vertexCount / 4;
@@ -68,7 +68,7 @@ Buffer& QuadIndexBuffer::getGlobalQuadBuffer(RenderContext& context, unsigned in
     while (m_capacity < requiredCapacity)
         m_capacity *= 2;
 
-    std::vector<uint8_t> indices;
+    ByteBuffer indices; // m_globalBuffer either takes ownership of this or it doesn't, either way, it doesn't dangle
     const mce::RenderContext& renderContext = mce::RenderContextImmediate::getAsConst();
 
     // Use 16-bit indices for smaller buffers to save memory, otherwise use 32-bit.
@@ -83,12 +83,12 @@ Buffer& QuadIndexBuffer::getGlobalQuadBuffer(RenderContext& context, unsigned in
         _makeIndexBuffer<uint32_t>(indices, m_capacity);
     }
 
-    void* data = &indices[0];
+    indices.orphan(); // orphan so the m_globalBuffer can adopt it
 
     m_globalBuffer.releaseBuffer();
 
-    m_globalBuffer.createDynamicIndexBuffer(context, m_indexSize, indices.size());
-    m_globalBuffer.updateBuffer(context, m_indexSize, data, indices.size() / m_indexSize);
+    m_globalBuffer.createDynamicIndexBuffer(context, m_indexSize, indices.getSize());
+    m_globalBuffer.updateBuffer(context, m_indexSize, indices, indices.getSize() / m_indexSize);
 
     outIndexSize = m_indexSize;
     return m_globalBuffer;

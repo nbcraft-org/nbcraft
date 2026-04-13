@@ -13,10 +13,10 @@ Mesh::Mesh()
     m_vertexCount = 0;
     m_primitiveMode = PRIMITIVE_MODE_NONE;
     m_indexSize = 0;
-    m_rawData = nullptr;
+    m_pRawData = nullptr;
 }
 
-Mesh::Mesh(const VertexFormat& vertexFormat, unsigned int vertexCount, unsigned int indexCount, uint8_t indexSize, PrimitiveMode primitiveMode, uint8_t *data, bool temporary)
+Mesh::Mesh(const VertexFormat& vertexFormat, unsigned int vertexCount, unsigned int indexCount, uint8_t indexSize, PrimitiveMode primitiveMode, ByteBuffer& data, bool temporary)
     : m_indexCount(indexCount)
     , m_vertexCount(vertexCount)
     , m_primitiveMode(primitiveMode)
@@ -25,11 +25,12 @@ Mesh::Mesh(const VertexFormat& vertexFormat, unsigned int vertexCount, unsigned 
 {
     if (temporary)
     {
-        m_rawData = data;
+        m_pRawData = &data;
+        //data = nullptr; // @NOTE: NOT SAFE
     }
     else
     {
-        m_rawData = nullptr;
+        m_pRawData = nullptr;
         if (!loadRawData(RenderContextImmediate::get(), data))
         {
             assert(false);
@@ -52,7 +53,7 @@ void Mesh::_move(Mesh& other)
     this->m_indexCount = other.m_indexCount;
     this->m_indexSize = other.m_indexSize;
     this->m_primitiveMode = other.m_primitiveMode;
-    this->m_rawData = other.m_rawData;
+    this->m_pRawData = other.m_pRawData;
 
     other.m_vertexFormat = VertexFormat::EMPTY;
     other.m_indexCount = 0;
@@ -68,10 +69,10 @@ void Mesh::reset()
     m_primitiveMode = PRIMITIVE_MODE_NONE;
     m_vertexFormat = VertexFormat::EMPTY;
     m_indexSize = 0;
-    m_rawData = nullptr;
+    m_pRawData = nullptr;
 }
 
-bool Mesh::loadRawData(RenderContext& context, uint8_t *data)
+bool Mesh::loadRawData(RenderContext& context, ByteBuffer& data)
 {
     if (!data)
         return false;
@@ -81,17 +82,23 @@ bool Mesh::loadRawData(RenderContext& context, uint8_t *data)
         return false;
     if (!m_vertexFormat)
         return false;
+
+    data.orphan(); // orphan so the vertex buffer can take ownership
     
     unsigned int vertexSize = m_vertexFormat.getVertexSize();
     m_vertexBuffer.createVertexBuffer(context, vertexSize, data, m_vertexCount);
 
-    if (m_indexCount == 0)
+    assert(m_indexCount == 0);
+    return true;
+
+    /*if (m_indexCount == 0)
         return true;
 
     unsigned int index = m_vertexCount * vertexSize;
-    m_indexBuffer.createIndexBuffer(context, m_indexSize, &data[index], m_indexCount);
+    void* indices = &data[index]; // @TODO: this will not work since the vertex buffer will take ownership of the ByteBuffer
+    m_indexBuffer.createIndexBuffer(context, m_indexSize, indices, m_indexCount);
 
-    return true;
+    return true;*/
 }
 
 void Mesh::render(const MaterialPtr& materialPtr, unsigned int startOffset, unsigned int count)
@@ -109,13 +116,13 @@ void Mesh::render(const MaterialPtr& materialPtr, unsigned int startOffset, unsi
 
         if (!immediateBuffer.isValid())
         {
+            ByteBuffer nothing;
             // Create 1Mb shared vertex buffer in VRAM
-            immediateBuffer.createDynamicBuffer(context, 1, nullptr, 0x100000, BUFFER_TYPE_VERTEX);
+            immediateBuffer.createDynamicBuffer(context, 1, nothing, 0x100000, BUFFER_TYPE_VERTEX);
         }
 
         unsigned int vertexSize = m_vertexFormat.getVertexSize();
-        void* vertexData = m_rawData;
-        immediateBuffer.updateBuffer(context, vertexSize, vertexData, vertexCount);
+        immediateBuffer.updateBuffer(context, vertexSize, *m_pRawData, vertexCount);
     }
     else
     {
@@ -127,7 +134,7 @@ void Mesh::render(const MaterialPtr& materialPtr, unsigned int startOffset, unsi
 
     if (materialPtr)
     {
-        materialPtr->useWith(context, m_vertexFormat, m_rawData);
+        materialPtr->useWith(context, m_vertexFormat, m_pRawData);
 #ifdef FEATURE_GFX_SHADERS
         materialPtr->m_pShader->validateVertexFormat(m_vertexFormat);
 #endif
@@ -174,7 +181,7 @@ bool Mesh::isValid() const
 
 bool Mesh::isTemporary() const
 {
-    return m_rawData != nullptr;
+    return m_pRawData != nullptr;
 }
 
 void Mesh::clearGlobalBuffers()

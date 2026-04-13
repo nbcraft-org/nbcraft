@@ -32,7 +32,7 @@ BufferOGL::~BufferOGL()
     releaseBuffer();
 }
 
-void BufferOGL::_createBuffer(RenderContext& context, const void* data, BufferType bufferType)
+void BufferOGL::_createBuffer(RenderContext& context, ByteBuffer& data, BufferType bufferType)
 {
     // catch any uncaught errors
     ErrorHandlerOGL::checkForErrors();
@@ -54,7 +54,7 @@ void BufferOGL::_createBuffer(RenderContext& context, const void* data, BufferTy
     activeBuffer = m_bufferName;
 
     // Creates and initializes the buffer object's data store
-    xglBufferData(m_target, m_internalSize, data, m_usage);
+    xglBufferData(m_target, m_internalSize, data.getData(), m_usage);
 
     ErrorHandlerOGL::checkForErrors();
 }
@@ -111,7 +111,7 @@ void BufferOGL::bindBuffer(RenderContext& context)
     activeBuffer = m_bufferName;
 }
 
-void BufferOGL::createBuffer(RenderContext& context, unsigned int stride, const void *data, unsigned int count, BufferType bufferType)
+void BufferOGL::createBuffer(RenderContext& context, unsigned int stride, ByteBuffer& data, unsigned int count, BufferType bufferType)
 {
     BufferBase::createBuffer(context, stride, data, count, bufferType);
     
@@ -119,7 +119,7 @@ void BufferOGL::createBuffer(RenderContext& context, unsigned int stride, const 
     _createBuffer(context, data, bufferType);
 }
 
-void BufferOGL::createDynamicBuffer(RenderContext& context, unsigned int stride, const void* data, unsigned int count, BufferType bufferType)
+void BufferOGL::createDynamicBuffer(RenderContext& context, unsigned int stride, ByteBuffer& data, unsigned int count, BufferType bufferType)
 {
     BufferBase::createDynamicBuffer(context, stride, data, count, bufferType);
 
@@ -132,7 +132,7 @@ void BufferOGL::createDynamicBuffer(RenderContext& context, unsigned int stride,
     _createBuffer(context, data, bufferType);
 }
 
-void BufferOGL::resizeBuffer(RenderContext& context, const void* data, unsigned int size)
+void BufferOGL::resizeBuffer(RenderContext& context, ByteBuffer& data, unsigned int size)
 {
     if (_isClientBuffer())
     {
@@ -141,11 +141,11 @@ void BufferOGL::resizeBuffer(RenderContext& context, const void* data, unsigned 
     }
 
     // @TODO: this can get called without bindBuffer being called first
-    xglBufferData(m_target, size, data, m_usage);
+    xglBufferData(m_target, size, data.getData(), m_usage);
     m_internalSize = size;
 }
 
-void BufferOGL::updateBuffer(RenderContext& context, unsigned int stride, void*& data, unsigned int count)
+void BufferOGL::updateBuffer(RenderContext& context, unsigned int stride, ByteBuffer& data, unsigned int count)
 {
     if (_isClientBuffer())
     {
@@ -172,7 +172,7 @@ void BufferOGL::updateBuffer(RenderContext& context, unsigned int stride, void*&
         const unsigned int size = count * stride;
 
         if (!GLES1_WORKAROUND && size <= m_internalSize)
-            xglBufferSubData(m_target, m_bufferOffset, size, data);
+            xglBufferSubData(m_target, m_bufferOffset, size, data.getData());
         else
             resizeBuffer(context, data, size);
     }

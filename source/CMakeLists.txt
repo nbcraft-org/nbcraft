@@ -16,6 +16,7 @@ add_library(nbcraft-core STATIC
     common/utility/AlignmentHelper.cpp
     common/utility/JsonParser.cpp
     common/utility/Singleton.cpp
+	common/utility/ByteBuffer.cpp
     common/Utils.cpp
     client/app/App.cpp
     client/app/AppPlatform.cpp

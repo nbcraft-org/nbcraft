@@ -18,12 +18,12 @@ namespace mce
         uint8_t m_indexSize;
         Buffer m_vertexBuffer;
         Buffer m_indexBuffer;
-        void *m_rawData;
+        ByteBuffer* m_pRawData;
 
     public:
         Mesh();
         MC_CTOR_MOVE(Mesh);
-        Mesh(const VertexFormat& vertexFormat, unsigned int vertexCount, unsigned int indexCount, uint8_t indexSize, PrimitiveMode primitiveMode, uint8_t *data, bool temporary);
+        Mesh(const VertexFormat& vertexFormat, unsigned int vertexCount, unsigned int indexCount, uint8_t indexSize, PrimitiveMode primitiveMode, ByteBuffer& data, bool temporary);
         ~Mesh();
 
     protected:
@@ -31,7 +31,7 @@ namespace mce
 
     public:
         void reset();
-        bool loadRawData(RenderContext& context, uint8_t *data);
+        bool loadRawData(RenderContext& context, ByteBuffer& data);
         void render(const MaterialPtr& materialPtr, unsigned int startOffset = 0, unsigned int count = 0);
         bool isValid() const;
         bool isTemporary() const;

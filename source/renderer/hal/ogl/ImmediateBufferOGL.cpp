@@ -11,7 +11,7 @@ ImmediateBufferOGL::ImmediateBufferOGL()
 {
 }
 
-void ImmediateBufferOGL::createDynamicBuffer(RenderContext& context, unsigned int stride, const void* data, unsigned int count, BufferType bufferType)
+void ImmediateBufferOGL::createDynamicBuffer(RenderContext& context, unsigned int stride, ByteBuffer& data, unsigned int count, BufferType bufferType)
 {
     if (gl::supportsImmediateMode())
     {
@@ -24,7 +24,7 @@ void ImmediateBufferOGL::createDynamicBuffer(RenderContext& context, unsigned in
     }
 }
 
-void ImmediateBufferOGL::updateBuffer(RenderContext& context, unsigned int stride, void*& data, unsigned int count)
+void ImmediateBufferOGL::updateBuffer(RenderContext& context, unsigned int stride, ByteBuffer& data, unsigned int count)
 {
     if (gl::supportsImmediateMode())
     {
