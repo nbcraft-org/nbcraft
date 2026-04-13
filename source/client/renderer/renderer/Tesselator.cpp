@@ -442,6 +442,7 @@ void Tesselator::vertex(float x, float y, float z)
 	}
 
 	bool didResize = m_indices.resize((m_vertices+1) * vertexSize);
+	(void)didResize; // to silence dumb warnings
 
 	// useful for finding improperly pre-allocated Tesselator calls, reducing these reduces memcpy calls,
 	// which provides SUBSTANTIAL performace gains
