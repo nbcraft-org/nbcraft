@@ -73,7 +73,7 @@ void CreditsScreen::render(float f)
 	float widthf = float(m_width);
 	float heightf = float(m_height);
 	float heightsub32 = heightf - 32;
-	t.begin(4);
+	t.begin(8);
 	t.color(0x505050, 255);
 	t.vertexUV(0.0f, heightf, 0.0f, 0.0f, heightf / 32.0f);
 	t.vertexUV(widthf, heightf, 0.0f, widthf / 32.0f, heightf / 32.0f);
