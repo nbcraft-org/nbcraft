@@ -204,7 +204,7 @@ class NetworkIDManager;
 		/// \internal
 		struct LocalSlot
 		{
-			DataStructures::OrderedList<LocalSlotObject,LocalSlotObject,LocalSlotObjectComp> slotObjects;
+			DataStructures::OrderedList<LocalSlotObject,LocalSlotObject,&RPC4::LocalSlotObjectComp> slotObjects;
 		};
 		DataStructures::Hash<RakNet::RakString, LocalSlot*,256, RakNet::RakString::ToInteger> localSlots;
 

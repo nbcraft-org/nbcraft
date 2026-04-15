@@ -104,7 +104,7 @@ namespace RakNet
 
 		// Forwarding requests in progress
 		//DataStructures::Multilist<ML_ORDERED_LIST, ForwardingRequest*, SenderAndTargetAddress> forwardingRequestList;
-		DataStructures::OrderedList<SenderAndTargetAddress, ForwardingRequest*, ForwardingRequestComp> forwardingRequestList;
+		DataStructures::OrderedList<UDPProxyCoordinator::SenderAndTargetAddress, UDPProxyCoordinator::ForwardingRequest*, &UDPProxyCoordinator::ForwardingRequestComp> forwardingRequestList;
 
 		RakNet::RakString remoteLoginPassword;
 
