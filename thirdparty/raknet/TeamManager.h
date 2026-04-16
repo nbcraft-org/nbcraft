@@ -561,7 +561,7 @@ protected:
 	void FillRequestedSlots(void);
 	unsigned int GetAvailableTeamIndexWithFewestMembers(TeamMemberLimit secondaryLimit, JoinPermissions joinPermissions);
 
-	void GetSortedJoinRequests(DataStructures::OrderedList<JoinRequestHelper, JoinRequestHelper, JoinRequestHelperComp> &joinRequests);
+	void GetSortedJoinRequests(DataStructures::OrderedList<TM_World::JoinRequestHelper, TM_World::JoinRequestHelper, &TM_World::JoinRequestHelperComp> &joinRequests);
 
 
 	// Send a message to all participants

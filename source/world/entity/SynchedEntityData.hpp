@@ -125,7 +125,7 @@ public:
 	{
 		if (hasData(id) && m_itemsArray[id]->getType() == DataTypeMap::typeFor<T>())
 		{
-			return m_itemsArray[id]->getData<T>();
+			return m_itemsArray[id]->template getData<T>();
 		}
 		else
 		{
