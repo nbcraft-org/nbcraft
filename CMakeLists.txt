@@ -109,6 +109,15 @@ else()
     link_libraries(Threads::Threads)
 endif()
 
+# Enable dynamic OpenGL (Always enabled on Windows & Dreamcast regardless).
+# This only works on some platforms, and is only tested on Linux with Mesa, and Windows.
+# It will NOT work on Darwin based platforms like iOS or macOS, because they have
+# different symbol names for their GL functions and use macros to provide compatability.
+# It will also break any staticly linked builds.
+if(NBC_DYNAMIC_OPENGL)
+    add_compile_definitions(DYNAMIC_OPENGL)
+endif()
+
 # Disable thread local storage (needed for C++98 & iOS)
 add_compile_definitions(RAPIDJSON_NO_THREAD_LOCAL STBI_NO_THREAD_LOCALS)
 

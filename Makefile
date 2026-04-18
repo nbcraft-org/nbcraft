@@ -74,6 +74,10 @@ ifeq ($(AUDIO_LIBRARY),openal)
 LIBS += -lopenal
 endif
 
+ifdef DYNAMIC_OPENGL
+DEFINES += -DDYNAMIC_OPENGL
+endif
+
 OBJS := $(addprefix build/,$(C_SRCS:.c=.c.o)) $(addprefix build/,$(CXX_SRCS:.cpp=.cpp.o))
 
 all: build/nbcraft build/assets
