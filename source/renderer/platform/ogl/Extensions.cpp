@@ -2,6 +2,12 @@
 #include "common/Logger.hpp"
 #include "GameMods.hpp"
 
+#if defined(_WIN32) || defined(__DREAMCAST__)
+#define DYNAMIC_OPENGL
+#elif defined(DYNAMIC_OPENGL)
+#include <dlfcn.h>
+#endif
+
 using namespace mce::Platform;
 
 #ifdef FEATURE_GFX_SHADERS
@@ -18,7 +24,7 @@ bool OGL::InitBindings()
 {
     bool result = true;
 
-#ifdef _WIN32
+#ifdef DYNAMIC_OPENGL
     xglInit();
     result = xglInitted();
 #endif
@@ -40,14 +46,14 @@ void* OGL::GetProcAddress(const char* name)
             result = (void*)GetProcAddress(handle, name);
         }
     }
+#elif defined(DYNAMIC_OPENGL) && !defined(__DREAMCAST__)
+    result = (void*)dlsym(RTLD_NEXT, name);
 #endif
 
     return result;
 }
 
-#if defined(_WIN32) || defined(__DREAMCAST__)
-
-#include <unordered_map>
+#ifdef DYNAMIC_OPENGL
 
 #ifdef __DREAMCAST__
 
@@ -69,22 +75,22 @@ typedef BOOL(WINAPI* PFNWGLSWAPINTERVALEXTPROC) (int interval);
 #endif
 
 #ifdef USE_HARDWARE_GL_BUFFERS
-#if GL_VERSION_1_3
+#if GL_VERSION_1_3 || GL_VERSION_ES_CM_1_0
 PFNGLACTIVETEXTUREPROC p_glActiveTexture;
 #endif
-#if GL_VERSION_1_5
+#if GL_VERSION_1_5 || GL_VERSION_ES_CM_1_0
 PFNGLBINDBUFFERPROC p_glBindBuffer;
 PFNGLBUFFERDATAPROC p_glBufferData;
 PFNGLGENBUFFERSPROC p_glGenBuffers;
 PFNGLDELETEBUFFERSPROC p_glDeleteBuffers;
 PFNGLBUFFERSUBDATAPROC p_glBufferSubData;
 #endif
-#if GL_VERSION_2_0
+#if GL_VERSION_2_0 || GL_ES_VERSION_2_0
 PFNGLSTENCILFUNCSEPARATEPROC p_glStencilFuncSeparate;
 PFNGLSTENCILOPSEPARATEPROC p_glStencilOpSeparate;
 #endif // GL_VERSION_2_0
 #ifdef FEATURE_GFX_SHADERS
-#if GL_VERSION_2_0
+#if GL_VERSION_2_0 || GL_ES_VERSION_2_0
 PFNGLUNIFORM1IPROC p_glUniform1i;
 PFNGLUNIFORM1FVPROC p_glUniform1fv;
 PFNGLUNIFORM2FVPROC p_glUniform2fv;
@@ -117,7 +123,7 @@ PFNGLGETUNIFORMLOCATIONPROC p_glGetUniformLocation;
 PFNGLGETATTRIBLOCATIONPROC p_glGetAttribLocation;
 PFNGLENABLEVERTEXATTRIBARRAYPROC p_glEnableVertexAttribArray;
 #endif // GL_VERSION_2_0
-#if GL_VERSION_4_1
+#if GL_VERSION_4_1 || GL_ES_VERSION_2_0
 PFNGLRELEASESHADERCOMPILERPROC p_glReleaseShaderCompiler;
 PFNGLGETSHADERPRECISIONFORMATPROC p_glGetShaderPrecisionFormat;
 #endif // GL_VERSION_4_1
@@ -183,11 +189,10 @@ bool xglInitted()
 #endif
 }
 
-// Only called on Win32 and SDL+Win32
 void xglInit()
 {
 #ifdef USE_HARDWARE_GL_BUFFERS
-#ifdef _WIN32
+#ifdef DYNAMIC_OPENGL
 #if GL_VERSION_1_3
 	p_glActiveTexture = (PFNGLACTIVETEXTUREPROC)OGL::GetProcAddress("glActiveTexture");
 #endif
@@ -244,10 +249,9 @@ void xglInit()
 #ifdef MC_GL_DEBUG_OUTPUT
 	p_glDebugMessageCallback = (PFNGLDEBUGMESSAGECALLBACKARBPROC)OGL::GetProcAddress("glDebugMessageCallback");
 #endif
-#else // !defined(_WIN32) // wtf would this even be?
+#else // !defined(DYNAMIC_OPENGL)
 #if GL_VERSION_1_3
 	p_glActiveTexture = (PFNGLACTIVETEXTUREPROC)glActiveTexture;
-	p_glLoadTransposeMatrixf = (PFNGLLOADTRANSPOSEMATRIXFPROC)glLoadTransposeMatrixf;
 #endif
 #if GL_VERSION_1_5
 	p_glBindBuffer = (PFNGLBINDBUFFERPROC)glBindBuffer;
@@ -302,8 +306,8 @@ void xglInit()
 #ifdef MC_GL_DEBUG_OUTPUT
 	p_glDebugMessageCallback = (PFNGLDEBUGMESSAGECALLBACKARBPROC)glDebugMessageCallbackARB;
 #endif
-#endif
-#endif
+#endif // DYNAMIC_OPENGL
+#endif // USE_HARDWARE_GL_BUFFERS
 
 #ifndef USE_OPENGL_2_FEATURES
 	p_wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC)OGL::GetProcAddress("wglSwapIntervalEXT");
