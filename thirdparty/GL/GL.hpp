@@ -8,6 +8,14 @@
 
 #pragma once
 
+#ifndef DYNAMIC_OPENGL
+#if defined(_WIN32) || defined(__DREAMCAST__)
+#define DYNAMIC_OPENGL 1
+#else
+#define DYNAMIC_OPENGL 0
+#endif
+#endif
+
 #include "common/Utils.hpp" // needed for M_PI
 #include "compat/PlatformDefinitions.h"
 #include "GameMods.hpp"
@@ -111,13 +119,13 @@ typedef void (APIENTRY* DEBUGPROC)(GLenum source,
 	GLvoid* userParam);
 #endif
 
-#ifdef _WIN32
+#if DYNAMIC_OPENGL
 void xglInit();
 bool xglInitted();
 bool xglVBOsBound();
 #endif
 
-#if defined(USE_OPENGL_2_FEATURES) && !defined(_WIN32) && !defined(__DREAMCAST__)
+#if defined(USE_OPENGL_2_FEATURES) && !DYNAMIC_OPENGL
 
 #if GL_VERSION_1_1 || GL_VERSION_ES_CM_1_0 || GL_ES_VERSION_2_0
 #define xglEnableClientState glEnableClientState
@@ -189,8 +197,6 @@ bool xglVBOsBound();
 
 #else
 
-// @NOTE: the GLES checks don't really matter here, since we're never compiling for Windows with GLES
-// However, we are keeping the GLES checks here for quick-reference
 #if GL_VERSION_1_1 || GL_VERSION_ES_CM_1_0
 void xglEnableClientState(GLenum _array);
 void xglDisableClientState(GLenum _array);
