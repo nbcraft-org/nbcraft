@@ -115,7 +115,7 @@ endif()
 # different symbol names for their GL functions and use macros to provide compatability.
 # It will also break any staticly linked builds.
 if(NBC_DYNAMIC_OPENGL)
-    add_compile_definitions(DYNAMIC_OPENGL)
+    add_compile_definitions(DYNAMIC_OPENGL=1)
 endif()
 
 # Disable thread local storage (needed for C++98 & iOS)

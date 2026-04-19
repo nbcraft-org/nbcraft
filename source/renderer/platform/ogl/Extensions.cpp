@@ -2,9 +2,7 @@
 #include "common/Logger.hpp"
 #include "GameMods.hpp"
 
-#if defined(_WIN32) || defined(__DREAMCAST__)
-#define DYNAMIC_OPENGL
-#elif defined(DYNAMIC_OPENGL)
+#if DYNAMIC_OPENGL && !defined(_WIN32) && !defined(__DREAMCAST__)
 #include <dlfcn.h>
 #endif
 
@@ -24,7 +22,7 @@ bool OGL::InitBindings()
 {
     bool result = true;
 
-#ifdef DYNAMIC_OPENGL
+#if DYNAMIC_OPENGL
     xglInit();
     result = xglInitted();
 #endif
@@ -46,14 +44,14 @@ void* OGL::GetProcAddress(const char* name)
             result = (void*)GetProcAddress(handle, name);
         }
     }
-#elif defined(DYNAMIC_OPENGL) && !defined(__DREAMCAST__)
+#elif DYNAMIC_OPENGL && !defined(__DREAMCAST__)
     result = (void*)dlsym(RTLD_NEXT, name);
 #endif
 
     return result;
 }
 
-#ifdef DYNAMIC_OPENGL
+#if DYNAMIC_OPENGL
 
 #ifdef __DREAMCAST__
 
@@ -192,7 +190,7 @@ bool xglInitted()
 void xglInit()
 {
 #ifdef USE_HARDWARE_GL_BUFFERS
-#ifdef DYNAMIC_OPENGL
+#if DYNAMIC_OPENGL
 #if GL_VERSION_1_3
 	p_glActiveTexture = (PFNGLACTIVETEXTUREPROC)OGL::GetProcAddress("glActiveTexture");
 #endif
@@ -249,7 +247,7 @@ void xglInit()
 #ifdef MC_GL_DEBUG_OUTPUT
 	p_glDebugMessageCallback = (PFNGLDEBUGMESSAGECALLBACKARBPROC)OGL::GetProcAddress("glDebugMessageCallback");
 #endif
-#else // !defined(DYNAMIC_OPENGL)
+#else // !DYNAMIC_OPENGL
 #if GL_VERSION_1_3
 	p_glActiveTexture = (PFNGLACTIVETEXTUREPROC)glActiveTexture;
 #endif

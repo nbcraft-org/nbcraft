@@ -75,7 +75,7 @@ LIBS += -lopenal
 endif
 
 ifdef DYNAMIC_OPENGL
-DEFINES += -DDYNAMIC_OPENGL
+DEFINES += -DDYNAMIC_OPENGL=1
 endif
 
 OBJS := $(addprefix build/,$(C_SRCS:.c=.c.o)) $(addprefix build/,$(CXX_SRCS:.cpp=.cpp.o))

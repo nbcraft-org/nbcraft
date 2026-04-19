@@ -8,8 +8,12 @@
 
 #pragma once
 
+#ifndef DYNAMIC_OPENGL
 #if defined(_WIN32) || defined(__DREAMCAST__)
-#define DYNAMIC_OPENGL
+#define DYNAMIC_OPENGL 1
+#else
+#define DYNAMIC_OPENGL 0
+#endif
 #endif
 
 #include "common/Utils.hpp" // needed for M_PI
@@ -115,13 +119,13 @@ typedef void (APIENTRY* DEBUGPROC)(GLenum source,
 	GLvoid* userParam);
 #endif
 
-#ifdef DYNAMIC_OPENGL
+#if DYNAMIC_OPENGL
 void xglInit();
 bool xglInitted();
 bool xglVBOsBound();
 #endif
 
-#if defined(USE_OPENGL_2_FEATURES) && !defined(DYNAMIC_OPENGL)
+#if defined(USE_OPENGL_2_FEATURES) && !DYNAMIC_OPENGL
 
 #if GL_VERSION_1_1 || GL_VERSION_ES_CM_1_0 || GL_ES_VERSION_2_0
 #define xglEnableClientState glEnableClientState
