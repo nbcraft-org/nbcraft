@@ -81,7 +81,6 @@ static void initGraphics()
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "OpenGL Error", mce::Platform::OGL::ERROR_MSG, window);
 		exit(EXIT_FAILURE);
 	}
-#else
 #endif
 }
 
