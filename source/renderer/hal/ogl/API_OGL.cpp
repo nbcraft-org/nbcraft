@@ -219,7 +219,7 @@ bool gl::supportsServerBuffers()
         const std::string& glExtensions = gl::getOpenGLExtensions();
         // OpenGL ES || OpenGL 1.5+
         if ((glVersion.gles || glExtensions.find("GL_ARB_vertex_buffer_object") || (glVersion.major > 1 || glVersion.minor >= 5))
-#ifdef DYNAMIC_OPENGL
+#if DYNAMIC_OPENGL
              && xglVBOsBound()
 #endif
             )
