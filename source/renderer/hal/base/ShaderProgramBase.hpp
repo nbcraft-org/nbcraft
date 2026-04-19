@@ -5,6 +5,7 @@
 
 namespace mce
 {
+	class RenderContext;
     class ShaderProgramBase
     {
     protected:
@@ -20,5 +21,12 @@ namespace mce
 
     public:
         bool isValid() const { return m_bValid; }
+
+	public:
+        static void SpliceShaderPath(std::string& shaderName, const std::string& shaderDir);
+        static void SpliceShaderPath(std::string& shaderName);
+        static void SpliceShaderExtension(std::string& shaderName, const std::string& shaderFileExtension);
+        static void SpliceShaderExtension(std::string& shaderName);
+        static void BuildHeader(RenderContext& context, std::ostringstream& stream);
     };
 }

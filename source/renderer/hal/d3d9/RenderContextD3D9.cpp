@@ -111,8 +111,14 @@ void RenderContextD3D9::drawIndexed(PrimitiveMode primitiveMode, unsigned int co
 
 void RenderContextD3D9::drawIndexed(PrimitiveMode primitiveMode, unsigned int count, unsigned int startOffset, uint8_t indexSize)
 {
+	unsigned int vertexCount;
+	if (primitiveMode == PRIMITIVE_MODE_QUAD_LIST)
+		vertexCount = (count / 6) * 4;
+	else
+		vertexCount = count;
+
     ErrorHandlerD3D9::checkForErrors(
-        m_d3dDevice->DrawIndexedPrimitive(modeMap[primitiveMode], 0, 0, 0, startOffset, _getPrimitiveCount(primitiveMode, count))
+        m_d3dDevice->DrawIndexedPrimitive(modeMap[primitiveMode], 0, 0, vertexCount, startOffset, _getPrimitiveCount(primitiveMode, count))
     );
 }
 

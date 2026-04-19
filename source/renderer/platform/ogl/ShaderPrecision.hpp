@@ -30,7 +30,7 @@ namespace mce
 
             public:
                 static const std::string& AtLeast(int atleast);
-                static void BuildHeader(std::ostringstream& stream);
+                static void BuildHeader(RenderContext& context, std::ostringstream& stream);
             };
         }
     }

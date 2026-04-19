@@ -37,9 +37,5 @@ namespace mce
         void reflectShaderAttributes(const std::string& shaderBytecode);
         void reflectShader(const ShaderProgramD3D9& shaderProgram, ShaderType shaderType);
         ComInterface<IDirect3DVertexDeclaration9> createVertexDeclaration(const VertexFormat& vertexFormat);
-
-        static void SpliceShaderPath(std::string& shaderName);
-        static void SpliceShaderExtension(std::string& shaderName);
-        static void BuildHeader(std::ostringstream& stream);
     };
 }

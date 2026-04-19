@@ -1,4 +1,5 @@
 #include <cstring>
+#include <sstream>
 
 #include "API_D3D11.hpp"
 #include "API_D3D11Compiler.hpp"
@@ -163,4 +164,20 @@ void ShaderProgramD3D11::compileShaderProgram()
 
     m_shaderBytecode = std::string((const char*)code->GetBufferPointer(), code->GetBufferSize());
     m_bValid = bSuccess;
+}
+
+void ShaderProgramD3D11::SpliceShaderPath(std::string& shaderName)
+{
+    ShaderProgramBase::SpliceShaderPath(shaderName, "/hlsl");
+}
+
+void ShaderProgramD3D11::SpliceShaderExtension(std::string& shaderName)
+{
+    ShaderProgramBase::SpliceShaderExtension(shaderName, ".hlsl");
+}
+
+void ShaderProgramD3D11::BuildHeader(RenderContext& context, std::ostringstream& stream)
+{
+    if (!context.supportsR8G8B8A8_SNORM())
+        stream << "#define R8G8B8A8_SNORM_UNSUPPORTED";
 }

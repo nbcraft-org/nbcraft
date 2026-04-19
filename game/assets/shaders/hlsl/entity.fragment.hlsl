@@ -54,11 +54,11 @@ PS_MAIN_BEGIN
 #elif defined(USE_VERTEX_COLORS)
         color *= PSInput.color;
 #else
-        color *= PSInput.light;
+        color.rgb *= PSInput.light.xyz;
 #endif
 
     //apply fog
-    color.rgb = lerp( color.rgb, PSInput.fogColor.rgb, PSInput.fogColor.a );
+    color.rgb = lerp( color.rgb, PSInput.fogColor.rgb, PSInput.fogIntensity );
 
 #ifdef USE_COLOR_MASK
 	#ifdef GLINT

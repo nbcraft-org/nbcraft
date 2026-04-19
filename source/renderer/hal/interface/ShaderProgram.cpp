@@ -6,3 +6,9 @@ ShaderProgram::ShaderProgram(ShaderType shaderType, std::string& shaderSource, c
     : MCE_GFX_CLASS_SHADER(ShaderProgram)(shaderType, shaderSource, header, shaderPath)
 {
 }
+
+void ShaderProgram::SpliceShaderPathAndExtension(std::string& shaderName)
+{
+    SpliceShaderPath(shaderName);
+    SpliceShaderExtension(shaderName);
+}

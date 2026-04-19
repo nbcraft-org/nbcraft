@@ -1,4 +1,5 @@
 #include <cstring>
+#include <sstream>
 
 #include "API_D3D9.hpp"
 #include "API_D3D9Compiler.hpp"
@@ -6,6 +7,7 @@
 #include "ShaderProgramD3D9.hpp"
 
 #include "common/Util.hpp"
+#include "client/app/Minecraft.hpp"
 #include "renderer/RenderContextImmediate.hpp"
 #include "renderer/hal/d3d9/helpers/ErrorHandlerD3D9.hpp"
 
@@ -35,11 +37,37 @@ std::string _getShaderModelType(ShaderType shaderType)
     }
 }
 
+void _getShaderModelVersion(ShaderType shaderType, int& major, int& minor)
+{
+	// For the Radeon 9000
+	/*switch (shaderType)
+	{
+	case SHADER_TYPE_VERTEX:
+		major = 1;
+		minor = 1;
+		break;
+	case SHADER_TYPE_FRAGMENT:
+		major = 1;
+		minor = 4;
+		break;
+
+    default:
+        LOG_E("Unknown shader type: %d", shaderType);
+        throw std::bad_cast();
+	}*/
+
+	// For the Xbox 360
+	major = 3;
+	minor = 0;
+}
+
 std::string _getShaderTarget(ShaderType shaderType)
 {
     std::string shaderModelType = _getShaderModelType(shaderType);
+	int major, minor;
+	_getShaderModelVersion(shaderType, major, minor);
 
-    return shaderModelType + "_3_0";
+    return shaderModelType + "_" + Util::toString(major) + "_" + Util::toString(minor);
 }
 
 void _translateShaderSource(std::string& source)
@@ -72,7 +100,7 @@ void ShaderProgramD3D9::compileShaderProgram()
         NULL,
         "main",
         shaderTarget.c_str(),
-        0x0,
+        0x0, // D3DXSHADER_USE_LEGACY_D3DX9_31_DLL,
         *code, *errorMsgs,
         NULL);
     if (hResult != S_OK)
@@ -111,4 +139,50 @@ void ShaderProgramD3D9::compileShaderProgram()
 
     m_shaderBytecode = std::string((const char*)code->GetBufferPointer(), code->GetBufferSize());
     m_bValid = bSuccess;
+}
+
+void ShaderProgramD3D9::SpliceShaderPath(std::string& shaderName)
+{
+    ShaderProgramBase::SpliceShaderPath(shaderName, "/hlsl");
+}
+
+void ShaderProgramD3D9::SpliceShaderExtension(std::string& shaderName)
+{
+    ShaderProgramBase::SpliceShaderExtension(shaderName, ".hlsl");
+}
+
+void _writeShaderTargetMacros(std::ostringstream& stream, int major, int minor)
+{
+	stream << "#define _SHADER_TARGET_MAJOR " << major << "\n";
+	stream << "#define _SHADER_TARGET_MINOR " << minor << "\n";
+}
+
+void _writeShaderTargetMacros(std::ostringstream& stream, ShaderType shaderType)
+{
+	int major, minor;
+	_getShaderModelVersion(shaderType, major, minor);
+	_writeShaderTargetMacros(stream, major, minor);
+}
+
+void _writeVersionMacros(RenderContext& context, std::ostringstream& stream)
+{
+    stream << "#define _DIRECT3D9\n";
+#ifdef _XBOX
+    stream << "#define _XBOX\n";
+#endif
+
+	stream << "#ifdef _SHADER_TYPE_VERTEX\n";
+	_writeShaderTargetMacros(stream, SHADER_TYPE_VERTEX);
+	stream << "#elif defined(_SHADER_TYPE_FRAGMENT)\n";
+	_writeShaderTargetMacros(stream, SHADER_TYPE_FRAGMENT);
+	stream << "#endif\n";
+}
+
+void ShaderProgramD3D9::BuildHeader(RenderContext& context, std::ostringstream& stream)
+{
+	_writeVersionMacros(context, stream);
+
+    // hack to fix dumb D3D9 bullshit: https://www.virtualdub.org/blog2/entry_366.html
+    stream << "#define __D3D9_OFFSET_X " << (-1.0f / Minecraft::width) << "\n";
+    stream << "#define __D3D9_OFFSET_Y " << (1.0f / Minecraft::height) << "\n";
 }
