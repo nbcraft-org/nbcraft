@@ -72,10 +72,17 @@
 		#define USE_OPENGL_2_FEATURES
 
 		#define GL_GLEXT_PROTOTYPES
+		#if DYNAMIC_OPENGL && !defined(_WIN32) && !defined(__DREAMCAST__)
+			#define SDL_NO_GLEXT
+			#define GL_GLEXT_LEGACY
+		#endif
 		#include "thirdparty/SDL/SDL_opengl.h"
 
 		#if !defined(_WIN32) && SDL_MAJOR_VERSION == 2
 			#include <SDL2/SDL_opengl_glext.h>
+		#endif
+		#if DYNAMIC_OPENGL && !defined(_WIN32) && !defined(__DREAMCAST__)
+			#include "thirdparty/GL/glext.h"
 		#endif
 	#else
 		#ifdef __APPLE__
