@@ -95,12 +95,10 @@ endif
 
 OBJS := $(addprefix build/,$(C_SRCS:.c=.c.o)) $(addprefix build/,$(CXX_SRCS:.cpp=.cpp.o))
 
-all: build/nbcraft build/assets
+all: build/nbcraft
 
 build:
 	mkdir build
-
-build/assets: build
 	ln -sf ../game/assets build
 
 build/nbcraft: $(OBJS) build
