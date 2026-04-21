@@ -12,6 +12,16 @@ DEFINES := -DHANDLE_CHARS_SEPARATELY -DRAPIDJSON_NO_THREAD_LOCAL -DSTBI_NO_THREA
 INCLUDES := -I. -Isource -Ithirdparty/zlib -Ithirdparty/raknet -Ithirdparty/rapidjson -Ithirdparty/stb_image/include
 LIBS := -pthread
 
+HEADERS := $(wildcard compat/*.h) \
+           $(wildcard compat/*.hpp) \
+           $(wildcard thirdparty/stb_image/include/*.h) \
+           $(wildcard thirdparty/raknet/*.h) \
+           $(wildcard thirdparty/zlib/*.h) \
+           $(shell find source -name '*.hpp') \
+           $(shell find source -name '*.h') \
+           $(shell find platforms -name '*.hpp') \
+           $(shell find platforms -name '*.h') \
+           $(shell find thirdparty/rapidjson -name '*.h')
 C_SRCS := $(wildcard thirdparty/zlib/*.c) thirdparty/stb_image/src/stb_image_impl.c thirdparty/stb_image/include/stb_vorbis.c
 CXX_SRCS := $(shell find source \
     -path source/renderer/platform -prune -o \
@@ -30,19 +40,23 @@ CXX_SRCS := $(shell find source \
 PLATFORM := sdl2
 GFX_API := OGL
 ifeq ($(PLATFORM),sdl2)
+HEADERS += $(wildcard thirdparty/SDL/*.h)
 DEFINES += -DUSE_SDL -DUSE_SDL2
 LIBS += -lSDL2
 else
+HEADERS += $(wildcard thirdparty/SDL/*.h)
 DEFINES += -DUSE_SDL -DUSE_SDL1
 LIBS += -lSDL
 endif
 CXX_SRCS += platforms/sdl/$(PLATFORM)/main.cpp $(wildcard platforms/sdl/base/*.cpp) $(wildcard platforms/sdl/$(PLATFORM)/base/*.cpp) $(wildcard platforms/sdl/$(PLATFORM)/desktop/*.cpp)
 ifeq ($(GFX_API),OGL)
+HEADERS += $(wildcard thirdparty/GL/*)
 DEFINES += -DMCE_GFX_API_OGL=1
 CXX_SRCS += $(shell find source/renderer/hal/ogl -name '*.cpp') $(wildcard source/renderer/platform/ogl/*.cpp)
 LIBS += -lGL
 else
 ifeq ($(GFX_API),OGL_SHADERS)
+HEADERS += $(wildcard thirdparty/GL/*)
 DEFINES += -DMCE_GFX_API_OGL=1 -DFEATURE_GFX_SHADERS
 CXX_SRCS += $(shell find source/renderer/hal/ogl -name '*.cpp') $(wildcard source/renderer/platform/ogl/*.cpp)
 LIBS += -lGL
@@ -93,11 +107,11 @@ build/nbcraft: $(OBJS) build
 	$(AR) rcs build/nbcraft.a $(OBJS)
 	$(CXX) $(LDFLAGS) build/nbcraft.a $(LIBS) -o build/nbcraft
 
-build/%.cpp.o: %.cpp
+build/%.cpp.o: %.cpp $(HEADERS)
 	@mkdir -p $(dir $@)
 	$(CXX) $(DEFINES) $(INCLUDES) $(CXXFLAGS) -c $< -o $@
 
-build/%.c.o: %.c
+build/%.c.o: %.c $(HEADERS)
 	@mkdir -p $(dir $@)
 	$(CC) $(DEFINES) $(INCLUDES) $(CFLAGS) -c $< -o $@
 
