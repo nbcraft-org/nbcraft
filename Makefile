@@ -101,7 +101,7 @@ build:
 	mkdir build
 
 build/assets: build
-	ln -s ../game/assets build/assets
+	ln -s ../game/assets build
 
 build/nbcraft: $(OBJS) build
 	$(AR) rcs build/nbcraft.a $(OBJS)
