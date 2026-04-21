@@ -96,6 +96,15 @@
 	// use our macro for glOrtho
 #endif
 
+#if DYNAMIC_OPENGL && !defined(_WIN32) && !defined(__DREAMCAST__)
+// The Mesa headers included with Red Hat Linux 9.0 (and possibly other systems) don't provide this
+// typedef in the main gl.h. It is provided in glext.h, but that doesn't declare it because it won't
+// do it if GL_VERSION_1_3 is defined and gl.h does still define GL_VERSION_1_3. We get around this
+// by just providing the typedefs ourselves here and using a preprocessor hack to avoid conflicts.
+#define PFNGLACTIVETEXTUREPROC __NBC_PFNGLACTIVETEXTUREPROC
+typedef void (APIENTRYP PFNGLACTIVETEXTUREPROC) (GLenum texture);
+#endif
+
 #ifndef GL_LOW_FLOAT
 #define GL_LOW_FLOAT    0x8DF0
 #define GL_MEDIUM_FLOAT 0x8DF1
