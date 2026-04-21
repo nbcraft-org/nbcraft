@@ -87,8 +87,7 @@ build:
 	mkdir build
 
 build/assets: build
-	cp -r game/assets build
-	rm -rf build/assets/app
+	ln -s ../game/assets build/assets
 
 build/nbcraft: $(OBJS) build
 	$(AR) rcs build/nbcraft.a $(OBJS)
