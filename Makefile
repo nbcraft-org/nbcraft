@@ -97,11 +97,8 @@ OBJS := $(addprefix build/,$(C_SRCS:.c=.c.o)) $(addprefix build/,$(CXX_SRCS:.cpp
 
 all: build/nbcraft
 
-build:
-	mkdir build
+build/nbcraft: $(OBJS)
 	ln -sf ../game/assets build
-
-build/nbcraft: $(OBJS) build
 	$(AR) rcs build/nbcraft.a $(OBJS)
 	$(CXX) $(LDFLAGS) build/nbcraft.a $(LIBS) -o build/nbcraft
 
