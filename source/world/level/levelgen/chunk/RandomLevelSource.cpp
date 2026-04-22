@@ -75,7 +75,7 @@ LevelChunk* RandomLevelSource::getChunk(const ChunkPos& pos)
 		return iter->second;
 
 	// have to generate the chunk
-	m_random.init_genrand(341872712 * pos.x + 132899541 * pos.z);
+	m_random.init_genrand(341872712U * pos.x + 132899541U * pos.z);
 
 	TileID* pLevelData = new TileID[32768];
 
@@ -373,7 +373,7 @@ void RandomLevelSource::postProcess(ChunkSource* src, const ChunkPos& pos)
 	m_random.setSeed(seed);
 	int32_t x1 = 1 + 2 * (m_random.nextInt() / 2);
 	int32_t x2 = 1 + 2 * (m_random.nextInt() / 2);
-	m_random.setSeed((int32_t(pos.x) * x1 + int32_t(pos.z) * x2) ^ seed);
+	m_random.setSeed((uint32_t(pos.x) * x1 + uint32_t(pos.z) * x2) ^ seed);
 
 	// @NOTE: I can't put the random calls _in_ the argument list - args are evaluated right to left I believe
 
