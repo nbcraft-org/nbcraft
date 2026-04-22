@@ -154,7 +154,7 @@ std::string Util::toString(const wchar_t* str)
 	return result;
 }
 
-#ifndef NBC_NO_WIDECHAR
+#ifndef MC_NO_WSTRING
 
 std::string Util::toString(const std::wstring& str)
 {

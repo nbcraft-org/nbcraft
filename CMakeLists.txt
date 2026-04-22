@@ -120,7 +120,7 @@ endif()
 
 # Disables all use of wstring to allow building on C++ standard libraries without wstring support.
 if(NBC_NO_WSTRING)
-    add_compile_definitions(NBC_NO_WSTRING)
+    add_compile_definitions(MC_NO_WSTRING)
 endif()
 
 # Disable thread local storage (needed for C++98 & iOS)
