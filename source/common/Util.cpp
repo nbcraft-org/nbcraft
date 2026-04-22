@@ -154,6 +154,8 @@ std::string Util::toString(const wchar_t* str)
 	return result;
 }
 
+#ifndef NBC_NO_WIDECHAR
+
 std::string Util::toString(const std::wstring& str)
 {
 	std::string result(str.size(), 0);
@@ -167,3 +169,5 @@ std::wstring Util::toWideString(const std::string& str)
 	mbstowcs((wchar_t*)result.data(), str.c_str(), str.size());
 	return result;
 }
+
+#endif

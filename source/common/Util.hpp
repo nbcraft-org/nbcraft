@@ -35,8 +35,10 @@ public:
 	static std::string toString(int value);
 	static std::string toString(float value);
 	static std::string toString(const wchar_t* str);
+#ifndef NBC_NO_WSTRING
 	static std::string toString(const std::wstring& str);
 	static std::wstring toWideString(const std::string& str);
+#endif
 
 	template<typename T>
 	static bool remove(std::vector<T>& vec, const T& t)
