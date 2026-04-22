@@ -114,8 +114,8 @@ endif()
 # It will NOT work on Darwin based platforms like iOS or macOS, because they have
 # different symbol names for their GL functions and use macros to provide compatability.
 # It will also break any staticly linked builds.
-if(NBC_DYNAMIC_OPENGL)
-    add_compile_definitions(DYNAMIC_OPENGL=1)
+if(NBC_DYNAMIC_GL)
+    add_compile_definitions(MC_DYNAMIC_GL=1)
 endif()
 
 # Disables all use of wstring to allow building on C++ standard libraries without wstring support.

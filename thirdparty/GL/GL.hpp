@@ -8,11 +8,11 @@
 
 #pragma once
 
-#ifndef DYNAMIC_OPENGL
+#ifndef MC_DYNAMIC_GL
 #if defined(_WIN32) || defined(__DREAMCAST__)
-#define DYNAMIC_OPENGL 1
+#define MC_DYNAMIC_GL 1
 #else
-#define DYNAMIC_OPENGL 0
+#define MC_DYNAMIC_GL 0
 #endif
 #endif
 
@@ -72,7 +72,7 @@
 		#define USE_OPENGL_2_FEATURES
 
 		#define GL_GLEXT_PROTOTYPES
-		#if DYNAMIC_OPENGL && !defined(_WIN32) && !defined(__DREAMCAST__)
+		#if MC_DYNAMIC_GL && !defined(_WIN32) && !defined(__DREAMCAST__)
 			#define SDL_NO_GLEXT
 			#define GL_GLEXT_LEGACY
 		#endif
@@ -81,7 +81,7 @@
 		#if !defined(_WIN32) && SDL_MAJOR_VERSION == 2
 			#include <SDL2/SDL_opengl_glext.h>
 		#endif
-		#if DYNAMIC_OPENGL && !defined(_WIN32) && !defined(__DREAMCAST__)
+		#if MC_DYNAMIC_GL && !defined(_WIN32) && !defined(__DREAMCAST__)
 			#include "thirdparty/GL/glext.h"
 		#endif
 	#else
@@ -103,7 +103,7 @@
 	// use our macro for glOrtho
 #endif
 
-#if DYNAMIC_OPENGL && !defined(_WIN32) && !defined(__DREAMCAST__)
+#if MC_DYNAMIC_GL && !defined(_WIN32) && !defined(__DREAMCAST__)
 // The Mesa headers included with Red Hat Linux 9.0 (and possibly other systems) don't provide this
 // typedef in the main gl.h. It is provided in glext.h, but that doesn't declare it because it won't
 // do it if GL_VERSION_1_3 is defined and gl.h does still define GL_VERSION_1_3. We get around this
@@ -135,13 +135,13 @@ typedef void (APIENTRY* DEBUGPROC)(GLenum source,
 	GLvoid* userParam);
 #endif
 
-#if DYNAMIC_OPENGL
+#if MC_DYNAMIC_GL
 void xglInit();
 bool xglInitted();
 bool xglVBOsBound();
 #endif
 
-#if defined(USE_OPENGL_2_FEATURES) && !DYNAMIC_OPENGL
+#if defined(USE_OPENGL_2_FEATURES) && !MC_DYNAMIC_GL
 
 #if GL_VERSION_1_1 || GL_VERSION_ES_CM_1_0 || GL_ES_VERSION_2_0
 #define xglEnableClientState glEnableClientState

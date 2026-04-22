@@ -89,10 +89,10 @@ ifeq ($(AUDIO_LIBRARY),openal)
 LIBS += -lopenal
 endif
 
-ifdef DYNAMIC_OPENGL
-DEFINES += -DDYNAMIC_OPENGL=1
+ifdef DYNAMIC_GL
+DEFINES += -DMC_DYNAMIC_GL=1
 endif
-ifdef NO_WIDECHAR
+ifdef NO_WSTRING
 DEFINES += -DMC_NO_WSTRING
 endif
 
