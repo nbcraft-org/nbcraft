@@ -2,7 +2,7 @@
 #include "common/Logger.hpp"
 #include "GameMods.hpp"
 
-#if MC_DYNAMIC_GL && !defined(_WIN32) && !defined(__DREAMCAST__)
+#if MC_DYNAMIC_GL && MC_PLATFORM_UNIX
 #include <dlfcn.h>
 #endif
 
@@ -44,7 +44,7 @@ void* OGL::GetProcAddress(const char* name)
             result = (void*)GetProcAddress(handle, name);
         }
     }
-#elif MC_DYNAMIC_GL && !defined(__DREAMCAST__)
+#elif MC_DYNAMIC_GL
     result = (void*)dlsym(RTLD_NEXT, name);
 #endif
 

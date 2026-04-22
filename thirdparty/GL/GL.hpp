@@ -9,7 +9,7 @@
 #pragma once
 
 #ifndef MC_DYNAMIC_GL
-#if defined(_WIN32) || defined(__DREAMCAST__)
+#ifdef _WIN32
 #define MC_DYNAMIC_GL 1
 #else
 #define MC_DYNAMIC_GL 0
@@ -72,7 +72,7 @@
 		#define USE_OPENGL_2_FEATURES
 
 		#define GL_GLEXT_PROTOTYPES
-		#if MC_DYNAMIC_GL && !defined(_WIN32) && !defined(__DREAMCAST__)
+		#if MC_DYNAMIC_GL && MC_PLATFORM_UNIX
 			#define SDL_NO_GLEXT
 			#define GL_GLEXT_LEGACY
 		#endif
@@ -81,7 +81,7 @@
 		#if !defined(_WIN32) && SDL_MAJOR_VERSION == 2
 			#include <SDL2/SDL_opengl_glext.h>
 		#endif
-		#if MC_DYNAMIC_GL && !defined(_WIN32) && !defined(__DREAMCAST__)
+		#if MC_DYNAMIC_GL && MC_PLATFORM_UNIX
 			#include "thirdparty/GL/glext.h"
 		#endif
 	#else
@@ -103,7 +103,7 @@
 	// use our macro for glOrtho
 #endif
 
-#if MC_DYNAMIC_GL && !defined(_WIN32) && !defined(__DREAMCAST__)
+#if MC_DYNAMIC_GL && MC_PLATFORM_UNIX
 // The Mesa headers included with Red Hat Linux 9.0 (and possibly other systems) don't provide this
 // typedef in the main gl.h. It is provided in glext.h, but that doesn't declare it because it won't
 // do it if GL_VERSION_1_3 is defined and gl.h does still define GL_VERSION_1_3. We get around this
