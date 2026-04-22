@@ -774,6 +774,8 @@ void GammaOption::apply()
 	// Budget rounding since the 360 just doesn't have a round function
 	// @TODO: Then again, we don't need this level or precision to begin with
 	// I just don't wanna have to rework the SliderButton to support integers
+	if (!m_pMinecraft->m_pGameRenderer)
+		return;
 	m_pMinecraft->m_pGameRenderer->setGamma((float)Mth::floor(get() * 100) / 100);
 }
 
