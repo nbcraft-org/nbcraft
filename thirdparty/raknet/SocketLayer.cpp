@@ -12,7 +12,7 @@
 /// \brief SocketLayer class implementation
 ///
 
-#include "compat/PlatformDefinitions.h"
+#include "../../compat/PlatformDefinitions.h"
 #include "SocketLayer.h"
 #include "RakAssert.h"
 #include "RakNetTypes.h"

@@ -8,7 +8,7 @@
  *
  */
 
-#include "compat/PlatformDefinitions.h"
+#include "../../compat/PlatformDefinitions.h"
 #include "RakNetSocket2.h"
 #include "RakMemoryOverride.h"
 #include "RakAssert.h"
