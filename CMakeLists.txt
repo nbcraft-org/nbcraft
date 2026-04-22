@@ -118,6 +118,11 @@ if(NBC_DYNAMIC_OPENGL)
     add_compile_definitions(DYNAMIC_OPENGL=1)
 endif()
 
+# Disables all use of wstring to allow building on C++ standard libraries without wstring support.
+if(NBC_NO_WSTRING)
+    add_compile_definitions(NBC_NO_WSTRING)
+endif()
+
 # Disable thread local storage (needed for C++98 & iOS)
 add_compile_definitions(RAPIDJSON_NO_THREAD_LOCAL STBI_NO_THREAD_LOCALS)
 

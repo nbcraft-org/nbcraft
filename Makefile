@@ -92,6 +92,9 @@ endif
 ifdef DYNAMIC_OPENGL
 DEFINES += -DDYNAMIC_OPENGL=1
 endif
+ifdef NO_WIDECHAR
+DEFINES += -DNBC_NO_WSTRING
+endif
 
 OBJS := $(addprefix build/,$(C_SRCS:.c=.c.o)) $(addprefix build/,$(CXX_SRCS:.cpp=.cpp.o))
 
