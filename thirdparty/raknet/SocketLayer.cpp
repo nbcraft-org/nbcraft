@@ -12,7 +12,7 @@
 /// \brief SocketLayer class implementation
 ///
 
-
+#include "compat/PlatformDefinitions.h"
 #include "SocketLayer.h"
 #include "RakAssert.h"
 #include "RakNetTypes.h"
@@ -65,7 +65,7 @@ using namespace pp;
 #include <sys/types.h>
 #include <lwip/sockets.h>
 #else
-#if (!defined(ANDROID) && !defined(__DREAMCAST__) && !defined(__SWITCH__))
+#if MC_SDK_LIBXENON
 #include <ifaddrs.h>
 #endif
 #include <netinet/in.h>
