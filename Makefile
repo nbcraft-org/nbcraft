@@ -9,8 +9,8 @@ CFLAGS := -O2 -DNDEBUG
 CXXFLAGS := -O2 -DNDEBUG
 
 DEFINES := -DHANDLE_CHARS_SEPARATELY -DRAPIDJSON_NO_THREAD_LOCAL -DSTBI_NO_THREAD_LOCALS
-INCLUDES := -I. -Isource -Ithirdparty/zlib -Ithirdparty/raknet -Ithirdparty/rapidjson -Ithirdparty/stb_image/include
-LIBS := -pthread
+INCLUDES := -I. -Isource -Ithirdparty/zlib -Ithirdparty/raknet -Ithirdparty/rapidjson -Ithirdparty/stb_image/include -I/usr/X11R6/include
+LIBS := -L/usr/X11R6/lib -pthread
 
 HEADERS := $(wildcard compat/*.h) \
            $(wildcard compat/*.hpp) \
