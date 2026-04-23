@@ -8,6 +8,8 @@ AR := ar
 CFLAGS := -O2 -DNDEBUG
 CXXFLAGS := -O2 -DNDEBUG
 
+OS := $(shell uname -s)
+
 DEFINES := -DHANDLE_CHARS_SEPARATELY -DRAPIDJSON_NO_THREAD_LOCAL -DSTBI_NO_THREAD_LOCALS
 INCLUDES := -I. -Isource -Ithirdparty/zlib -Ithirdparty/raknet -Ithirdparty/rapidjson -Ithirdparty/stb_image/include -I/usr/X11R6/include
 LIBS := -L/usr/X11R6/lib -pthread
@@ -53,13 +55,21 @@ ifeq ($(GFX_API),OGL)
 HEADERS += $(wildcard thirdparty/GL/*)
 DEFINES += -DMCE_GFX_API_OGL=1
 CXX_SRCS += $(shell find source/renderer/hal/ogl -name '*.cpp') $(wildcard source/renderer/platform/ogl/*.cpp)
+ifeq ($(OS),Darwin)
+LIBS += -framework OpenGL
+else
 LIBS += -lGL
+endif
 else
 ifeq ($(GFX_API),OGL_SHADERS)
 HEADERS += $(wildcard thirdparty/GL/*)
 DEFINES += -DMCE_GFX_API_OGL=1 -DFEATURE_GFX_SHADERS
 CXX_SRCS += $(shell find source/renderer/hal/ogl -name '*.cpp') $(wildcard source/renderer/platform/ogl/*.cpp)
+ifeq ($(OS),Darwin)
+LIBS += -framework OpenGL
+else
 LIBS += -lGL
+endif
 else
 ifeq ($(GFX_API),NULL)
 DEFINES += -DMCE_GFX_API_NULL=1
@@ -86,7 +96,11 @@ AUDIO_LIBRARY := openal
 INCLUDES += -Iplatforms/audio/$(AUDIO_LIBRARY)
 CXX_SRCS += $(wildcard platforms/audio/$(AUDIO_LIBRARY)/*.cpp)
 ifeq ($(AUDIO_LIBRARY),openal)
+ifeq ($(OS),Darwin)
+LIBS += -framework OpenAL
+else
 LIBS += -lopenal
+endif
 endif
 
 ifdef DYNAMIC_GL
