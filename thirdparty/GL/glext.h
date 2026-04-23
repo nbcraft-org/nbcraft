@@ -88,6 +88,8 @@ extern "C" {
 #define GL_SMOOTH_LINE_WIDTH_GRANULARITY  0x0B23
 #define GL_ALIASED_LINE_WIDTH_RANGE       0x846E
 #endif
+// This used to be above but some old mesa headers
+// define GL_VERSION_1_2 but not this for some reason.
 #ifndef GL_SMOOTH_LINE_WIDTH_RANGE
 #define GL_SMOOTH_LINE_WIDTH_RANGE        0x0B22
 #endif
