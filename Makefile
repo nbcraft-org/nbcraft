@@ -19,8 +19,8 @@ HEADERS := $(wildcard compat/*.h) \
            $(wildcard thirdparty/zlib/*.h) \
            $(shell find source -name '*.hpp') \
            $(shell find source -name '*.h') \
-           $(shell find platforms -name '*.hpp') \
-           $(shell find platforms -name '*.h') \
+           $(shell find platforms -name build -prune -name '*.hpp') \
+           $(shell find platforms -name build -prune -name '*.h') \
            $(shell find thirdparty/rapidjson -name '*.h')
 C_SRCS := $(wildcard thirdparty/zlib/*.c) thirdparty/stb_image/src/stb_image_impl.c thirdparty/stb_image/include/stb_vorbis.c
 CXX_SRCS := $(shell find source \
