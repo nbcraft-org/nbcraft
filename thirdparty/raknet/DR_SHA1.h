@@ -171,6 +171,10 @@
 #ifndef TCHAR
 #define TCHAR char
 #endif
+#if defined(_T) && defined(__APPLE__)
+// The Mac OS X 10.3 SDK ctype.h defines this for something unrelated.
+#undef _T
+#endif
 #ifndef _T
 #define _T(__x) (__x)
 #define _tmain main
