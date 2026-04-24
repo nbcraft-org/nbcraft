@@ -11,8 +11,14 @@ CXXFLAGS := -O2 -DNDEBUG
 OS := $(shell uname -s)
 
 DEFINES := -DHANDLE_CHARS_SEPARATELY -DRAPIDJSON_NO_THREAD_LOCAL -DSTBI_NO_THREAD_LOCALS
-INCLUDES := -I. -Isource -Ithirdparty/zlib -Ithirdparty/raknet -Ithirdparty/rapidjson -Ithirdparty/stb_image/include -I/usr/X11R6/include
+INCLUDES := -I. -Isource -Ithirdparty/zlib -Ithirdparty/raknet -Ithirdparty/rapidjson -Ithirdparty/stb_image/include
+
+ifeq ($(OS),Darwin)
+LIBS := -lmx
+else
 LIBS := -L/usr/X11R6/lib -pthread
+INCLUDES += -I/usr/X11R6/include
+endif
 
 HEADERS := $(wildcard compat/*.h) \
            $(wildcard compat/*.hpp) \
@@ -50,6 +56,7 @@ HEADERS += $(wildcard thirdparty/SDL/*.h)
 DEFINES += -DUSE_SDL -DUSE_SDL1
 LIBS += -lSDL
 ifeq ($(OS),Darwin)
+LIBS += -framework AppKit
 PRELIBS := -lSDLmain
 endif
 endif
