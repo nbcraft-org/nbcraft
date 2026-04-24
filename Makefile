@@ -49,6 +49,9 @@ else
 HEADERS += $(wildcard thirdparty/SDL/*.h)
 DEFINES += -DUSE_SDL -DUSE_SDL1
 LIBS += -lSDL
+ifeq ($(OS),Darwin)
+PRELIBS := -lSDLmain
+endif
 endif
 CXX_SRCS += platforms/sdl/$(PLATFORM)/main.cpp $(wildcard platforms/sdl/base/*.cpp) $(wildcard platforms/sdl/$(PLATFORM)/base/*.cpp) $(wildcard platforms/sdl/$(PLATFORM)/desktop/*.cpp)
 ifeq ($(GFX_API),OGL)
@@ -117,7 +120,7 @@ all: build/nbcraft
 build/nbcraft: $(OBJS)
 	ln -sf ../game/assets build
 	$(AR) rcs build/nbcraft.a $(OBJS)
-	$(CXX) $(LDFLAGS) build/nbcraft.a $(LIBS) -o build/nbcraft
+	$(CXX) $(LDFLAGS) $(PRELIBS) build/nbcraft.a $(LIBS) -o build/nbcraft
 
 build/%.cpp.o: %.cpp $(HEADERS)
 	@mkdir -p $(dir $@)
