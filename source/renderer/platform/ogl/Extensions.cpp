@@ -44,7 +44,7 @@ void* OGL::GetProcAddress(const char* name)
             result = (void*)GetProcAddress(handle, name);
         }
     }
-#elif MC_DYNAMIC_GL
+#elif MC_DYNAMIC_GL && defined(RTLD_NEXT)
     result = (void*)dlsym(RTLD_NEXT, name);
 #endif
 
