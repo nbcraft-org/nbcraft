@@ -73,7 +73,7 @@ bool Util::isValidPath(const std::string& path)
 {
 	for (size_t i = 0; i < path.size(); i++)
 	{
-		switch (path.at(i))
+		switch (path[i])
 		{
 		case '\n':
 		case '\r':

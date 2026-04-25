@@ -215,7 +215,7 @@ void Entity::move(const Vec3& pos)
 		AABBVector* cubes = m_pLevel->getCubes(this, AABB(m_hitbox).expand(newPos.x, newPos.y, newPos.z));
 
 		for (size_t i = 0; i < cubes->size(); ++i)
-			newPos.y = cubes->at(i).clipYCollide(m_hitbox, newPos.y);
+			newPos.y = (*cubes)[i].clipYCollide(m_hitbox, newPos.y);
 
 		m_hitbox.move(0.0f, newPos.y, 0.0f);
 		if (!m_bSlide && cPosY != newPos.y)
@@ -224,14 +224,14 @@ void Entity::move(const Vec3& pos)
 		bool lastsOnGround = m_bOnGround || (cPosY != newPos.y && cPosY < 0.0);
 
 		for (size_t i = 0; i < cubes->size(); ++i)
-			newPos.x = cubes->at(i).clipXCollide(m_hitbox, newPos.x);
+			newPos.x = (*cubes)[i].clipXCollide(m_hitbox, newPos.x);
 	
 		m_hitbox.move(newPos.x, 0.0f, 0.0f);
 		if (!m_bSlide && cPosX != newPos.x)
 			newPos = Vec3::ZERO;
 
 		for (size_t i = 0; i < cubes->size(); ++i)
-			newPos.z = cubes->at(i).clipZCollide(m_hitbox, newPos.z);
+			newPos.z = (*cubes)[i].clipZCollide(m_hitbox, newPos.z);
 
 		m_hitbox.move(0.0f, 0.0f, newPos.z);
 		if (!m_bSlide && cPosZ != newPos.z)
@@ -248,21 +248,21 @@ void Entity::move(const Vec3& pos)
 			cubes = m_pLevel->getCubes(this, AABB(m_hitbox).expand(cPosX, newPos.y, cPosZ));
 
 			for (size_t i = 0; i < cubes->size(); ++i)
-				newPos.y = cubes->at(i).clipYCollide(m_hitbox, newPos.y);
+				newPos.y = (*cubes)[i].clipYCollide(m_hitbox, newPos.y);
 
 			m_hitbox.move(0.0f, newPos.y, 0.0f);
 			if (!m_bSlide && cPosY != newPos.y)
 				newPos = Vec3::ZERO;
 
 			for (size_t i = 0; i < cubes->size(); ++i)
-				newPos.x = cubes->at(i).clipXCollide(m_hitbox, newPos.x);
+				newPos.x = (*cubes)[i].clipXCollide(m_hitbox, newPos.x);
 
 			m_hitbox.move(newPos.x, 0.0f, 0.0f);
 			if (!m_bSlide && cPosX != newPos.x)
 				newPos = Vec3::ZERO;
 
 			for (size_t i = 0; i < cubes->size(); ++i)
-				newPos.z = cubes->at(i).clipZCollide(m_hitbox, newPos.z);
+				newPos.z = (*cubes)[i].clipZCollide(m_hitbox, newPos.z);
 
 			m_hitbox.move(0.0f, 0.0f, newPos.z);
 			if (!m_bSlide && cPosZ != newPos.z)

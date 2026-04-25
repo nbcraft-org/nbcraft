@@ -78,9 +78,9 @@ Level::~Level()
 	SAFE_DELETE(m_pMobSpawner);
 
 	const size_t size = m_entities.size();
-	for (size_t i = 0; i < size; i++)
+	for (size_t i = 0; i < size; ++i)
 	{
-		Entity* pEnt = m_entities.at(i);
+		Entity* pEnt = m_entities[i];
 		
 		//you better HOPE this is freed by Minecraft! (or a NetworkHandler)
 		//Really should have used shared pointers and stuff.
