@@ -51,6 +51,10 @@ RAPIDJSON_DIAG_OFF(effc++)
 #undef GetObject
 #endif
 
+#if defined(__GNUC__) && (((__GNUC__ == 3) && (__GNUC_MINOR__ == 0)) || (__GNUC__ < 3))
+#define RAPIDJSON_NOMEMBERITERATORCLASS
+#endif
+
 #ifndef RAPIDJSON_NOMEMBERITERATORCLASS
 #include <iterator> // std::random_access_iterator_tag
 #endif
@@ -2957,8 +2961,8 @@ public:
     typedef GenericObject<false, ValueT> Object;
     typedef ValueT PlainType;
     typedef typename internal::MaybeAddConst<Const,PlainType>::Type ValueType;
-    typedef GenericMemberIterator<Const, typename ValueT::EncodingType, typename ValueT::AllocatorType> MemberIterator;  // This may be const or non-const iterator
-    typedef GenericMemberIterator<true, typename ValueT::EncodingType, typename ValueT::AllocatorType> ConstMemberIterator;
+    typedef typename GenericMemberIterator<Const, typename ValueT::EncodingType, typename ValueT::AllocatorType>::Iterator MemberIterator;  // This may be const or non-const iterator
+    typedef typename GenericMemberIterator<true, typename ValueT::EncodingType, typename ValueT::AllocatorType>::Iterator ConstMemberIterator;
     typedef typename ValueType::AllocatorType AllocatorType;
     typedef typename ValueType::StringRefType StringRefType;
     typedef typename ValueType::EncodingType EncodingType;
