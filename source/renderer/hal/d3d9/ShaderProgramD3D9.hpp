@@ -21,5 +21,10 @@ namespace mce
 
     public:
         void compileShaderProgram();
+
+	public:
+        static void SpliceShaderPath(std::string& shaderName);
+        static void SpliceShaderExtension(std::string& shaderName);
+        static void BuildHeader(RenderContext& context, std::ostringstream& stream);
     };
 }

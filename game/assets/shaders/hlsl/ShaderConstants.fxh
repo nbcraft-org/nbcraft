@@ -1,7 +1,7 @@
 // These [aren't but] should be grouped in a way that they require the least amount of updating (world data in one, model data in another, part of model data in another one, etc)
 
-#ifdef SHADER_TYPE_FRAGMENT
-#if defined(_DIRECT3D9)
+#ifdef _SHADER_TYPE_FRAGMENT
+#if _SHADER_TARGET_MAJOR <= 3
 texture TEXTURE_0 : register ( t0 );
 texture TEXTURE_1 : register ( t1 );
 texture TEXTURE_2 : register ( t2 );
@@ -42,7 +42,7 @@ sampler TextureSampler2 : register( s2 );
 #endif
 #endif
 
-#if defined(LOW_PRECISION) && !defined(_DIRECT3D9)
+#if defined(LOW_PRECISION) && _SHADER_TARAGET_MAJOR >= 4
 #define lpfloat min16float
 #define lpfloat4 min16float4
 #else
@@ -50,10 +50,12 @@ sampler TextureSampler2 : register( s2 );
 #define lpfloat4 float4
 #endif
 
-#ifdef _DIRECT3D9
+#if _SHADER_TARGET_MAJOR <= 3
 
-#define CBUFFER_BEGIN(name, reg) cbuffer name {
-#define CBUFFER_END }
+//#define CBUFFER_BEGIN(name, reg) cbuffer name {
+//#define CBUFFER_END }
+#define CBUFFER_BEGIN(name, reg)
+#define CBUFFER_END
 
 #define VS_MAIN_BEGIN PS_Input main( VS_Input VSInput ) { PS_Input PSInput; 
 #define VS_MAIN_END float2 __d3d9offset = (__D3D9_OFFSET_X, __D3D9_OFFSET_Y); PSInput.position.xy += __d3d9offset.xy * PSInput.position.w; return PSInput; }
@@ -63,7 +65,12 @@ sampler TextureSampler2 : register( s2 );
 #define R8G8B8A8_SNORM_UNSUPPORTED
 
 // D3D9 has OpenGL-like render state alpha testing
+#if _SHADER_TARGET_MAJOR <= 1 // error X3500: asymetric returns from if statements not yet implemented
+#define discard PSOutput.color = float4(0,0,0,0)
+#else // _SHADER_TARGET_MAJOR >= 2
 #define discard PSOutput.color = float4(0,0,0,0); return PSOutput
+#endif
+
 #define snorm
 
 // System-Value Semantics were introduced in D3D10
@@ -72,7 +79,7 @@ sampler TextureSampler2 : register( s2 );
 #define SV_Target COLOR
 #define SV_Depth DEPTH
 
-#else // !defined(_DIRECT3D9)
+#else // _SHADER_TARGET_MAJOR >= 4
 
 #define CBUFFER_BEGIN(name, reg) cbuffer name : register ( b##reg ) {
 #define CBUFFER_END }
@@ -82,7 +89,7 @@ sampler TextureSampler2 : register( s2 );
 #define PS_MAIN_BEGIN void main( in PS_Input PSInput, out PS_Output PSOutput ) {
 #define PS_MAIN_END }
 
-#endif // !defined(_DIRECT3D9)
+#endif // _SHADER_TARGET_MAJOR >= 4
 
 
 CBUFFER_BEGIN(RenderChunkConstants, 1)

@@ -28,7 +28,7 @@ PS_MAIN_BEGIN
     if( diffuse.a < 0.5 )
     {
         discard;
-    }
+    } else {
 #endif
 
 #ifdef GLINT
@@ -49,4 +49,7 @@ PS_MAIN_BEGIN
 #endif
 
     PSOutput.color = diffuse * PSInput.color;
+#ifdef ALPHA_TEST
+	}
+#endif
 PS_MAIN_END

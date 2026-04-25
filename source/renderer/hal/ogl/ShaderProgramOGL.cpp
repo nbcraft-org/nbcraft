@@ -1,4 +1,5 @@
 #include <cstring>
+#include <sstream>
 
 #include "ShaderProgramOGL.hpp"
 
@@ -43,7 +44,7 @@ void ShaderProgramOGL::deleteShader()
 
 std::string _getVersionMacro()
 {
-// for compatibility reason
+	// for compatibility reasons (I've heard GLES bitches about this or something)
 #if defined(__APPLE__) && TARGET_OS_IPHONE
     return "\n";
 #endif
@@ -158,6 +159,22 @@ bool ShaderProgramOGL::compileShaderProgram(std::string& shaderSource)
     ErrorHandlerOGL::checkForErrors();
 
     return true;
+}
+
+void ShaderProgramOGL::SpliceShaderPath(std::string& shaderName)
+{
+    ShaderProgramBase::SpliceShaderPath(shaderName, "/glsl");
+}
+
+void ShaderProgramOGL::BuildHeader(RenderContext& context, std::ostringstream& stream)
+{
+    Platform::OGL::Precision::BuildHeader(stream);
+    
+    const std::string& glExtensions = gl::getOpenGLExtensions();
+    bool supportsSDs = (glExtensions.find("GL_OES_standard_derivatives") != std::string::npos);
+
+    if (supportsSDs)
+        stream << "#extension GL_OES_standard_derivatives : enable\n";
 }
 
 #endif // FEATURE_GFX_SHADERS

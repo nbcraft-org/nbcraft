@@ -38,9 +38,6 @@ namespace mce
         void reflectShaderUniforms();
         void reflectShaderAttributes();
         void reflectShader();
-
-        static void SpliceShaderPath(std::string& shaderName);
-        static void BuildHeader(std::ostringstream& stream);
     };
 }
 

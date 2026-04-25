@@ -26,12 +26,13 @@ DWORD mapTypeToD3DLockType(MapType mapType)
     case MAP_READ:               return D3DLOCK_READONLY;
     case MAP_WRITE:              return 0x0;
     case MAP_WRITE_DISCARD:
-#ifdef D3DLOCK_DISCARD
-		return D3DLOCK_DISCARD;
-#else
+// Direct3D9: (ERROR) :Can specify D3DLOCK_DISCARD or D3DLOCK_NOOVERWRITE for only Vertex Buffers created with D3DUSAGE_DYNAMIC
+/*#ifdef D3DLOCK_DISCARD
+		return D3DLOCK_DISCARD; // may need to be disabled on some older GPUs, we'll see
+#else*/
         // 360 seems to discard by default
         return 0x0;
-#endif
+//#endif
     case MAP_WRITE_NO_OVERWRITE: return D3DLOCK_NOOVERWRITE;
     default:
         LOG_E("Unknown mapType: %d", mapType);
@@ -174,11 +175,11 @@ void BufferD3D9::updateBuffer(RenderContext& context, unsigned int stride, ByteB
     switch (m_bufferType)
     {
     case BUFFER_TYPE_VERTEX:
-        m_vertexBuffer->Lock(0, 0, &pData, lockFlags);
+        ErrorHandlerD3D9::checkForErrors(m_vertexBuffer->Lock(0, 0, &pData, lockFlags));
         break;
     case BUFFER_TYPE_INDEX:
         m_format = D3DFormatFromStride(stride);
-        m_indexBuffer->Lock(0, 0, &pData, lockFlags);
+        ErrorHandlerD3D9::checkForErrors(m_indexBuffer->Lock(0, 0, &pData, lockFlags));
         break;
     default:
         LOG_E("Unknown bufferType: %d", m_bufferType);

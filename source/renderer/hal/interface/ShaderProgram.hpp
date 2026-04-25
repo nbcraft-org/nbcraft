@@ -12,5 +12,8 @@ namespace mce
     {
     public:
         ShaderProgram(ShaderType shaderType, std::string& shaderSource, const std::string& header, const std::string& shaderPath);
+
+    public:
+        static void SpliceShaderPathAndExtension(std::string& shaderName);
     };
 }

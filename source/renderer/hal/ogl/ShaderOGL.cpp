@@ -285,21 +285,4 @@ void ShaderOGL::reflectShader()
     reflectShaderAttributes();
 }
 
-void ShaderOGL::SpliceShaderPath(std::string& shaderName)
-{
-    ShaderBase::SpliceShaderPath(shaderName, "/glsl");
-}
-
-void ShaderOGL::BuildHeader(std::ostringstream& stream)
-{
-    Platform::OGL::Precision::BuildHeader(stream);
-
-    
-    const std::string& glExtensions = gl::getOpenGLExtensions();
-    bool supportsSDs = (glExtensions.find("GL_OES_standard_derivatives") != std::string::npos);
-
-    if (supportsSDs)
-        stream << "#extension GL_OES_standard_derivatives : enable\n";
-}
-
 #endif // FEATURE_GFX_SHADERS

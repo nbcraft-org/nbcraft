@@ -20,6 +20,10 @@ namespace mce
     protected:
         void deleteShader();
         bool compileShaderProgram(std::string& shaderSource);
+
+	public:
+        static void SpliceShaderPath(std::string& shaderName);
+        static void BuildHeader(RenderContext& context, std::ostringstream& stream);
     };
 }
 
