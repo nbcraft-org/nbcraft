@@ -37,6 +37,15 @@ namespace DataStructures
 		if (a<b) return -1; if (a==b) return 0; return 1;
 	}
 
+	template <class key_type, class map_node_type, int (*key_comparison_func)(const key_type&, const key_type&)>
+	int MapNodeComparisonFunc(const key_type &a, const map_node_type &b)
+	{
+#ifdef _MSC_VER
+#pragma warning( disable : 4127 ) // warning C4127: conditional expression is constant
+#endif
+		return key_comparison_func(a, b.mapNodeKey);
+	}
+
 	/// \note IMPORTANT! If you use defaultMapKeyComparison then call IMPLEMENT_DEFAULT_COMPARISON or you will get an unresolved external linker error.
 	template <class key_type, class data_type, int (*key_comparison_func)(const key_type&, const key_type&)=defaultMapKeyComparison<key_type> >
 	class RAK_DLL_EXPORT Map
@@ -53,15 +62,6 @@ namespace DataStructures
 			key_type mapNodeKey;
 			data_type mapNodeData;
 		};
-
-		// Has to be a static because the comparison callback for DataStructures::OrderedList is a C function
-		static int NodeComparisonFunc(const key_type &a, const MapNode &b)
-		{
-#ifdef _MSC_VER
-#pragma warning( disable : 4127 ) // warning C4127: conditional expression is constant
-#endif
-			return key_comparison_func(a, b.mapNodeKey);
-		}
 
 		Map();
 		~Map();
@@ -86,7 +86,7 @@ namespace DataStructures
 		unsigned Size(void) const;
 
 	protected:
-		DataStructures::OrderedList< key_type,MapNode,&Map::NodeComparisonFunc > mapNodeList;
+		DataStructures::OrderedList< key_type,MapNode,&DataStructures::MapNodeComparisonFunc<key_type, MapNode, key_comparison_func> > mapNodeList;
 
 		void SaveLastSearch(const key_type &key, unsigned index) const;
 		bool HasSavedSearchResult(const key_type &key) const;
