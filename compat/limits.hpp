@@ -6,6 +6,8 @@
 
 #else
 
+/* GCC before 3.0 didn't have <limits> */
+
 #include <math.h>
 #include <float.h>
 
