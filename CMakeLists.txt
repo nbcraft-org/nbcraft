@@ -133,6 +133,8 @@ endif()
 
 message(STATUS "Selected GFX API: ${NBC_GFX_API}")
 
+include_directories(.)
+
 # stb_image And Other Libraries
 add_subdirectory(thirdparty/stb_image EXCLUDE_FROM_ALL)
 
