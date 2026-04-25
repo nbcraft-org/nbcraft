@@ -147,14 +147,14 @@ std::string Util::toString(float value)
 	return ss.str();
 }
 
+#ifndef MC_NO_WSTRING
+
 std::string Util::toString(const wchar_t* str)
 {
 	std::string result(wcslen(str), 0);
 	wcstombs((char*)result.data(), str, result.size());
 	return result;
 }
-
-#ifndef MC_NO_WSTRING
 
 std::string Util::toString(const std::wstring& str)
 {

@@ -19,7 +19,7 @@
 #include "internal/meta.h"
 
 #include <memory>
-#include <limits>
+#include "compat/limits.hpp"
 
 #if RAPIDJSON_HAS_CXX11
 #include <type_traits>
@@ -674,7 +674,7 @@ public:
         typedef StdAllocator<U, BaseAllocator> other;
     };
 
-    typedef typename allocator_type::value_type value_type;
+    typedef void value_type;
 
 private:
     template <typename, typename>

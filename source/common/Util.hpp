@@ -34,8 +34,8 @@ public:
 
 	static std::string toString(int value);
 	static std::string toString(float value);
-	static std::string toString(const wchar_t* str);
 #ifndef MC_NO_WSTRING
+	static std::string toString(const wchar_t* str);
 	static std::string toString(const std::wstring& str);
 	static std::wstring toWideString(const std::string& str);
 #endif

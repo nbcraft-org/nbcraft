@@ -27,7 +27,7 @@
 ///////////////////////////////////////////////////////////////////////////////////
 
 #include "../trigonometric.hpp"
-#include <limits>
+#include "compat/limits.hpp"
 
 namespace glm
 {

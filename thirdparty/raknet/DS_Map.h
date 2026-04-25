@@ -37,14 +37,28 @@ namespace DataStructures
 		if (a<b) return -1; if (a==b) return 0; return 1;
 	}
 
-	template <class key_type, class map_node_type, int (*key_comparison_func)(const key_type&, const key_type&)>
-	int MapNodeComparisonFunc(const key_type &a, const map_node_type &b)
+	template <class key_type, class data_type>
+	struct MapNodeData
 	{
+		MapNodeData() {}
+		MapNodeData(key_type _key, data_type _data) : mapNodeKey(_key), mapNodeData(_data) {}
+		MapNodeData& operator = ( const MapNodeData& input ) {mapNodeKey=input.mapNodeKey; mapNodeData=input.mapNodeData; return *this;}
+		MapNodeData( const MapNodeData & input) {mapNodeKey=input.mapNodeKey; mapNodeData=input.mapNodeData;}
+		key_type mapNodeKey;
+		data_type mapNodeData;
+	};
+
+	template <class key_type, class data_type, int (*key_comparison_func)(const key_type&, const key_type&)>
+	struct MapComparisonFunc
+	{
+		static int NodeComparisonFunc(const key_type &a, const MapNodeData<key_type, data_type> &b)
+		{
 #ifdef _MSC_VER
 #pragma warning( disable : 4127 ) // warning C4127: conditional expression is constant
 #endif
-		return key_comparison_func(a, b.mapNodeKey);
-	}
+			return key_comparison_func(a, b.mapNodeKey);
+		}
+	};
 
 	/// \note IMPORTANT! If you use defaultMapKeyComparison then call IMPLEMENT_DEFAULT_COMPARISON or you will get an unresolved external linker error.
 	template <class key_type, class data_type, int (*key_comparison_func)(const key_type&, const key_type&)=defaultMapKeyComparison<key_type> >
@@ -53,15 +67,7 @@ namespace DataStructures
 	public:
 		static void IMPLEMENT_DEFAULT_COMPARISON(void) {DataStructures::defaultMapKeyComparison<key_type>(key_type(),key_type());}
 
-		struct MapNode
-		{
-			MapNode() {}
-			MapNode(key_type _key, data_type _data) : mapNodeKey(_key), mapNodeData(_data) {}
-			MapNode& operator = ( const MapNode& input ) {mapNodeKey=input.mapNodeKey; mapNodeData=input.mapNodeData; return *this;}
-			MapNode( const MapNode & input) {mapNodeKey=input.mapNodeKey; mapNodeData=input.mapNodeData;}
-			key_type mapNodeKey;
-			data_type mapNodeData;
-		};
+		typedef DataStructures::MapNodeData<key_type, data_type> MapNode;
 
 		Map();
 		~Map();
@@ -86,7 +92,7 @@ namespace DataStructures
 		unsigned Size(void) const;
 
 	protected:
-		DataStructures::OrderedList< key_type,MapNode,&DataStructures::MapNodeComparisonFunc<key_type, MapNode, key_comparison_func> > mapNodeList;
+		DataStructures::OrderedList< key_type,MapNode,&DataStructures::MapComparisonFunc<key_type, data_type, key_comparison_func>::NodeComparisonFunc > mapNodeList;
 
 		void SaveLastSearch(const key_type &key, unsigned index) const;
 		bool HasSavedSearchResult(const key_type &key) const;
