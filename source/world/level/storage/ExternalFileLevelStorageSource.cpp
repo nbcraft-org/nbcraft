@@ -110,7 +110,7 @@ void ExternalFileLevelStorageSource::renameLevel(const std::string& oldName, con
 
 	const size_t size = vls.size();
 	for (size_t i = 0; i < size; i++)
-		maps.insert(vls.at(i).m_fileName);
+		maps.insert(vls[i].m_fileName);
 
 	std::string levelUniqueName = levelName;
 	while (maps.find(levelUniqueName) != maps.end())

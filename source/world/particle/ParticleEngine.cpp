@@ -196,7 +196,7 @@ void ParticleEngine::renderLit(const Entity& camera, float a)
 
 		for (size_t i = 0; i < m_particles[tt].size(); ++i)
 		{
-			Particle* p = m_particles[tt].at(i);
+			Particle* p = m_particles[tt][i];
 			p->render(t, a, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 		}
 
