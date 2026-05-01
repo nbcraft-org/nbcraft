@@ -16,6 +16,8 @@
 #include "client/resources/ResourcePackManager.hpp"
 #include "client/resources/ResourcePackRepository.hpp"
 
+#include <stdlib.h>
+
 const std::string SoundDesc::DIRS[] = {
     "sound",
     "newsound",
