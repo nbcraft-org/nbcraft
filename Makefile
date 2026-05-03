@@ -16,8 +16,12 @@ INCLUDES := -I. -Isource -Ithirdparty/zlib -Ithirdparty/raknet -Ithirdparty/rapi
 ifeq ($(OS),Darwin)
 LIBS := -lmx
 else
+ifeq ($(OS),SunOS)
+LIBS := -lsocket -lnsl
+else
 LIBS := -L/usr/X11R6/lib -pthread
 INCLUDES += -I/usr/X11R6/include
+endif
 endif
 
 HEADERS := $(wildcard compat/*.h) \
