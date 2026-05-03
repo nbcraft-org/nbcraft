@@ -29,7 +29,7 @@
 #include "../trigonometric.hpp"
 #include "../geometric.hpp"
 #include "../exponential.hpp"
-#include <limits>
+#include "compat/limits.hpp"
 
 namespace glm{
 namespace detail

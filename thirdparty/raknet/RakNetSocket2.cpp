@@ -8,6 +8,7 @@
  *
  */
 
+#include "../../compat/PlatformDefinitions.h"
 #include "RakNetSocket2.h"
 #include "RakMemoryOverride.h"
 #include "RakAssert.h"
@@ -35,7 +36,7 @@ using namespace RakNet;
 #include <sys/types.h>
 #include <lwip/sockets.h>
 #else
-#if (!defined(ANDROID) && !defined(__DREAMCAST__) && !defined(__SWITCH__))
+#if MC_SDK_LIBXENON
 #include <ifaddrs.h>
 #endif
 #include <netinet/in.h>

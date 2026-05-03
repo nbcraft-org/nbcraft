@@ -69,7 +69,6 @@ static void preInitGraphics()
 #if MCE_GFX_API_OGL
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-#else
 #endif
 }
 

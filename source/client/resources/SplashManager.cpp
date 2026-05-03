@@ -21,7 +21,7 @@ void SplashManager::init(const std::string& user)
         if (line[line.size() - 1] == '\r')
             line.erase(line.size() - 1);
 
-        if (line.compare(0, 2, "//") == 0)
+        if (line.size() >= 2 && line[0] == '/' && line[1] == '/')
             continue;
 
         m_splashes.push_back(line);

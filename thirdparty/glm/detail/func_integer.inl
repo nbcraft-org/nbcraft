@@ -37,7 +37,7 @@
 #	pragma intrinsic(_BitScanReverse)
 #endif//(GLM_COMPILER & GLM_COMPILER_VC)
 #endif//(GLM_ARCH != GLM_ARCH_PURE)
-#include <limits>
+#include "compat/limits.hpp"
 
 namespace glm
 {

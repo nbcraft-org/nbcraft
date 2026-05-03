@@ -9,7 +9,7 @@
 
 #include "../geometric.hpp"
 #include <cfloat>
-#include <limits>
+#include "compat/limits.hpp"
 
 namespace glm
 {

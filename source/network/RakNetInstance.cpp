@@ -238,7 +238,7 @@ void RakNetInstance::runEvents(NetEventCallback& callback)
 				// update the info of a pinged compatible server, if possible.
 				for (size_t i = 0; i < m_servers.size(); i++)
 				{
-					PingedCompatibleServer& server = m_servers.at(i);
+					PingedCompatibleServer& server = m_servers[i];
 					if (server.m_address == pPacket->systemAddress)
 					{
 						server.m_lastPinged = RakNet::GetTimeMS();

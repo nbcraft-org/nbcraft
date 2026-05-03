@@ -46,7 +46,6 @@ static void preInitGraphics()
 #endif
 	// Double-Buffering
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-#else
 #endif
 }
 
@@ -81,7 +80,6 @@ static void initGraphics()
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "OpenGL Error", mce::Platform::OGL::ERROR_MSG, window);
 		exit(EXIT_FAILURE);
 	}
-#else
 #endif
 }
 
@@ -89,7 +87,6 @@ static void teardownGraphics()
 {
 #if MCE_GFX_API_OGL
 	SDL_GL_DeleteContext(glContext);
-#else
 #endif
 }
 
@@ -312,7 +309,6 @@ static void resize()
 #if MCE_GFX_API_OGL
 	SDL_GL_GetDrawableSize(window,
 		&drawWidth, &drawHeight);
-#else
 #endif
 	
 	int windowWidth, windowHeight;

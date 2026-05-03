@@ -43,13 +43,13 @@ void ExternalFileLevelStorageSource::getLevelList(std::vector<LevelSummary>& vls
 
 		LOG_I("Entry: %s", de->d_name);
 
-#if defined( __HAIKU__ )
+#ifdef DT_DIR
+		if (de->d_type == DT_DIR)
+#else
 		std::string temp = m_worldsPath + '/' + de->d_name;
 
 		struct stat buf;
 		if ( ( lstat( temp.c_str(), &buf ) == 0 ) && S_ISDIR( buf.st_mode ) )
-#else
-		if (de->d_type == DT_DIR)
 #endif
 		{
 			addLevelSummaryIfExists(vls, de->d_name);
@@ -110,7 +110,7 @@ void ExternalFileLevelStorageSource::renameLevel(const std::string& oldName, con
 
 	const size_t size = vls.size();
 	for (size_t i = 0; i < size; i++)
-		maps.insert(vls.at(i).m_fileName);
+		maps.insert(vls[i].m_fileName);
 
 	std::string levelUniqueName = levelName;
 	while (maps.find(levelUniqueName) != maps.end())

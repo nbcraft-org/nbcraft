@@ -7,7 +7,7 @@
  ********************************************************************/
 
 #include <math.h>
-#include <limits>
+#include "compat/limits.hpp"
 
 #include "Random.hpp"
 

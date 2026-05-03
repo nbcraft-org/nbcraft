@@ -1,4 +1,5 @@
 #include <typeinfo>
+#include <algorithm>
 
 #include "TextureBase.hpp"
 #include "common/Logger.hpp"

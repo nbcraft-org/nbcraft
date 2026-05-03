@@ -85,9 +85,13 @@ extern "C" {
 #define GL_TEXTURE_MAX_LEVEL              0x813D
 #define GL_SMOOTH_POINT_SIZE_RANGE        0x0B12
 #define GL_SMOOTH_POINT_SIZE_GRANULARITY  0x0B13
-#define GL_SMOOTH_LINE_WIDTH_RANGE        0x0B22
 #define GL_SMOOTH_LINE_WIDTH_GRANULARITY  0x0B23
 #define GL_ALIASED_LINE_WIDTH_RANGE       0x846E
+#endif
+// This used to be above but some old mesa headers
+// define GL_VERSION_1_2 but not this for some reason.
+#ifndef GL_SMOOTH_LINE_WIDTH_RANGE
+#define GL_SMOOTH_LINE_WIDTH_RANGE        0x0B22
 #endif
 
 #ifndef GL_VERSION_1_2_DEPRECATED

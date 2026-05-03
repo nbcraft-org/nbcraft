@@ -42,7 +42,7 @@ inline SizeType StrLen(const char* s) {
 
 template <>
 inline SizeType StrLen(const wchar_t* s) {
-    return SizeType(std::wcslen(s));
+    return SizeType(::wcslen(s));
 }
 
 //! Custom strcmpn() which works on different character types.

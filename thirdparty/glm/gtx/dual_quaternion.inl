@@ -27,7 +27,7 @@
 ///////////////////////////////////////////////////////////////////////////////////
 
 #include "../geometric.hpp"
-#include <limits>
+#include "compat/limits.hpp"
 
 namespace glm{
 namespace detail

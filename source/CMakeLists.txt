@@ -535,7 +535,7 @@ add_library(nbcraft-core STATIC
     renderer/hal/interface/ShaderProgram.cpp
     renderer/hal/interface/Texture.cpp
 )
-target_include_directories(nbcraft-core PUBLIC . ..)
+target_include_directories(nbcraft-core PUBLIC .)
 
 # OGL Shader variant build hack
 if(NBC_GFX_API STREQUAL "OGL_SHADERS")

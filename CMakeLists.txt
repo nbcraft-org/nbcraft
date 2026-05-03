@@ -109,6 +109,20 @@ else()
     link_libraries(Threads::Threads)
 endif()
 
+# Enable dynamic OpenGL (Always enabled on Windows & Dreamcast regardless).
+# This only works on some platforms, and is only tested on Linux with Mesa, and Windows.
+# It will NOT work on Darwin based platforms like iOS or macOS, because they have
+# different symbol names for their GL functions and use macros to provide compatability.
+# It will also break any staticly linked builds.
+if(NBC_DYNAMIC_GL)
+    add_compile_definitions(MC_DYNAMIC_GL=1)
+endif()
+
+# Disables all use of wstring to allow building on C++ standard libraries without wstring support.
+if(NBC_NO_WSTRING)
+    add_compile_definitions(MC_NO_WSTRING)
+endif()
+
 # Disable thread local storage (needed for C++98 & iOS)
 add_compile_definitions(RAPIDJSON_NO_THREAD_LOCAL STBI_NO_THREAD_LOCALS)
 
@@ -118,6 +132,8 @@ if(NOT DEFINED NBC_GFX_API)
 endif()
 
 message(STATUS "Selected GFX API: ${NBC_GFX_API}")
+
+include_directories(.)
 
 # stb_image And Other Libraries
 add_subdirectory(thirdparty/stb_image EXCLUDE_FROM_ALL)
