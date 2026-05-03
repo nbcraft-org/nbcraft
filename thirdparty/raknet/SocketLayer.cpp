@@ -203,15 +203,11 @@ void SocketLayer::SetSocketOptions( __UDPSOCKET__ listenSocket, bool blockingSoc
 
 RakNet::RakString SocketLayer::GetSubNetForSocketAndIp(__UDPSOCKET__ inSock, RakNet::RakString inIpString)
 {
-	#if (!defined(__DREAMCAST__) && !defined(MC_NO_NETWORKING))
+#if (!defined(__DREAMCAST__) && !defined(MC_NO_NETWORKING) && !defined(__sun__))
 	RakNet::RakString netMaskString;
 	RakNet::RakString ipString;
 
-
-
-
-
-#if   defined(WINDOWS_STORE_RT) || defined(_XBOX) || defined(XENON)
+#if defined(WINDOWS_STORE_RT) || defined(_XBOX) || defined(XENON)
 	RakAssert("Not yet supported" && 0);
 	return "";
 #elif defined(_WIN32)
