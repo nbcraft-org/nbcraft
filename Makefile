@@ -131,7 +131,7 @@ all: build/nbcraft
 build/nbcraft: $(OBJS)
 	ln -sf ../game/assets build
 	$(AR) rcs build/nbcraft.a $(OBJS)
-	$(CXX) $(LDFLAGS) $(PRELIBS) build/nbcraft.a $(LIBS) -o build/nbcraft
+	$(CXX) $(LDFLAGS) $(PRELIBS) build/nbcraft.a $(LIBS) -o $@
 
 build/%.cpp.o: %.cpp $(HEADERS)
 	@mkdir -p $(dir $@)
