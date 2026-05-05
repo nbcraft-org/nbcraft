@@ -40,8 +40,10 @@ DWORD _getCompilerFlags(RenderContext& context, ShaderType shaderType)
 	 * OCT2006_d3dx9_31_x86.cab or OCT2006_d3dx9_31_x64.cab must be included as part of the applications redist.
 	 * This flag is required to compile ps_1_x shaders without using the promotion flag to ps_2_0.
 	 */
+#ifdef D3DXSHADER_USE_LEGACY_D3DX9_31_DLL
 	if (major == 1)
 		compilerFlags &= D3DXSHADER_USE_LEGACY_D3DX9_31_DLL;
+#endif
 
 	return compilerFlags;
 }

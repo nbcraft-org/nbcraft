@@ -5,7 +5,6 @@
 #include "API_D3D.hpp"
 
 #include "renderer/hal/base/ShaderProgramBase.hpp"
-#include "thirdparty/com/ComInterface.hpp"
 
 namespace mce
 {

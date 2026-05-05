@@ -1,5 +1,3 @@
-#include <cstring>
-
 #include "API_D3D.hpp"
 
 #include "ShaderProgramD3D.hpp"
