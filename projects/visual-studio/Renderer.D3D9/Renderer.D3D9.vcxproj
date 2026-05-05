@@ -79,6 +79,11 @@
     </ProjectReference>
     <ProjectReference Include="..\Renderer.D3D\Renderer.D3D.vcxproj">
       <Project>{b44ad6b2-8197-4f41-857c-6a6d69f7bdf4}</Project>
+      <Private>true</Private>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">

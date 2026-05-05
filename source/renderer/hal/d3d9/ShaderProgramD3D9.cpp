@@ -42,7 +42,7 @@ DWORD _getCompilerFlags(RenderContext& context, ShaderType shaderType)
 	 */
 #ifdef D3DXSHADER_USE_LEGACY_D3DX9_31_DLL
 	if (major == 1)
-		compilerFlags &= D3DXSHADER_USE_LEGACY_D3DX9_31_DLL;
+		compilerFlags |= D3DXSHADER_USE_LEGACY_D3DX9_31_DLL;
 #endif
 
 	return compilerFlags;
