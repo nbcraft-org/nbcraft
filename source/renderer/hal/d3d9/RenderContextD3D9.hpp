@@ -41,6 +41,7 @@ namespace mce
     private:
         IDirect3D9* m_pD3D;
         D3DDevice m_d3dDevice;
+        int m_shaderLangVersions[SHADER_TYPES_COUNT][2];
 
     public:
         D3DVIEWPORT9 m_viewport;
@@ -71,7 +72,7 @@ namespace mce
 		void resume();
         void swapBuffers();
 
-        void getShaderLangVersion(ShaderType shaderType, int& major, int& minor) const;
+        void getShaderLangVersion(ShaderType shaderType, int& major, int& minor);
 
         bool supports8BitIndices() const;
 

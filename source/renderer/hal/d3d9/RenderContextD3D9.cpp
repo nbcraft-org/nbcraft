@@ -51,6 +51,8 @@ RenderContextD3D9::RenderContextD3D9()
     m_width = 0;
     m_height = 0;
 
+    memset(&m_shaderLangVersions, -1, sizeof(m_shaderLangVersions));
+
     // wasn't here in 0.12.1, but where else is it supposed to go?
     createDeviceResources();
 }
@@ -207,28 +209,38 @@ void RenderContextD3D9::swapBuffers()
     ErrorHandlerD3D9::checkForErrors(hr);
 }
 
-void RenderContextD3D9::getShaderLangVersion(ShaderType shaderType, int& major, int& minor) const
+void RenderContextD3D9::getShaderLangVersion(ShaderType shaderType, int& major, int& minor)
 {
-    // For the Radeon 9000 (performs worse than OpenGL for some reason)
-    /*switch (shaderType)
+    // Check cache
+    int* shaderLangVersion = m_shaderLangVersions[shaderType];
+    major = shaderLangVersion[0];
+    minor = shaderLangVersion[1];
+
+    if (major != -1 && minor != -1)
+        return;
+
+    D3DCAPS9 caps;
+    m_d3dDevice->GetDeviceCaps(&caps);
+
+    switch (shaderType)
     {
     case SHADER_TYPE_VERTEX:
-        major = 1;
-        minor = 1;
+        major = D3DSHADER_VERSION_MAJOR(caps.VertexShaderVersion);
+        minor = D3DSHADER_VERSION_MINOR(caps.VertexShaderVersion);
         break;
     case SHADER_TYPE_FRAGMENT:
-        major = 1;
-        minor = 4;
+        major = D3DSHADER_VERSION_MAJOR(caps.PixelShaderVersion);
+        minor = D3DSHADER_VERSION_MINOR(caps.PixelShaderVersion);
         break;
 
     default:
         LOG_E("Unknown shader type: %d", shaderType);
         throw std::bad_cast();
-    }*/
+    }
 
-    // For the Xbox 360
-    major = 3;
-    minor = 0;
+    // Cache the result
+    shaderLangVersion[0] = major;
+    shaderLangVersion[1] = minor;
 }
 
 bool RenderContextD3D9::supports8BitIndices() const

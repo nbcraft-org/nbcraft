@@ -117,7 +117,7 @@ void RenderContextD3D11::swapBuffers()
     }
 }
 
-void RenderContextD3D11::getShaderLangVersion(ShaderType shaderType, int& major, int& minor) const
+void RenderContextD3D11::getShaderLangVersion(ShaderType shaderType, int& major, int& minor)
 {
     // https://learn.microsoft.com/en-us/windows/win32/direct3d11/overviews-direct3d-11-devices-downlevel-intro
     switch (m_featureLevel)

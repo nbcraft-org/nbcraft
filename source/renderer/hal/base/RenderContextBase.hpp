@@ -62,7 +62,7 @@ namespace mce
         void*& getActiveClientBuffer(BufferType bufferType);
         const void* getActiveClientBuffer(BufferType bufferType) const;
 
-        void getShaderLangVersion(ShaderType shaderType, int& major, int& minor) const;
+        void getShaderLangVersion(ShaderType shaderType, int& major, int& minor);
         
         int getMaxVertexCount() const         { return -1;   }
         bool supports8BitIndices() const      { return true; }

@@ -28,6 +28,24 @@ void _translateShaderSource(std::string& source)
     Util::stringReplace(source, "TEXCOORD_", "TEXCOORD");
 }
 
+DWORD _getCompilerFlags(RenderContext& context, ShaderType shaderType)
+{
+	DWORD compilerFlags = 0x0;
+
+	int major, minor;
+	context.getShaderLangVersion(shaderType, major, minor);
+
+	/*
+	 * Enable the use of the original Direct3D 9 HLSL compiler.
+	 * OCT2006_d3dx9_31_x86.cab or OCT2006_d3dx9_31_x64.cab must be included as part of the applications redist.
+	 * This flag is required to compile ps_1_x shaders without using the promotion flag to ps_2_0.
+	 */
+	if (major == 1)
+		compilerFlags &= D3DXSHADER_USE_LEGACY_D3DX9_31_DLL;
+
+	return compilerFlags;
+}
+
 void ShaderProgramD3D9::compileShaderProgram()
 {
     if (!m_shaderBytecode.empty())
@@ -43,6 +61,7 @@ void ShaderProgramD3D9::compileShaderProgram()
 
     RenderContext& renderContext = RenderContextImmediate::get();
     std::string shaderTarget = _GetShaderTarget(renderContext, m_shaderType);
+	DWORD compilerFlags = _getCompilerFlags(renderContext, m_shaderType);
 
     HRESULT hResult;
     ComInterface<ID3DXBuffer> code, errorMsgs;
@@ -52,7 +71,7 @@ void ShaderProgramD3D9::compileShaderProgram()
         NULL,
         "main",
         shaderTarget.c_str(),
-        0x0, // D3DXSHADER_USE_LEGACY_D3DX9_31_DLL,
+        compilerFlags,
         *code, *errorMsgs,
         NULL);
     if (hResult != S_OK)

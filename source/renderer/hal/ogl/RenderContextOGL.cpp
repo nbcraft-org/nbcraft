@@ -286,7 +286,7 @@ void RenderContextOGL::clearContextState()
 #endif
 }
 
-void RenderContextOGL::getShaderLangVersion(ShaderType shaderType, int& major, int& minor) const
+void RenderContextOGL::getShaderLangVersion(ShaderType shaderType, int& major, int& minor)
 {
     major = 1; minor = 40;
     const gl::Version& glVersion = gl::Version::singleton();

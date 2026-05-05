@@ -77,7 +77,7 @@ namespace mce
         void setRenderTarget();
         void swapBuffers();
 
-        void getShaderLangVersion(ShaderType shaderType, int& major, int& minor) const;
+        void getShaderLangVersion(ShaderType shaderType, int& major, int& minor);
 
         void createDeviceResources();
         void createWindowSizeDependentResources(HWND hWnd, const Vec2& logicalSize, const Vec2& compositionScale);
