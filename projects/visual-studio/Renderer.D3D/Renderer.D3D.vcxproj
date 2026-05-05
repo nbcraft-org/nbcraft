@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Xbox 360">
+      <Configuration>Debug</Configuration>
+      <Platform>Xbox 360</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Xbox 360">
+      <Configuration>Release</Configuration>
+      <Platform>Xbox 360</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\d3d\API_D3D.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\d3d\RenderContextD3D.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\d3d\RenderDeviceD3D.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\d3d\ShaderProgramD3D.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\d3d\API_D3D.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\d3d\API_D3DCompiler.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\d3d\RenderContextD3D.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\d3d\RenderDeviceD3D.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\d3d\ShaderProgramD3D.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\COM\COM.vcxproj">
+      <Project>{bc0701d1-0634-4754-b078-65a45bf01fa1}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{b44ad6b2-8197-4f41-857c-6a6d69f7bdf4}</ProjectGuid>
+    <RootNamespace>Renderer.D3D</RootNamespace>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ProjectName>Renderer.D3D</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="NBCraft">
+    <Import Project="../Directory.Build.props" Condition="'$(MC_GLOBAL_PROPS)'==''" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

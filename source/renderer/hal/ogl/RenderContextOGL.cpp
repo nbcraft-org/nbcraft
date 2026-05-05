@@ -23,8 +23,8 @@ const RenderContextOGL::VertexFieldFormat RenderContextOGL::vertexFieldFormats[]
     { GL_SHORT,          2, GL_TRUE  }  // VERTEX_FIELD_UV1      : VERTEX_FIELD_TYPE_SINT16_2_N
 #endif // FEATURE_GFX_SHADERS
 #else
-    { GL_FLOAT,          2, GL_FALSE  }, // VERTEX_FIELD_UV0      : VERTEX_FIELD_TYPE_FLOAT32_2
-    { GL_FLOAT,          2, GL_FALSE  }  // VERTEX_FIELD_UV1      : VERTEX_FIELD_TYPE_FLOAT32_2
+    { GL_FLOAT,          2, GL_FALSE  }, // VERTEX_FIELD_UV0     : VERTEX_FIELD_TYPE_FLOAT32_2
+    { GL_FLOAT,          2, GL_FALSE  }  // VERTEX_FIELD_UV1     : VERTEX_FIELD_TYPE_FLOAT32_2
 #endif // ENH_GFX_COMPACT_UVS
 };
 
@@ -284,6 +284,82 @@ void RenderContextOGL::clearContextState()
 #ifndef FEATURE_GFX_SHADERS
     disableFixedLighting(false);
 #endif
+}
+
+void RenderContextOGL::getShaderLangVersion(ShaderType shaderType, int& major, int& minor) const
+{
+    major = 1; minor = 40;
+    const gl::Version& glVersion = gl::Version::singleton();
+
+    if (glVersion.gles)
+    {
+        /*
+            GLES version  GLSL version
+            2.0           1.00 ES
+            3.0           3.00 ES
+            3.1           3.10 ES
+        */
+        switch (glVersion.major)
+        {
+        case 2:
+            major = 1; minor = 0;
+            break;
+        default:
+            major = 3; minor = 0; // "300 es"
+            break;
+        }
+    }
+    else
+    {
+        /*
+            GL version  GLSL version
+            2.0         1.10
+            2.1         1.20
+            3.0         1.30
+            3.1         1.40
+            3.2         1.50
+            3.3         3.30
+            4.0         4.00
+            4.1         4.10
+            4.2         4.20
+            4.3         4.30
+            4.4         4.40
+            4.5         4.50
+        */
+        switch (glVersion.major)
+        {
+        case 2:
+        {
+            switch (glVersion.minor)
+            {
+            case 0: major = 1; minor = 10; break;
+            case 1: major = 1; minor = 20; break;
+            }
+            break;
+        }
+        case 3:
+        {
+            switch (glVersion.minor)
+            {
+            case 0: major = 1; minor = 30; break;
+            case 1: major = 1; minor = 40; break;
+            case 2: major = 1; minor = 50; break;
+            case 3: major = 3; minor = 30; break;
+            }
+            break;
+        }
+        case 4:
+        {
+            switch (glVersion.minor)
+            {
+            case 0: major = 4; minor = 0; break;
+            case 1: major = 4; minor = 10; break;
+                // 4.2 and above support GLSL 4.20 and all versions back to 1.40
+            }
+            break;
+        }
+        }
+    }
 }
 
 GLuint& RenderContextOGL::getActiveBufferUnit(BufferType bufferType)

@@ -1303,6 +1303,9 @@ void Minecraft::gotoMainMenu()
 {
 #if MC_PLATFORM_CONSOLE
 	m_pSoundEngine->playMusic();
+#else
+	if (getOptions()->getUiTheme() == UI_CONSOLE)
+		m_pSoundEngine->playMusic();
 #endif
 	getScreenChooser()->pushStartScreen();
 }

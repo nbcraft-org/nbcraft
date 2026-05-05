@@ -87,6 +87,8 @@ namespace mce
         void clearStencilBuffer();
         void clearDepthStencilBuffer();
         void clearContextState();
+
+        void getShaderLangVersion(ShaderType shaderType, int& major, int& minor) const;
         
         int getMaxVertexCount() const { return gl::getMaxVertexCount(); }
         bool supports32BitIndices() const { return gl::supports32BitIndices(); }

@@ -45,7 +45,7 @@ bool RenderContextD3D9::VertexDeclID::operator==(const RenderContextD3D9::Vertex
 }
 
 RenderContextD3D9::RenderContextD3D9()
-    : RenderContextBase()
+    : RenderContextD3D()
 {
     memset(&m_viewport, 0, sizeof(m_viewport));
     m_width = 0;
@@ -112,10 +112,14 @@ void RenderContextD3D9::drawIndexed(PrimitiveMode primitiveMode, unsigned int co
 void RenderContextD3D9::drawIndexed(PrimitiveMode primitiveMode, unsigned int count, unsigned int startOffset, uint8_t indexSize)
 {
 	unsigned int vertexCount;
+#ifdef _XBOX
+	vertexCount = 0;
+#else
 	if (primitiveMode == PRIMITIVE_MODE_QUAD_LIST)
 		vertexCount = (count / 6) * 4;
 	else
 		vertexCount = count;
+#endif
 
     ErrorHandlerD3D9::checkForErrors(
         m_d3dDevice->DrawIndexedPrimitive(modeMap[primitiveMode], 0, 0, vertexCount, startOffset, _getPrimitiveCount(primitiveMode, count))
@@ -201,6 +205,30 @@ void RenderContextD3D9::swapBuffers()
 {
     HRESULT hr = m_d3dDevice->Present(NULL, NULL, NULL, NULL);
     ErrorHandlerD3D9::checkForErrors(hr);
+}
+
+void RenderContextD3D9::getShaderLangVersion(ShaderType shaderType, int& major, int& minor) const
+{
+    // For the Radeon 9000 (performs worse than OpenGL for some reason)
+    /*switch (shaderType)
+    {
+    case SHADER_TYPE_VERTEX:
+        major = 1;
+        minor = 1;
+        break;
+    case SHADER_TYPE_FRAGMENT:
+        major = 1;
+        minor = 4;
+        break;
+
+    default:
+        LOG_E("Unknown shader type: %d", shaderType);
+        throw std::bad_cast();
+    }*/
+
+    // For the Xbox 360
+    major = 3;
+    minor = 0;
 }
 
 bool RenderContextD3D9::supports8BitIndices() const

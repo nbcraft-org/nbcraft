@@ -14,60 +14,12 @@
 using namespace mce;
 
 ShaderProgramD3D9::ShaderProgramD3D9(ShaderType shaderType, std::string& shaderSource, const std::string& header, const std::string& shaderPath)
-    : ShaderProgramBase(header, shaderPath, shaderType)
+    : ShaderProgramD3D(shaderType, shaderSource, header, shaderPath)
 {
-    m_shaderSource = shaderSource;
 }
 
 ShaderProgramD3D9::~ShaderProgramD3D9()
 {
-}
-
-std::string _getShaderModelType(ShaderType shaderType)
-{
-    switch (shaderType)
-    {
-    case SHADER_TYPE_VERTEX:   return "vs";
-    case SHADER_TYPE_FRAGMENT: return "ps";
-    case SHADER_TYPE_GEOMETRY: return "gs";
-
-    default:
-        LOG_E("Unknown shader type: %d", shaderType);
-        throw std::bad_cast();
-    }
-}
-
-void _getShaderModelVersion(ShaderType shaderType, int& major, int& minor)
-{
-	// For the Radeon 9000
-	/*switch (shaderType)
-	{
-	case SHADER_TYPE_VERTEX:
-		major = 1;
-		minor = 1;
-		break;
-	case SHADER_TYPE_FRAGMENT:
-		major = 1;
-		minor = 4;
-		break;
-
-    default:
-        LOG_E("Unknown shader type: %d", shaderType);
-        throw std::bad_cast();
-	}*/
-
-	// For the Xbox 360
-	major = 3;
-	minor = 0;
-}
-
-std::string _getShaderTarget(ShaderType shaderType)
-{
-    std::string shaderModelType = _getShaderModelType(shaderType);
-	int major, minor;
-	_getShaderModelVersion(shaderType, major, minor);
-
-    return shaderModelType + "_" + Util::toString(major) + "_" + Util::toString(minor);
 }
 
 void _translateShaderSource(std::string& source)
@@ -90,7 +42,7 @@ void ShaderProgramD3D9::compileShaderProgram()
     _translateShaderSource(m_shaderSource);
 
     RenderContext& renderContext = RenderContextImmediate::get();
-    std::string shaderTarget = _getShaderTarget(m_shaderType);
+    std::string shaderTarget = _GetShaderTarget(renderContext, m_shaderType);
 
     HRESULT hResult;
     ComInterface<ID3DXBuffer> code, errorMsgs;
@@ -141,46 +93,14 @@ void ShaderProgramD3D9::compileShaderProgram()
     m_bValid = bSuccess;
 }
 
-void ShaderProgramD3D9::SpliceShaderPath(std::string& shaderName)
-{
-    ShaderProgramBase::SpliceShaderPath(shaderName, "/hlsl");
-}
-
-void ShaderProgramD3D9::SpliceShaderExtension(std::string& shaderName)
-{
-    ShaderProgramBase::SpliceShaderExtension(shaderName, ".hlsl");
-}
-
-void _writeShaderTargetMacros(std::ostringstream& stream, int major, int minor)
-{
-	stream << "#define _SHADER_TARGET_MAJOR " << major << "\n";
-	stream << "#define _SHADER_TARGET_MINOR " << minor << "\n";
-}
-
-void _writeShaderTargetMacros(std::ostringstream& stream, ShaderType shaderType)
-{
-	int major, minor;
-	_getShaderModelVersion(shaderType, major, minor);
-	_writeShaderTargetMacros(stream, major, minor);
-}
-
-void _writeVersionMacros(RenderContext& context, std::ostringstream& stream)
+void ShaderProgramD3D9::BuildHeader(RenderContext& context, std::ostringstream& stream)
 {
     stream << "#define _DIRECT3D9\n";
 #ifdef _XBOX
     stream << "#define _XBOX\n";
 #endif
 
-	stream << "#ifdef _SHADER_TYPE_VERTEX\n";
-	_writeShaderTargetMacros(stream, SHADER_TYPE_VERTEX);
-	stream << "#elif defined(_SHADER_TYPE_FRAGMENT)\n";
-	_writeShaderTargetMacros(stream, SHADER_TYPE_FRAGMENT);
-	stream << "#endif\n";
-}
-
-void ShaderProgramD3D9::BuildHeader(RenderContext& context, std::ostringstream& stream)
-{
-	_writeVersionMacros(context, stream);
+    ShaderProgramD3D::BuildHeader(context, stream);
 
     // hack to fix dumb D3D9 bullshit: https://www.virtualdub.org/blog2/entry_366.html
     stream << "#define __D3D9_OFFSET_X " << (-1.0f / Minecraft::width) << "\n";

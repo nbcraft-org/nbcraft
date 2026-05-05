@@ -312,7 +312,7 @@ void ShaderD3D9::reflectShaderAttributes(const std::string& shaderBytecode)
     m_attributeListIndex = RenderDevice::getInstance().registerOrGetAttributeListIndex(attrList);
 }
 
-void ShaderD3D9::reflectShader(const ShaderProgramD3D9& shaderProgram, ShaderType shaderType)
+void ShaderD3D9::reflectShader(const ShaderProgramD3D& shaderProgram, ShaderType shaderType)
 {
     if (!shaderProgram.isValid())
     {

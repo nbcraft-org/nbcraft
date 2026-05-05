@@ -81,3 +81,9 @@ const void* RenderContextBase::getActiveClientBuffer(BufferType bufferType) cons
 
     return m_activeClientBuffers[bufferType];
 }
+
+void RenderContextBase::getShaderLangVersion(ShaderType shaderType, int& major, int& minor) const
+{
+    assert(!"RenderContext::getShaderLangVersion() not implemented!");
+    major = 0; minor = 0;
+}
