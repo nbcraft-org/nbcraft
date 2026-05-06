@@ -4,8 +4,8 @@ project(nbcraft-renderer-dxgi)
 # Build
 add_library(nbcraft-renderer-dxgi STATIC
     API_DXGI.cpp
-    helpers\ErrorHandlerDXGI.cpp
-	helpers\TextureHelperDXGI.cpp
+    helpers/ErrorHandlerDXGI.cpp
+	helpers/TextureHelperDXGI.cpp
 )
 
 # Libraries
