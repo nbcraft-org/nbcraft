@@ -19,7 +19,7 @@
 #include "internal/meta.h"
 
 #include <memory>
-#include "compat/limits.hpp"
+#include "compat/Limits.hpp"
 
 #if RAPIDJSON_HAS_CXX11
 #include <type_traits>

@@ -23,7 +23,7 @@
 #include "memorystream.h"
 #include "encodedstream.h"
 #include <new>      // placement new
-#include "compat/limits.hpp"
+#include "compat/Limits.hpp"
 #ifdef __cpp_lib_three_way_comparison
 #include <compare>
 #endif

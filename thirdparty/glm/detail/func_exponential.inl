@@ -28,7 +28,7 @@
 
 #include "func_vector_relational.hpp"
 #include "_vectorize.hpp"
-#include "compat/limits.hpp"
+#include "compat/Limits.hpp"
 #include <cassert>
 
 namespace glm{

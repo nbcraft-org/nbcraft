@@ -7,7 +7,7 @@
 // File    : glm/gtx/quaternion.inl
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "compat/limits.hpp"
+#include "compat/Limits.hpp"
 #include "../gtc/constants.hpp"
 
 namespace glm

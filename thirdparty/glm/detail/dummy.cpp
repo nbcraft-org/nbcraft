@@ -32,7 +32,7 @@
 #define GLM_FORCE_RADIANS
 #define GLM_MESSAGES
 #include "../glm.hpp"
-#include "compat/limits.hpp"
+#include "compat/Limits.hpp"
 
 struct material
 {
