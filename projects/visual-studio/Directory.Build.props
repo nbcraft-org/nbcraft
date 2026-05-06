@@ -57,7 +57,7 @@
   
   <!-- GFX Macros -->
   <PropertyGroup Label="UserMacros" Condition="'$(MC_GFX_API)'=='OGL'">
-    <MC_GFX_API_MACRO>MCE_GFX_API_OGL;</MC_GFX_API_MACRO>
+    <MC_GFX_API_MACRO>MCE_GFX_API_OGL</MC_GFX_API_MACRO>
   </PropertyGroup>
   <PropertyGroup Label="UserMacros" Condition="'$(MC_GFX_API)'=='D3D9'">
     <MC_GFX_API_MACRO>MCE_GFX_API_D3D9;FEATURE_GFX_SHADERS</MC_GFX_API_MACRO>

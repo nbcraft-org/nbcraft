@@ -546,75 +546,16 @@ endif()
 
 if(NBC_GFX_API STREQUAL "OGL")
     target_compile_definitions(nbcraft-core PUBLIC MCE_GFX_API_OGL=1)
-    target_sources(nbcraft-core PRIVATE
-        renderer/hal/ogl/API_OGL.cpp
-        renderer/hal/ogl/AlphaStateOGL.cpp
-        renderer/hal/ogl/BlendStateOGL.cpp
-        renderer/hal/ogl/BufferOGL.cpp
-        renderer/hal/ogl/ConstantBufferContainerOGL.cpp
-        renderer/hal/ogl/DepthStencilStateOGL.cpp
-        renderer/hal/ogl/RenderStateOGL.cpp
-        renderer/hal/ogl/FogStateOGL.cpp
-        renderer/hal/ogl/GPUEventsOGL.cpp
-        renderer/hal/ogl/ImmediateBufferOGL.cpp
-        renderer/hal/ogl/ProfileSectionOGL.cpp
-        renderer/hal/ogl/RasterizerStateOGL.cpp
-        renderer/hal/ogl/RenderContextOGL.cpp
-        renderer/hal/ogl/RenderDeviceOGL.cpp
-        renderer/hal/ogl/ResourceOGL.cpp
-        renderer/hal/ogl/ShaderConstantOGL.cpp
-        renderer/hal/ogl/ShaderConstantWithDataOGL.cpp
-        renderer/hal/ogl/ShaderOGL.cpp
-        renderer/hal/ogl/ShaderProgramOGL.cpp
-        renderer/hal/ogl/ShaderResourceOGL.cpp
-        renderer/hal/ogl/ShaderUniformOGL.cpp
-        renderer/hal/ogl/TextureOGL.cpp
-        renderer/hal/ogl/helpers/ErrorHandlerOGL.cpp
-        renderer/platform/ogl/Extensions.cpp
-        renderer/platform/ogl/ShaderPrecision.cpp
-    )
+	add_subdirectory(renderer/hal/ogl nbcraft-renderer-ogl)
+    target_link_libraries(nbcraft-core PUBLIC nbcraft-renderer-ogl)
 elseif(NBC_GFX_API STREQUAL "D3D11")
     target_compile_definitions(nbcraft-core PUBLIC MCE_GFX_API_D3D11=1 FEATURE_GFX_SHADERS)
-    target_sources(nbcraft-core PRIVATE
-        renderer/hal/d3d11/API_D3D11.cpp
-        renderer/hal/d3d11/BlendStateD3D11.cpp
-        renderer/hal/d3d11/BufferD3D11.cpp
-        renderer/hal/d3d11/ConstantBufferContainerD3D11.cpp
-        renderer/hal/d3d11/DepthStencilStateD3D11.cpp
-        renderer/hal/d3d11/GPUEventsD3D11.cpp
-        renderer/hal/d3d11/ImmediateBufferD3D11.cpp
-        renderer/hal/d3d11/ProfileSectionD3D11.cpp
-        renderer/hal/d3d11/RasterizerStateD3D11.cpp
-        renderer/hal/d3d11/RenderContextD3D11.cpp
-        renderer/hal/d3d11/RenderDeviceD3D11.cpp
-        renderer/hal/d3d11/ShaderConstantD3D11.cpp
-        renderer/hal/d3d11/ShaderConstantWithDataD3D11.cpp
-        renderer/hal/d3d11/ShaderD3D11.cpp
-        renderer/hal/d3d11/ShaderProgramD3D11.cpp
-        renderer/hal/d3d11/ShaderResourceD3D11.cpp
-        renderer/hal/d3d11/TextureD3D11.cpp
-        renderer/hal/d3d11/helpers/TextureHelperD3D11.cpp
-        renderer/hal/dxgi/API_DXGI.cpp
-        renderer/hal/dxgi/helpers/ErrorHandlerDXGI.cpp
-        renderer/hal/dxgi/helpers/TextureHelperDXGI.cpp
-    )
+	add_subdirectory(renderer/hal/d3d11 nbcraft-renderer-d3d11)
+    target_link_libraries(nbcraft-core PUBLIC nbcraft-renderer-d3d11)
 elseif((NOT DEFINED NBC_GFX_API) OR (NBC_GFX_API STREQUAL "Null"))
     target_compile_definitions(nbcraft-core PUBLIC MCE_GFX_API_NULL=1)
-    target_sources(nbcraft-core PRIVATE
-        renderer/hal/null/BlendStateNull.cpp
-        renderer/hal/null/BufferNull.cpp
-        renderer/hal/null/ConstantBufferContainerNull.cpp
-        renderer/hal/null/DepthStencilStateNull.cpp
-        renderer/hal/null/ImmediateBufferNull.cpp
-        renderer/hal/null/RasterizerStateNull.cpp
-        renderer/hal/null/RenderContextNull.cpp
-        renderer/hal/null/RenderDeviceNull.cpp
-        renderer/hal/null/ShaderConstantNull.cpp
-        renderer/hal/null/ShaderConstantWithDataNull.cpp
-        renderer/hal/null/ShaderNull.cpp
-        renderer/hal/null/ShaderProgramNull.cpp
-        renderer/hal/null/TextureNull.cpp
-    )
+	add_subdirectory(renderer/hal/null nbcraft-renderer-null)
+    target_link_libraries(nbcraft-core PUBLIC nbcraft-renderer-null)
 else()
     message(FATAL_ERROR "An unknown or unsupported GFX API was specified: ${NBC_GFX_API}")
 endif()
