@@ -26,8 +26,8 @@ add_library(nbcraft-renderer-ogl STATIC
      ShaderUniformOGL.cpp
      TextureOGL.cpp
      helpers/ErrorHandlerOGL.cpp
-     renderer/platform/ogl/Extensions.cpp
-     renderer/platform/ogl/ShaderPrecision.cpp
+     ../../platform/ogl/Extensions.cpp
+     ../../platform/ogl/ShaderPrecision.cpp
 )
 
 # Libraries
