@@ -33,7 +33,7 @@ export PATH="$PWD/toolchain-$arch/bin:$PATH"
 
 # Increase this if we ever make a change to the toolchain, for example
 # using a newer GCC version, and we need to invalidate the cache.
-toolchainver=2
+toolchainver=3
 if [ "$(cat "toolchain-$arch/toolchainver" 2>/dev/null)" != "$toolchainver" ]; then
     # adapted from https://github.com/DiscordMessenger/dm/blob/master/doc/pentium-toolchain/README.md
 
@@ -96,7 +96,7 @@ if [ "$(cat "toolchain-$arch/toolchainver" 2>/dev/null)" != "$toolchainver" ]; t
     make -j"$ncpus" install
     cd ../..
 
-    gcc_version='15.2.0'
+    gcc_version='16.1.0'
     rm -rf gcc-*
     wget -O- "https://ftp.gnu.org/gnu/gcc/gcc-$gcc_version/gcc-$gcc_version.tar.xz" | tar -xJ
 
