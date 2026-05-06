@@ -6,6 +6,8 @@
 	SPDX-License-Identifier: BSD-1-Clause
  ********************************************************************/
 
+#include <stdlib.h>
+
 #define STB_VORBIS_HEADER_ONLY
 #include "thirdparty/stb_image/include/stb_vorbis.c"
 
@@ -15,8 +17,6 @@
 #include "client/resources/Resource.hpp"
 #include "client/resources/ResourcePackManager.hpp"
 #include "client/resources/ResourcePackRepository.hpp"
-
-#include <stdlib.h>
 
 const std::string SoundDesc::DIRS[] = {
     "sound",
