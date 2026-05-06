@@ -25,11 +25,11 @@ add_library(nbcraft-renderer-d3d11 STATIC
 
 # Reference Renderer.D3D
 add_subdirectory(../d3d nbcraft-renderer-d3d)
-target_link_libraries(nbcraft-renderer-d3d11 PUBLIC nbcraft-renderer-d3d)
+target_link_libraries(nbcraft-renderer-d3d11 nbcraft-renderer-d3d)
 
 # Reference Renderer.DXGI
 add_subdirectory(../dxgi nbcraft-renderer-dxgi)
-target_link_libraries(nbcraft-renderer-d3d11 PUBLIC nbcraft-renderer-dxgi)
+target_link_libraries(nbcraft-renderer-d3d11 nbcraft-renderer-dxgi)
 
 # Libraries
 target_link_libraries(nbcraft-renderer-d3d11
