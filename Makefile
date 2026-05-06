@@ -40,6 +40,7 @@ CXX_SRCS := $(shell find source \
     -path source/renderer/hal/ogl -prune -o \
     -path source/renderer/hal/d3d11 -prune -o \
     -path source/renderer/hal/d3d9 -prune -o \
+    -path source/renderer/hal/d3d -prune -o \
     -path source/renderer/hal/dxgi -prune -o \
     -path source/renderer/hal/null -prune -o \
     -name '*.cpp' -print) \
