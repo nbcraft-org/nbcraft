@@ -13,5 +13,6 @@ namespace mce
 
     protected:
         unsigned int _getPrimitiveCount(PrimitiveMode mode, unsigned int indexCount);
+        unsigned int _getVertexCount(PrimitiveMode primitiveMode, unsigned int indexCount);
     };
 }

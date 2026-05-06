@@ -117,10 +117,7 @@ void RenderContextD3D9::drawIndexed(PrimitiveMode primitiveMode, unsigned int co
 #ifdef _XBOX
 	vertexCount = 0;
 #else
-	if (primitiveMode == PRIMITIVE_MODE_QUAD_LIST)
-		vertexCount = (count / 6) * 4;
-	else
-		vertexCount = count;
+    vertexCount = _getVertexCount(primitiveMode, count);
 #endif
 
     ErrorHandlerD3D9::checkForErrors(

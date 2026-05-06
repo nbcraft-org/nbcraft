@@ -10,7 +10,7 @@ RenderContextD3D::RenderContextD3D()
 
 unsigned int RenderContextD3D::_getPrimitiveCount(PrimitiveMode mode, unsigned int indexCount)
 {
-    // D3D11 uses index count, but D3D needs the actual number of primitives.
+    // D3D11 uses index count, but D3D9 needs the actual number of primitives.
     switch (mode)
     {
     case PRIMITIVE_MODE_QUAD_LIST:
@@ -22,5 +22,14 @@ unsigned int RenderContextD3D::_getPrimitiveCount(PrimitiveMode mode, unsigned i
         LOG_E("Unknown PrimitiveMode: %d", mode);
         assert(false); // we don't want this shitting itself on release
         return 0;
+    }
+}
+
+unsigned int RenderContextD3D::_getVertexCount(PrimitiveMode primitiveMode, unsigned int indexCount)
+{
+    switch (primitiveMode)
+    {
+    case PRIMITIVE_MODE_QUAD_LIST: return (indexCount / 6) * 4;
+    default:                       return indexCount;
     }
 }
