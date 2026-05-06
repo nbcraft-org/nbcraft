@@ -207,7 +207,7 @@ RakNet::RakString SocketLayer::GetSubNetForSocketAndIp(__UDPSOCKET__ inSock, Rak
 	RakNet::RakString netMaskString;
 	RakNet::RakString ipString;
 
-#if defined(WINDOWS_STORE_RT) || defined(_XBOX) || defined(XENON)
+#if defined(WINDOWS_STORE_RT) || MC_PLATFORM_XBOX
 	RakAssert("Not yet supported" && 0);
 	return "";
 #elif defined(_WIN32)
