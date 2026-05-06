@@ -505,9 +505,11 @@ namespace internal {
 template <typename T>
 struct IsGenericValue : FalseType {};
 
+// select candidates according to nested encoding and allocator types
 template <typename Encoding, typename Allocator>
 struct IsGenericValue< GenericValue<Encoding, Allocator> > : TrueType {};
 
+// helper to match arbitrary GenericValue instantiations, including derived classes
 template <typename Encoding, typename Allocator, typename StackAllocator>
 struct IsGenericValue< GenericDocument<Encoding, Allocator, StackAllocator> > : TrueType {};
 
