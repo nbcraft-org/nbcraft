@@ -74,10 +74,14 @@ bool ShaderProgramOGL::compileShaderProgram(std::string& shaderSource)
     
     m_shaderName = xglCreateShader(shaderTypeMap[m_shaderType]);
 
-    if (strncmp(shaderSource.c_str(), MULTIVERSION_STRING, sizeof(MULTIVERSION_STRING) - 1) == 0)
+    // make everything multi-version. why not?
+    shaderSource.insert(0, _getVersionMacro(context, m_shaderType));
+
+    // never really worked since our #defines are appended before the multiversion comment
+    /*if (strncmp(shaderSource.c_str(), MULTIVERSION_STRING, sizeof(MULTIVERSION_STRING) - 1) == 0)
     {
         shaderSource.replace(0, sizeof(MULTIVERSION_STRING), _getVersionMacro(context, m_shaderType));
-    }
+    }*/
 
     const GLint sourceLength = shaderSource.size();
     const GLchar* sourceStr = (const GLchar*)shaderSource.data();

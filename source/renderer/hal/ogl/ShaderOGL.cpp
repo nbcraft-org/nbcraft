@@ -171,7 +171,7 @@ void ShaderOGL::bindShader(RenderContext& context, const VertexFormat& format, c
         context.m_activeShaderProgram = m_program;
     }
 
-    bindVertexPointers(format, dataBasePtr);
+    bindVertexPointers(format, gl::supportsImmediateMode() ? dataBasePtr : nullptr);
 
     for (size_t i = 0; i < m_textureList.size(); i++)
     {

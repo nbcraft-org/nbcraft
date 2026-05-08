@@ -1,4 +1,3 @@
-// __multiversion__
 #include "ShaderConstants.h"
 
 uniform vec4 OVERLAY_COLOR;
