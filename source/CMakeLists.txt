@@ -503,7 +503,7 @@ add_library(nbcraft-core STATIC
     renderer/hal/base/ShaderConstantWithDataBase.cpp
     renderer/hal/base/ShaderContextBase.cpp
     renderer/hal/base/ShaderProgramBase.cpp
-    renderer/hal/base/VertexStateBase.cpp
+    renderer/hal/base/VertexBufferStateBase.cpp
     renderer/hal/base/TextureBase.cpp
     renderer/hal/enums/BlendTarget_JsonParser.cpp
     renderer/hal/enums/ComparisonFunc_JsonParser.cpp
