@@ -116,6 +116,9 @@
     <ClInclude Include="$(MC_ROOT)\source\renderer\hal\ogl\AlphaStateOGL.hpp">
       <Filter>Header Files\HAL\OGL</Filter>
     </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\ogl\VertexBufferStateOGL.hpp">
+      <Filter>Header Files\HAL\OGL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\renderer\hal\ogl\API_OGL.cpp">
@@ -191,6 +194,9 @@
       <Filter>Source Files\Platform\OGL</Filter>
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\renderer\hal\ogl\AlphaStateOGL.cpp">
+      <Filter>Source Files\HAL\OGL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\ogl\VertexBufferStateOGL.cpp">
       <Filter>Source Files\HAL\OGL</Filter>
     </ClCompile>
   </ItemGroup>

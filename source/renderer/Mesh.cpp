@@ -23,6 +23,10 @@ Mesh::Mesh(const VertexFormat& vertexFormat, unsigned int vertexCount, unsigned 
     , m_vertexFormat(vertexFormat)
     , m_indexSize(indexSize)
 {
+    RenderContext& context = RenderContextImmediate::get();
+
+    m_vertexBufferState.createVertexBufferState(context, vertexFormat);
+
     if (temporary)
     {
         m_pRawData = &data;
@@ -31,7 +35,7 @@ Mesh::Mesh(const VertexFormat& vertexFormat, unsigned int vertexCount, unsigned 
     else
     {
         m_pRawData = nullptr;
-        if (!loadRawData(RenderContextImmediate::get(), data))
+        if (!loadRawData(context, data))
         {
             assert(false);
             reset();
@@ -50,6 +54,7 @@ void Mesh::_move(Mesh& other)
     this->m_indexBuffer = other.m_indexBuffer;
     this->m_vertexCount = other.m_vertexCount;
     this->m_vertexFormat = other.m_vertexFormat;
+    std::swap(this->m_vertexBufferState, other.m_vertexBufferState);
     this->m_indexCount = other.m_indexCount;
     this->m_indexSize = other.m_indexSize;
     this->m_primitiveMode = other.m_primitiveMode;
@@ -144,9 +149,7 @@ void Mesh::render(const MaterialPtr& materialPtr, unsigned int startOffset, unsi
         assert(!"Attempted to render Mesh with NULL MaterialPtr. Maybe a material failed to load?");
     }
 
-#ifndef FEATURE_GFX_SHADERS
-    context.setVertexState(m_vertexFormat);
-#endif
+    m_vertexBufferState.bindVertexBufferState(context);
 
     if (m_primitiveMode == PRIMITIVE_MODE_QUAD_LIST)
     {
@@ -168,10 +171,6 @@ void Mesh::render(const MaterialPtr& materialPtr, unsigned int startOffset, unsi
     {
         context.draw(m_primitiveMode, startOffset, vertexCount);
     }
-
-#ifndef FEATURE_GFX_SHADERS
-    context.clearVertexState(m_vertexFormat);
-#endif
 }
 
 bool Mesh::isValid() const

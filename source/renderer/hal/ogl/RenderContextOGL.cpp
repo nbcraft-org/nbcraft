@@ -66,67 +66,6 @@ void RenderContextOGL::loadMatrix(MatrixType matrixType, const Matrix& matrix)
 #endif
 }
 
-void RenderContextOGL::setVertexState(const VertexFormat& vertexFormat)
-{
-    // @TODO: make this state-based, we have a lot of back-to-back calls of these
-#ifndef FEATURE_GFX_SHADERS
-    void* vertexData = getActiveClientBuffer(BUFFER_TYPE_VERTEX);
-    unsigned int vertexSize = vertexFormat.getVertexSize();
-
-    if (vertexFormat.hasField(VERTEX_FIELD_POSITION))
-    {
-        const VertexFieldFormat& field = vertexFieldFormats[VERTEX_FIELD_POSITION];
-        xglVertexPointer(field.components, field.componentsType, vertexSize, vertexFormat.getFieldOffset(VERTEX_FIELD_POSITION, vertexData));
-        xglEnableClientState(GL_VERTEX_ARRAY);
-        ErrorHandlerOGL::checkForErrors();
-    }
-
-    if (vertexFormat.hasField(VERTEX_FIELD_UV0))
-    {
-        const VertexFieldFormat& field = vertexFieldFormats[VERTEX_FIELD_UV0];
-        xglTexCoordPointer(field.components, field.componentsType, vertexSize, vertexFormat.getFieldOffset(VERTEX_FIELD_UV0, vertexData));
-        xglEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        ErrorHandlerOGL::checkForErrors();
-    }
-
-    if (vertexFormat.hasField(VERTEX_FIELD_COLOR))
-    {
-        const VertexFieldFormat& field = vertexFieldFormats[VERTEX_FIELD_COLOR];
-        xglColorPointer(field.components, field.componentsType, vertexSize, vertexFormat.getFieldOffset(VERTEX_FIELD_COLOR, vertexData));
-        xglEnableClientState(GL_COLOR_ARRAY);
-        ErrorHandlerOGL::checkForErrors();
-    }
-
-#ifdef USE_GL_NORMAL_LIGHTING
-    if (vertexFormat.hasField(VERTEX_FIELD_NORMAL))
-    {
-        const VertexFieldFormat& field = vertexFieldFormats[VERTEX_FIELD_NORMAL];
-        xglNormalPointer(field.componentsType, vertexSize, vertexFormat.getFieldOffset(VERTEX_FIELD_NORMAL, vertexData));
-        xglEnableClientState(GL_NORMAL_ARRAY);
-        ErrorHandlerOGL::checkForErrors();
-    }
-#endif
-#endif
-
-    RenderContextBase::setVertexState(vertexFormat);
-}
-
-void RenderContextOGL::clearVertexState(const VertexFormat& vertexFormat)
-{
-#ifndef FEATURE_GFX_SHADERS
-    if (vertexFormat.hasField(VERTEX_FIELD_POSITION))
-        xglDisableClientState(GL_VERTEX_ARRAY);
-#ifdef USE_GL_NORMAL_LIGHTING
-    if (vertexFormat.hasField(VERTEX_FIELD_NORMAL))
-        xglDisableClientState(GL_NORMAL_ARRAY);
-#endif
-    if (vertexFormat.hasField(VERTEX_FIELD_COLOR))
-        xglDisableClientState(GL_COLOR_ARRAY);
-    if (vertexFormat.hasField(VERTEX_FIELD_UV0))
-        xglDisableClientState(GL_TEXTURE_COORD_ARRAY);
-#endif
-}
-
 float* _getBuffer(const Vec3& abc, float d)
 {
     static float lb[4] = {};

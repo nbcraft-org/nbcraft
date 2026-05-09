@@ -2,6 +2,7 @@
 
 #include "renderer/hal/enums/PrimitiveMode.hpp"
 #include "renderer/hal/interface/Buffer.hpp"
+#include "renderer/hal/interface/VertexBufferState.hpp"
 
 #include "VertexFormat.hpp"
 #include "MaterialPtr.hpp"
@@ -15,6 +16,7 @@ namespace mce
         unsigned int m_vertexCount;
         PrimitiveMode m_primitiveMode;
         VertexFormat m_vertexFormat;
+        VertexBufferState m_vertexBufferState;
         uint8_t m_indexSize;
         Buffer m_vertexBuffer;
         Buffer m_indexBuffer;

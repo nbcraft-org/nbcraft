@@ -15,9 +15,12 @@ namespace mce
     {
     public:
         RenderContextStateBase m_currentState;
+
+        // only used in D3D for shaders
         VertexFormat m_lastVertexFormat;
         unsigned int m_lastAttributeListIndex;
         ShaderProgram* m_lastShaderPrograms[SHADER_TYPES_COUNT];
+
         void* m_activeClientBuffers[BUFFER_TYPES_COUNT];
         ImmediateBuffer m_immediateBuffer;
         StencilRefObject m_stencilReference;
@@ -31,8 +34,6 @@ namespace mce
 
     public:
         void loadMatrix(MatrixType matrixType, const Matrix& matrix) {}
-        void setVertexState(const VertexFormat& vertexFormat) { m_lastVertexFormat = vertexFormat; }
-        void clearVertexState(const VertexFormat& vertexFormat) {}
         void enableFixedLighting(bool init) {}
         void disableFixedLighting(bool teardown) {}
         bool setShadeMode(ShadeMode mode);

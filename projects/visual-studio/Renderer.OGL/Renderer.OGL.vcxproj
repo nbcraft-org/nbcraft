@@ -44,6 +44,7 @@
     <ClCompile Include="$(MC_ROOT)\source\renderer\platform\ogl\Extensions.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\renderer\platform\ogl\ShaderPrecision.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\renderer\hal\ogl\AlphaStateOGL.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\ogl\VertexBufferStateOGL.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\renderer\hal\ogl\API_OGL.hpp" />
@@ -71,6 +72,7 @@
     <ClInclude Include="$(MC_ROOT)\source\renderer\platform\ogl\Extensions.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\renderer\platform\ogl\ShaderPrecision.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\renderer\hal\ogl\AlphaStateOGL.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\ogl\VertexBufferStateOGL.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

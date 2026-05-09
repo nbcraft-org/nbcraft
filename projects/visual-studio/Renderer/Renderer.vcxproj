@@ -113,6 +113,10 @@
     <ClCompile Include="$(MC_ROOT)\source\renderer\hal\AlphaStateDescription.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\renderer\hal\base\AlphaStateBase.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\renderer\hal\interface\AlphaState.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\base\VertexBufferStateBase.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\interface\VertexBufferState.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\null\VertexBufferStateNull.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\VertexBufferStateDescription.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\renderer\GL\GL.hpp" />
@@ -216,6 +220,10 @@
     <ClInclude Include="$(MC_ROOT)\source\renderer\hal\AlphaStateDescription.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\renderer\hal\base\AlphaStateBase.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\renderer\hal\interface\AlphaState.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\base\VertexBufferStateBase.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\interface\VertexBufferState.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\null\VertexBufferStateNull.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\VertexBufferStateDescription.hpp" />
   </ItemGroup>
   <ItemGroup Condition="'$(MC_GFX_API)'=='Null'">
     <ProjectReference Include="..\Renderer.Null\Renderer.Null.vcxproj">

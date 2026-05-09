@@ -72,8 +72,6 @@ namespace mce
 
     public:
         void loadMatrix(MatrixType matrixType, const Matrix& matrix);
-        void setVertexState(const VertexFormat& vertexFormat);
-        void clearVertexState(const VertexFormat& vertexFormat);
         void enableFixedLighting(bool init);
         void disableFixedLighting(bool teardown);
         bool setShadeMode(ShadeMode mode);
