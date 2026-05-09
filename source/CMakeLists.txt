@@ -518,6 +518,7 @@ add_library(nbcraft-core STATIC
     renderer/hal/null/AlphaStateNull.cpp
     renderer/hal/null/RenderStateNull.cpp
     renderer/hal/null/FogStateNull.cpp
+    renderer/hal/null/VertexBufferStateNull.cpp
     renderer/hal/interface/AlphaState.cpp
     renderer/hal/interface/BlendState.cpp
     renderer/hal/interface/Buffer.cpp
