@@ -70,9 +70,7 @@ static LONG g_gmtime_s_lock_state = 0;
 
 static void compat_init_gmtime_s_lock(void)
 {
-    LONG state;
-
-    state = InterlockedCompareExchange(&g_gmtime_s_lock_state, 1, 0);
+    LONG state = InterlockedCompareExchange(&g_gmtime_s_lock_state, 1, 0);
 
     if (state == 0) {
         InitializeCriticalSection(&g_gmtime_s_lock);
