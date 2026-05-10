@@ -122,6 +122,7 @@ public:
 	TileID getTopTile(const TilePos& pos) const;
 	int getTopTileY(const TilePos& pos) const;
 	int getTopSolidBlock(const TilePos& tilePos) const;
+	GameType getLoadedPlayerGameType() const;
 	void loadPlayer(Player&);
 	bool addEntity(Entity*);
 	bool removeEntity(Entity*);

@@ -209,7 +209,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ReadyPacke
 
 	m_pLevel->addEntity(pPlayer);
 
-	if (m_pMinecraft->m_pGameMode->isCreativeType())
+	if (m_pMinecraft->getLevelGameMode()->isCreativeType())
 		pPlayer->m_pInventory->prepareCreativeInventory();
 	else
 		pPlayer->m_pInventory->prepareSurvivalInventory();
@@ -419,11 +419,11 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, InteractPa
 	{
 	case InteractPacket::INTERACT:
 		pPlayer->swing();
-		m_pMinecraft->m_pGameMode->interact(pPlayer, pTarget);
+		m_pMinecraft->getPlayerGameMode(*pPlayer)->interact(pPlayer, pTarget);
 		break;
 	case InteractPacket::ATTACK:
 		pPlayer->swing();
-		m_pMinecraft->m_pGameMode->attack(pPlayer, pTarget);
+		m_pMinecraft->getPlayerGameMode(*pPlayer)->attack(pPlayer, pTarget);
 		break;
 	default:
 		LOG_W("Received unkown action in InteractPacket: %d", packet->m_actionType);

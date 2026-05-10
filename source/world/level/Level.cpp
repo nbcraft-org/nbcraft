@@ -12,6 +12,7 @@
 
 #include "GameMods.hpp"
 #include "common/Logger.hpp"
+#include "nbt/CompoundTag.hpp"
 #include "network/RakNetInstance.hpp"
 #include "network/packets/EntityEventPacket.hpp"
 #include "network/packets/SetEntityDataPacket.hpp"
@@ -1254,6 +1255,19 @@ bool Level::addEntity(Entity* pEnt)
 	entityAdded(pEnt);
 
 	return true;
+}
+
+GameType Level::getLoadedPlayerGameType() const
+{
+	GameType gameType = m_pLevelData->getGameType();
+
+	const CompoundTag* tag = m_pLevelData->getLoadedPlayerTag();
+	if (tag && tag->contains("playerGameType"))
+	{
+		gameType = (GameType)tag->getInt32("playerGameType");
+	}
+
+	return gameType;
 }
 
 void Level::loadPlayer(Player& player)

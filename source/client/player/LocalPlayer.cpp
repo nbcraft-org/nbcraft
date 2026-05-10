@@ -149,7 +149,7 @@ void LocalPlayer::openContainer(Container* container)
 void LocalPlayer::closeContainer()
 {
 	Player::closeContainer();
-	m_pMinecraft->m_pGameMode->handleCloseInventory(m_pContainerMenu->m_containerId, this);
+	m_pMinecraft->getLocalPlayerGameMode()->handleCloseInventory(m_pContainerMenu->m_containerId, this);
 	m_pMinecraft->setScreen(nullptr);
 }
 

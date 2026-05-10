@@ -43,6 +43,7 @@ private:
 	void _levelGenerated();
 	void _resetPlayer(Player* player);
 	GameMode* _createGameMode(GameType gameType, Level& level);
+	void _initGameModes(Level& level);
 
 protected:
 	void _reloadInput();
@@ -88,6 +89,9 @@ public:
 	bool useController() const;
 
 	void setGameMode(GameType gameType);
+	GameMode* getLevelGameMode() const;
+	GameMode* getPlayerGameMode(Player& player) const;
+	GameMode* getLocalPlayerGameMode() const;
 
 	void update() override;
 	void init() override;
@@ -141,7 +145,7 @@ public:
 	GameRenderer* m_pGameRenderer;
 	ParticleEngine* m_pParticleEngine;
 	SoundEngine* m_pSoundEngine;
-	GameMode* m_pGameMode;
+	GameMode* m_gameModes[GAME_TYPES_COUNT];
 	Textures* m_pTextures;
 	Font* m_pFont;
 	RakNetInstance* m_pRakNetInstance;

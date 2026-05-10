@@ -280,7 +280,7 @@ void TouchscreenInput_TestFps::tick(Player* pPlayer)
 			m_bJumping = true;
 		m_bJumpBeingHeld = true;
 
-		if (m_bWasJumping && m_pMinecraft->m_pGameMode->isCreativeType())
+		if (m_bWasJumping && m_pMinecraft->getLocalPlayerGameMode()->isCreativeType())
 		{
 			m_bWasJumping = false;
 			m_bJumpBeingHeld = false;

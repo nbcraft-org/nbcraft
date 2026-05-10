@@ -190,7 +190,7 @@ void Gui::render(float f, bool bHaveScreen, int mouseX, int mouseY)
 		matrix->translate(Vec3(0, -35, 0));
 		matrix->scale(mc.getOptions()->m_hudSize.get());
 	}
-	if (mc.m_pGameMode->canHurtPlayer())
+	if (mc.getLocalPlayerGameMode()->canHurtPlayer())
 	{
 		textures.loadAndBindTexture("gui/icons.png");
 
@@ -337,7 +337,7 @@ void Gui::handleClick(int clickID, int mouseX, int mouseY)
 
 	if (m_pMinecraft->isTouchscreen() && slot == getNumSlots() - 1)
 	{
-		if (m_pMinecraft->m_pGameMode->isSurvivalType())
+		if (m_pMinecraft->getLocalPlayerGameMode()->isSurvivalType())
 			m_pMinecraft->setScreen(new InventoryScreen(m_pMinecraft->m_pLocalPlayer));
 		else
 			m_pMinecraft->setScreen(new IngameBlockSelectionScreen());
@@ -372,7 +372,7 @@ void Gui::handleKeyPressed(int keyCode)
 
 	if (options->isKey(KM_INVENTORY, keyCode))
 	{
-		if (m_pMinecraft->m_pGameMode->isSurvivalType())
+		if (m_pMinecraft->getLocalPlayerGameMode()->isSurvivalType())
 			m_pMinecraft->setScreen(new InventoryScreen(m_pMinecraft->m_pLocalPlayer));
 		else
 			m_pMinecraft->setScreen(new IngameBlockSelectionScreen);
