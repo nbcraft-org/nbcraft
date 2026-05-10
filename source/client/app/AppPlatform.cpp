@@ -63,7 +63,7 @@ void AppPlatform::finish()
 
 }
 
-#if defined(__CRTDLL__)
+#ifdef __CRTDLL__
 
 static CRITICAL_SECTION g_gmtime_s_lock;
 static LONG g_gmtime_s_lock_state = 0;
