@@ -39,15 +39,18 @@ if [ "$(cat "toolchain-$arch/toolchainver" 2>/dev/null)" != "$toolchainver" ]; t
 
     case $arch in
         (i?86)
-            winnt=0x0400 # Windows NT 4.0
+            winnt=0x0400 # Windows NT 4.0 (We actually support older than that but this is the lowest this value can have)
+            crt='crtdll'
         ;;
         (x86_64)
             winnt=0x0501 # Windows XP
+            crt='msvcrt-os'
         ;;
         (arm64|aarch64)
             printf 'aarch64 builds are currently unsupported.\n'
             exit 1
             # winnt=0x0A00 # Windows 10
+            # crt='msvcrt-os'
         ;;
         (*)
             printf 'Unknown architecture!\n'
@@ -92,7 +95,7 @@ if [ "$(cat "toolchain-$arch/toolchainver" 2>/dev/null)" != "$toolchainver" ]; t
         --host="$target" \
         --prefix="$workdir/toolchain-$arch/$target" \
         --with-default-win32-winnt="$winnt" \
-        --with-default-msvcrt=crtdll
+        --with-default-msvcrt="$crt"
     make -j"$ncpus" install
     cd ../..
 
@@ -130,7 +133,7 @@ if [ "$(cat "toolchain-$arch/toolchainver" 2>/dev/null)" != "$toolchainver" ]; t
         --host="$target" \
         --prefix="$workdir/toolchain-$arch/$target" \
         --with-default-win32-winnt="$winnt" \
-        --with-default-msvcrt=crtdll
+        --with-default-msvcrt="$crt"
     make -j1
     make -j1 install
     cd ../..
