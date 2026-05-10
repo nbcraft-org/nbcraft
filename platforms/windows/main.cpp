@@ -133,10 +133,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 {
 #if defined(_DEBUG) && defined(MOD_POPOUT_CONSOLE)
 	AllocConsole();
-	FILE* ostream;
-	FILE* istream;
-	freopen_s(&ostream, "CONOUT$", "w", stdout);
-	freopen_s(&istream, "CONIN$", "r", stdin);
+	freopen("CONOUT$", "w", stdout);
+	freopen("CONIN$", "r", stdin);
 	SetConsoleTitle(C_GAME_NAME " Debug Console");
 #endif
 
