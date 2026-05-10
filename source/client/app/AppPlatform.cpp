@@ -63,6 +63,50 @@ void AppPlatform::finish()
 
 }
 
+#if defined(__CRTDLL__)
+
+static CRITICAL_SECTION g_gmtime_s_lock;
+static LONG g_gmtime_s_lock_state = 0;
+
+static void compat_init_gmtime_s_lock(void)
+{
+    LONG state;
+
+    state = InterlockedCompareExchange(&g_gmtime_s_lock_state, 1, 0);
+
+    if (state == 0) {
+        InitializeCriticalSection(&g_gmtime_s_lock);
+        InterlockedExchange(&g_gmtime_s_lock_state, 2);
+    } else {
+        while (InterlockedCompareExchange(&g_gmtime_s_lock_state, 2, 2) != 2)
+            Sleep(0);
+    }
+}
+
+#define gmtime_s __crtdll_gmtime_s
+
+static errno_t gmtime_s(struct tm* out, const time_t* timer)
+{
+    struct tm* tmp;
+
+    if (!out || !timer)
+        return EINVAL;
+
+    compat_init_gmtime_s_lock();
+
+    EnterCriticalSection(&g_gmtime_s_lock);
+
+    tmp = gmtime(timer);
+    if (tmp)
+        *out = *tmp;
+
+    LeaveCriticalSection(&g_gmtime_s_lock);
+
+    return tmp ? 0 : EINVAL;
+}
+
+#endif
+
 std::string AppPlatform::getDateString(int time)
 {
 	time_t tt = time;

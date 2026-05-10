@@ -33,7 +33,7 @@ export PATH="$PWD/toolchain-$arch/bin:$PATH"
 
 # Increase this if we ever make a change to the toolchain, for example
 # using a newer GCC version, and we need to invalidate the cache.
-toolchainver=3
+toolchainver=4
 if [ "$(cat "toolchain-$arch/toolchainver" 2>/dev/null)" != "$toolchainver" ]; then
     # adapted from https://github.com/DiscordMessenger/dm/blob/master/doc/pentium-toolchain/README.md
 
@@ -92,7 +92,7 @@ if [ "$(cat "toolchain-$arch/toolchainver" 2>/dev/null)" != "$toolchainver" ]; t
         --host="$target" \
         --prefix="$workdir/toolchain-$arch/$target" \
         --with-default-win32-winnt="$winnt" \
-        --with-default-msvcrt=msvcrt-os
+        --with-default-msvcrt=crtdll
     make -j"$ncpus" install
     cd ../..
 
@@ -130,7 +130,7 @@ if [ "$(cat "toolchain-$arch/toolchainver" 2>/dev/null)" != "$toolchainver" ]; t
         --host="$target" \
         --prefix="$workdir/toolchain-$arch/$target" \
         --with-default-win32-winnt="$winnt" \
-        --with-default-msvcrt=msvcrt-os
+        --with-default-msvcrt=crtdll
     make -j1
     make -j1 install
     cd ../..
