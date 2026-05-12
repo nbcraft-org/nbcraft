@@ -132,7 +132,10 @@ void ChestTile::onRemove(Level* level, const TilePos& pos)
     ChestTileEntity* ent = static_cast<ChestTileEntity*>(level->getTileEntity(pos));
 
     if (!ent)
+    {
         EntityTile::onRemove(level, pos);
+        return;
+    }
 
     for (int slot = 0; slot < ent->getContainerSize(); ++slot)
     {
