@@ -266,6 +266,14 @@ public:
 	std::string getDisplayValue() const override;
 };
 
+class ControllerOption : public BoolOption
+{
+public:
+	ControllerOption(const std::string& key, const std::string& name, bool initial = true) : BoolOption(key, name, initial) {}
+
+	void apply() override;
+};
+
 class AOOption : public BoolOption
 {
 public:
@@ -288,6 +296,14 @@ public:
 	FancyGraphicsOption(const std::string& key, const std::string& name, bool initial = true) : GraphicsOption(key, name, initial) {}
 
 	std::string getMessage() const override;
+};
+
+class VsyncOption : public BoolOption
+{
+public:
+	VsyncOption(const std::string& key, const std::string& name, bool initial = true) : BoolOption(key, name, initial) {}
+
+	void apply() override;
 };
 
 class GuiScaleOption : public ValuesOption

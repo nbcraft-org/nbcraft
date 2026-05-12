@@ -81,10 +81,9 @@ Level::~Level()
 	SAFE_DELETE(m_pPathFinder);
 	SAFE_DELETE(m_pMobSpawner);
 
-	const size_t size = m_entities.size();
-	for (size_t i = 0; i < size; ++i)
+	for (EntityMap::iterator it = m_entities.begin(); it != m_entities.end(); it++)
 	{
-		Entity* pEnt = m_entities[i];
+		Entity* pEnt = it->second;
 		
 		//you better HOPE this is freed by Minecraft! (or a NetworkHandler)
 		//Really should have used shared pointers and stuff.

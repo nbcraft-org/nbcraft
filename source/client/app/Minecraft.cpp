@@ -185,7 +185,7 @@ void Minecraft::_initGameModes(Level& level)
 	}
 }
 
-void Minecraft::_reloadInput()
+void Minecraft::reloadInput()
 {
 	if (m_pInputHolder)
 		delete m_pInputHolder;

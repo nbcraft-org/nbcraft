@@ -671,9 +671,6 @@
     <ClCompile Include="$(MC_ROOT)\source\world\item\CoalItem.cpp">
       <Filter>Source Files\Item</Filter>
     </ClCompile>
-    <ClCompile Include="$(MC_ROOT)\source\world\item\CoalItem.cpp">
-      <Filter>Source Files\Item</Filter>
-    </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\world\particle\NoteParticle.cpp">
       <Filter>Source Files\Particle</Filter>
     </ClCompile>
@@ -1221,9 +1218,6 @@
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\world\inventory\FurnaceResultSlot.hpp">
       <Filter>Header Files\Inventory</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MC_ROOT)\source\world\item\CoalItem.hpp">
-      <Filter>Header Files\Item</Filter>
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\world\tile\entity\ChestTileEntity.hpp">
       <Filter>Header Files\Tile\Entity</Filter>

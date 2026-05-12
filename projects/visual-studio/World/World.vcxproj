@@ -233,7 +233,6 @@
     <ClCompile Include="$(MC_ROOT)\source\world\Facing.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\FurnaceMenu.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\FurnaceResultSlot.cpp" />
-    <ClCompile Include="$(MC_ROOT)\source\world\item\CoalItem.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\particle\NoteParticle.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\tile\ChestTile.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\tile\EntityTile.cpp" />
@@ -418,7 +417,6 @@
     <ClInclude Include="$(MC_ROOT)\source\world\item\CoalItem.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\inventory\FurnaceMenu.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\inventory\FurnaceResultSlot.hpp" />
-    <ClInclude Include="$(MC_ROOT)\source\world\item\CoalItem.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\tile\ChestTile.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\tile\EntityTile.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\tile\entity\ChestTileEntity.hpp" />

@@ -28,6 +28,9 @@ public:
 	};
 
 public:
+	virtual ~Container() {}
+
+public:
 	virtual Size getContainerSize() const = 0;
 	virtual ItemStack& getItem(int index) = 0;
 	virtual ItemStack* tryGetItem(int index)

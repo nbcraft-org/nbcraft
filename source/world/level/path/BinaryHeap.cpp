@@ -44,6 +44,7 @@ void BinaryHeap::inlined0(int num)
 		Node* var5 = m_items[var4];
 		if (var3 >= var5->f) {
 			break;
+		}
 
 		m_items[num] = var5;
 		var5->heapIdx = num;
@@ -58,41 +59,39 @@ void BinaryHeap::downHeap(int num)
 	Node* var2 = m_items[num];
 	float var3 = var2->f;
 
-	while (true)
-	{
+	while (true) {
 		int var4 = 1 + (num << 1);
 		int var5 = var4 + 1;
-		if (var4 >= m_count)
+		if (var4 >= m_count) {
 			break;
+		}
 
 		Node* var6 = m_items[var4];
 		float var7 = var6->f;
 		Node* var8;
 		float var9;
-		if (var5 >= m_count)
-		{
+		if (var5 >= m_count) {
 			var8 = nullptr;
 			var9 = std::numeric_limits<float>::infinity();
 		}
-		else
-		{
+		else {
 			var8 = m_items[var5];
 			var9 = var8->f;
 		}
 
-		if (var7 < var9)
-		{
-			if (var7 >= var3)
+		if (var7 < var9) {
+			if (var7 >= var3) {
 				break;
+			}
 
 			m_items[num] = var6;
 			var6->heapIdx = num;
 			num = var4;
 		}
-		else
-		{
-			if (var9 >= var3)
+		else {
+			if (var9 >= var3) {
 				break;
+			}
 
 			m_items[num] = var8;
 			var8->heapIdx = num;

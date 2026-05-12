@@ -21,8 +21,8 @@ void NoteParticle::tick()
 {
 	m_oPos = m_pos;
 
-	m_timer++;
-	if (m_timer > m_lifetime)
+	m_age++;
+	if (m_age > m_lifetime)
 		remove();
 
 	move(m_vel);
@@ -41,7 +41,7 @@ void NoteParticle::tick()
 
 void NoteParticle::render(Tesselator& t, float f, float a, float b, float c, float d, float e)
 {
-	float mult = float(m_timer + f) / float(m_lifetime) * 32.0f;
+	float mult = float(m_age + f) / float(m_lifetime) * 32.0f;
 	m_size = m_oSize * Mth::clamp(mult, 0.0f, 1.0f);
 	Particle::render(t, f, a, b, c, d, e);
 }

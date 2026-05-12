@@ -53,7 +53,7 @@ void ContainerMenu::addSlot(Slot* slot)
 
 void ContainerMenu::addSlotListener(ContainerListener* listener)
 {
-    m_listeners.push_back(listener);
+    m_listeners.insert(listener);
 
     // @PARITY: Not done on PE
     /*std::vector<ItemStack> snapshot = copyItems();

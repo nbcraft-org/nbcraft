@@ -861,7 +861,7 @@ void Mob::updateAi()
 		m_lookTime--;
 
 		// if the entity was removed, or we're too far away, or our gaze timer is up
-		if (m_lookTime < 0 || m_pEntLookedAt->m_bRemoved || m_pEntLookedAt->distanceToSqr(this) > 64.0f)
+		if (m_lookTime < 0 || pEnt->m_bRemoved || pEnt->distanceToSqr(this) > 64.0f)
 			// stop staring
 			m_entLookedAtId = 0;
 	}

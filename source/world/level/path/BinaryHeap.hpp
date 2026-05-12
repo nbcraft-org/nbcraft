@@ -16,7 +16,7 @@ public:
 	{
 		m_count = 0;
 		m_capacity = 1024;
-		m_items = new Node*[m_capacity];
+		m_items = new Node * [m_capacity];
 	}
 
 	~BinaryHeap()
@@ -29,8 +29,7 @@ public:
 	void inlined0(int i);
 	void downHeap(int i);
 
-	Node* removeTop()
-	{
+	Node* removeTop() {
 		Node* pNode = m_items[0];
 		m_items[0] = m_items[--m_count];
 		m_items[m_count] = 0;
@@ -42,13 +41,11 @@ public:
 		return pNode;
 	}
 
-	void clear()
-	{
+	void clear() {
 		m_count = 0;
 	}
-	
-	int size() const
-	{
+
+	int size() const {
 		return m_count;
 	}
 
