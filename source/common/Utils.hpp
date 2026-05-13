@@ -40,7 +40,7 @@
 #define gmtime_s __nbc_gmtime_s
 errno_t gmtime_s(struct tm* out, const time_t* timer);
 
-#endif
+#endif // __CRTDLL__
 
 #if MC_PLATFORM_WINPC
 

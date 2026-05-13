@@ -83,7 +83,7 @@ errno_t gmtime_s(struct tm* out, const time_t* timer)
     return tmp ? 0 : EINVAL;
 }
 
-#endif
+#endif // __CRTDLL__
 
 void toDosPath(char* path)
 {
