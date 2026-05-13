@@ -35,6 +35,13 @@
 
 #ifdef _WIN32
 
+#ifdef __CRTDLL__
+
+#define gmtime_s __nbc_gmtime_s
+errno_t gmtime_s(struct tm* out, const time_t* timer);
+
+#endif
+
 #if MC_PLATFORM_WINPC
 
 #define WIN32_LEAN_AND_MEAN
