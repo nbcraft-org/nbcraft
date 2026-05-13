@@ -856,7 +856,7 @@ void GameRenderer::renderPointer(const MenuPointer& pointer)
 	Textures& textures = *m_pMinecraft->m_pTextures;
 
 	MatrixStack::Ref mtx = MatrixStack::World.push();
-	mtx->translate(Vec3(pointer.x, pointer.y, 0));
+	mtx->translate(Vec3(pointer.x, pointer.y, 0.0f));
 
 	if (m_pMinecraft->m_pScreen && m_pMinecraft->m_pScreen->m_uiTheme == UI_CONSOLE)
 		mtx->scale(2.0f);

@@ -410,7 +410,7 @@ void SoundSystemOAL::startEngine()
 	{
 		m_musicStream = new SoundStreamOAL();
 	}
-	catch (const std::runtime_error& e)
+	catch (const std::runtime_error&)
 	{
 		LOG_E("Failed to init audio");
 		return;

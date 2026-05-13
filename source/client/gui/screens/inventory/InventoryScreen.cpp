@@ -84,7 +84,7 @@ void InventoryScreen::_renderBg(float partialTick)
 #endif
     MatrixStack::Ref matrix = MatrixStack::World.push();
 
-    matrix->translate(Vec3(m_leftPos + playerX, m_topPos + playerY, 50.0f));
+    matrix->translate(Vec3(m_leftPos + playerX, m_topPos + playerY, 50));
     matrix->scale(Vec3(-scale, scale, scale));
     matrix->rotate(180.0f, Vec3(0.0f, 0.0f, 1.0f));
 

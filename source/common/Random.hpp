@@ -40,7 +40,8 @@ class Random
 	unsigned int rseed;
 	uint32_t mt[CMATH_N];  // the array for the state vector
 	int mti;                    // mti==N+1 means mt[N] is not initialized
-	double nextNextGaussian;
+	bool hasNextNextGaussian;
+	float nextNextGaussian;
 
 public:
 	Random(int32_t seed = getTimeMs());

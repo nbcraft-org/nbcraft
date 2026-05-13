@@ -109,7 +109,7 @@ Vec2 TileRenderer::getLightColor(const Tile* tile, const TilePos& pos)
 		return Vec2::ONE;
 
 	if (pos.y > 127)
-		return Vec2(240.0f / 255.0f, 0);
+		return Vec2(240.0f / 255.0f, 0.0f);
 
 	float brightness = tile->getBrightness(m_pTileSource, pos);
 	return Vec2(brightness, brightness);

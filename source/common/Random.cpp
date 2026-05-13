@@ -21,13 +21,14 @@
 Random::Random(int32_t seed)
 {
 	setSeed(seed);
-	nextNextGaussian = std::numeric_limits<double>::max();
 }
 
 void Random::setSeed(int32_t seed)
 {
 	rseed = seed;
 	mti = N + 1;
+	hasNextNextGaussian = false;
+	nextNextGaussian = 0;
 	init_genrand(seed);
 }
 
@@ -113,12 +114,12 @@ int Random::nextInt()
 
 float Random::nextGaussian()
 {
-	if (nextNextGaussian < std::numeric_limits<double>::max())
+	if (hasNextNextGaussian)
 	{
-		double backup = nextNextGaussian;
-		nextNextGaussian = std::numeric_limits<double>::max();
-		return backup;
+		hasNextNextGaussian = false;
+		return nextNextGaussian;
 	}
+
 	// See Knuth, ACP, Section 3.4.1 Algorithm C.
 	float v1, v2, s;
 	do
@@ -130,5 +131,6 @@ float Random::nextGaussian()
 	while (s >= 1 || s == 0);
 	float mult = sqrtf(-2 * logf(s) / s);
 	nextNextGaussian = v2 * mult;
+	hasNextNextGaussian = true;
 	return v1 * mult;
 }

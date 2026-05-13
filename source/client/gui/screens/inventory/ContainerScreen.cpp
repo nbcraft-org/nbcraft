@@ -168,7 +168,7 @@ void ContainerScreen::render(float partialTicks)
     _renderBg(partialTicks);
 
     MatrixStack::Ref matrix = MatrixStack::World.push();
-    matrix->translate(Vec3(m_leftPos, m_topPos, 0.0f));
+    matrix->translate(Vec3(m_leftPos, m_topPos, 0));
     
     _renderLabels();
 

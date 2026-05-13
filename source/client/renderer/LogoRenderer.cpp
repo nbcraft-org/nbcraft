@@ -343,7 +343,7 @@ void LogoRenderer::render3d(float f)
 					z = 0.0f;
 				}
 
-				matrix->translate(Vec3(x, y, z));
+				matrix->translate(Vec3(float(x), float(y), z));
 				matrix->scale(scale);
 				matrix->scale(Vec3(-1.0f, 1.0f, 1.0f));
 				matrix->rotate(rotation, Vec3::UNIT_Z);

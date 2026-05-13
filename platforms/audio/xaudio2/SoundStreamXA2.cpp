@@ -161,7 +161,7 @@ void SoundStreamXA2::_update()
     }
 }
 
-void SoundStreamXA2::_publishBuffer(unsigned int destBufferId, const SoundBuffer& sourceBuffer)
+void SoundStreamXA2::_publishBuffer(BufferId destBufferId, const SoundBuffer& sourceBuffer)
 {
     if (!m_sourceVoice) return;
 

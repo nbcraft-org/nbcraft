@@ -253,9 +253,9 @@ void Gui::renderSlot(int slot, int x, int y, float f)
 		{
 			float var7 = 1.0f + var6 / 5.0f;
 			matrix = MatrixStack::World.push();
-			matrix->translate(Vec3(x + 8, y + 12, 0.0f));
+			matrix->translate(Vec3(x + 8, y + 12, 0));
 			matrix->scale(Vec3(1.0f / var7, (var7 + 1.0f) / 2.0f, 1.0f));
-			matrix->translate(Vec3(-(x + 8), -(y + 12), 0.0f));
+			matrix->translate(Vec3(-(x + 8), -(y + 12), 0));
 		}
 
 		ItemRenderer::singleton().renderGuiItem(m_pMinecraft->m_pFont, m_pMinecraft->m_pTextures, item, x, y, true);

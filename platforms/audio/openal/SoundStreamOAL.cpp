@@ -46,7 +46,7 @@ void SoundStreamOAL::_resetSource()
 
 void SoundStreamOAL::_deleteBuffers()
 {
-    alDeleteBuffers(m_buffers.size(), _getBuffersArray());
+    alDeleteBuffers(static_cast<ALsizei>(m_buffers.size()), _getBuffersArray());
     AL_ERROR_CHECK();
 
     m_buffers.clear();
@@ -167,7 +167,7 @@ void SoundStreamOAL::_update()
     }
 }
 
-void SoundStreamOAL::_publishBuffer(unsigned int destBufferId, const SoundBuffer& sourceBuffer)
+void SoundStreamOAL::_publishBuffer(BufferId destBufferId, const SoundBuffer& sourceBuffer)
 {
     alBufferData(m_buffers[destBufferId], m_alFormat, sourceBuffer.m_pData, sourceBuffer.m_dataSize * sizeof(int16_t), m_info.sample_rate);
     AL_ERROR_CHECK();

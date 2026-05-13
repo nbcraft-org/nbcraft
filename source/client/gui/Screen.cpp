@@ -492,7 +492,7 @@ void Screen::onRender(float f)
 	{
 		// push the entire screen up
 		matrix = MatrixStack::World.push();
-		matrix->translate(Vec3(0.0f, -m_yOffset, 0.0f));
+		matrix->translate(Vec3(0, -m_yOffset, 0));
 	}
 
 	render(f);
