@@ -102,7 +102,7 @@ void SelectWorldScreen::tick()
 	if (field_130 == 1)
 	{
 		// poll the user status to get details about the world name and seed
-		int userInputStatus = m_pMinecraft->platform()->getUserInputStatus();
+		int userInputStatus = AppPlatform::singleton()->getUserInputStatus();
 
 		if (userInputStatus < 0)
 			return;
@@ -113,7 +113,7 @@ void SelectWorldScreen::tick()
 			return;
 		}
 
-		std::vector<std::string> userInput = m_pMinecraft->platform()->getUserInput();
+		std::vector<std::string> userInput = AppPlatform::singleton()->getUserInput();
 
 		std::string levelNickname = Util::stringTrim(userInput[0]);
 		std::string levelUniqueName = levelNickname;
@@ -209,8 +209,8 @@ void SelectWorldScreen::_buttonClicked(Button* pButton)
 #ifndef ORIGINAL_CODE
 		m_pMinecraft->getScreenChooser()->pushCreateWorldScreen(this);
 #else
-		m_pMinecraft->platform()->showDialog(AppPlatform::DLG_CREATE_WORLD);
-		m_pMinecraft->platform()->createUserInput();
+		AppPlatform::singleton()->showDialog(AppPlatform::DLG_CREATE_WORLD);
+		AppPlatform::singleton()->createUserInput();
 		m_walkAnimPos = true;
 #endif
 	}

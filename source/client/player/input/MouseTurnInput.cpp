@@ -11,17 +11,16 @@
 
 constexpr float C_SENSITIVITY = 1.0f;
 
-MouseTurnInput::MouseTurnInput(Minecraft* pMC)
+MouseTurnInput::MouseTurnInput()
 {
-	m_pMinecraft = pMC;
 	m_lastX = m_lastY = -1;
 }
 
 Vec2 MouseTurnInput::getTurnDelta()
 {
 	int deltaX = 0, deltaY = 0;
-	m_pMinecraft->platform()->getMouseDiff(deltaX, deltaY);
-	m_pMinecraft->platform()->clearDiff();
+	AppPlatform::singleton()->getMouseDiff(deltaX, deltaY);
+	AppPlatform::singleton()->clearDiff();
 
 	Vec2 d;
 	d.x = C_SENSITIVITY * deltaX;

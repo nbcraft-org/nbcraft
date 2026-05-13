@@ -54,12 +54,12 @@ void Options::_initDefaultValues()
 	loadControls();
 }
 
-static UITheme GetDefaultUiTheme(Minecraft* mc)
+static UITheme GetDefaultUiTheme()
 {
 #if MC_PLATFORM_XBOX360
 	return UI_CONSOLE;
 #else
-	return mc->platform()->isTouchscreen() ? UI_POCKET : UI_JAVA;
+	return AppPlatform::singleton()->isTouchscreen() ? UI_POCKET : UI_JAVA;
 #endif
 }
 
@@ -82,7 +82,7 @@ Options::Options(Minecraft* mc, const std::string& folderPath) :
 	, m_gamma("gfx_gamma", "options.gamma", 0.50f)
 	, m_playerName("mp_username", "options.username", "Steve")
 	, m_serverVisibleDefault("mp_server_visible_default", "options.serverVisibleDefault", true)
-	, m_autoJump("ctrl_autojump", "options.autoJump", mc->platform()->isTouchscreen())
+	, m_autoJump("ctrl_autojump", "options.autoJump", AppPlatform::singleton()->isTouchscreen())
 	, m_debugText("info_debugtext", "options.debugText", false)
 	, m_blockOutlines("gfx_blockoutlines", "options.blockOutlines", false)
 	, m_fancyGrass("gfx_fancygrass", "options.fancyGrass", true)
@@ -92,7 +92,7 @@ Options::Options(Minecraft* mc, const std::string& folderPath) :
 	, m_dynamicHand("gfx_dynamichand", "options.dynamicHand", false)
 	, m_menuPanorama("misc_menupano", "options.menuPanorama", true)
 	, m_lang("gfx_lang", "options.lang", "en_us")
-	, m_uiTheme("gfx_uitheme", "options.uiTheme", GetDefaultUiTheme(m_pMinecraft), ValuesBuilder().add("options.uiTheme.pocket").add("options.uiTheme.java").add("options.uiTheme.console"))
+	, m_uiTheme("gfx_uitheme", "options.uiTheme", GetDefaultUiTheme(), ValuesBuilder().add("options.uiTheme.pocket").add("options.uiTheme.java").add("options.uiTheme.console"))
 	, m_logoType("gfx_logotype", "options.logoType", LOGO_AUTO, ValuesBuilder().add("options.logoType.auto").add("options.logoType.pocket").add("options.logoType.java").add("options.logoType.console").add("options.logoType.xbox360").add("options.logoType.logo3d"))
 	, m_hudSize("gfx_hudsize", "options.hudSize", HUD_SIZE_2)
 	, m_classicCrafting("gfx_classiccrafting", "options.classicCrafting", true)

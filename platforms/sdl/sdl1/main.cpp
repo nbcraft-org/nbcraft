@@ -36,10 +36,14 @@ typedef AppPlatform_sdl1_desktop UsedAppPlatform;
 
 static float g_fPointToPixelScale = 1.0f;
 
-UsedAppPlatform* g_pAppPlatform;
 NinecraftApp* g_pApp;
 
 SDL_Surface* screen = NULL;
+
+static UsedAppPlatform* getPlatform()
+{
+    return static_cast<UsedAppPlatform*>(AppPlatform::singleton());
+}
 
 static void initPlatform()
 {
@@ -155,7 +159,7 @@ static void handle_events()
                     }
                 }
 
-                g_pAppPlatform->handleKeyEvent(event);
+                getPlatform()->handleKeyEvent(event);
                 break;
             }
             case SDL_JOYBUTTONDOWN:
@@ -166,7 +170,7 @@ static void handle_events()
                 {
                     g_pApp->pauseGame() || g_pApp->resumeGame();
                 }
-                g_pAppPlatform->handleControllerButtonEvent(event.jbutton.which, event.jbutton.button, event.jbutton.state);
+                getPlatform()->handleControllerButtonEvent(event.jbutton.which, event.jbutton.button, event.jbutton.state);
                 break;
             }
             case SDL_MOUSEBUTTONDOWN:
@@ -186,11 +190,11 @@ static void handle_events()
                 float x = event.motion.x * scale;
                 float y = event.motion.y * scale;
                 Mouse::feed(MOUSE_BUTTON_NONE, false, x, y);
-                g_pAppPlatform->setMouseDiff(event.motion.xrel * scale, event.motion.yrel * scale);
+                getPlatform()->setMouseDiff(event.motion.xrel * scale, event.motion.yrel * scale);
                 break;
             }
             case SDL_JOYAXISMOTION:
-                g_pAppPlatform->handleControllerAxisEvent(event.jaxis.which, event.jaxis.axis, event.jaxis.value);
+                getPlatform()->handleControllerAxisEvent(event.jaxis.which, event.jaxis.axis, event.jaxis.value);
                 break;
             case SDL_VIDEORESIZE:
             {
@@ -243,7 +247,7 @@ static void main_loop()
     {
         g_pApp->saveOptions();
         delete g_pApp;
-        delete g_pAppPlatform;
+        delete getPlatform();
         teardown();
         exit(EXIT_SUCCESS);
     }
@@ -292,11 +296,10 @@ int main(int argc, char* argv[])
         createFolderIfNotExists(storagePath.c_str());
 
     //LOG_I("Initializing AppPlatform...");
-    g_pAppPlatform = new UsedAppPlatform(storagePath, screen);
-    g_pAppPlatform->m_externalStorageDir = storagePath;
+    UsedAppPlatform* appPlatform = new UsedAppPlatform(storagePath, screen);
+    appPlatform->m_externalStorageDir = storagePath;
     //LOG_I("Initializing NinecraftApp...");
     g_pApp = new NinecraftApp;
-    g_pApp->m_pPlatform = g_pAppPlatform;
     g_pApp->init();
 
     resize();

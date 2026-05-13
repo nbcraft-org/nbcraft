@@ -282,7 +282,7 @@ void ContainerScreen::slotClicked(Slot* slot, int index, MouseButtonType button,
 
 void ContainerScreen::slotClicked(const MenuPointer& pointer, MouseButtonType button)
 {
-    slotClicked(pointer, button, m_pMinecraft->m_pPlatform->shiftPressed());
+    slotClicked(pointer, button, AppPlatform::singleton()->shiftPressed());
 }
 
 void ContainerScreen::keyPressed(int keyCode)

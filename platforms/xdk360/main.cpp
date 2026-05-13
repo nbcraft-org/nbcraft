@@ -54,7 +54,6 @@ void __cdecl main()
 		goto _cleanup;
 
 	g_pApp = new NinecraftApp;
-	g_pApp->m_pPlatform = &g_AppPlatform;
 	g_AppPlatform.m_externalStorageDir = "savedrive:";
 
 	// initialize the app

@@ -25,11 +25,15 @@ typedef AppPlatform_sdl2_desktop UsedAppPlatform;
 
 static float g_fPointToPixelScale = 1.0f;
 
-UsedAppPlatform *g_pAppPlatform;
 NinecraftApp *g_pApp;
 
 SDL_Window *window = NULL;
 SDL_GLContext glContext = NULL;
+
+static UsedAppPlatform* getPlatform()
+{
+	return static_cast<UsedAppPlatform*>(AppPlatform::singleton());
+}
 
 static void preInitGraphics()
 {
@@ -194,7 +198,7 @@ static void handle_events()
 					g_pApp->handleCharInput('\b');
 				}
 
-				if (g_pAppPlatform->controlPressed())
+				if (getPlatform()->controlPressed())
 				{
 					// Copy and pasting
 					if (event.key.keysym.sym == SDLK_v && event.key.state == SDL_PRESSED)
@@ -204,7 +208,7 @@ static void handle_events()
 					}
 				}
 
-				g_pAppPlatform->handleKeyEvent(event);
+				getPlatform()->handleKeyEvent(event);
 				break;
 			}
 			case SDL_CONTROLLERBUTTONDOWN:
@@ -215,7 +219,7 @@ static void handle_events()
 				{
 					g_pApp->pauseGame() || g_pApp->resumeGame();
 				}
-				g_pAppPlatform->handleControllerButtonEvent(event.cbutton.which, event.cbutton.button, event.cbutton.state);
+				getPlatform()->handleControllerButtonEvent(event.cbutton.which, event.cbutton.button, event.cbutton.state);
 				break;
 			}
 			case SDL_MOUSEBUTTONDOWN:
@@ -242,7 +246,7 @@ static void handle_events()
 					float y = event.motion.y * scale;
 					Multitouch::feed(MOUSE_BUTTON_NONE, false, x, y, 0);
 					Mouse::feed(MOUSE_BUTTON_NONE, false, x, y);
-					g_pAppPlatform->setMouseDiff(event.motion.xrel * scale, event.motion.yrel * scale);
+					getPlatform()->setMouseDiff(event.motion.xrel * scale, event.motion.yrel * scale);
 				}
 				break;
 			}
@@ -255,7 +259,7 @@ static void handle_events()
 				break;
 			}
 			case SDL_CONTROLLERAXISMOTION:
-				g_pAppPlatform->handleControllerAxisEvent(event.caxis.which, event.caxis.axis, event.caxis.value);
+				getPlatform()->handleControllerAxisEvent(event.caxis.which, event.caxis.axis, event.caxis.value);
 				break;
 			case SDL_FINGERDOWN:
 			case SDL_FINGERUP:
@@ -280,10 +284,10 @@ static void handle_events()
 				break;
 			}
 			case SDL_CONTROLLERDEVICEADDED:
-				g_pAppPlatform->gameControllerAdded(event.cdevice.which);
+				getPlatform()->gameControllerAdded(event.cdevice.which);
 				break;
 			case SDL_CONTROLLERDEVICEREMOVED:
-				g_pAppPlatform->gameControllerRemoved(event.cdevice.which);
+				getPlatform()->gameControllerRemoved(event.cdevice.which);
 				break;
 			case SDL_WINDOWEVENT:
 			{
@@ -355,7 +359,7 @@ static EM_BOOL main_loop(double time, void *user_data)
 	{
 		g_pApp->saveOptions();
 		delete g_pApp;
-		delete g_pAppPlatform;
+		delete getPlatform();
 		teardown();
 		// Stop Looping
 		return EM_FALSE;
@@ -438,10 +442,9 @@ int main(int argc, char *argv[])
 		createFolderIfNotExists(storagePath.c_str());
 	
 	// Start MCPE
-	g_pAppPlatform = new UsedAppPlatform(storagePath, window);
-	g_pAppPlatform->m_externalStorageDir = storagePath;
+	UsedAppPlatform* appPlatform = new UsedAppPlatform(storagePath, window);
+	appPlatform->m_externalStorageDir = storagePath;
 	g_pApp = new NinecraftApp;
-	g_pApp->m_pPlatform = g_pAppPlatform;
 	g_pApp->init();
 	
 	// Set Size

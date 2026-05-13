@@ -151,7 +151,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		goto _cleanup;
 
 	g_pApp = new NinecraftApp;
-	g_pApp->m_pPlatform = &g_AppPlatform;
 
 	// Storage Directory
 	{

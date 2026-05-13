@@ -283,8 +283,8 @@ void OptionsScreen::setWidthAllButtons(int width)
 
 void OptionsScreen::init()
 {
-	m_pMinecraft->platform()->showDialog(AppPlatform::DLG_OPTIONS);
-	m_pMinecraft->platform()->createUserInput();
+	AppPlatform::singleton()->showDialog(AppPlatform::DLG_OPTIONS);
+	AppPlatform::singleton()->createUserInput();
 
 	bool crampedMode = isCramped();
 

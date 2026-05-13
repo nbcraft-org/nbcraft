@@ -206,7 +206,7 @@ void Minecraft::_reloadInput()
 	{
 		m_pInputHolder = new CustomInputHolder(
 			new KeyboardInput(getOptions()),
-			new MouseTurnInput(this),
+			new MouseTurnInput(),
 			new MouseBuildInput()
 		);
 	}
@@ -224,7 +224,7 @@ void Minecraft::_reloadInput()
 int Minecraft::getLicenseId()
 {
 	if (m_licenseID < 0)
-		m_licenseID = m_pPlatform->checkLicense();
+		m_licenseID = AppPlatform::singleton()->checkLicense();
 
 	return m_licenseID;
 }
@@ -244,7 +244,7 @@ void Minecraft::releaseMouse()
 	// the mouse handler, but we don't have access to the platform
 	// from there!
 	recenterMouse();
-	platform()->setMouseGrabbed(false);
+	AppPlatform::singleton()->setMouseGrabbed(false);
 }
 
 void Minecraft::grabMouse()
@@ -261,7 +261,7 @@ void Minecraft::grabMouse()
 	if (useController() || isTouchscreen())
 		return; // don't actually try to grab the mouse
 
-	platform()->setMouseGrabbed(true);
+	AppPlatform::singleton()->setMouseGrabbed(true);
 }
 
 void Minecraft::recenterMouse()
@@ -269,7 +269,7 @@ void Minecraft::recenterMouse()
 	if (useController() || isTouchscreen())
 		return;
 
-	platform()->recenterMouse();
+	AppPlatform::singleton()->recenterMouse();
 }
 
 void Minecraft::setScreen(Screen* pScreen)
@@ -343,13 +343,13 @@ void Minecraft::setScreen(Screen* pScreen)
 
 void Minecraft::saveOptions()
 {
-	if (platform()->hasFileSystemAccess())
+	if (AppPlatform::singleton()->hasFileSystemAccess())
 		getOptions()->save().join();
 }
 
 void Minecraft::saveOptionsAsync()
 {
-	if (platform()->hasFileSystemAccess())
+	if (AppPlatform::singleton()->hasFileSystemAccess())
 		getOptions()->save();
 }
 
@@ -383,7 +383,7 @@ bool Minecraft::useSplitControls() const
 
 bool Minecraft::useController() const
 {
-	return m_pPlatform->hasGamepad() && getOptions()->m_bUseController.get();
+	return AppPlatform::singleton()->hasGamepad() && getOptions()->m_bUseController.get();
 }
 
 void Minecraft::setGameMode(GameType gameType)
@@ -576,7 +576,7 @@ void Minecraft::tickInput()
 		{
 			// @HACK: on SDL1, we don't recenter the mouse every tick, meaning the user can
 			// unintentionally click the hotbar while swinging their fist
-			if (platform()->getRecenterMouseEveryTick() || m_pScreen)
+			if (AppPlatform::singleton()->getRecenterMouseEveryTick() || m_pScreen)
 				m_pGui->handleClick(1, Mouse::getX(), Mouse::getY());
 		}
 
@@ -697,7 +697,7 @@ void Minecraft::tickMouse()
 	if (useController() || isTouchscreen())
 		return; // don't actually try to recenter the mouse
 
-    if (platform()->getRecenterMouseEveryTick()) // just for SDL1
+    if (AppPlatform::singleton()->getRecenterMouseEveryTick()) // just for SDL1
         recenterMouse();
 }
 
@@ -896,7 +896,7 @@ void Minecraft::update()
 {
 	m_timer.advanceTime(isGamePaused() && m_pLevel);
 
-	platform()->tick();
+	AppPlatform::singleton()->tick();
 
 	if (m_pRakNetInstance && m_pNetEventCallback)
 	{
