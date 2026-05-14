@@ -788,7 +788,7 @@ void Mob::lookAt(Entity* pEnt, float a3, float a4)
 	              -rotlerp(m_rot.y, x2 * 180.0f / float(M_PI), a3)));
 }
 
-Entity *Mob::getLookingAt() const
+Entity* Mob::getLookingAt() const
 {
 	if (m_entLookedAtId == 0)
 		return nullptr;

@@ -60,12 +60,19 @@ void FurnaceMenu::broadcastChanges()
 
 void FurnaceMenu::setData(int index, int value)
 {
-    if (index == 0)
+    switch (index)
+    {
+    case 0:
         m_furnace->m_tickCount = value;
-    else if (index == 1)
+        break;
+    case 1:
         m_furnace->m_litTime = value;
-    else if (index == 2)
+        break;
+    case 2:
         m_furnace->m_litDuration = value;
+        break;
+    default: break;
+    }
 }
 
 ItemStack FurnaceMenu::quickMoveStack(Container::SlotID slotId)

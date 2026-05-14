@@ -2,7 +2,7 @@
 
 #include "ContainerMenu.hpp"
 #include "world/entity/Player.hpp"
-#include <world/tile/entity/FurnaceTileEntity.hpp>
+#include "world/tile/entity/FurnaceTileEntity.hpp"
 
 class FurnaceMenu : public ContainerMenu
 {

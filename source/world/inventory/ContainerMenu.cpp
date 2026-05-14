@@ -103,7 +103,7 @@ void ContainerMenu::slotsChanged(Container*)
 
 void ContainerMenu::containerContentChanged(Container* container, Container::StackID stackId)
 {
-    // slotId is an index within a specific container, but m_slots contains
+    // stackId is an index of an ItemStack within a specific container, but m_slots contains
     // slots from multiple containers. We need to find which slot in m_slots corresponds
     // to this container slot by matching both the container and the slot index.
     for (size_t i = 0; i < m_slots.size(); ++i)

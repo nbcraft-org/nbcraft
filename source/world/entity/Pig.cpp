@@ -16,8 +16,8 @@ Pig::Pig(Level* pLevel) : Animal(pLevel)
 	m_texture = "mob/pig.png";
 	setSize(0.9f, 0.9f);
 	// some dataitem stuff
-	setSaddle(true);
 }
+
 int Pig::getDeathLoot() const
 {
 	return (isOnFire()) ? 
