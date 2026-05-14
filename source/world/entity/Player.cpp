@@ -266,7 +266,7 @@ void Player::tick()
 const ItemStack& Player::getCarriedItem() const
 {
 	// This only gets the first row slot
-	/*ItemStack* item = m_pInventory->getItem(m_pInventory->m_selectedSlot);
+	/*ItemStack* item = m_pInventory->getItem(m_pInventory->m_selectedStackId);
   
 	if (ItemStack::isNull(item))
 		return nullptr;

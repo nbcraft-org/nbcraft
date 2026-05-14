@@ -11,7 +11,7 @@
 Inventory::Inventory(Player* pPlayer) : m_items(C_NUM_INVENTORY_SLOTS), m_armor(C_NUM_ARMOR_SLOTS)
 {
 	m_pPlayer = pPlayer;
-	m_selectedSlot = 0;
+	m_selectedStackId = 0;
 }
 
 Inventory::~Inventory()
@@ -274,7 +274,7 @@ ItemStack Inventory::removeItem(StackID stackId, int count)
 
 int Inventory::getSlot(int id)
 {
-	for (size_t i = 0; i < m_items.size(); ++i)
+	for (StackID i = 0; i < m_items.size(); ++i)
 	{
 		if (!m_items[i].isEmpty() && m_items[i].getId() == id)
 			return i;
@@ -300,7 +300,7 @@ bool Inventory::removeResource(int id)
 // Doesn't exist in PE
 void Inventory::tick()
 {
-    for (SlotID i = 0; i < m_items.size(); i++)
+    for (StackID i = 0; i < m_items.size(); i++)
     {
 		ItemStack& item = m_items[i];
 
@@ -308,7 +308,7 @@ void Inventory::tick()
         {
 			if (item.m_popTime > 0)
 				item.m_popTime--;
-			item.getItem()->inventoryTick(&item, m_pPlayer->m_pLevel, m_pPlayer, i, i == m_selectedSlot);
+			item.getItem()->inventoryTick(&item, m_pPlayer->m_pLevel, m_pPlayer, i, i == m_selectedStackId);
         }
     }
 }
@@ -386,12 +386,12 @@ ItemStack& Inventory::getArmor(Item::EquipmentSlot slotNo)
 
 ItemStack& Inventory::getSelectedItem()
 {
-	return getItem(m_selectedSlot);
+	return getItem(m_selectedStackId);
 }
 
 int Inventory::getSelectedItemId()
 {
-	return getItem(m_selectedSlot).getId();
+	return getItem(m_selectedStackId).getId();
 }
 
 void Inventory::setItem(StackID stackId, const ItemStack& item)
@@ -408,7 +408,7 @@ void Inventory::setItem(StackID stackId, const ItemStack& item)
 
 void Inventory::setSelectedItem(ItemStack item)
 {
-	setItem(m_selectedSlot, item);
+	setItem(m_selectedStackId, item);
 }
 
 void Inventory::setCarried(const ItemStack& carried)
@@ -436,14 +436,14 @@ void Inventory::pickItem(int itemID, int data, int maxHotBarSlot)
 		if (i < size_t(maxHotBarSlot))
 			selectSlot(i);
 		else
-			swapItems(i, m_selectedSlot);
+			swapItems(i, m_selectedStackId);
 		return;
 	}
 
 	if (m_pPlayer->isCreative() && selectItem != nullptr)
 	{
 		ItemStack oldSelected = getSelected();
-		setItem(m_selectedSlot, ItemStack(selectItem, 1, data));
+		setItem(m_selectedStackId, ItemStack(selectItem, 1, data));
 		if (!oldSelected.isEmpty()) addResource(oldSelected);
 	}
 }
@@ -460,9 +460,9 @@ void Inventory::selectItem(int itemID, int maxHotBarSlot)
 			continue;
 
 		if (i < size_t(maxHotBarSlot))
-			m_selectedSlot = i;
+			m_selectedStackId = i;
 		else
-			swapItems(i, m_selectedSlot);
+			swapItems(i, m_selectedStackId);
 	}
 }
 
@@ -471,12 +471,12 @@ void Inventory::swapItems(StackID stackIdA, StackID stackIdB)
 	std::swap(getItem(stackIdA), getItem(stackIdB));
 }
 
-void Inventory::selectSlot(SlotID slotId)
+void Inventory::selectSlot(StackID stackId)
 {
-	if (slotId < 0 || slotId >= C_MAX_HOTBAR_ITEMS)
+	if (stackId < 0 || stackId >= C_MAX_HOTBAR_ITEMS)
 		return;
 
-	m_selectedSlot = slotId;
+	m_selectedStackId = stackId;
 }
 
 int Inventory::getAttackDamage(Entity* pEnt)

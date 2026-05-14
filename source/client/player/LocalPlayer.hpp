@@ -56,6 +56,7 @@ private:
 	// multiplayer related
 	Vec3 m_lastSentPos;
 	Vec2 m_lastSentRot;
+	Container::StackID m_lastSelectedStackId;
 	// multiplayer related -- end
 
 public:
@@ -71,7 +72,6 @@ public:
 	float field_C18;
 	float field_C1C;
 	int m_nAutoJumpFrames;
-	int m_lastSelectedSlot;
 	Minecraft* m_pMinecraft;
 	IMoveInput* m_pMoveInput;
 	Vec2 m_renderArmRot;

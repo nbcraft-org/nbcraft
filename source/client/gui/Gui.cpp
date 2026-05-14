@@ -349,22 +349,22 @@ void Gui::handleClick(int clickID, int mouseX, int mouseY)
 
 void Gui::handleScrollWheel(bool down)
 {
-	Container::SlotID slotId = m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedSlot;
+	Container::StackID stackId = m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedStackId;
 
 	int maxItems = getNumUsableSlots() - 1;
 
 	if (down)
 	{
-		if (slotId++ == maxItems)
-			slotId = 0;
+		if (stackId++ == maxItems)
+			stackId = 0;
 	}
 	else
 	{
-		if (slotId-- == 0)
-			slotId = maxItems;
+		if (stackId-- == 0)
+			stackId = maxItems;
 	}
 
-	m_pMinecraft->m_pLocalPlayer->m_pInventory->selectSlot(slotId);
+	m_pMinecraft->m_pLocalPlayer->m_pInventory->selectSlot(stackId);
 }
 
 void Gui::handleKeyPressed(int keyCode)
@@ -387,21 +387,21 @@ void Gui::handleKeyPressed(int keyCode)
 		int maxItems = getNumSlots() - 1;
 		if (m_pMinecraft->useTouchscreen())
 			maxItems--;
-		Container::SlotID* slotId = &m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedSlot;
+		Container::StackID* stackId = &m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedStackId;
 
 		if (slotR)
 		{
-			if (*slotId < maxItems)
-				(*slotId)++;
+			if (*stackId < maxItems)
+				(*stackId)++;
 			else
-				*slotId = 0;
+				*stackId = 0;
 		}
 		else if (slotL)
 		{
-			if (*slotId > 0)
-				(*slotId)--;
+			if (*stackId > 0)
+				(*stackId)--;
 			else
-				*slotId = maxItems;
+				*stackId = maxItems;
 		}
 		return;
 	}
@@ -690,7 +690,7 @@ void Gui::renderToolBar(float f, float alpha)
 	Inventory* inventory = player->m_pInventory;
 
 	// selection mark
-	blit(-1 - hotbarWidth / 2 + 20 * inventory->m_selectedSlot, -23, 0, 22, 24, 22, 0, 0);
+	blit(-1 - hotbarWidth / 2 + 20 * inventory->m_selectedStackId, -23, 0, 22, 24, 22, 0, 0);
 
 	// chat and pause button for mobile devices
 	if (mc->isTouchscreen())

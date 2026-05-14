@@ -23,15 +23,17 @@ void LocalPlayer::_init()
 	// multiplayer related
 	m_lastSentPos = Vec3::ZERO;
 	m_lastSentRot = Vec2::ZERO;
+	m_lastSelectedStackId = m_pInventory->m_selectedStackId;
 	// multiplayer related -- end
 
 	m_renderArmRot = Vec2::ZERO;
 	m_lastRenderArmRot = Vec2::ZERO;
-	m_lastSelectedSlot = m_pInventory->getSelectedItemId();
 }
 
 LocalPlayer::LocalPlayer(Minecraft* pMinecraft, Level* pLevel, User* pUser, GameType playerGameType, int dimensionId) : Player(pLevel, playerGameType)
 {
+	m_lastSelectedStackId = 0;
+
 	field_BEC = 0;
 	field_BF0 = Vec3::ZERO;
 	field_BFC = 0.0f;
@@ -43,7 +45,6 @@ LocalPlayer::LocalPlayer(Minecraft* pMinecraft, Level* pLevel, User* pUser, Game
 	field_C14 = 0.0f;
 	field_C18 = 0.0f;
 	field_C1C = 0.0f;
-	m_lastSelectedSlot = 0;
 	m_pMoveInput = nullptr;
 
 	m_pMinecraft = pMinecraft;
@@ -343,9 +344,9 @@ void LocalPlayer::tick()
 	{
 		sendPosition();
 
-		if (m_lastSelectedSlot != m_pInventory->m_selectedSlot)
+		if (m_lastSelectedStackId != m_pInventory->m_selectedStackId)
 		{
-			m_lastSelectedSlot = m_pInventory->m_selectedSlot;
+			m_lastSelectedStackId = m_pInventory->m_selectedStackId;
 			const ItemStack& item = m_pInventory->getSelectedItem();
 			m_pMinecraft->m_pRakNetInstance->send(new PlayerEquipmentPacket(m_EntityID, item.getId(), item.getAuxValue()));
 		}

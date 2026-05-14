@@ -57,7 +57,7 @@ public:
 	void pickItem(int itemID, int data, int maxHotBarSlot);
 	void selectItem(int itemID, int maxHotBarSlot);
 	void swapItems(StackID stackIdA, StackID stackIdB);
-	void selectSlot(SlotID slotId);
+	void selectSlot(StackID stackId);
 
 	int getAttackDamage(Entity*);
 
@@ -72,7 +72,7 @@ public:
 
 	bool contains(const ItemStack&) const;
 
-	uint16_t getSelectedSlotNo() const { return m_selectedSlot; }
+	StackID getSelectedSlotNo() const { return m_selectedStackId; }
 
 	// v0.2.0 name alias
 	ItemStack& getSelected() { return getSelectedItem(); }
@@ -98,7 +98,7 @@ private:
 
 public:
 	Player* m_pPlayer;
-	SlotID m_selectedSlot;
+	StackID m_selectedStackId;
 
 private:
 	ItemStack m_carried;
