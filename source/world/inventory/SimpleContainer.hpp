@@ -8,15 +8,15 @@
 class SimpleContainer : public Container
 {
 public:
-	SimpleContainer(int size, const std::string& name);
+	SimpleContainer(Size size, const std::string& name);
 
 public:
 	uint16_t getContainerSize() const override;
-	ItemStack& getItem(int index) override;
-	ItemStack removeItem(int index, int count) override;
-	void setItem(int index, const ItemStack& item) override;
+	ItemStack& getItem(StackID index) override;
+	ItemStack removeItem(StackID index, int count) override;
+	void setItem(StackID index, const ItemStack& item) override;
 	std::string getName() const override;
-	void setContainerChanged(SlotID slot) override;
+	void setContainerChanged(StackID stackId) override;
 	bool stillValid(Player* player) const override;
 	void addContentChangeListener(ContainerContentChangeListener* listener) override;
 	void addSizeChangeListener(ContainerSizeChangeListener* listener) override;

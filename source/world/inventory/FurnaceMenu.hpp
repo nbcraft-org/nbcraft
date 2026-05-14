@@ -14,7 +14,7 @@ public:
     void addSlotListener(ContainerListener* listener) override;
     void broadcastChanges() override;
     void setData(int, int) override;
-    ItemStack quickMoveStack(int index) override;
+    ItemStack quickMoveStack(Container::SlotID slotId) override;
 
 private:
     FurnaceTileEntity* m_furnace;

@@ -44,13 +44,13 @@ SlotDisplay FurnaceScreen::_createSlotDisplay(const Slot& slot)
     switch (slot.m_group)
     {
     case Slot::INPUT:
-        return SlotDisplay(56, 17 + (slot.m_slot % 2) * (slotSize * 2));
+        return SlotDisplay(56, 17 + (slot.m_stackId % 2) * (slotSize * 2));
     case Slot::OUTPUT:
         return SlotDisplay(116, 35);
     case Slot::INVENTORY:
-        return SlotDisplay(8 + (slot.m_slot % 9) * slotSize, 84 + ((slot.m_slot / 9) - 1) * slotSize, slotSize);
+        return SlotDisplay(8 + (slot.m_stackId % 9) * slotSize, 84 + ((slot.m_stackId / 9) - 1) * slotSize, slotSize);
     case Slot::HOTBAR:
-        return SlotDisplay(8 + (slot.m_slot % 9) * slotSize, 142, slotSize);
+        return SlotDisplay(8 + (slot.m_stackId % 9) * slotSize, 142, slotSize);
     default:
         return SlotDisplay();
     }

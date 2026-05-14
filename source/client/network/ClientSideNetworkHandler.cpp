@@ -778,7 +778,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ContainerS
 		return;
 	
 	pContainerMenu->m_bBroadcastChanges = false;
-	pContainerMenu->setItem(packet->m_slot, packet->m_item);
+	pContainerMenu->setItem(packet->m_slotId, packet->m_item);
 	pContainerMenu->m_bBroadcastChanges = true;
 }
 
@@ -801,7 +801,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ContainerS
 		return;
 
 	pContainerMenu->m_bBroadcastChanges = false;
-	pContainerMenu->setData(packet->m_slot, packet->m_value);
+	pContainerMenu->setData(packet->m_slotId, packet->m_value);
 	pContainerMenu->m_bBroadcastChanges = true;
 }
 

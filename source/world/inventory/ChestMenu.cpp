@@ -32,16 +32,16 @@ bool ChestMenu::stillValid(Player* player) const
     return m_pContainer->stillValid(player);
 }
 
-ItemStack ChestMenu::quickMoveStack(int index)
+ItemStack ChestMenu::quickMoveStack(Container::SlotID slotId)
 {
     ItemStack item = ItemStack::EMPTY;
-    Slot* slot = getSlot(index);
+    Slot* slot = getSlot(slotId);
     if (slot && slot->hasItem())
     {
         ItemStack& slotItem = slot->getItem();
         item = slotItem;
         int rows = m_pContainer->getContainerSize() / 9;
-        if (index < rows * 9)
+        if (slotId < rows * 9)
             moveItemStackTo(slotItem, rows * 9, m_slots.size(), true);
         else
             moveItemStackTo(slotItem, 0, rows * 9, false);

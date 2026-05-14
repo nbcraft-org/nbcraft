@@ -258,6 +258,9 @@ bool LocalPlayer::isSneaking() const
 void LocalPlayer::move(const Vec3& pos)
 {
 	LocalPlayer* pLP = m_pMinecraft->m_pLocalPlayer;
+	if (!pLP)
+		return;
+
 	if (Minecraft::DEADMAU5_CAMERA_CHEATS && pLP == this && m_pMinecraft->getOptions()->m_flightHax.get())
 	{
 		//@HUH: Using m_pMinecraft->m_pLocalPlayer instead of this, even though they're the same

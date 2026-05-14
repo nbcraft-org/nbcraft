@@ -25,15 +25,15 @@ public:
 
     std::string getName() const override;
 
-    ItemStack& getItem(int index) override;
+    ItemStack& getItem(StackID index) override;
 
-    ItemStack removeItem(int index, int count) override;
+    ItemStack removeItem(StackID index, int count) override;
 
-    void setItem(int index, const ItemStack& item) override;
+    void setItem(StackID index, const ItemStack& item) override;
 
     int getMaxStackSize() override;
 
-    void setContainerChanged(SlotID slot) override;
+    void setContainerChanged(StackID stackId) override;
 
     bool stillValid(Player* player) const override;
 

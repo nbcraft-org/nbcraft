@@ -126,9 +126,9 @@ void GameMode::attack(Player* player, Entity* entity)
 	player->attack(entity);
 }
 
-ItemStack GameMode::handleInventoryMouseClick(int containerId, int slotNum, MouseButtonType button, bool quick, Player* player)
+ItemStack GameMode::handleInventoryMouseClick(int containerId, Container::SlotID slotId, MouseButtonType button, bool quick, Player* player)
 {
-	return player->m_pContainerMenu->clicked(slotNum, button, quick, player);
+	return player->m_pContainerMenu->clicked(slotId, button, quick, player);
 }
 
 void GameMode::handleCloseInventory(int a, Player* player)

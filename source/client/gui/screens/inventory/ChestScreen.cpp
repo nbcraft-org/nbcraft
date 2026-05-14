@@ -34,11 +34,11 @@ SlotDisplay ChestScreen::_createSlotDisplay(const Slot& slot)
     switch (slot.m_group)
     {
     case Slot::CONTAINER:
-        return SlotDisplay(8 + (slot.m_slot % 9) * slotSize, 18 + (slot.m_slot / 9) * slotSize, slotSize);
+        return SlotDisplay(8 + (slot.m_stackId % 9) * slotSize, 18 + (slot.m_stackId / 9) * slotSize, slotSize);
     case Slot::INVENTORY:
-        return SlotDisplay(8 + (slot.m_slot % 9) * slotSize, (rows * 18) + 13 + (slot.m_slot / 9) * slotSize, slotSize);
+        return SlotDisplay(8 + (slot.m_stackId % 9) * slotSize, (rows * 18) + 13 + (slot.m_stackId / 9) * slotSize, slotSize);
     case Slot::HOTBAR:
-        return SlotDisplay(8 + (slot.m_slot % 9) * slotSize, 89 + rows * slotSize, slotSize);
+        return SlotDisplay(8 + (slot.m_stackId % 9) * slotSize, 89 + rows * slotSize, slotSize);
     default:
         return SlotDisplay();
     }

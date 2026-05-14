@@ -116,9 +116,9 @@ bool FurnaceTileEntity::stillValid(Player* player) const
     return player->distanceToSqr(m_pos + 0.5f) <= 64.0;
 }
 
-void FurnaceTileEntity::setContainerChanged(SlotID slot)
+void FurnaceTileEntity::setContainerChanged(StackID stackId)
 {
-    SimpleContainer::setContainerChanged(slot);
+    SimpleContainer::setContainerChanged(stackId);
     TileEntity::setChanged();
 }
 

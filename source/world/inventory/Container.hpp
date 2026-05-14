@@ -17,6 +17,8 @@ protected:
 
 public:
 	typedef uint16_t Size;
+	typedef int16_t SlotID;
+	typedef uint16_t StackID;
 
 public:
 	enum Type
@@ -32,23 +34,23 @@ public:
 
 public:
 	virtual Size getContainerSize() const = 0;
-	virtual ItemStack& getItem(int index) = 0;
-	virtual ItemStack* tryGetItem(int index)
+	virtual ItemStack& getItem(StackID stackId) = 0;
+	virtual ItemStack* tryGetItem(StackID stackId)
 	{
-		if (index >= 0 && index < getContainerSize())
-			return &getItem(index);
+		if (stackId >= 0 && stackId < getContainerSize())
+			return &getItem(stackId);
 		else
 			return nullptr;
 	}
-	virtual ItemStack removeItem(int index, int count) = 0;
-	virtual void setItem(int index, const ItemStack& item) = 0;
+	virtual ItemStack removeItem(StackID stackId, int count) = 0;
+	virtual void setItem(StackID stackId, const ItemStack& item) = 0;
 	virtual std::string getName() const = 0;
 	virtual int getMaxStackSize()
 	{
 		return C_MAX_CONTAINER_STACK_SIZE;
 	}
 	// Was called setChanged in Java
-	virtual void setContainerChanged(SlotID slot) = 0;
+	virtual void setContainerChanged(StackID stackId) = 0;
 	virtual bool stillValid(Player* player) const = 0;
 
 	virtual void addContentChangeListener(ContainerContentChangeListener* listener) {}

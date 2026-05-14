@@ -8,10 +8,10 @@ public:
     {
     }
 
-    void containerContentChanged(Container* container, SlotID slot) override
+    void containerContentChanged(Container* container, StackID stackId) override
     {
         if (m_pOwner)
-            m_pOwner->setContainerChanged(slot + m_offset);
+            m_pOwner->setContainerChanged(stackId + m_offset);
     }
 
 private:
@@ -52,7 +52,7 @@ std::string CompoundContainer::getName() const
     return m_name;
 }
 
-ItemStack& CompoundContainer::getItem(int index)
+ItemStack& CompoundContainer::getItem(StackID index)
 {
     if (index >= m_pLeftContainer->getContainerSize())
         return m_pRightContainer->getItem(index - m_pLeftContainer->getContainerSize());
@@ -60,7 +60,7 @@ ItemStack& CompoundContainer::getItem(int index)
         return m_pLeftContainer->getItem(index);
 }
 
-ItemStack CompoundContainer::removeItem(int index, int count)
+ItemStack CompoundContainer::removeItem(StackID index, int count)
 {
     if (index >= m_pLeftContainer->getContainerSize())
         return m_pRightContainer->removeItem(index - m_pLeftContainer->getContainerSize(), count);
@@ -68,7 +68,7 @@ ItemStack CompoundContainer::removeItem(int index, int count)
         return m_pLeftContainer->removeItem(index, count);
 }
 
-void CompoundContainer::setItem(int index, const ItemStack& item)
+void CompoundContainer::setItem(StackID index, const ItemStack& item)
 {
     if (index >= m_pLeftContainer->getContainerSize())
         m_pRightContainer->setItem(index - m_pLeftContainer->getContainerSize(), item);
@@ -81,12 +81,12 @@ int CompoundContainer::getMaxStackSize()
     return m_pLeftContainer->getMaxStackSize();
 }
 
-void CompoundContainer::setContainerChanged(SlotID slot)
+void CompoundContainer::setContainerChanged(StackID stackId)
 {
     for (ContentChangeListeners::iterator it = m_contentChangeListeners.begin(); it != m_contentChangeListeners.end(); ++it)
     {
         ContainerContentChangeListener* listener = *it;
-        listener->containerContentChanged(this, slot);
+        listener->containerContentChanged(this, stackId);
     }
 }
 

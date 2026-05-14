@@ -28,20 +28,20 @@ public:
     void addSlot(Slot* slot);
     virtual void addSlotListener(ContainerListener* listener);
     void sendData(int id, int value);
-    virtual void broadcastChanges(SlotID slot);
+    virtual void broadcastChanges(Container::SlotID slotId);
     virtual void broadcastChanges();
     virtual void removed(Player* player);
     virtual void slotsChanged(Container* container);
 
     // Called getItems in PE and Java
     std::vector<ItemStack> cloneItems();
-    Slot* getSlotFor(Container* container, int index);
-    Slot* getSlot(int index);
-    virtual ItemStack clicked(int slotIndex, MouseButtonType mouseButton, bool quickMove, Player* player);
-    virtual ItemStack quickMoveStack(int index);
-    virtual void moveItemStackTo(ItemStack& item, int slotFrom, int slotTo, bool take);
+    Slot* getSlotFor(Container* container, Container::StackID stackId);
+    Slot* getSlot(Container::SlotID slotId) { return m_slots[slotId]; }
+    virtual ItemStack clicked(Container::SlotID slotId, MouseButtonType mouseButton, bool quickMove, Player* player);
+    virtual ItemStack quickMoveStack(Container::SlotID slotId);
+    virtual void moveItemStackTo(ItemStack& item, Container::SlotID slotFrom, Container::SlotID slotTo, bool take);
 
-    void setItem(int slotIndex, ItemStack item);
+    void setItem(Container::SlotID slotId, ItemStack item);
     void setAll(const std::vector<ItemStack>& items);
     virtual void setData(int id, int value);
 
@@ -59,7 +59,7 @@ public:
     virtual bool isPauseScreen() const { return false; }
 
 public:
-    void containerContentChanged(Container* container, SlotID slot) override;
+    void containerContentChanged(Container* container, Container::StackID stackId) override;
 
 protected:
     std::vector<ItemStack> m_lastSlots;

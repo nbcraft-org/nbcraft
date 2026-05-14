@@ -123,20 +123,20 @@ void ServerPlayer::refreshContainer(ContainerMenu* menu, const std::vector<ItemS
 #endif
 }
 
-void ServerPlayer::slotChanged(ContainerMenu* menu, int index, Slot* slot, ItemStack& item, bool isResultSlot)
+void ServerPlayer::slotChanged(ContainerMenu* menu, Container::SlotID slotId, Slot* slot, ItemStack& item, bool isResultSlot)
 {
 #if NETWORK_PROTOCOL_VERSION >= 5
 	// @TODO: See my gripes in ContainerMenu::slotChanged
 	// But ultimately this is a bandaid for the fact that the client has authority over the inventory in PE
 	if (!isResultSlot && slot->m_group != Slot::INVENTORY && slot->m_group != Slot::HOTBAR)
-		m_pLevel->m_pRakNetInstance->send(new ContainerSetSlotPacket(menu->m_containerId, index, item));
+		m_pLevel->m_pRakNetInstance->send(new ContainerSetSlotPacket(menu->m_containerId, slotId, item));
 #endif
 }
 
-void ServerPlayer::setContainerData(ContainerMenu* menu, int id, int value)
+void ServerPlayer::setContainerData(ContainerMenu* menu, Container::SlotID slotId, int value)
 {
 #if NETWORK_PROTOCOL_VERSION >= 5
-	m_pLevel->m_pRakNetInstance->send(new ContainerSetDataPacket(menu->m_containerId, id, value));
+	m_pLevel->m_pRakNetInstance->send(new ContainerSetDataPacket(menu->m_containerId, slotId, value));
 #endif
 }
 

@@ -41,7 +41,7 @@ void ContainerMenu::_clearSlots()
 
 void ContainerMenu::addSlot(Slot* slot)
 {
-    slot->m_index = m_slots.size();
+    slot->m_id = m_slots.size();
     m_slots.push_back(slot);
     m_lastSlots.push_back(ItemStack::EMPTY);
 
@@ -67,14 +67,14 @@ void ContainerMenu::sendData(int id, int value)
         (*it)->setContainerData(this, id, value);
 }
 
-void ContainerMenu::broadcastChanges(SlotID slot)
+void ContainerMenu::broadcastChanges(Container::SlotID slotId)
 {
-    ItemStack& current = m_slots[slot]->getItem();
-    if (m_lastSlots[slot] != current)
+    ItemStack& current = m_slots[slotId]->getItem();
+    if (m_lastSlots[slotId] != current)
     {
-        m_lastSlots[slot] = ItemStack(current);
+        m_lastSlots[slotId] = ItemStack(current);
         for (ContainerListeners::iterator it = m_listeners.begin(); it != m_listeners.end(); ++it)
-            (*it)->slotChanged(this, slot, m_slots[slot], m_lastSlots[slot], isResultSlot());
+            (*it)->slotChanged(this, slotId, m_slots[slotId], m_lastSlots[slotId], isResultSlot());
     }
 }
 
@@ -101,15 +101,15 @@ void ContainerMenu::slotsChanged(Container*)
     broadcastChanges();
 }
 
-void ContainerMenu::containerContentChanged(Container* container, SlotID containerSlot)
+void ContainerMenu::containerContentChanged(Container* container, Container::StackID stackId)
 {
-    // containerSlot is an index within a specific container, but m_slots contains
+    // slotId is an index within a specific container, but m_slots contains
     // slots from multiple containers. We need to find which slot in m_slots corresponds
     // to this container slot by matching both the container and the slot index.
     for (size_t i = 0; i < m_slots.size(); ++i)
     {
         Slot* slot = m_slots[i];
-        if (slot->m_pContainer == container && slot->m_index == containerSlot)
+        if (slot->m_pContainer == container && slot->m_stackId == stackId)
         {
             if (m_bBroadcastChanges)
                 broadcastChanges(i);
@@ -138,38 +138,33 @@ std::vector<ItemStack> ContainerMenu::cloneItems()
     return content;
 }
 
-Slot* ContainerMenu::getSlotFor(Container* container, int index)
+Slot* ContainerMenu::getSlotFor(Container* container, Container::StackID stackId)
 {
     for (std::vector<Slot*>::iterator it = m_slots.begin(); it != m_slots.end(); ++it)
     {
         Slot* slot = *it;
-        if (slot->isAt(container, index))
+        if (slot->isAt(container, stackId))
             return slot;
     }
     return nullptr;
 }
 
-Slot* ContainerMenu::getSlot(int index)
+ItemStack ContainerMenu::quickMoveStack(Container::SlotID slotId)
 {
-    return m_slots[index];
+    return slotId >= 0 && slotId < int(m_slots.size()) ? getSlot(slotId)->getItem() : ItemStack::EMPTY;
 }
 
-ItemStack ContainerMenu::quickMoveStack(int index)
+void ContainerMenu::moveItemStackTo(ItemStack& item, Container::SlotID slotFrom, Container::SlotID slotTo, bool take)
 {
-    return index >= 0 && index < int(m_slots.size()) ? getSlot(index)->getItem() : ItemStack::EMPTY;
-}
-
-void ContainerMenu::moveItemStackTo(ItemStack& item, int slotFrom, int slotTo, bool take)
-{
-    int index = slotFrom;
+    Container::SlotID slotId = slotFrom;
     if (take)
-        index = slotTo - 1;
+        slotId = slotTo - 1;
 
     if (item.isStackable())
     {
-        while (item.m_count > 0 && ((!take && index < slotTo) || (take && index >= slotFrom)))
+        while (item.m_count > 0 && ((!take && slotId < slotTo) || (take && slotId >= slotFrom)))
         {
-            Slot* slot = getSlot(index);
+            Slot* slot = getSlot(slotId);
             ItemStack& slotItem = slot->getItem();
             if (slotItem && slotItem.getId() == item.getId() && (!item.isStackedByData() || item.getAuxValue() == slotItem.getAuxValue()))
             {
@@ -189,22 +184,22 @@ void ContainerMenu::moveItemStackTo(ItemStack& item, int slotFrom, int slotTo, b
             }
 
             if (take)
-                --index;
+                --slotId;
             else
-                ++index;
+                ++slotId;
         }
     }
 
     if (item.m_count > 0)
     {
         if (take)
-            index = slotTo - 1;
+            slotId = slotTo - 1;
         else
-            index = slotFrom;
+            slotId = slotFrom;
 
-        while ((!take && index < slotTo) || (take && index >= slotFrom))
+        while ((!take && slotId < slotTo) || (take && slotId >= slotFrom))
         {
-            Slot* slot = getSlot(index);
+            Slot* slot = getSlot(slotId);
             ItemStack& slotItem = slot->getItem();
             if (!slotItem)
             {
@@ -215,14 +210,14 @@ void ContainerMenu::moveItemStackTo(ItemStack& item, int slotFrom, int slotTo, b
             }
 
             if (take)
-                --index;
+                --slotId;
             else
-                ++index;
+                ++slotId;
         }
     }
 }
 
-ItemStack ContainerMenu::clicked(int slotIndex, MouseButtonType mouseButton, bool quickMove, Player* player)
+ItemStack ContainerMenu::clicked(Container::SlotID slotId, MouseButtonType mouseButton, bool quickMove, Player* player)
 {
     ItemStack result = ItemStack::EMPTY;
 
@@ -231,7 +226,7 @@ ItemStack ContainerMenu::clicked(int slotIndex, MouseButtonType mouseButton, boo
 
     Inventory* inv = player->m_pInventory;
 
-    if (slotIndex == -999)
+    if (slotId == -999)
     {
         if (!inv->getCarried().isEmpty())
         {
@@ -255,19 +250,19 @@ ItemStack ContainerMenu::clicked(int slotIndex, MouseButtonType mouseButton, boo
     {
         if (quickMove)
         {
-            ItemStack quickMoved = quickMoveStack(slotIndex);
+            ItemStack quickMoved = quickMoveStack(slotId);
             if (!quickMoved.isEmpty())
             {
                 result = quickMoved;
-                Slot* slot = getSlot(slotIndex);
+                Slot* slot = getSlot(slotId);
                 if (slot && slot->hasItem() && slot->getItem().m_count < quickMoved.m_count)
-                    clicked(slotIndex, mouseButton, quickMove, player);
+                    clicked(slotId, mouseButton, quickMove, player);
             }
 
             return result;
         }
 
-        Slot* slot = getSlot(slotIndex);
+        Slot* slot = getSlot(slotId);
         if (!slot)
             return result;
 
@@ -380,12 +375,12 @@ ItemStack ContainerMenu::clicked(int slotIndex, MouseButtonType mouseButton, boo
     return result;
 }
 
-void ContainerMenu::setItem(int index, ItemStack item)
+void ContainerMenu::setItem(Container::SlotID slotId, ItemStack item)
 {
-    m_slots[index]->set(item);
-    if (!m_bBroadcastChanges && index >= 0 && index < (int)m_lastSlots.size())
+    m_slots[slotId]->set(item);
+    if (!m_bBroadcastChanges && slotId >= 0 && slotId < (int)m_lastSlots.size())
     {
-        m_lastSlots[index] = ItemStack(m_slots[index]->getItem());
+        m_lastSlots[slotId] = ItemStack(m_slots[slotId]->getItem());
     }
 }
 

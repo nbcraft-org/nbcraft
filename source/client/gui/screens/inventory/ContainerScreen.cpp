@@ -140,7 +140,7 @@ void ContainerScreen::initMenuPointer()
     {
         Slot* slot = *it;
         //@NOTE: Selects the first hotbar slot
-        if (slot->m_slot == 0 && m_pMinecraft->m_pLocalPlayer && slot->m_pContainer == m_pMinecraft->m_pLocalPlayer->m_pInventory)
+        if (slot->m_id == 0 && m_pMinecraft->m_pLocalPlayer && slot->m_pContainer == m_pMinecraft->m_pLocalPlayer->m_pInventory)
         {
             _selectSlot(slot);
             break;
@@ -266,18 +266,18 @@ void ContainerScreen::slotClicked(const MenuPointer& pointer, MouseButtonType bu
     {
         Slot* slot = _findSlot(pointer.x, pointer.y);
         bool outside = pointer.x < m_leftPos || pointer.y < m_topPos || pointer.x >= m_leftPos + m_imageWidth || pointer.y >= m_topPos + m_imageHeight;
-        int index = -1;
-        if (slot) index = slot->m_index;
-        if (outside) index = -999;
-        if (index != -1)
-            slotClicked(slot, index, button, index != -999 && quick);
+        Container::SlotID slotId = -1;
+        if (slot) slotId = slot->m_id;
+        if (outside) slotId = -999;
+        if (slotId != -1)
+            slotClicked(slot, slotId, button, slotId != -999 && quick);
     }
 }
 
-void ContainerScreen::slotClicked(Slot* slot, int index, MouseButtonType button, bool quick)
+void ContainerScreen::slotClicked(Slot* slot, Container::SlotID slotId, MouseButtonType button, bool quick)
 {
     _tryPlayInteractSound();
-    m_pMinecraft->getLocalPlayerGameMode()->handleInventoryMouseClick(m_pMenu->m_containerId, index, button, quick, m_pMinecraft->m_pLocalPlayer);
+    m_pMinecraft->getLocalPlayerGameMode()->handleInventoryMouseClick(m_pMenu->m_containerId, slotId, button, quick, m_pMinecraft->m_pLocalPlayer);
 }
 
 void ContainerScreen::slotClicked(const MenuPointer& pointer, MouseButtonType button)
@@ -317,7 +317,7 @@ void ContainerScreen::keyPressed(int keyCode)
 
 const SlotDisplay& ContainerScreen::getSlotDisplay(const Slot& slot) const
 {
-    return m_slotDisplays[slot.m_index];
+    return m_slotDisplays[slot.m_id];
 }
 
 void ContainerScreen::onClose()
@@ -369,5 +369,5 @@ bool ContainerScreen::SlotNavigation::next(int& x, int& y, bool cycle)
 bool ContainerScreen::SlotNavigation::isValid(ID id)
 {
     Slot* hovered = m_pScreen->_findSlot();
-    return !hovered || hovered->m_index != id;
+    return !hovered || hovered->m_id != id;
 }

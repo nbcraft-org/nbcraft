@@ -1,9 +1,9 @@
 #include "Slot.hpp"
 
-Slot::Slot(Container* container, int slot, Group group) :
-    m_pContainer(container),
-    m_slot(slot),
-    m_group(group)
+Slot::Slot(Container* container, Container::StackID stackId, Group group)
+    : m_pContainer(container)
+    , m_stackId(stackId)
+    , m_group(group)
 {
 }
 
@@ -18,6 +18,6 @@ bool Slot::canSync() const
 
 void Slot::set(const ItemStack& item)
 {
-    m_pContainer->setItem(m_slot, item);
+    m_pContainer->setItem(m_stackId, item);
     setChanged();
 }

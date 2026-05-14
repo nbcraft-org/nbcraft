@@ -41,14 +41,14 @@ public:
 	bool add(ItemStack& item);
     void tick();
 
-	ItemStack& getItem(int slotNo) override;
+	ItemStack& getItem(StackID stackId) override;
 	ItemStack& getArmor(Item::EquipmentSlot slotNo);
 	ItemStack& getSelectedItem();
 	int getSelectedItemId();
 
-	void setItem(int index, const ItemStack& item) override;
+	void setItem(StackID stackId, const ItemStack& item) override;
 	void setSelectedItem(ItemStack item);
-	ItemStack removeItem(int index, int count) override;
+	ItemStack removeItem(StackID stackId, int count) override;
 	bool removeResource(int id);
 
 	void setCarried(const ItemStack& item);
@@ -56,8 +56,8 @@ public:
 
 	void pickItem(int itemID, int data, int maxHotBarSlot);
 	void selectItem(int itemID, int maxHotBarSlot);
-	void swapItems(int, int);
-	void selectSlot(int slotNo);
+	void swapItems(StackID stackIdA, StackID stackIdB);
+	void selectSlot(SlotID slotId);
 
 	int getAttackDamage(Entity*);
 
@@ -83,7 +83,7 @@ public:
 		return "Inventory";
 	}
 
-	void setContainerChanged(SlotID slot) override;
+	void setContainerChanged(StackID stackId) override;
 	void addContentChangeListener(ContainerContentChangeListener* listener) override;
 	void removeContentChangeListener(ContainerContentChangeListener* listener) override;
 

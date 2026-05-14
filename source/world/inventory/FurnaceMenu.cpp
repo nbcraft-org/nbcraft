@@ -68,19 +68,19 @@ void FurnaceMenu::setData(int index, int value)
         m_furnace->m_litDuration = value;
 }
 
-ItemStack FurnaceMenu::quickMoveStack(int index)
+ItemStack FurnaceMenu::quickMoveStack(Container::SlotID slotId)
 {
     ItemStack item;
-    Slot* slot = getSlot(index);
+    Slot* slot = getSlot(slotId);
     if (slot && slot->hasItem())
     {
         ItemStack& slotItem = slot->getItem();
         item = slotItem.copy();
-        if (index == 2)
+        if (slotId == 2)
             moveItemStackTo(slotItem, 3, 39, true);
-        else if (index >= 3 && index < 30)
+        else if (slotId >= 3 && slotId < 30)
             moveItemStackTo(slotItem, 30, 39, false);
-        else if (index >= 30 && index < 39)
+        else if (slotId >= 30 && slotId < 39)
             moveItemStackTo(slotItem, 3, 30, false);
         else
             moveItemStackTo(slotItem, 3, 39, false);

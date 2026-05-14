@@ -2,7 +2,7 @@
 #include "ContainerContentChangeListener.hpp"
 #include "ContainerSizeChangeListener.hpp"
 
-SimpleContainer::SimpleContainer(int size, const std::string& name)
+SimpleContainer::SimpleContainer(Size size, const std::string& name)
     : m_items(size)
     , m_name(name)
 {
@@ -13,12 +13,12 @@ uint16_t SimpleContainer::getContainerSize() const
     return uint16_t(m_items.size());
 }
 
-ItemStack& SimpleContainer::getItem(int index) 
+ItemStack& SimpleContainer::getItem(StackID index)
 {
     return m_items[index];
 }
 
-ItemStack SimpleContainer::removeItem(int index, int count)
+ItemStack SimpleContainer::removeItem(StackID index, int count)
 {
     if (!m_items[index].isEmpty())
     {
@@ -43,7 +43,7 @@ ItemStack SimpleContainer::removeItem(int index, int count)
     return ItemStack::EMPTY;
 }
 
-void SimpleContainer::setItem(int index, const ItemStack& item)
+void SimpleContainer::setItem(StackID index, const ItemStack& item)
 {
     m_items[index] = item;
     if (!item.isEmpty() && item.m_count > getMaxStackSize())
@@ -57,12 +57,12 @@ std::string SimpleContainer::getName() const
     return m_name;
 }
 
-void SimpleContainer::setContainerChanged(SlotID slot)
+void SimpleContainer::setContainerChanged(StackID stackId)
 {
     for (ContentChangeListeners::iterator it = m_contentChangeListeners.begin(); it != m_contentChangeListeners.end(); it++)
     {
         ContainerContentChangeListener* pListener = *it;
-        pListener->containerContentChanged(this, slot);
+        pListener->containerContentChanged(this, stackId);
     }
 }
 

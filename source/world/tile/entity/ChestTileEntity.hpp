@@ -13,5 +13,5 @@ public:
 
     bool stillValid(Player* player) const override;
 
-    void setContainerChanged(SlotID slot) override;
+    void setContainerChanged(StackID stackId) override;
 };

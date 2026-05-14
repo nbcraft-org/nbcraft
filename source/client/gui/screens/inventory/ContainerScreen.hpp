@@ -73,7 +73,7 @@ public:
     virtual void initMenuPointer() override;
     virtual void slotsChanged(Container* container);
     virtual void slotClicked(const MenuPointer& pointer, MouseButtonType button, bool quick);
-    virtual void slotClicked(Slot* slot, int index, MouseButtonType button, bool quick);
+    virtual void slotClicked(Slot* slot, Container::SlotID slotId, MouseButtonType button, bool quick);
     void slotClicked(const MenuPointer& pointer, MouseButtonType button);
 
 public:

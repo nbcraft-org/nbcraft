@@ -656,7 +656,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ContainerS
 		{
 		case Container::FURNACE:
 		case Container::CONTAINER:
-			pContainerMenu->setItem(packet->m_slot, packet->m_item);
+			pContainerMenu->setItem(packet->m_slotId, packet->m_item);
 			break;
 		default:
 			break;

@@ -73,19 +73,19 @@ bool InventoryMenu::stillValid(Player* player) const
     return true;
 }
 
-ItemStack InventoryMenu::quickMoveStack(int index)
+ItemStack InventoryMenu::quickMoveStack(Container::SlotID slotId)
 {
     ItemStack item = ItemStack::EMPTY;
-    Slot* slot = getSlot(index);
+    Slot* slot = getSlot(slotId);
     if (slot && slot->hasItem())
     {
         ItemStack& slotItem = slot->getItem();
         item = slotItem;
-        if (index == 0)
+        if (slotId == 0)
             moveItemStackTo(slotItem, 9, 45, true);
-        else if (index >= 9 && index < 36)
+        else if (slotId >= 9 && slotId < 36)
             moveItemStackTo(slotItem, 36, 45, false);
-        else if (index >= 36 && index < 45)
+        else if (slotId >= 36 && slotId < 45)
             moveItemStackTo(slotItem, 9, 36, false);
         else
             moveItemStackTo(slotItem, 9, 45, false);
