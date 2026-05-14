@@ -94,5 +94,5 @@ void MusicTile::triggerEvent(Level* level, const TileEvent& event)
     }
 
     level->playSound(event.pos + 0.5f, "note." + soundType, 3.0f, std::pow(2.0f, (note - 12) / 12.0f));
-    level->addParticle("note", Vec3(event.pos.x + 0.5f, event.pos.y + 1.2f, event.pos.z + 0.5f), Vec3(note / 24.0f, 0, 0));
+    level->addParticle("note", Vec3(event.pos.x + 0.5f, event.pos.y + 1.2f, event.pos.z + 0.5f), Vec3(note / 24.0f, 0.0f, 0.0f));
 }
