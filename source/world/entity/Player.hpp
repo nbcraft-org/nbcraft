@@ -68,7 +68,7 @@ public:
 	void causeFallDamage(float level) override;
 
 	virtual void animateRespawn();
-	//virtual void drop(); // see definition
+	virtual void drop();
 	virtual void drop(const ItemStack& item, bool randomly = false);
 	virtual void startCrafting(const TilePos& pos);
 	virtual void startStonecutting(const TilePos& pos);

@@ -520,16 +520,11 @@ void Player::setRespawnPos(const TilePos& pos)
 	m_respawnPos = pos;
 }
 
-/*void Player::drop()
+// @PARITY: From b1.2_02, doesn't exist in PE
+void Player::drop()
 {
-	// @PARITY: From b1.2_02, doesn't exist in PE
-	// Isn't called anywhere, but is overriden in MultiplayerLocalPlayer with a PlayerActionPacket
-	ItemStack* item = getSelectedItem();
-	if (!item)
-		return;
-
-	drop(m_pInventory->removeItem(*item, 1));
-}*/
+	drop(m_pInventory->removeItem(m_pInventory->getSelectedSlotNo(), 1));
+}
 
 void Player::drop(const ItemStack& item, bool randomly)
 {

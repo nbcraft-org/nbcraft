@@ -621,17 +621,7 @@ void Minecraft::tickInput()
 			}
 			else if (getOptions()->isKey(KM_DROP, keyCode))
 			{
-				ItemStack& item = m_pLocalPlayer->m_pInventory->getSelected();
-				if (!item.isEmpty())
-				{
-					ItemStack itemDrop(item);
-					itemDrop.m_count = 1;
-
-					if (m_pLocalPlayer->isSurvival())
-						item.shrink(1);
-
-					m_pLocalPlayer->drop(itemDrop);
-				}
+				m_pLocalPlayer->drop();
 			}
 			else if (getOptions()->isKey(KM_TOGGLEGUI, keyCode))
 			{

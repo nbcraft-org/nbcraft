@@ -125,12 +125,14 @@ std::vector<ItemStack> ContainerMenu::cloneItems()
     for (std::vector<Slot*>::iterator it = m_slots.begin(); it != m_slots.end(); ++it)
     {
         Slot* slot = *it;
+#ifndef FEATURE_SERVER_INVENTORIES
         // @TODO: I really do not like this.
         // Firstly, inventories shouldn't be owned by the client
         // Secondly, we shouldn't be checking types directly like this
         // Ultimately this HAS to have two different storages, one for the inventory and one for the container
         if (slot->m_group == Slot::INVENTORY || slot->m_group == Slot::HOTBAR)
             continue;
+#endif
         const ItemStack& item = (*it)->getItem();
         content.push_back(item);
     }

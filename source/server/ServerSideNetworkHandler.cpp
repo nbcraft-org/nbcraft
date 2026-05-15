@@ -647,10 +647,20 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ContainerS
 		return;
 
 	ContainerMenu* pContainerMenu = pPlayer->m_pContainerMenu;
+	bool isInventory = false;
+
+	// @HACK: LocalPlayer inventory seems to always have Container ID 0
+	if (packet->m_containerId == 0)
+	{
+		pContainerMenu = pPlayer->m_pInventoryMenu;
+		isInventory = true;
+	}
+
 	if (!pContainerMenu)
 		return;
 
-	if (pContainerMenu->m_containerId == packet->m_containerId)
+	if (pContainerMenu->m_containerId == packet->m_containerId
+		|| (isInventory && packet->m_containerId == 0)) 
 	{
 		switch (pContainerMenu->m_containerType)
 		{

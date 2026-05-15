@@ -7,6 +7,8 @@ class FurnaceScreen : public ContainerScreen
 {
 public:
     FurnaceScreen(Inventory* inventory, FurnaceTileEntity* container);
+
+public:
     void tick() override;
 
 protected:

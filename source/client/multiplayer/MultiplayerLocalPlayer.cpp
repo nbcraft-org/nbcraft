@@ -78,10 +78,11 @@ void MultiplayerLocalPlayer::heal(int health)
 {
 }
 
+// @PARITY: From Java
+// Uncomment when we have fully server-authoritative inventories
 /*void MultiplayerLocalPlayer::drop()
 {
-    // @PARITY: From Java
-	m_pLevel->m_pRakNetInstance->send(new PlayerActionPacket(PlayerActionPacket::DROP_ITEM))
+    m_pLevel->m_pRakNetInstance->send(new PlayerActionPacket(m_EntityID, PlayerActionPacket::DROP_ITEM));
 }*/
 
 void MultiplayerLocalPlayer::hurtTo(int newHealth)

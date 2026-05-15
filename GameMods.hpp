@@ -21,6 +21,7 @@
 // Features (major changes)
 //#define FEATURE_GFX_SHADERS 	           // Loads and uses Shaders from the assets folder for rendering.
 #define FEATURE_NETWORKING                 // Enables multi-player through RakNet
+//#define FEATURE_SERVER_INVENTORIES       // Enables server-sided/server-authoritative player inventories.
 
 // TODO: Add to the LevelSettings struct
 //#define FEATURE_CAVES 	               // Generates caves around the world.

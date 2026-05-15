@@ -131,9 +131,13 @@ void ServerPlayer::slotChanged(ContainerMenu* menu, Container::SlotID slotId, Sl
 #if NETWORK_PROTOCOL_VERSION >= 5
 	if (!isResultSlot)
 	{
+#ifndef FEATURE_SERVER_INVENTORIES
 		// @TODO: See my gripes in ContainerMenu::slotChanged
 		// But ultimately this is a bandaid for the fact that the client has authority over the inventory in PE
-		//if (slot->m_group != Slot::INVENTORY && slot->m_group != Slot::HOTBAR)
+		if (slot->m_group == Slot::INVENTORY || slot->m_group == Slot::HOTBAR)
+			return;
+#endif
+
 		m_pLevel->m_pRakNetInstance->send(new ContainerSetSlotPacket(menu->m_containerId, slotId, item));
 	}
 #endif
@@ -153,7 +157,7 @@ void ServerPlayer::doCloseContainer()
 	else
 		LOG_W("Container is missing @ doCloseContainer!");
 
-	setContainerMenu(nullptr); // m_pInventoryMenu on Java, nullptr on Pocket
+	setContainerMenu(m_pInventoryMenu); // m_pInventoryMenu on Java, nullptr on Pocket
 }
 
 void ServerPlayer::setContainerMenu(ContainerMenu* menu)
@@ -161,10 +165,13 @@ void ServerPlayer::setContainerMenu(ContainerMenu* menu)
 	if (m_pContainerMenu == menu)
 		return;
 
-	SAFE_DELETE(m_pContainerMenu);
+	if (m_pContainerMenu != m_pInventoryMenu)
+		SAFE_DELETE(m_pContainerMenu);
+
 	m_pContainerMenu = menu;
 
-	if (menu)
+	// we shouldn't be changing the containerId of the InventoryMenu
+	if (menu && menu != m_pInventoryMenu)
 	{
 		m_pContainerMenu->m_containerId = m_containerId;
 		m_pContainerMenu->addSlotListener(this);

@@ -268,8 +268,8 @@ ItemStack Inventory::removeItem(StackID stackId, int count)
 			return removed;
 		}
 	}
-	else
-		return ItemStack::EMPTY;
+	
+	return ItemStack::EMPTY;
 }
 
 int Inventory::getSlot(int id)
@@ -371,7 +371,8 @@ bool Inventory::hasUnlimitedResource(const ItemStack& item) const
 
 ItemStack& Inventory::getItem(StackID stackId)
 {
-	assert(stackId >= 0 && stackId < getContainerSize());
+	// stackId < getContainerSize() trips when the RemotePlayer dies
+	//assert(stackId >= 0 && stackId < getContainerSize());
 
 	if (size_t(stackId) < m_items.size())
 		return m_items[stackId];
