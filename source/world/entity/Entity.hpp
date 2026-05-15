@@ -243,8 +243,8 @@ public:
 	}
 
 private:
-	Entity::ID _ridingId;
-	Entity::ID _riderId;
+	Entity::ID m_ridingId;
+	Entity::ID m_riderId;
 
 protected:
 	SynchedEntityData m_entityData;

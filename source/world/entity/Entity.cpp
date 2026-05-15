@@ -25,8 +25,8 @@ void Entity::_init()
 	m_bInAChunk = false;
 	m_viewScale = 1.0f;
 	m_dimensionId = DIMENSION_OVERWORLD;
-	_riderId = 0;
-	_ridingId = 0;
+	m_riderId = 0;
+	m_ridingId = 0;
 	m_bRiding = false;
     m_bBlocksBuilding = false;
 	m_pLevel = nullptr;
@@ -487,7 +487,7 @@ void Entity::baseTick()
 	if (const Entity* riding = getRiding())
 	{
 		// if you were riding an entity and they no longer exist, stop
-		if ((!riding && _ridingId > 0) || riding->m_bRemoved)
+		if ((!riding && m_ridingId > 0) || riding->m_bRemoved)
 		{
 			setRiding(nullptr);
 		}
@@ -1002,7 +1002,7 @@ void Entity::rideTick()
 	float rotX = m_rideRot.x * 0.5f;
 	float rotY = m_rideRot.y * 0.5f;
 
-	float lookLimiter = 10.0f;
+	constexpr float lookLimiter = 10.0f;
 	rotX = Mth::clamp(rotX, -lookLimiter, lookLimiter);
 	rotY = Mth::clamp(rotY, -lookLimiter, lookLimiter);
 
@@ -1084,10 +1084,10 @@ void Entity::ride(Entity* newRiding)
 
 Entity* Entity::getRiding() const
 {
-	if (_ridingId <= 0)
+	if (m_ridingId <= 0)
 		return nullptr;
 
-	if (Entity* riding = m_pLevel->getEntity(_ridingId))
+	if (Entity* riding = m_pLevel->getEntity(m_ridingId))
 		return riding;
 
 	return nullptr;
@@ -1095,10 +1095,10 @@ Entity* Entity::getRiding() const
 
 Entity* Entity::getRider() const
 {
-    if (_riderId <= 0)
+    if (m_riderId <= 0)
 		return nullptr;
 
-	if (Entity* rider = m_pLevel->getEntity(_riderId))
+	if (Entity* rider = m_pLevel->getEntity(m_riderId))
 		return rider;
 
 	return nullptr;
@@ -1106,12 +1106,12 @@ Entity* Entity::getRider() const
 
 void Entity::setRider(Entity* rider)
 {
-	_riderId = (rider) ? rider->m_EntityID : 0;
+	m_riderId = (rider) ? rider->m_EntityID : 0;
 }
 
 void Entity::setRiding(Entity* riding)
 {
-	_ridingId = (riding) ? riding->m_EntityID : 0;
+	m_ridingId = (riding) ? riding->m_EntityID : 0;
 	setSharedFlag(FLAG_RIDING, riding);
 }
 

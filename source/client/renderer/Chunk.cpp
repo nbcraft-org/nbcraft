@@ -214,6 +214,8 @@ void Chunk::rebuild()
 			break;
 	}
 
+	// get TileEntity diff and update m_globalTileEntities (renderable TileEntities) accordingly
+
 	std::set<TileEntity*> newSet(m_tileEntities.begin(), m_tileEntities.end());
 	TileEntityVector toAdd, toRemove;
 
