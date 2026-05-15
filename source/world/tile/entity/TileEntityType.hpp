@@ -42,8 +42,8 @@ public:
 	TileEntity* newTileEntity() const;
 
 private:
-	std::string _name;
-	CreateFunction _function;
+	std::string m_name;
+	CreateFunction m_function;
 
 	template <typename T>
 	static TileEntity* CreateType() { return new T(); }
@@ -53,6 +53,6 @@ template <typename T>
 TileEntityType* TileEntityFactory::registerTileEntity(const std::string& name)
 {
 	TileEntityType* type = new TileEntityType(name, &TileEntityType::CreateType<T>);
-	_types[type->_name] = type;
+	_types[type->m_name] = type;
 	return type;
 }

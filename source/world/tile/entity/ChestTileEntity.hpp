@@ -4,10 +4,12 @@
 #include "world/level/Level.hpp"
 #include "world/inventory/SimpleContainer.hpp"
 
-class ChestTileEntity : public TileEntity, public SimpleContainer {
+class ChestTileEntity : public TileEntity, public SimpleContainer
+{
 public:
     ChestTileEntity();
 
+public:
     void load(const CompoundTag& tag) override;
     void save(CompoundTag& tag) const override;
 

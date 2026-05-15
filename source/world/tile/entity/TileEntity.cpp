@@ -2,7 +2,9 @@
 #include "common/Logger.hpp"
 #include "world/level/Level.hpp"
 
-TileEntity::TileEntity() : m_bRemove(false), m_pLevel(nullptr)
+TileEntity::TileEntity()
+    : m_bRemove(false)
+    , m_pLevel(nullptr)
 {
 }
 

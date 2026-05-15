@@ -36,16 +36,18 @@ const TileEntityType* TileEntityFactory::getType(const std::string& name)
     return _types[name];
 }
 
-TileEntityType::TileEntityType(const std::string& name, CreateFunction func) : _name(name), _function(func)
+TileEntityType::TileEntityType(const std::string& name, CreateFunction func)
+    : m_name(name)
+    , m_function(func)
 {
 }
 
 const std::string& TileEntityType::getName() const
 {
-    return _name;
+    return m_name;
 }
 
 TileEntity* TileEntityType::newTileEntity() const
 {
-    return _function();
+    return m_function();
 }

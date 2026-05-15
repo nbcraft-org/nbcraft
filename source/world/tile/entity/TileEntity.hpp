@@ -47,4 +47,3 @@ public:
     Level* m_pLevel;
     TilePos m_pos;
 };
-

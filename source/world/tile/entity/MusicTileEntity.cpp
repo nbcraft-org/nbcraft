@@ -1,7 +1,9 @@
 #include "MusicTileEntity.hpp"
 #include "world/level/Level.hpp"
 
-MusicTileEntity::MusicTileEntity() : TileEntity(), m_note(0), m_bOn(false)
+MusicTileEntity::MusicTileEntity() : TileEntity()
+    , m_note(0)
+    , m_bOn(false)
 {
     m_pType = TileEntityType::noteblock;
 }

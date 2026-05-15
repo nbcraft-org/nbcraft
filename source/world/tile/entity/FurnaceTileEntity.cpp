@@ -5,7 +5,8 @@
 #define C_BURN_TIME (200)
 
 FurnaceTileEntity::FurnaceTileEntity()
-    : SimpleContainer(3, "gui.furnace"), m_litTime(0), m_litDuration(0), m_tickCount(0)
+    : SimpleContainer(3, "gui.furnace")
+    , m_litTime(0), m_litDuration(0), m_tickCount(0)
 {
     m_pType = TileEntityType::furnace;
 }

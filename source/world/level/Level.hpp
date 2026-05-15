@@ -246,7 +246,7 @@ public:
 	MobSpawner* m_pMobSpawner;
 
 	std::map<EntityCategories::CategoriesMask, int> m_entityCountsByCategory;
-	TileEntityVector m_tileEntityList;
+	TileEntityVector m_tileEntities;
 	TileEntityVector m_pendingTileEntities;
 };
 

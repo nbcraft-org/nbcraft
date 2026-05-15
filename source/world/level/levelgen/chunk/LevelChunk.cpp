@@ -717,7 +717,7 @@ void LevelChunk::addTileEntity(TileEntity* tileEntity)
 {
 	setTileEntity(tileEntity->m_pos, tileEntity);
 	if (m_bLoaded)
-		m_pLevel->m_tileEntityList.push_back(tileEntity);
+		m_pLevel->m_tileEntities.push_back(tileEntity);
 }
 
 void LevelChunk::setTileEntity(const ChunkTilePos& pos, TileEntity* tileEntity)

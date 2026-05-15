@@ -40,7 +40,7 @@ Level::Level(LevelStorage* pStor, const std::string& name, const LevelSettings& 
 	m_bCalculatingInitialSpawn = false;
 	m_pChunkSource = nullptr;
 	m_pLevelStorage = pStor;
-	m_tileEntityList = TileEntityVector();
+	m_tileEntities = TileEntityVector();
 	m_bUpdatingTileEntities = false;
 	m_randValue = 42184323;
 	m_addend = 1013904223;
@@ -269,7 +269,7 @@ TileEntity* Level::getTileEntity(const TilePos& pos) const
 
 const TileEntityVector* Level::getAllTileEntities() const
 {
-	return &m_tileEntityList;
+	return &m_tileEntities;
 }
 
 void Level::setTileEntity(const TilePos& pos, TileEntity* tileEntity)
@@ -285,7 +285,7 @@ void Level::setTileEntity(const TilePos& pos, TileEntity* tileEntity)
 		return;
 	}
 
-	m_tileEntityList.push_back(tileEntity);
+	m_tileEntities.push_back(tileEntity);
 	LevelChunk* pChunk = getChunk(pos);
 	if (pChunk)
 		pChunk->setTileEntity(pos, tileEntity);
@@ -308,7 +308,7 @@ void Level::removeTileEntity(const TilePos& pos)
 		return;
 	}
 
-	Util::remove(m_tileEntityList, tileEntity);
+	Util::remove(m_tileEntities, tileEntity);
 
 	if (LevelChunk* pChunk = getChunk(pos))
 	{
@@ -1251,7 +1251,6 @@ void Level::removeAllPendingEntityRemovals()
 		{
 			m_entities.erase(ent->hashCode());
 		}
-
 	}
 
 	for (EntityVector::iterator it = m_pendingEntityRemovals.begin(); it != m_pendingEntityRemovals.end(); it++)
@@ -1852,9 +1851,9 @@ void Level::tickEntities()
 	}
 
 	m_bUpdatingTileEntities = true;
-	for (size_t i = 0; i < m_tileEntityList.size(); i++)
+	for (size_t i = 0; i < m_tileEntities.size(); i++)
 	{
-		TileEntity* tileEnt = m_tileEntityList[i];
+		TileEntity* tileEnt = m_tileEntities[i];
 
 		if (!tileEnt->isRemoved())
 		{
@@ -1866,7 +1865,7 @@ void Level::tickEntities()
 			if (ch)
 				ch->removeTileEntity(tileEnt->m_pos);
 
-			m_tileEntityList.erase(m_tileEntityList.begin() + i);
+			m_tileEntities.erase(m_tileEntities.begin() + i);
 			i--;
 
 			delete tileEnt;
