@@ -24,7 +24,6 @@ public:
 	int checkLicense() override;
 	int getScreenWidth() const override { return m_ScreenWidth; }
 	int getScreenHeight() const override { return m_ScreenHeight; }
-	std::string getDateString(int time) override;
 
 	// From v0.1.1. Also add these to determine touch screen use within the game.
 	bool isTouchscreen() const override;
@@ -54,8 +53,6 @@ public:
 	bool initGraphics(unsigned int width, unsigned int height);
 	void createWindowSizeDependentResources(unsigned int width, unsigned int height);
 	void swapBuffers();
-	void setVSyncEnabled(bool enabled) override;
-	bool isVsyncSwitchable() const override;
 
 private:
 	int m_ScreenWidth;

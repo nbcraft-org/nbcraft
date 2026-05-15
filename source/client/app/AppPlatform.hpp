@@ -111,7 +111,7 @@ public:
 	virtual std::string getClipboardText();
 	// Graphics settings
 	virtual void setVSyncEnabled(bool enabled);
-	virtual bool isVsyncSwitchable() const;
+	virtual bool isVSyncSwitchable() const;
 	
 	void _fireLowMemory();
 	void _fireAppSuspended();

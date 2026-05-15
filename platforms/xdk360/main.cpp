@@ -53,8 +53,6 @@ void __cdecl main()
 	if (!g_AppPlatform.initGraphics(Minecraft::width, Minecraft::height))
 		goto _cleanup;
 
-	g_AppPlatform.setVSyncEnabled(true);
-
 	g_pApp = new NinecraftApp;
 	g_pApp->m_pPlatform = &g_AppPlatform;
 	g_AppPlatform.m_externalStorageDir = "savedrive:";

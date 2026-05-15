@@ -498,7 +498,7 @@ public:
 	OPTION(m_viewBobbing);                 \
 	OPTION(m_anaglyphs);                   \
 	OPTION(m_blockOutlines);               \
-	OPTION(m_vSync);               	       \
+	OPTION(m_vSync); idxVSync = currentIndex; \
 	OPTION(m_fancyGrass);                  \
 	OPTION(m_biomeColors);                 \
 	OPTION(m_dynamicHand);                 \

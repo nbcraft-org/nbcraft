@@ -15,6 +15,6 @@ protected:
     SlotDisplay _createSlotDisplay(const Slot&) override;
 
 private:
-    Inventory* m_inventory;
-    FurnaceTileEntity* m_furnace;
+    Inventory* m_pInventory;
+    FurnaceTileEntity* m_pFurnace;
 };

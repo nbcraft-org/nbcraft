@@ -37,7 +37,6 @@ public:
 	int getScreenWidth() const override { return m_ScreenWidth; }
 	int getScreenHeight() const override { return m_ScreenHeight; }
 	void showDialog(eDialogType) override;
-	std::string getDateString(int time) override;
 	bool doesTextureExist(const std::string& path) const override;
 
 	// From v0.1.1. Also add these to determine touch screen use within the game.
@@ -83,7 +82,7 @@ public:
 	void createWindowSizeDependentResources(const Vec2& logicalSize, const Vec2& compositionScale);
 	void swapBuffers();
 	void setVSyncEnabled(bool enabled) override;
-	bool isVsyncSwitchable() const override;
+	bool isVSyncSwitchable() const override;
 
 	static MouseButtonType GetMouseButtonType(UINT iMsg);
 	static bool GetMouseButtonState(UINT iMsg, WPARAM wParam);

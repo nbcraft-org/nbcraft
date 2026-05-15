@@ -675,8 +675,8 @@ void Options::initResourceDependentOptions()
 	if (!Screen::isMenuPanoramaAvailable())
 		m_menuPanorama.set(false);
 
-	if (!m_pMinecraft->platform()->isVsyncSwitchable())
-		m_vSync.set(false);
+	if (!m_pMinecraft->platform()->isVSyncSwitchable())
+		m_vSync.set(true);
 }
 
 const std::string& OptionEntry::getDisplayName() const

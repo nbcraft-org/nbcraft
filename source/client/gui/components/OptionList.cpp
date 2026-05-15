@@ -181,7 +181,7 @@ void OptionList::initVideoMenu()
 {
 	Options* pOptions = m_pMinecraft->getOptions();
 	int currentIndex = -1;
-	int idxPano = -1;
+	int idxPano = -1, idxVSync = -1;
 
 	OPTIONS_LIST_VIDEO_GRAPHICS;
 	OPTIONS_LIST_VIDEO_EXPERIMENTAL;
@@ -190,6 +190,9 @@ void OptionList::initVideoMenu()
 	if (!Screen::isMenuPanoramaAvailable())
 		m_items[idxPano]->setEnabled(false);
 #endif
+
+	if (!m_pMinecraft->platform()->isVSyncSwitchable())
+		m_items[idxVSync]->setEnabled(false);
 }
 
 OptionHeader::OptionHeader(const std::string& text)

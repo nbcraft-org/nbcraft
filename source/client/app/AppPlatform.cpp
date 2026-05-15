@@ -326,7 +326,7 @@ void AppPlatform::setVSyncEnabled(bool enabled)
 {
 }
 
-bool AppPlatform::isVsyncSwitchable() const
+bool AppPlatform::isVSyncSwitchable() const
 {
     return false;
 }

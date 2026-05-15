@@ -83,9 +83,10 @@ ControlsPanelScreen::ControlsPanelScreen(Screen* parent, Minecraft* mc) : PanelS
 	OPTIONS_LIST_CONTROLS_FEEDBACK;
 	OPTIONS_LIST_CONTROLS_EXPERIMENTAL;
 
+	m_layout.m_elements[idxController]->setEnabled(false);
+
 	if (!mc->isTouchscreen())
 		m_layout.m_elements[idxSplit]->setEnabled(false);
-	m_layout.m_elements[idxController]->setEnabled(false);
 }
 
 void ControlsPanelScreen::removed()
@@ -96,7 +97,7 @@ void ControlsPanelScreen::removed()
 SettingsPanelScreen::SettingsPanelScreen(Screen* parent, Options& options) : PanelScreen_Console(parent)
 {
 	int currentIndex = -1;
-	int idxPano = -1;
+	int idxPano = -1, idxVSync = -1;
 
 	OPTIONS_LIST_GAMEPLAY_GAME;
 	OPTIONS_LIST_GAMEPLAY_AUDIO;
@@ -107,6 +108,9 @@ SettingsPanelScreen::SettingsPanelScreen(Screen* parent, Options& options) : Pan
 	if (!Screen::isMenuPanoramaAvailable())
 		m_layout.m_elements[idxPano]->setEnabled(false);
 #endif
+
+	if (!m_pMinecraft->platform()->isVSyncSwitchable())
+		m_layout.m_elements[idxVSync]->setEnabled(false);
 
 	(void)currentIndex; // compiler will warn about an unused variable sometimes if this isn't here
 }
