@@ -87,13 +87,11 @@ void TopSnowTile::tick(Level* level, const TilePos& pos, Random* random)
 
 void TopSnowTile::playerDestroy(Level* level, Player* player, const TilePos& pos, TileData data)
 {
-	float dispersion = 0.7f;
+	constexpr float dispersion = 0.7f;
 
-	Vec3 offset (
-		(level->m_random.nextFloat() * dispersion) + (1.0f - dispersion) * 0.5f,
-		(level->m_random.nextFloat() * dispersion) + (1.0f - dispersion) * 0.5f,
-		(level->m_random.nextFloat() * dispersion) + (1.0f - dispersion) * 0.5f
-	);
+	Vec3 offset(level->m_random.nextFloat(), level->m_random.nextFloat(), level->m_random.nextFloat());
+	offset *= dispersion;
+	offset += (1.0f - dispersion) * 0.5f;
 
 	ItemEntity* pItemEntity = new ItemEntity(level, Vec3(pos) + offset, ItemStack(getResource(data, &level->m_random), 1, 0));
 	pItemEntity->m_throwTime = 10;
