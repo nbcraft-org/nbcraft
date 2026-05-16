@@ -13,10 +13,10 @@ int ChestTile::getTexture(const LevelSource* level, const TilePos& pos, Facing::
     if (face == Facing::UP || face == Facing::DOWN)
         return m_TextureFrame - 1;
 
-    int id_north = level->getTile(pos.north());
-    int id_south = level->getTile(pos.south());
-    int id_west = level->getTile(pos.west());
-    int id_east = level->getTile(pos.east());
+    TileID id_north = level->getTile(pos.north());
+    TileID id_south = level->getTile(pos.south());
+    TileID id_west = level->getTile(pos.west());
+    TileID id_east = level->getTile(pos.east());
 
     bool isDoubleNS = (id_north == m_ID || id_south == m_ID);
     bool isDoubleWE = (id_west == m_ID || id_east == m_ID);
@@ -45,8 +45,8 @@ int ChestTile::getTexture(const LevelSource* level, const TilePos& pos, Facing::
         left = id_west == m_ID;
         TilePos side = left ? pos.west() : pos.east();
 
-        int id_behind = level->getTile(side.north());
-        int id_infront = level->getTile(side.south());
+        TileID id_behind = level->getTile(side.north());
+        TileID id_infront = level->getTile(side.south());
 
         if ((Tile::solid[id_north] || Tile::solid[id_behind]) && !Tile::solid[id_south] && !Tile::solid[id_infront])
             front = Facing::SOUTH;
@@ -68,8 +68,8 @@ int ChestTile::getTexture(const LevelSource* level, const TilePos& pos, Facing::
         left = id_north == m_ID;
         TilePos side = left ? pos.north() : pos.south();
 
-        int id_behind = level->getTile(side.west());
-        int id_infront = level->getTile(side.east());
+        TileID id_behind = level->getTile(side.west());
+        TileID id_infront = level->getTile(side.east());
 
         if ((Tile::solid[id_west] || Tile::solid[id_behind]) && !Tile::solid[id_east] && !Tile::solid[id_infront])
             front = Facing::EAST;
@@ -137,28 +137,29 @@ void ChestTile::onRemove(Level* level, const TilePos& pos)
         return;
     }
 
-    for (int slot = 0; slot < ent->getContainerSize(); ++slot)
+    for (Container::StackID slot = 0; slot < ent->getContainerSize(); ++slot)
     {
         ItemStack& item = ent->getItem(slot);
-        if (!item.isEmpty())
-        {
-            TilePos offset(
-                (m_chestRandom.nextFloat() * 0.8f) + 0.1f,
-                (m_chestRandom.nextFloat() * 0.8f) + 0.1f,
-                (m_chestRandom.nextFloat() * 0.8f) + 0.1f
-            );
+        if (item.isEmpty())
+            continue;
 
-            while (item.m_count > 0)
-            {
-                int toRemove = std::min(m_chestRandom.nextInt(21) + 10, static_cast<int>(item.m_count));
-                item.m_count -= toRemove;
-                ItemEntity* itemEnt = new ItemEntity(level, pos + offset, ItemStack(item.getItem()->m_itemID, toRemove, item.getAuxValue()));
-                float spread = 0.05f;
-                itemEnt->m_vel.x = (double)((float)m_chestRandom.nextGaussian() * spread);
-                itemEnt->m_vel.y = (double)((float)m_chestRandom.nextGaussian() * spread + 0.2f);
-                itemEnt->m_vel.z = (double)((float)m_chestRandom.nextGaussian() * spread);
-                level->addEntity(itemEnt);
-            }
+        constexpr float spread = 0.05f;
+
+        TilePos offset(
+            (m_chestRandom.nextFloat() * 0.8f) + 0.1f,
+            (m_chestRandom.nextFloat() * 0.8f) + 0.1f,
+            (m_chestRandom.nextFloat() * 0.8f) + 0.1f
+        );
+
+        while (item.m_count > 0)
+        {
+            int toRemove = std::min(m_chestRandom.nextInt(21) + 10, static_cast<int>(item.m_count));
+            item.m_count -= toRemove;
+            ItemEntity* itemEnt = new ItemEntity(level, pos + offset, ItemStack(item.getItem()->m_itemID, toRemove, item.getAuxValue()));
+            itemEnt->m_vel.x = (double)((float)m_chestRandom.nextGaussian() * spread);
+            itemEnt->m_vel.y = (double)((float)m_chestRandom.nextGaussian() * spread + 0.2f);
+            itemEnt->m_vel.z = (double)((float)m_chestRandom.nextGaussian() * spread);
+            level->addEntity(itemEnt);
         }
     }
 
@@ -192,18 +193,18 @@ bool ChestTile::use(Level* level, const TilePos& pos, Player* player)
     if (!tileEnt)
         return false;
 
-    ChestTileEntity* chest = static_cast<ChestTileEntity*>(tileEnt);
-    Container* container = static_cast<Container*>(chest);
+    ChestTileEntity* chest = (ChestTileEntity*)tileEnt;
+    Container* container = dynamic_cast<Container*>(chest);
     for (int rel = Facing::NORTH; rel <= Facing::EAST; rel++) 
     {
-        TilePos relPos = pos.relative(static_cast<Facing::Name>(rel));
-        if (level->getTile(pos.relative(static_cast<Facing::Name>(rel))) == m_ID)
+        TilePos relPos = pos.relative((Facing::Name)rel);
+        if (level->getTile(pos.relative((Facing::Name)rel)) == m_ID)
         {
             TileEntity* nearbyTileEntity = level->getTileEntity(relPos);
             if (!nearbyTileEntity)
                 continue;
 
-            Container* nearbyContainer = static_cast<Container*>(static_cast<ChestTileEntity*>(nearbyTileEntity));
+            Container* nearbyContainer = dynamic_cast<Container*>(nearbyTileEntity);
             if (rel % 2 == 0)
                 container = new CompoundContainer("Large chest", nearbyContainer, container);
             else

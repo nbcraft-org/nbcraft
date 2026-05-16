@@ -19,7 +19,7 @@ public:
 	{
 		m_entityId = 0;
 		m_count = 0;
-		m_extra = 0;
+		m_extra = EXTRA_NONE;
 	}
 	SendInventoryPacket(int32_t entityId, bool dropAll = false);
 

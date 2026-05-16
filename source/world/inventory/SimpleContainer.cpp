@@ -8,9 +8,9 @@ SimpleContainer::SimpleContainer(Size size, const std::string& name)
 {
 }
 
-uint16_t SimpleContainer::getContainerSize() const
+Container::Size SimpleContainer::getContainerSize() const
 {
-    return uint16_t(m_items.size());
+    return (Size)(m_items.size());
 }
 
 ItemStack& SimpleContainer::getItem(StackID index)

@@ -11,7 +11,7 @@ public:
 	SimpleContainer(Size size, const std::string& name);
 
 public:
-	uint16_t getContainerSize() const override;
+	Size getContainerSize() const override;
 	ItemStack& getItem(StackID index) override;
 	ItemStack removeItem(StackID index, int count) override;
 	void setItem(StackID index, const ItemStack& item) override;

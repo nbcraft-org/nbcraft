@@ -16,7 +16,7 @@ private:
 public:
 	static void initTileEntities();
 	static void teardownTileEntities();
-	static const TileEntityType* getType(const std::string& name);
+	static const TileEntityType* getType(const std::string& name) { return _types[name]; }
 
 public:
 	template <typename T>
@@ -35,11 +35,15 @@ public:
 	typedef TileEntity* (*CreateFunction)();
 
 public:
-	TileEntityType(const std::string& name, CreateFunction func);
+	TileEntityType(const std::string& name, CreateFunction func)
+		: m_name(name)
+		, m_function(func)
+	{
+	}
 
 public:
-	const std::string& getName() const;
-	TileEntity* newTileEntity() const;
+	const std::string& getName() const { return m_name; }
+	TileEntity* newTileEntity() const { return m_function(); }
 
 private:
 	std::string m_name;

@@ -5,7 +5,7 @@
 SendInventoryPacket::SendInventoryPacket(int32_t entityId, bool dropAll)
 	: m_entityId(entityId)
 	, m_count(0)
-	, m_extra(dropAll ? EXTRA_DROP_ALL : 0)
+	, m_extra(dropAll ? EXTRA_DROP_ALL : EXTRA_NONE)
 {
 }
 
@@ -34,11 +34,8 @@ void SendInventoryPacket::read(RakNet::BitStream& bs)
 	bs.Read(m_count);
 
 	m_count = Mth::Min(m_count, 512);
-
-	// End early, processing the rest of this (like PE does) is just a recipe for disaster
-	// Plus, it doesn't really matter, as PE just sends 512 empty items anyways
-	
 	m_items.reserve(m_count);
+
 	for (uint16_t i = 0; i < m_count; i++)
 	{
 		m_items.push_back(PacketUtil::ReadItemStack(bs, false));

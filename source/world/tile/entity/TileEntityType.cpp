@@ -30,24 +30,3 @@ void TileEntityFactory::teardownTileEntities()
     }
 	_types.clear();
 }
-
-const TileEntityType* TileEntityFactory::getType(const std::string& name)
-{
-    return _types[name];
-}
-
-TileEntityType::TileEntityType(const std::string& name, CreateFunction func)
-    : m_name(name)
-    , m_function(func)
-{
-}
-
-const std::string& TileEntityType::getName() const
-{
-    return m_name;
-}
-
-TileEntity* TileEntityType::newTileEntity() const
-{
-    return m_function();
-}

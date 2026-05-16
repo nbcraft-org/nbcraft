@@ -25,8 +25,10 @@ void InventoryScreen::init()
 
 void InventoryScreen::renderBackground()
 {
-    if (m_uiTheme != UI_CONSOLE)
-        ContainerScreen::renderBackground();
+    if (m_uiTheme == UI_CONSOLE)
+        return;
+
+    ContainerScreen::renderBackground();
 }
 
 void InventoryScreen::_renderLabels()
