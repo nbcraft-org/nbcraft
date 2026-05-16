@@ -173,6 +173,11 @@ void Player::die(Entity* pCulprit)
 		if (m_name == "Notch")
 			drop(ItemStack(Item::apple), true);
 	}
+
+#ifndef FEATURE_SERVER_INVENTORIES
+	// don't drop items on the server, leave it to SendInventoryPacket
+	if (m_pLevel->m_bIsClientSide)
+#endif
 #if NETWORK_PROTOCOL_VERSION <= 3
 	m_pInventory->dropAll(m_pLevel->m_bIsClientSide);
 #endif

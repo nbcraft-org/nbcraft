@@ -28,7 +28,7 @@ public:
 	void prepareCreativeInventory();
 	void prepareSurvivalInventory();
 
-	uint16_t getContainerSize() const override;
+	Size getContainerSize() const override;
 
 	void clear();
 	void replace(const std::vector<ItemStack>& items);

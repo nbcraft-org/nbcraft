@@ -121,9 +121,9 @@ void Inventory::prepareSurvivalInventory()
 #endif
 }
 
-uint16_t Inventory::getContainerSize() const
+Container::Size Inventory::getContainerSize() const
 {
-	return uint16_t(m_items.size() + m_armor.size());
+	return (Size)(m_items.size() + m_armor.size());
 }
 
 void Inventory::clear()
@@ -372,7 +372,7 @@ bool Inventory::hasUnlimitedResource(const ItemStack& item) const
 ItemStack& Inventory::getItem(StackID stackId)
 {
 	// stackId < getContainerSize() trips when the RemotePlayer dies
-	//assert(stackId >= 0 && stackId < getContainerSize());
+	assert(stackId >= 0 && stackId < getContainerSize());
 
 	if (size_t(stackId) < m_items.size())
 		return m_items[stackId];

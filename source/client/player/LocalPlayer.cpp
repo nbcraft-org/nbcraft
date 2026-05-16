@@ -61,7 +61,11 @@ LocalPlayer::~LocalPlayer()
 void LocalPlayer::die(Entity* pCulprit)
 {
 #if NETWORK_PROTOCOL_VERSION >= 4
+#ifdef FEATURE_SERVER_INVENTORIES
 	m_pInventory->dropAll();
+#else
+	m_pInventory->dropAll(m_pLevel->m_bIsClientSide);
+#endif
 #endif
 
 	Player::die(pCulprit);

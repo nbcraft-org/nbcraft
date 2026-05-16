@@ -101,16 +101,14 @@ void MultiplayerLocalPlayer::hurtTo(int newHealth)
 void MultiplayerLocalPlayer::die(Entity* pCulprit)
 {
 #if NETWORK_PROTOCOL_VERSION >= 4
-    SendInventoryPacket* pPkt = new SendInventoryPacket();
-    pPkt->m_entityId = m_EntityID;
-    pPkt->m_bDropAll = true;
+    SendInventoryPacket* pPkt = new SendInventoryPacket(m_EntityID, true);
 
-    uint16_t size = m_pInventory->getContainerSize();
+    Container::Size size = m_pInventory->getContainerSize();
 
     // 0.3.0
     if (size > 9)
     {
-        for (int i = 0; i < size; i++)
+        for (Container::StackID i = 0; i < size; i++)
         {
             pPkt->m_items.push_back(m_pInventory->getItem(i));
         }

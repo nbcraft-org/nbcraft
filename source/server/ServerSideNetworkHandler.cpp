@@ -595,7 +595,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, SendInvent
 
 	pPlayer->m_pInventory->replace(packet->m_items);
 
-	if (packet->m_bDropAll)
+	if (packet->m_extra == SendInventoryPacket::EXTRA_DROP_ALL)
 		pPlayer->m_pInventory->dropAll();
 }
 
