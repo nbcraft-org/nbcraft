@@ -165,6 +165,7 @@ Textures::Textures() :
 	addSprite("gui/console/Graphics/Armour_Slot_Legs.png", m_guiAtlas);
 	addSprite("gui/console/Graphics/Armour_Slot_Feet.png", m_guiAtlas);
 	addSprite("gui/console/Graphics/Arrow_Off.png", m_guiAtlas);
+	addSprite("gui/console/Graphics/Arrow_On.png", m_guiAtlas);
 	addSprite("gui/console/Graphics/Arrow_Small_Off.png", m_guiAtlas);
 	addSprite("gui/console/Graphics/Flame_Off.png", m_guiAtlas);
 	addSprite("gui/console/Graphics/Flame_On.png", m_guiAtlas);

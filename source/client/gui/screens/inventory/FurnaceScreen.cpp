@@ -60,7 +60,8 @@ void FurnaceScreen::_renderBg(float a)
             blitSprite(*m_pMinecraft->m_pTextures, "gui/console/Graphics/Flame_On.png", m_leftPos + 195, m_topPos + 141, -48, -(p + 2) * 3, nullptr, 0.0f, 3.0f, 48, (p + 2) * 3);
         }
 
-        //p = m_pFurnace->getBurnProgress(24);
+        p = m_pFurnace->getBurnProgress(24);
+        blitSprite(*m_pMinecraft->m_pTextures, "gui/console/Graphics/Arrow_On.png", m_leftPos + 224, m_topPos + 100, (p + 1) * 3, 48, nullptr, 0.0f, 0.0f, (p + 1) * 3, 48);
         //blit(m_leftPos + 79, m_topPos + 34, 176, 14, p + 1, 16, 0, 0);
     }
     else
