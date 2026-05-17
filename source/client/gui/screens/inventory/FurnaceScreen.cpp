@@ -33,8 +33,8 @@ void FurnaceScreen::_renderLabels()
         m_pFont->drawScalable(m_pFurnace->getName(), 26, 21, 0x404040);
         m_pFont->drawScalable(m_pInventory->getName(), 26, m_imageHeight - 238 + 2, 0x404040);
 
-        m_pFont->drawScalable("Ingredient", 44, 68, 0x404040);
-        m_pFont->drawScalable("Fuel", 106, 162, 0x404040);
+        m_pFont->drawScalable("Ingredient", 40, 68, 0x404040);
+        m_pFont->drawScalable("Fuel", 102, 162, 0x404040);
     }
     else
     {
