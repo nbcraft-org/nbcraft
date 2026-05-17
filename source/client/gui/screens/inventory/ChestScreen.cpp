@@ -35,8 +35,8 @@ void ChestScreen::_renderLabels()
 {
     if (m_uiTheme == UI_CONSOLE)
     {
-        m_pFont->drawScalable(m_pContainer->getName(), 28, 20, Color::TEXT_GREY, 2.5f);
-        m_pFont->drawScalable(m_pInventory->getName(), 28, m_imageHeight - 237 + 8, Color::TEXT_GREY, 2.5f);
+        m_pFont->drawScalable(m_pContainer->getName(), 28, 20, Color::TEXT_GREY);
+        m_pFont->drawScalable(m_pInventory->getName(), 28, m_imageHeight - 234 + 8, Color::TEXT_GREY);
     }
     else
     {
@@ -74,7 +74,7 @@ SlotDisplay ChestScreen::_createSlotDisplay(const Slot& slot)
         case Slot::INVENTORY:
             return SlotDisplay(28 + (slot.m_stackId % 9) * slotSize, (rows * 42) + 45 + (slot.m_stackId / 9) * slotSize, slotSize, true);
         case Slot::HOTBAR:
-            return SlotDisplay(28 + (slot.m_stackId % 9) * slotSize, 224 + rows * slotSize, slotSize, true);
+            return SlotDisplay(28 + (slot.m_stackId % 9) * slotSize, 226 + rows * slotSize, slotSize, true);
         default:
             return SlotDisplay();
         }

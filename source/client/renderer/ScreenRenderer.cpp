@@ -121,7 +121,11 @@ void ScreenRenderer::blitSprite(Textures& textures, const std::string& texture, 
 
 void ScreenRenderer::blitSprite(Textures& textures, const TextureAtlasSprite* sprite, int x, int y, int width, int height, mce::MaterialPtr* materialPtr, float u, float v, int uvWidth, int uvHeight)
 {
-    if (!sprite || !sprite->m_pAtlas) return;
+    if (!sprite || !sprite->m_pAtlas)
+    {
+        assert(!"Invalid spite ptr provided to blitSprite!");
+        return;
+    }
 
     TextureAtlas& atlas = *sprite->m_pAtlas;
 
