@@ -154,17 +154,36 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, LoginPacke
 
 	m_pendingPlayers[guid] = pPlayer;
 
-	StartGamePacket sgp;
-	sgp.m_seed = m_pLevel->getSeed();
-	sgp.m_levelVersion = m_pLevel->getLevelData()->getStorageVersion();
-	sgp.m_gameType = pPlayer->getPlayerGameType();
-	sgp.m_entityId = pPlayer->m_EntityID;
-	sgp.m_time = m_pLevel->getTime();
-	sgp.m_pos = pPlayer->m_pos;
-	sgp.m_pos.y -= pPlayer->m_heightOffset;
-	
-	sgp.write(bs);
-	m_pRakNetPeer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, guid, false);
+	// Ensure Player is spawned above-ground
+	{
+		Vec3& pos = pPlayer->m_pos;
+		while (pos.y > 0)
+		{
+			pPlayer->setPos(pos);
+			if (pPlayer->canSpawn())
+				break;
+			pos.y++;
+		}
+
+		Vec3 pos2 = pos;
+		pos2.y -= pPlayer->m_heightOffset;
+		pPlayer->moveTo(pos2, pPlayer->m_rot);
+	}
+
+	// Send StartGamePacket
+	{
+		StartGamePacket sgp;
+		sgp.m_seed = m_pLevel->getSeed();
+		sgp.m_levelVersion = m_pLevel->getLevelData()->getStorageVersion();
+		sgp.m_gameType = pPlayer->getPlayerGameType();
+		sgp.m_entityId = pPlayer->m_EntityID;
+		sgp.m_time = m_pLevel->getTime();
+		sgp.m_pos = pPlayer->m_pos;
+		sgp.m_pos.y -= pPlayer->m_heightOffset;
+
+		sgp.write(bs);
+		m_pRakNetPeer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, guid, false);
+	}
 
 #if NETWORK_PROTOCOL_VERSION <= 2
 	// emulate a ReadyPacket being received
