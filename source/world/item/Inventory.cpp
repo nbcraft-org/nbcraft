@@ -407,7 +407,7 @@ void Inventory::setItem(StackID stackId, const ItemStack& item)
 	}
 }
 
-void Inventory::setSelectedItem(ItemStack item)
+void Inventory::setSelectedItem(const ItemStack& item)
 {
 	setItem(m_selectedStackId, item);
 }

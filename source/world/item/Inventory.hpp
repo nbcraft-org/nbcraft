@@ -47,7 +47,7 @@ public:
 	int getSelectedItemId();
 
 	void setItem(StackID stackId, const ItemStack& item) override;
-	void setSelectedItem(ItemStack item);
+	void setSelectedItem(const ItemStack& item);
 	ItemStack removeItem(StackID stackId, int count) override;
 	bool removeResource(int id);
 
