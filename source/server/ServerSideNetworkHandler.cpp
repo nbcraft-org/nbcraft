@@ -485,6 +485,23 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, UseItemPac
 	pPlayer->swing();
 }
 
+// added specifically to allow Noteblocks to work, but ideally should just be a part of ServerPlayerGameMode
+bool _startDestroyBlock(Level& level, Player& player, const TilePos& pos, Facing::Name face)
+{
+	ItemStack& item = player.getSelectedItem();
+	if (!item.isEmpty() && item.getItem() == Item::bow)
+		return true;
+
+	TileID tile = level.getTile(pos);
+
+	if (tile <= 0)
+		return false;
+	
+	Tile::tiles[tile]->attack(&level, pos, &player);
+
+	return true;
+}
+
 void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, PlayerActionPacket* packet)
 {
 	puts_ignorable("PlayerActionPacket");
@@ -499,6 +516,13 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, PlayerActi
 
 	switch (packet->m_action)
 	{
+	case PlayerActionPacket::START_DESTROY_BLOCK:
+		_startDestroyBlock(*m_pLevel, *pPlayer, packet->m_tilePos, packet->m_tileFace);
+		//m_pMinecraft->getPlayerGameMode(*pPlayer)->startDestroyBlock(pPlayer, packet->m_tilePos, packet->m_tileFace);
+		break;
+	case PlayerActionPacket::STOP_DESTROY_BLOCK:
+		//m_pMinecraft->getPlayerGameMode(*pPlayer)->stopDestroyBlock(pPlayer, packet->m_tilePos, packet->m_tileFace);
+		break;
 	case PlayerActionPacket::STOP_USING_ITEM:
 		pPlayer->releaseUsingItem();
 		break;

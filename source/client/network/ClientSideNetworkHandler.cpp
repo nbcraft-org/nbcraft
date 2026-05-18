@@ -603,7 +603,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, PlayerE
 
 #ifdef FEATURE_SERVER_INVENTORIES
 	// will need to be reworked for proper server-sided inventory support, pick the proper slot, not just any item
-	pPlayer->m_pInventory->pickItem(pPlayerEquipmentPkt->m_itemID, pPlayerEquipmentPkt->m_itemAuxValue, C_MAX_HOTBAR_ITEMS);;
+	pPlayer->m_pInventory->pickItem(pPlayerEquipmentPkt->m_itemID, pPlayerEquipmentPkt->m_itemAuxValue, C_MAX_HOTBAR_ITEMS);
 #else
 	pPlayer->m_pInventory->setSelectedItem(ItemStack(pPlayerEquipmentPkt->m_itemID, 1, pPlayerEquipmentPkt->m_itemAuxValue));
 #endif

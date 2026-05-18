@@ -42,6 +42,14 @@ bool SurvivalMode::startDestroyBlock(Player* player, const TilePos& pos, Facing:
 	if (tile <= 0)
 		return false;
 
+	// @PARITY: This is in MultiPlayerGameMode on Java, but we aren't equipped to move to that at the moment
+#if NETWORK_PROTOCOL_VERSION >= 6
+	if (m_pMinecraft->isOnlineClient())
+	{
+		m_pMinecraft->m_pRakNetInstance->send(new PlayerActionPacket(player->m_EntityID, PlayerActionPacket::START_DESTROY_BLOCK, pos, face));
+	}
+#endif
+
 	if (m_destroyProgress == 0.0f)
 	{
 		Tile::tiles[tile]->attack(&_level, pos, player);
@@ -128,6 +136,14 @@ bool SurvivalMode::continueDestroyBlock(Player* player, const TilePos& pos, Faci
 		m_destroyCooldown = 5;
 		m_destroyProgress     = 0.0f;
 		m_lastDestroyProgress = 0.0f;
+
+		// @PARITY: This is in MultiPlayerGameMode on Java, but we aren't equipped to move to that at the moment
+#if NETWORK_PROTOCOL_VERSION >= 6
+		if (m_pMinecraft->isOnlineClient())
+		{
+			m_pMinecraft->m_pRakNetInstance->send(new PlayerActionPacket(player->m_EntityID, PlayerActionPacket::STOP_DESTROY_BLOCK, pos, face));
+		}
+#endif
 		return destroyBlock(player, m_destroyingPos, face);
 	}
 
