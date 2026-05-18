@@ -212,16 +212,20 @@ void ContainerScreen::render(float partialTicks)
         if (!name.empty())
         {
             int w = m_pFont->width(name);
-            int tx = m_menuPointer.x - m_leftPos + 10;
-            int ty = m_menuPointer.y - m_topPos - 32;
+            int tx = m_menuPointer.x - m_leftPos;
+            int ty = m_menuPointer.y - m_topPos;
             if (m_uiTheme == UI_CONSOLE)
             {
+                tx += 10;
+                ty -= 32;
                 blitNineSlice(*m_pMinecraft->m_pTextures, ScreenRenderer::POINTER_TEXT_PANEL_SLICES, tx - 6, ty - 6, w * 2 + 12, 34, 8);
                 MatrixStack::Ref tooltipMatrix = MatrixStack::World.push();
                 m_pFont->drawScalableShadow(name, tx, ty + 4, -1);
             }
             else
             {
+                tx += 12;
+                ty -= 12;
                 fillGradient(tx - 3, ty - 3, tx + w + 3, ty + 8 + 3, 0xC0000000, 0xC0000000);
                 m_pFont->drawShadow(name, tx, ty, -1);
             }
