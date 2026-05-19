@@ -6,6 +6,8 @@
 	SPDX-License-Identifier: BSD-1-Clause
  ********************************************************************/
 
+#include <iterator>
+
 #include "Chunk.hpp"
 #include "renderer/RenderContextImmediate.hpp"
 #include "world/level/Level.hpp"
