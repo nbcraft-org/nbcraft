@@ -118,7 +118,7 @@ void ContainerMenu::containerContentChanged(Container* container, Container::Sta
     }
 }
 
-std::vector<ItemStack> ContainerMenu::cloneItems()
+std::vector<ItemStack> ContainerMenu::cloneItems(bool all)
 {
     std::vector<ItemStack> content;
 
@@ -130,7 +130,7 @@ std::vector<ItemStack> ContainerMenu::cloneItems()
         // Firstly, inventories shouldn't be owned by the client
         // Secondly, we shouldn't be checking types directly like this
         // Ultimately this HAS to have two different storages, one for the inventory and one for the container
-        if (slot->m_group == Slot::INVENTORY || slot->m_group == Slot::HOTBAR)
+        if (!all && (slot->m_group == Slot::INVENTORY || slot->m_group == Slot::HOTBAR))
             continue;
 #endif
         const ItemStack& item = (*it)->getItem();

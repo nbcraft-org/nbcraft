@@ -38,6 +38,8 @@ public:
 	void saveLevelData(const std::string& levelPath, LevelData* levelData, const std::vector<Player*>* players) override;
 	void saveLevelData(LevelData* levelData, const std::vector<Player*>* players) override;
 	void savePlayerData(LevelData& levelData, const std::vector<Player*>& players) override;
+	bool load(Player& player) override;
+	bool save(Player& player) override;
 	void saveGame(Level* level) override;
 	void closeAll() override;
 	void tick() override;

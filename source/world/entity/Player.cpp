@@ -42,8 +42,8 @@ Player::Player(Level* pLevel, GameType playerGameType) : Mob(pLevel)
 
 	m_pInventory = new Inventory(this);
 
-	m_pContainerMenu = nullptr;
 	m_pInventoryMenu = new InventoryMenu(m_pInventory);
+	m_pContainerMenu = m_pInventoryMenu;
 
 	setDefaultHeadHeight();
 

@@ -245,6 +245,7 @@
     <ClCompile Include="$(MC_ROOT)\source\world\tile\MusicTile.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\ContainerContentChangeListener.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\ContainerSizeChangeListener.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\inventory\Container.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Entity.hpp" />

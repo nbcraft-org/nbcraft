@@ -20,6 +20,7 @@
 //#define NETWORK_PROTOCOL_VERSION 5   // 0.3.2
 #define NETWORK_PROTOCOL_VERSION 6     // 0.3.3
 //#define NETWORK_PROTOCOL_VERSION 7   // 0.4.0
+//#define NETWORK_PROTOCOL_VERSION 11  // 0.7.0
 //#define NETWORK_PROTOCOL_VERSION 29  // 0.12.1
 
 class NetEventCallback;

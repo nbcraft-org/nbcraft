@@ -26,6 +26,8 @@ public:
 	virtual void saveLevelData(LevelData* levelData, const std::vector<Player*>* players) = 0;
 	virtual void saveLevelData(LevelData* levelData);
 	virtual void savePlayerData(LevelData& levelData, const std::vector<Player*>& players);
+	virtual bool load(Player& player) { return false; }
+	virtual bool save(Player& player) { return false; }
 	virtual void saveGame(Level* level);
 	void loadEntities(Level* level) { loadEntities(level, nullptr); }
 	virtual void loadEntities(Level* level, LevelChunk* chunk);

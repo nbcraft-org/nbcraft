@@ -1,6 +1,7 @@
 #pragma once
 
 #include <set>
+#include <vector>
 
 #include "world/item/ItemStack.hpp"
 
@@ -52,6 +53,7 @@ public:
 	// Was called setChanged in Java
 	virtual void setContainerChanged(StackID stackId) = 0;
 	virtual bool stillValid(Player* player) const = 0;
+	virtual std::vector<ItemStack> getSlotCopies();
 
 	virtual void addContentChangeListener(ContainerContentChangeListener* listener) {}
 	virtual void addSizeChangeListener(ContainerSizeChangeListener* listener) {}

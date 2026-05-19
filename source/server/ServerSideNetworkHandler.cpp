@@ -97,6 +97,12 @@ void ServerSideNetworkHandler::onDisconnect(const RakNet::RakNetGUID& guid)
 		m_pRakNetInstance->send(new RemoveEntityPacket(pPlayer->m_EntityID));
 
 		pPlayer->m_bForceRemove = true;
+
+#ifdef ENH_SAVE_REMOTE_PLAYERS
+		LevelStorage* pLevelStorage = m_pLevel->getLevelStorage();
+		pLevelStorage->save(*pPlayer);
+#endif
+
 		// remove it from our world
 		m_pLevel->removeEntity(pPlayer);
 	}
@@ -152,6 +158,14 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, LoginPacke
 	pPlayer->m_guid = guid;
 	pPlayer->m_name = std::string(packet->m_userName.C_String());
 
+	GameMode* pGameMode = m_pMinecraft->getPlayerGameMode(*pPlayer);
+	pGameMode->initPlayer(pPlayer);
+
+#ifdef ENH_SAVE_REMOTE_PLAYERS
+	LevelStorage* pLevelStorage = m_pLevel->getLevelStorage();
+	pLevelStorage->load(*pPlayer);
+#endif
+
 	m_pendingPlayers[guid] = pPlayer;
 
 	// Ensure Player is spawned above-ground
@@ -204,7 +218,10 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ReadyPacke
 
 	Player* pPlayer = popPendingPlayer(guid);
 	if (!pPlayer)
+	{
+		LOG_E("We don't have a user associated with this player!");
 		return;
+	}
 
 	RakNet::BitStream bs;
 
@@ -228,11 +245,6 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ReadyPacke
 
 	m_pLevel->addEntity(pPlayer);
 
-	if (m_pMinecraft->getLevelGameMode()->isCreativeType())
-		pPlayer->m_pInventory->prepareCreativeInventory();
-	else
-		pPlayer->m_pInventory->prepareSurvivalInventory();
-
 	m_pMinecraft->m_pGui->addMessage(pPlayer->m_name + " joined the game");
 
 #if NETWORK_PROTOCOL_VERSION >= 3
@@ -247,6 +259,19 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ReadyPacke
 			packet.write(bs);
 			m_pRakNetPeer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, guid, false);
 		}
+	}
+#endif
+
+	// was actually added in 11 (0.7.0), but I don't think anything's stopping us from doing this for older clients
+#if NETWORK_PROTOCOL_VERSION >= 6 && defined(ENH_SAVE_REMOTE_PLAYERS)
+	// send the connecting player's inventory
+	if (!pPlayer->isCreative())
+	{
+		std::vector<ItemStack> items = pPlayer->m_pInventoryMenu->cloneItems(true);
+		ContainerSetContentPacket cscp(0, items);
+		bs.Reset();
+		cscp.write(bs);
+		m_pRakNetPeer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, guid, false);
 	}
 #endif
 
@@ -816,7 +841,10 @@ void ServerSideNetworkHandler::allowIncomingConnections(bool b)
 Player* ServerSideNetworkHandler::popPendingPlayer(const RakNet::RakNetGUID& guid)
 {
 	if (!m_pLevel)
+	{
+		LOG_E("Could not add player since Level is NULL!");
 		return nullptr;
+	}
 
 	Player* pPlayer = getPendingPlayerByGUID(guid);
 	if (pPlayer)
