@@ -43,5 +43,13 @@ public:
 	AABB& expand(float x, float y, float z);
 	AABB& expand(const Vec3& vec);
 	bool contains(const Vec3& v) const;
+
+	AABB& shrink(const Vec3& vec)
+	{
+		min += vec;
+		max -= vec;
+		return *this;
+	}
+	AABB& shrink(float x, float y, float z) { return shrink(Vec3(x, y, z)); }
 };
 

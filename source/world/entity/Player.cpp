@@ -210,7 +210,9 @@ void Player::aiStep()
     m_pInventory->tick();
 #endif
 	m_oBob = m_bob;
-    //Mob::aiStep(); // @PARITY: called in Java, calling here results in 2x speed player movement
+
+	//Mob::aiStep(); // @PARITY: not called in PE, instead called in LocalPlayer, called regardless in Java
+
 	float velLen = Mth::sqrt(m_vel.x * m_vel.x + m_vel.z * m_vel.z);
 	float velYAtan = Mth::atan(m_vel.y * -0.2f), x1 = 0.0f;
 

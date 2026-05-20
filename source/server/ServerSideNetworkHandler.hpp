@@ -36,6 +36,8 @@ class ServerSideNetworkHandler : public NetEventCallback, public LevelListener
 private:
 	bool _checkPermissions(OnlinePlayer* player);
 	bool _validateNum(OnlinePlayer* player, int value, int min, int max);
+	Player* _getVerifiedPlayer(const RakNet::RakNetGUID& guid, Entity::ID entityId) const;
+	void _handleMovePlayer(Player& player, MovePlayerPacket* packet);
 
 public:
 
@@ -106,6 +108,9 @@ public:
 	RakNet::RakPeerInterface* m_pRakNetPeer;
 	PlayerMap m_pendingPlayers;
 	bool m_bAllowIncoming;
+
+	// Server-specific options, the type of stuff that should probably go in server.properties
+	bool m_bStrictPlayerMovement;
 
 	OnlinePlayerMap m_onlinePlayers;
 	CommandMap m_commands;

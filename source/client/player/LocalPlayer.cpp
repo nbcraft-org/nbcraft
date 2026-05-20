@@ -217,9 +217,9 @@ void LocalPlayer::calculateFlight(const Vec3& pos)
 
 	float y1 = 0.0f;
 	if (Keyboard::isKeyDown(m_pMinecraft->getOptions()->getKey(KM_FLY_UP)))
-		y1 = f1 * 0.2f;
+		y1 = f1 * 0.2f; // @PARITY: 0.5 on Java
 	if (Keyboard::isKeyDown(m_pMinecraft->getOptions()->getKey(KM_FLY_DOWN)))
-		y1 = f1 * -0.2f;
+		y1 = f1 * -0.2f; // @PARITY: -0.5 on Java
 
 	field_BFC += x1;
 	float f2 = m_pMinecraft->getOptions()->m_sensitivity.get() * 0.35f;

@@ -428,7 +428,7 @@ void Entity::lerpTo(const Vec3& pos)
 	setPos(pos);
 }
 
-void Entity::lerpTo(const Vec3& pos, const Vec2& rot, int p)
+void Entity::lerpTo(const Vec3& pos, const Vec2& rot, int steps)
 {
 	lerpTo(pos);
 	setRot(rot);

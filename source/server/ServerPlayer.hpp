@@ -17,6 +17,7 @@ public:
 	void closeContainer() override;
 	void openFurnace(FurnaceTileEntity* tileEntity);
 	void take(Entity* pEnt, int count) override;
+	bool interpolateOnly() const override { return true; }
 
 	void refreshContainer(ContainerMenu* menu, const std::vector<ItemStack>& items) override;
 	void slotChanged(ContainerMenu* menu, Container::SlotID slotId, Slot* slot, ItemStack& item, bool isResultSlot) override;

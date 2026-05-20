@@ -25,7 +25,7 @@ protected:
 public:
 	// overrides
 	void reset() override;
-	void lerpTo(const Vec3& pos, const Vec2& rot, int steps) override;
+	void lerpTo(const Vec3& pos, const Vec2& rot, int steps = 3) override;
 	void tick() override;
 	void baseTick() override;
 	float getHeadHeight() const override { return 0.85f * m_bbHeight; }
