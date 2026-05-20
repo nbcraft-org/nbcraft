@@ -117,6 +117,10 @@ void ServerPlayer::take(Entity* pEnt, int count)
 	Player::take(pEnt, count);
 }
 
+void ServerPlayer::checkFallDamage(float ya, bool onGround)
+{
+}
+
 void ServerPlayer::refreshContainer(ContainerMenu* menu, const std::vector<ItemStack>& items)
 {
 #if NETWORK_PROTOCOL_VERSION >= 5
@@ -178,4 +182,9 @@ void ServerPlayer::setContainerMenu(ContainerMenu* menu)
 		refreshContainer(m_pContainerMenu, m_pContainerMenu->cloneItems());
 		m_pContainerMenu->broadcastChanges();
 	}
+}
+
+void ServerPlayer::doCheckFallDamage(float ya, bool onGround)
+{
+	Player::checkFallDamage(ya, onGround);
 }

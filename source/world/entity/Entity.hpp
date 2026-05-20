@@ -198,8 +198,8 @@ public:
 	virtual void setPos(EntityPos*);
 	virtual void resetPos(bool respawn = false);
 	virtual void outOfWorld();
-	virtual void checkFallDamage(float f, bool b);
-	virtual void causeFallDamage(float f);
+	virtual void checkFallDamage(float ya, bool onGround);
+	virtual void causeFallDamage(float ya);
 	virtual void markHurt();
 	virtual void burn(int);
 	virtual void lavaHurt();

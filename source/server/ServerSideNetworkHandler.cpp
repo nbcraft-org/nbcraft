@@ -188,7 +188,8 @@ void ServerSideNetworkHandler::_handleMovePlayer(Player& player, MovePlayerPacke
 
 	//player.m_bOnGround = packet->onGround;
 	//this.server.playerList.move(player); // playerChunkMap.move(player)
-	//player.doCheckFallDamage(player.m_pos.y - postDelta.x, packet->onGround);
+	ServerPlayer& serverPlayer = (ServerPlayer&)player;
+	serverPlayer.doCheckFallDamage(player.m_pos.y - oPos.y, player.m_bOnGround/*packet->onGround*/);
 
 	redistributePacket(packet, player.m_guid);
 }
