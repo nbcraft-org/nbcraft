@@ -177,7 +177,7 @@ void ServerSideNetworkHandler::_handleMovePlayer(Player& player, MovePlayerPacke
 
 	aabb = player.m_hitbox;
 	aabb.shrink(shrinkAmount, shrinkAmount, shrinkAmount);
-	const bool hasNoCollisionAfter = m_pLevel->getCubes(&player, aabb)->size() == 0;
+	bool hasNoCollisionAfter = m_pLevel->getCubes(&player, aabb)->size() == 0;
 
 	// Revert movement if illegal collisions or invalid movement occur
 	if (hasNoCollisionBefore && (movedWrongly || !hasNoCollisionAfter) /*&& !player.isSleeping()*/)
@@ -631,7 +631,13 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, UseItemPac
 		}
 	}
 
-	if (packet->m_item.isEmpty())
+	ItemStack& item = packet->m_item;
+
+	// if we're getting a bad state from the client, odds are we finished off a consumable, so just do what Java does
+	if (item.isEmpty())
+		item = player.m_pInventory->getSelected();
+
+	if (item.isEmpty())
 		return;
 
 	if (onTile)
