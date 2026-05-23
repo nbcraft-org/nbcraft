@@ -642,11 +642,11 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, UseItemPac
 
 	if (onTile)
 	{
-		packet->m_item.useOn(&player, m_pLevel, packet->m_tilePos, (Facing::Name)packet->m_tileFace);
+		item.useOn(&player, m_pLevel, packet->m_tilePos, (Facing::Name)packet->m_tileFace);
 	}
 	else
 	{
-		packet->m_item.use(m_pLevel, &player);
+		item.use(m_pLevel, &player);
 	}
 
 	player.swing();

@@ -351,8 +351,13 @@ void LocalPlayer::tick()
 		if (m_lastSelectedStackId != m_pInventory->m_selectedStackId)
 		{
 			m_lastSelectedStackId = m_pInventory->m_selectedStackId;
-			const ItemStack& item = m_pInventory->getSelectedItem();
-			m_pMinecraft->m_pRakNetInstance->send(new PlayerEquipmentPacket(m_EntityID, item.getId(), item.getAuxValue()));
+			const ItemStack* item = &m_pInventory->getSelectedItem();
+
+			// @HACK: send Air for empty items, the server doesn't know how many we have
+			if (item->isEmpty())
+				item = &ItemStack::EMPTY;
+
+			m_pMinecraft->m_pRakNetInstance->send(new PlayerEquipmentPacket(m_EntityID, item->getId(), item->getAuxValue()));
 		}
 	}
 }
