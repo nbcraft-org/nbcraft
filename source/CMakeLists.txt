@@ -362,6 +362,7 @@ add_library(nbcraft-core STATIC
     world/item/crafting/SingleInputRecipe.cpp
     world/item/crafting/ShapedRecipe.cpp
     world/item/crafting/ShapelessRecipe.cpp
+    world/inventory/Container.cpp
     world/inventory/ContainerListener.cpp
     world/inventory/CompoundContainer.cpp
     world/inventory/ContainerContentChangeListener.cpp
