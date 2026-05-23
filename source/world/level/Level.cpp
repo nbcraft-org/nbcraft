@@ -1412,7 +1412,7 @@ void Level::sendEntityData()
 		Entity* ent = it->second;
 		SynchedEntityData& data = ent->getEntityData();
 		if (data.isDirty())
-			m_pRakNetInstance->send(SetEntityDataPacket(ent->m_EntityID, data));
+			m_pRakNetInstance->send(new SetEntityDataPacket(ent->m_EntityID, data));
 	}
 }
 
@@ -1615,7 +1615,7 @@ void Level::broadcastEntityEvent(const Entity& entity, Entity::EventType::ID eve
 	if (m_bIsClientSide || !m_pRakNetInstance)
 		return;
 
-	m_pRakNetInstance->send(EntityEventPacket(entity.m_EntityID, eventId));
+	m_pRakNetInstance->send(new EntityEventPacket(entity.m_EntityID, eventId));
 }
 
 void Level::removeListener(LevelListener* listener)

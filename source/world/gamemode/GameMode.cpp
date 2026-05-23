@@ -53,7 +53,7 @@ bool GameMode::destroyBlock(Player* player, const TilePos& pos, Facing::Name fac
 
 	if (m_pMinecraft->isOnline())
 	{
-		m_pMinecraft->m_pRakNetInstance->send(RemoveBlockPacket(player->m_EntityID, pos));
+		m_pMinecraft->m_pRakNetInstance->send(new RemoveBlockPacket(player->m_EntityID, pos));
 	}
 
 	return true;
@@ -148,7 +148,7 @@ bool GameMode::useItem(Player* player, Level* level, ItemStack& item)
 
 	if (level->m_bIsClientSide)
 	{
-		_level.m_pRakNetInstance->send(UseItemPacket(TilePos::ZERO, 255, player->m_EntityID, item));
+		_level.m_pRakNetInstance->send(new UseItemPacket(TilePos::ZERO, 255, player->m_EntityID, item));
 	}
 
 	if (&item == result)
@@ -162,7 +162,7 @@ bool GameMode::useItemOn(Player* player, Level* level, ItemStack& item, const Ti
 	// Sending this packet regardless is intentional. PE does this, Java does this.
 	if (level->m_bIsClientSide)
 	{
-		_level.m_pRakNetInstance->send(UseItemPacket(pos, face, player->m_EntityID, item));
+		_level.m_pRakNetInstance->send(new UseItemPacket(pos, face, player->m_EntityID, item));
 	}
 
 	TileID tile = level->getTile(pos);
@@ -188,7 +188,7 @@ void GameMode::releaseUsingItem(Player* player)
 #if NETWORK_PROTOCOL_VERSION >= 6
 	if (m_pMinecraft->isOnlineClient())
 	{
-		m_pMinecraft->m_pRakNetInstance->send(PlayerActionPacket(player->m_EntityID, PlayerActionPacket::STOP_USING_ITEM));
+		m_pMinecraft->m_pRakNetInstance->send(new PlayerActionPacket(player->m_EntityID, PlayerActionPacket::STOP_USING_ITEM));
 	}
 #endif
 

@@ -336,7 +336,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, TakeIte
 			{
 				if (m_serverProtocolVersion >= 4)
 				{
-					m_pRakNetInstance->send(DropItemPacket(pkt->m_sourceId, pItemEntity->m_itemStack));
+					m_pRakNetInstance->send(new DropItemPacket(pkt->m_sourceId, pItemEntity->m_itemStack));
 				}
 			}
 		}

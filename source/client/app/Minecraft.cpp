@@ -786,7 +786,7 @@ void Minecraft::respawnPlayer()
 	_resetPlayer(m_pLocalPlayer);
 
 	// Allows client to dictate respawn position. Why?
-	m_pRakNetInstance->send(RespawnPacket(m_pLocalPlayer->m_EntityID, m_pLocalPlayer->m_pos));
+	m_pRakNetInstance->send(new RespawnPacket(m_pLocalPlayer->m_EntityID, m_pLocalPlayer->m_pos));
 }
 
 void Minecraft::freeResources(bool bCopyMap)

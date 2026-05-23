@@ -260,7 +260,7 @@ void ServerSideNetworkHandler::onDisconnect(const RakNet::RakNetGUID& guid)
 		// tell everyone that they left the game
 		displayGameMessage(pPlayer->m_name + " disconnected from the game");
 
-		m_pRakNetInstance->send(RemoveEntityPacket(pPlayer->m_EntityID));
+		m_pRakNetInstance->send(new RemoveEntityPacket(pPlayer->m_EntityID));
 
 		pPlayer->m_bForceRemove = true;
 
@@ -311,7 +311,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, LoginPacke
 
 	if (loginStatus != LoginStatusPacket::STATUS_SUCCESS)
 	{
-		m_pRakNetInstance->send(guid, bs, LoginStatusPacket(loginStatus));
+		m_pRakNetInstance->send(guid, bs, new LoginStatusPacket(loginStatus));
 		return;
 	}
 #endif
@@ -718,7 +718,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, RequestChu
 
 	if (packet->m_chunkPos.x == -9999)
 	{
-		m_pRakNetInstance->send(guid, LevelDataPacket(m_pLevel));
+		m_pRakNetInstance->send(guid, new LevelDataPacket(m_pLevel));
 		return;
 	}
 
@@ -866,7 +866,7 @@ void ServerSideNetworkHandler::timeChanged(uint32_t time)
 {
 	if ((time % (20 * NETWORK_TIME_SEND_FREQUENCY)) == 0)
 	{
-		m_pRakNetInstance->send(SetTimePacket(time));
+		m_pRakNetInstance->send(new SetTimePacket(time));
 	}
 }
 
@@ -906,7 +906,7 @@ void ServerSideNetworkHandler::levelEvent(const LevelEvent& event)
 void ServerSideNetworkHandler::tileEvent(const TileEvent& event)
 {
 #if NETWORK_PROTOCOL_VERSION >= 5
-	m_pRakNetInstance->send(TileEventPacket(event.pos, event.b0, event.b1));
+	m_pRakNetInstance->send(new TileEventPacket(event.pos, event.b0, event.b1));
 #endif
 }
 
@@ -945,7 +945,7 @@ Player* ServerSideNetworkHandler::popPendingPlayer(const RakNet::RakNetGUID& gui
 void ServerSideNetworkHandler::displayGameMessage(const std::string& msg)
 {
 	m_pMinecraft->m_pGui->addMessage(msg);
-	m_pRakNetInstance->send(MessagePacket(msg));
+	m_pRakNetInstance->send(new MessagePacket(msg));
 }
 
 void ServerSideNetworkHandler::sendMessage(const RakNet::RakNetGUID& guid, const std::string& msg)
@@ -956,7 +956,7 @@ void ServerSideNetworkHandler::sendMessage(const RakNet::RakNetGUID& guid, const
 		return;
 	}
 
-	m_pRakNetInstance->send(guid, MessagePacket(msg));
+	m_pRakNetInstance->send(guid, new MessagePacket(msg));
 }
 
 void ServerSideNetworkHandler::sendMessage(OnlinePlayer* player, const std::string& msg)

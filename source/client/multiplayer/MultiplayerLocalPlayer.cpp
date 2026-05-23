@@ -79,7 +79,7 @@ void MultiplayerLocalPlayer::heal(int health)
 // Uncomment when we have fully server-authoritative inventories
 /*void MultiplayerLocalPlayer::drop()
 {
-    m_pLevel->m_pRakNetInstance->send(PlayerActionPacket(m_EntityID, PlayerActionPacket::DROP_ITEM));
+    m_pLevel->m_pRakNetInstance->send(new PlayerActionPacket(m_EntityID, PlayerActionPacket::DROP_ITEM));
 }*/
 
 void MultiplayerLocalPlayer::hurtTo(int newHealth)
@@ -120,14 +120,14 @@ void MultiplayerLocalPlayer::die(Entity* pCulprit)
 void MultiplayerLocalPlayer::drop(const ItemStack& item, bool randomly)
 {
 #if NETWORK_PROTOCOL_VERSION >= 4
-        m_pMinecraft->m_pRakNetInstance->send(DropItemPacket(m_EntityID, item));
+        m_pMinecraft->m_pRakNetInstance->send(new DropItemPacket(m_EntityID, item));
 #endif
 }
 
 void MultiplayerLocalPlayer::closeContainer()
 {
 #if NETWORK_PROTOCOL_VERSION >= 5
-    m_pMinecraft->m_pRakNetInstance->send(ContainerClosePacket(m_pContainerMenu->m_containerId));
+    m_pMinecraft->m_pRakNetInstance->send(new ContainerClosePacket(m_pContainerMenu->m_containerId));
 #endif
 
     LocalPlayer::closeContainer();
@@ -140,6 +140,6 @@ void MultiplayerLocalPlayer::refreshContainer(ContainerMenu* menu, const std::ve
 void MultiplayerLocalPlayer::slotChanged(ContainerMenu* menu, Container::SlotID slotId, Slot* slot, ItemStack& item, bool isResultSlot)
 {
 #if NETWORK_PROTOCOL_VERSION >= 5
-    m_pMinecraft->m_pRakNetInstance->send(ContainerSetSlotPacket(menu->m_containerId, slotId, item));
+    m_pMinecraft->m_pRakNetInstance->send(new ContainerSetSlotPacket(menu->m_containerId, slotId, item));
 #endif
 }
