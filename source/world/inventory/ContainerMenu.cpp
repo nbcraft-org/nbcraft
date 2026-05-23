@@ -55,7 +55,7 @@ void ContainerMenu::addSlotListener(ContainerListener* listener)
 {
     m_listeners.insert(listener);
 
-    // @PARITY: Not done on PE
+    // @PARITY-JAVA: Not done on PE
     /*std::vector<ItemStack> snapshot = copyItems();
     listener->refreshContainer(this, snapshot);
     broadcastChanges();*/

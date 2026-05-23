@@ -1112,7 +1112,7 @@ float Minecraft::getBestScaleForThisScreenSize(int width, int height)
 	}
 	else
 	{
-		// @PARITY: This is the screen scaling we use on non-touchscreen devices (minus Xboxes)
+		// @PARITY-JAVA: This is the screen scaling we use on non-touchscreen devices (minus Xboxes)
 		if (height > 1600)
 			return 1.0f / 4.0f;
 

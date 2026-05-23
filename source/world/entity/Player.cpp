@@ -527,7 +527,7 @@ void Player::setRespawnPos(const TilePos& pos)
 	m_respawnPos = pos;
 }
 
-// @PARITY: From b1.2_02, doesn't exist in PE
+// @PARITY-PE: From b1.2_02, doesn't exist in PE
 void Player::drop()
 {
 	drop(m_pInventory->removeItem(m_pInventory->getSelectedSlotNo(), 1));

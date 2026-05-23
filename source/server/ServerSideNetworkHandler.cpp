@@ -60,6 +60,29 @@ ServerSideNetworkHandler::~ServerSideNetworkHandler()
 	m_onlinePlayers.clear();
 }
 
+Packet* _getPacketForEntity(Entity& entity)
+{
+	if (entity.getDescriptor().isType(EntityType::ITEM))
+	{
+#if NETWORK_PROTOCOL_VERSION >= 2
+		return new AddItemEntityPacket((ItemEntity&)entity);
+#endif
+	}
+	else if (entity.isMob())
+	{
+		AddMobPacket packet((Mob&)entity);
+		//LOG_I("add mob packet!");
+	}
+	else
+	{
+#if NETWORK_PROTOCOL_VERSION >= 6
+		return new AddEntityPacket(entity);
+#endif
+	}
+
+	return nullptr;
+}
+
 Player* ServerSideNetworkHandler::_getVerifiedPlayer(const RakNet::RakNetGUID& guid, Entity::ID entityId) const
 {
 	Entity* pEntity = m_pLevel->getEntity(entityId);
@@ -396,9 +419,12 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ReadyPacke
 		Entity* entity = it->second;
 		if (canReplicateEntity(entity))
 		{
-			AddMobPacket packet(*((Mob*)entity));
+			Packet* packet = _getPacketForEntity(*entity);
+			if (!packet)
+				continue;
 			bs.Reset();
-			packet.write(bs);
+			packet->write(bs);
+			delete packet;
 			m_pRakNetPeer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, guid, false);
 		}
 	}
@@ -861,24 +887,12 @@ void ServerSideNetworkHandler::entityAdded(Entity* entity)
 	if (!canReplicateEntity(entity))
 		return;
 
-	if (entity->getDescriptor().isType(EntityType::ITEM))
-	{
-#if NETWORK_PROTOCOL_VERSION >= 2
-		m_pRakNetInstance->send(new AddItemEntityPacket(*(ItemEntity*)entity));
-#endif
-	}
-	else if (entity->isMob())
-	{
-		AddMobPacket packet(*((Mob*)entity));
-		//LOG_I("add mob packet!");
-		redistributePacket(&packet, m_pRakNetInstance->m_guid);
-	}
-	else
-	{
-#if NETWORK_PROTOCOL_VERSION >= 6
-		m_pRakNetInstance->send(new AddEntityPacket(*entity));
-#endif
-	}
+	Packet* packet = _getPacketForEntity(*entity);
+	if (!packet)
+		return;
+
+	// @PARITY-PE: AddMobPacket is sent as RELIABLE_ORDERED in PE using redistributePacket
+	m_pRakNetInstance->send(packet);
 }
 
 void ServerSideNetworkHandler::entityRemoved(Entity* entity)

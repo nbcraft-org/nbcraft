@@ -78,7 +78,7 @@ void MultiplayerLocalPlayer::heal(int health)
 {
 }
 
-// @PARITY: From Java
+// @PARITY-JAVA: From Java
 // Uncomment when we have fully server-authoritative inventories
 /*void MultiplayerLocalPlayer::drop()
 {
