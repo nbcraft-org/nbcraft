@@ -33,7 +33,8 @@ static inline void _do_nothing(...) {}
 	Player* _pPlayer = _getVerifiedPlayer(guid, entityId); \
 	if (!_pPlayer)                                         \
 		return;                                            \
-	Player& player = *_pPlayer                             \
+	Player& player = *_pPlayer;                            \
+	(void)player                                           \
 
 ServerSideNetworkHandler::ServerSideNetworkHandler(Minecraft* minecraft, RakNetInstance* rakNetInstance)
 {
