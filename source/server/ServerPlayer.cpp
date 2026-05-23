@@ -71,7 +71,7 @@ void ServerPlayer::openContainer(Container* container)
 
 #if NETWORK_PROTOCOL_VERSION >= 5
 	m_pLevel->m_pRakNetInstance->send(
-		ContainerOpenPacket(
+		new ContainerOpenPacket(
 			m_containerId, Container::CONTAINER,
 			container->getName(), container->getContainerSize()
 		)
@@ -100,7 +100,7 @@ void ServerPlayer::openFurnace(FurnaceTileEntity* furnace)
 
 #if NETWORK_PROTOCOL_VERSION >= 5
 	m_pLevel->m_pRakNetInstance->send(
-		ContainerOpenPacket(
+		new ContainerOpenPacket(
 			m_containerId, Container::FURNACE,
 			furnace->getName(), furnace->getContainerSize()
 		)
