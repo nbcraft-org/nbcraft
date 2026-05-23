@@ -51,8 +51,8 @@ void ClientSideNetworkHandler::levelGenerated(Level* level)
 
 	if (m_serverProtocolVersion >= 3)
 	{
-		ReadyPacket* pReadyPkt = new ReadyPacket(1);
-		m_pRakNetInstance->send(pReadyPkt);
+		ReadyPacket readyPkt(1);
+		m_pRakNetInstance->send(readyPkt);
 	}
 
 	arrangeRequestChunkOrder();
@@ -69,8 +69,8 @@ void ClientSideNetworkHandler::onConnect(const RakNet::RakNetGUID& rakGuid) // s
 	m_serverGUID = rakGuid;
 
 	clearChunksLoaded();
-	LoginPacket* pLoginPkt = new LoginPacket(m_pMinecraft->m_pUser->m_name, NETWORK_PROTOCOL_VERSION);
-	m_pRakNetInstance->send(pLoginPkt);
+	LoginPacket loginPkt(m_pMinecraft->m_pUser->m_name, NETWORK_PROTOCOL_VERSION);
+	m_pRakNetInstance->send(loginPkt);
 }
 
 void ClientSideNetworkHandler::onUnableToConnect()
@@ -336,7 +336,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, TakeIte
 			{
 				if (m_serverProtocolVersion >= 4)
 				{
-					m_pRakNetInstance->send(new DropItemPacket(pkt->m_sourceId, pItemEntity->m_itemStack));
+					m_pRakNetInstance->send(DropItemPacket(pkt->m_sourceId, pItemEntity->m_itemStack));
 				}
 			}
 		}

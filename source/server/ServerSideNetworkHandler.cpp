@@ -71,8 +71,8 @@ Packet* _getPacketForEntity(Entity& entity)
 	}
 	else if (entity.isMob())
 	{
-		AddMobPacket packet((Mob&)entity);
 		//LOG_I("add mob packet!");
+		return new AddMobPacket((Mob&)entity);
 	}
 	else
 	{
@@ -260,7 +260,7 @@ void ServerSideNetworkHandler::onDisconnect(const RakNet::RakNetGUID& guid)
 		// tell everyone that they left the game
 		displayGameMessage(pPlayer->m_name + " disconnected from the game");
 
-		m_pRakNetInstance->send(new RemoveEntityPacket(pPlayer->m_EntityID));
+		m_pRakNetInstance->send(RemoveEntityPacket(pPlayer->m_EntityID));
 
 		pPlayer->m_bForceRemove = true;
 
@@ -311,11 +311,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, LoginPacke
 
 	if (loginStatus != LoginStatusPacket::STATUS_SUCCESS)
 	{
-		LoginStatusPacket lsp = LoginStatusPacket(loginStatus);
-
-		lsp.write(bs);
-		m_pRakNetPeer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, guid, false);
-
+		m_pRakNetInstance->send(guid, bs, LoginStatusPacket(loginStatus));
 		return;
 	}
 #endif
@@ -361,8 +357,8 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, LoginPacke
 		sgp.m_pos = pPlayer->m_pos;
 		sgp.m_pos.y -= pPlayer->m_heightOffset;
 
-		sgp.write(bs);
-		m_pRakNetPeer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, guid, false);
+		sgp.m_reliability = RELIABLE_ORDERED;
+		m_pRakNetInstance->send(guid, bs, sgp);
 	}
 
 #if NETWORK_PROTOCOL_VERSION <= 2
@@ -394,8 +390,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ReadyPacke
 #if NETWORK_PROTOCOL_VERSION >= 3
 	{
 		SetTimePacket packet(m_pLevel->getTime());
-		packet.write(bs);
-		m_pRakNetPeer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, guid, false);
+		m_pRakNetInstance->send(guid, bs, packet);
 	}
 #endif
 
@@ -405,8 +400,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ReadyPacke
 		Player* player = m_pLevel->m_players[i];
 		AddPlayerPacket app(player);
 		bs.Reset();
-		app.write(bs);
-		m_pRakNetPeer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, guid, false);
+		m_pRakNetInstance->send(guid, bs, app);
 	}
 
 	m_pLevel->addEntity(pPlayer);
@@ -424,9 +418,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ReadyPacke
 			if (!packet)
 				continue;
 			bs.Reset();
-			packet->write(bs);
-			delete packet;
-			m_pRakNetPeer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, guid, false);
+			m_pRakNetInstance->send(guid, bs, packet);
 		}
 	}
 #endif
@@ -439,15 +431,15 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ReadyPacke
 		std::vector<ItemStack> items = pPlayer->m_pInventoryMenu->cloneItems(true);
 		ContainerSetContentPacket cscp(0, items);
 		bs.Reset();
-		cscp.write(bs);
-		m_pRakNetPeer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, guid, false);
+		m_pRakNetInstance->send(guid, bs, cscp);
 	}
 #endif
 
 	AddPlayerPacket app(pPlayer);
 	bs.Reset();
 	app.write(bs);
-	m_pRakNetPeer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, guid, true);
+	// specifying GUID to avoid sending it to the connecting player
+	m_pRakNetPeer->Send(&bs, HIGH_PRIORITY, RELIABLE, 0, guid, true);
 }
 
 void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, MessagePacket* packet)
@@ -592,7 +584,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, RemoveBloc
 void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, PlayerEquipmentPacket* packet)
 {
 	if (!m_pLevel) return;
-	//puts_ignorable("InteractPacket");
+	//puts_ignorable("PlayerEquipmentPacket");
 	VALIDATE_PLAYER_ACTION(packet->m_playerID);
 
 #ifdef FEATURE_SERVER_INVENTORIES
@@ -726,7 +718,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, RequestChu
 
 	if (packet->m_chunkPos.x == -9999)
 	{
-		m_pRakNetInstance->send(guid, new LevelDataPacket(m_pLevel));
+		m_pRakNetInstance->send(guid, LevelDataPacket(m_pLevel));
 		return;
 	}
 
@@ -739,11 +731,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, RequestChu
 
 	// @NOTE: this allows the client to request empty chunks. Is that okay?
 	ChunkDataPacket cdp(pChunk->m_chunkPos, pChunk);
-
-	RakNet::BitStream bs;
-	cdp.write(bs);
-
-	m_pRakNetPeer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, guid, false);
+	m_pRakNetInstance->send(guid, cdp);
 }
 
 void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, AnimatePacket* packet)
@@ -869,17 +857,16 @@ void ServerSideNetworkHandler::tileChanged(const TilePos& pos)
 	ubp.m_tileTypeId = m_pLevel->getTile(pos);
 	ubp.m_data = m_pLevel->getData(pos);
 
-	RakNet::BitStream bs;
-	ubp.write(bs);
-
-	m_pRakNetPeer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::AddressOrGUID(), true);
+	ubp.m_reliability = RELIABLE_ORDERED;
+	ubp.m_channel = CHANNEL_TILE_EVENTS;
+	m_pRakNetInstance->send(ubp);
 }
 
 void ServerSideNetworkHandler::timeChanged(uint32_t time)
 {
 	if ((time % (20 * NETWORK_TIME_SEND_FREQUENCY)) == 0)
 	{
-		m_pRakNetInstance->send(new SetTimePacket(time));
+		m_pRakNetInstance->send(SetTimePacket(time));
 	}
 }
 
@@ -892,7 +879,7 @@ void ServerSideNetworkHandler::entityAdded(Entity* entity)
 	if (!packet)
 		return;
 
-	// @PARITY-PE: AddMobPacket is sent as RELIABLE_ORDERED in PE using redistributePacket
+	// @PARITY-PE: AddMobPacket is sent as RELIABLE_ORDERED in PE using redistributePacket. Any reason for this?
 	m_pRakNetInstance->send(packet);
 }
 
@@ -919,7 +906,7 @@ void ServerSideNetworkHandler::levelEvent(const LevelEvent& event)
 void ServerSideNetworkHandler::tileEvent(const TileEvent& event)
 {
 #if NETWORK_PROTOCOL_VERSION >= 5
-	m_pRakNetInstance->send(new TileEventPacket(event.pos, event.b0, event.b1));
+	m_pRakNetInstance->send(TileEventPacket(event.pos, event.b0, event.b1));
 #endif
 }
 
@@ -958,7 +945,7 @@ Player* ServerSideNetworkHandler::popPendingPlayer(const RakNet::RakNetGUID& gui
 void ServerSideNetworkHandler::displayGameMessage(const std::string& msg)
 {
 	m_pMinecraft->m_pGui->addMessage(msg);
-	m_pRakNetInstance->send(new MessagePacket(msg));
+	m_pRakNetInstance->send(MessagePacket(msg));
 }
 
 void ServerSideNetworkHandler::sendMessage(const RakNet::RakNetGUID& guid, const std::string& msg)
@@ -969,7 +956,7 @@ void ServerSideNetworkHandler::sendMessage(const RakNet::RakNetGUID& guid, const
 		return;
 	}
 
-	m_pRakNetInstance->send(guid, new MessagePacket(msg));
+	m_pRakNetInstance->send(guid, MessagePacket(msg));
 }
 
 void ServerSideNetworkHandler::sendMessage(OnlinePlayer* player, const std::string& msg)
@@ -982,7 +969,7 @@ void ServerSideNetworkHandler::redistributePacket(Packet* packet, const RakNet::
 	RakNet::BitStream bs;
 	packet->write(bs);
 
-	m_pRakNetPeer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, source, true);
+	m_pRakNetPeer->Send(&bs, packet->m_priority, packet->m_reliability, packet->m_channel, source, true);
 }
 
 OnlinePlayer* ServerSideNetworkHandler::getOnlinePlayerByGUID(const RakNet::RakNetGUID& guid)

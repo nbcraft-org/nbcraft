@@ -132,7 +132,13 @@ void LocalPlayer::swing()
 {
 	Player::swing();
 
-	m_pMinecraft->m_pRakNetInstance->send(new AnimatePacket(m_EntityID, AnimatePacket::SWING));
+	if (m_swingTime != -1 || !m_pMinecraft->isOnline())
+		return;
+
+	Packet* packet = new AnimatePacket(m_EntityID, AnimatePacket::SWING);
+	packet->m_reliability = UNRELIABLE;
+	packet->m_priority = MEDIUM_PRIORITY;
+	m_pMinecraft->m_pRakNetInstance->send(packet);
 }
 
 void LocalPlayer::startCrafting(const TilePos& pos)
@@ -357,7 +363,7 @@ void LocalPlayer::tick()
 			if (item->isEmpty())
 				item = &ItemStack::EMPTY;
 
-			m_pMinecraft->m_pRakNetInstance->send(new PlayerEquipmentPacket(m_EntityID, item->getId(), item->getAuxValue()));
+			m_pMinecraft->m_pRakNetInstance->send(PlayerEquipmentPacket(m_EntityID, item->getId(), item->getAuxValue()));
 		}
 	}
 }
@@ -402,7 +408,7 @@ void LocalPlayer::sendPosition()
 		fabsf(m_lastSentRot.y - m_rot.y) > 1.0f ||
 		fabsf(m_lastSentRot.x - m_rot.x) > 1.0f)
 	{
-		m_pMinecraft->m_pRakNetInstance->send(new MovePlayerPacket(m_EntityID, Vec3(m_pos.x, m_pos.y - m_heightOffset, m_pos.z), m_rot));
+		m_pMinecraft->m_pRakNetInstance->send(MovePlayerPacket(m_EntityID, Vec3(m_pos.x, m_pos.y - m_heightOffset, m_pos.z), m_rot));
 		m_lastSentPos = m_pos;
 		m_lastSentRot = m_rot;
 	}

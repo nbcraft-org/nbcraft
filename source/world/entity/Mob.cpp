@@ -325,7 +325,7 @@ void Mob::baseTick()
 			fabsf(m_lastSentRot.y - m_rot.y) > 1.0f ||
 			fabsf(m_lastSentRot.x - m_rot.x) > 1.0f)
 		{
-			m_pLevel->m_pRakNetInstance->send(new MoveEntityPacket_PosRot(m_EntityID, Vec3(m_pos.x, m_pos.y - m_heightOffset, m_pos.z), m_rot));
+			m_pLevel->m_pRakNetInstance->send(MoveEntityPacket_PosRot(m_EntityID, Vec3(m_pos.x, m_pos.y - m_heightOffset, m_pos.z), m_rot));
 			m_lastSentPos = m_pos;
 			m_lastSentRot = m_rot;
 		}
@@ -333,7 +333,7 @@ void Mob::baseTick()
 		float diff = fabsf(m_vel.x - m_lastSentVel.x) + fabsf(m_vel.y - m_lastSentVel.y) + fabsf(m_vel.z - m_lastSentVel.z);
 		if (diff > 0.1f || (diff > 0.0f && m_vel == Vec3::ZERO))
 		{
-			m_pLevel->m_pRakNetInstance->send(new SetEntityMotionPacket(m_EntityID, m_vel));
+			m_pLevel->m_pRakNetInstance->send(SetEntityMotionPacket(m_EntityID, m_vel));
 			m_lastSentVel = m_vel;
 		}
 #endif

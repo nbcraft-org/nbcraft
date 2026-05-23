@@ -69,7 +69,7 @@ bool TileItem::useOn(ItemStack* instance, Player* player, Level* level, const Ti
 	);
 
 	if (level->m_pRakNetInstance)
-		level->m_pRakNetInstance->send(new PlaceBlockPacket(player->m_EntityID, tp, (TileID)m_tile, face, instance->getAuxValue()));
+		level->m_pRakNetInstance->send(PlaceBlockPacket(player->m_EntityID, tp, (TileID)m_tile, face, instance->getAuxValue()));
 
 	player->useItem(*instance);
 	return true;

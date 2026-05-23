@@ -152,8 +152,8 @@ public:
 	bool isUnobstructed(AABB*) const;
 	bool mayInteract(Player* player, const TilePos& pos) const;
 	bool mayPlace(TileID tid, const TilePos& pos, bool b) const;
-	void broadcastAll(Packet* packet);
-	void broadcastToAllInRange(Packet* packet, const Vec3& pos, float range, Player* avoid = nullptr);
+	void broadcastAll(Packet& packet);
+	void broadcastToAllInRange(Packet& packet, const Vec3& pos, float range, Player* avoid = nullptr);
 	void broadcastEntityEvent(const Entity& entity, Entity::EventType::ID eventId);
 	void removeListener(LevelListener*);
 	void addListener(LevelListener*);

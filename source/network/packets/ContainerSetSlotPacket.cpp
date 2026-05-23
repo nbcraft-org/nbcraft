@@ -7,6 +7,7 @@ ContainerSetSlotPacket::ContainerSetSlotPacket(int8_t containerId, int16_t slotI
 	, m_slotId(slotId)
 	, m_item(item)
 {
+	_init();
 }
 
 void ContainerSetSlotPacket::handle(const RakNet::RakNetGUID& guid, NetEventCallback& callback)

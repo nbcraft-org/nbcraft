@@ -46,7 +46,7 @@ bool SurvivalMode::startDestroyBlock(Player* player, const TilePos& pos, Facing:
 #if NETWORK_PROTOCOL_VERSION >= 6
 	if (m_pMinecraft->isOnlineClient())
 	{
-		m_pMinecraft->m_pRakNetInstance->send(new PlayerActionPacket(player->m_EntityID, PlayerActionPacket::START_DESTROY_BLOCK, pos, face));
+		m_pMinecraft->m_pRakNetInstance->send(PlayerActionPacket(player->m_EntityID, PlayerActionPacket::START_DESTROY_BLOCK, pos, face));
 	}
 #endif
 
@@ -141,7 +141,7 @@ bool SurvivalMode::continueDestroyBlock(Player* player, const TilePos& pos, Faci
 #if NETWORK_PROTOCOL_VERSION >= 6
 		if (m_pMinecraft->isOnlineClient())
 		{
-			m_pMinecraft->m_pRakNetInstance->send(new PlayerActionPacket(player->m_EntityID, PlayerActionPacket::STOP_DESTROY_BLOCK, pos, face));
+			m_pMinecraft->m_pRakNetInstance->send(PlayerActionPacket(player->m_EntityID, PlayerActionPacket::STOP_DESTROY_BLOCK, pos, face));
 		}
 #endif
 		return destroyBlock(player, m_destroyingPos, face);

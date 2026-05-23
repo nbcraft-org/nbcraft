@@ -1412,7 +1412,7 @@ void Level::sendEntityData()
 		Entity* ent = it->second;
 		SynchedEntityData& data = ent->getEntityData();
 		if (data.isDirty())
-			m_pRakNetInstance->send(new SetEntityDataPacket(ent->m_EntityID, data));
+			m_pRakNetInstance->send(SetEntityDataPacket(ent->m_EntityID, data));
 	}
 }
 
@@ -1578,7 +1578,7 @@ bool Level::mayPlace(TileID tile, const TilePos& pos, bool b) const
 	return pTile->mayPlace(this, pos);
 }
 
-void Level::broadcastAll(Packet* packet)
+void Level::broadcastAll(Packet& packet)
 {
 	assert(!m_bIsClientSide);
 
@@ -1588,7 +1588,7 @@ void Level::broadcastAll(Packet* packet)
 	}
 }
 
-void Level::broadcastToAllInRange(Packet* packet, const Vec3& pos, float range, Player* avoid)
+void Level::broadcastToAllInRange(Packet& packet, const Vec3& pos, float range, Player* avoid)
 {
 	assert(!m_bIsClientSide);
 
@@ -1604,11 +1604,10 @@ void Level::broadcastToAllInRange(Packet* packet, const Vec3& pos, float range, 
 			{
 				Vec3 diff = pos - pPlayer->m_pos;
 				if (diff.lengthSqr() < range * range)
-					m_pRakNetInstance->send(pPlayer->m_guid, *packet);
+					m_pRakNetInstance->send(pPlayer->m_guid, packet);
 			}
 		}
 	}
-	delete packet;
 }
 
 void Level::broadcastEntityEvent(const Entity& entity, Entity::EventType::ID eventId)
@@ -1616,7 +1615,7 @@ void Level::broadcastEntityEvent(const Entity& entity, Entity::EventType::ID eve
 	if (m_bIsClientSide || !m_pRakNetInstance)
 		return;
 
-	m_pRakNetInstance->send(new EntityEventPacket(entity.m_EntityID, eventId));
+	m_pRakNetInstance->send(EntityEventPacket(entity.m_EntityID, eventId));
 }
 
 void Level::removeListener(LevelListener* listener)
@@ -2100,7 +2099,7 @@ void Level::explode(Entity* entity, const Vec3& pos, float power, bool bIsFiery)
 #if NETWORK_PROTOCOL_VERSION >= 3
 	if (!m_bIsClientSide)
 	{
-		broadcastToAllInRange(new ExplodePacket(pos, power), pos, 64.0f);
+		broadcastToAllInRange(ExplodePacket(pos, power), pos, 64.0f);
 	}
 #endif
 }
