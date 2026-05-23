@@ -181,10 +181,11 @@ void ServerSideNetworkHandler::_handleMovePlayer(Player& player, MovePlayerPacke
 	// Recalculate differences post-movement
 	Vec3 postDelta = pos - player.m_pos;
 
-	if (postDelta.y > -0.5f || postDelta.y < 0.5f)
-	{
+	// b1.3, this logic is accurate but always evaluates to true
+	/*if (postDelta.y > -0.5f || postDelta.y < 0.5f)
+	{*/
 		postDelta.y = 0.0f;
-	}
+	//}
 
 	float sqDistanceDiff = postDelta.lengthSqr();
 
