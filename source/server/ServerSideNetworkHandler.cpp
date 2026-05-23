@@ -168,7 +168,7 @@ void ServerSideNetworkHandler::_handleMovePlayer(Player& player, MovePlayerPacke
 	if (sqDistanceDiff > shrinkAmount /*&& !player.isSleeping()*/)
 	{
 		movedWrongly = true;
-		LOG_W("%s moved wrongly!", player.m_name);
+		LOG_W("%s moved wrongly!", player.m_name.c_str());
 		LOG_I("Got position %f, %f, %f", pos.x, pos.y, pos.z);
 		LOG_I("Expected %f, %f, %f", player.m_pos.x, player.m_pos.y, player.m_pos.z);
 	}

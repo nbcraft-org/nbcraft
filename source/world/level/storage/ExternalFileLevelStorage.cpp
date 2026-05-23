@@ -7,6 +7,7 @@
  ********************************************************************/
 
 #include <stdint.h>
+#include <algorithm>
 
 #include "ExternalFileLevelStorage.hpp"
 
@@ -160,7 +161,8 @@ unsigned int getRemainingFileSize(FILE* pFile)
 std::string getPlayerFilename(const std::string& basePath, const std::string& playerName)
 {
 	std::string fileName = playerName;
-	std::transform(fileName.begin(), fileName.end(), fileName.begin(), std::tolower);
+	std::transform<std::string::iterator, std::string::iterator, int(int)>
+    (fileName.begin(), fileName.end(), fileName.begin(), std::tolower);
 	return basePath + "/players/" + fileName + ".dat";
 }
 
