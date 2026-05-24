@@ -57,7 +57,7 @@ void ServerPlayer::startCrafting(const TilePos& pos)
 	_nextContainerCounter();
 
 #if NETWORK_PROTOCOL_VERSION >= 5
-	m_pLevel->m_pRakNetInstance->send(new ContainerOpenPacket(m_containerId, Container::CRAFTING, "Crafting", 9));
+	m_pLevel->m_pRakNetInstance->send(m_guid, new ContainerOpenPacket(m_containerId, Container::CRAFTING, "Crafting", 9));
 #endif
 
 	setContainerMenu(new CraftingMenu(m_pInventory, pos, m_pLevel));
@@ -71,6 +71,7 @@ void ServerPlayer::openContainer(Container* container)
 
 #if NETWORK_PROTOCOL_VERSION >= 5
 	m_pLevel->m_pRakNetInstance->send(
+		m_guid,
 		new ContainerOpenPacket(
 			m_containerId, Container::CONTAINER,
 			container->getName(), container->getContainerSize()
@@ -86,7 +87,7 @@ void ServerPlayer::closeContainer()
 	//LOG_I("Client is closing a container");
 
 #if NETWORK_PROTOCOL_VERSION >= 5
-	m_pLevel->m_pRakNetInstance->send(new ContainerClosePacket(m_pContainerMenu->m_containerId));
+	m_pLevel->m_pRakNetInstance->send(m_guid, new ContainerClosePacket(m_pContainerMenu->m_containerId));
 #endif
 
 	doCloseContainer();
@@ -100,6 +101,7 @@ void ServerPlayer::openFurnace(FurnaceTileEntity* furnace)
 
 #if NETWORK_PROTOCOL_VERSION >= 5
 	m_pLevel->m_pRakNetInstance->send(
+		m_guid,
 		new ContainerOpenPacket(
 			m_containerId, Container::FURNACE,
 			furnace->getName(), furnace->getContainerSize()
@@ -112,7 +114,8 @@ void ServerPlayer::openFurnace(FurnaceTileEntity* furnace)
 
 void ServerPlayer::take(Entity* pEnt, int count)
 {
-	m_pLevel->m_pRakNetInstance->send(new TakeItemEntityPacket(pEnt->m_EntityID, m_EntityID));
+	m_pLevel->m_pRakNetInstance->send(m_guid,
+		new TakeItemEntityPacket(pEnt->m_EntityID, m_EntityID));
 
 	Player::take(pEnt, count);
 }
@@ -124,9 +127,9 @@ void ServerPlayer::checkFallDamage(float ya, bool onGround)
 void ServerPlayer::refreshContainer(ContainerMenu* menu, const std::vector<ItemStack>& items)
 {
 #if NETWORK_PROTOCOL_VERSION >= 5
-	m_pLevel->m_pRakNetInstance->send(new ContainerSetContentPacket(menu->m_containerId, items));
+	m_pLevel->m_pRakNetInstance->send(m_guid, new ContainerSetContentPacket(menu->m_containerId, items));
 	// @PARITY-JAVA: Not called on MCPE
-	//m_pLevel->m_pRakNetInstance->send(new ContainerSetSlotPacket(-1, -1, m_pInventory->getCarried()));
+	//m_pLevel->m_pRakNetInstance->send(m_guid, new ContainerSetSlotPacket(-1, -1, m_pInventory->getCarried()));
 #endif
 }
 
@@ -142,7 +145,7 @@ void ServerPlayer::slotChanged(ContainerMenu* menu, Container::SlotID slotId, Sl
 			return;
 #endif
 
-		m_pLevel->m_pRakNetInstance->send(new ContainerSetSlotPacket(menu->m_containerId, slotId, item));
+		m_pLevel->m_pRakNetInstance->send(m_guid, new ContainerSetSlotPacket(menu->m_containerId, slotId, item));
 	}
 #endif
 }
@@ -150,7 +153,7 @@ void ServerPlayer::slotChanged(ContainerMenu* menu, Container::SlotID slotId, Sl
 void ServerPlayer::setContainerData(ContainerMenu* menu, int id, int value)
 {
 #if NETWORK_PROTOCOL_VERSION >= 5
-	m_pLevel->m_pRakNetInstance->send(new ContainerSetDataPacket(menu->m_containerId, id, value));
+	m_pLevel->m_pRakNetInstance->send(m_guid, new ContainerSetDataPacket(menu->m_containerId, id, value));
 #endif
 }
 
