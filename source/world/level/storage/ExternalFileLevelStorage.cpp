@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 #include <algorithm>
+#include <cctype>
 
 #include "ExternalFileLevelStorage.hpp"
 
