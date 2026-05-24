@@ -1608,6 +1608,7 @@ void Level::broadcastToAllInRange(Packet* packet, const Vec3& pos, float range, 
 			}
 		}
 	}
+
 	delete packet;
 }
 
@@ -1683,7 +1684,7 @@ void Level::tickTiles()
 		ChunkPos pos = *it;
 		LevelChunk* pChunk = getChunk(pos);
 
-		// @PARITY: 80 on Java
+		// @PARITY-JAVA: 80 on Java
 		// changed from 80 to 20 in PE 0.2.0
 		for (int i = 0; i < 20; i++)
 		{

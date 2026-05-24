@@ -247,7 +247,7 @@ void Mob::baseTick()
     if (isAlive() && isInWall())
         hurt(nullptr, 1);
 
-    // @PARITY: Java
+    // @PARITY-JAVA: From Java
     /*if (m_bFireImmune || m_pLevel->m_bIsClientSide)
     {
         m_fireTicks = 0;

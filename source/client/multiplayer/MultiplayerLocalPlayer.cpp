@@ -25,16 +25,13 @@ void MultiplayerLocalPlayer::_handleOpenedContainerMenu()
 
 bool MultiplayerLocalPlayer::hurt(Entity* pAttacker, int damage)
 {
-    // Java returns false
-	return false;
+    // @PARITY-JAVA: Java returns false
+	//return false;
 
     // Pulled from Mob::hurt(), modified to remove impact on health.
-    // @BUG: Will never work, because EntityEventPacket sets m_invulnerableTime
-    // before InteractPacket is received and calls this.
-    // If we remove the m_invulnerableTime check, the player can then be
-    // knocked back despite being invulnerable
+    // Requires ordered packets in order to work correctly
 
-    /*if (isCreative())
+    if (isCreative())
         return false;
 
     bool var3 = true;
@@ -71,14 +68,14 @@ bool MultiplayerLocalPlayer::hurt(Entity* pAttacker, int damage)
         }
     }
 
-    return true;*/
+    return true;
 }
 
 void MultiplayerLocalPlayer::heal(int health)
 {
 }
 
-// @PARITY: From Java
+// @PARITY-JAVA: From Java
 // Uncomment when we have fully server-authoritative inventories
 /*void MultiplayerLocalPlayer::drop()
 {
@@ -101,7 +98,7 @@ void MultiplayerLocalPlayer::hurtTo(int newHealth)
 void MultiplayerLocalPlayer::die(Entity* pCulprit)
 {
 #if NETWORK_PROTOCOL_VERSION >= 4
-    SendInventoryPacket* pPkt = new SendInventoryPacket(m_EntityID, true);
+    SendInventoryPacket pkt(m_EntityID, true);
 
     Container::Size size = m_pInventory->getContainerSize();
 
@@ -110,11 +107,11 @@ void MultiplayerLocalPlayer::die(Entity* pCulprit)
     {
         for (Container::StackID i = 0; i < size; i++)
         {
-            pPkt->m_items.push_back(m_pInventory->getItem(i));
+            pkt.m_items.push_back(m_pInventory->getItem(i));
         }
     }
 
-    m_pMinecraft->m_pRakNetInstance->send(pPkt);
+    m_pMinecraft->m_pRakNetInstance->send(pkt);
 #endif
 
     LocalPlayer::die(pCulprit);

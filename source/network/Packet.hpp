@@ -12,6 +12,8 @@
 #include "RakNetTypes.h"
 #include "BitStream.h"
 #include "MessageIdentifiers.h"
+#include "PacketPriority.h"
+#include "OrderingChannel.hpp"
 
 #define NETWORK_PROTOCOL_VERSION_MIN 6 // the packet IDs changed completely between 2 thru 6
 //#define NETWORK_PROTOCOL_VERSION 2   // 0.1.0 (actual client crashes with unrecognized tiles)
@@ -20,6 +22,7 @@
 //#define NETWORK_PROTOCOL_VERSION 5   // 0.3.2
 #define NETWORK_PROTOCOL_VERSION 6     // 0.3.3
 //#define NETWORK_PROTOCOL_VERSION 7   // 0.4.0
+//#define NETWORK_PROTOCOL_VERSION 11  // 0.7.0
 //#define NETWORK_PROTOCOL_VERSION 29  // 0.12.1
 
 class NetEventCallback;
@@ -274,8 +277,19 @@ enum MinecraftPacketIds
 class Packet
 {
 public:
+	Packet()
+		: m_priority(HIGH_PRIORITY)
+		, m_reliability(RELIABLE)
+		, m_channel(CHANNEL_DEFAULT)
+	{}
 	virtual ~Packet() {}
+
 	virtual void write(RakNet::BitStream&) = 0;
 	virtual void read(RakNet::BitStream&) = 0;
 	virtual void handle(const RakNet::RakNetGUID&, NetEventCallback&) = 0;
+
+public:
+	PacketPriority m_priority;
+	PacketReliability m_reliability;
+	OrderingChannel m_channel;
 };

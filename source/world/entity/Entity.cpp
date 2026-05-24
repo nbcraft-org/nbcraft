@@ -428,7 +428,7 @@ void Entity::lerpTo(const Vec3& pos)
 	setPos(pos);
 }
 
-void Entity::lerpTo(const Vec3& pos, const Vec2& rot, int p)
+void Entity::lerpTo(const Vec3& pos, const Vec2& rot, int steps)
 {
 	lerpTo(pos);
 	setRot(rot);
@@ -915,9 +915,9 @@ void Entity::outOfWorld()
 	remove();
 }
 
-void Entity::checkFallDamage(float fDeltaY, bool bHitGround)
+void Entity::checkFallDamage(float ya, bool onGround)
 {
-	if (bHitGround)
+	if (onGround)
 	{
 		if (m_distanceFallen > 0.0f)
 		{
@@ -925,13 +925,13 @@ void Entity::checkFallDamage(float fDeltaY, bool bHitGround)
 			m_distanceFallen = 0.0f;
 		}
 	}
-	else if (fDeltaY < 0.0f)
+	else if (ya < 0.0f)
 	{
-		m_distanceFallen -= fDeltaY;
+		m_distanceFallen -= ya;
 	}
 }
 
-void Entity::causeFallDamage(float f)
+void Entity::causeFallDamage(float ya)
 {
 	// stub
 }

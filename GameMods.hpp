@@ -51,6 +51,7 @@
 #define ENH_NEW_LADDER_BEHAVIOR 	       // Use Java Beta 1.5 ladder behavior
 //#define ENH_GFX_COMPACT_UVS              // Use two unsigned 16-bit integers for UVs instead of a float Vec2
 //#define ENH_RENDER_HAND_ARMOR            // Render the right arm of the chestplate you are wearing on top the first-person hand.
+#define ENH_SAVE_REMOTE_PLAYERS            // Save remote player data on the server, such as inventory, position, health, etc.
 
 // TODO: Implement this permanently?
 #define ENH_IMPROVED_SAVING     	 // Improve world saving. The original Minecraft doesn't always really save for some reason

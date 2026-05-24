@@ -137,7 +137,7 @@ public:
 	virtual void absMoveTo(const Vec3& pos, const Vec2& rot);
 	virtual void moveRelative(const Vec3& pos);
 	virtual void lerpTo(const Vec3& pos);
-	virtual void lerpTo(const Vec3& pos, const Vec2& rot, int p = 3);
+	virtual void lerpTo(const Vec3& pos, const Vec2& rot, int steps = 3);
 	virtual void lerpMotion(const Vec3& pos);
 	virtual void turn(const Vec2& rot);
 	virtual void interpolateTurn(const Vec2& rot);
@@ -198,8 +198,8 @@ public:
 	virtual void setPos(EntityPos*);
 	virtual void resetPos(bool respawn = false);
 	virtual void outOfWorld();
-	virtual void checkFallDamage(float f, bool b);
-	virtual void causeFallDamage(float f);
+	virtual void checkFallDamage(float ya, bool onGround);
+	virtual void causeFallDamage(float ya);
 	virtual void markHurt();
 	virtual void burn(int);
 	virtual void lavaHurt();

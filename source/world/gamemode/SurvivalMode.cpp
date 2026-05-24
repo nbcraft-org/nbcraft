@@ -42,7 +42,7 @@ bool SurvivalMode::startDestroyBlock(Player* player, const TilePos& pos, Facing:
 	if (tile <= 0)
 		return false;
 
-	// @PARITY: This is in MultiPlayerGameMode on Java, but we aren't equipped to move to that at the moment
+	// @PARITY: This is in MultiPlayerGameMode on Java, but we aren't equipped to move to that at the moment. Also, is not sent on PE.
 #if NETWORK_PROTOCOL_VERSION >= 6
 	if (m_pMinecraft->isOnlineClient())
 	{
@@ -137,7 +137,7 @@ bool SurvivalMode::continueDestroyBlock(Player* player, const TilePos& pos, Faci
 		m_destroyProgress     = 0.0f;
 		m_lastDestroyProgress = 0.0f;
 
-		// @PARITY: This is in MultiPlayerGameMode on Java, but we aren't equipped to move to that at the moment
+		// @PARITY: This is in MultiPlayerGameMode on Java, but we aren't equipped to move to that at the moment. Also, is not sent on PE.
 #if NETWORK_PROTOCOL_VERSION >= 6
 		if (m_pMinecraft->isOnlineClient())
 		{

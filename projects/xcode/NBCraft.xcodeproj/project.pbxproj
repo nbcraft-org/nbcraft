@@ -974,6 +974,7 @@
 		84E4BFBB2AE9869A0023E16A /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840DD6332AC810620006A435 /* Timer.cpp */; };
 		84E4BFBC2AE9869A0023E16A /* Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840DD6352AC810620006A435 /* Util.cpp */; };
 		84E4BFBD2AE9869A0023E16A /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840DD6372AC810620006A435 /* Utils.cpp */; };
+		84E5F3962FC175CA00AE884C /* Container.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E5F3952FC175CA00AE884C /* Container.cpp */; };
 		84E635C52FAF3D8000D2C708 /* VertexBufferStateBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E635C32FAF3D8000D2C708 /* VertexBufferStateBase.cpp */; };
 		84E635C62FAF3D8000D2C708 /* VertexBufferStateBase.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84E635C42FAF3D8000D2C708 /* VertexBufferStateBase.hpp */; };
 		84E635C92FAF3D9600D2C708 /* VertexBufferStateOGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E635C72FAF3D9600D2C708 /* VertexBufferStateOGL.cpp */; };
@@ -2776,6 +2777,7 @@
 		84E2A3E82FBAAD6A0026780B /* MusicTile.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MusicTile.hpp; sourceTree = "<group>"; };
 		84E2A3FB2FBAAD7D0026780B /* Facing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Facing.cpp; sourceTree = "<group>"; };
 		84E4BFAE2AE9854B0023E16A /* libCommon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCommon.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		84E5F3952FC175CA00AE884C /* Container.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Container.cpp; sourceTree = "<group>"; };
 		84E635C32FAF3D8000D2C708 /* VertexBufferStateBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VertexBufferStateBase.cpp; sourceTree = "<group>"; };
 		84E635C42FAF3D8000D2C708 /* VertexBufferStateBase.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = VertexBufferStateBase.hpp; sourceTree = "<group>"; };
 		84E635C72FAF3D9600D2C708 /* VertexBufferStateOGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VertexBufferStateOGL.cpp; sourceTree = "<group>"; };
@@ -5139,6 +5141,7 @@
 				84E022FF2F2A0245003C8FFE /* ChestMenu.hpp */,
 				84E7BF2A2F286A20002D3936 /* CompoundContainer.cpp */,
 				84E7BF2B2F286A20002D3936 /* CompoundContainer.hpp */,
+				84E5F3952FC175CA00AE884C /* Container.cpp */,
 				84E7BF2C2F286A20002D3936 /* Container.hpp */,
 				84E2A3C42FBAAC700026780B /* ContainerContentChangeListener.cpp */,
 				84E2A3C52FBAAC700026780B /* ContainerContentChangeListener.hpp */,
@@ -7299,6 +7302,7 @@
 				84BF635E2AF18631008A9995 /* HalfTransparentTile.cpp in Sources */,
 				84E1C9D92E7FDC26007D2F5D /* SoulSandTile.cpp in Sources */,
 				84BF635F2AF18631008A9995 /* IceTile.cpp in Sources */,
+				84E5F3962FC175CA00AE884C /* Container.cpp in Sources */,
 				84BF63602AF18631008A9995 /* InvisibleTile.cpp in Sources */,
 				84BF63612AF18631008A9995 /* LadderTile.cpp in Sources */,
 				84BF63622AF18631008A9995 /* LeafTile.cpp in Sources */,

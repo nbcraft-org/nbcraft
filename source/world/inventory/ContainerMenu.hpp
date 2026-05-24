@@ -34,7 +34,7 @@ public:
     virtual void slotsChanged(Container* container);
 
     // Called getItems in PE and Java
-    std::vector<ItemStack> cloneItems();
+    std::vector<ItemStack> cloneItems(bool all = false);
     Slot* getSlotFor(Container* container, Container::StackID stackId);
     Slot* getSlot(Container::SlotID slotId) { return m_slots[slotId]; }
     virtual ItemStack clicked(Container::SlotID slotId, MouseButtonType mouseButton, bool quickMove, Player* player);

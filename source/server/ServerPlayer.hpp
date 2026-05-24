@@ -17,6 +17,8 @@ public:
 	void closeContainer() override;
 	void openFurnace(FurnaceTileEntity* tileEntity);
 	void take(Entity* pEnt, int count) override;
+	void checkFallDamage(float ya, bool onGround) override;
+	bool interpolateOnly() const override { return true; }
 
 	void refreshContainer(ContainerMenu* menu, const std::vector<ItemStack>& items) override;
 	void slotChanged(ContainerMenu* menu, Container::SlotID slotId, Slot* slot, ItemStack& item, bool isResultSlot) override;
@@ -24,6 +26,7 @@ public:
 
 	void doCloseContainer();
 	void setContainerMenu(ContainerMenu* menu);
+	void doCheckFallDamage(float ya, bool onGround);
 
 private:
 	int m_lastHealth;

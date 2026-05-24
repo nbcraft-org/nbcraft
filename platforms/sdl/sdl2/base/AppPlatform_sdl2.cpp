@@ -106,6 +106,22 @@ int AppPlatform_sdl2::getScreenHeight() const
 	return height;
 }
 
+void AppPlatform_sdl2::setVSyncEnabled(bool enabled)
+{
+#if MCE_GFX_API_OGL
+	SDL_GL_SetSwapInterval(enabled ? 1 : 0);
+#endif
+}
+
+bool AppPlatform_sdl2::isVSyncSwitchable() const
+{
+#if MCE_GFX_API_OGL
+	return true;
+#else
+	return false;
+#endif
+}
+
 void AppPlatform_sdl2::showKeyboard(LocalPlayerID playerId, const VirtualKeyboard& keyboard)
 {
 	if (SDL_IsTextInputActive())

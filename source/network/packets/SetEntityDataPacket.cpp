@@ -3,13 +3,6 @@
 #include "network/RakIO.hpp"
 #include "network/PacketUtil.hpp"
 
-SetEntityDataPacket::SetEntityDataPacket(int32_t id, SynchedEntityData& data)
-{
-	m_entityId = id;
-	m_bIsIncoming = false;
-	m_packedItems = data.packDirty();
-}
-
 void SetEntityDataPacket::handle(const RakNet::RakNetGUID& guid, NetEventCallback& callback)
 {
 	callback.handle(guid, this);

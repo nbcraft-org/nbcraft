@@ -132,7 +132,13 @@ void LocalPlayer::swing()
 {
 	Player::swing();
 
-	m_pMinecraft->m_pRakNetInstance->send(new AnimatePacket(m_EntityID, AnimatePacket::SWING));
+	if (m_swingTime != -1 || !m_pMinecraft->isOnline())
+		return;
+
+	Packet* packet = new AnimatePacket(m_EntityID, AnimatePacket::SWING);
+	packet->m_reliability = UNRELIABLE;
+	packet->m_priority = MEDIUM_PRIORITY;
+	m_pMinecraft->m_pRakNetInstance->send(packet);
 }
 
 void LocalPlayer::startCrafting(const TilePos& pos)
@@ -217,9 +223,9 @@ void LocalPlayer::calculateFlight(const Vec3& pos)
 
 	float y1 = 0.0f;
 	if (Keyboard::isKeyDown(m_pMinecraft->getOptions()->getKey(KM_FLY_UP)))
-		y1 = f1 * 0.2f;
+		y1 = f1 * 0.2f; // @PARITY-JAVA: 0.5 on Java
 	if (Keyboard::isKeyDown(m_pMinecraft->getOptions()->getKey(KM_FLY_DOWN)))
-		y1 = f1 * -0.2f;
+		y1 = f1 * -0.2f; // @PARITY-JAVA: -0.5 on Java
 
 	field_BFC += x1;
 	float f2 = m_pMinecraft->getOptions()->m_sensitivity.get() * 0.35f;
@@ -351,8 +357,13 @@ void LocalPlayer::tick()
 		if (m_lastSelectedStackId != m_pInventory->m_selectedStackId)
 		{
 			m_lastSelectedStackId = m_pInventory->m_selectedStackId;
-			const ItemStack& item = m_pInventory->getSelectedItem();
-			m_pMinecraft->m_pRakNetInstance->send(new PlayerEquipmentPacket(m_EntityID, item.getId(), item.getAuxValue()));
+			const ItemStack* item = &m_pInventory->getSelectedItem();
+
+			// @HACK: send Air for empty items, the server doesn't know how many we have
+			if (item->isEmpty())
+				item = &ItemStack::EMPTY;
+
+			m_pMinecraft->m_pRakNetInstance->send(new PlayerEquipmentPacket(m_EntityID, item->getId(), item->getAuxValue()));
 		}
 	}
 }

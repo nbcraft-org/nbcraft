@@ -42,8 +42,8 @@ Player::Player(Level* pLevel, GameType playerGameType) : Mob(pLevel)
 
 	m_pInventory = new Inventory(this);
 
-	m_pContainerMenu = nullptr;
 	m_pInventoryMenu = new InventoryMenu(m_pInventory);
+	m_pContainerMenu = m_pInventoryMenu;
 
 	setDefaultHeadHeight();
 
@@ -210,7 +210,9 @@ void Player::aiStep()
     m_pInventory->tick();
 #endif
 	m_oBob = m_bob;
-    //Mob::aiStep(); // @PARITY: called in Java, calling here results in 2x speed player movement
+
+	//Mob::aiStep(); // @PARITY: not called in PE, instead called in LocalPlayer, called regardless in Java
+
 	float velLen = Mth::sqrt(m_vel.x * m_vel.x + m_vel.z * m_vel.z);
 	float velYAtan = Mth::atan(m_vel.y * -0.2f), x1 = 0.0f;
 
@@ -525,7 +527,7 @@ void Player::setRespawnPos(const TilePos& pos)
 	m_respawnPos = pos;
 }
 
-// @PARITY: From b1.2_02, doesn't exist in PE
+// @PARITY-PE: From b1.2_02, doesn't exist in PE
 void Player::drop()
 {
 	drop(m_pInventory->removeItem(m_pInventory->getSelectedSlotNo(), 1));

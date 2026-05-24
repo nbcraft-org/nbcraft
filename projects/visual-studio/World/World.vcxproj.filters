@@ -716,6 +716,9 @@
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\ContainerSizeChangeListener.cpp">
       <Filter>Source Files\Inventory</Filter>
     </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\inventory\Container.cpp">
+      <Filter>Source Files\Inventory</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Entity.hpp">

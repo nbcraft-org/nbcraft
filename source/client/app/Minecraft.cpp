@@ -455,7 +455,12 @@ void Minecraft::handleBuildAction(const BuildActionIntention& action)
 			Entity* pTarget = m_hitResult.m_pEnt;
 			if (action.isAttack())
 			{
-				m_pRakNetInstance->send(new InteractPacket(player->m_EntityID, pTarget->m_EntityID, InteractPacket::ATTACK));
+				InteractPacket pkt(player->m_EntityID, pTarget->m_EntityID, InteractPacket::ATTACK);
+
+				pkt.m_reliability = RELIABLE_ORDERED;
+				pkt.m_channel = CHANNEL_PLAYER_EVENTS;
+				m_pRakNetInstance->send(pkt);
+
 				pGameMode->attack(player, pTarget);
 				m_lastBlockBreakTime = getTimeMs();
 			}
@@ -464,7 +469,9 @@ void Minecraft::handleBuildAction(const BuildActionIntention& action)
 				if (pTarget->interactPreventDefault())
 					bInteract = false;
 
-				m_pRakNetInstance->send(new InteractPacket(player->m_EntityID, pTarget->m_EntityID, InteractPacket::INTERACT));
+				InteractPacket pkt(player->m_EntityID, pTarget->m_EntityID, InteractPacket::INTERACT);
+				m_pRakNetInstance->send(pkt);
+
 				pGameMode->interact(player, pTarget);
 				m_lastInteractTime = getTimeMs();
 			}
@@ -754,9 +761,14 @@ void Minecraft::sendMessage(const std::string& message)
 	{
 		// send the server a message packet
 		if (m_pRakNetInstance)
-			m_pRakNetInstance->send(new MessagePacket(message));
+		{
+			MessagePacket pkt(message);
+			m_pRakNetInstance->send(pkt);
+		}
 		else
+		{
 			m_pGui->addMessage("You aren't actually playing multiplayer!");
+		}
 	}
 	else
 	{
@@ -1112,7 +1124,7 @@ float Minecraft::getBestScaleForThisScreenSize(int width, int height)
 	}
 	else
 	{
-		// @PARITY: This is the screen scaling we use on non-touchscreen devices (minus Xboxes)
+		// @PARITY-JAVA: This is the screen scaling we use on non-touchscreen devices (minus Xboxes)
 		if (height > 1600)
 			return 1.0f / 4.0f;
 
