@@ -55,12 +55,12 @@
 #include "RocketLauncherTile.hpp"
 //#include "RedStoneDustTile.hpp"
 #include "CraftingTableTile.hpp"
-//#include "FurnaceTile.hpp"
+#include "FurnaceTile.hpp"
 #include "TallGrass.hpp"
 #include "DeadBush.hpp"
 //#include "Fern.hpp"
 #include "CactusTile.hpp"
-//#include "ChestTile.hpp"
+#include "ChestTile.hpp"
 #include "PumpkinTile.hpp"
 #include "SoulSandTile.hpp"
 #include "GlowstoneTile.hpp"
@@ -79,7 +79,7 @@
 #include "NotGateTile.hpp"
 //#include "CakeTile.hpp"
 //#include "DispenserTile.hpp"
-//#include "MusicTile.hpp"
+#include "MusicTile.hpp"
 //#include "RecordPlayerTile.hpp"
 //#include "TrapDoorTile.hpp"
 //#include "PortalTile.hpp"
@@ -206,7 +206,7 @@ Tile* Tile::init()
 	solid[m_ID] = isSolidRender();
 	lightBlock[m_ID] = isSolidRender() ? 255 : 0;
 	translucent[m_ID] = m_pMaterial->blocksLight();
-	isEntityTile[m_ID] = 0;
+	isEntityTile[m_ID] = hasTileEntity();
 
 	m_toolMask = Tool::NONE;
 	m_requiredToolLevel = 0;
@@ -262,6 +262,11 @@ bool Tile::mayPick() const
 bool Tile::mayPick(TileData data, bool y) const
 {
 	return mayPick();
+}
+
+bool Tile::hasTileEntity() const
+{
+	return false;
 }
 
 int Tile::getResource(TileData data, Random* pRandom) const
@@ -842,6 +847,31 @@ void Tile::initTiles()
 		->setSoundType(Tile::SOUND_GRASS)
 		->setDescriptionId("crops");
 
+	Tile::musicBlock = (new MusicTile(TILE_NOTE_BLOCK, TEXTURE_JUKEBOX_SIDE))
+		->init()
+		->setSoundType(Tile::SOUND_WOOD)
+		->setDestroyTime(0.8f)
+		->setDescriptionId("musicBlock");
+
+	Tile::furnace = (new FurnaceTile(TILE_FURNACE, false))
+		->init()
+		->setDestroyTime(3.5f)
+		->setSoundType(Tile::SOUND_STONE)
+		->setDescriptionId("furnace");
+
+	Tile::furnaceLit = (new FurnaceTile(TILE_FURNACE_LIT, true))
+		->init()
+		->setLightEmission(14.0f / 16.0f)
+		->setDestroyTime(3.5f)
+		->setSoundType(Tile::SOUND_STONE)
+		->setDescriptionId("furnace");
+
+	Tile::chest = (new ChestTile(TILE_CHEST, TEXTURE_CHEST_ONE_SIDE))
+		->init()
+		->setDestroyTime(2.5f)
+		->setSoundType(Tile::SOUND_WOOD)
+		->setDescriptionId("chest");
+
 	// Great
 	Item::items[Tile::cloth->m_ID] = (new ClothItem(Tile::cloth->m_ID - C_MAX_TILES))
 		->setDescriptionId("cloth");
@@ -1021,12 +1051,10 @@ void Tile::neighborChanged(Level* pLevel, const TilePos& pos, TileID tile)
 
 void Tile::onPlace(Level* pLevel, const TilePos& pos)
 {
-
 }
 
 void Tile::onRemove(Level* pLevel, const TilePos& pos)
 {
-
 }
 
 bool Tile::containsX(const Vec3& v)
@@ -1346,4 +1374,8 @@ Tile
 	*Tile::diode_off,
 	*Tile::diode_on,
 	*Tile::craftingTable,
-	*Tile::crops;
+	*Tile::crops,
+	*Tile::musicBlock,
+	*Tile::furnace,
+	*Tile::furnaceLit,
+	*Tile::chest;

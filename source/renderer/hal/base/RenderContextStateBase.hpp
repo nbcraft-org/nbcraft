@@ -6,6 +6,7 @@
 #include "renderer/hal/RenderStateDescription.hpp"
 #include "renderer/hal/AlphaStateDescription.hpp"
 #include "renderer/hal/FogStateDescription.hpp"
+#include "renderer/hal/VertexBufferStateDescription.hpp"
 #include "common/math/Color.hpp"
 #include "renderer/hal/enums/ShadeMode.hpp"
 
@@ -23,6 +24,7 @@ namespace mce
         RenderStateDescription m_renderStateDescription;
         AlphaStateDescription m_alphaStateDescription;
         FogStateDescription m_fogStateDescription;
+        VertexBufferStateDescription m_vertexBufferStateDescription;
         Color m_color;
         ShadeMode m_shadeMode;
         Gamma m_gamma;
@@ -32,6 +34,7 @@ namespace mce
         bool m_bBoundRenderState;
         bool m_bBoundAlphaState;
         bool m_bBoundFogState;
+        bool m_bBoundVertexBufferState;
         bool m_bBoundColor;
         bool m_bBoundShadeMode;
         bool m_bBoundGamma;

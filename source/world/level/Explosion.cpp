@@ -84,7 +84,7 @@ void Explosion::explode()
 	EntityVector ents = m_pLevel->getEntities(m_pEntity, aabb);
 	for (size_t i = 0; i < ents.size(); i++)
 	{
-		Entity* entity = ents.at(i);
+		Entity* entity = ents[i];
 		float distPowerRatio = entity->distanceTo(m_pos) / m_power;
 		if (distPowerRatio > 1.0f)
 			continue;

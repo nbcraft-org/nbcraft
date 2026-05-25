@@ -190,12 +190,12 @@ void Gui::render(float f, bool bHaveScreen, int mouseX, int mouseY)
 		matrix->translate(Vec3(0, -35, 0));
 		matrix->scale(mc.getOptions()->m_hudSize.get());
 	}
-	if (mc.m_pGameMode->canHurtPlayer())
+	if (mc.getLocalPlayerGameMode()->canHurtPlayer())
 	{
 		textures.loadAndBindTexture("gui/icons.png");
 
 		Tesselator& t = Tesselator::instance;
-		t.begin(0);
+		t.begin(160);
 		t.voidBeginAndEndCalls(true);
 
 		renderHearts(isPocket);
@@ -253,15 +253,15 @@ void Gui::renderSlot(int slot, int x, int y, float f)
 		{
 			float var7 = 1.0f + var6 / 5.0f;
 			matrix = MatrixStack::World.push();
-			matrix->translate(Vec3(x + 8, y + 12, 0.0f));
+			matrix->translate(Vec3(x + 8, y + 12, 0));
 			matrix->scale(Vec3(1.0f / var7, (var7 + 1.0f) / 2.0f, 1.0f));
-			matrix->translate(Vec3(-(x + 8), -(y + 12), 0.0f));
+			matrix->translate(Vec3(-(x + 8), -(y + 12), 0));
 		}
 
 		ItemRenderer::singleton().renderGuiItem(m_pMinecraft->m_pFont, m_pMinecraft->m_pTextures, item, x, y, true);
 	}
 
-    //ItemRenderer::renderGuiItemDecorations(m_pMinecraft->m_pFont, m_pMinecraft->m_pTextures, item, x, y);
+	//ItemRenderer::renderGuiItemDecorations(m_pMinecraft->m_pFont, m_pMinecraft->m_pTextures, item, x, y);
 }
 
 void Gui::renderSlotOverlay(int slot, int x, int y, float f)
@@ -335,9 +335,10 @@ void Gui::handleClick(int clickID, int mouseX, int mouseY)
 	if (slot == -1)
 		return;
 
-	if (m_pMinecraft->isTouchscreen() && slot == getNumSlots() - 1)
+	// Final slot on touch opens inventory
+	if (m_pMinecraft->useTouchscreen() && slot == getNumSlots() - 1)
 	{
-		if (m_pMinecraft->m_pGameMode->isSurvivalType())
+		if (m_pMinecraft->getLocalPlayerGameMode()->isSurvivalType())
 			m_pMinecraft->setScreen(new InventoryScreen(m_pMinecraft->m_pLocalPlayer));
 		else
 			m_pMinecraft->setScreen(new IngameBlockSelectionScreen());
@@ -348,22 +349,22 @@ void Gui::handleClick(int clickID, int mouseX, int mouseY)
 
 void Gui::handleScrollWheel(bool down)
 {
-	SlotID slot = m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedSlot;
+	Container::StackID stackId = m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedStackId;
 
 	int maxItems = getNumUsableSlots() - 1;
 
 	if (down)
 	{
-		if (slot++ == maxItems)
-			slot = 0;
+		if (stackId++ == maxItems)
+			stackId = 0;
 	}
 	else
 	{
-		if (slot-- == 0)
-			slot = maxItems;
+		if (stackId-- == 0)
+			stackId = maxItems;
 	}
 
-	m_pMinecraft->m_pLocalPlayer->m_pInventory->selectSlot(slot);
+	m_pMinecraft->m_pLocalPlayer->m_pInventory->selectSlot(stackId);
 }
 
 void Gui::handleKeyPressed(int keyCode)
@@ -372,7 +373,7 @@ void Gui::handleKeyPressed(int keyCode)
 
 	if (options->isKey(KM_INVENTORY, keyCode))
 	{
-		if (m_pMinecraft->m_pGameMode->isSurvivalType())
+		if (m_pMinecraft->getLocalPlayerGameMode()->isSurvivalType())
 			m_pMinecraft->setScreen(new InventoryScreen(m_pMinecraft->m_pLocalPlayer));
 		else
 			m_pMinecraft->setScreen(new IngameBlockSelectionScreen);
@@ -384,23 +385,23 @@ void Gui::handleKeyPressed(int keyCode)
 	if (slotL || slotR)
 	{
 		int maxItems = getNumSlots() - 1;
-		if (m_pMinecraft->isTouchscreen())
+		if (m_pMinecraft->useTouchscreen())
 			maxItems--;
-		SlotID* slot = &m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedSlot;
+		Container::StackID* stackId = &m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedStackId;
 
 		if (slotR)
 		{
-			if (*slot < maxItems)
-				(*slot)++;
+			if (*stackId < maxItems)
+				(*stackId)++;
 			else
-				*slot = 0;
+				*stackId = 0;
 		}
 		else if (slotL)
 		{
-			if (*slot > 0)
-				(*slot)--;
+			if (*stackId > 0)
+				(*stackId)--;
 			else
-				*slot = maxItems;
+				*stackId = maxItems;
 		}
 		return;
 	}
@@ -689,7 +690,7 @@ void Gui::renderToolBar(float f, float alpha)
 	Inventory* inventory = player->m_pInventory;
 
 	// selection mark
-	blit(-1 - hotbarWidth / 2 + 20 * inventory->m_selectedSlot, -23, 0, 22, 24, 22, 0, 0);
+	blit(-1 - hotbarWidth / 2 + 20 * inventory->m_selectedStackId, -23, 0, 22, 24, 22, 0, 0);
 
 	// chat and pause button for mobile devices
 	if (mc->isTouchscreen())
@@ -706,7 +707,7 @@ void Gui::renderToolBar(float f, float alpha)
 
 	textures->loadAndBindTexture(C_BLOCKS_NAME);
 
-	int diff = mc->isTouchscreen();
+	int diff = mc->useTouchscreen();
 
 	int slotX = -hotbarWidth / 2 + 3;
 	for (int i = 0; i < nSlots - diff; i++)
@@ -728,8 +729,8 @@ void Gui::renderToolBar(float f, float alpha)
 
 	field_A3C = false;
 
-	// blit the "more items" button
-	if (mc->isTouchscreen())
+	// blit the "more items" button if using touch
+	if (mc->useTouchscreen())
 	{
 		textures->loadAndBindTexture(C_TERRAIN_NAME);
 		blit(hotbarWidth / 2 - 19, -19, 208, 208, 16, 16, 0, 0);
@@ -747,7 +748,7 @@ int Gui::getNumSlots()
 
 int Gui::getNumUsableSlots()
 {
-	return getNumSlots() - m_pMinecraft->isTouchscreen();
+	return getNumSlots() - m_pMinecraft->useTouchscreen();
 }
 
 RectangleArea Gui::getRectangleArea(bool b)

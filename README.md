@@ -24,9 +24,9 @@ The decompilation was performed primarily using [IDA](https://hex-rays.com/ida-p
   certain versions of the game, such as the 0.1.0 touch prototype/debug build)
 * To add support for as many platforms as possible, such as the PlayStation 3, Wii, and more.
   Currently, the following platforms are supported:
-	* Windows (2000 and above; thanks to [iProgramInCpp](https://github.com/iProgramMC))
+	* Windows (95 and above; thanks to [iProgramInCpp](https://github.com/iProgramMC))
 	* Android (thanks to [Stom](https://github.com/Stommm) for the help)
-	* Linux
+	* Linux (basically anything with POSIX.1-2001, C++98, SDL, and OpenGL support should also work without too much trouble)
 	* WebGL
 	* macOS (10.4 and above; thanks to [BrentDaMage](https://github.com/BrentDaMage))
 	* iOS (3.1 and above; thanks to [BrentDaMage](https://github.com/BrentDaMage))
@@ -92,7 +92,8 @@ Then, copy the assets (including sounds and textures) into the "minecraft" resou
 	   pack.png
 	   particles.png
 	   terrain.png
-	   ```<br>
+	   ```
+	   <br>
    - Any Pocket Edition assets will need to be manually extracted from _Pocket Edition_.
    - **To retrieve the sounds**, locate the `resources` directory in the `.minecraft` folder
      - Copy the contents (e.g. `music`, `sound`, etc.) into the `game/assets/resource_packs/minecraft` directory of the project.
@@ -113,6 +114,59 @@ This fetches the project's necessary dependencies.
 ## How to Build
 
 ### Windows
+
+There are 2 ways to build on Windows, the universal build script or Visual Studio.
+
+#### MinGW cross build script
+
+There is a script to easily build a version of NBCraft that works on all versions of Windows since 95.
+
+You will need to install the following dependencies
+
+##### Dependencies (Ubuntu/Debian)
+
+- `build-essential` (C/C++ Toolchain)
+- `cmake` (CMake)
+- `make` (GNU Make)
+- `wget` (Wget)
+- `zlib1g-dev` (ZLib)
+- `libgmp-dev libmpfr-dev libmpc-dev` (GCC dependencies)
+
+##### Dependencies (macOS)
+
+- Xcode command line tools
+- `cmake` (CMake)
+- `wget` (Wget)
+- `gmp mpfr mpc` (GCC dependencies)
+
+Then run
+
+```sh
+# to build for 64 bit machines
+export ARCH=x86_64
+# to build for pentium pro or newer
+export ARCH=i686
+# CPUs older than the pentium pro will likely have unplayable performance but will build.
+# to build for pentium or newer
+export ARCH=i586
+# to build for i486 or newer
+export ARCH=i486
+
+# (macOS only) if gmp, mpfr, and mpc were installed from homebrew
+export GMP="$(brew --prefix)"
+export MPFR="$(brew --prefix)"
+export MPC="$(brew --prefix)"
+# (macOS only) if gmp, mpfr, and mpc were installed from macports
+export GMP='/opt/local'
+export MPFR='/opt/local'
+export MPC='/opt/local'
+
+./platforms/windows/build.sh
+```
+
+An executable and assets folder will be placed at platforms/windows/build/NBCraft
+
+#### Visual Studio
 
 The project is configured to target Windows XP by default by using "v141_xp" build tools. If you would like
 to build with Windows XP support, please follow the guide [here](https://learn.microsoft.com/en-us/cpp/build/configuring-programs-for-windows-xp?view=msvc-170#install-the-windows-xp-platform-toolset)
@@ -150,7 +204,6 @@ This project uses CMake on Unix-like systems.
 - `cmake` (CMake)
 - `libsdl2-dev` (SDL2)
 - `libopenal-dev` (OpenAL)
-- `zlib1g-dev` (ZLib)
 
 #### Dependencies (Haiku)
 
@@ -168,6 +221,18 @@ cmake --build .
 ./nbcraft
 ```
 
+#### Makefile
+
+For systems where cmake is not available, there is a GNU Makefile available. The dependencies are the same except without CMake.
+You should ***ALWAYS*** try to use CMake if you can, the Makefile is very limited and only intended for old or obscure systems that cannot run CMake.
+
+```sh
+make
+# Run
+cd build
+./nbcraft
+```
+
 ### macOS
 
 There are 3 ways to build on macOS, Xcode, CMake, or the universal build script.
@@ -182,7 +247,7 @@ You can build with CMake as detailed in the Unix-like systems section above.  Yo
 
 #### Universal build script
 
-There is a script to easily create a version of NBCraft that works on all versions of macOS since 10.4 tiger, and on PowerPC.
+There is a script to easily build a version of NBCraft that works on all versions of macOS since 10.4 tiger, and on PowerPC.
 
 You will need to install the following dependencies, in addition to the Xcode command line tools:
 

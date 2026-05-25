@@ -25,8 +25,10 @@ void InventoryScreen::init()
 
 void InventoryScreen::renderBackground()
 {
-    if (m_uiTheme != UI_CONSOLE)
-        ContainerScreen::renderBackground();
+    if (m_uiTheme == UI_CONSOLE)
+        return;
+
+    ContainerScreen::renderBackground();
 }
 
 void InventoryScreen::_renderLabels()
@@ -84,7 +86,7 @@ void InventoryScreen::_renderBg(float partialTick)
 #endif
     MatrixStack::Ref matrix = MatrixStack::World.push();
 
-    matrix->translate(Vec3(m_leftPos + playerX, m_topPos + playerY, 50.0f));
+    matrix->translate(Vec3(m_leftPos + playerX, m_topPos + playerY, 50));
     matrix->scale(Vec3(-scale, scale, scale));
     matrix->rotate(180.0f, Vec3(0.0f, 0.0f, 1.0f));
 
@@ -135,16 +137,16 @@ SlotDisplay InventoryScreen::_createSlotDisplay(const Slot& slot)
         case Slot::OUTPUT:
             return m_pMinecraft->getOptions()->m_classicCrafting.get() ? SlotDisplay(352, 83, 54, true) : SlotDisplay();
         case Slot::INPUT:
-            return m_pMinecraft->getOptions()->m_classicCrafting.get() ? SlotDisplay(221 + (slot.m_slot % 2) * slotSize, 67 + (slot.m_slot / 2) * slotSize, slotSize, true) : SlotDisplay();
+            return m_pMinecraft->getOptions()->m_classicCrafting.get() ? SlotDisplay(221 + (slot.m_stackId % 2) * slotSize, 67 + (slot.m_stackId / 2) * slotSize, slotSize, true) : SlotDisplay();
         case Slot::ARMOR:
         {
             const ArmorSlot& armorSlot = (const ArmorSlot&)slot;
             return SlotDisplay(m_pMinecraft->getOptions()->m_classicCrafting.get() ? 27 : 127, 29 + (Item::SLOT_HEAD - armorSlot.m_equipmentSlot) * slotSize, slotSize, true, -1, CONSOLE_ARMOR_SLOTS[armorSlot.m_equipmentSlot]);
         }
         case Slot::INVENTORY:
-            return SlotDisplay(28 + (slot.m_slot % 9) * slotSize, 233 + ((slot.m_slot / 9) - 1) * slotSize, slotSize, true);
+            return SlotDisplay(28 + (slot.m_stackId % 9) * slotSize, 233 + ((slot.m_stackId / 9) - 1) * slotSize, slotSize, true);
         case Slot::HOTBAR:
-            return SlotDisplay(28 + (slot.m_slot % 9) * slotSize, 372, slotSize, true);
+            return SlotDisplay(28 + (slot.m_stackId % 9) * slotSize, 372, slotSize, true);
         default:
             return SlotDisplay();
         }
@@ -157,16 +159,16 @@ SlotDisplay InventoryScreen::_createSlotDisplay(const Slot& slot)
         case Slot::OUTPUT:
             return SlotDisplay(144, 36);
         case Slot::INPUT:
-            return SlotDisplay(88 + (slot.m_slot % 2) * slotSize, 26 + (slot.m_slot / 2) * slotSize);
+            return SlotDisplay(88 + (slot.m_stackId % 2) * slotSize, 26 + (slot.m_stackId / 2) * slotSize);
         case Slot::ARMOR:
         {
             const ArmorSlot& armorSlot = (const ArmorSlot&)slot;
             return SlotDisplay(8, 8 + (Item::SLOT_HEAD - armorSlot.m_equipmentSlot) * slotSize, slotSize, false, 16 * ((Item::SLOT_HEAD - armorSlot.m_equipmentSlot) + 1) - 1);
         }
         case Slot::INVENTORY:
-            return SlotDisplay(8 + (slot.m_slot % 9) * slotSize, 84 + ((slot.m_slot / 9) - 1) * slotSize, slotSize);
+            return SlotDisplay(8 + (slot.m_stackId % 9) * slotSize, 84 + ((slot.m_stackId / 9) - 1) * slotSize, slotSize);
         case Slot::HOTBAR:
-            return SlotDisplay(8 + (slot.m_slot % 9) * slotSize, 142, slotSize);
+            return SlotDisplay(8 + (slot.m_stackId % 9) * slotSize, 142, slotSize);
         default:
             return SlotDisplay();
         }

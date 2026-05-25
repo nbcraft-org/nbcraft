@@ -28,8 +28,9 @@ public:
         if (!module) module = LoadLibrary("XINPUT9_1_0.DLL");
         if (module)
             GetState = (DWORD (WINAPI *)(DWORD, XINPUT_STATE *))GetProcAddress(module, "XInputGetState");
-        if (!GetState)
-            LOG_W("Could not find xinput driver, xinput controllers will be disabled.");
+        // Crashes because the logger singleton isn't initialized
+        // if (!GetState)
+        //     LOG_W("Could not find xinput driver, xinput controllers will be disabled.");
 #endif
     }
 

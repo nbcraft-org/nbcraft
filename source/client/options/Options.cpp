@@ -45,7 +45,7 @@ void Options::_initDefaultValues()
 #ifdef ORIGINAL_CODE
 	m_viewDistance.set(2);
 	m_thirdPerson.set(0);
-	field_19 = 0;
+	m_bUseMouseToBreak = false;
 #endif
 
 	// Force this on until we get a proper UI
@@ -99,7 +99,7 @@ Options::Options(Minecraft* mc, const std::string& folderPath) :
 	//, m_limitFramerate("gfx_fpslimit", "options.framerateLimit", 0, ValuesBuilder().add(performance.max").add("performance.balanced").add("performance.powersaver"))
 	//, m_bMipmaps("gfx_mipmaps", "options.mipmaps")
 	//, m_moreWorldOptions("misc_moreworldoptions", "options.moreWorldOptions", true)
-	//, m_vSync("enableVsync", "options.enableVsync")
+	, m_vSync("enableVsync", "options.enableVsync", true)
 {
 	add(m_musicVolume);
 	add(m_masterVolume);
@@ -128,10 +128,12 @@ Options::Options(Minecraft* mc, const std::string& folderPath) :
 	add(m_playerName);
 	add(m_debugText);
 	add(m_lang);
+	add(m_bUseController);
+	add(m_hudSize);
 	add(m_uiTheme);
 	add(m_logoType);
-	add(m_hudSize);
 	add(m_classicCrafting);
+	add(m_vSync);
 	_initDefaultValues();
 	if (folderPath.empty()) return;
 	m_filePath = folderPath + "/options.txt";
@@ -672,6 +674,9 @@ void Options::initResourceDependentOptions()
 
 	if (!Screen::isMenuPanoramaAvailable())
 		m_menuPanorama.set(false);
+
+	if (!m_pMinecraft->platform()->isVSyncSwitchable())
+		m_vSync.set(true);
 }
 
 const std::string& OptionEntry::getDisplayName() const
@@ -757,6 +762,15 @@ std::string SensitivityOption::getDisplayValue() const
 	return get() == 0.0f ? Language::get("options.sensitivity.min") : get() == 1.0f ? Language::get("options.sensitivity.max") : Util::toString(int(get() * 200)) + "%";
 }
 
+void ControllerOption::apply()
+{
+	// @TODO: This works but ultimately needs to be a multi-select (KBM, controller, touch) instead of a single option.
+	// Either that or figure out an automatic way to switch between them based on input like how Minecraft Bedrock does
+	// For now, I just wanted to be able to switch to controller input on mobile devices.
+	if (m_pMinecraft && m_pMinecraft->m_pInputHolder)
+		m_pMinecraft->reloadInput();
+}
+
 void AOOption::apply()
 {
 	Minecraft::useAmbientOcclusion = get();
@@ -774,6 +788,8 @@ void GammaOption::apply()
 	// Budget rounding since the 360 just doesn't have a round function
 	// @TODO: Then again, we don't need this level or precision to begin with
 	// I just don't wanna have to rework the SliderButton to support integers
+	if (!m_pMinecraft->m_pGameRenderer)
+		return;
 	m_pMinecraft->m_pGameRenderer->setGamma((float)Mth::floor(get() * 100) / 100);
 }
 
@@ -791,6 +807,11 @@ void GraphicsOption::apply()
 std::string FancyGraphicsOption::getMessage() const
 {
 	return Util::format(Language::get("options.value").c_str(), Language::get("options.graphics").c_str(), Language::get(get() ? "options.graphics.fancy" : "options.graphics.fast").c_str());
+}
+
+void VsyncOption::apply()
+{
+	m_pMinecraft->platform()->setVSyncEnabled(get());
 }
 
 void LogoTypeOption::apply()

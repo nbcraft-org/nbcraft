@@ -79,13 +79,12 @@ bool BirchFeature::place(Level* level, Random* random, const TilePos& pos)
 		for (tp.x = pos.x - c1; tp.x <= pos.x + c1; tp.x++)
 		{
 			//int c3 = c2;
-			int c4 = diff / 2 - 1;
 			/*if (c2 < 0)
 				c3 = -c2;*/
 
 			//int c5 = c3;
 
-			for (tp.z = pos.z - c1; tp.z <= pos.z + c1; tp.z++, c4++)
+			for (tp.z = pos.z - c1; tp.z <= pos.z + c1; tp.z++)
 			{
                 if ((abs(tp.x - pos.x) != c1 || abs(tp.z - pos.z) != c1 || (random->nextInt(2) != 0 && diff != 0)) && !Tile::solid[level->getTile(TilePos(tp.x, i, tp.z))])
 				{

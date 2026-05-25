@@ -6,6 +6,8 @@
 	SPDX-License-Identifier: BSD-1-Clause
  ********************************************************************/
 
+#include <stdlib.h>
+
 #define STB_VORBIS_HEADER_ONLY
 #include "thirdparty/stb_image/include/stb_vorbis.c"
 
@@ -81,11 +83,13 @@ bool SoundDesc::_load(const char* category, const char *name)
     }
     location.path = "sound/" + std::string(name) + ".pcm";
     ret = _loadPcm(location);
-    if (!ret) {
+    if (!ret)
+    {
         m_codecType = AudioCodec::NONE;
         LOG_W("Failed to load sound \"%s\"!", name);
         return false;
-    } else
+    }
+    else
         return true;
 }
 

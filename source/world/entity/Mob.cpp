@@ -54,7 +54,7 @@ void Mob::_init()
 	m_lPos = Vec3::ZERO;
 	m_lRot = Vec2::ZERO;
 	m_lastHurt = 0;
-	m_pEntLookedAt = nullptr;
+	m_entLookedAtId = 0;
 	m_bSwinging = false;
 	m_swingTime = 0;
 	m_ambientSoundTime = 0;
@@ -247,7 +247,7 @@ void Mob::baseTick()
     if (isAlive() && isInWall())
         hurt(nullptr, 1);
 
-	// @PARITY: Java
+	// @PARITY-JAVA: From Java
 	// uncommenting this because otherwise pigmen will burn
     {
         m_fireTicks = 0;
@@ -760,7 +760,7 @@ void Mob::aiStep()
 	{
 		Entity* pEnt = *it;
 		if (pEnt->isPushable())
- 			pEnt->push(this);
+			pEnt->push(this);
 	}
 }
 
@@ -786,6 +786,13 @@ void Mob::lookAt(Entity* pEnt, float a3, float a4)
 
 	setRot(Vec2(rotlerp(m_rot.x, x1 * 180.0f / float(M_PI) - 90.0f, a4),
 	              -rotlerp(m_rot.y, x2 * 180.0f / float(M_PI), a3)));
+}
+
+Entity* Mob::getLookingAt() const
+{
+	if (m_entLookedAtId == 0)
+		return nullptr;
+    return m_pLevel->getEntity(m_entLookedAtId);
 }
 
 bool Mob::canSpawn()
@@ -834,7 +841,7 @@ void Mob::updateAi()
 		Entity* nearestPlayer = m_pLevel->getNearestPlayer(*this, 8.0f);
 		if (nearestPlayer)
 		{
-			m_pEntLookedAt = nearestPlayer;
+			m_entLookedAtId = nearestPlayer->m_EntityID;
 
 			m_lookTime = m_random.nextInt(20) + 10;
 		}
@@ -845,17 +852,18 @@ void Mob::updateAi()
 	}
 
 	// @TODO: we get a crash here when a Player leaves
-	if (m_pEntLookedAt)
+	if (m_entLookedAtId > 0)
 	{
-		lookAt(m_pEntLookedAt, 10.0f, getMaxHeadXRot());
+		Entity* pEnt = m_pLevel->getEntity(m_entLookedAtId);
+		lookAt(pEnt, 10.0f, getMaxHeadXRot());
 
 		// gaze timer
 		m_lookTime--;
 
 		// if the entity was removed, or we're too far away, or our gaze timer is up
-		if (m_lookTime < 0 || m_pEntLookedAt->m_bRemoved || m_pEntLookedAt->distanceToSqr(this) > 64.0f)
+		if (m_lookTime < 0 || pEnt->m_bRemoved || pEnt->distanceToSqr(this) > 64.0f)
 			// stop staring
-			m_pEntLookedAt = nullptr;
+			m_entLookedAtId = 0;
 	}
 	else
 	{

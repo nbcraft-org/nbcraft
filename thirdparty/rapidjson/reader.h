@@ -24,7 +24,7 @@
 #include "internal/meta.h"
 #include "internal/stack.h"
 #include "internal/strtod.h"
-#include <limits>
+#include "compat/Limits.hpp"
 
 #if defined(RAPIDJSON_SIMD) && defined(_MSC_VER)
 #include <intrin.h>

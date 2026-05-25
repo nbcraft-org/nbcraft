@@ -20,7 +20,7 @@
 #include "diyfp.h"
 #include "pow10.h"
 #include <climits>
-#include <limits>
+#include "compat/Limits.hpp"
 
 RAPIDJSON_NAMESPACE_BEGIN
 namespace internal {

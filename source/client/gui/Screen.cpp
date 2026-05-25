@@ -399,7 +399,7 @@ void Screen::pointerPressed(const MenuPointer& pointer, MouseButtonType btn) // 
 		{
 			m_pClickedElement = element;
 
-			if (!m_pMinecraft->isTouchscreen())
+			if (!m_pMinecraft->useTouchscreen())
 			{
 				if (_useController())
 					m_pMinecraft->m_pSoundEngine->playUI(C_SOUND_UI_PRESS);
@@ -492,7 +492,7 @@ void Screen::onRender(float f)
 	{
 		// push the entire screen up
 		matrix = MatrixStack::World.push();
-		matrix->translate(Vec3(0.0f, -m_yOffset, 0.0f));
+		matrix->translate(Vec3(0, -m_yOffset, 0));
 	}
 
 	render(f);

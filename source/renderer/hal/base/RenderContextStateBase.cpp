@@ -16,6 +16,7 @@ void RenderContextStateBase::clear()
     m_bBoundRenderState = false;
     m_bBoundAlphaState = false;
     m_bBoundFogState = false;
+    m_bBoundVertexBufferState = false;
     m_bBoundColor = false;
     m_bBoundShadeMode = false;
     m_bBoundGamma = false;

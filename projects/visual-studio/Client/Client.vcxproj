@@ -267,6 +267,7 @@
     <ClInclude Include="..\..\..\source\client\renderer\entity\GiantMobRenderer.hpp" />
     <ClInclude Include="..\..\..\source\client\renderer\entity\SlimeRenderer.hpp" />
     <ClInclude Include="..\..\..\source\client\renderer\entity\SquidRenderer.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\FurnaceScreen.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\client\app\App.cpp" />
@@ -452,6 +453,7 @@
     <ClCompile Include="..\..\..\source\client\renderer\entity\GiantMobRenderer.cpp" />
     <ClCompile Include="..\..\..\source\client\renderer\entity\SlimeRenderer.cpp" />
     <ClCompile Include="..\..\..\source\client\renderer\entity\SquidRenderer.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\FurnaceScreen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">

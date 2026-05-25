@@ -6,7 +6,7 @@
 class ControlsPanelScreen : public PanelScreen_Console
 {
 public:
-	ControlsPanelScreen(Screen*, Minecraft*);
+	ControlsPanelScreen(Screen*, Minecraft&);
 
 	void removed() override;
 };
@@ -14,7 +14,7 @@ public:
 class SettingsPanelScreen : public PanelScreen_Console
 {
 public:
-	SettingsPanelScreen(Screen*, Options&);
+	SettingsPanelScreen(Screen*, Minecraft&);
 
 	void render(float) override;
 	void removed() override;

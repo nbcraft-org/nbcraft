@@ -119,7 +119,7 @@ Tesselator::~Tesselator()
 void* Tesselator::_allocateIndices(int count)
 {
 	m_indices.resize(m_indexSize * count);
-	return &m_indices.front();
+	return m_indices.data();
 }
 
 void Tesselator::_tex(const Vec2& uv, int count)
@@ -248,7 +248,7 @@ void Tesselator::beginIndices(int maxIndices)
 		maxIndices *= m_indexSize;
 	}
 
-	m_indices.resize(m_indices.size() + maxIndices);
+	m_indices.resize(m_indices.getSize() + maxIndices);
 }
 
 void Tesselator::draw(const mce::MaterialPtr& materialPtr)
@@ -280,10 +280,11 @@ mce::Mesh Tesselator::end(const char* debugName, bool temporary)
 			m_indexCount,
 			m_indexSize,
 			m_drawMode,
-			&m_indices[0],
+			m_indices,
 			temporary);
 
-		if (!temporary)
+		// check if the GFX Buffer took ownership of the data, this is only done by client-sided buffers (for now)
+		if (!temporary || !m_indices)
 			clear();
 
 		return mesh;
@@ -432,18 +433,23 @@ void Tesselator::vertex(float x, float y, float z)
 	m_count++;
 
 	unsigned int vertexSize = m_vertexFormat.getVertexSize();
-	uint8_t* oldIndicesPtr = !m_indices.empty() ? &m_indices.front() : nullptr;
+	const uint8_t* oldIndicesPtr = !m_indices.isEmpty() ? m_indices.getData() : nullptr;
 
 	if (m_pendingVertices > 0)
 	{
-		m_indices.reserve(vertexSize * m_pendingVertices);
+		m_indices.reserve(m_pendingVertices * vertexSize);
 		m_pendingVertices = 0;
 	}
 
-	m_indices.resize((m_vertices+1) * vertexSize);
+	bool didResize = m_indices.resize((m_vertices+1) * vertexSize);
+	(void)didResize; // to silence dumb warnings
+
+	// useful for finding improperly pre-allocated Tesselator calls, reducing these reduces memcpy calls,
+	// which provides SUBSTANTIAL performace gains
+	//assert(!didResize);
 
 	// Make sure m_indices front pointer hasn't changed from reallocation as a result of reserve or resize
-	if (isFormatFixed() && oldIndicesPtr == &m_indices.front())
+	if (isFormatFixed() && oldIndicesPtr == m_indices.getData())
 	{
 		m_currentVertex.nextVertex();
 	}

@@ -77,6 +77,14 @@
     <ProjectReference Include="..\COM\COM.vcxproj">
       <Project>{bc0701d1-0634-4754-b078-65a45bf01fa1}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\Renderer.D3D\Renderer.D3D.vcxproj">
+      <Project>{b44ad6b2-8197-4f41-857c-6a6d69f7bdf4}</Project>
+      <Private>true</Private>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

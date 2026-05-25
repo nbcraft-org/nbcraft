@@ -23,7 +23,8 @@ enum eParticleTextureIndex
 {
 	PTI_BUBBLE = 32,
 	PTI_FLAME = 48,
-	PTI_LAVA
+	PTI_LAVA,
+	PTI_NOTE = 64
 };
 
 class Particle : public Entity
@@ -143,4 +144,15 @@ public:
 
 	int getParticleTexture() override;
 	void render(Tesselator&, float, float, float, float, float, float) override;
+};
+
+class NoteParticle : public Particle
+{
+public:
+	NoteParticle(Level*, const Vec3& pos, const Vec3& dir, float scale = 2.0f);
+	void tick() override;
+	void render(Tesselator&, float, float, float, float, float, float) override;
+
+public:
+	float m_oSize;
 };

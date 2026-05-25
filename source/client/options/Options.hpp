@@ -266,6 +266,14 @@ public:
 	std::string getDisplayValue() const override;
 };
 
+class ControllerOption : public BoolOption
+{
+public:
+	ControllerOption(const std::string& key, const std::string& name, bool initial = true) : BoolOption(key, name, initial) {}
+
+	void apply() override;
+};
+
 class AOOption : public BoolOption
 {
 public:
@@ -288,6 +296,14 @@ public:
 	FancyGraphicsOption(const std::string& key, const std::string& name, bool initial = true) : GraphicsOption(key, name, initial) {}
 
 	std::string getMessage() const override;
+};
+
+class VsyncOption : public BoolOption
+{
+public:
+	VsyncOption(const std::string& key, const std::string& name, bool initial = true) : BoolOption(key, name, initial) {}
+
+	void apply() override;
 };
 
 class GuiScaleOption : public ValuesOption
@@ -335,6 +351,7 @@ class Options
 {
 public:
 	struct KeyBind;
+
 private:
 	static bool _hasResourcePack(const ResourcePack& pack, ResourcePackStack& packs);
 	static void _tryAddResourcePack(const std::string& name, ResourcePackStack& packs);
@@ -364,6 +381,7 @@ private:
 	void _initDefaultValues();
 	void _load();
 	AsyncTask _saveAsync();
+
 public:
 	Options(Minecraft*, const std::string& folderPath = "");
 
@@ -425,7 +443,7 @@ public:
 	GraphicsOption m_fancyGrass;
 	GraphicsOption m_biomeColors;
 	BoolOption m_splitControls;
-	BoolOption m_bUseController;
+	ControllerOption m_bUseController;
 	BoolOption m_dynamicHand;
 	BoolOption m_menuPanorama;
 	StringOption m_lang;
@@ -433,6 +451,7 @@ public:
 	LogoTypeOption m_logoType;
 	HUDSizeOption m_hudSize;
 	BoolOption m_classicCrafting;
+	VsyncOption m_vSync;
 	ResourcePackStack m_resourcePacks;
 };
 
@@ -479,6 +498,7 @@ public:
 	OPTION(m_viewBobbing);                 \
 	OPTION(m_anaglyphs);                   \
 	OPTION(m_blockOutlines);               \
+	OPTION(m_vSync); idxVSync = currentIndex; \
 	OPTION(m_fancyGrass);                  \
 	OPTION(m_biomeColors);                 \
 	OPTION(m_dynamicHand);                 \

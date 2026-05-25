@@ -343,7 +343,7 @@ void LogoRenderer::render3d(float f)
 					z = 0.0f;
 				}
 
-				matrix->translate(Vec3(x, y, z));
+				matrix->translate(Vec3(float(x), float(y), z));
 				matrix->scale(scale);
 				matrix->scale(Vec3(-1.0f, 1.0f, 1.0f));
 				matrix->rotate(rotation, Vec3::UNIT_Z);
@@ -414,8 +414,10 @@ Tile* TitleTile::getRandomTile(Tile* except1, Tile* except2)
 	for (;;)
 	{
 		id = _random.nextInt(256);
-		for (int i = 0; i < _tileBlockListSize; i++) {
-			if (_tileBlockList[i] == id) {
+		for (int i = 0; i < _tileBlockListSize; i++)
+		{
+			if (_tileBlockList[i] == id)
+			{
 				// N.B. Air does not have a tile
 				id = TILE_AIR;
 				break;

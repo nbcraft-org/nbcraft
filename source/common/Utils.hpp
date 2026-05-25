@@ -13,7 +13,7 @@
 #include <stdint.h>
 #include <stdarg.h>
 #include <assert.h>
-#include <limits>
+#include "compat/Limits.hpp"
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #endif
@@ -34,6 +34,13 @@
 #endif
 
 #ifdef _WIN32
+
+#ifdef __CRTDLL__
+
+#define gmtime_s __nbc_gmtime_s
+errno_t gmtime_s(struct tm* out, const time_t* timer);
+
+#endif // __CRTDLL__
 
 #if MC_PLATFORM_WINPC
 
@@ -548,8 +555,6 @@ typedef uint8_t TileID;
 // Rename "Tile" to "TileType"
 // Rename "FullTile" to "Tile"
 typedef uint8_t TileData;
-
-typedef uint16_t SlotID;
 
 #define SAFE_DELETE(ptr) do { if (ptr) delete ptr; } while (0)
 #define SAFE_DELETE_ARRAY(ptr) do { if (ptr) delete[] ptr; } while (0)

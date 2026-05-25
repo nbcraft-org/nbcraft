@@ -36,6 +36,9 @@ CraftingMenu::CraftingMenu(Inventory* inventory, const TilePos& tilePos, Level* 
 
 CraftingMenu::~CraftingMenu()
 {
+    _clearSlots();
+
+    // clearSlots must be called before these are deleted
     delete m_pCraftSlots;
     delete m_pResultSlots;
 }
@@ -67,19 +70,19 @@ bool CraftingMenu::stillValid(Player* player) const
         return !(player->distanceToSqr(Vec3(m_pos.x + 0.5f, m_pos.y + 0.5f, m_pos.z + 0.5f)) > 64.0f);
 }
 
-ItemStack CraftingMenu::quickMoveStack(int index)
+ItemStack CraftingMenu::quickMoveStack(Container::SlotID slotId)
 {
     ItemStack item = ItemStack::EMPTY;
-    Slot* slot = getSlot(index);
+    Slot* slot = getSlot(slotId);
     if (slot && slot->hasItem())
     {
         ItemStack& slotItem = slot->getItem();
         item = slotItem;
-        if (index == 0)
+        if (slotId == 0)
             moveItemStackTo(slotItem, 10, 46, true);
-        else if (index >= 10 && index < 37)
+        else if (slotId >= 10 && slotId < 37)
             moveItemStackTo(slotItem, 37, 46, false);
-        else if (index >= 37 && index < 46)
+        else if (slotId >= 37 && slotId < 46)
             moveItemStackTo(slotItem, 10, 37, false);
         else
             moveItemStackTo(slotItem, 10, 46, false);

@@ -25,14 +25,14 @@ void ImmediateBufferD3D9::_swapBuffers()
     m_pBuffer = m_pBuffer == &m_buffer1 ? &m_buffer2 : &m_buffer1;
 }
 
-void ImmediateBufferD3D9::createDynamicBuffer(RenderContext& context, unsigned int stride, const void* data, unsigned int count, BufferType bufferType)
+void ImmediateBufferD3D9::createDynamicBuffer(RenderContext& context, unsigned int stride, ByteBuffer& data, unsigned int count, BufferType bufferType)
 {
     // We're eating 2 MBs here instead of one
     m_buffer1.createDynamicBuffer(context, stride, data, count, bufferType);
     m_buffer2.createDynamicBuffer(context, stride, data, count, bufferType);
 }
 
-void ImmediateBufferD3D9::updateBuffer(RenderContext& context, unsigned int stride, void*& data, unsigned int count)
+void ImmediateBufferD3D9::updateBuffer(RenderContext& context, unsigned int stride, ByteBuffer& data, unsigned int count)
 {
     // @NOTE: We do our own double-buffering because the 360 will shit itself otherwise and read the wrong vertex data
     _swapBuffers();

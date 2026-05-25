@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{5E65F60F-BA81-469A-BCD9-5A05B0CE0AC6}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{96C60A2F-5D0A-4933-B99B-79208DEADB14}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\HAL">
+      <UniqueIdentifier>{7db56ea8-e84b-4b28-8b8b-7b0a87a4313f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\HAL">
+      <UniqueIdentifier>{7eebeb73-6f61-4ad3-9e03-4d7a8575a64d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\HAL\D3D">
+      <UniqueIdentifier>{8512eeef-f45f-4878-803d-05df55336365}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\HAL\D3D">
+      <UniqueIdentifier>{37f842cc-4b67-42bd-9fbd-633095aa80e1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\d3d\API_D3D.cpp">
+      <Filter>Source Files\HAL\D3D</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\d3d\RenderContextD3D.cpp">
+      <Filter>Source Files\HAL\D3D</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\d3d\RenderDeviceD3D.cpp">
+      <Filter>Source Files\HAL\D3D</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\d3d\ShaderProgramD3D.cpp">
+      <Filter>Source Files\HAL\D3D</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\d3d\API_D3D.hpp">
+      <Filter>Header Files\HAL\D3D</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\d3d\API_D3DCompiler.hpp">
+      <Filter>Header Files\HAL\D3D</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\d3d\RenderContextD3D.hpp">
+      <Filter>Header Files\HAL\D3D</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\d3d\RenderDeviceD3D.hpp">
+      <Filter>Header Files\HAL\D3D</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\d3d\ShaderProgramD3D.hpp">
+      <Filter>Header Files\HAL\D3D</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

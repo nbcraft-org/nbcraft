@@ -19,9 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\dxgi\API_DXGI.cpp" />
-    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\dxgi\helpers\ErrorHandlerDXGI.cpp" />
-    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\dxgi\helpers\TextureHelperDXGI.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\renderer\hal\d3d11\API_D3D11.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\renderer\hal\d3d11\BlendStateD3D11.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\renderer\hal\d3d11\BufferD3D11.cpp" />
@@ -42,9 +39,6 @@
     <ClCompile Include="$(MC_ROOT)\source\renderer\hal\d3d11\helpers\TextureHelperD3D11.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\dxgi\API_DXGI.hpp" />
-    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\dxgi\helpers\ErrorHandlerDXGI.hpp" />
-    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\dxgi\helpers\TextureHelperDXGI.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\renderer\hal\d3d11\API_D3D11.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\renderer\hal\d3d11\BlendStateD3D11.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\renderer\hal\d3d11\BufferD3D11.hpp" />
@@ -65,6 +59,14 @@
     <ClInclude Include="$(MC_ROOT)\source\renderer\hal\d3d11\API_D3D11Compiler.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\renderer\hal\d3d11\helpers\TextureHelperD3D11.hpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Renderer.D3D\Renderer.D3D.vcxproj">
+      <Project>{b44ad6b2-8197-4f41-857c-6a6d69f7bdf4}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Renderer.DXGI\Renderer.DXGI.vcxproj">
+      <Project>{3ba54870-b99f-4773-b31c-4adac028f450}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -75,7 +77,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Lib>
-      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

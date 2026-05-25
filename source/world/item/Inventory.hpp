@@ -1,8 +1,9 @@
 #pragma once
 
+#include <set>
 #include <vector>
-#include "world/Container.hpp"
 #include "GameMods.hpp"
+#include "world/inventory/Container.hpp"
 #include "world/item/ItemStack.hpp"
 #include "world/entity/Player.hpp"
 #include "world/gamemode/GameType.hpp"
@@ -19,13 +20,15 @@ class Player; // in case we're included from Player.hpp
 
 class Inventory : public Container
 {
+private:
+	typedef std::set<ContainerContentChangeListener*> ContentChangeListeners;
 public:
 	Inventory(Player*);
 	virtual ~Inventory();
 	void prepareCreativeInventory();
 	void prepareSurvivalInventory();
 
-	uint16_t getContainerSize() const override;
+	Size getContainerSize() const override;
 
 	void clear();
 	void replace(const std::vector<ItemStack>& items);
@@ -38,14 +41,14 @@ public:
 	bool add(ItemStack& item);
     void tick();
 
-	ItemStack& getItem(int slotNo) override;
+	ItemStack& getItem(StackID stackId) override;
 	ItemStack& getArmor(Item::EquipmentSlot slotNo);
 	ItemStack& getSelectedItem();
 	int getSelectedItemId();
 
-	void setItem(int index, const ItemStack& item) override;
-	void setSelectedItem(ItemStack item);
-	ItemStack removeItem(int index, int count) override;
+	void setItem(StackID stackId, const ItemStack& item) override;
+	void setSelectedItem(const ItemStack& item);
+	ItemStack removeItem(StackID stackId, int count) override;
 	bool removeResource(int id);
 
 	void setCarried(const ItemStack& item);
@@ -53,8 +56,8 @@ public:
 
 	void pickItem(int itemID, int data, int maxHotBarSlot);
 	void selectItem(int itemID, int maxHotBarSlot);
-	void swapItems(int, int);
-	void selectSlot(int slotNo);
+	void swapItems(StackID stackIdA, StackID stackIdB);
+	void selectSlot(StackID stackId);
 
 	int getAttackDamage(Entity*);
 
@@ -69,7 +72,7 @@ public:
 
 	bool contains(const ItemStack&) const;
 
-	uint16_t getSelectedSlotNo() const { return m_selectedSlot; }
+	StackID getSelectedSlotNo() const { return m_selectedStackId; }
 
 	// v0.2.0 name alias
 	ItemStack& getSelected() { return getSelectedItem(); }
@@ -80,9 +83,11 @@ public:
 		return "Inventory";
 	}
 
-	void setChanged() override { }
+	void setContainerChanged(StackID stackId) override;
+	void addContentChangeListener(ContainerContentChangeListener* listener) override;
+	void removeContentChangeListener(ContainerContentChangeListener* listener) override;
 
-	bool stillValid(Player* player) const override { return true;	}
+	bool stillValid(Player* player) const override { return true; }
 	
 private:
 	GameType _getGameMode() const;
@@ -93,11 +98,12 @@ private:
 
 public:
 	Player* m_pPlayer;
-	SlotID m_selectedSlot;
+	StackID m_selectedStackId;
 
 private:
 	ItemStack m_carried;
 
 	std::vector<ItemStack> m_items;
 	std::vector<ItemStack> m_armor;
+	ContentChangeListeners m_contentChangeListeners;
 };

@@ -84,70 +84,70 @@ jobs:
           - name: Pack cache
             run: cd ~ && tar cJf ccache.tar.xz .cache/ccache
 
-    # flatpak:
-    #     strategy:
-    #         fail-fast: false
-    #         matrix:
-    #             include:
-    #               - name: x86_64 SDL 2 (OGL)
-    #                 gfx-api: OGL
-    #                 arch: x86_64
-    #                 runner: ubuntu-24.04
-    #               - name: x86_64 SDL 2 (OGL + Shaders)
-    #                 gfx-api: OGL_SHADERS
-    #                 arch: x86_64
-    #                 runner: ubuntu-24.04
-    #               - name: aarch64 SDL 2 (OGL)
-    #                 gfx-api: OGL
-    #                 arch: aarch64
-    #                 runner: ubuntu-24.04-arm
-    #               - name: aarch64 SDL 2 (OGL + Shaders)
-    #                 gfx-api: OGL_SHADERS
-    #                 arch: aarch64
-    #                 runner: ubuntu-24.04-arm
-    #     name: Flatpak (${{ matrix.name }})
-    #     runs-on: ${{ matrix.runner }}
-    #     steps:
-    #       - name: Get Time
-    #         id: get-time
-    #         run: echo "time=$(date -u '+%Y-%m-%d-%H:%M:%S')" >> $GITHUB_OUTPUT
-    #       - uses: actions/cache@v5
-    #         with:
-    #           path: ~/ccache.tar.xz
-    #           key: flatpak-artifact-${{ matrix.name }}-${{ steps.get-time.outputs.time }}
-    #           restore-keys: flatpak-artifact-${{ matrix.name }}-
-    #       - name: Unpack cache
-    #         run: cd ~ && [ -f ccache.tar.xz ] && tar xf ccache.tar.xz || true
-    #       - name: Checkout Repository
-    #         uses: actions/checkout@v6
-    #         with:
-    #             submodules: true
-    #       - name: Install Dependencies
-    #         run: |
-    #             sudo apt-get update
-    #             sudo apt-get install --no-install-recommends -y flatpak
-    #             flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-    #             flatpak --user install -y \
-    #                 org.freedesktop.Platform/${{ matrix.arch }}/25.08 \
-    #                 org.freedesktop.Sdk/${{ matrix.arch }}/25.08
-    #       - name: Build
-    #         run: ./platforms/linux/build-flatpak.sh
-    #         env:
-    #           NOSTRIP: 1
-    #           ARCH: ${{ matrix.arch }}
-    #           NBC_GFX_API: ${{ matrix.gfx }}
-    #       - uses: actions/upload-artifact@v6
-    #         with:
-    #           name: Flatpak (${{ matrix.name }})
-    #           path: platforms/linux/build-flatpak/NBCraft-${{ matrix.arch }}.flatpak
-    #       - name: Pack cache
-    #         run: cd ~ && tar cJf ccache.tar.xz .cache/ccache
+    flatpak:
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                  - name: x86_64 SDL 2 (OGL)
+                    gfx-api: OGL
+                    arch: x86_64
+                    runner: ubuntu-24.04
+                  - name: x86_64 SDL 2 (OGL + Shaders)
+                    gfx-api: OGL_SHADERS
+                    arch: x86_64
+                    runner: ubuntu-24.04
+                  - name: aarch64 SDL 2 (OGL)
+                    gfx-api: OGL
+                    arch: aarch64
+                    runner: ubuntu-24.04-arm
+                  - name: aarch64 SDL 2 (OGL + Shaders)
+                    gfx-api: OGL_SHADERS
+                    arch: aarch64
+                    runner: ubuntu-24.04-arm
+        name: Flatpak (${{ matrix.name }})
+        runs-on: ${{ matrix.runner }}
+        steps:
+          - name: Get Time
+            id: get-time
+            run: echo "time=$(date -u '+%Y-%m-%d-%H:%M:%S')" >> $GITHUB_OUTPUT
+          - uses: actions/cache@v5
+            with:
+              path: ~/ccache.tar.xz
+              key: flatpak-artifact-${{ matrix.name }}-${{ steps.get-time.outputs.time }}
+              restore-keys: flatpak-artifact-${{ matrix.name }}-
+          - name: Unpack cache
+            run: cd ~ && [ -f ccache.tar.xz ] && tar xf ccache.tar.xz || true
+          - name: Checkout Repository
+            uses: actions/checkout@v6
+            with:
+                submodules: true
+          - name: Install Dependencies
+            run: |
+                sudo apt-get update
+                sudo apt-get install --no-install-recommends -y flatpak
+                flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+                flatpak --user install -y \
+                    org.freedesktop.Platform/${{ matrix.arch }}/25.08 \
+                    org.freedesktop.Sdk/${{ matrix.arch }}/25.08
+          - name: Build
+            run: ./platforms/linux/build-flatpak.sh
+            env:
+              NOSTRIP: 1
+              ARCH: ${{ matrix.arch }}
+              NBC_GFX_API: ${{ matrix.gfx }}
+          - uses: actions/upload-artifact@v6
+            with:
+              name: Flatpak (${{ matrix.name }})
+              path: platforms/linux/build-flatpak/NBCraft-${{ matrix.arch }}.flatpak
+          - name: Pack cache
+            run: cd ~ && tar cJf ccache.tar.xz .cache/ccache
 
     macos:
         strategy:
             fail-fast: false
         name: macOS
-        runs-on: macos-15
+        runs-on: macos-26
         steps:
           - name: Checkout Repository
             uses: actions/checkout@v6
@@ -180,14 +180,18 @@ jobs:
                   MPC="$(brew --prefix)" \
                   PATH="$PWD/cmake-4.2.3-macos-universal/CMake.app/Contents/bin:$PATH" \
                   ./platforms/macos/build.sh
-              tar cf workspacecache.tar platforms/macos/build/work/toolchain platforms/macos/build/work/toolchain-ppc
+              tar cf workspacecache.tar platforms/macos/build/work/toolchain platforms/macos/build/work/toolchain-ppc platforms/macos/build/work/lastworkdir
               mv workspacecache.tar ~
+              # workaround stupid upload-artifacts bs semantics
+              # if you point it at a folder the zip will have the contents of that folder instead of the folder itself
+              mkdir upload
+              mv platforms/macos/build/NBCraft.app upload
             env:
               NOSTRIP: 1
           - uses: actions/upload-artifact@v6
             with:
               name: macOS
-              path: platforms/macos/build/NBCraft
+              path: upload
           - name: Pack cache
             run: cd ~ && tar cJf ccache.tar.xz Library/Caches/ccache workspacecache.tar
 
@@ -217,12 +221,12 @@ jobs:
           - name: Install Dependencies
             run: |
                 wget https://apt.llvm.org/llvm.sh
-                sudo bash llvm.sh 21
+                sudo bash llvm.sh 22
                 sudo apt-get update
                 sudo apt-get install --no-install-recommends -y \
                     cmake \
                     ccache \
-                    clang-21 \
+                    clang-22 \
                     libplist-utils \
                     libplist-dev \
                     libssl-dev
@@ -233,10 +237,10 @@ jobs:
               tar cf workspacecache.tar platforms/ios/build/work/toolchain
               mv workspacecache.tar ~
             env:
-              CLANG: clang-21
-              AR: llvm-ar-21
-              RANLIB: llvm-ranlib-21
-              LLVM_CONFIG: llvm-config-21
+              CLANG: clang-22
+              AR: llvm-ar-22
+              RANLIB: llvm-ranlib-22
+              LLVM_CONFIG: llvm-config-22
               NOSTRIP: 1
           - uses: actions/upload-artifact@v6
             with:
@@ -336,6 +340,10 @@ jobs:
         name: Windows (${{ matrix.name }})
         runs-on: ubuntu-24.04
         steps:
+          - name: Checkout Repository
+            uses: actions/checkout@v6
+            with:
+                submodules: true
           - name: Get Time
             id: get-time
             run: echo "time=$(date -u '+%Y-%m-%d-%H:%M:%S')" >> $GITHUB_OUTPUT
@@ -343,16 +351,12 @@ jobs:
             with:
               path: ~/ccache.tar.xz
               key: windows-artifact-${{ matrix.name }}-${{ steps.get-time.outputs.time }}
-              restore-keys: mingw-artifact-${{ matrix.name }}-
+              restore-keys: windows-artifact-${{ matrix.name }}-
           - name: Unpack cache
             run: |
               cd ~
               [ -f ccache.tar.xz ] && tar xf ccache.tar.xz || true
               [ -f workspacecache.tar ] && mv workspacecache.tar ${{ github.workspace }} || true
-          - name: Checkout Repository
-            uses: actions/checkout@v6
-            with:
-                submodules: true
           - name: Install Dependencies
             run: |
                 sudo apt-get update
@@ -365,6 +369,7 @@ jobs:
                     libmpc-dev
           - name: Build
             run: |
+              [ -f workspacecache.tar ] && tar xf workspacecache.tar || true
               ./platforms/windows/build.sh
               tar cf workspacecache.tar platforms/windows/build/work/toolchain-${{ matrix.arch }}
               mv workspacecache.tar ~

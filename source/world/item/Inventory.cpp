@@ -4,13 +4,14 @@
 #include "common/Logger.hpp"
 #include "nbt/CompoundTag.hpp"
 #include "network/Packet.hpp"
+#include "world/inventory/ContainerContentChangeListener.hpp"
 
 #include "Item.hpp"
 
 Inventory::Inventory(Player* pPlayer) : m_items(C_NUM_INVENTORY_SLOTS), m_armor(C_NUM_ARMOR_SLOTS)
 {
 	m_pPlayer = pPlayer;
-	m_selectedSlot = 0;
+	m_selectedStackId = 0;
 }
 
 Inventory::~Inventory()
@@ -120,9 +121,9 @@ void Inventory::prepareSurvivalInventory()
 #endif
 }
 
-uint16_t Inventory::getContainerSize() const
+Container::Size Inventory::getContainerSize() const
 {
-	return uint16_t(m_items.size() + m_armor.size());
+	return (Size)(m_items.size() + m_armor.size());
 }
 
 void Inventory::clear()
@@ -246,34 +247,34 @@ int Inventory::addResource(const ItemStack& item)
 	}
 }
 
-ItemStack Inventory::removeItem(int index, int count)
+ItemStack Inventory::removeItem(StackID stackId, int count)
 {
-	ItemStack& item = getItem(index);
+	ItemStack& item = getItem(stackId);
 
 	if (!item.isEmpty())
 	{
 		if (item.m_count <= count)
 		{
 			ItemStack removed = item;
-			setItem(index, ItemStack::EMPTY);
+			setItem(stackId, ItemStack::EMPTY);
 			return removed;
 		}
 		else
 		{
 			ItemStack removed = item.remove(count);
 			if (item.m_count == 0)
-				setItem(index, ItemStack::EMPTY);
+				setItem(stackId, ItemStack::EMPTY);
 
 			return removed;
 		}
 	}
-	else
-		return ItemStack::EMPTY;
+	
+	return ItemStack::EMPTY;
 }
 
 int Inventory::getSlot(int id)
 {
-	for (size_t i = 0; i < m_items.size(); ++i)
+	for (StackID i = 0; i < m_items.size(); ++i)
 	{
 		if (!m_items[i].isEmpty() && m_items[i].getId() == id)
 			return i;
@@ -299,7 +300,7 @@ bool Inventory::removeResource(int id)
 // Doesn't exist in PE
 void Inventory::tick()
 {
-    for (size_t i = 0; i < m_items.size(); i++)
+    for (StackID i = 0; i < m_items.size(); i++)
     {
 		ItemStack& item = m_items[i];
 
@@ -307,7 +308,7 @@ void Inventory::tick()
         {
 			if (item.m_popTime > 0)
 				item.m_popTime--;
-			item.getItem()->inventoryTick(&item, m_pPlayer->m_pLevel, m_pPlayer, i, i == m_selectedSlot);
+			item.getItem()->inventoryTick(&item, m_pPlayer->m_pLevel, m_pPlayer, i, i == m_selectedStackId);
         }
     }
 }
@@ -368,14 +369,15 @@ bool Inventory::hasUnlimitedResource(const ItemStack& item) const
 	return true;
 }
 
-ItemStack& Inventory::getItem(int slotNo)
+ItemStack& Inventory::getItem(StackID stackId)
 {
-	assert(slotNo >= 0 && slotNo < getContainerSize());
+	// stackId < getContainerSize() trips when the RemotePlayer dies
+	assert(stackId >= 0 && stackId < getContainerSize());
 
-	if (size_t(slotNo) < m_items.size())
-		return m_items[slotNo];
+	if (size_t(stackId) < m_items.size())
+		return m_items[stackId];
 	else
-		return m_armor[slotNo - m_items.size()];
+		return m_armor[stackId - m_items.size()];
 }
 
 ItemStack& Inventory::getArmor(Item::EquipmentSlot slotNo)
@@ -385,29 +387,29 @@ ItemStack& Inventory::getArmor(Item::EquipmentSlot slotNo)
 
 ItemStack& Inventory::getSelectedItem()
 {
-	return getItem(m_selectedSlot);
+	return getItem(m_selectedStackId);
 }
 
 int Inventory::getSelectedItemId()
 {
-	return getItem(m_selectedSlot).getId();
+	return getItem(m_selectedStackId).getId();
 }
 
-void Inventory::setItem(int index, const ItemStack& item)
+void Inventory::setItem(StackID stackId, const ItemStack& item)
 {
-	if ((size_t)index >= m_items.size())
+	if ((size_t)stackId >= m_items.size())
 	{
-		m_armor[index - m_items.size()] = item;
+		m_armor[stackId - m_items.size()] = item;
 	}
 	else
 	{
-		m_items[index] = item;
+		m_items[stackId] = item;
 	}
 }
 
-void Inventory::setSelectedItem(ItemStack item)
+void Inventory::setSelectedItem(const ItemStack& item)
 {
-	setItem(m_selectedSlot, item);
+	setItem(m_selectedStackId, item);
 }
 
 void Inventory::setCarried(const ItemStack& carried)
@@ -425,24 +427,24 @@ void Inventory::pickItem(int itemID, int data, int maxHotBarSlot)
 {
 	Item* selectItem = Item::items[itemID];
 
-	if (!selectItem) return;
+	if (!selectItem && itemID != TILE_AIR) return;
 
 	for (size_t i = 0; i < m_items.size(); i++)
 	{
-		if (!m_items[i] || m_items[i].getId() != itemID || m_items[i].getAuxValue() != data)
+		if (m_items[i].getId() != itemID || m_items[i].getAuxValue() != data)
 			continue;
 
 		if (i < size_t(maxHotBarSlot))
 			selectSlot(i);
 		else
-			swapItems(i, m_selectedSlot);
+			swapItems(i, m_selectedStackId);
 		return;
 	}
 
-	if (m_pPlayer->isCreative())
+	if (m_pPlayer->isCreative() && selectItem != nullptr)
 	{
 		ItemStack oldSelected = getSelected();
-		setItem(m_selectedSlot, ItemStack(selectItem, 1, data));
+		setItem(m_selectedStackId, ItemStack(selectItem, 1, data));
 		if (!oldSelected.isEmpty()) addResource(oldSelected);
 	}
 }
@@ -459,23 +461,23 @@ void Inventory::selectItem(int itemID, int maxHotBarSlot)
 			continue;
 
 		if (i < size_t(maxHotBarSlot))
-			m_selectedSlot = i;
+			m_selectedStackId = i;
 		else
-			swapItems(i, m_selectedSlot);
+			swapItems(i, m_selectedStackId);
 	}
 }
 
-void Inventory::swapItems(int indexA, int indexB)
+void Inventory::swapItems(StackID stackIdA, StackID stackIdB)
 {
-	std::swap(getItem(indexA), getItem(indexB));
+	std::swap(getItem(stackIdA), getItem(stackIdB));
 }
 
-void Inventory::selectSlot(int slotNo)
+void Inventory::selectSlot(StackID stackId)
 {
-	if (slotNo < 0 || slotNo >= C_MAX_HOTBAR_ITEMS)
+	if (stackId < 0 || stackId >= C_MAX_HOTBAR_ITEMS)
 		return;
 
-	m_selectedSlot = slotNo;
+	m_selectedStackId = stackId;
 }
 
 int Inventory::getAttackDamage(Entity* pEnt)
@@ -626,4 +628,23 @@ void Inventory::load(const ListTag& tag)
 GameType Inventory::_getGameMode() const
 {
 	return m_pPlayer->getPlayerGameType();
+}
+
+void Inventory::setContainerChanged(StackID stackId)
+{
+	for (ContentChangeListeners::iterator it = m_contentChangeListeners.begin(); it != m_contentChangeListeners.end(); ++it)
+	{
+		ContainerContentChangeListener* listener = *it;
+		listener->containerContentChanged(this, stackId);
+	}
+}
+
+void Inventory::addContentChangeListener(ContainerContentChangeListener* listener)
+{
+	m_contentChangeListeners.insert(listener);
+}
+
+void Inventory::removeContentChangeListener(ContainerContentChangeListener* listener)
+{
+	m_contentChangeListeners.erase(listener);
 }

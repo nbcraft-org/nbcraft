@@ -1,4 +1,5 @@
 #include <cstring>
+#include <sstream>
 
 #include "API_D3D9.hpp"
 #include "API_D3D9Compiler.hpp"
@@ -6,46 +7,45 @@
 #include "ShaderProgramD3D9.hpp"
 
 #include "common/Util.hpp"
+#include "client/app/Minecraft.hpp"
 #include "renderer/RenderContextImmediate.hpp"
 #include "renderer/hal/d3d9/helpers/ErrorHandlerD3D9.hpp"
 
 using namespace mce;
 
 ShaderProgramD3D9::ShaderProgramD3D9(ShaderType shaderType, std::string& shaderSource, const std::string& header, const std::string& shaderPath)
-    : ShaderProgramBase(header, shaderPath, shaderType)
+    : ShaderProgramD3D(shaderType, shaderSource, header, shaderPath)
 {
-    m_shaderSource = shaderSource;
 }
 
 ShaderProgramD3D9::~ShaderProgramD3D9()
 {
 }
 
-std::string _getShaderModelType(ShaderType shaderType)
-{
-    switch (shaderType)
-    {
-    case SHADER_TYPE_VERTEX:   return "vs";
-    case SHADER_TYPE_FRAGMENT: return "ps";
-    case SHADER_TYPE_GEOMETRY: return "gs";
-
-    default:
-        LOG_E("Unknown shader type: %d", shaderType);
-        throw std::bad_cast();
-    }
-}
-
-std::string _getShaderTarget(ShaderType shaderType)
-{
-    std::string shaderModelType = _getShaderModelType(shaderType);
-
-    return shaderModelType + "_3_0";
-}
-
 void _translateShaderSource(std::string& source)
 {
     // Dirty hack, since D3D9 doesn't support the lack of an underscore
     Util::stringReplace(source, "TEXCOORD_", "TEXCOORD");
+}
+
+DWORD _getCompilerFlags(RenderContext& context, ShaderType shaderType)
+{
+	DWORD compilerFlags = 0x0;
+
+	int major, minor;
+	context.getShaderLangVersion(shaderType, major, minor);
+
+	/*
+	 * Enable the use of the original Direct3D 9 HLSL compiler.
+	 * OCT2006_d3dx9_31_x86.cab or OCT2006_d3dx9_31_x64.cab must be included as part of the applications redist.
+	 * This flag is required to compile ps_1_x shaders without using the promotion flag to ps_2_0.
+	 */
+#ifdef D3DXSHADER_USE_LEGACY_D3DX9_31_DLL
+	if (major == 1)
+		compilerFlags |= D3DXSHADER_USE_LEGACY_D3DX9_31_DLL;
+#endif
+
+	return compilerFlags;
 }
 
 void ShaderProgramD3D9::compileShaderProgram()
@@ -62,7 +62,8 @@ void ShaderProgramD3D9::compileShaderProgram()
     _translateShaderSource(m_shaderSource);
 
     RenderContext& renderContext = RenderContextImmediate::get();
-    std::string shaderTarget = _getShaderTarget(m_shaderType);
+    std::string shaderTarget = _GetShaderTarget(renderContext, m_shaderType);
+	DWORD compilerFlags = _getCompilerFlags(renderContext, m_shaderType);
 
     HRESULT hResult;
     ComInterface<ID3DXBuffer> code, errorMsgs;
@@ -72,7 +73,7 @@ void ShaderProgramD3D9::compileShaderProgram()
         NULL,
         "main",
         shaderTarget.c_str(),
-        0x0,
+        compilerFlags,
         *code, *errorMsgs,
         NULL);
     if (hResult != S_OK)
@@ -111,4 +112,18 @@ void ShaderProgramD3D9::compileShaderProgram()
 
     m_shaderBytecode = std::string((const char*)code->GetBufferPointer(), code->GetBufferSize());
     m_bValid = bSuccess;
+}
+
+void ShaderProgramD3D9::BuildHeader(RenderContext& context, std::ostringstream& stream)
+{
+    stream << "#define _DIRECT3D9\n";
+#ifdef _XBOX
+    stream << "#define _XBOX\n";
+#endif
+
+    ShaderProgramD3D::BuildHeader(context, stream);
+
+    // hack to fix dumb D3D9 bullshit: https://www.virtualdub.org/blog2/entry_366.html
+    stream << "#define __D3D9_OFFSET_X " << (-1.0f / Minecraft::width) << "\n";
+    stream << "#define __D3D9_OFFSET_Y " << (1.0f / Minecraft::height) << "\n";
 }

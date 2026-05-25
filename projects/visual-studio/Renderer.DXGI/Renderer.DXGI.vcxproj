@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\dxgi\API_DXGI.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\dxgi\helpers\ErrorHandlerDXGI.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\dxgi\helpers\TextureHelperDXGI.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\dxgi\API_DXGI.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\dxgi\helpers\ErrorHandlerDXGI.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\dxgi\helpers\TextureHelperDXGI.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\COM\COM.vcxproj">
+      <Project>{bc0701d1-0634-4754-b078-65a45bf01fa1}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{3ba54870-b99f-4773-b31c-4adac028f450}</ProjectGuid>
+    <RootNamespace>Renderer.DXGI</RootNamespace>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ProjectName>Renderer.DXGI</ProjectName>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <Lib>
+      <AdditionalDependencies>dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="NBCraft">
+    <Import Project="../Directory.Build.props" Condition="'$(MC_GLOBAL_PROPS)'==''" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

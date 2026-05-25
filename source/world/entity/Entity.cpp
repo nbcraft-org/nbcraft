@@ -25,6 +25,9 @@ void Entity::_init()
 	m_bInAChunk = false;
 	m_viewScale = 1.0f;
 	m_dimensionId = DIMENSION_OVERWORLD;
+	m_riderId = 0;
+	m_ridingId = 0;
+	m_bRiding = false;
     m_bBlocksBuilding = false;
 	m_pLevel = nullptr;
 	m_tintColor = Color::WHITE;
@@ -215,7 +218,7 @@ void Entity::move(const Vec3& pos)
 		AABBVector* cubes = m_pLevel->getCubes(this, AABB(m_hitbox).expand(newPos.x, newPos.y, newPos.z));
 
 		for (size_t i = 0; i < cubes->size(); ++i)
-			newPos.y = cubes->at(i).clipYCollide(m_hitbox, newPos.y);
+			newPos.y = (*cubes)[i].clipYCollide(m_hitbox, newPos.y);
 
 		m_hitbox.move(0.0f, newPos.y, 0.0f);
 		if (!m_bSlide && cPosY != newPos.y)
@@ -224,14 +227,14 @@ void Entity::move(const Vec3& pos)
 		bool lastsOnGround = m_bOnGround || (cPosY != newPos.y && cPosY < 0.0);
 
 		for (size_t i = 0; i < cubes->size(); ++i)
-			newPos.x = cubes->at(i).clipXCollide(m_hitbox, newPos.x);
+			newPos.x = (*cubes)[i].clipXCollide(m_hitbox, newPos.x);
 	
 		m_hitbox.move(newPos.x, 0.0f, 0.0f);
 		if (!m_bSlide && cPosX != newPos.x)
 			newPos = Vec3::ZERO;
 
 		for (size_t i = 0; i < cubes->size(); ++i)
-			newPos.z = cubes->at(i).clipZCollide(m_hitbox, newPos.z);
+			newPos.z = (*cubes)[i].clipZCollide(m_hitbox, newPos.z);
 
 		m_hitbox.move(0.0f, 0.0f, newPos.z);
 		if (!m_bSlide && cPosZ != newPos.z)
@@ -248,21 +251,21 @@ void Entity::move(const Vec3& pos)
 			cubes = m_pLevel->getCubes(this, AABB(m_hitbox).expand(cPosX, newPos.y, cPosZ));
 
 			for (size_t i = 0; i < cubes->size(); ++i)
-				newPos.y = cubes->at(i).clipYCollide(m_hitbox, newPos.y);
+				newPos.y = (*cubes)[i].clipYCollide(m_hitbox, newPos.y);
 
 			m_hitbox.move(0.0f, newPos.y, 0.0f);
 			if (!m_bSlide && cPosY != newPos.y)
 				newPos = Vec3::ZERO;
 
 			for (size_t i = 0; i < cubes->size(); ++i)
-				newPos.x = cubes->at(i).clipXCollide(m_hitbox, newPos.x);
+				newPos.x = (*cubes)[i].clipXCollide(m_hitbox, newPos.x);
 
 			m_hitbox.move(newPos.x, 0.0f, 0.0f);
 			if (!m_bSlide && cPosX != newPos.x)
 				newPos = Vec3::ZERO;
 
 			for (size_t i = 0; i < cubes->size(); ++i)
-				newPos.z = cubes->at(i).clipZCollide(m_hitbox, newPos.z);
+				newPos.z = (*cubes)[i].clipZCollide(m_hitbox, newPos.z);
 
 			m_hitbox.move(0.0f, 0.0f, newPos.z);
 			if (!m_bSlide && cPosZ != newPos.z)
@@ -425,7 +428,7 @@ void Entity::lerpTo(const Vec3& pos)
 	setPos(pos);
 }
 
-void Entity::lerpTo(const Vec3& pos, const Vec2& rot, int p)
+void Entity::lerpTo(const Vec3& pos, const Vec2& rot, int steps)
 {
 	lerpTo(pos);
 	setRot(rot);
@@ -481,6 +484,14 @@ void Entity::tick()
 void Entity::baseTick()
 {
 	//@TODO: untangle the gotos
+	if (const Entity* riding = getRiding())
+	{
+		// if you were riding an entity and they no longer exist, stop
+		if ((!riding && m_ridingId > 0) || riding->m_bRemoved)
+		{
+			setRiding(nullptr);
+		}
+	}
 
 	m_walkDistO = m_walkDist;
 	m_oPos = m_pos;
@@ -757,6 +768,9 @@ void Entity::playerTouch(Player* player)
 
 void Entity::push(Entity* bud)
 {
+	if (bud == getRider() || bud == getRiding())
+		return;
+
 	float diffX = bud->m_pos.x - m_pos.x;
 	float diffZ = bud->m_pos.z - m_pos.z;
 	float maxDiff = Mth::absMax(diffX, diffZ);
@@ -901,9 +915,9 @@ void Entity::outOfWorld()
 	remove();
 }
 
-void Entity::checkFallDamage(float fDeltaY, bool bHitGround)
+void Entity::checkFallDamage(float ya, bool onGround)
 {
-	if (bHitGround)
+	if (onGround)
 	{
 		if (m_distanceFallen > 0.0f)
 		{
@@ -911,13 +925,13 @@ void Entity::checkFallDamage(float fDeltaY, bool bHitGround)
 			m_distanceFallen = 0.0f;
 		}
 	}
-	else if (fDeltaY < 0.0f)
+	else if (ya < 0.0f)
 	{
-		m_distanceFallen -= fDeltaY;
+		m_distanceFallen -= ya;
 	}
 }
 
-void Entity::causeFallDamage(float f)
+void Entity::causeFallDamage(float ya)
 {
 	// stub
 }
@@ -959,6 +973,46 @@ AABB* Entity::getCollideAgainstBox(Entity* ent) const
 	return nullptr;
 }
 
+void Entity::rideTick()
+{
+	Entity* riding = getRiding();
+	if (!riding || riding->m_bRemoved)
+	{
+		setRiding(nullptr);
+		return;
+	}
+
+	// we don't move
+	m_vel = Vec3::ZERO;
+
+	tick();
+
+	riding->positionRider();
+	m_rideRot.x += riding->m_rot.x - riding->m_oRot.x;
+	m_rideRot.y += riding->m_rot.y - riding->m_oRot.y;
+	while (m_rideRot.y >= 180.0f)
+		m_rideRot.y -= 360.0f;
+	while (m_rideRot.y < -180.0f)
+		m_rideRot.y += 360.0f;
+	while (m_rideRot.x >= 180.0f)
+		m_rideRot.x -= 360.0f;
+	while (m_rideRot.x < -180.0f)
+		m_rideRot.x += 360.0f;
+	
+	float rotX = m_rideRot.x * 0.5f;
+	float rotY = m_rideRot.y * 0.5f;
+
+	constexpr float lookLimiter = 10.0f;
+	rotX = Mth::clamp(rotX, -lookLimiter, lookLimiter);
+	rotY = Mth::clamp(rotY, -lookLimiter, lookLimiter);
+
+	m_rideRot.x -= rotX;
+	m_rideRot.y -= rotY;
+
+	m_rot.x += rotX;
+	m_rot.y += rotY;
+}
+
 void Entity::handleInsidePortal()
 {
 }
@@ -966,6 +1020,99 @@ void Entity::handleInsidePortal()
 void Entity::handleEntityEvent(EventType::ID eventId)
 {
 	LOG_W("Unknown EntityEvent ID: %d, EntityType: %s", eventId, getDescriptor().getEntityType().getName().c_str());
+}
+
+void Entity::positionRider()
+{
+	Entity* rider = getRider();
+	if (!rider)
+		return;
+
+	rider->setPos(Vec3(m_pos.x, m_pos.y + getRideHeight() + rider->getRidingHeight(), m_pos.z));
+}
+
+void Entity::ride(Entity* newRiding)
+{
+	m_rideRot = Vec2::ZERO;
+	Entity* oldRiding = getRiding();
+
+	// Dismount current ride if nullptr is fed in
+	if (newRiding == nullptr)
+	{
+		if (oldRiding)
+		{
+			moveTo(oldRiding->m_pos);
+			setRot(oldRiding->m_rot);
+			oldRiding->setRider(nullptr);
+		}
+
+		// Let yourself know you aren't riding anything
+		setRiding(nullptr);
+
+		return;
+	}
+
+	// Dismount if the same entity is fed in
+	if (oldRiding && oldRiding == newRiding)
+	{
+		oldRiding->setRider(nullptr);
+
+		setRiding(nullptr);
+
+		moveTo(oldRiding->m_pos);
+		setRot(oldRiding->m_rot);
+		return;
+	}
+
+	// if (this.riding != null) this.riding.rider = null;
+	if (oldRiding)
+	{
+		oldRiding->setRider(nullptr);
+	}
+
+	// if (newRiding.rider != null) newRiding.rider.riding = null;
+	// i hate this name but it's literally what it is
+	if (Entity* newRidesOldRider = newRiding->getRider())
+	{
+		setRiding(nullptr);
+		newRidesOldRider->setRider(nullptr);
+	}
+
+	setRiding(newRiding);
+	newRiding->setRider(this);
+}
+
+Entity* Entity::getRiding() const
+{
+	if (m_ridingId <= 0)
+		return nullptr;
+
+	if (Entity* riding = m_pLevel->getEntity(m_ridingId))
+		return riding;
+
+	return nullptr;
+}
+
+Entity* Entity::getRider() const
+{
+    if (m_riderId <= 0)
+		return nullptr;
+
+	if (Entity* rider = m_pLevel->getEntity(m_riderId))
+		return rider;
+
+	return nullptr;
+}
+
+void Entity::setRider(Entity* rider)
+{
+	m_riderId = (rider) ? rider->m_EntityID : 0;
+}
+
+void Entity::setRiding(Entity* riding)
+{
+	m_ridingId = (riding) ? riding->m_EntityID : 0;
+	setSharedFlag(FLAG_RIDING, riding);
 }
 
 /*void Entity::thunderHit(LightningBolt* bolt)
@@ -1007,7 +1154,7 @@ void Entity::load(const CompoundTag& tag)
 	m_airSupply = tag.getInt16("Air");
 	m_bOnGround = tag.getBoolean("OnGround");
 	setPos(m_pos);
-	setRot(m_rot);
+	setRot(m_rot, true);
 	readAdditionalSaveData(tag);
 }
 

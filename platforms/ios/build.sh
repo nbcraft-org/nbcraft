@@ -108,7 +108,7 @@ if [ -n "$outdated_toolchain" ]; then
     # this step is needed even on macOS since newer versions of Xcode will straight up not let you link for old iOS versions anymore
     printf '\nBuilding toolchain...\n\n'
 
-    cctools_commit=12e2486bc81c3b2be975d3e117a9d3ab6ec3970c
+    cctools_commit=fee8115127bb849d7481ea0015f181d3ebbd33cf
     rm -rf cctools-port-*
     wget -O- "https://github.com/Un1q32/cctools-port/archive/$cctools_commit.tar.gz" | tar -xz
 

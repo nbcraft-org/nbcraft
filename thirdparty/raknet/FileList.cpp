@@ -50,7 +50,7 @@ using namespace RakNet;
 
 
 #else
-	#if !defined ( __FreeBSD__ )
+	#if !defined ( __FreeBSD__ ) && !defined ( __OpenBSD__ )
 	#include <alloca.h>
 	#endif
 #include <unistd.h>

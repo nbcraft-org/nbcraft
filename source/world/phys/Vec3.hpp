@@ -27,52 +27,132 @@ public:
 
 public:
 	float x, y, z;
-    
-private:
-    void _init(float x, float y, float z);
 
 public:
 	// this constructor is nice to have, but it's probably inlined
-	Vec3();
-	Vec3(float xyz);
-	Vec3(float x, float y, float z);
-	Vec3(const TilePos& tilePos);
+	Vec3() : x(0), y(0), z(0) {}
+	Vec3(float xyz) : x(xyz), y(xyz), z(xyz) {}
+	Vec3(int xyz) : x(float(xyz)), y(float(xyz)), z(float(xyz)) {}
+	Vec3(float x, float y, float z) : x(x), y(y), z(z) {}
+	Vec3(int x, int y, int z) : x(float(x)), y(float(y)), z(float(z)) {}
 
-	Vec3 interpolateTo(const Vec3& to, float t) const;
+	Vec3 interpolateTo(const Vec3& to, float t) const
+	{
+		return *this + (to - *this) * t;
+	}
+
 	Vec3 vectorTo(const Vec3& to) const
 	{
 		return Vec3(to.x - x, to.y - y, to.z - z);
 	}
-	Vec3 normalize() const;
+
+	Vec3 normalize() const
+	{
+		float dist = length();
+		if (dist < 0.0001f)
+			return ZERO;
+
+		return Vec3(x / dist, y / dist, z / dist);
+	}
+
 	float dot(const Vec3& other) const
 	{
 		return x * other.x + y * other.y + z * other.z;
 	}
+
 	Vec3 cross(const Vec3& other) const
 	{
 		return Vec3(y * other.z - z * other.y, z * other.x - x * other.z, x * other.y - y * other.x);
 	}
+
 	Vec3 add(float x, float y, float z) const
 	{
 		return Vec3(this->x + x, this->y + y, this->z + z); 
 	}
 
-	// these are likely inlined
 	float distanceTo(const Vec3& b) const
 	{ 
 		return Mth::sqrt(distanceToSqr(b));
 	}
+
 	float distanceToSqr(const Vec3& b) const
 	{
 		return (*this - b).lengthSqr();
 	}
     
-    bool clipX(const Vec3& a2, float a3, Vec3& a4) const;
-	bool clipY(const Vec3& a2, float a3, Vec3& a4) const;
-	bool clipZ(const Vec3& a2, float a3, Vec3& a4) const;
-	void xRot(float rot);
-	void yRot(float rot);
-	void zRot(float rot);
+	bool clipX(const Vec3& endPoint, float clipValue, Vec3& intersection) const
+	{
+		float deltaX = endPoint.x - this->x;
+		if (deltaX * deltaX < 0.000001f)
+			return false;
+
+		float t = (clipValue - this->x) / deltaX;
+		if (t < 0.0f || t > 1.0f)
+			return false;
+
+		intersection = interpolateTo(endPoint, t);
+		return true;
+	}
+
+	bool clipY(const Vec3& endPoint, float clipValue, Vec3& intersection) const
+	{
+		float deltaY = endPoint.y - this->y;
+		if (deltaY * deltaY < 0.000001f)
+			return false;
+
+		float t = (clipValue - this->y) / deltaY;
+		if (t < 0.0f || t > 1.0f)
+			return false;
+
+		intersection = interpolateTo(endPoint, t);
+		return true;
+	}
+
+	bool clipZ(const Vec3& endPoint, float clipValue, Vec3& intersection) const
+	{
+		float deltaZ = endPoint.z - this->z;
+		if (deltaZ * deltaZ < 0.000001f)
+			return false;
+
+		float t = (clipValue - this->z) / deltaZ;
+		if (t < 0.0f || t > 1.0f)
+			return false;
+
+		intersection = interpolateTo(endPoint, t);
+		return true;
+	}
+	void xRot(float rot) {
+		float cos = Mth::cos(rot);
+		float sin = Mth::sin(rot);
+		float var4 = x;
+		float var6 = y * cos + z * sin;
+		float var8 = z * cos - y * sin;
+		x = var4;
+		y = var6;
+		z = var8;
+	}
+
+	void yRot(float rot) {
+		float cos = Mth::cos(rot);
+		float sin = Mth::sin(rot);
+		float var4 = x * cos + z * sin;
+		float var6 = y;
+		float var8 = z * cos - x * sin;
+		x = var4;
+		y = var6;
+		z = var8;
+	}
+
+	void zRot(float rot) {
+		float cos = Mth::cos(rot);
+		float sin = Mth::sin(rot);
+		float var4 = x * cos + y * sin;
+		float var6 = y * cos - x * sin;
+		float var8 = z;
+		x = var4;
+		y = var6;
+		z = var8;
+	}
 
 	Vec3 translate(float tx, float ty, float tz) const
 	{
@@ -94,7 +174,6 @@ public:
 		return Vec3(x * scale, y * scale, z * scale);
 	}
 
-	// these are also likely inlined, but I'll declare them in the header
 	Vec3 operator+(const Vec3& b) const
 	{
 		return Vec3(x + b.x, y + b.y, z + b.z);
@@ -120,6 +199,13 @@ public:
 	void operator-=(const Vec3& b)
 	{
 		(*this) += -b;
+	}
+
+	void operator*=(const Vec3& b)
+	{
+		x *= b.x;
+		y *= b.y;
+		z *= b.z;
 	}
 
 	void operator+=(float f)

@@ -50,6 +50,41 @@ int g_TimeSecondsOnInit = 0;
 
 #ifdef _WIN32
 
+#ifdef __CRTDLL__
+
+static CRITICAL_SECTION g_gmtime_s_lock;
+static LONG g_gmtime_s_lock_state = 0;
+
+errno_t gmtime_s(struct tm* out, const time_t* timer)
+{
+    struct tm* tmp;
+
+    if (!out || !timer)
+        return EINVAL;
+
+    LONG state = InterlockedCompareExchange(&g_gmtime_s_lock_state, 1, 0);
+
+    if (state == 0) {
+        InitializeCriticalSection(&g_gmtime_s_lock);
+        InterlockedExchange(&g_gmtime_s_lock_state, 2);
+    } else {
+        while (InterlockedCompareExchange(&g_gmtime_s_lock_state, 2, 2) != 2)
+            Sleep(0);
+    }
+
+    EnterCriticalSection(&g_gmtime_s_lock);
+
+    tmp = gmtime(timer);
+    if (tmp)
+        *out = *tmp;
+
+    LeaveCriticalSection(&g_gmtime_s_lock);
+
+    return tmp ? 0 : EINVAL;
+}
+
+#endif // __CRTDLL__
+
 void toDosPath(char* path)
 {
     if (path == NULL) return;

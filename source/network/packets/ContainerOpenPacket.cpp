@@ -1,13 +1,6 @@
 #include "ContainerOpenPacket.hpp"
 #include "network/NetEventCallback.hpp"
 
-ContainerOpenPacket::ContainerOpenPacket(int8_t containerId, Container::Type type, const std::string& title, int8_t size)
-	: m_containerId(containerId)
-	, m_type(type)
-	, m_title(title.c_str())
-	, m_size(size)
-{}
-
 void ContainerOpenPacket::handle(const RakNet::RakNetGUID& guid, NetEventCallback& callback)
 {
 	callback.handle(guid, this);

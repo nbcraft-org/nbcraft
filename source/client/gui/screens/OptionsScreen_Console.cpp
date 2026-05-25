@@ -19,9 +19,9 @@ OptionsScreen_Console::OptionsScreen_Console(Screen* screen) :
 void OptionsScreen_Console::_buttonClicked(Button* btn)
 {
 	if (btn->getId() == m_btnControls.getId())
-		m_pMinecraft->setScreen(new ControlsPanelScreen(this, m_pMinecraft));
+		m_pMinecraft->setScreen(new ControlsPanelScreen(this, *m_pMinecraft));
 	else if (btn->getId() == m_btnSettings.getId())
-		m_pMinecraft->setScreen(new SettingsPanelScreen(this, *m_pMinecraft->getOptions()));
+		m_pMinecraft->setScreen(new SettingsPanelScreen(this, *m_pMinecraft));
 	else if (btn->getId() == m_btnCredits.getId())
 		m_pMinecraft->getScreenChooser()->pushCreditsScreen(this);
 	else if (btn->getId() == m_btnResetToDefaults.getId())
@@ -73,9 +73,9 @@ bool OptionsScreen_Console::handleBackEvent(bool b)
 #define HEADER(text) do { m_layout.m_elements.push_back(new OptionHeader_Console(text)); currentIndex++; } while (0)
 #define OPTION(name) do { options.name.addGuiElement(m_layout.m_elements, m_uiTheme); currentIndex++; } while (0)
 
-ControlsPanelScreen::ControlsPanelScreen(Screen* parent, Minecraft* mc) : PanelScreen_Console(parent)
+ControlsPanelScreen::ControlsPanelScreen(Screen* parent, Minecraft& mc) : PanelScreen_Console(parent)
 {
-	Options& options = *mc->getOptions();
+	Options& options = *mc.getOptions();
 	int currentIndex = -1;
 	int idxSplit = -1, idxController = -1;
 
@@ -83,9 +83,10 @@ ControlsPanelScreen::ControlsPanelScreen(Screen* parent, Minecraft* mc) : PanelS
 	OPTIONS_LIST_CONTROLS_FEEDBACK;
 	OPTIONS_LIST_CONTROLS_EXPERIMENTAL;
 
-	if (!mc->isTouchscreen())
-		m_layout.m_elements[idxSplit]->setEnabled(false);
 	m_layout.m_elements[idxController]->setEnabled(false);
+
+	if (!mc.isTouchscreen())
+		m_layout.m_elements[idxSplit]->setEnabled(false);
 }
 
 void ControlsPanelScreen::removed()
@@ -93,10 +94,14 @@ void ControlsPanelScreen::removed()
 	m_pMinecraft->saveOptionsAsync();
 }
 
-SettingsPanelScreen::SettingsPanelScreen(Screen* parent, Options& options) : PanelScreen_Console(parent)
+SettingsPanelScreen::SettingsPanelScreen(Screen* parent, Minecraft& mc) : PanelScreen_Console(parent)
 {
+	m_pMinecraft = &mc;
+
 	int currentIndex = -1;
-	int idxPano = -1;
+	int idxPano = -1, idxVSync = -1;
+
+	Options& options = *mc.getOptions();
 
 	OPTIONS_LIST_GAMEPLAY_GAME;
 	OPTIONS_LIST_GAMEPLAY_AUDIO;
@@ -107,6 +112,9 @@ SettingsPanelScreen::SettingsPanelScreen(Screen* parent, Options& options) : Pan
 	if (!Screen::isMenuPanoramaAvailable())
 		m_layout.m_elements[idxPano]->setEnabled(false);
 #endif
+
+	if (!m_pMinecraft->platform()->isVSyncSwitchable())
+		m_layout.m_elements[idxVSync]->setEnabled(false);
 
 	(void)currentIndex; // compiler will warn about an unused variable sometimes if this isn't here
 }

@@ -343,21 +343,3 @@ ComInterface<ID3D11InputLayout> ShaderD3D11::createInputLayout(const VertexForma
 
     return ComInterface<ID3D11InputLayout>(pInputLayout);
 }
-
-void ShaderD3D11::SpliceShaderPath(std::string& shaderName)
-{
-    ShaderBase::SpliceShaderPath(shaderName, "/hlsl");
-}
-
-void ShaderD3D11::SpliceShaderExtension(std::string& shaderName)
-{
-    ShaderBase::SpliceShaderExtension(shaderName, ".hlsl");
-}
-
-void ShaderD3D11::BuildHeader(std::ostringstream& stream)
-{
-    const RenderContext& renderContext = RenderContextImmediate::getAsConst();
-
-    if (!renderContext.supportsR8G8B8A8_SNORM())
-        stream << "#define R8G8B8A8_SNORM_UNSUPPORTED";
-}

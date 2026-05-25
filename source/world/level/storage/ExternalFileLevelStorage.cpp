@@ -7,6 +7,8 @@
  ********************************************************************/
 
 #include <stdint.h>
+#include <algorithm>
+#include <cctype>
 
 #include "ExternalFileLevelStorage.hpp"
 
@@ -16,6 +18,7 @@
 #include "network/RakIO.hpp"
 #include "world/entity/EntityFactory.hpp"
 #include "world/level/Level.hpp"
+#include "world/tile/entity/TileEntity.hpp"
 #include "thirdparty/raknet/GetTime.h"
 
 #ifndef DEMO
@@ -141,6 +144,125 @@ void ExternalFileLevelStorage::savePlayerData(LevelData& levelData, const std::v
 	fwrite(&levelData.m_LocalPlayerData, 1, nSizePD, pFile);
 
 	fclose(pFile);
+}
+
+unsigned int getRemainingFileSize(FILE* pFile)
+{
+	long v6 = ftell(pFile);
+	if (fseek(pFile, 0, 2) != 0)
+		return 0;
+
+	long v7 = ftell(pFile);
+	if (fseek(pFile, v6, 0) != 0)
+		return 0;
+
+	return (unsigned int)(v7 - v6);
+}
+
+std::string getPlayerFilename(const std::string& basePath, const std::string& playerName)
+{
+	std::string fileName = playerName;
+	std::transform<std::string::iterator, std::string::iterator, int(int)>
+    (fileName.begin(), fileName.end(), fileName.begin(), std::tolower);
+	return basePath + "/players/" + fileName + ".dat";
+}
+
+bool ExternalFileLevelStorage::load(Player& player)
+{
+	std::string fileName = getPlayerFilename(m_levelDirPath, player.m_name);
+	FILE* pFile = fopen(fileName.c_str(), "rb");
+	if (!pFile)
+		return false;
+
+	char formatId[4];
+	if (fread(formatId, 1, 4, pFile) != 4)
+	{
+		fclose(pFile);
+		return false;
+	}
+	int formatVersion;
+	if (fread(&formatVersion, 4, 1, pFile) != 1)
+	{
+		fclose(pFile);
+		return false;
+	}
+	unsigned int size;
+	if (fread(&size, 4, 1, pFile) != 1)
+	{
+		fclose(pFile);
+		return false;
+	}
+
+	if (size <= getRemainingFileSize(pFile) && size > 0)
+	{
+		uint8_t* data = new uint8_t[size];
+		if (fread(data, 1, size, pFile) != size)
+		{
+			fclose(pFile);
+			delete[] data;
+			return false;
+		}
+
+		RakNet::BitStream bs(data, size, false);
+		RakDataInput dis = RakDataInput(bs);
+
+		CompoundTag* tag = NbtIo::read(dis);
+		if (tag)
+		{
+			if (tag->getId() == Tag::TAG_TYPE_COMPOUND)
+			{
+				player.load(*tag);
+			}
+
+			tag->deleteChildren();
+			delete tag;
+		}
+
+		if (data)
+			delete[] data;
+	}
+
+	fclose(pFile);
+
+	return false;
+}
+
+bool ExternalFileLevelStorage::save(Player& player)
+{
+	if (player.m_bRemoved)
+		return false;
+
+	RakNet::BitStream bs;
+	RakDataOutput dos = RakDataOutput(bs);
+
+	CompoundTag* tag = new CompoundTag();
+
+	player.saveWithoutId(*tag);
+	NbtIo::write(*tag, dos);
+	tag->deleteChildren();
+
+	unsigned int size = bs.GetNumberOfBytesUsed();
+
+	std::string directory = m_levelDirPath + "/players/";
+	createFolderIfNotExists(directory.c_str());
+
+	std::string fileName = getPlayerFilename(m_levelDirPath, player.m_name);
+	std::string tmpFileName = fileName + ".tmp";
+	FILE* pFile = fopen(tmpFileName.c_str(), "wb");
+	if (!pFile)
+		return false;
+
+	int formatVersion = 1; // I'm assuming it's a version number
+	fwrite("PLR", 1, 4, pFile);
+	fwrite(&formatVersion, 4, 1, pFile);
+	fwrite(&size, 4, 1, pFile);
+	fwrite(bs.GetData(), 1, size, pFile);
+	fclose(pFile);
+
+	if (XPL_ACCESS(fileName.c_str(), 0) == 0)
+		remove(fileName.c_str());
+
+	return rename(tmpFileName.c_str(), fileName.c_str()) == 1;
 }
 
 void ExternalFileLevelStorage::saveGame(Level* level)
@@ -288,21 +410,8 @@ void ExternalFileLevelStorage::loadEntities(Level* level, LevelChunk* chunk)
 		fclose(pFile);
 		return;
 	}
-	
-	long v6 = ftell(pFile);
-	if (fseek(pFile, 0, 2) != 0)
-	{
-		fclose(pFile);
-		return;
-	}
-	long v7 = ftell(pFile);
-	if (fseek(pFile, v6, 0) != 0)
-	{
-		fclose(pFile);
-		return;
-	}
 
-	if (size <= (unsigned int)(v7 - v6) && size > 0)
+	if (size <= getRemainingFileSize(pFile) && size > 0)
 	{
 		uint8_t* data = new uint8_t[size];
 		if (fread(data, 1, size, pFile) != size)
@@ -333,6 +442,22 @@ void ExternalFileLevelStorage::loadEntities(Level* level, LevelChunk* chunk)
 						Entity* entity = EntityFactory::LoadEntity(*(CompoundTag*)betterTag, level);
 						if (entity)
 							level->addEntity(entity);
+					}
+				}
+
+				const ListTag* tileEntitiesTag = tag->getList("TileEntities");
+				if (tileEntitiesTag)
+				{
+					const std::vector<Tag*>& tileEntities = tileEntitiesTag->rawView();
+					for (std::vector<Tag*>::const_iterator it = tileEntities.begin(); it != tileEntities.end(); it++)
+					{
+						const Tag* betterTag = *it;
+						if (!betterTag || betterTag->getId() != Tag::TAG_TYPE_COMPOUND)
+							continue;
+
+						TileEntity* tileEntity = TileEntity::LoadTileEntity(*(CompoundTag*)betterTag);
+						if (tileEntity)
+							level->setTileEntity(tileEntity->m_pos, tileEntity);
 					}
 				}
 			}
@@ -383,10 +508,10 @@ void ExternalFileLevelStorage::saveEntities(Level* level, LevelChunk* chunk)
 	//getTimeS();
 	ListTag* entitiesTag = new ListTag();
 
-	const EntityVector* entities = level->getAllEntities();
-	for (EntityVector::const_iterator it = entities->begin(); it != entities->end(); it++)
+	const EntityMap* entities = level->getAllEntities();
+	for (EntityMap::const_iterator it = entities->begin(); it != entities->end(); it++)
 	{
-		const Entity* entity = *it;
+		const Entity* entity = it->second;
 		CompoundTag* tag = new CompoundTag();
 
 		if (!entity->save(*tag))
@@ -395,8 +520,21 @@ void ExternalFileLevelStorage::saveEntities(Level* level, LevelChunk* chunk)
 		entitiesTag->add(tag);
 	}
 
+	ListTag* tileEntitiesTag = new ListTag();
+
+	const TileEntityVector* tileEntities = level->getAllTileEntities();
+	for (TileEntityVector::const_iterator it = tileEntities->begin(); it != tileEntities->end(); it++)
+	{
+		const TileEntity* tileEntity = *it;
+		CompoundTag* tag = new CompoundTag();
+
+		tileEntity->save(*tag);
+		tileEntitiesTag->add(tag);
+	}
+
 	CompoundTag tag = CompoundTag();
 	tag.put("Entities", entitiesTag);
+	tag.put("TileEntities", tileEntitiesTag);
 	RakNet::BitStream bs;
 	RakDataOutput dos = RakDataOutput(bs);
 	NbtIo::write(tag, dos);

@@ -102,6 +102,9 @@ void SoundEngine::playMusic(bool resetDelay)
 
 void SoundEngine::playMusicTick()
 {
+    if (!m_pSoundSystem->isAvailable())
+        return;
+
     if (m_pOptions->m_musicVolume.get() <= 0.0f)
         return;
 
@@ -133,7 +136,8 @@ void SoundEngine::forcePlayMusic()
 
 void SoundEngine::updateListener(const Mob* player, float elapsedTime)
 {
-	  assert(m_pSoundSystem->isAvailable());
+    if (!m_pSoundSystem->isAvailable())
+        return;
 
     if (m_pOptions->m_masterVolume.get() > 0.0f)
     {
@@ -153,12 +157,17 @@ void SoundEngine::updateListener(const Mob* player, float elapsedTime)
 
 void SoundEngine::update()
 {
-    assert(m_pSoundSystem->isAvailable());
+    if (!m_pSoundSystem->isAvailable())
+        return;
+
     m_pSoundSystem->update();
 }
 
 void SoundEngine::play(const std::string& name, const Vec3& pos, float volume, float pitch)
 {
+    if (!m_pSoundSystem->isAvailable())
+        return;
+
     float vol = m_pOptions->m_masterVolume.get() * volume;
     if (vol <= 0.0f)
         return;
@@ -197,6 +206,9 @@ void SoundEngine::play(const std::string& name, const Vec3& pos, float volume, f
 
 void SoundEngine::playUI(const std::string& name, float volume, float pitch)
 {
+    if (!m_pSoundSystem->isAvailable())
+        return;
+
     volume *= 0.25f; // present on Java b1.2_02, but not Pocket for some reason
     float vol = m_pOptions->m_masterVolume.get() * volume;
     if (vol <= 0.0f)
@@ -213,6 +225,9 @@ void SoundEngine::playUI(const std::string& name, float volume, float pitch)
 
 void SoundEngine::playMusic(const std::string& name)
 {
+    if (!m_pSoundSystem->isAvailable())
+        return;
+
     float vol = m_pOptions->m_musicVolume.get();
     if (vol <= 0.0f)
         return;

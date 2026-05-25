@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{553CB43C-E58B-49C7-9480-F773AAA812BC}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{602A17F4-2612-4E25-A869-CB47ADAB5DB7}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\HAL">
+      <UniqueIdentifier>{8b5349ea-128f-4a84-b319-6f95b24c4aaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\HAL">
+      <UniqueIdentifier>{10f7271f-a254-4e28-8db8-621569481837}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\HAL\DXGI">
+      <UniqueIdentifier>{7e9db244-c6f9-4ec6-872a-a4999b643490}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\HAL\DXGI">
+      <UniqueIdentifier>{4dc436fc-23d9-447c-93e8-05408e54e5a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\HAL\DXGI\Helpers">
+      <UniqueIdentifier>{2fe9f2df-d294-405f-b109-7e137639cda6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\HAL\DXGI\Helpers">
+      <UniqueIdentifier>{1342d8d9-1e61-4607-ac17-18a755c21412}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\dxgi\API_DXGI.cpp">
+      <Filter>Source Files\HAL\DXGI</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\dxgi\helpers\ErrorHandlerDXGI.cpp">
+      <Filter>Source Files\HAL\DXGI\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\dxgi\helpers\TextureHelperDXGI.cpp">
+      <Filter>Source Files\HAL\DXGI\Helpers</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\dxgi\API_DXGI.hpp">
+      <Filter>Header Files\HAL\DXGI</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\dxgi\helpers\ErrorHandlerDXGI.hpp">
+      <Filter>Header Files\HAL\DXGI\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\dxgi\helpers\TextureHelperDXGI.hpp">
+      <Filter>Header Files\HAL\DXGI\Helpers</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

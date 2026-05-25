@@ -25,6 +25,8 @@ RenderMaterial::RenderMaterial()
 
 RenderMaterial::RenderMaterial(const rapidjson::Value::ConstObject& root, const RenderMaterial& parent)
 {
+    RenderContext& renderContext = RenderContextImmediate::get();
+
 	*this = parent;
     _parseRenderStates(root);
     _parseRuntimeStates(root);
@@ -34,13 +36,12 @@ RenderMaterial::RenderMaterial(const rapidjson::Value::ConstObject& root, const 
     {
         _parseDefines(root);
 #ifdef FEATURE_GFX_SHADERS
-        _loadShader(*ShaderGroup::singleton());
+        _loadShader(renderContext, *ShaderGroup::singleton());
 #endif
     }
 
     _applyRenderStates();
 
-    RenderContext& renderContext = RenderContextImmediate::get();
     m_blendState.createBlendState(renderContext, m_blendStateDescription);
     m_depthStencilState.createDepthState(renderContext, m_depthStencilStateDescription);
     m_rasterizerState.createRasterizerStateDescription(renderContext, m_rasterizerStateDescription);
@@ -179,7 +180,7 @@ void RenderMaterial::_parseShaderPaths(const rapidjson::Value& root)
 
 #ifdef FEATURE_GFX_SHADERS
 
-std::string RenderMaterial::_buildHeader()
+std::string RenderMaterial::_buildHeader(RenderContext& context)
 {
     std::ostringstream stream;
 
@@ -188,18 +189,18 @@ std::string RenderMaterial::_buildHeader()
         stream << "#define " + *it + "\n";
     }
 
-    Shader::BuildHeader(stream);
+    ShaderProgram::BuildHeader(context, stream);
 
     return stream.str();
 }
 
-void RenderMaterial::_loadShader(ShaderGroup& shaderGroup)
+void RenderMaterial::_loadShader(RenderContext& context, ShaderGroup& shaderGroup)
 {
-    Shader::SpliceShaderPathAndExtension(m_vertexShader);
-    Shader::SpliceShaderPathAndExtension(m_fragmentShader);
-    Shader::SpliceShaderPathAndExtension(m_geometryShader);
+    ShaderProgram::SpliceShaderPathAndExtension(m_vertexShader);
+    ShaderProgram::SpliceShaderPathAndExtension(m_fragmentShader);
+    ShaderProgram::SpliceShaderPathAndExtension(m_geometryShader);
 
-    std::string header = _buildHeader();
+    std::string header = _buildHeader(context);
     m_pShader = &shaderGroup.loadShader(header, m_vertexShader, m_fragmentShader, m_geometryShader);
 }
 

@@ -28,11 +28,20 @@ private:
 
 public:
 	// this constructor is nice to have, but it's probably inlined
-	Vec2();
-	Vec2(float xy);
-	Vec2(float x, float y);
+	Vec2() : x(0), y(0) {}
+	Vec2(float xy) : x(xy), y(xy) {}
+	Vec2(int xy) : x(float(xy)), y(float(xy)) {}
+	Vec2(float x, float y) : x(x), y(y) {}
+	Vec2(int x, int y) : x(float(x)), y(float(y)) {}
     
-    Vec2 normalize() const;
+    Vec2 normalize() const
+	{
+		float dist = Mth::sqrt(x * x + y * y);
+		if (dist < 0.0001f)
+			return ZERO;
+
+		return Vec2(x / dist, y / dist);
+	}
 
 	Vec2 translate(float tx, float ty) const
 	{

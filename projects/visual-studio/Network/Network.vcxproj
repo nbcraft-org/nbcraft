@@ -149,6 +149,7 @@
     <ClInclude Include="$(MC_ROOT)\source\network\packets\TileEventPacket.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\network\packets\PlayerActionPacket.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\network\packets\AddEntityPacket.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\network\OrderingChannel.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">

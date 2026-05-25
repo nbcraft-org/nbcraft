@@ -396,7 +396,7 @@ void ItemInHandRenderer::tick()
 
 	ItemStack& item = m_pMinecraft->m_pLocalPlayer->m_pInventory->getSelectedItem();
 
-	bool bSameItem = m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedSlot == m_lastSlot && m_selectedItem == item;
+	bool bSameItem = m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedStackId == m_lastSlot && m_selectedItem == item;
 
 	if (item.isEmpty() && m_selectedItem.isEmpty())
 		bSameItem = true;
@@ -424,7 +424,7 @@ void ItemInHandRenderer::tick()
 	if (m_height < 0.1f)
 	{
 		m_selectedItem = ItemStack(item);
-		m_lastSlot = m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedSlot;
+		m_lastSlot = m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedStackId;
 	}
 }
 

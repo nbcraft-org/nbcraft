@@ -99,35 +99,12 @@ void AppPlatform_win32::saveScreenshot(const std::string& fileName, int width, i
 
 	stbi_flip_vertically_on_write(true);
 
-	// Verify if the folder exists for saving screenshots and
-	// create it if it doesn't 
-	// Kinda inefficient but I didn't want to be too intrusive 
-	// -Vruk
-	// https://stackoverflow.com/a/22182041
-
-	// https://stackoverflow.com/a/8901001
-	CHAR mypicturespath[MAX_PATH];
-	HRESULT result = SHGetFolderPathA(NULL, CSIDL_MYPICTURES, NULL, SHGFP_TYPE_CURRENT, mypicturespath);
-
-	static char str[MAX_PATH];
-
-	if (result == S_OK)
-		sprintf(str, "%s\\%s", mypicturespath, "MCPE");
-	else
-		sprintf(str, "%s\\%s", ".", "Screenshots");
-
-	// https://stackoverflow.com/a/8233867
-	DWORD error = GetLastError();
-	if (error == ERROR_PATH_NOT_FOUND || error == ERROR_FILE_NOT_FOUND || error == ERROR_INVALID_NAME)
-	{
-		// https://stackoverflow.com/a/22182041
-		CreateDirectoryA(str, NULL);
-	}
+	std::string screenshot_path = m_externalStorageDir + "\\screenshots";
+	createFolderIfNotExists(screenshot_path.c_str());
 	
-	char fullpath[MAX_PATH];
-	sprintf(fullpath, "%s\\%s", str, fileName.c_str());
+	screenshot_path += '\\' + fileName;
 
-	stbi_write_png(fullpath, width, height, 4, pixels, width * 4);
+	stbi_write_png(screenshot_path.c_str(), width, height, 4, pixels, width * 4);
 
 	delete[] pixels;
 #endif
@@ -156,21 +133,6 @@ void AppPlatform_win32::createUserInput()
 void AppPlatform_win32::showDialog(eDialogType type)
 {
 	m_DialogType = type;
-}
-
-std::string AppPlatform_win32::getDateString(int time)
-{
-	time_t tt = time;
-	struct tm t;
-	// using the _s variant. For a different platform there's gmtime_r. This is not directly portable however.
-	gmtime_s(&t, &tt);
-
-	//format it with strftime
-	char buf[2048];
-	strftime(buf, sizeof buf, "%b %d %Y %H:%M:%S", &t);
-	//strftime(buf, sizeof buf, "%a %b %d %H:%M:%S %Z %Y", &t);
-
-	return std::string(buf);
 }
 
 bool AppPlatform_win32::doesTextureExist(const std::string& path) const
@@ -481,6 +443,22 @@ bool AppPlatform_win32::initGraphics(int width, int height)
 	setScreenSize(width, height);
 
 	return true;
+}
+
+void AppPlatform_win32::setVSyncEnabled(bool enabled)
+{
+#if MCE_GFX_API_OGL
+	xglSwapIntervalEXT(enabled ? 1 : 0);
+#endif
+}
+
+bool AppPlatform_win32::isVSyncSwitchable() const
+{
+#if MCE_GFX_API_OGL
+	return true;
+#else
+	return false;
+#endif
 }
 
 void AppPlatform_win32::createWindowSizeDependentResources(const Vec2& logicalSize, const Vec2& compositionScale)

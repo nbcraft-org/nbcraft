@@ -83,8 +83,8 @@ void HumanoidMobRenderer::additionalRendering(const Mob& mob, float f)
 			if (TileRenderer::canRender(Tile::tiles[headGear.getId()]->getRenderShape()))
 			{
 				matrix->translate(Vec3(0.0f, -0.25f, 0.0f));
-				matrix->rotate(180.0f, Vec3(0.0f, 1.0f, 0.0f));
-				matrix->scale(Vec3(fScale, -fScale, fScale));
+				matrix->rotate(180.0f, Vec3::UNIT_X);
+				matrix->scale(Vec3(fScale, fScale, fScale));
 			}
 
 			m_pDispatcher->m_pItemInHandRenderer->renderItem(mob, headGear, f);

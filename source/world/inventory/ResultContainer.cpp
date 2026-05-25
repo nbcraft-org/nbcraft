@@ -13,7 +13,7 @@ uint16_t ResultContainer::getContainerSize() const
     return 1;
 }
 
-ItemStack& ResultContainer::getItem(int index)
+ItemStack& ResultContainer::getItem(StackID stackId)
 {
     return m_item;
 }
@@ -23,24 +23,23 @@ std::string ResultContainer::getName() const
     return "";
 }
 
-ItemStack ResultContainer::removeItem(int index, int)
+ItemStack ResultContainer::removeItem(StackID stackId, int)
 {
-    if (index == 0)
-    {
-        ItemStack result = m_item;
-        m_item = ItemStack::EMPTY;
-        return result;
-    }
-    return ItemStack::EMPTY;
+    if (stackId != 0)
+        return ItemStack::EMPTY;
+
+    ItemStack result = m_item;
+    m_item = ItemStack::EMPTY;
+    return result;
 }
 
-void ResultContainer::setItem(int index, const ItemStack& item)
+void ResultContainer::setItem(StackID stackId, const ItemStack& item)
 {
-    if (index == 0)
+    if (stackId == 0)
         m_item = item;
 }
 
-void ResultContainer::setChanged()
+void ResultContainer::setContainerChanged(StackID stackId)
 {
 }
 

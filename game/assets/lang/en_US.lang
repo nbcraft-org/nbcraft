@@ -104,6 +104,7 @@ options.guiScale.small=Small
 options.guiScale.normal=Normal
 options.guiScale.large=Large
 options.gamma=Gamma
+options.enableVsync=V-Sync
 
 performance.max=Max FPS
 performance.balanced=Balanced

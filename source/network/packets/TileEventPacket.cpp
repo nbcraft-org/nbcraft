@@ -1,12 +1,6 @@
 #include "TileEventPacket.hpp"
 #include "network/NetEventCallback.hpp"
 
-TileEventPacket::TileEventPacket(const TilePos& pos, int32_t b0, int32_t b1)
-	: m_pos(pos)
-	, m_b0(b0)
-	, m_b1(b1)
-{}
-
 void TileEventPacket::handle(const RakNet::RakNetGUID& guid, NetEventCallback& callback)
 {
 	callback.handle(guid, this);

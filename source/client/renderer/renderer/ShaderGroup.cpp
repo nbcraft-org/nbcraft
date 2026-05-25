@@ -80,7 +80,7 @@ ShaderProgram& ShaderGroup::getShaderProgram(ShaderType shaderType, const std::s
     {
         processIncludeDirectives(codeOrPath, programCode);
 
-        programCode.insert(0, Util::format("#define %s\n", ShaderTypeToString[shaderType]));
+        programCode.insert(0, Util::format("#define _%s\n", ShaderTypeToString[shaderType]));
         programCode.insert(programCode.find('\n') + 1, header);
 
       //  printf("FILE: \n %s \n\n\n\n", programCode.data());
@@ -115,7 +115,7 @@ void ShaderGroup::processIncludeDirectives(const std::string& path, std::string&
 
         std::string includeFile = code.substr(openOffset + 1, closeOffset - openOffset - 1);
         includeFile = "shaders/" + includeFile;
-        Shader::SpliceShaderPath(includeFile);
+        ShaderProgram::SpliceShaderPath(includeFile);
 
         // pragma once
         if (includeGuards[includeFile])

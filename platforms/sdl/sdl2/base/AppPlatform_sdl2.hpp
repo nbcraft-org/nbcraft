@@ -30,6 +30,9 @@ public:
 	int getScreenWidth() const override;
 	int getScreenHeight() const override;
 
+	void setVSyncEnabled(bool enabled) override;
+	bool isVSyncSwitchable() const override;
+
 	// On-screen keyboard
 	void showKeyboard(LocalPlayerID playerId, const VirtualKeyboard& keyboard) override;
 	void hideKeyboard(LocalPlayerID playerId) override;

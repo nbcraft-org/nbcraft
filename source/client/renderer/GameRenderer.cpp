@@ -647,7 +647,7 @@ void GameRenderer::render(const Timer& timer)
 	int mouseY = -9999;
 	bool bMouseData = false;
 
-	if (m_pMinecraft->isTouchscreen())
+	if (m_pMinecraft->useTouchscreen())
 	{
 		int pointerId = Multitouch::getFirstActivePointerIdExThisUpdate();
 		if (pointerId >= 0)
@@ -856,7 +856,7 @@ void GameRenderer::renderPointer(const MenuPointer& pointer)
 	Textures& textures = *m_pMinecraft->m_pTextures;
 
 	MatrixStack::Ref mtx = MatrixStack::World.push();
-	mtx->translate(Vec3(pointer.x, pointer.y, 0));
+	mtx->translate(Vec3(pointer.x, pointer.y, 0.0f));
 
 	if (m_pMinecraft->m_pScreen && m_pMinecraft->m_pScreen->m_uiTheme == UI_CONSOLE)
 		mtx->scale(2.0f);
@@ -899,7 +899,7 @@ void GameRenderer::pick(float f)
 
 	Mob* pMob = m_pMinecraft->m_pCameraEntity;
 	HitResult& mchr = m_pMinecraft->m_hitResult;
-	float dist = m_pMinecraft->m_pGameMode->getBlockReachDistance();
+	float dist = m_pMinecraft->getLocalPlayerGameMode()->getBlockReachDistance();
 	bool isFirstPerson = !m_pMinecraft->getOptions()->m_thirdPerson.get();
 	Vec3 touchPosNear, touchPosFar;
 	bool bUseTouchCoords = false;
@@ -994,7 +994,7 @@ void GameRenderer::pick(float f)
 	if (mchr.m_hitType != HitResult::NONE)
 		dist = mchr.m_hitPos.distanceTo(mobPos);
 
-	float maxEntityDist = m_pMinecraft->m_pGameMode->getEntityReachDistance();
+	float maxEntityDist = m_pMinecraft->getLocalPlayerGameMode()->getEntityReachDistance();
 	/*if (m_pMinecraft->m_pGameMode->isCreativeType())
 		dist = 7.0f;
 	else */if (dist > maxEntityDist)
