@@ -385,7 +385,7 @@ add_library(nbcraft-core STATIC
     world/item/ItemStack.cpp
     world/item/RocketItem.cpp
     world/item/Item.cpp
-	word/item/FlintAndSteelItem.cpp
+	world/item/FlintAndSteelItem.cpp
     world/item/FoodItem.cpp
     world/item/SeedItem.cpp
     world/item/ArmorItem.cpp

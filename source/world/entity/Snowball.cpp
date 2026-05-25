@@ -18,12 +18,14 @@ void Snowball::_init()
     m_owner = nullptr;
 }
 
-Snowball::Snowball(Level* pLevel) : Entity(pLevel) {
+Snowball::Snowball(Level* pLevel) : Entity(pLevel) 
+{
     _init();
     setSize(0.25f, 0.25f);
 }
 
-Snowball::Snowball(Level* pLevel, Mob* pMob) : Entity(pLevel) {
+Snowball::Snowball(Level* pLevel, Mob* pMob) : Entity(pLevel) 
+{
     _init();
 
     m_owner = pMob;
@@ -35,32 +37,30 @@ Snowball::Snowball(Level* pLevel, Mob* pMob) : Entity(pLevel) {
     m_pos.y -= 0.1f;
     m_pos.z -= Mth::sin(m_rot.y / 180.0f * M_PI) * 0.16f;
     setPos(m_pos);
-    float f = 0.4f;
+    constexpr float f = 0.4f;
     m_vel.x = -Mth::sin(m_rot.y / 180.0f * M_PI) * Mth::cos(m_rot.x / 180.0f * M_PI) * f;
     m_vel.z = Mth::cos(m_rot.y / 180.0f * M_PI) * Mth::cos(m_rot.x / 180.0f * M_PI) * f;
     m_vel.y = -Mth::sin(m_rot.x / 180.0f * M_PI) * f;
     shoot(m_vel, 1.5f, 1.0f);
 }
 
-Snowball::Snowball(Level* pLevel, const Vec3& pos) {
+Snowball::Snowball(Level* pLevel, const Vec3& pos) 
+{
     _init();
 
     m_life = 0;
-    setSize(0.25F, 0.25F);
+    setSize(0.25f, 0.25f);
     setPos(m_pos);
 }
 
-void Snowball::shoot(Vec3 vel, float speed, float r) {
+void Snowball::shoot(Vec3 vel, float speed, float r) 
+{
     float f = Mth::sqrt(vel.x * vel.x + vel.y * vel.y + vel.z * vel.z);
-    vel.x /= f;
-    vel.y /= f;
-    vel.z /= f;
-    vel.x += sharedRandom.nextGaussian() * 0.0075F * r;
-    vel.y += sharedRandom.nextGaussian() * 0.0075F * r;
-    vel.z += sharedRandom.nextGaussian() * 0.0075F * r;
-    vel.x *= speed;
-    vel.y *= speed;
-    vel.z *= speed;
+    vel /= f;
+    vel.x += sharedRandom.nextGaussian() * 0.0075f * r;
+    vel.y += sharedRandom.nextGaussian() * 0.0075f * r;
+    vel.z += sharedRandom.nextGaussian() * 0.0075f * r;
+    vel *= speed;
     m_vel = vel;
     _lerpMotion(vel);
     m_life = 0;
@@ -88,14 +88,16 @@ void Snowball::lerpMotion(const Vec3& vel)
     _lerpMotion2(vel);
 }
 
-bool Snowball::shouldRenderAtSqrDistance(float distSqr) const {
+bool Snowball::shouldRenderAtSqrDistance(float distSqr) const 
+{
     float avgSide = (this->m_bbWidth + m_bbHeight + m_bbWidth) / 3.0f;
     float d = avgSide * 4;
     d *= 64.0;
     return distSqr < d * d;
 }
 
-void Snowball::tick() {
+void Snowball::tick() 
+{
     m_posPrev = m_pos;
     Entity::tick();
     if (m_shakeTime > 0)
@@ -215,24 +217,6 @@ void Snowball::tick() {
     setPos(m_pos);
 }
 
-// Seems to be an arrow leftover? doesn't even get used as this entity gets removed the moment it touches the ground.
-void Snowball::playerTouch(Player* pPlayer)
-{
-    if (!m_pLevel->m_bIsClientSide)
-    {
-        if (m_bInGround && m_bIsPlayerOwned && m_shakeTime <= 0)
-        {
-            ItemStack arrow(Item::arrow, 1);
-            if (pPlayer->m_pInventory->add(arrow))
-            {
-                m_pLevel->playSound(this, "random.pop", 0.2f, ((sharedRandom.nextFloat() - sharedRandom.nextFloat()) * 0.7f + 1.0f) * 2.0f);
-                pPlayer->take(this, 1);
-                remove();
-            }
-        }
-    }
-}
-
 void Snowball::addAdditionalSaveData(CompoundTag& tag) const
 {
     tag.putInt16("xTile", m_tilePos.x);
@@ -255,8 +239,9 @@ void Snowball::readAdditionalSaveData(const CompoundTag& tag)
     m_bIsPlayerOwned = tag.getBoolean("player");
 }
 
-float Snowball::getShadowHeightOffs() {
-    return 0.0F;
+float Snowball::getShadowHeightOffs() 
+{
+    return 0.0f;
 }
 
 Entity::AuxValue Snowball::getAuxValue() const

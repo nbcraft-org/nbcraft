@@ -28,7 +28,6 @@ private:
 	void _lerpMotion(const Vec3& vel);
 	void _lerpMotion2(const Vec3& vel);
 public:
-	void playerTouch(Player* pPlayer);
 	bool shouldRenderAtSqrDistance(float distSqr) const override;
 	void shoot(float x, float y, float z, float speed, float r) { shoot(Vec3(x, y, z), speed, r); };
 	void shoot(Vec3 pos, float speed, float r);

@@ -32,4 +32,3 @@ void ItemParticle::render(Tesselator& t, float f, float a, float b, float c, flo
     t.vertexUV(PosX + a * ja + d * ja, PosY + b * ja, PosZ + c * ja + e * ja, ga, ha);
     t.vertexUV(PosX + a * ja - d * ja, PosY - b * ja, PosZ + c * ja - e * ja, ga, ia);
 }
-
