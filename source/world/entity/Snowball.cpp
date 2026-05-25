@@ -3,42 +3,33 @@
 #include "world/level/Level.hpp"
 #include "nbt/CompoundTag.hpp"
 
-const unsigned int Snowball::ARROW_BASE_DAMAGE = 0;
-
 void Snowball::_init()
 {
     m_pDescriptor = &EntityTypeDescriptor::snowball;
     m_renderType = RENDER_SNOWBALL;
-    setSize(0.25f, 0.25f);
-
-    m_tilePos = Vec3(-1, -1, -1);
+    m_tilePos = TilePos(-1, -1, -1);
     m_lastTile = 0;
     m_lastTileData = 0;
     m_bInGround = false;
     m_bIsPlayerOwned = false;
-    m_life = 0;
+    m_life = 0; 
     m_flightTime = 0;
-    m_shakeTime = 0;
+    m_shakeTime = 0; ;
     m_owner = nullptr;
 }
 
-Snowball::Snowball(Level* pLevel) : Entity(pLevel)
+Snowball::Snowball(Level* pLevel) : Entity(pLevel) 
 {
     _init();
+    setSize(0.25f, 0.25f);
 }
 
-Snowball::Snowball(Level* pLevel, const Vec3& pos) : Entity(pLevel)
-{
-    _init();
-
-    setPos(pos);
-}
-
-Snowball::Snowball(Level* pLevel, Mob* pMob) : Entity(pLevel)
+Snowball::Snowball(Level* pLevel, Mob* pMob) : Entity(pLevel) 
 {
     _init();
 
     m_owner = pMob;
+    setSize(0.25f, 0.25f);
     m_bIsPlayerOwned = m_owner->isPlayer();
     moveTo(Vec3(pMob->m_pos.x, pMob->m_pos.y + pMob->getHeadHeight(), pMob->m_pos.z), Vec2(pMob->m_rot.y, pMob->m_rot.x));
 
@@ -46,32 +37,32 @@ Snowball::Snowball(Level* pLevel, Mob* pMob) : Entity(pLevel)
     m_pos.y -= 0.1f;
     m_pos.z -= Mth::sin(m_rot.y / 180.0f * M_PI) * 0.16f;
     setPos(m_pos);
-
-    m_vel.x = -Mth::sin(m_rot.y / 180.0f * M_PI) * Mth::cos(m_rot.x / 180.0f * M_PI);
-    m_vel.z = Mth::cos(m_rot.y / 180.0f * M_PI) * Mth::cos(m_rot.x / 180.0f * M_PI);
-    m_vel.y = -Mth::sin(m_rot.x / 180.0f * M_PI);
+    constexpr float f = 0.4f;
+    m_vel.x = -Mth::sin(m_rot.y / 180.0f * M_PI) * Mth::cos(m_rot.x / 180.0f * M_PI) * f;
+    m_vel.z = Mth::cos(m_rot.y / 180.0f * M_PI) * Mth::cos(m_rot.x / 180.0f * M_PI) * f;
+    m_vel.y = -Mth::sin(m_rot.x / 180.0f * M_PI) * f;
     shoot(m_vel, 1.5f, 1.0f);
 }
 
-bool Snowball::shouldRenderAtSqrDistance(float distSqr) const
+Snowball::Snowball(Level* pLevel, const Vec3& pos) 
 {
-    float var3 = (((m_hitbox.max.z - m_hitbox.min.z) + (m_hitbox.max.x - m_hitbox.min.x) + (m_hitbox.max.y - m_hitbox.min.y)) / 3.0f) * 4.0f; // this.bb.getSize() * 4.0D
-    var3 *= 64.0f;
-    return distSqr < var3* var3;
+    _init();
+
+    m_life = 0;
+    setSize(0.25f, 0.25f);
+    setPos(m_pos);
 }
 
-void Snowball::shoot(Vec3 vel, float speed, float r)
+void Snowball::shoot(Vec3 vel, float speed, float r) 
 {
-    float len = vel.length();
-    vel /= len;
+    float f = Mth::sqrt(vel.x * vel.x + vel.y * vel.y + vel.z * vel.z);
+    vel /= f;
     vel.x += sharedRandom.nextGaussian() * 0.0075f * r;
     vel.y += sharedRandom.nextGaussian() * 0.0075f * r;
     vel.z += sharedRandom.nextGaussian() * 0.0075f * r;
     vel *= speed;
-
     m_vel = vel;
     _lerpMotion(vel);
-
     m_life = 0;
 }
 
@@ -97,12 +88,18 @@ void Snowball::lerpMotion(const Vec3& vel)
     _lerpMotion2(vel);
 }
 
-void Snowball::tick()
+bool Snowball::shouldRenderAtSqrDistance(float distSqr) const 
 {
+    float avgSide = (this->m_bbWidth + m_bbHeight + m_bbWidth) / 3.0f;
+    float d = avgSide * 4;
+    d *= 64.0;
+    return distSqr < d * d;
+}
+
+void Snowball::tick() 
+{
+    m_posPrev = m_pos;
     Entity::tick();
-
-    //_lerpMotion2(m_vel);
-
     if (m_shakeTime > 0)
         --m_shakeTime;
 
@@ -126,11 +123,9 @@ void Snowball::tick()
         m_life = 0;
         m_flightTime = 0;
     }
-    else
-    {
+    else {
         ++m_flightTime;
     }
-
     Vec3 future_pos = m_pos + m_vel;
     HitResult hit_result = m_pLevel->clip(m_pos, future_pos);
     if (hit_result.isHit())
@@ -138,52 +133,47 @@ void Snowball::tick()
         future_pos = hit_result.m_hitPos;
     }
 
-    if (!m_pLevel->m_bIsClientSide) {
-        Entity* hit_ent = nullptr;
-        AABB hitbox = m_hitbox;
-        hitbox.expand(m_vel.x, m_vel.y, m_vel.z).grow(1.0f);
-        EntityVector entities = m_pLevel->getEntities(this, hitbox);
+    Entity* hit_ent = nullptr;
+    AABB hitbox = m_hitbox;
+    hitbox.expand(m_vel.x, m_vel.y, m_vel.z).grow(1.0f);
+    EntityVector entities = m_pLevel->getEntities(this, hitbox);
 
-        float max_dist = 0.0f;
-        constexpr float var10 = 0.3f;
-        for (EntityVector::iterator it = entities.begin(); it != entities.end(); it++)
+    float max_dist = 0.0f;
+    constexpr float var10 = 0.3f;
+    for (EntityVector::iterator it = entities.begin(); it != entities.end(); it++)
+    {
+        Entity* ent = *it;
+        if (ent->m_bCollision && (ent != m_owner || m_flightTime >= 5))
         {
-            Entity* ent = *it;
-            if (ent->isPickable() && (ent != m_owner || m_flightTime >= 5))
+            AABB aabb = ent->m_hitbox;
+            aabb.grow(var10);
+            HitResult hit = aabb.clip(m_pos, future_pos);
+            if (hit.isHit())
             {
-                AABB aabb = ent->m_hitbox;
-                aabb.grow(var10);
-                // these Vec3's are copied in the TilePos::clip fn, so no need to create them over and over like in b1.2
-                HitResult hit = aabb.clip(m_pos, future_pos);
-                if (hit.isHit())
+                float distance = m_pos.distanceTo(hit.m_hitPos);
+                if (distance < max_dist || max_dist == 0.0f)
                 {
-                    float distance = m_pos.distanceTo(hit.m_hitPos);
-                    if (distance < max_dist || max_dist == 0.0f)
-                    {
-                        hit_ent = ent;
-                        max_dist = distance;
-                    }
+                    hit_ent = ent;
+                    max_dist = distance;
                 }
             }
         }
+    }
 
-        if (hit_ent != nullptr)
-        {
-            hit_result = HitResult(hit_ent);
-        }
+    if (hit_ent != nullptr)
+    {
+        hit_result = HitResult(hit_ent);
     }
 
     if (hit_result.isHit())
     {
-        if (hit_result.m_pEnt != nullptr && hit_result.m_pEnt->hurt(m_owner, ARROW_BASE_DAMAGE))
+        if (hit_result.m_pEnt != nullptr)
         {
+            hit_result.m_pEnt->hurt(m_owner, 0);
         }
-
-        for (int var16 = 0; var16 < 8; ++var16)
-        {
-            m_pLevel->addParticle("snowballpoof", m_pos);
+        for (int k = 0; k < 8; k++) {
+            m_pLevel->addParticle("snowballpoof", m_pos, 0);
         }
-        
         remove();
     }
 
@@ -216,7 +206,7 @@ void Snowball::tick()
         for (int var19 = 0; var19 < 4; ++var19)
         {
             constexpr float var20 = 0.25f;
-            m_pLevel->addParticle("bubble", m_pos - m_vel * var20, m_pos * 1); // passed as reference so *1; although addParticle doesn't exist yet
+            m_pLevel->addParticle("bubble", m_pos - m_vel * var20, m_pos * 1);
         }
 
         dampening = 0.8f;
@@ -227,28 +217,12 @@ void Snowball::tick()
     setPos(m_pos);
 }
 
-void Snowball::playerTouch(Player* pPlayer)
-{
-    if (m_bInGround && m_bIsPlayerOwned && m_shakeTime <= 0)
-    {
-        ItemStack arrow(Item::arrow, 1);
-        // they use ->add here in b1.2_02
-        if (pPlayer->m_pInventory->add(arrow))
-        {
-            m_pLevel->playSound(this, "random.pop", 0.2f, ((sharedRandom.nextFloat() - sharedRandom.nextFloat()) * 0.7f + 1.0f) * 2.0f);
-            pPlayer->take(this, 1);
-            remove();
-        }
-    }
-}
-
 void Snowball::addAdditionalSaveData(CompoundTag& tag) const
 {
     tag.putInt16("xTile", m_tilePos.x);
     tag.putInt16("yTile", m_tilePos.y);
     tag.putInt16("zTile", m_tilePos.z);
     tag.putInt8("inTile", m_lastTile);
-    tag.putInt8("inData", m_lastTileData);
     tag.putInt8("shake", m_shakeTime);
     tag.putBoolean("inGround", m_bInGround);
     tag.putBoolean("player", m_bIsPlayerOwned);
@@ -260,8 +234,19 @@ void Snowball::readAdditionalSaveData(const CompoundTag& tag)
     m_tilePos.y = tag.getInt16("yTile");
     m_tilePos.z = tag.getInt16("zTile");
     m_lastTile = tag.getInt8("inTile") & 255;
-    m_lastTileData = tag.getInt8("inData") & 255;
     m_shakeTime = tag.getInt8("shake") & 255;
     m_bInGround = tag.getBoolean("inGround");
     m_bIsPlayerOwned = tag.getBoolean("player");
+}
+
+Entity::AuxValue Snowball::getAuxValue() const
+{
+    return m_owner ? m_owner->m_EntityID : 0;
+}
+
+void Snowball::setAuxValue(Entity::AuxValue value)
+{
+    Entity* pOwner = m_pLevel->getEntity(value);
+    if (pOwner && pOwner->isMob())
+        m_owner = (Mob*)pOwner;
 }

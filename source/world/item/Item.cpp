@@ -17,10 +17,15 @@
 #include "CoalItem.hpp"
 #include "DoorItem.hpp"
 #include "DyePowderItem.hpp"
+
+#include "EggItem.hpp"
 #include "FoodItem.hpp"
+
+#include "FlintAndSteelItem.hpp"
 #include "HoeItem.hpp"
 #include "RocketItem.hpp"
 #include "SeedItem.hpp"
+#include "SnowballItem.hpp"
 #include "TileItem.hpp"
 #include "ToolItem.hpp"
 #include "TilePlanterItem.hpp"
@@ -338,7 +343,7 @@ void Item::initItems()
 		->setIcon(3, 3)
 		->setDescriptionId("bootsDiamond");
 
-	Item::flintAndSteel = NEW_ITEM(ITEM_FLINT_AND_STEEL)
+	Item::flintAndSteel = NEW_X_ITEMN(FlintAndSteelItem, ITEM_FLINT_AND_STEEL)
 		->setIcon(5, 0)
 		->setDescriptionId("flintAndSteel");
 

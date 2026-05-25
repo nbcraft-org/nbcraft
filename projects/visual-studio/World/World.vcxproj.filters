@@ -671,70 +671,58 @@
     <ClCompile Include="$(MC_ROOT)\source\world\item\CoalItem.cpp">
       <Filter>Source Files\Item</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\entity\Giant.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\entity\Giant.cpp">
       <Filter>Source Files\Entity</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\entity\PigZombie.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\entity\PigZombie.cpp">
       <Filter>Source Files\Entity</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\entity\Slime.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\entity\Slime.cpp">
       <Filter>Source Files\Entity</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\entity\Snowball.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\entity\Squid.cpp">
       <Filter>Source Files\Entity</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\entity\Squid.cpp">
-      <Filter>Source Files\Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\world\entity\ThrownEgg.cpp">
-      <Filter>Source Files\Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\world\item\EggItem.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\item\RedStoneItem.cpp">
       <Filter>Source Files\Item</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\item\RedStoneItem.cpp">
-      <Filter>Source Files\Item</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\world\item\SnowballItem.cpp">
-      <Filter>Source Files\Item</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\world\particle\BreakingItemParticle.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\particle\BreakingItemParticle.cpp">
       <Filter>Source Files\Particle</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\tile\ButtonTile.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\ButtonTile.cpp">
       <Filter>Source Files\Tile</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\tile\DiodeTile.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\DiodeTile.cpp">
       <Filter>Source Files\Tile</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\tile\LeverTile.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\LeverTile.cpp">
       <Filter>Source Files\Tile</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\tile\NotGateTile.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\NotGateTile.cpp">
       <Filter>Source Files\Tile</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\tile\PressurePlateTile.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\PressurePlateTile.cpp">
       <Filter>Source Files\Tile</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\tile\RedStoneDustTile.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\RedStoneDustTile.cpp">
       <Filter>Source Files\Tile</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\tile\SnowTile.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\SnowTile.cpp">
       <Filter>Source Files\Tile</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\entity\Fireball.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\entity\Fireball.cpp">
       <Filter>Source Files\Entity</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\entity\FlyingMob.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\entity\FlyingMob.cpp">
       <Filter>Source Files\Entity</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\entity\Ghast.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\entity\Ghast.cpp">
       <Filter>Source Files\Entity</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\entity\FishingHook.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\entity\FishingHook.cpp">
       <Filter>Source Files\Entity</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\item\FishingRodItem.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\item\FishingRodItem.cpp">
       <Filter>Source Files\Item</Filter>
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\world\particle\NoteParticle.cpp">
@@ -785,14 +773,32 @@
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\Container.cpp">
       <Filter>Source Files\Inventory</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\tile\entity\DispenserTileEntity.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\entity\DispenserTileEntity.cpp">
       <Filter>Source Files\Tile\Entity</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\tile\DispenserTile.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\DispenserTile.cpp">
       <Filter>Source Files\Tile</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\inventory\TrapMenu.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\inventory\TrapMenu.cpp">
       <Filter>Source Files\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\item\EggItem.cpp">
+      <Filter>Source Files\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\entity\ThrownEgg.cpp">
+      <Filter>Source Files\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\particle\ItemParticle.cpp">
+      <Filter>Source Files\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\entity\Snowball.cpp">
+      <Filter>Source Files\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\item\SnowballItem.cpp">
+      <Filter>Source Files\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\item\FlintAndSteelItem.cpp">
+      <Filter>Source Files\Item</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1291,67 +1297,55 @@
     <ClInclude Include="$(MC_ROOT)\source\world\item\CoalItem.hpp">
       <Filter>Header Files\Item</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\entity\Giant.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\entity\Giant.hpp">
       <Filter>Header Files\Entity</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\entity\PigZombie.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\entity\PigZombie.hpp">
       <Filter>Header Files\Entity</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\entity\Slime.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\entity\Slime.hpp">
       <Filter>Header Files\Entity</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\entity\Snowball.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\entity\Squid.hpp">
       <Filter>Header Files\Entity</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\entity\Squid.hpp">
-      <Filter>Header Files\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\world\entity\ThrownEgg.hpp">
-      <Filter>Header Files\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\world\item\EggItem.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\item\RedStoneItem.hpp">
       <Filter>Header Files\Item</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\item\RedStoneItem.hpp">
-      <Filter>Header Files\Item</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\world\item\SnowballItem.hpp">
-      <Filter>Header Files\Item</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\world\tile\ButtonTile.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\ButtonTile.hpp">
       <Filter>Header Files\Tile</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\tile\DiodeTile.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\DiodeTile.hpp">
       <Filter>Header Files\Tile</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\tile\LeverTile.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\LeverTile.hpp">
       <Filter>Header Files\Tile</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\tile\NotGateTile.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\NotGateTile.hpp">
       <Filter>Header Files\Tile</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\tile\PressurePlateTile.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\PressurePlateTile.hpp">
       <Filter>Header Files\Tile</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\tile\RedStoneDustTile.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\RedStoneDustTile.hpp">
       <Filter>Header Files\Tile</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\tile\SnowTile.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\SnowTile.hpp">
       <Filter>Header Files\Tile</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\entity\Fireball.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\entity\Fireball.hpp">
       <Filter>Header Files\Entity</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\entity\FlyingMob.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\entity\FlyingMob.hpp">
       <Filter>Header Files\Entity</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\entity\Ghast.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\entity\Ghast.hpp">
       <Filter>Header Files\Entity</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\entity\FishingHook.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\entity\FishingHook.hpp">
       <Filter>Header Files\Entity</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\item\FishingRodItem.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\item\FishingRodItem.hpp">
       <Filter>Header Files\Item</Filter>
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\world\inventory\FurnaceMenu.hpp">
@@ -1402,14 +1396,29 @@
     <ClInclude Include="$(MC_ROOT)\source\world\inventory\ContainerSizeChangeListener.hpp">
       <Filter>Header Files\Inventory</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\tile\entity\DispenserTileEntity.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\entity\DispenserTileEntity.hpp">
       <Filter>Header Files\Tile\Entity</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\tile\DispenserTile.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\DispenserTile.hpp">
       <Filter>Header Files\Tile</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\inventory\TrapMenu.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\inventory\TrapMenu.hpp">
       <Filter>Header Files\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\item\EggItem.hpp">
+      <Filter>Header Files\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\entity\ThrownEgg.hpp">
+      <Filter>Header Files\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\entity\Snowball.hpp">
+      <Filter>Header Files\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\item\SnowballItem.hpp">
+      <Filter>Header Files\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\item\FlintAndSteelItem.hpp">
+      <Filter>Header Files\Item</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -5,7 +5,8 @@
 class SnowballItem : public Item
 {
 public:
-	SnowballItem(int id);
+	SnowballItem(int);
 
-	ItemStack* use(ItemStack* inst, Level* level, Mob* mob) const override;
+public:
+	ItemStack* use(ItemStack* inst, Level* level, Mob* user) const;
 };
