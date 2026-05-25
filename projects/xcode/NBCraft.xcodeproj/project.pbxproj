@@ -1290,6 +1290,18 @@
 		84EB0E112EE2D4D4008FB007 /* JsonParser.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84EB0A042EE2CCC0008FB007 /* JsonParser.hpp */; };
 		84EB0E122EE2D4D4008FB007 /* Singleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84EB0A052EE2CCC0008FB007 /* Singleton.cpp */; };
 		84EB0E132EE2D4D4008FB007 /* Singleton.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84EB0A062EE2CCC0008FB007 /* Singleton.hpp */; };
+		84ED413B2FC3EC220038BAC4 /* EggItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED41352FC3EC220038BAC4 /* EggItem.cpp */; };
+		84ED413C2FC3EC220038BAC4 /* EggItem.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED41362FC3EC220038BAC4 /* EggItem.hpp */; };
+		84ED413D2FC3EC220038BAC4 /* FlintAndSteelItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED41372FC3EC220038BAC4 /* FlintAndSteelItem.cpp */; };
+		84ED413E2FC3EC220038BAC4 /* FlintAndSteelItem.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED41382FC3EC220038BAC4 /* FlintAndSteelItem.hpp */; };
+		84ED413F2FC3EC220038BAC4 /* SnowballItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED41392FC3EC220038BAC4 /* SnowballItem.cpp */; };
+		84ED41402FC3EC220038BAC4 /* SnowballItem.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED413A2FC3EC220038BAC4 /* SnowballItem.hpp */; };
+		84ED41422FC3EC520038BAC4 /* OrderingChannel.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED41412FC3EC520038BAC4 /* OrderingChannel.hpp */; };
+		84ED41472FC3EC730038BAC4 /* Snowball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED41432FC3EC730038BAC4 /* Snowball.cpp */; };
+		84ED41482FC3EC730038BAC4 /* Snowball.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED41442FC3EC730038BAC4 /* Snowball.hpp */; };
+		84ED41492FC3EC730038BAC4 /* ThrownEgg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED41452FC3EC730038BAC4 /* ThrownEgg.cpp */; };
+		84ED414A2FC3EC730038BAC4 /* ThrownEgg.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED41462FC3EC730038BAC4 /* ThrownEgg.hpp */; };
+		84ED414C2FC3EC850038BAC4 /* ItemParticle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED414B2FC3EC850038BAC4 /* ItemParticle.cpp */; };
 		84EE49EF2F387DBD00677881 /* SliderButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84EE49E92F387DBD00677881 /* SliderButton.cpp */; };
 		84EE49F02F387DBD00677881 /* SliderButton.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84EE49EA2F387DBD00677881 /* SliderButton.hpp */; };
 		84EE49F12F387DBD00677881 /* SwitchButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84EE49EB2F387DBD00677881 /* SwitchButton.cpp */; };
@@ -3094,6 +3106,18 @@
 		84EB0D0F2EE2D4B3008FB007 /* WeatherConstants.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = WeatherConstants.hpp; sourceTree = "<group>"; };
 		84EB0D102EE2D4B3008FB007 /* WorldConstants.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorldConstants.cpp; sourceTree = "<group>"; };
 		84EB0D112EE2D4B3008FB007 /* WorldConstants.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = WorldConstants.hpp; sourceTree = "<group>"; };
+		84ED41352FC3EC220038BAC4 /* EggItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EggItem.cpp; sourceTree = "<group>"; };
+		84ED41362FC3EC220038BAC4 /* EggItem.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EggItem.hpp; sourceTree = "<group>"; };
+		84ED41372FC3EC220038BAC4 /* FlintAndSteelItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FlintAndSteelItem.cpp; sourceTree = "<group>"; };
+		84ED41382FC3EC220038BAC4 /* FlintAndSteelItem.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FlintAndSteelItem.hpp; sourceTree = "<group>"; };
+		84ED41392FC3EC220038BAC4 /* SnowballItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SnowballItem.cpp; sourceTree = "<group>"; };
+		84ED413A2FC3EC220038BAC4 /* SnowballItem.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SnowballItem.hpp; sourceTree = "<group>"; };
+		84ED41412FC3EC520038BAC4 /* OrderingChannel.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = OrderingChannel.hpp; sourceTree = "<group>"; };
+		84ED41432FC3EC730038BAC4 /* Snowball.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Snowball.cpp; sourceTree = "<group>"; };
+		84ED41442FC3EC730038BAC4 /* Snowball.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Snowball.hpp; sourceTree = "<group>"; };
+		84ED41452FC3EC730038BAC4 /* ThrownEgg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThrownEgg.cpp; sourceTree = "<group>"; };
+		84ED41462FC3EC730038BAC4 /* ThrownEgg.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ThrownEgg.hpp; sourceTree = "<group>"; };
+		84ED414B2FC3EC850038BAC4 /* ItemParticle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ItemParticle.cpp; sourceTree = "<group>"; };
 		84ED99D42AFF12D1003B6AF0 /* nbcraft.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = nbcraft.entitlements; sourceTree = "<group>"; };
 		84EDD07A2E76E2B600375AEF /* LegacyCPP.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LegacyCPP.hpp; sourceTree = "<group>"; };
 		84EDD07B2E76E2B600375AEF /* LegacyCPP_Compat.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LegacyCPP_Compat.hpp; sourceTree = "<group>"; };
@@ -3683,6 +3707,7 @@
 				840DD63B2AC810620006A435 /* MinecraftPackets.hpp */,
 				840DD63C2AC810620006A435 /* NetEventCallback.cpp */,
 				840DD63D2AC810620006A435 /* NetEventCallback.hpp */,
+				84ED41412FC3EC520038BAC4 /* OrderingChannel.hpp */,
 				840DD63E2AC810620006A435 /* Packet.hpp */,
 				840DD63F2AC810620006A435 /* packets */,
 				8470AF2E2BE9B62600BCA54E /* PacketUtil.cpp */,
@@ -3877,8 +3902,6 @@
 		840DD6572AC810620006A435 /* entity */ = {
 			isa = PBXGroup;
 			children = (
-				848CCB442F3A38E800031D1F /* MobSpawner.hpp */,
-				848CCB452F3A38E800031D1F /* MobSpawner.cpp */,
 				84AA8B582B32F3B5003F5B82 /* Animal.cpp */,
 				84AA8B592B32F3B5003F5B82 /* Animal.hpp */,
 				84B1E0312E04FD7900ED000A /* Arrow.cpp */,
@@ -3909,6 +3932,8 @@
 				8445E79B2D769329008DC834 /* MobCategory.hpp */,
 				8470AF292BE9B60A00BCA54E /* MobFactory.cpp */,
 				8470AF2A2BE9B60A00BCA54E /* MobFactory.hpp */,
+				848CCB452F3A38E800031D1F /* MobSpawner.cpp */,
+				848CCB442F3A38E800031D1F /* MobSpawner.hpp */,
 				84AA8B6A2B32F3B5003F5B82 /* Monster.cpp */,
 				84AA8B6B2B32F3B5003F5B82 /* Monster.hpp */,
 				84AA8B6C2B32F3B5003F5B82 /* PathfinderMob.cpp */,
@@ -3925,10 +3950,14 @@
 				8445E79D2D769329008DC834 /* Sheep.hpp */,
 				84B1E0332E04FD7900ED000A /* Skeleton.cpp */,
 				84B1E0342E04FD7900ED000A /* Skeleton.hpp */,
+				84ED41432FC3EC730038BAC4 /* Snowball.cpp */,
+				84ED41442FC3EC730038BAC4 /* Snowball.hpp */,
 				84B1E0352E04FD7900ED000A /* Spider.cpp */,
 				84B1E0362E04FD7900ED000A /* Spider.hpp */,
 				8445E79E2D769329008DC834 /* SynchedEntityData.cpp */,
 				8445E79F2D769329008DC834 /* SynchedEntityData.hpp */,
+				84ED41452FC3EC730038BAC4 /* ThrownEgg.cpp */,
+				84ED41462FC3EC730038BAC4 /* ThrownEgg.hpp */,
 				840DD6662AC810620006A435 /* TripodCamera.cpp */,
 				840DD6672AC810620006A435 /* TripodCamera.hpp */,
 				84AA8B762B32F3B5003F5B82 /* WaterAnimal.cpp */,
@@ -3975,6 +4004,10 @@
 				84E023032F2A0255003C8FFE /* DyeColor.hpp */,
 				848AA3142F34E897007E9A3E /* DyePowderItem.cpp */,
 				848AA3132F34E897007E9A3E /* DyePowderItem.hpp */,
+				84ED41352FC3EC220038BAC4 /* EggItem.cpp */,
+				84ED41362FC3EC220038BAC4 /* EggItem.hpp */,
+				84ED41372FC3EC220038BAC4 /* FlintAndSteelItem.cpp */,
+				84ED41382FC3EC220038BAC4 /* FlintAndSteelItem.hpp */,
 				848CCB492F3A974000031D1F /* FoodItem.cpp */,
 				848CCB482F3A974000031D1F /* FoodItem.hpp */,
 				84B9D8992F3BE0A900FD67C4 /* HoeItem.cpp */,
@@ -3991,6 +4024,8 @@
 				84B9D89A2F3BE0A900FD67C4 /* SeedItem.hpp */,
 				84E1C9E32E7FDC72007D2F5D /* SlabItem.cpp */,
 				84E1C9E42E7FDC72007D2F5D /* SlabItem.hpp */,
+				84ED41392FC3EC220038BAC4 /* SnowballItem.cpp */,
+				84ED413A2FC3EC220038BAC4 /* SnowballItem.hpp */,
 				840DD67A2AC810620006A435 /* TileItem.cpp */,
 				840DD67B2AC810620006A435 /* TileItem.hpp */,
 				840DD67C2AC810620006A435 /* TilePlanterItem.cpp */,
@@ -4156,6 +4191,7 @@
 				8470AF3A2BE9B6FA00BCA54E /* FireworkParticle.cpp */,
 				8470AF3B2BE9B6FA00BCA54E /* FireworkParticle.hpp */,
 				840DD6D12AC810620006A435 /* FlameParticle.cpp */,
+				84ED414B2FC3EC850038BAC4 /* ItemParticle.cpp */,
 				840DD6D22AC810620006A435 /* LavaParticle.cpp */,
 				84E2A3D42FBAAC860026780B /* NoteParticle.cpp */,
 				840DD6D32AC810620006A435 /* Particle.cpp */,
@@ -5771,6 +5807,7 @@
 				8406FD2D2AF1820700B09C1D /* NetEventCallback.hpp in Headers */,
 				84DAF59A2F34650500D67310 /* TileEventPacket.hpp in Headers */,
 				84F77A382EA1C01C0045C907 /* AddItemEntityPacket.hpp in Headers */,
+				84ED41422FC3EC520038BAC4 /* OrderingChannel.hpp in Headers */,
 				84DAF5922F34650500D67310 /* ContainerSetDataPacket.hpp in Headers */,
 				84F77A432EA1C01C0045C907 /* LevelDataPacket.hpp in Headers */,
 				84F77A5D2EA1C01C0045C907 /* TakeItemEntityPacket.hpp in Headers */,
@@ -6039,6 +6076,7 @@
 				84BF63872AF186C8008A9995 /* Item.hpp in Headers */,
 				84E7BF332F286A20002D3936 /* ContainerListener.hpp in Headers */,
 				84BF63892AF186C8008A9995 /* TileItem.hpp in Headers */,
+				84ED41402FC3EC220038BAC4 /* SnowballItem.hpp in Headers */,
 				84BF638A2AF186C8008A9995 /* TilePlanterItem.hpp in Headers */,
 				84E7BF292F286A08002D3936 /* Slot.hpp in Headers */,
 				84E1C9DC2E7FDC26007D2F5D /* TallGrass.hpp in Headers */,
@@ -6103,6 +6141,7 @@
 				84E7BF232F286A08002D3936 /* ResultContainer.hpp in Headers */,
 				84E1C9E62E7FDC72007D2F5D /* AuxTileItem.hpp in Headers */,
 				84E7BF272F286A08002D3936 /* SimpleContainer.hpp in Headers */,
+				84ED413E2FC3EC220038BAC4 /* FlintAndSteelItem.hpp in Headers */,
 				84B1E0402E04FD7900ED000A /* Zombie.hpp in Headers */,
 				84BF63AC2AF186C8008A9995 /* ParticleEngine.hpp in Headers */,
 				84BF63AD2AF186C8008A9995 /* AABB.hpp in Headers */,
@@ -6114,6 +6153,7 @@
 				84BF63B12AF186C9008A9995 /* Bush.hpp in Headers */,
 				84BF63B22AF186C9008A9995 /* ClayTile.hpp in Headers */,
 				84BF63B32AF186C9008A9995 /* ClothTile.hpp in Headers */,
+				84ED414A2FC3EC730038BAC4 /* ThrownEgg.hpp in Headers */,
 				84BF63B42AF186C9008A9995 /* DirtTile.hpp in Headers */,
 				84BF63B52AF186C9008A9995 /* DoorTile.hpp in Headers */,
 				84BF63B62AF186C9008A9995 /* FarmTile.hpp in Headers */,
@@ -6129,6 +6169,7 @@
 				84BF63BC2AF186C9008A9995 /* IceTile.hpp in Headers */,
 				84BF63BD2AF186C9008A9995 /* InvisibleTile.hpp in Headers */,
 				84BF63BE2AF186C9008A9995 /* LadderTile.hpp in Headers */,
+				84ED413C2FC3EC220038BAC4 /* EggItem.hpp in Headers */,
 				8445E7AA2D769329008DC834 /* SynchedEntityData.hpp in Headers */,
 				84BF63BF2AF186C9008A9995 /* LeafTile.hpp in Headers */,
 				84BF63C02AF186C9008A9995 /* LiquidTile.hpp in Headers */,
@@ -6170,6 +6211,7 @@
 				84E7BF312F286A20002D3936 /* Container.hpp in Headers */,
 				84BF63D52AF186C9008A9995 /* WireTile.hpp in Headers */,
 				84AA8B512B32F39A003F5B82 /* BinaryHeap.hpp in Headers */,
+				84ED41482FC3EC730038BAC4 /* Snowball.hpp in Headers */,
 				84AA8B532B32F39A003F5B82 /* Node.hpp in Headers */,
 				84AA8B552B32F39A003F5B82 /* Path.hpp in Headers */,
 				84AA8B572B32F39A003F5B82 /* PathFinder.hpp in Headers */,
@@ -7171,9 +7213,11 @@
 				84BF630C2AF18631008A9995 /* Entity.cpp in Sources */,
 				84BF630D2AF18631008A9995 /* FallingTile.cpp in Sources */,
 				84BF630E2AF18631008A9995 /* ItemEntity.cpp in Sources */,
+				84ED41472FC3EC730038BAC4 /* Snowball.cpp in Sources */,
 				84BF63102AF18631008A9995 /* Mob.cpp in Sources */,
 				84BF63112AF18631008A9995 /* Player.cpp in Sources */,
 				8445E7A52D769329008DC834 /* MobCategory.cpp in Sources */,
+				84ED414C2FC3EC850038BAC4 /* ItemParticle.cpp in Sources */,
 				84E2A3ED2FBAAD6A0026780B /* FurnaceTileEntity.cpp in Sources */,
 				84E7BF222F286A08002D3936 /* ResultContainer.cpp in Sources */,
 				84BF63122AF18631008A9995 /* PrimedTnt.cpp in Sources */,
@@ -7191,6 +7235,7 @@
 				8445E7A22D769329008DC834 /* EntityType.cpp in Sources */,
 				84BF631A2AF18631008A9995 /* Item.cpp in Sources */,
 				84BF631C2AF18631008A9995 /* TileItem.cpp in Sources */,
+				84ED41492FC3EC730038BAC4 /* ThrownEgg.cpp in Sources */,
 				84E1C9F02E7FDC89007D2F5D /* VegetationFeature.cpp in Sources */,
 				84BF631D2AF18631008A9995 /* TilePlanterItem.cpp in Sources */,
 				84BF631E2AF18631008A9995 /* Dimension.cpp in Sources */,
@@ -7201,6 +7246,7 @@
 				84C6142B2F323602008AC5BE /* WeaponItem.cpp in Sources */,
 				84E2A3F32FBAAD6A0026780B /* TileEntityType.cpp in Sources */,
 				84BF63212AF18631008A9995 /* Biome.cpp in Sources */,
+				84ED413F2FC3EC220038BAC4 /* SnowballItem.cpp in Sources */,
 				84BF63222AF18631008A9995 /* BiomeSource.cpp in Sources */,
 				84BF63232AF18631008A9995 /* ChunkCache.cpp in Sources */,
 				84E1C9CF2E7FDC26007D2F5D /* CactusTile.cpp in Sources */,
@@ -7280,6 +7326,7 @@
 				84BF634E2AF18631008A9995 /* SmokeParticle.cpp in Sources */,
 				848AA3152F34E897007E9A3E /* DyePowderItem.cpp in Sources */,
 				84BF634F2AF18631008A9995 /* TerrainParticle.cpp in Sources */,
+				84ED413D2FC3EC220038BAC4 /* FlintAndSteelItem.cpp in Sources */,
 				84BF63502AF18631008A9995 /* AABB.cpp in Sources */,
 				84BF63512AF18631008A9995 /* HitResult.cpp in Sources */,
 				84BF63522AF18631008A9995 /* Vec3.cpp in Sources */,
@@ -7351,6 +7398,7 @@
 				84B1E03B2E04FD7900ED000A /* Skeleton.cpp in Sources */,
 				84AA8B7C2B32F3B5003F5B82 /* Cow.cpp in Sources */,
 				84AA8B7E2B32F3B5003F5B82 /* Creeper.cpp in Sources */,
+				84ED413B2FC3EC220038BAC4 /* EggItem.cpp in Sources */,
 				84AA8B8A2B32F3B5003F5B82 /* Monster.cpp in Sources */,
 				840823DA2F4FF4B80097F6A5 /* CoalItem.cpp in Sources */,
 				84E7BF242F286A08002D3936 /* ResultSlot.cpp in Sources */,

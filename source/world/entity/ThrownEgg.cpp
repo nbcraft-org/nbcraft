@@ -173,18 +173,21 @@ void ThrownEgg::tick()
         {
             hit_result.m_pEnt->hurt(m_owner, 0);
         }
-        if ( !m_pLevel->m_bIsClientSide && sharedRandom.nextInt(8) == 0) {
+        if (!m_pLevel->m_bIsClientSide && sharedRandom.nextInt(8) == 0)
+        {
             int j = 1;
             if (sharedRandom.nextInt(32) == 0)
                 j = 4;
 
-            for (int l = 0; l < j; l++) {
+            for (int l = 0; l < j; l++)
+            {
                 Chicken* chicken = new Chicken(m_pLevel);
                 chicken->moveTo(m_pos, 0.0f);
                 m_pLevel->addEntity(chicken);
             }
         }
-        for (int k = 0; k < 8; k++) {
+        for (int k = 0; k < 8; k++)
+        {
             m_pLevel->addParticle("snowballpoof", m_pos, 0);
         }
         remove();
