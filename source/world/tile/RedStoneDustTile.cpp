@@ -434,7 +434,7 @@ void RedStoneDustTile::animateTick(Level* level, const TilePos& pos, Random* ran
 		}
 		*/
 
-		level->addParticle("reddust", Vec3(var7, var9, var11), Vec3(0.0, 0.0, 0.0)); // var14, var15, var16
+		level->addParticle("reddust", Vec3(var7, var9, var11), Vec3(0.0f, 0.0f, 0.0f)); // var14, var15, var16
 	}
 }
 
