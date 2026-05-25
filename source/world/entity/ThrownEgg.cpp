@@ -8,7 +8,7 @@ void ThrownEgg::_init()
 {
     m_pDescriptor = &EntityTypeDescriptor::thrownEgg;
     m_renderType = RENDER_THROWN_EGG;
-	m_tilePos = Vec3(-1, -1, -1);
+    m_tilePos = TilePos(-1, -1, -1);
 	m_lastTile = 0;
 	m_lastTileData = 0; 
 	m_bInGround = false; 
@@ -18,10 +18,12 @@ void ThrownEgg::_init()
 	m_shakeTime = 0; ; 
 	m_owner = nullptr; 
 }
+
 ThrownEgg::ThrownEgg(Level* pLevel) : Entity(pLevel) {
 	_init();
 	setSize(0.25f, 0.25f);
 }
+
 ThrownEgg::ThrownEgg(Level* pLevel, Mob* pMob) : Entity(pLevel) {
 	_init();
 

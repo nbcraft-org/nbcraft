@@ -719,22 +719,22 @@
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\Container.cpp">
       <Filter>Source Files\Inventory</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\item\EggItem.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\item\EggItem.cpp">
       <Filter>Source Files\Item</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\entity\ThrownEgg.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\entity\ThrownEgg.cpp">
       <Filter>Source Files\Entity</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\particle\ItemParticle.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\particle\ItemParticle.cpp">
       <Filter>Source Files\Particle</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\entity\Snowball.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\entity\Snowball.cpp">
       <Filter>Source Files\Entity</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\item\SnowballItem.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\item\SnowballItem.cpp">
       <Filter>Source Files\Item</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\item\FlintAndSteelItem.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\item\FlintAndSteelItem.cpp">
       <Filter>Source Files\Item</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1282,19 +1282,19 @@
     <ClInclude Include="$(MC_ROOT)\source\world\inventory\ContainerSizeChangeListener.hpp">
       <Filter>Header Files\Inventory</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\item\EggItem.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\item\EggItem.hpp">
       <Filter>Header Files\Item</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\entity\ThrownEgg.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\entity\ThrownEgg.hpp">
       <Filter>Header Files\Entity</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\entity\Snowball.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\entity\Snowball.hpp">
       <Filter>Header Files\Entity</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\item\SnowballItem.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\item\SnowballItem.hpp">
       <Filter>Header Files\Item</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\item\FlintAndSteelItem.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\item\FlintAndSteelItem.hpp">
       <Filter>Header Files\Item</Filter>
     </ClInclude>
   </ItemGroup>

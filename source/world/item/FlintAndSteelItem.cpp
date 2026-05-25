@@ -28,4 +28,3 @@ bool FlintAndSteelItem::useOn(ItemStack* instance, Player* player, Level* level,
     instance->hurtAndBreak(1, player);
     return true;
 }
-

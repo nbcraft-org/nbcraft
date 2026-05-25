@@ -15,4 +15,3 @@ ItemStack* SnowballItem::use(ItemStack* inst, Level* level, Mob* user) const {
 		level->addEntity(new Snowball(level, user));
 	return inst;
 }
-

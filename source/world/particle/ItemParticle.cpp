@@ -1,11 +1,3 @@
-/********************************************************************
-	Minecraft: Pocket Edition - Decompilation Project
-	Copyright (C) 2023 iProgramInCpp
-
-	The following code is licensed under the BSD 1 clause license.
-	SPDX-License-Identifier: BSD-1-Clause
- ********************************************************************/
-
 #include "Particle.hpp"
 
 ItemParticle::ItemParticle(Level* level, const Vec3& pos, const Item* item) :
@@ -16,10 +8,12 @@ ItemParticle::ItemParticle(Level* level, const Vec3& pos, const Item* item) :
 	m_rCol = m_gCol = m_bCol = 1.0f;
 	m_size /= 2.0f;
 }
+
 int ItemParticle::getParticleTexture()
 {
     return PT_PARTICLES2;
 }
+
 void ItemParticle::render(Tesselator& t, float f, float a, float b, float c, float d, float e)
 {
     float MagicValue = 0.015609375f;

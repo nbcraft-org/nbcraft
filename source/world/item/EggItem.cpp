@@ -16,4 +16,3 @@ ItemStack* EggItem::use(ItemStack* inst, Level* level, Mob* user) const {
 		level->addEntity(new ThrownEgg(level, user));
 	return inst;
 }
-

@@ -7,7 +7,7 @@ void Snowball::_init()
 {
     m_pDescriptor = &EntityTypeDescriptor::snowball;
     m_renderType = RENDER_SNOWBALL;
-    m_tilePos = Vec3(-1, -1, -1);
+    m_tilePos = TilePos(-1, -1, -1);
     m_lastTile = 0;
     m_lastTileData = 0;
     m_bInGround = false;
@@ -17,10 +17,12 @@ void Snowball::_init()
     m_shakeTime = 0; ;
     m_owner = nullptr;
 }
+
 Snowball::Snowball(Level* pLevel) : Entity(pLevel) {
     _init();
     setSize(0.25f, 0.25f);
 }
+
 Snowball::Snowball(Level* pLevel, Mob* pMob) : Entity(pLevel) {
     _init();
 
