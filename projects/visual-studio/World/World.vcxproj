@@ -240,6 +240,7 @@
     <ClCompile Include="..\..\..\source\world\entity\Snowball.cpp" />
     <ClCompile Include="..\..\..\source\world\entity\Squid.cpp" />
     <ClCompile Include="..\..\..\source\world\entity\ThrownEgg.cpp" />
+    <ClCompile Include="..\..\..\source\world\inventory\TrapMenu.cpp" />
     <ClCompile Include="..\..\..\source\world\item\EggItem.cpp" />
     <ClCompile Include="..\..\..\source\world\item\FishingRodItem.cpp" />
     <ClCompile Include="..\..\..\source\world\item\RedStoneItem.cpp" />
@@ -247,6 +248,8 @@
     <ClCompile Include="..\..\..\source\world\particle\BreakingItemParticle.cpp" />
     <ClCompile Include="..\..\..\source\world\tile\ButtonTile.cpp" />
     <ClCompile Include="..\..\..\source\world\tile\DiodeTile.cpp" />
+    <ClCompile Include="..\..\..\source\world\tile\DispenserTile.cpp" />
+    <ClCompile Include="..\..\..\source\world\tile\entity\DispenserTileEntity.cpp" />
     <ClCompile Include="..\..\..\source\world\tile\LeverTile.cpp" />
     <ClCompile Include="..\..\..\source\world\tile\NotGateTile.cpp" />
     <ClCompile Include="..\..\..\source\world\tile\PressurePlateTile.cpp" />
@@ -448,12 +451,15 @@
     <ClInclude Include="..\..\..\source\world\entity\Snowball.hpp" />
     <ClInclude Include="..\..\..\source\world\entity\Squid.hpp" />
     <ClInclude Include="..\..\..\source\world\entity\ThrownEgg.hpp" />
+    <ClInclude Include="..\..\..\source\world\inventory\TrapMenu.hpp" />
     <ClInclude Include="..\..\..\source\world\item\EggItem.hpp" />
     <ClInclude Include="..\..\..\source\world\item\FishingRodItem.hpp" />
     <ClInclude Include="..\..\..\source\world\item\RedStoneItem.hpp" />
     <ClInclude Include="..\..\..\source\world\item\SnowballItem.hpp" />
     <ClInclude Include="..\..\..\source\world\tile\ButtonTile.hpp" />
     <ClInclude Include="..\..\..\source\world\tile\DiodeTile.hpp" />
+    <ClInclude Include="..\..\..\source\world\tile\DispenserTile.hpp" />
+    <ClInclude Include="..\..\..\source\world\tile\entity\DispenserTileEntity.hpp" />
     <ClInclude Include="..\..\..\source\world\tile\LeverTile.hpp" />
     <ClInclude Include="..\..\..\source\world\tile\NotGateTile.hpp" />
     <ClInclude Include="..\..\..\source\world\tile\PressurePlateTile.hpp" />

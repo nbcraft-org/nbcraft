@@ -601,6 +601,11 @@ void Player::closeContainer()
 {
 }
 
+void Player::openTrap(DispenserTileEntity* tileEntity)
+{
+	_handleOpenedContainerMenu();
+}
+
 void Player::touch(Entity* pEnt)
 {
 	pEnt->playerTouch(this);

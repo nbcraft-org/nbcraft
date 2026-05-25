@@ -20,6 +20,7 @@
 
 class Inventory; // in case we're included from Inventory.hpp
 class FurnaceTileEntity;
+class DispenserTileEntity;
 
 class Player : public Mob
 {
@@ -78,7 +79,7 @@ public:
 	virtual void openFurnace(FurnaceTileEntity* tileEntity);
 	virtual void openContainer(Container* container);
 	virtual void closeContainer();
-	//virtual void openTrap(DispenserTileEntity* tileEntity);
+	virtual void openTrap(DispenserTileEntity* tileEntity);
 	//virtual void openTextEdit(SignTileEntity* tileEntity);
 	virtual bool isLocalPlayer() const { return false; }
 	virtual void take(Entity* pEnt, int count) {}

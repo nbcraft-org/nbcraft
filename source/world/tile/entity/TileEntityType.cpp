@@ -11,6 +11,7 @@
 TileEntityType* TileEntityType::furnace;
 TileEntityType* TileEntityType::chest;
 TileEntityType* TileEntityType::noteblock;
+TileEntityType* TileEntityType::dispenser;
 
 std::map<std::string, TileEntityType*> TileEntityFactory::_types;
 
@@ -19,6 +20,7 @@ void TileEntityFactory::initTileEntities()
 	TileEntityType::furnace =       registerTileEntity<FurnaceTileEntity>("Furnace");
 	TileEntityType::chest =         registerTileEntity<ChestTileEntity>("Chest");
     TileEntityType::noteblock =     registerTileEntity<MusicTileEntity>("Music");
+    TileEntityType::dispenser =     registerTileEntity<MusicTileEntity>("Trap");
 }
 
 void TileEntityFactory::teardownTileEntities()

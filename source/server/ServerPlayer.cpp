@@ -14,6 +14,7 @@
 #include "world/inventory/ChestMenu.hpp"
 #include "world/level/Level.hpp"
 #include "world/tile/entity/FurnaceTileEntity.hpp"
+#include "world/tile/entity/DispenserTileEntity.hpp"
 #include "world/inventory/Slot.hpp"
 
 ServerPlayer::ServerPlayer(Level* pLevel, GameType playerGameType)
@@ -110,6 +111,25 @@ void ServerPlayer::openFurnace(FurnaceTileEntity* furnace)
 #endif
 
 	setContainerMenu(new FurnaceMenu(m_pInventory, furnace));
+}
+
+void ServerPlayer::openTrap(DispenserTileEntity* trap)
+{
+	//LOG_I("Client is opening a dispenser");
+
+	_nextContainerCounter();
+
+#if NETWORK_PROTOCOL_VERSION >= 5
+	m_pLevel->m_pRakNetInstance->send(
+		m_guid,
+		new ContainerOpenPacket(
+			m_containerId, Container::DISPENSER,
+			trap->getName(), trap->getContainerSize()
+		)
+	);
+#endif
+
+	//setContainerMenu(new TrapMenu(m_pInventory, trap));
 }
 
 void ServerPlayer::take(Entity* pEnt, int count)

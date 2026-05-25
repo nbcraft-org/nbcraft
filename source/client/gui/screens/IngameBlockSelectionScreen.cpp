@@ -117,6 +117,7 @@ IngameBlockSelectionScreen::IngameBlockSelectionScreen() :
 	addCreativeItem(Tile::pressurePlate_wood->m_ID);
 	addCreativeItem(Tile::notGate_on->m_ID);
 	addCreativeItem(Tile::button->m_ID);
+	addCreativeItem(Tile::dispenser->m_ID);
 	addCreativeItem(Tile::snow->m_ID);
 	addCreativeItem(Tile::topSnow->m_ID);
 

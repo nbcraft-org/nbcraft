@@ -78,7 +78,7 @@
 //#include "MobSpawnerTile.hpp"
 #include "NotGateTile.hpp"
 //#include "CakeTile.hpp"
-//#include "DispenserTile.hpp"
+#include "DispenserTile.hpp"
 #include "MusicTile.hpp"
 //#include "RecordPlayerTile.hpp"
 //#include "TrapDoorTile.hpp"
@@ -872,6 +872,12 @@ void Tile::initTiles()
 		->setSoundType(Tile::SOUND_WOOD)
 		->setDescriptionId("chest");
 
+	Tile::dispenser = (new DispenserTile(TILE_DISPENSER))
+		->init()
+		->setDestroyTime(3.5f)
+		->setSoundType(Tile::SOUND_STONE)
+		->setDescriptionId("dispenser");
+
 	// Great
 	Item::items[Tile::cloth->m_ID] = (new ClothItem(Tile::cloth->m_ID - C_MAX_TILES))
 		->setDescriptionId("cloth");
@@ -1378,4 +1384,5 @@ Tile
 	*Tile::musicBlock,
 	*Tile::furnace,
 	*Tile::furnaceLit,
-	*Tile::chest;
+	*Tile::chest,
+	*Tile::dispenser;

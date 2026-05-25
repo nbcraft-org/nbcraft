@@ -29,6 +29,7 @@ public:
 	static TileEntityType* furnace;
 	static TileEntityType* chest;
 	static TileEntityType* noteblock;
+	static TileEntityType* dispenser;
 
 public:
 	friend class TileEntityFactory;

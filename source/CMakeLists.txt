@@ -134,6 +134,7 @@ add_library(nbcraft-core STATIC
     client/gui/screens/inventory/ClassicCraftingScreen_Console.cpp
     client/gui/screens/inventory/FurnaceScreen.cpp
     client/gui/screens/inventory/ChestScreen.cpp
+	client/gui/screens/inventory/TrapScreen.cpp
     client/gui/components/ScrolledSelectionList.cpp
     client/gui/components/AvailableGamesList.cpp
     client/gui/components/RolledSelectionList.cpp
@@ -391,6 +392,7 @@ add_library(nbcraft-core STATIC
     world/inventory/CraftingMenu.cpp
     world/inventory/FurnaceMenu.cpp
     world/inventory/ChestMenu.cpp
+	world/inventory/TrapMenu.cpp
     world/inventory/Slot.cpp
     world/inventory/ResultSlot.cpp
     world/inventory/ArmorSlot.cpp
@@ -490,11 +492,13 @@ add_library(nbcraft-core STATIC
 	world/tile/DiodeTile.cpp
 	world/tile/SnowTile.cpp
     world/tile/CraftingTableTile.cpp
+	world/tile/DispenserTile.cpp
     world/tile/entity/TileEntity.cpp
     world/tile/entity/TileEntityType.cpp
     world/tile/entity/ChestTileEntity.cpp
     world/tile/entity/FurnaceTileEntity.cpp
     world/tile/entity/MusicTileEntity.cpp
+	world/tile/entity/DispenserTileEntity.cpp
     world/Facing.cpp
     renderer/GL/GL.cpp
     renderer/Attribute.cpp
