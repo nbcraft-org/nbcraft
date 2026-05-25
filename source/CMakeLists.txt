@@ -286,6 +286,8 @@ add_library(nbcraft-core STATIC
     world/entity/Spider.cpp
     world/entity/Zombie.cpp
     world/entity/Arrow.cpp
+	world/entity/ThrownEgg.cpp
+	world/entity/Snowball.cpp
     world/entity/WaterAnimal.cpp
     world/entity/Monster.cpp
     world/entity/Rocket.cpp
@@ -383,6 +385,7 @@ add_library(nbcraft-core STATIC
     world/item/ItemStack.cpp
     world/item/RocketItem.cpp
     world/item/Item.cpp
+	word/item/FlintAndSteelItem.cpp
     world/item/FoodItem.cpp
     world/item/SeedItem.cpp
     world/item/ArmorItem.cpp
@@ -395,12 +398,15 @@ add_library(nbcraft-core STATIC
     world/item/AuxTileItem.cpp
     world/item/ClothItem.cpp
     world/item/DyeColor.cpp
+	world/item/EggItem.cpp
     world/item/SlabItem.cpp
+	world/item/SnowballItem.cpp
     world/particle/RedDustParticle.cpp
     world/particle/TerrainParticle.cpp
     world/particle/NoteParticle.cpp
     world/particle/BubbleParticle.cpp
     world/particle/ExplodeParticle.cpp
+	world/particle/ItemParticle.cpp
     world/particle/ParticleEngine.cpp
     world/particle/FlameParticle.cpp
     world/particle/SmokeParticle.cpp

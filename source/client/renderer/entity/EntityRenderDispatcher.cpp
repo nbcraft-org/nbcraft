@@ -15,6 +15,8 @@
 #include "TripodCameraRenderer.hpp"
 #include "TntRenderer.hpp"
 #include "ItemRenderer.hpp"
+
+#include "ItemSpriteRenderer.hpp"
 #include "FallingTileRenderer.hpp"
 #include "PigRenderer.hpp"
 #include "SheepRenderer.hpp"
@@ -65,6 +67,8 @@ EntityRenderDispatcher::EntityRenderDispatcher()
 	_addRenderer(Entity::RENDER_TNT,          new TntRenderer());
 	_addRenderer(Entity::RENDER_CAMERA,       new TripodCameraRenderer());
 	_addRenderer(Entity::RENDER_ITEM,         new ItemRenderer());
+	_addRenderer(Entity::RENDER_THROWN_EGG,	  new ItemSpriteRenderer(Item::egg->getIcon(0)));
+	_addRenderer(Entity::RENDER_SNOWBALL, new ItemSpriteRenderer(Item::snowBall->getIcon(0)));
 	_addRenderer(Entity::RENDER_ROCKET,       new RocketRenderer());
 }
 

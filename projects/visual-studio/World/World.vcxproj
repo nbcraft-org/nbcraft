@@ -246,6 +246,12 @@
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\ContainerContentChangeListener.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\ContainerSizeChangeListener.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\Container.cpp" />
+    <ClCompile Include="..\..\..\source\world\entity\Snowball.cpp" />
+    <ClCompile Include="..\..\..\source\world\entity\ThrownEgg.cpp" />
+    <ClCompile Include="..\..\..\source\world\item\EggItem.cpp" />
+    <ClCompile Include="..\..\..\source\world\item\FlintAndSteelItem.cpp" />
+    <ClCompile Include="..\..\..\source\world\item\SnowballItem.cpp" />
+    <ClCompile Include="..\..\..\source\world\particle\ItemParticle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Entity.hpp" />
@@ -429,6 +435,11 @@
     <ClInclude Include="$(MC_ROOT)\source\world\tile\MusicTile.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\inventory\ContainerContentChangeListener.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\inventory\ContainerSizeChangeListener.hpp" />
+    <ClInclude Include="..\..\..\source\world\entity\Snowball.hpp" />
+    <ClInclude Include="..\..\..\source\world\entity\ThrownEgg.hpp" />
+    <ClInclude Include="..\..\..\source\world\item\EggItem.hpp" />
+    <ClInclude Include="..\..\..\source\world\item\FlintAndSteelItem.hpp" />
+    <ClInclude Include="..\..\..\source\world\item\SnowballItem.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NBT\NBT.vcxproj">

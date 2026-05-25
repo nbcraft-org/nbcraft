@@ -147,3 +147,11 @@ public:
 public:
 	float m_oSize;
 };
+
+class ItemParticle : public Particle
+{
+public:
+	ItemParticle(Level*, const Vec3& pos, const Item* item);
+	int getParticleTexture() override;
+	void render(Tesselator&, float, float, float, float, float, float) override;
+};

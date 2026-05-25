@@ -1474,7 +1474,11 @@ void LevelRenderer::addParticle(const std::string& name, const Vec3& pos, const 
 		pe->add(new RedDustParticle(m_pLevel, pos, dir));
 		return;
 	}
-
+	if (name == "snowballpoof")
+	{
+		pe->add(new ItemParticle(m_pLevel, pos, Item::snowBall));
+		return;
+	}
 	LOG_W("Unknown particle type: %s", name.c_str());
 }
 
