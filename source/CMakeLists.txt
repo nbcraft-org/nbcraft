@@ -434,7 +434,6 @@ add_library(nbcraft-core STATIC
     world/particle/Particle.cpp
     world/particle/LavaParticle.cpp
     world/particle/FireworkParticle.cpp
-	world/particle/BreakingItemParticle.cpp
     world/tile/InvisibleTile.cpp
     world/tile/Sapling.cpp
     world/tile/TreeTile.cpp
