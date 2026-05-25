@@ -11,7 +11,7 @@ ItemParticle::ItemParticle(Level* level, const Vec3& pos, const Item* item) :
 
 int ItemParticle::getParticleTexture()
 {
-    return PT_PARTICLES2;
+    return PT_ITEM;
 }
 
 void ItemParticle::render(Tesselator& t, float f, float a, float b, float c, float d, float e)

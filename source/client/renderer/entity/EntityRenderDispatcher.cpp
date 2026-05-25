@@ -83,8 +83,6 @@ EntityRenderDispatcher::EntityRenderDispatcher()
 	_addRenderer(Entity::RENDER_THROWN_EGG,	  new ItemSpriteRenderer(Item::egg->getIcon(0)));
 	_addRenderer(Entity::RENDER_SNOWBALL,	  new ItemSpriteRenderer(Item::snowBall->getIcon(0)));
 	_addRenderer(Entity::RENDER_ROCKET,       new RocketRenderer());
-	_addRenderer(Entity::RENDER_SNOWBALL,     new ItemSpriteRenderer( Item::snowBall->getIcon(nullptr)));
-	_addRenderer(Entity::RENDER_THROWN_EGG,   new ItemSpriteRenderer( Item::egg->getIcon(nullptr)));
 	_addRenderer(Entity::RENDER_FIREBALL,     new FireballRenderer());
 	_addRenderer(Entity::RENDER_FISHING_HOOK, new FishingHookRenderer());
 }

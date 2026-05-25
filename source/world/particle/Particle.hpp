@@ -137,6 +137,7 @@ public:
 	float m_oSize;
 };
 
+// DEPRECATED
 class BreakingItemParticle : public Particle
 {
 public:
