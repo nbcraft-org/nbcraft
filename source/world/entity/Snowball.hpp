@@ -18,8 +18,6 @@ private:
 public:
 	int m_shakeTime;
 	Mob* m_owner;
-private:
-	Entity* pMob;
 public:
 	Snowball(Level* pLevel);
 	Snowball(Level* pLevel, Mob* pMob);
