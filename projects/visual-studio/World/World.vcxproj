@@ -241,7 +241,6 @@
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\TrapMenu.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\item\FishingRodItem.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\item\RedStoneItem.cpp" />
-    <ClCompile Include="$(MC_ROOT)\source\world\particle\BreakingItemParticle.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\tile\ButtonTile.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\tile\DiodeTile.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\tile\DispenserTile.cpp" />

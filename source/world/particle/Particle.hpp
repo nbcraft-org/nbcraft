@@ -137,16 +137,6 @@ public:
 	float m_oSize;
 };
 
-// DEPRECATED
-class BreakingItemParticle : public Particle
-{
-public:
-	BreakingItemParticle(Level*, const Vec3& pos, Item*);
-
-	int getParticleTexture() override;
-	void render(Tesselator&, float, float, float, float, float, float) override;
-};
-
 class NoteParticle : public Particle
 {
 public:

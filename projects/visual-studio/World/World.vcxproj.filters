@@ -686,9 +686,6 @@
     <ClCompile Include="$(MC_ROOT)\source\world\item\RedStoneItem.cpp">
       <Filter>Source Files\Item</Filter>
     </ClCompile>
-    <ClCompile Include="$(MC_ROOT)\source\world\particle\BreakingItemParticle.cpp">
-      <Filter>Source Files\Particle</Filter>
-    </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\world\tile\ButtonTile.cpp">
       <Filter>Source Files\Tile</Filter>
     </ClCompile>
