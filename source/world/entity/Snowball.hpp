@@ -36,7 +36,7 @@ public:
 	void tick() override;
 	virtual void addAdditionalSaveData(CompoundTag& tag) const override;
 	virtual void readAdditionalSaveData(const CompoundTag& tag) override;
-	float getShadowHeightOffs();
+	float getShadowHeightOffs() const override { return 0.0f; }
 	AuxValue getAuxValue() const override;
 	void setAuxValue(AuxValue value) override;
 };

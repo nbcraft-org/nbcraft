@@ -239,11 +239,6 @@ void Snowball::readAdditionalSaveData(const CompoundTag& tag)
     m_bIsPlayerOwned = tag.getBoolean("player");
 }
 
-float Snowball::getShadowHeightOffs() 
-{
-    return 0.0f;
-}
-
 Entity::AuxValue Snowball::getAuxValue() const
 {
     return m_owner ? m_owner->m_EntityID : 0;
