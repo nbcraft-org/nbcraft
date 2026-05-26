@@ -200,8 +200,8 @@ void TileRenderer::renderEast(Tile* tile, const Vec3& pos, int texture)
 	}
 	else
 	{
-		texV_u = C_RATIO * (texY + aabb.min.y * 16.0f);
-		texV_d = C_RATIO * (texY + aabb.max.y * 16.0f - 0.01f);
+		texV_u = C_RATIO * (texY + (1.0f - aabb.max.y) * 16.0f);
+		texV_d = C_RATIO * (texY + (1.0f - aabb.min.y) * 16.0f - 0.01f);
 	}
 
 	Tesselator& t = m_tessellator;
@@ -277,8 +277,8 @@ void TileRenderer::renderWest(Tile* tile, const Vec3& pos, int texture)
 	}
 	else
 	{
-		texV_u = C_RATIO * (texY + aabb.min.y * 16.0f);
-		texV_d = C_RATIO * (texY + aabb.max.y * 16.0f - 0.01f);
+		texV_u = C_RATIO * (texY + (1.0f - aabb.max.y) * 16.0f);
+		texV_d = C_RATIO * (texY + (1.0f - aabb.min.y) * 16.0f - 0.01f);
 	}
 
 	Tesselator& t = m_tessellator;
@@ -354,8 +354,8 @@ void TileRenderer::renderSouth(Tile* tile, const Vec3& pos, int texture)
 	}
 	else
 	{
-		texV_u = C_RATIO * (texY + aabb.min.y * 16.0f);
-		texV_d = C_RATIO * (texY + aabb.max.y * 16.0f - 0.01f);
+		texV_u = C_RATIO * (texY + (1.0f - aabb.max.y) * 16.0f);
+		texV_d = C_RATIO * (texY + (1.0f - aabb.min.y) * 16.0f - 0.01f);
 	}
 
 	Tesselator& t = m_tessellator;
@@ -431,8 +431,8 @@ void TileRenderer::renderNorth(Tile* tile, const Vec3& pos, int texture)
 	}
 	else
 	{
-		texV_u = C_RATIO * (texY + aabb.min.y * 16.0f);
-		texV_d = C_RATIO * (texY + aabb.max.y * 16.0f - 0.01f);
+		texV_u = C_RATIO * (texY + (1.0f - aabb.max.y) * 16.0f);
+		texV_d = C_RATIO * (texY + (1.0f - aabb.min.y) * 16.0f - 0.01f);
 	}
 
 	Tesselator& t = m_tessellator;
@@ -2700,8 +2700,8 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 #ifndef USE_GL_NORMAL_LIGHTING
 	preshade = true;
 #endif
-
 	int shape = tileType->getRenderShape();
+	tileType->updateDefaultShape();
 	switch (shape)
 	{
 		case SHAPE_SOLID:

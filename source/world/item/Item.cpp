@@ -543,7 +543,7 @@ void Item::initItems()
 		->setDescriptionId("sugar")
 		->handEquipped(); // weirdly also in JE
 
-	Item::cake = NEW_ITEM(ITEM_CAKE)
+	Item::cake = NEW_X_ITEM(TilePlanterItem, ITEM_CAKE, TILE_CAKE)
 		->setIcon(13, 1)
 		->setMaxStackSize(1)
 		->setDescriptionId("cake");

@@ -77,11 +77,11 @@
 //#include "ButtonTile.hpp"
 //#include "MobSpawnerTile.hpp"
 //#include "RedstoneTorchTile.hpp"
-//#include "CakeTile.hpp"
+#include "CakeTile.hpp"
 //#include "DispenserTile.hpp"
 #include "MusicTile.hpp"
 //#include "RecordPlayerTile.hpp"
-//#include "TrapDoorTile.hpp"
+#include "TrapDoorTile.hpp"
 //#include "PortalTile.hpp"
 //#include "RepeaterTile.hpp"
 //#include "Mushroom.hpp"
@@ -664,6 +664,12 @@ void Tile::initTiles()
 		->setDestroyTime(-1.0f)
 		->setExplodeable(6000000.0f);
 
+	Tile::trapDoor = (new TrapdoorTile(TILE_TRAPDOOR, Material::wood))
+		->init()
+		->setDestroyTime(3.0f)
+		->setSoundType(Tile::SOUND_WOOD)
+		->setDescriptionId("trapdoor");
+
 	// @TODO: FenceGateTile class
 	/*Tile::fenceGate = (new FenceGateTile(TILE_WOOD, TEXTURE_PLANKS, Material::wood))
 		->init()
@@ -753,6 +759,12 @@ void Tile::initTiles()
 		->setSoundType(Tile::SOUND_WOOD)
 		->setDescriptionId("litpumpkin");
 	
+	Tile::cake = (new CakeTile(TILE_CAKE, TEXTURE_CAKE_TOP))
+		->init()
+		->setDestroyTime(0.5f)
+		->setSoundType(Tile::SOUND_CLOTH)
+		->setDescriptionId("cake");
+
 	Tile::netherrack = (new Tile(TILE_NETHERRACK, TEXTURE_BLOODSTONE, Material::stone))
 		->init()
 		->setDestroyTime(0.4f)
@@ -1311,4 +1323,6 @@ Tile
 	*Tile::musicBlock,
 	*Tile::furnace,
 	*Tile::furnaceLit,
-	*Tile::chest;
+	*Tile::chest,
+	*Tile::cake,
+	*Tile::trapDoor;

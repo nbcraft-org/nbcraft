@@ -221,9 +221,9 @@ Recipes::Recipes()
     add(ShapedRecipeBuilder("###", ItemStack(Tile::stoneSlabHalf, 3, 3))
         .add('#', Tile::stoneBrick));
 
-    //add(ShapedRecipeBuilder("###",
-    //                        "###", ItemStack(Tile::trapDoor, 2))
-    //    .add('#', Tile::wood));
+    add(ShapedRecipeBuilder("###",
+                            "###", ItemStack(Tile::trapDoor, 2))
+        .add('#', Tile::wood));
 
     add(ShapedRecipeBuilder("# #",
                             "###",
