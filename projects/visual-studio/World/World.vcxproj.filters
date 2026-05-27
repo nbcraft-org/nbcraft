@@ -1313,7 +1313,7 @@
       <Filter>Header Files\Tile</Filter>
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\world\tile\FenceGateTile.hpp">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files\Tile</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
