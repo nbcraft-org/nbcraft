@@ -352,7 +352,7 @@ void ItemInHandRenderer::renderFire(float a)
 		float texV_2 = (texY + 15.99f) / 256.0f;
 
 		matrix->translate(Vec3(float(-(i * 2 - 1)) * 0.24f, -0.3f, 0.0f));
-		matrix->rotate(float(-(i * 2 - 1)) * 10.0f, Vec3::UNIT_Y);
+		matrix->rotate(float((i * 2 - 1)) * 10.0f, Vec3::UNIT_Y);
 
         ScreenRenderer& screenRenderer = ScreenRenderer::singleton();
         screenRenderer.blitRaw(-0.5f, 0.5f, -0.5f, 0.5f, -0.5f, texU_1, texU_2, texV_1, texV_2);
