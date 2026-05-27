@@ -1225,13 +1225,15 @@ bool TileRenderer::tesselateFenceGateInWorld(Tile* tile, const TilePos& pos)
 	int getFacing = metadata & 3;
 	bool bRenderedAnything = false;
 
+	constexpr float o = 0.4375f;
+	constexpr float q = 0.5625f;
+	float g = 0.0f;
+	float m = 0.125f;
+	float var22 = 0.375f;
+	float var29 = 0.5f;
 
 	if (getFacing != 3 && getFacing != 1) 
 	{
-		float g = 0.0f;
-		float m = 0.125f;
-		float o = 0.4375f;
-		float q = 0.5625f;
 		tile->setShape(g, 0.3125f, o, m, 1.0f, q);
 		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
 		g = 0.875F;
@@ -1241,65 +1243,53 @@ bool TileRenderer::tesselateFenceGateInWorld(Tile* tile, const TilePos& pos)
 	}
 	else 
 	{
-		float f = 0.4375f;
-		float h = 0.5625f;
-		float n = 0.0f;
-		float p = 0.125f;
-		tile->setShape(f, 0.3125f, n, h, 1.0f, p);
+		tile->setShape(o, 0.3125f, g, q, 1.0f, m);
 		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
-		n = 0.875F;
-		p = 1.0F;
-		tile->setShape(f, 0.3125f, n, h, 1.0f, p);
+		g = 0.875F;
+		m = 1.0F;
+		tile->setShape(o, 0.3125f, g, q, 1.0f, m);
 		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
 	}
 
 	if (getOpen == 0) {
 		if (getFacing != 3 && getFacing != 1) {
-			float var22 = 0.375f;
-			float var29 = 0.5f;
-			float var39 = 0.4375f;
-			float var46 = 0.5625f;
-			tile->setShape(var22, 0.375f, var39, var29, 0.9375f, var46);
+			tile->setShape(var22, 0.375f, o, var29, 0.9375f, q);
 			if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
 			var22 = 0.5f;
 			var29 = 0.625f;
-			tile->setShape(var22, 0.375f, var39, var29, 0.9375f, var46);
+			tile->setShape(var22, 0.375f, o, var29, 0.9375f, q);
 			if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
 			var22 = 0.625f;
 			var29 = 0.875f;
-			tile->setShape(var22, 0.375f, var39, var29, 0.5625f, var46);
+			tile->setShape(var22, 0.375f, o, var29, 0.5625f, q);
 			if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
-			tile->setShape(var22, 0.75f, var39, var29, 0.9375f, var46);
+			tile->setShape(var22, 0.75f, o, var29, 0.9375f, q);
 			if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
 			var22 = 0.125f;
 			var29 = 0.375f;
-			tile->setShape(var22, 0.375f, var39, var29, 0.5625f, var46);
+			tile->setShape(var22, 0.375f, o, var29, 0.5625f, q);
 			if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
-			tile->setShape(var22, 0.75f, var39, var29, 0.9375f, var46);
+			tile->setShape(var22, 0.75f, o, var29, 0.9375f, q);
 			if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
 		}
 		else {
-			float var21 = 0.4375f;
-			float var28 = 0.5625f;
-			float var35 = 0.375f;
-			float var42 = 0.5f;
-			tile->setShape(var21, 0.375f, var35, var28, 0.9375f, var42);
+			tile->setShape(o, 0.375f, var22, q, 0.9375f, var29);
 			if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
-			var35 = 0.5f;
-			var42 = 0.625f;
-			tile->setShape(var21, 0.375f, var35, var28, 0.9375f, var42);
+			var22 = 0.5f;
+			var29 = 0.625f;
+			tile->setShape(o, 0.375f, var22, q, 0.9375f, var29);
 			if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
-			var35 = 0.625f;
-			var42 = 0.875f;
-			tile->setShape(var21, 0.375f, var35, var28, 0.5625f, var42);
+			var22 = 0.625f;
+			var29 = 0.875f;
+			tile->setShape(o, 0.375f, var22, q, 0.5625f, var29);
 			if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
-			tile->setShape(var21, 0.75f, var35, var28, 0.9375f, var42);
+			tile->setShape(o, 0.75f, var22, q, 0.9375f, var29);
 			if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
-			var35 = 0.125f;
-			var42 = 0.375f;
-			tile->setShape(var21, 0.375f, var35, var28, 0.5625f, var42);
+			var22 = 0.125f;
+			var29 = 0.375f;
+			tile->setShape(o, 0.375f, var22, q, 0.5625f, var29);
 			if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
-			tile->setShape(var21, 0.75f, var35, var28, 0.9375f, var42);
+			tile->setShape(o, 0.75f, var22, q, 0.9375f, var29);
 			if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
 		}
 	}
@@ -1360,7 +1350,6 @@ bool TileRenderer::tesselateFenceGateInWorld(Tile* tile, const TilePos& pos)
 		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
 	}
 
-	tile->setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 	tile->setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 
 	return bRenderedAnything;

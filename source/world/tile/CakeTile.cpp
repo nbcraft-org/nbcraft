@@ -10,36 +10,36 @@ CakeTile::CakeTile(int id, int texture) : Tile(id, texture, Material::cake)
 void CakeTile::updateShape(const LevelSource* level, const TilePos& pos)
 {
 	int i = level->getData(pos);
-	float f = 0.0625f;
+	constexpr float f = 0.0625f;
 	float g = (1 + i * 2) / 16.0f;
-	float h = 0.5f;
+	constexpr float h = 0.5f;
 	setShape(g, 0.0f, f, 1.0f - f, h, 1.0f - f);
 }
 
 void CakeTile::updateDefaultShape()
 {
-	float f = 0.0625f;
-	float g = 0.5f;
+	constexpr float f = 0.0625f;
+	constexpr float g = 0.5f;
 	setShape(f, 0.0F, f, 1.0F - f, g, 1.0F - f);
 }
 
 AABB CakeTile::getTileAABB(const Level* pLevel, const TilePos& pos)
 {
 	int i = pLevel->getData(pos);
-	float f = 0.0625F;
+	constexpr float f = 0.0625F;
 	float g = (1 + i * 2) / 16.0f;
-	float h = 0.5f;
-	m_aabbReturned = AABB(pos.x + g, pos.y, pos.z + f, pos.x + 1.0f - f, pos.y + h - f, pos.z + 1.0f - f);
+	constexpr float h = 0.5f;
+	m_aabbReturned = AABB(pos.x + g, pos.y, pos.z + f, pos.x + 1 - f, pos.y + h, pos.z + 1 - f);
 	return m_aabbReturned;
 }
 
 AABB* CakeTile::getAABB(const Level* pLevel, const TilePos& pos)
 {
 	int i = pLevel->getData(pos);
-	float f = 0.0625F;
+	constexpr float f = 0.0625F;
 	float g = (1 + i * 2) / 16.0f;
-	float h = 0.5f;
-	m_aabbReturned = AABB(pos.x + g, pos.y, pos.z + f, pos.x + 1.0f - f, pos.y + h, pos.z + 1.0f - f);
+	constexpr float h = 0.5f;
+	m_aabbReturned = AABB(pos.x + g, pos.y, pos.z + f, pos.x + 1 - f, pos.y + h, pos.z + 1 - f);
 	return &m_aabbReturned;
 }
 

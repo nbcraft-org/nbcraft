@@ -28,30 +28,22 @@ AABB TrapdoorTile::getTileAABB(const Level* level, const TilePos& pos)
 void TrapdoorTile::updateShape(const LevelSource* level, const TilePos& pos)
 {
 	TileData metadata = level->getData(pos);
-	float f = 0.1875F;
+	constexpr float f = 0.1875F;
 	setShape(0.0F, 0.0F, 0.0F, 1.0F, f, 1.0F);
 	if (isOpen(metadata)) {
-		if ((metadata & 3) == 0) {
-			setShape(0.0F, 0.0F, 1.0F - f, 1.0F, 1.0F, 1.0F);
-		}
-
-		if ((metadata & 3) == 1) {
-			setShape(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, f);
-		}
-
-		if ((metadata & 3) == 2) {
-			setShape(1.0F - f, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-		}
-
-		if ((metadata & 3) == 3) {
-			setShape(0.0F, 0.0F, 0.0F, f, 1.0F, 1.0F);
+		switch (metadata & 3)
+		{
+			case 0: setShape(0.0F, 0.0F, 1.0F - f, 1.0F, 1.0F, 1.0F); break;
+			case 1: setShape(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, f);		  break;
+			case 2: setShape(1.0F - f, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F); break;
+			case 3: setShape(0.0F, 0.0F, 0.0F, f, 1.0F, 1.0F);		  break;
 		}
 	}
 }
 
 void TrapdoorTile::updateDefaultShape()
 {
-	float f = 0.1875F;
+	constexpr float f = 0.1875F;
 	Tile::setShape(0.0f, 0.5f - f / 2.0f, 0.0f, 1.0f, 0.5f + f / 2.0f, 1.0f);
 }
 
@@ -63,8 +55,7 @@ void TrapdoorTile::attack(Level* level, const TilePos& pos, Player* player)
 void TrapdoorTile::setOpen(Level* level, const TilePos& pos, bool bOpen)
 {
 	TileData data = level->getData(pos);
-	int j = (data & 4) > 0 ? 1 : 0;
-	if (isOpen(level->getData(pos)) != bOpen)
+	if (isOpen(data) != bOpen)
 	{
 		level->setData(pos, data ^ 4);
 		level->levelEvent(LevelEvent(LevelEvent::SOUND_DOOR, pos, 0));
@@ -73,22 +64,16 @@ void TrapdoorTile::setOpen(Level* level, const TilePos& pos, bool bOpen)
 
 void TrapdoorTile::neighborChanged(Level* level, const TilePos& pos, TileID newTile) // check this
 {
-	int i = level->getData(pos);
+	int data = level->getData(pos);
 	TilePos newPos = pos;
-	if ((i & 3) == 0) {
-		newPos.z = pos.z + 1;
-	}
 
-	if ((i & 3) == 1) {
-		newPos.z--;
-	}
-
-	if ((i & 3) == 2) {
-		newPos.x = pos.x + 1;
-	}
-
-	if ((i & 3) == 3) {
-		newPos.x--;
+	switch (data & 3)
+	{
+		case 0: newPos.z = pos.z + 1; break;
+		case 1: newPos.z--;           break;
+		case 2: newPos.x = pos.x + 1; break;
+		case 3: newPos.x--;           break;
+		default: break;
 	}
 
 	if (!level->isSolidTile(newPos)) {
@@ -110,24 +95,16 @@ HitResult TrapdoorTile::clip(const Level* level, const TilePos& pos, Vec3 v1, Ve
 
 void TrapdoorTile::setPlacedOnFace(Level* level, const TilePos& pos, Facing::Name face) // check this
 {
-	int i = 0;
-	if (face == 2) {
-		i = 0;
+	int updateFlag = 0;
+	switch (face)
+	{
+		case (Facing::NORTH): updateFlag = 0; break;
+		case (Facing::SOUTH): updateFlag = 1; break;
+		case (Facing::WEST):  updateFlag = 2; break;
+		case (Facing::EAST):  updateFlag = 3; break;
+		default: break;
 	}
-
-	if (face == 3) {
-		i = 1;
-	}
-
-	if (face == 4) {
-		i = 2;
-	}
-
-	if (face == 5) {
-		i = 3;
-	}
-
-	level->setData(pos, i);
+	level->setData(pos, updateFlag);
 }
 
 bool TrapdoorTile::mayPlace(const Level* level, const TilePos& pos) const // check this
