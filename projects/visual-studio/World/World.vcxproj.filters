@@ -743,6 +743,9 @@
     <ClCompile Include="$(MC_ROOT)\source\world\tile\TrapdoorTile.cpp">
       <Filter>Source Files\Tile</Filter>
     </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\FenceGateTile.cpp">
+      <Filter>Source Files\Tile</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Entity.hpp">
@@ -1307,6 +1310,9 @@
       <Filter>Header Files\Tile</Filter>
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\world\tile\TrapdoorTile.hpp">
+      <Filter>Header Files\Tile</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\FenceGateTile.hpp">
       <Filter>Header Files\Tile</Filter>
     </ClInclude>
   </ItemGroup>

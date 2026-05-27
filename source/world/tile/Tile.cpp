@@ -65,6 +65,8 @@
 #include "SoulSandTile.hpp"
 #include "GlowstoneTile.hpp"
 #include "FenceTile.hpp"
+
+#include "FenceGateTile.hpp"
 //#include "BedTile.hpp"
 #include "CropsTile.hpp"
 #include "Web.hpp"
@@ -664,19 +666,13 @@ void Tile::initTiles()
 		->setDestroyTime(-1.0f)
 		->setExplodeable(6000000.0f);
 
-	Tile::trapDoor = (new TrapdoorTile(TILE_TRAPDOOR, Material::wood))
-		->init()
-		->setDestroyTime(3.0f)
-		->setSoundType(Tile::SOUND_WOOD)
-		->setDescriptionId("trapdoor");
-
 	// @TODO: FenceGateTile class
-	/*Tile::fenceGate = (new FenceGateTile(TILE_WOOD, TEXTURE_PLANKS, Material::wood))
+	Tile::fenceGate = (new FenceGateTile(TILE_FENCE_GATE, TEXTURE_PLANKS))
 		->init()
 		->setDestroyTime(2.0f)
 		->setExplodeable(5.0f)
 		->setSoundType(Tile::SOUND_WOOD)
-		->setDescriptionId("fenceGate");*/
+		->setDescriptionId("fenceGate");
 
 	Tile::info_updateGame1 = (new DirtTile(TILE_INFO_UPDATEGAME1, TEXTURE_INFO_UPDATEGAME1, Material::dirt))
 		->init()
@@ -764,6 +760,12 @@ void Tile::initTiles()
 		->setDestroyTime(0.5f)
 		->setSoundType(Tile::SOUND_CLOTH)
 		->setDescriptionId("cake");
+
+	Tile::trapDoor = (new TrapdoorTile(TILE_TRAPDOOR, Material::wood))
+		->init()
+		->setDestroyTime(3.0f)
+		->setSoundType(Tile::SOUND_WOOD)
+		->setDescriptionId("trapdoor");
 
 	Tile::netherrack = (new Tile(TILE_NETHERRACK, TEXTURE_BLOODSTONE, Material::stone))
 		->init()
@@ -1318,6 +1320,7 @@ Tile
 	*Tile::glowstone,
 	*Tile::web,
 	*Tile::fence,
+	*Tile::fenceGate,
 	*Tile::craftingTable,
 	*Tile::crops,
 	*Tile::musicBlock,

@@ -60,6 +60,7 @@ public:
 	bool tesselateWaterInWorld(Tile*, const TilePos& pos);
 	bool tesselateStairsInWorld(Tile*, const TilePos& pos);
 	bool tesselateFenceInWorld(Tile*, const TilePos& pos);
+	bool tesselateFenceGateInWorld(Tile*, const TilePos& pos);
 	bool tesselateLadderInWorld(Tile*, const TilePos& pos);
 	bool tesselateTorchInWorld(Tile*, const TilePos& pos);
 	bool tesselateDoorInWorld(Tile*, const TilePos& pos);
