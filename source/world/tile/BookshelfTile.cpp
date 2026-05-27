@@ -23,7 +23,7 @@ int BookshelfTile::getTexture(Facing::Name face) const
 
 int BookshelfTile::getResource(TileData data, Random* random) const
 {
-	return 0; // would be Book
+	return Item::book->m_itemID;
 }
 
 int BookshelfTile::getResourceCount(Random* random) const
