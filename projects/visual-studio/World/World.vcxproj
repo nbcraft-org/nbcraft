@@ -253,7 +253,7 @@
     <ClCompile Include="$(MC_ROOT)\source\world\item\SnowballItem.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\particle\ItemParticle.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\tile\CakeTile.cpp" />
-    <ClCompile Include="$(MC_ROOT)\source\world\tile\TrapdoorTile.cpp" />
+    <ClCompile Include="..\..\..\source\world\tile\TrapDoorTile.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\tile\FenceGateTile.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -444,7 +444,7 @@
     <ClInclude Include="$(MC_ROOT)\source\world\item\FlintAndSteelItem.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\item\SnowballItem.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\tile\CakeTile.hpp" />
-    <ClInclude Include="$(MC_ROOT)\source\world\tile\TrapdoorTile.hpp" />
+    <ClInclude Include="..\..\..\source\world\tile\TrapDoorTile.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\tile\FenceGateTile.hpp" />
   </ItemGroup>
   <ItemGroup>

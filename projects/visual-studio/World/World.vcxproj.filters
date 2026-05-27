@@ -740,7 +740,7 @@
     <ClCompile Include="$(MC_ROOT)\source\world\tile\CakeTile.cpp">
       <Filter>Source Files\Tile</Filter>
     </ClCompile>
-    <ClCompile Include="$(MC_ROOT)\source\world\tile\TrapdoorTile.cpp">
+    <ClCompile Include="..\..\..\source\world\tile\TrapDoorTile.cpp">
       <Filter>Source Files\Tile</Filter>
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\world\tile\FenceGateTile.cpp">
@@ -1309,7 +1309,7 @@
     <ClInclude Include="$(MC_ROOT)\source\world\tile\CakeTile.hpp">
       <Filter>Header Files\Tile</Filter>
     </ClInclude>
-    <ClInclude Include="$(MC_ROOT)\source\world\tile\TrapdoorTile.hpp">
+    <ClInclude Include="..\..\..\source\world\tile\TrapDoorTile.hpp">
       <Filter>Header Files\Tile</Filter>
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\world\tile\FenceGateTile.hpp">
