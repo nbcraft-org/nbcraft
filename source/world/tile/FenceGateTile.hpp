@@ -2,6 +2,10 @@
 
 #include "Tile.hpp"
 
+#define C_DIR_MASK 3
+#define C_OPEN_BIT 4
+#define C_CLOSE_MASK -5
+
 class FenceGateTile : public Tile
 {
 public:
@@ -21,6 +25,6 @@ public:
 	// @NOTE: These are inlined.
 	inline static bool isOpen(TileData data)
 	{
-		return (data & 4) != 0;
+		return (data & C_OPEN_BIT) != 0;
 	}
 };

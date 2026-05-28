@@ -25,7 +25,6 @@ public:
 	bool canSurvive(const Level* pLevel, const TilePos& pos) const override;
 public:
 	void neighborChanged(Level* pLevel, const TilePos& pos, TileID tile) override;
-	void attack(Level* level, const TilePos& pos, Player* player) override;
-	int getResource(TileData, Random*) const override { return 0; }
+	int getResource(TileData, Random*) const override { return TILE_AIR; }
 	int getResourceCount(Random*) const override { return 0; }
 };

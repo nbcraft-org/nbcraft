@@ -1236,8 +1236,8 @@ bool TileRenderer::tesselateFenceGateInWorld(Tile* tile, const TilePos& pos)
 	{
 		tile->setShape(g, 0.3125f, o, m, 1.0f, q);
 		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
-		g = 0.875F;
-		m = 1.0F;
+		g = 0.875f;
+		m = 1.0f;
 		tile->setShape(g, 0.3125f, o, m, 1.0f, q);
 		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
 	}
@@ -1245,8 +1245,8 @@ bool TileRenderer::tesselateFenceGateInWorld(Tile* tile, const TilePos& pos)
 	{
 		tile->setShape(o, 0.3125f, g, q, 1.0f, m);
 		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
-		g = 0.875F;
-		m = 1.0F;
+		g = 0.875f;
+		m = 1.0f;
 		tile->setShape(o, 0.3125f, g, q, 1.0f, m);
 		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
 	}
@@ -2973,18 +2973,17 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 		case SHAPE_FENCE_GATE:
 			t.addOffset(-0.5f, -0.5f, -0.5f);
 			for (int o = 0; o < 3; o++) {
-				float r = 0.0625F;
+				constexpr float r = 0.0625F;
 				if (o == 0) {
-					tileType->setShape(0.5F - r, 0.3F, 0.0F, 0.5F + r, 1.0F, r * 2.0F);
+					tileType->setShape(0.5f - r, 0.3f, 0.0f, 0.5f + r, 1.0f, r * 2.0f);
 				}
 
 				if (o == 1) {
-					tileType->setShape(0.5F - r, 0.3F, 1.0F - r * 2.0F, 0.5F + r, 1.0F, 1.0F);
+					tileType->setShape(0.5f - r, 0.3f, 1.0f - r * 2.0f, 0.5f + r, 1.0f, 1.0f);
 				}
 
-				r = 0.0625F;
 				if (o == 2) {
-					tileType->setShape(0.5F - r, 0.5F, 0.0F, 0.5F + r, 1.0F - r, 1.0F);
+					tileType->setShape(0.5f - r, 0.5f, 0.0f, 0.5f + r, 1.0f - r, 1.0f);
 				}
 
 				t.begin(24);

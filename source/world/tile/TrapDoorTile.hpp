@@ -2,6 +2,9 @@
 
 #include "Tile.hpp"
 
+#define C_DIR_MASK 3
+#define C_OPEN_BIT 4
+
 class TrapdoorTile : public Tile
 {
 public:
@@ -28,10 +31,6 @@ public:
 	// @NOTE: These are inlined.
 	inline static bool isOpen(TileData data)
 	{
-		return (data & 4) != 0;
-	}
-	inline static bool isTop(TileData data)
-	{
-		return (data & 8) != 0;
+		return (data & C_OPEN_BIT) != 0;
 	}
 };

@@ -20,13 +20,13 @@ void CakeTile::updateDefaultShape()
 {
 	constexpr float f = 0.0625f;
 	constexpr float g = 0.5f;
-	setShape(f, 0.0F, f, 1.0F - f, g, 1.0F - f);
+	setShape(f, 0.0f, f, 1.0f - f, g, 1.0f - f);
 }
 
 AABB CakeTile::getTileAABB(const Level* pLevel, const TilePos& pos)
 {
 	int i = pLevel->getData(pos);
-	constexpr float f = 0.0625F;
+	constexpr float f = 0.0625f;
 	float g = (1 + i * 2) / 16.0f;
 	constexpr float h = 0.5f;
 	m_aabbReturned = AABB(pos.x + g, pos.y, pos.z + f, pos.x + 1 - f, pos.y + h, pos.z + 1 - f);
@@ -36,7 +36,7 @@ AABB CakeTile::getTileAABB(const Level* pLevel, const TilePos& pos)
 AABB* CakeTile::getAABB(const Level* pLevel, const TilePos& pos)
 {
 	int i = pLevel->getData(pos);
-	constexpr float f = 0.0625F;
+	constexpr float f = 0.0625f;
 	float g = (1 + i * 2) / 16.0f;
 	constexpr float h = 0.5f;
 	m_aabbReturned = AABB(pos.x + g, pos.y, pos.z + f, pos.x + 1 - f, pos.y + h, pos.z + 1 - f);
@@ -66,11 +66,6 @@ bool CakeTile::use(Level* pLevel, const TilePos& pos, Player* player)
 {
 	eat(pLevel, pos, player);
 	return true;
-}
-
-void CakeTile::attack(Level* level, const TilePos& pos, Player* player)
-{
-	eat(level, pos, player);
 }
 
 void CakeTile::eat(Level* pLevel, const TilePos& pos, Player* player)
