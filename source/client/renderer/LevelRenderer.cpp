@@ -1488,6 +1488,16 @@ void LevelRenderer::addParticle(const std::string& name, const Vec3& pos, const 
 	LOG_W("Unknown particle type: %s", name.c_str());
 }
 
+void LevelRenderer::playStreamingMusic(const std::string& name, int x, int y, int z)
+{
+	if (name != Util::EMPTY_STRING)
+	{
+		m_pMinecraft->m_pGui->setNowPlaying("C418 - " + name);
+	}
+
+	//m_pMinecraft->m_pSoundEngine->playStreaming(name, Vec3(float(x), float(y), float(z)), 1.0f, 1.0f);
+}
+
 void LevelRenderer::playSound(const std::string& name, const Vec3& pos, float volume, float pitch)
 {
 	// TODO: Who's the genius who decided it'd be better to check a name string rather than an enum?
