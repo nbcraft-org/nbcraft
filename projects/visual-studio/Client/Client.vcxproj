@@ -259,6 +259,10 @@
     <ClInclude Include="$(MC_ROOT)\source\client\resources\LoadingTipManager.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\resources\SplashManager.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\FurnaceScreen.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\components\ImageButton.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\components\LargeImageButton.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\ScreenChooser_Pocket.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\StartMenuScreen_Pocket.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\client\app\App.cpp" />
@@ -436,6 +440,10 @@
     <ClCompile Include="$(MC_ROOT)\source\client\resources\LoadingTipManager.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\resources\SplashManager.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\FurnaceScreen.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\components\ImageButton.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\components\LargeImageButton.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\ScreenChooser_Pocket.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\StartMenuScreen_Pocket.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">

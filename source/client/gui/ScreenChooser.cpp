@@ -12,6 +12,7 @@
 #include "screens/ProgressScreen.hpp"
 #include "screens/CreditsScreen.hpp"
 
+#include "ScreenChooser_Pocket.hpp"
 #include "ScreenChooser_Console.hpp"
 
 ScreenChooser::ScreenChooser(Minecraft* mc, UITheme uiTheme) :
@@ -73,6 +74,8 @@ ScreenChooser* ScreenChooser::Create(Minecraft* mc)
 {
 	switch (mc->getOptions()->getUiTheme())
 	{
+	case UI_POCKET:
+		return new ScreenChooser_Pocket(mc);
 	case UI_CONSOLE:
 		return new ScreenChooser_Console(mc);
 	default:

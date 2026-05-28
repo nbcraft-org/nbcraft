@@ -123,6 +123,7 @@ void LogoRenderer::_build2dTitleMesh()
 		return;
 
 	UITheme uiTheme = m_pMinecraft->getUiTheme();
+	bool isPocket = uiTheme == UI_POCKET;
 	bool isConsole = uiTheme == UI_CONSOLE;
 
 	switch (m_pMinecraft->getOptions()->getLogoType())
@@ -133,7 +134,13 @@ void LogoRenderer::_build2dTitleMesh()
 		width = pTex->m_imageData.m_width;
 		height = pTex->m_imageData.m_height;
 
-		if (isConsole)
+		if (isPocket)
+		{
+			yPos = 4;
+			width = Mth::Min(m_width * 0.5f, width * 0.5f);
+			height *= (float)width / pTex->m_imageData.m_width;
+		}
+		else if (isConsole)
 		{
 			yPos = 56;
 			width *= 2;
@@ -163,7 +170,14 @@ void LogoRenderer::_build2dTitleMesh()
 		int halfWidth = 155;
 		height = 44;
 
-		if (isConsole)
+		if (isPocket)
+		{
+			yPos = 4;
+			width = Mth::Min(m_width * 0.5f, width * 0.5f);
+			halfWidth *= 0.5f;
+			height *= (float)width / pTex->m_imageData.m_width;
+		}
+		else if (isConsole)
 		{
 			yPos = 56;
 			width *= 2;
@@ -204,6 +218,14 @@ void LogoRenderer::_build2dTitleMesh()
 			yPos = 15;
 			width /= 2;
 			height /= 2;
+
+			if (isPocket)
+			{
+				yPos = 4;
+				int nWidth = Mth::Min(m_width * 0.5f, width * 0.5f);
+				height *= (float)nWidth / width;
+				width = nWidth;
+			}
 		}
 
 		left = (m_width - width) / 2;
@@ -232,6 +254,7 @@ void LogoRenderer::render2d()
 void LogoRenderer::render3d(float f)
 {
 	UITheme uiTheme = m_pMinecraft->getUiTheme();
+	bool isPocket = uiTheme == UI_POCKET;
 	bool isConsole = uiTheme == UI_CONSOLE;
 
 	int Width = int(sizeof gLogoLine1 - 1);
@@ -246,10 +269,12 @@ void LogoRenderer::render3d(float f)
 				m_pTiles[y * Width + x] = new TitleTile(m_random, x, y);
 	}
 
-	int titleHeight = int(120 / Gui::GuiScale);
+	int yPos = 120;
 
-	if (m_width * 3 / 4 < 256) // cramped mode
-		titleHeight = int(80 / Gui::GuiScale);
+	if (isPocket || m_width * 3 / 4 < 256) // cramped mode
+		yPos = 80;
+
+	int titleHeight = int(yPos / Gui::GuiScale);
 
 	if (isConsole)
 		titleHeight *= 2;
@@ -257,13 +282,18 @@ void LogoRenderer::render3d(float f)
 	MatrixStack::Ref projMtx = MatrixStack::Projection.pushIdentity();
 	projMtx->setPerspective(70.0f, float(Minecraft::width) / titleHeight, 0.05f, 100.0f);
 
+	int yOffset = 0;
+	if (isPocket)
+		yOffset = 18;
+	yOffset /= Gui::GuiScale;
+
 	mce::RenderContext& renderContext = mce::RenderContextImmediate::get();
 
 	mce::ViewportOrigin viewportOrigin;
 	{
 		viewportOrigin.leftX = 0;
-		viewportOrigin.bottomLeftY = Minecraft::height - titleHeight;
-		viewportOrigin.topLeftY = 0;
+		viewportOrigin.bottomLeftY = Minecraft::height - titleHeight + yOffset;
+		viewportOrigin.topLeftY = -yOffset;
 	}
 	renderContext.setViewport(Minecraft::width, titleHeight, 0.0f, 0.7f, viewportOrigin);
 
