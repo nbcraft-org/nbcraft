@@ -257,7 +257,8 @@ public: // static variables
 		* furnaceLit,
 		* musicBlock,
 		* chest,
-		* dispenser;
+		* dispenser,
+		* recordPlayer;
 
 public:
 	int m_TextureFrame;

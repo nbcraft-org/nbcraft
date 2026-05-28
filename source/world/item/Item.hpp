@@ -21,7 +21,7 @@
 
 #include "ItemStack.hpp"
 
-#define C_MAX_ITEMS (C_MAX_TILES * 2)
+#define C_MAX_ITEMS (C_MAX_TILES * 256)
 
 class ItemStack; // in case we're included from ItemStack.hpp
 

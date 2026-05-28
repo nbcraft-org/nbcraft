@@ -93,6 +93,8 @@ IngameBlockSelectionScreen::IngameBlockSelectionScreen() :
 	addCreativeItem(Item::diode->m_itemID);
 	addCreativeItem(Item::snowBall->m_itemID);
 	addCreativeItem(Item::egg->m_itemID);
+	addCreativeItem(Item::record_01->m_itemID);
+	addCreativeItem(Item::record_02->m_itemID);
 
 	// more stuff
 	addCreativeItem(Tile::cloth->m_ID, 0);
@@ -118,6 +120,8 @@ IngameBlockSelectionScreen::IngameBlockSelectionScreen() :
 	addCreativeItem(Tile::notGate_on->m_ID);
 	addCreativeItem(Tile::button->m_ID);
 	addCreativeItem(Tile::dispenser->m_ID);
+	addCreativeItem(Tile::recordPlayer->m_ID);
+	addCreativeItem(Tile::musicBlock->m_ID);
 	addCreativeItem(Tile::snow->m_ID);
 	addCreativeItem(Tile::topSnow->m_ID);
 

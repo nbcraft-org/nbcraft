@@ -35,6 +35,7 @@
 #include "EggItem.hpp"
 #include "WeaponItem.hpp"
 #include "FishingRodItem.hpp"
+#include "RecordingItem.hpp"
 
 #define ITEM(x) ((x) - 256)
 
@@ -583,11 +584,11 @@ void Item::initItems()
 		->setIcon(13, 5)
 		->setDescriptionId("shears");
 	
-	Item::record_01 = NEW_ITEM(ITEM_RECORD_01)
+	Item::record_01 = NEW_X_ITEM(RecordingItem, ITEM_RECORD_01, "13")
 		->setIcon(0, 15)
 		->setDescriptionId("record");
 
-	Item::record_02 = NEW_ITEM(ITEM_RECORD_02)
+	Item::record_02 = NEW_X_ITEM(RecordingItem, ITEM_RECORD_02, "cat")
 		->setIcon(1, 15)
 		->setDescriptionId("record");
 

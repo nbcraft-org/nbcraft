@@ -53,7 +53,7 @@
 #include "BookshelfTile.hpp"
 #include "WireTile.hpp"
 #include "RocketLauncherTile.hpp"
-//#include "RedStoneDustTile.hpp"
+#include "RedStoneDustTile.hpp"
 #include "CraftingTableTile.hpp"
 #include "FurnaceTile.hpp"
 #include "TallGrass.hpp"
@@ -80,12 +80,11 @@
 //#include "CakeTile.hpp"
 #include "DispenserTile.hpp"
 #include "MusicTile.hpp"
-//#include "RecordPlayerTile.hpp"
+#include "RecordPlayerTile.hpp"
 //#include "TrapDoorTile.hpp"
 //#include "PortalTile.hpp"
 #include "DiodeTile.hpp"
 //#include "Mushroom.hpp"
-#include "RedStoneDustTile.hpp"
 
 std::string Tile::TILE_DESCRIPTION_PREFIX = "tile.";
 
@@ -878,6 +877,13 @@ void Tile::initTiles()
 		->setSoundType(Tile::SOUND_STONE)
 		->setDescriptionId("dispenser");
 
+	Tile::recordPlayer = (new RecordPlayerTile(TILE_JUKEBOX, TEXTURE_JUKEBOX_SIDE))
+		->init()
+		->setDestroyTime(2.0f)
+		->setExplodeable(10.0f)
+		->setSoundType(Tile::SOUND_STONE)
+		->setDescriptionId("jukebox");
+
 	// Great
 	Item::items[Tile::cloth->m_ID] = (new ClothItem(Tile::cloth->m_ID - C_MAX_TILES))
 		->setDescriptionId("cloth");
@@ -1385,4 +1391,5 @@ Tile
 	*Tile::furnace,
 	*Tile::furnaceLit,
 	*Tile::chest,
-	*Tile::dispenser;
+	*Tile::dispenser,
+	*Tile::recordPlayer;

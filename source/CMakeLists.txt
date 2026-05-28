@@ -422,6 +422,7 @@ add_library(nbcraft-core STATIC
 	world/item/RedStoneItem.cpp
 	world/item/SnowballItem.cpp
 	world/item/FishingRodItem.cpp
+	world/item/RecordingItem.cpp
     world/particle/RedDustParticle.cpp
     world/particle/TerrainParticle.cpp
     world/particle/NoteParticle.cpp
@@ -494,6 +495,7 @@ add_library(nbcraft-core STATIC
 	world/tile/SnowTile.cpp
     world/tile/CraftingTableTile.cpp
 	world/tile/DispenserTile.cpp
+	world/tile/RecordPlayerTile.cpp
     world/tile/entity/TileEntity.cpp
     world/tile/entity/TileEntityType.cpp
     world/tile/entity/ChestTileEntity.cpp

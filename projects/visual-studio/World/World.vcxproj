@@ -272,6 +272,8 @@
     <ClCompile Include="$(MC_ROOT)\source\world\item\FlintAndSteelItem.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\item\SnowballItem.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\particle\ItemParticle.cpp" />
+    <ClCompile Include="..\..\..\source\world\item\RecordingItem.cpp" />
+    <ClCompile Include="..\..\..\source\world\tile\RecordPlayerTile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Entity.hpp" />
@@ -480,6 +482,8 @@
     <ClInclude Include="$(MC_ROOT)\source\world\item\EggItem.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\item\FlintAndSteelItem.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\item\SnowballItem.hpp" />
+    <ClInclude Include="..\..\..\source\world\item\RecordingItem.hpp" />
+    <ClInclude Include="..\..\..\source\world\tile\RecordPlayerTile.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NBT\NBT.vcxproj">

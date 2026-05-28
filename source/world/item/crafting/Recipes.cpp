@@ -163,11 +163,11 @@ Recipes::Recipes()
                             "###", ItemStack(Tile::fence, 2))
         .add('#', Item::stick));
 
-    //add(ShapedRecipeBuilder("###",
-    //                        "#X#",
-    //                        "###", ItemStack(Tile::recordPlayer, 1))
-    //    .add('#', Tile::wood)
-    //    .add('X', Item::emerald));
+    add(ShapedRecipeBuilder("###",
+                            "#X#",
+                            "###", ItemStack(Tile::recordPlayer, 1))
+        .add('#', Tile::wood)
+        .add('X', Item::emerald));
 
     add(ShapedRecipeBuilder("###",
                             "#X#",
@@ -395,12 +395,12 @@ Recipes::Recipes()
     add(ShapedRecipeBuilder("##", ItemStack(Tile::pressurePlate_wood, 1))
         .add('#', Tile::wood));
 
-    //add(ShapedRecipeBuilder("###",
-    //                        "#X#",
-    //                        "#R#", ItemStack(Tile::dispenser, 1))
-    //    .add('#', Tile::stoneBrick)
-    //    .add('X', Item::bow)
-    //    .add('R', Item::redStone));
+    add(ShapedRecipeBuilder("###",
+                            "#X#",
+                            "#R#", ItemStack(Tile::dispenser, 1))
+        .add('#', Tile::stoneBrick)
+        .add('X', Item::bow)
+        .add('R', Item::redStone));
 
     add(ShapedRecipeBuilder("###",
                             "XXX", ItemStack(Item::bed))

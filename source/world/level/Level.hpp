@@ -168,6 +168,7 @@ public:
 	void addParticle(const std::string& name, const Vec3& pos, const Vec3& dir = Vec3::ZERO);
 	void playSound(Entity*, const std::string& name, float volume = 1.0f, float pitch = 1.0f);
 	void playSound(const Vec3& pos, const std::string& name, float volume = 1.0f, float pitch = 1.0f);
+	void playStreamingMusic(const std::string& name, const TilePos& pos);
 	void animateTick(const TilePos& pos);
 	float getSeenPercent(Vec3, AABB) const;
 	void explode(Entity*, const Vec3& pos, float power);
