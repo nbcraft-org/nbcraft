@@ -81,23 +81,23 @@ void Button::_renderMessageConsole(Font& font)
 	font.drawScalableShadow(getMessage(), m_xPos + (m_width - textWidth) / 2, m_yPos + (m_height - 16) / 2, textColor);
 }
 
-Button::Button(int xPos, int yPos, int btnWidth, int btnHeight, const std::string& text)
+Button::Button(int x, int y, int width, int height, const std::string& text)
 {
 	_init();
 
-	m_xPos = xPos;
-	m_yPos = yPos;
+	m_xPos = x;
+	m_yPos = y;
 	setMessage(text);
-	m_width  = btnWidth;
-	m_height = btnHeight;
+	m_width  = width;
+	m_height = height;
 }
 
-Button::Button(int xPos, int yPos, const std::string& text)
+Button::Button(int x, int y, const std::string& text)
 {
 	_init();
 
-	m_xPos = xPos;
-	m_yPos = yPos;
+	m_xPos = x;
+	m_yPos = y;
 	setMessage(text);
 	m_width  = 200;
 	m_height = 24;

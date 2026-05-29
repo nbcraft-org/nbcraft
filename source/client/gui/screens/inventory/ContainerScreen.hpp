@@ -100,5 +100,6 @@ protected:
     std::vector<SlotDisplay> m_slotDisplays;
 
 private:
-    int m_timeSlotDragged;
+    bool m_bSplitStackThisTick;
+    float m_slotDragStartTime;
 };

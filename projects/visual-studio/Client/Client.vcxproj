@@ -269,6 +269,10 @@
     <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\SlimeRenderer.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\SquidRenderer.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\FurnaceScreen.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\components\ImageButton.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\components\LargeImageButton.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\ScreenChooser_Pocket.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\StartMenuScreen_Pocket.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\client\app\App.cpp" />
@@ -456,6 +460,10 @@
     <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\SlimeRenderer.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\SquidRenderer.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\FurnaceScreen.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\components\ImageButton.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\components\LargeImageButton.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\ScreenChooser_Pocket.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\StartMenuScreen_Pocket.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">

@@ -26,9 +26,9 @@ protected:
 	void _renderMessageConsole(Font&);
 
 public:
-	Button(int x, int y, int width, int height, const std::string&);
-	Button(int x, int y, const std::string&);
-	Button(const std::string&);
+	Button(int x, int y, int width, int height, const std::string& text);
+	Button(int x, int y, const std::string& text);
+	Button(const std::string& text);
 
 public:
 	Type getType() const override { return TYPE_BUTTON; }

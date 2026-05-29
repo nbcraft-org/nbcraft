@@ -589,7 +589,11 @@ void Minecraft::tickInput()
 			// @HACK: on SDL1, we don't recenter the mouse every tick, meaning the user can
 			// unintentionally click the hotbar while swinging their fist
 			if (platform()->getRecenterMouseEveryTick() || m_pScreen)
+			{
 				m_pGui->handleClick(1, Mouse::getX(), Mouse::getY());
+				// Gui:handleClick() pops the current mouse event from the stack, and continuing would mean an over-read
+				continue;
+			}
 		}
 
 		MouseButtonType buttonType = Mouse::getEventButton();

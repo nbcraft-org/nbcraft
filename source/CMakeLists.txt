@@ -101,11 +101,13 @@ add_library(nbcraft-core STATIC
     client/gui/Screen.cpp
     client/gui/ScreenChooser.cpp
     client/gui/ScreenChooser_Console.cpp
+	client/gui/ScreenChooser_Pocket.cpp
     client/gui/screens/CreditsScreen.cpp
     client/gui/screens/OptionsScreen.cpp
     client/gui/screens/OptionsScreen_Console.cpp
     client/gui/screens/StartMenuScreen.cpp
     client/gui/screens/StartMenuScreen_Console.cpp
+	client/gui/screens/StartMenuScreen_Pocket.cpp
     client/gui/screens/ConvertWorldScreen.cpp
     client/gui/screens/CreateWorldScreen.cpp
     client/gui/screens/CreateWorldScreen_Console.cpp
@@ -148,6 +150,8 @@ add_library(nbcraft-core STATIC
     client/gui/components/WorldSelectionList.cpp
     client/gui/components/OptionList.cpp
     client/gui/components/ScrollRenderer_Console.cpp
+	client/gui/components/ImageButton.cpp
+	client/gui/components/LargeImageButton.cpp
     client/locale/Language.cpp
     client/gui/Gui.cpp
     client/gui/GuiComponent.cpp
