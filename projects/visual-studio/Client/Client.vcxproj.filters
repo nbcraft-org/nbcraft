@@ -60,6 +60,9 @@
     <Filter Include="Header Files\Sound">
       <UniqueIdentifier>{7ce8acc7-4fb7-440b-bace-76d8a3514038}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Sound">
+      <UniqueIdentifier>{46244bde-3ec8-4717-be26-c90a2fd9b7d4}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header Files\App">
       <UniqueIdentifier>{d7896ae3-f50c-4976-9897-336cbfb70dea}</UniqueIdentifier>
     </Filter>
@@ -125,9 +128,6 @@
     </Filter>
     <Filter Include="Source Files\Locale">
       <UniqueIdentifier>{8d211c71-2764-43ef-8587-7414109f4ff5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Resources\Sound">
-      <UniqueIdentifier>{dd9a353b-2a43-442d-a40f-56a04100b71b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -680,6 +680,18 @@
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\FurnaceScreen.hpp">
       <Filter>Header Files\GUI\Screens\Inventory</Filter>
     </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\components\ImageButton.hpp">
+      <Filter>Header Files\GUI\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\components\LargeImageButton.hpp">
+      <Filter>Header Files\GUI\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\StartMenuScreen_Pocket.hpp">
+      <Filter>Header Files\GUI\Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\ScreenChooser_Pocket.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\client\gui\components\AvailableGamesList.cpp">
@@ -881,22 +893,22 @@
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\client\sound\SoundPathRepository.cpp">
-      <Filter>Header Files\Resources\Sound</Filter>
+      <Filter>Source Files\Sound</Filter>
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\client\sound\SoundData.cpp">
-      <Filter>Header Files\Resources\Sound</Filter>
+      <Filter>Source Files\Sound</Filter>
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\client\sound\SoundEngine.cpp">
-      <Filter>Header Files\Resources\Sound</Filter>
+      <Filter>Source Files\Sound</Filter>
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\client\sound\SoundRepository.cpp">
-      <Filter>Header Files\Resources\Sound</Filter>
+      <Filter>Source Files\Sound</Filter>
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\client\sound\SoundStream.cpp">
-      <Filter>Header Files\Resources\Sound</Filter>
+      <Filter>Source Files\Sound</Filter>
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\client\sound\SoundSystem.cpp">
-      <Filter>Header Files\Resources\Sound</Filter>
+      <Filter>Source Files\Sound</Filter>
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\client\app\App.cpp">
       <Filter>Source Files\App</Filter>
@@ -1209,6 +1221,18 @@
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\FurnaceScreen.cpp">
       <Filter>Source Files\GUI\Screens\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\components\ImageButton.cpp">
+      <Filter>Source Files\GUI\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\components\LargeImageButton.cpp">
+      <Filter>Source Files\GUI\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\StartMenuScreen_Pocket.cpp">
+      <Filter>Source Files\GUI\Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\ScreenChooser_Pocket.cpp">
+      <Filter>Source Files\GUI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

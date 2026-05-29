@@ -1,17 +1,21 @@
+#include <cfloat>
+
 #include "client/gui/screens/inventory/ContainerScreen.hpp"
 #include "client/locale/Language.hpp"
 #include "client/renderer/Lighting.hpp"
 #include "client/renderer/entity/ItemRenderer.hpp"
 #include "renderer/ShaderConstants.hpp"
-#include <cfloat>
 
-ContainerScreen::ContainerScreen(ContainerMenu* menu) :
-    m_pMenu(menu),
-    m_imageWidth(176),
-    m_imageHeight(166),
-    m_leftPos(0),
-    m_topPos(0),
-    m_timeSlotDragged(0)
+#define C_TOUCH_STACK_SPLIT_START_TIME 250 // 0.25s
+
+ContainerScreen::ContainerScreen(ContainerMenu* menu)
+    : m_pMenu(menu)
+    , m_imageWidth(176)
+    , m_imageHeight(166)
+    , m_leftPos(0)
+    , m_topPos(0)
+    , m_bSplitStackThisTick(false)
+    , m_slotDragStartTime(0)
 {
     m_uiTheme = UI_UNIVERSAL;
     m_bRenderPointer = true;
@@ -239,28 +243,46 @@ void ContainerScreen::render(float partialTicks)
 void ContainerScreen::pointerPressed(const MenuPointer& pointer, MouseButtonType button)
 {
     Screen::pointerPressed(pointer, button);
-    if (m_pMinecraft->useTouchscreen()) return;
-    slotClicked(pointer, button);
+
+    if (m_pMinecraft->useTouchscreen())
+    {
+        if (_findSlot())
+            m_slotDragStartTime = getTimeMs();
+    }
+    else
+    {
+        slotClicked(pointer, button);
+    }
 }
 
 void ContainerScreen::pointerReleased(const MenuPointer& pointer, MouseButtonType button)
 {
     Screen::pointerReleased(pointer, button);
-    if (m_pMinecraft->useTouchscreen() && m_timeSlotDragged < 5)
-        slotClicked(pointer, button);
-    m_timeSlotDragged = 0;
+
+    if (m_pMinecraft->useTouchscreen())
+    {
+        if (!m_bSplitStackThisTick)
+            slotClicked(pointer, button);
+        m_slotDragStartTime = 0.0f;
+        m_bSplitStackThisTick = false;
+    }
 }
 
 void ContainerScreen::handlePointerPressed(bool isPressed)
 {
     Screen::handlePointerPressed(isPressed);
-    if (isPressed && _findSlot())
-        m_timeSlotDragged++;
-    else m_timeSlotDragged = 0;
 
-    if (m_pMinecraft->useTouchscreen() && m_timeSlotDragged % 5 == 0)
+    if (m_pMinecraft->useTouchscreen() && isPressed && m_slotDragStartTime > 0.0f)
     {
-        slotClicked(m_menuPointer, MOUSE_BUTTON_RIGHT);
+        float timeMs = getTimeMs();
+        float timeSinceDragStart = timeMs - m_slotDragStartTime;
+        if (timeSinceDragStart >= C_TOUCH_STACK_SPLIT_START_TIME)
+        {
+            slotClicked(m_menuPointer, MOUSE_BUTTON_RIGHT);
+            m_bSplitStackThisTick = true;
+            // reset timer to now
+            m_slotDragStartTime = timeMs;
+        }
     }
 }
 
