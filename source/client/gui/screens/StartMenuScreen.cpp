@@ -17,6 +17,12 @@
 #include "SelectWorldScreen.hpp"
 #include "JoinGameScreen.hpp"
 
+#if defined(DEMO) || !MC_PLATFORM_MOBILE
+#define CAN_QUIT 1
+#else
+#define CAN_QUIT 0
+#endif
+
 StartMenuScreen::StartMenuScreen()
 	: m_buyButton(0, 0, 78, 22, "Buy")
 	, m_creditsButton(0, 0, 78, 22, "")
@@ -128,12 +134,14 @@ void StartMenuScreen::_setupPositions()
 
 	m_buyButton.m_xPos = x1 / 2 + m_optionsButton->m_width + 4;
 
+#if !CAN_QUIT
 	// fill in empty space where quit/buy button would be
-	if (m_pMinecraft->isTouchscreen())
+	if (m_pMinecraft->useTouchscreen())
 	{
 		m_optionsButton->m_xPos = m_startButton->m_xPos;
 		m_optionsButton->m_width = m_startButton->m_width;
 	}
+#endif
 }
 
 void StartMenuScreen::init()
@@ -152,16 +160,9 @@ void StartMenuScreen::init()
 	_addElement(*m_joinButton);
 	_addElement(*m_optionsButton);
 
-    bool canQuit = false;
-
-#if defined(DEMO) || !MC_PLATFORM_MOBILE
-	canQuit = true;
+#if CAN_QUIT
+    _addElement(m_buyButton);
 #endif
-
-	if (canQuit)
-    {
-        _addElement(m_buyButton);
-    }
 
 	_addElement(m_creditsButton, false);
 

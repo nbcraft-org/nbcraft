@@ -1,4 +1,5 @@
 #include "GuiElement.hpp"
+#include "client/app/Minecraft.hpp"
 
 GuiElement::GuiElement()
 {
@@ -81,6 +82,10 @@ void GuiElement::handleScroll(float force)
 
 bool GuiElement::isHovered(Minecraft* pMinecraft, const MenuPointer& pointer)
 {
+	// prevents "Start Game" button on Pocket UI from starting out hovered
+	if (pMinecraft->useTouchscreen() && !pointer.isPressed)
+		return false;
+
 	return _isHovered(pointer);
 }
 
