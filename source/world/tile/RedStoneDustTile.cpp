@@ -370,10 +370,10 @@ int RedStoneDustTile::getSignal(const LevelSource* level, const TilePos& pos, Fa
 	}
 	else
 	{
-		bool var6 = shouldConnectTo(level, TilePos(pos.x - 1, pos.y, pos.z)) || !level->isSolidTile(TilePos(pos.x - 1, pos.y, pos.z)) && shouldConnectTo(level, TilePos(pos.x - 1, pos.y - 1, pos.z));
-		bool var7 = shouldConnectTo(level, TilePos(pos.x + 1, pos.y, pos.z)) || !level->isSolidTile(TilePos(pos.x + 1, pos.y, pos.z)) && shouldConnectTo(level, TilePos(pos.x + 1, pos.y - 1, pos.z));
-		bool var8 = shouldConnectTo(level, TilePos(pos.x, pos.y, pos.z - 1)) || !level->isSolidTile(TilePos(pos.x, pos.y, pos.z - 1)) && shouldConnectTo(level, TilePos(pos.x, pos.y - 1, pos.z - 1));
-		bool var9 = shouldConnectTo(level, TilePos(pos.x, pos.y, pos.z + 1)) || !level->isSolidTile(TilePos(pos.x, pos.y, pos.z + 1)) && shouldConnectTo(level, TilePos(pos.x, pos.y - 1, pos.z + 1));
+		bool var6 = shouldConnectTo(level, TilePos(pos.x - 1, pos.y, pos.z)) || (!level->isSolidTile(TilePos(pos.x - 1, pos.y, pos.z)) && shouldConnectTo(level, TilePos(pos.x - 1, pos.y - 1, pos.z)));
+		bool var7 = shouldConnectTo(level, TilePos(pos.x + 1, pos.y, pos.z)) || (!level->isSolidTile(TilePos(pos.x + 1, pos.y, pos.z)) && shouldConnectTo(level, TilePos(pos.x + 1, pos.y - 1, pos.z)));
+		bool var8 = shouldConnectTo(level, TilePos(pos.x, pos.y, pos.z - 1)) || (!level->isSolidTile(TilePos(pos.x, pos.y, pos.z - 1)) && shouldConnectTo(level, TilePos(pos.x, pos.y - 1, pos.z - 1)));
+		bool var9 = shouldConnectTo(level, TilePos(pos.x, pos.y, pos.z + 1)) || (!level->isSolidTile(TilePos(pos.x, pos.y, pos.z + 1)) && shouldConnectTo(level, TilePos(pos.x, pos.y - 1, pos.z + 1)));
 		if (!level->isSolidTile(TilePos(pos.x, pos.y + 1, pos.z)))
 		{
 			if (level->isSolidTile(TilePos(pos.x - 1, pos.y, pos.z)) && shouldConnectTo(level, TilePos(pos.x - 1, pos.y + 1, pos.z)))

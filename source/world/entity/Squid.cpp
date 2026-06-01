@@ -7,6 +7,16 @@ Squid::Squid(Level* pLevel) : WaterAnimal(pLevel)
 	m_renderType = RENDER_SQUID;
 	m_texture = "mob/squid.png";
 	setSize(0.95f, 0.95f);
+	m_xBodyRot = 0.0f;
+	m_xBodyRotO = 0.0f;
+	m_zBodyRot = 0.0f;
+	m_zBodyRotO = 0.0f;
+	m_tentacleMovement = 0.0f;
+	m_oldTentacleMovement = 0.0f;
+	m_tentacleAngle = 0.0f;
+	m_oldTentacleAngle = 0.0f;
+	m_speed = 0.0f;
+	m_rotateSpeed = 0.0f;
 	m_tentacleSpeed = 1.0f / (m_random.nextFloat() + 1.0f) * 0.2f;
 }
 

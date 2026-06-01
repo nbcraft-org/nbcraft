@@ -23,18 +23,18 @@ public:
 	void updateAi() override;
 
 public:
-	float m_xBodyRot = 0.0f;
-	float m_xBodyRotO = 0.0f;
-	float m_zBodyRot = 0.0f;
-	float m_zBodyRotO = 0.0f;
-	float m_tentacleMovement = 0.0f;
-	float m_oldTentacleMovement = 0.0f;
-	float m_tentacleAngle = 0.0f;
-	float m_oldTentacleAngle = 0.0f;
+	float m_xBodyRot;
+	float m_xBodyRotO;
+	float m_zBodyRot;
+	float m_zBodyRotO;
+	float m_tentacleMovement;
+	float m_oldTentacleMovement;
+	float m_tentacleAngle;
+	float m_oldTentacleAngle;
 
 private:
-	float m_speed = 0.0f;
-	float m_tentacleSpeed = 0.0f;
-	float m_rotateSpeed = 0.0f;
+	float m_speed;
+	float m_tentacleSpeed;
+	float m_rotateSpeed;
 	Vec3 m_tPos;
 };
