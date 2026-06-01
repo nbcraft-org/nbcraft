@@ -12,7 +12,6 @@ FireballRenderer::~FireballRenderer()
 
 void FireballRenderer::render(const Entity& entity, const Vec3& pos, float rot, float a)
 {
-	const Fireball& snowball = reinterpret_cast<const Fireball&>(entity);
 	MatrixStack::Ref matrix = MatrixStack::World.push();
 
 	matrix->translate(pos);
