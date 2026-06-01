@@ -45,6 +45,8 @@ void LeverTile::setPlacedOnFace(Level* level, const TilePos& pos, Facing::Name f
 
 	switch (face)
 	{
+	case Facing::DOWN:
+		break;
 	case Facing::UP:
 		if (level->isSolidTile(pos.below()))
 			data = 5 + level->m_random.nextInt(2);

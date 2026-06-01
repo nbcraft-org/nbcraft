@@ -129,8 +129,8 @@ bool DiodeTile::use(Level* level, const TilePos& pos, Player* player)
 {
 	TileData data = level->getData(pos);
 	int var7 = (data & 12) >> 2;
-	var7 = var7 + 1 << 2 & 12;
-	level->setData(pos, var7 | data & 3);
+	var7 = (var7 + 1) << 2 & 12;
+	level->setData(pos, var7 | (data & 3));
 	return true;
 }
 

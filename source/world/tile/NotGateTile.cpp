@@ -23,7 +23,7 @@ bool NotGateTile::isToggledTooFrequently(Level* level, const TilePos& pos, bool 
 
 	int count = 0;
 
-	for (int var7 = 0; var7 < m_recentToggles.size(); var7++)
+	for (int var7 = 0; var7 < (int)m_recentToggles.size(); var7++)
 	{
 		Toggle toggle = m_recentToggles.at(var7);
 		if (toggle.pos == pos)

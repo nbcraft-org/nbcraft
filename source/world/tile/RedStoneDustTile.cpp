@@ -46,7 +46,7 @@ void RedStoneDustTile::updatePowerStrength(Level* level, const TilePos& pos)
 	var5.insert(var5.begin(), m_toUpdate.begin(), m_toUpdate.end());
 	m_toUpdate.clear();
 
-	for (int var6 = 0; var6 < var5.size(); var6++)
+	for (int var6 = 0; var6 < (int)var5.size(); var6++)
 	{
 		TilePos var7 = var5[var6];
 		level->updateNeighborsAt(var7, m_ID);
@@ -158,7 +158,7 @@ void RedStoneDustTile::updatePowerStrength(Level* level, const TilePos& pos1, co
 				var14 += 2;
 			}
 
-			bool var15 = false;
+			//bool var15 = false;
 			int var16 = checkTarget(level, TilePos(var12, pos1.y, var13), -1);
 			var9 = level->getData(pos1);
 			if (var9 > 0)

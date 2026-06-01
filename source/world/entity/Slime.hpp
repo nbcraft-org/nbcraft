@@ -22,8 +22,8 @@ public:
 
 	float m_squish;
 	float m_oSquish;
-	int m_size = 1;
+	int m_size;
 
 private:
-	int m_jumpDelay = 0;
+	int m_jumpDelay;
 };
