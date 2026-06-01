@@ -79,7 +79,8 @@ void ItemInHandRenderer::render(float a)
 	if (pLP->m_fishing)
     {
         // We shouldn't do this, make this static or something
-		pItem = &ItemStack(Item::stick);
+        ItemStack stick = ItemStack(Item::stick);
+		pItem = &stick;
 	}
     
     float swing2, swing3;
