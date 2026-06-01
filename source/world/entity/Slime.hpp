@@ -7,6 +7,7 @@ class Slime : public Mob
 public:
 	Slime(Level* pLevel);
 
+	using Mob::setSize; // -Werror was a mistake
 	void setSize(int);
 	void addAdditionalSaveData(CompoundTag& tag) const override;
 	void readAdditionalSaveData(const CompoundTag& tag) override;
