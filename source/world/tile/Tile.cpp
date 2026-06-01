@@ -790,13 +790,13 @@ void Tile::initTiles()
 		->setSoundType(Tile::SOUND_WOOD)
 		->setDescriptionId("lever");
 
-	Tile::pressurePlate_stone = (new PressurePlateTile(TILE_PLATE_STONE, TEXTURE_STONE, PressurePlateTile::Sensitivity::mobs))
+	Tile::pressurePlate_stone = (new PressurePlateTile(TILE_PLATE_STONE, TEXTURE_STONE, PressurePlateTile::mobs))
 		->init()
 		->setDestroyTime(0.5f)
 		->setSoundType(Tile::SOUND_STONE)
 		->setDescriptionId("pressurePlate");
 
-	Tile::pressurePlate_wood = (new PressurePlateTile(TILE_PLATE_WOOD, TEXTURE_PLANKS, PressurePlateTile::Sensitivity::everything))
+	Tile::pressurePlate_wood = (new PressurePlateTile(TILE_PLATE_WOOD, TEXTURE_PLANKS, PressurePlateTile::everything))
 		->init()
 		->setDestroyTime(0.5f)
 		->setSoundType(Tile::SOUND_WOOD)

@@ -62,7 +62,8 @@ bool PigZombie::hurt(Entity* pCulprit, int damage)
 		//for (Entity* entity : entities) {
 		for (int i = 0; i < (int)entities.size(); i++)
 		{
-			if (entities[i]->getDescriptor().isType(EntityType::PIG_ZOMBIE)) {
+			if (entities[i]->getDescriptor().isType(EntityType::PIG_ZOMBIE))
+			{
 				static_cast<PigZombie*>(entities[i])->alert(pCulprit);
 			}
 		}
