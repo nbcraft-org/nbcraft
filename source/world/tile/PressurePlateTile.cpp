@@ -82,11 +82,11 @@ void PressurePlateTile::checkPressed(Level* level, const TilePos& pos) const
 	EntityVector var8 = level->getEntities(nullptr, aabb);
 	switch (m_sensitivity)
 	{
-	case Sensitivity::everything:
+	case everything:
 		var6 = !var8.empty();
 		break;
 
-	case Sensitivity::mobs:
+	case mobs:
 		var6 = false;
 		for (size_t i = 0; i < var8.size(); i++)
 		{
@@ -98,7 +98,7 @@ void PressurePlateTile::checkPressed(Level* level, const TilePos& pos) const
 		}
 		break;
 
-	case Sensitivity::players:
+	case players:
 		var6 = false;
 		for (size_t i = 0; i < var8.size(); i++)
 		{
