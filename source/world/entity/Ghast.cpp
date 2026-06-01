@@ -9,6 +9,11 @@ Ghast::Ghast(Level* pLevel) : FlyingMob(pLevel)
 	m_texture = "mob/ghast.png";
 	setSize(4.0f, 4.0f);
 	m_bFireImmune = true;
+	m_floatDuration = 0;
+	m_oCharge = 0;
+	m_charge = 0;
+	m_target = nullptr;
+	m_retargetTime = 0;
 }
 
 void Ghast::updateAi()

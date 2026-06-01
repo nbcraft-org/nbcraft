@@ -16,14 +16,14 @@ public:
 	bool canSpawn() override { return m_random.nextInt(20) == 0 && FlyingMob::canSpawn() && m_pLevel->m_difficulty > 0; }
 	int getMaxSpawnClusterSize() const override { return 1; }
 
-	int m_floatDuration = 0;
+	int m_floatDuration;
 	Vec3 m_targetPos;
-	int m_oCharge = 0;
-	int m_charge = 0;
+	int m_oCharge;
+	int m_charge;
 
 private:
 	bool canReach(const Vec3&, float);
 
-	Entity* m_target = nullptr;
-	int m_retargetTime = 0;
+	Entity* m_target;
+	int m_retargetTime;
 };
