@@ -1903,13 +1903,13 @@ bool TileRenderer::tesselateDustInWorld(Tile* tile, const TilePos& pos)
 	float o = 0.0f;
 	float r = 0.03125f;
 	bool w = RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.x - 1, pos.y, pos.z))
-		|| !m_pTileSource->isSolidTile(TilePos(pos.x - 1, pos.y, pos.z)) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.x - 1, pos.y - 1, pos.z));
+		|| (!m_pTileSource->isSolidTile(TilePos(pos.x - 1, pos.y, pos.z)) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.x - 1, pos.y - 1, pos.z)));
 	bool e = RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.x + 1, pos.y, pos.z))
-		|| !m_pTileSource->isSolidTile(TilePos(pos.x + 1, pos.y, pos.z)) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.x + 1, pos.y - 1, pos.z));
+		|| (!m_pTileSource->isSolidTile(TilePos(pos.x + 1, pos.y, pos.z)) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.x + 1, pos.y - 1, pos.z)));
 	bool n = RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.x, pos.y, pos.z - 1))
-		|| !m_pTileSource->isSolidTile(TilePos(pos.x, pos.y, pos.z - 1)) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.x, pos.y - 1, pos.z - 1));
+		|| (!m_pTileSource->isSolidTile(TilePos(pos.x, pos.y, pos.z - 1)) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.x, pos.y - 1, pos.z - 1)));
 	bool s = RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.x, pos.y, pos.z + 1))
-		|| !m_pTileSource->isSolidTile(TilePos(pos.x, pos.y, pos.z + 1)) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.x, pos.y - 1, pos.z + 1));
+		|| (!m_pTileSource->isSolidTile(TilePos(pos.x, pos.y, pos.z + 1)) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.x, pos.y - 1, pos.z + 1)));
 	if (!m_pTileSource->isSolidTile(TilePos(pos.x, pos.y + 1, pos.z))) {
 		if (m_pTileSource->isSolidTile(TilePos(pos.x - 1, pos.y, pos.z)) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.x - 1, pos.y + 1, pos.z))) {
 			w = true;

@@ -16,7 +16,7 @@ enum eParticleTexture
 	PT_PARTICLES,
 	PT_TERRAIN,
 	PT_ITEM,
-	PT_PARTICLES3,
+	PT_PARTICLES3
 };
 
 enum eParticleTextureIndex
