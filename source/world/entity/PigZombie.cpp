@@ -59,9 +59,11 @@ bool PigZombie::hurt(Entity* pCulprit, int damage)
 		bb.grow(32.0f, 32.0f, 32.0f);
 		EntityVector entities = m_pLevel->getEntities(this, bb);
 
-		for (Entity* entity : entities) {
-			if (entity->getDescriptor().isType(EntityType::PIG_ZOMBIE)) {
-				static_cast<PigZombie*>(entity)->alert(pCulprit);
+		//for (Entity* entity : entities) {
+		for (int i = 0; i < (int)entities.size(); i++)
+		{
+			if (entities[i]->getDescriptor().isType(EntityType::PIG_ZOMBIE)) {
+				static_cast<PigZombie*>(entities[i])->alert(pCulprit);
 			}
 		}
 
