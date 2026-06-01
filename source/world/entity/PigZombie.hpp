@@ -25,7 +25,7 @@ public:
 private:
 	void alert(Entity*);
 
-	int m_angerTime = 0;
-	int m_playAngrySoundIn = 0;
+	int m_angerTime;
+	int m_playAngrySoundIn;
 	static ItemStack m_sword;
 };

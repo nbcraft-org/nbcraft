@@ -10,6 +10,8 @@ PigZombie::PigZombie(Level* pLevel) : Zombie(pLevel)
 	m_runSpeed = 0.5f;
 	m_attackDamage = 5;
 	m_bFireImmune = true;
+	m_angerTime = 0;
+	m_playAngrySoundIn = 0;
 }
 
 void PigZombie::tick()
