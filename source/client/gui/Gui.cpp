@@ -8,6 +8,7 @@
 
 //#include "Gui.hpp" // apparently this breaks building on clang or something
 #include "client/app/Minecraft.hpp"
+#include "client/gui/screens/inventory/CreativeScreen.hpp"
 #include "client/gui/screens/IngameBlockSelectionScreen.hpp"
 #include "client/gui/screens/ChatScreen.hpp"
 #include "client/gui/screens/PauseScreen.hpp"
@@ -341,7 +342,7 @@ void Gui::handleClick(int clickID, int mouseX, int mouseY)
 		if (m_pMinecraft->getLocalPlayerGameMode()->isSurvivalType())
 			m_pMinecraft->setScreen(new InventoryScreen(m_pMinecraft->m_pLocalPlayer));
 		else
-			m_pMinecraft->setScreen(new IngameBlockSelectionScreen());
+			m_pMinecraft->setScreen(new CreativeScreen(m_pMinecraft->m_pLocalPlayer->m_pInventory));
 	}
 	else
 		m_pMinecraft->m_pLocalPlayer->m_pInventory->selectSlot(slot);
@@ -371,12 +372,25 @@ void Gui::handleKeyPressed(int keyCode)
 {
 	Options* options = m_pMinecraft->getOptions();
 
-	if (options->isKey(KM_INVENTORY, keyCode))
+	if (options->isKey(KM_CRAFTING, keyCode))
 	{
 		if (m_pMinecraft->getLocalPlayerGameMode()->isSurvivalType())
 			m_pMinecraft->setScreen(new InventoryScreen(m_pMinecraft->m_pLocalPlayer));
 		else
-			m_pMinecraft->setScreen(new IngameBlockSelectionScreen);
+			m_pMinecraft->setScreen(new CreativeScreen(m_pMinecraft->m_pLocalPlayer->m_pInventory));
+		return;
+	}
+
+	if (options->isKey(KM_INVENTORY, keyCode))
+	{
+		m_pMinecraft->setScreen(new InventoryScreen(m_pMinecraft->m_pLocalPlayer));
+		return;
+	}
+
+	if (options->isKey(KM_FOG, keyCode))
+	{
+		Options& o = *m_pMinecraft->getOptions();
+		o.m_viewDistance.set((o.m_viewDistance.get() + 1) % 4);
 		return;
 	}
 

@@ -424,7 +424,8 @@ void Options::loadControls()
 	KM(KM_BACKWARD,     "key.back",          'S');
 	KM(KM_RIGHT,        "key.right",         'D');
 	KM(KM_JUMP,         "key.jump",          ' ');
-	KM(KM_INVENTORY,    "key.inventory",     'E');
+	KM(KM_CRAFTING,     "key.crafting",      'E');
+	KM(KM_INVENTORY,    "key.inventory",     'I');
 	KM(KM_DROP,         "key.drop",          'Q');
 	KM(KM_CHAT,         "key.chat",          'T');
 	KM(KM_FOG,          "key.fog",           'F');
@@ -486,7 +487,8 @@ void Options::loadControls()
 	KM(KM_DROP,          SDLVK_q);
 	KM(KM_CHAT,          SDLVK_t);
 	KM(KM_FOG,           SDLVK_f);
-	KM(KM_INVENTORY,     SDLVK_e);
+	KM(KM_CRAFTING,      SDLVK_e);
+	KM(KM_INVENTORY,     SDLVK_i);
 	KM(KM_SNEAK,         SDLVK_LSHIFT);
 	KM(KM_SLOT_1,        SDLVK_1);
 	KM(KM_SLOT_2,        SDLVK_2);

@@ -617,6 +617,9 @@
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\ChestMenu.cpp">
       <Filter>Source Files\Inventory</Filter>
     </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\inventory\CreativeMenu.cpp">
+      <Filter>Source Files\Inventory</Filter>
+    </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\world\item\DyeColor.cpp">
       <Filter>Source Files\Item</Filter>
     </ClCompile>
@@ -1187,6 +1190,9 @@
       <Filter>Header Files\Inventory</Filter>
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\world\inventory\ChestMenu.hpp">
+      <Filter>Header Files\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\inventory\CreativeMenu.hpp">
       <Filter>Header Files\Inventory</Filter>
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\world\item\DyeColor.hpp">

@@ -25,6 +25,7 @@ enum eKeyMappingIndex
 	KM_BACKWARD,
 	KM_RIGHT,
 	KM_JUMP,
+	KM_CRAFTING,
 	KM_INVENTORY,
 	KM_DROP,
 	KM_CHAT,
