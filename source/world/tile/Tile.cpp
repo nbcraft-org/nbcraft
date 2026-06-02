@@ -783,7 +783,7 @@ void Tile::initTiles()
 		->setDestroyTime(0.3f)
 		->setLightEmission(1.0f)
 		->setSoundType(Tile::SOUND_GLASS)
-		->setDescriptionId("lightGem");
+		->setDescriptionId("lightgem");
 
 	Tile::web = (new Web(TILE_COBWEB, TEXTURE_COBWEB))
 		->init()

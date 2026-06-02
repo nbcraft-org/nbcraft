@@ -9,8 +9,10 @@ CreateWorldScreen_Console::CreateWorldScreen_Console(Options& options, Screen* p
 	m_inviteOnly(0, 0, false, Language::get("playGame.inviteOnly")),
 	m_textName(this, 0, 0, 400, 38, "", "New World"),
 	m_textSeed(this, 0, 0, 400, 38, ""),
+	m_btnGameMode(0, 0, 400, 40, ""),
 	m_difficultySlider(0, 0, 400, 32, &options.m_difficulty, options.m_difficulty.getMessage(), options.m_difficulty.toFloat()),
-	m_btnCreate(0, 0, 400, 40, Language::get("playGame.createNewWorld"))
+	m_btnCreate(0, 0, 400, 40, Language::get("playGame.createNewWorld")),
+	m_gameMode(GAME_TYPE_SURVIVAL)
 {
 	m_onlineGame.setEnabled(false);
 	m_inviteOnly.setEnabled(false);
@@ -38,15 +40,17 @@ void CreateWorldScreen_Console::_buttonClicked(Button* pButton)
 				seed = Util::hashCode(seedThing);
 		}
 
-		LevelSettings levelSettings(seed);
+		LevelSettings levelSettings(seed, m_gameMode);
 		m_pMinecraft->selectLevel(levelUniqueName, levelNickname, levelSettings);
 	}
+	if (pButton->getId() == m_btnGameMode.getId())
+		m_gameMode = static_cast<GameType>((static_cast<int>(m_gameMode) + 1) % (GAME_TYPES_MAX + 1));
 }
 
 void CreateWorldScreen_Console::init()
 {
 	m_panel.w = 450;
-	m_panel.h = 390;
+	m_panel.h = 400;
 	m_panel.x = (m_width - m_panel.w) / 2;
 	m_panel.y = (m_height - m_panel.h) / 2 + 45;
 
@@ -67,12 +71,16 @@ void CreateWorldScreen_Console::init()
 	m_textSeed.m_yPos = m_panel.y + 188;
 	_addElement(m_textSeed);
 
+	m_btnGameMode.m_xPos = left;
+	m_btnGameMode.m_yPos = m_panel.y + 252;
+	_addElement(m_btnGameMode);
+
 	m_difficultySlider.m_xPos = left;
-	m_difficultySlider.m_yPos = m_panel.y + 267;
+	m_difficultySlider.m_yPos = m_panel.y + 300; // 267 // 310
 	_addElement(m_difficultySlider);
 
 	m_btnCreate.m_xPos = left;
-	m_btnCreate.m_yPos = m_panel.y + 322;
+	m_btnCreate.m_yPos = m_panel.y + 340; //322
 	_addElement(m_btnCreate);
 
 	m_textName.init(m_pFont);
@@ -82,7 +90,7 @@ void CreateWorldScreen_Console::init()
 void CreateWorldScreen_Console::render(float f)
 {
 	PanelScreen_Console::render(f);
-
+	m_btnGameMode.setMessage(Language::get("playGame.gameMode") + GameTypeConv::GameTypeToNonLocString(m_gameMode));
 	Font& font = *m_pFont;
 	font.drawScalable(Language::get("selectWorld.enterName"), m_textName.m_xPos + 1, m_textName.m_yPos - 19, Color::TEXT_GREY);
 	font.drawScalable(Language::get("selectWorld.enterSeed"), m_textSeed.m_xPos + 1, m_textSeed.m_yPos - 19, Color::TEXT_GREY);
