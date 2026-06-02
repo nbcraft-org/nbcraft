@@ -65,6 +65,8 @@
 #include "SoulSandTile.hpp"
 #include "GlowstoneTile.hpp"
 #include "FenceTile.hpp"
+
+#include "FenceGateTile.hpp"
 //#include "BedTile.hpp"
 #include "CropsTile.hpp"
 #include "Web.hpp"
@@ -77,11 +79,11 @@
 #include "ButtonTile.hpp"
 //#include "MobSpawnerTile.hpp"
 #include "NotGateTile.hpp"
-//#include "CakeTile.hpp"
+#include "CakeTile.hpp"
 #include "DispenserTile.hpp"
 #include "MusicTile.hpp"
 #include "RecordPlayerTile.hpp"
-//#include "TrapDoorTile.hpp"
+#include "TrapDoorTile.hpp"
 //#include "PortalTile.hpp"
 #include "DiodeTile.hpp"
 //#include "Mushroom.hpp"
@@ -663,13 +665,12 @@ void Tile::initTiles()
 		->setDestroyTime(-1.0f)
 		->setExplodeable(6000000.0f);
 
-	// @TODO: FenceGateTile class
-	/*Tile::fenceGate = (new FenceGateTile(TILE_WOOD, TEXTURE_PLANKS, Material::wood))
+	Tile::fenceGate = (new FenceGateTile(TILE_FENCE_GATE, TEXTURE_PLANKS))
 		->init()
 		->setDestroyTime(2.0f)
 		->setExplodeable(5.0f)
 		->setSoundType(Tile::SOUND_WOOD)
-		->setDescriptionId("fenceGate");*/
+		->setDescriptionId("fenceGate");
 
 	Tile::info_updateGame1 = (new DirtTile(TILE_INFO_UPDATEGAME1, TEXTURE_INFO_UPDATEGAME1, Material::dirt))
 		->init()
@@ -752,6 +753,18 @@ void Tile::initTiles()
 		->setSoundType(Tile::SOUND_WOOD)
 		->setDescriptionId("litpumpkin");
 	
+	Tile::cake = (new CakeTile(TILE_CAKE, TEXTURE_CAKE_TOP))
+		->init()
+		->setDestroyTime(0.5f)
+		->setSoundType(Tile::SOUND_CLOTH)
+		->setDescriptionId("cake");
+
+	Tile::trapDoor = (new TrapdoorTile(TILE_TRAPDOOR, Material::wood))
+		->init()
+		->setDestroyTime(3.0f)
+		->setSoundType(Tile::SOUND_WOOD)
+		->setDescriptionId("trapdoor");
+
 	Tile::netherrack = (new Tile(TILE_NETHERRACK, TEXTURE_BLOODSTONE, Material::stone))
 		->init()
 		->setDestroyTime(0.4f)
@@ -1374,6 +1387,7 @@ Tile
 	*Tile::glowstone,
 	*Tile::web,
 	*Tile::fence,
+	*Tile::fenceGate,
 	*Tile::redStoneDust,
 	*Tile::lever,
 	*Tile::pressurePlate_stone,
@@ -1390,4 +1404,6 @@ Tile
 	*Tile::furnaceLit,
 	*Tile::chest,
 	*Tile::dispenser,
-	*Tile::recordPlayer;
+	*Tile::recordPlayer,
+	*Tile::cake,
+	*Tile::trapDoor;

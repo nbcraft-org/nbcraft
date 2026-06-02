@@ -163,6 +163,11 @@ Recipes::Recipes()
                             "###", ItemStack(Tile::fence, 2))
         .add('#', Item::stick));
 
+    //add(ShapedRecipeBuilder("#W#",
+    //    "#W#", ItemStack(Tile::fenceGate, 1))
+    //    .add('#', Item::stick)
+    //    .add('W', Tile::wood));
+  
     add(ShapedRecipeBuilder("###",
                             "#X#",
                             "###", ItemStack(Tile::recordPlayer, 1))
@@ -221,9 +226,9 @@ Recipes::Recipes()
     add(ShapedRecipeBuilder("###", ItemStack(Tile::stoneSlabHalf, 3, 3))
         .add('#', Tile::stoneBrick));
 
-    //add(ShapedRecipeBuilder("###",
-    //                        "###", ItemStack(Tile::trapDoor, 2))
-    //    .add('#', Tile::wood));
+    add(ShapedRecipeBuilder("###",
+                            "###", ItemStack(Tile::trapDoor, 2))
+        .add('#', Tile::wood));
 
     add(ShapedRecipeBuilder("# #",
                             "###",

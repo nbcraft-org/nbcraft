@@ -797,10 +797,19 @@
     <ClCompile Include="$(MC_ROOT)\source\world\item\FlintAndSteelItem.cpp">
       <Filter>Source Files\Item</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\item\RecordingItem.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\item\RecordingItem.cpp">
       <Filter>Source Files\Item</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\tile\RecordPlayerTile.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\RecordPlayerTile.cpp">
+      <Filter>Source Files\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\CakeTile.cpp">
+      <Filter>Source Files\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\TrapDoorTile.cpp">
+      <Filter>Source Files\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\FenceGateTile.cpp">
       <Filter>Source Files\Tile</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1423,10 +1432,19 @@
     <ClInclude Include="$(MC_ROOT)\source\world\item\FlintAndSteelItem.hpp">
       <Filter>Header Files\Item</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\item\RecordingItem.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\item\RecordingItem.hpp">
       <Filter>Header Files\Item</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\tile\RecordPlayerTile.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\RecordPlayerTile.hpp">
+      <Filter>Header Files\Tile</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\CakeTile.hpp">
+      <Filter>Header Files\Tile</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\TrapDoorTile.hpp">
+      <Filter>Header Files\Tile</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\FenceGateTile.hpp">
       <Filter>Header Files\Tile</Filter>
     </ClInclude>
   </ItemGroup>

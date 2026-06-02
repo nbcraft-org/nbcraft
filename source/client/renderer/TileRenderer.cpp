@@ -18,9 +18,11 @@
 #include "world/tile/LiquidTile.hpp"
 #include "world/tile/DiodeTile.hpp"
 #include "world/tile/LeafTile.hpp"
+
+#include "world/tile/FenceTile.hpp"
 #include "GameMods.hpp"
 
-#define DEFAULT_LIGHT_COLOR 16711935
+#define DEFAULT_LIGHT_COLOR 0xFF00FF
 
 TileRenderer::Materials::Materials()
 {
@@ -157,7 +159,7 @@ float TileRenderer::getWaterHeight(const TilePos& pos, const Material* pCheckMtl
 
 bool TileRenderer::canRender(int renderShape)
 {
-	return renderShape == SHAPE_SOLID || renderShape == SHAPE_STAIRS || renderShape == SHAPE_FENCE || renderShape == SHAPE_CACTUS;
+	return renderShape == SHAPE_SOLID || renderShape == SHAPE_STAIRS || renderShape == SHAPE_FENCE || renderShape == SHAPE_FENCE_GATE || renderShape == SHAPE_CACTUS;
 }
 
 // @NOTE: This sucks! Very badly! But it's how they did it.
@@ -202,8 +204,13 @@ void TileRenderer::renderEast(Tile* tile, const Vec3& pos, int texture)
 	}
 	else
 	{
+#ifdef ENH_BETA_1_7_TERRAIN_ATLAS
+		texV_u = C_RATIO * (texY + (1.0f - aabb.max.y) * 16.0f);
+		texV_d = C_RATIO * (texY + (1.0f - aabb.min.y) * 16.0f - 0.01f);
+#else
 		texV_u = C_RATIO * (texY + aabb.min.y * 16.0f);
 		texV_d = C_RATIO * (texY + aabb.max.y * 16.0f - 0.01f);
+#endif
 	}
 
 	Tesselator& t = m_tessellator;
@@ -279,8 +286,13 @@ void TileRenderer::renderWest(Tile* tile, const Vec3& pos, int texture)
 	}
 	else
 	{
+#ifdef ENH_BETA_1_7_TERRAIN_ATLAS
+		texV_u = C_RATIO * (texY + (1.0f - aabb.max.y) * 16.0f);
+		texV_d = C_RATIO * (texY + (1.0f - aabb.min.y) * 16.0f - 0.01f);
+#else
 		texV_u = C_RATIO * (texY + aabb.min.y * 16.0f);
 		texV_d = C_RATIO * (texY + aabb.max.y * 16.0f - 0.01f);
+#endif
 	}
 
 	Tesselator& t = m_tessellator;
@@ -356,8 +368,13 @@ void TileRenderer::renderSouth(Tile* tile, const Vec3& pos, int texture)
 	}
 	else
 	{
+#ifdef ENH_BETA_1_7_TERRAIN_ATLAS
+		texV_u = C_RATIO * (texY + (1.0f - aabb.max.y) * 16.0f);
+		texV_d = C_RATIO * (texY + (1.0f - aabb.min.y) * 16.0f - 0.01f);
+#else
 		texV_u = C_RATIO * (texY + aabb.min.y * 16.0f);
 		texV_d = C_RATIO * (texY + aabb.max.y * 16.0f - 0.01f);
+#endif
 	}
 
 	Tesselator& t = m_tessellator;
@@ -433,8 +450,13 @@ void TileRenderer::renderNorth(Tile* tile, const Vec3& pos, int texture)
 	}
 	else
 	{
+#ifdef ENH_BETA_1_7_TERRAIN_ATLAS
+		texV_u = C_RATIO * (texY + (1.0f - aabb.max.y) * 16.0f);
+		texV_d = C_RATIO * (texY + (1.0f - aabb.min.y) * 16.0f - 0.01f);
+#else
 		texV_u = C_RATIO * (texY + aabb.min.y * 16.0f);
 		texV_d = C_RATIO * (texY + aabb.max.y * 16.0f - 0.01f);
+#endif
 	}
 
 	Tesselator& t = m_tessellator;
@@ -1161,11 +1183,12 @@ bool TileRenderer::tesselateFenceInWorld(Tile* tile, const TilePos& pos)
 	tile->setShape(0.375f, 0.0f, 0.375f, 0.625f, 1.0f, 0.625f);
 	bool bRenderedAnything = tesselateBlockInWorld(tile, pos);
 
+	FenceTile* pFenceTile = (FenceTile*)Tile::fence;
 
-	bool tileWest = m_pTileSource->getTile(pos.west()) == tile->m_ID;
-	bool tileEast = m_pTileSource->getTile(pos.east()) == tile->m_ID;
-	bool tileNorth = m_pTileSource->getTile(pos.north()) == tile->m_ID;
-	bool tileSouth = m_pTileSource->getTile(pos.south()) == tile->m_ID;
+	bool tileWest = pFenceTile->shouldConnectTo(m_pTileSource, pos.west());
+	bool tileEast = pFenceTile->shouldConnectTo(m_pTileSource, pos.east());
+	bool tileNorth = pFenceTile->shouldConnectTo(m_pTileSource, pos.north());
+	bool tileSouth = pFenceTile->shouldConnectTo(m_pTileSource, pos.south());
 
 	bool connectsHorizontally = tileWest || tileEast;
 	bool connectsVertically = tileNorth || tileSouth;
@@ -1209,6 +1232,143 @@ bool TileRenderer::tesselateFenceInWorld(Tile* tile, const TilePos& pos)
 	if (connectsVertically)
 	{
 		tile->setShape(var6, var14, var18, var7, var15, var19);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+	}
+
+	tile->setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+
+	return bRenderedAnything;
+}
+
+bool TileRenderer::tesselateFenceGateInWorld(Tile* tile, const TilePos& pos)
+{
+	int metadata = m_pTileSource->getData(pos);
+	int getOpen = metadata & 4;
+	int getFacing = metadata & 3;
+	bool bRenderedAnything = false;
+
+	constexpr float o = 0.4375f;
+	constexpr float q = 0.5625f;
+	float g = 0.0f;
+	float m = 0.125f;
+	float var22 = 0.375f;
+	float var29 = 0.5f;
+
+	if (getFacing != 3 && getFacing != 1) 
+	{
+		tile->setShape(g, 0.3125f, o, m, 1.0f, q);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+		g = 0.875f;
+		m = 1.0f;
+		tile->setShape(g, 0.3125f, o, m, 1.0f, q);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+	}
+	else 
+	{
+		tile->setShape(o, 0.3125f, g, q, 1.0f, m);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+		g = 0.875f;
+		m = 1.0f;
+		tile->setShape(o, 0.3125f, g, q, 1.0f, m);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+	}
+
+	if (getOpen == 0) {
+		if (getFacing != 3 && getFacing != 1) {
+			tile->setShape(var22, 0.375f, o, var29, 0.9375f, q);
+			if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+			var22 = 0.5f;
+			var29 = 0.625f;
+			tile->setShape(var22, 0.375f, o, var29, 0.9375f, q);
+			if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+			var22 = 0.625f;
+			var29 = 0.875f;
+			tile->setShape(var22, 0.375f, o, var29, 0.5625f, q);
+			if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+			tile->setShape(var22, 0.75f, o, var29, 0.9375f, q);
+			if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+			var22 = 0.125f;
+			var29 = 0.375f;
+			tile->setShape(var22, 0.375f, o, var29, 0.5625f, q);
+			if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+			tile->setShape(var22, 0.75f, o, var29, 0.9375f, q);
+			if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+		}
+		else {
+			tile->setShape(o, 0.375f, var22, q, 0.9375f, var29);
+			if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+			var22 = 0.5f;
+			var29 = 0.625f;
+			tile->setShape(o, 0.375f, var22, q, 0.9375f, var29);
+			if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+			var22 = 0.625f;
+			var29 = 0.875f;
+			tile->setShape(o, 0.375f, var22, q, 0.5625f, var29);
+			if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+			tile->setShape(o, 0.75f, var22, q, 0.9375f, var29);
+			if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+			var22 = 0.125f;
+			var29 = 0.375f;
+			tile->setShape(o, 0.375f, var22, q, 0.5625f, var29);
+			if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+			tile->setShape(o, 0.75f, var22, q, 0.9375f, var29);
+			if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+		}
+	}
+	else if (getFacing == 3) {
+		tile->setShape(0.8125f, 0.375f, 0.0f, 0.9375f, 0.9375f, 0.125f);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+		tile->setShape(0.8125f, 0.375f, 0.875f, 0.9375f, 0.9375f, 1.0f);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+		tile->setShape(0.5625f, 0.375f, 0.0f, 0.8125f, 0.5625f, 0.125f);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+		tile->setShape(0.5625f, 0.375f, 0.875f, 0.8125f, 0.5625f, 1.0f);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+		tile->setShape(0.5625f, 0.75f, 0.0f, 0.8125f, 0.9375f, 0.125f);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+		tile->setShape(0.5625f, 0.75f, 0.875f, 0.8125f, 0.9375f, 1.0f);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+	}
+	else if (getFacing == 1) {
+		tile->setShape(0.0625f, 0.375f, 0.0f, 0.1875f, 0.9375f, 0.125f);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+		tile->setShape(0.0625f, 0.375f, 0.875f, 0.1875f, 0.9375f, 1.0f);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+		tile->setShape(0.1875f, 0.375f, 0.0f, 0.4375f, 0.5625f, 0.125f);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+		tile->setShape(0.1875f, 0.375f, 0.875f, 0.4375f, 0.5625f, 1.0f);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+		tile->setShape(0.1875f, 0.75f, 0.0f, 0.4375f, 0.9375f, 0.125f);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+		tile->setShape(0.1875f, 0.75f, 0.875f, 0.4375f, 0.9375f, 1.0f);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+	}
+	else if (getFacing == 0) {
+		tile->setShape(0.0f, 0.375f, 0.8125f, 0.125f, 0.9375f, 0.9375f);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+		tile->setShape(0.875f, 0.375f, 0.8125f, 1.0f, 0.9375f, 0.9375f);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+		tile->setShape(0.0f, 0.375f, 0.5625f, 0.125f, 0.5625f, 0.8125f);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+		tile->setShape(0.875f, 0.375f, 0.5625f, 1.0f, 0.5625f, 0.8125f);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+		tile->setShape(0.0f, 0.75f, 0.5625f, 0.125f, 0.9375f, 0.8125f);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+		tile->setShape(0.875f, 0.75f, 0.5625f, 1.0f, 0.9375f, 0.8125f);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+	}
+	else if (getFacing == 2) {
+		tile->setShape(0.0f, 0.375f, 0.0625f, 0.125f, 0.9375f, 0.1875f);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+		tile->setShape(0.875f, 0.375f, 0.0625f, 1.0f, 0.9375f, 0.1875f);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+		tile->setShape(0.0f, 0.375f, 0.1875f, 0.125f, 0.5625f, 0.4375f);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+		tile->setShape(0.875f, 0.375f, 0.1875f, 1.0f, 0.5625f, 0.4375f);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+		tile->setShape(0.0f, 0.75f, 0.1875f, 0.125f, 0.9375f, 0.4375f);
+		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
+		tile->setShape(0.875f, 0.75f, 0.1875f, 1.0f, 0.9375f, 0.4375f);
 		if (tesselateBlockInWorld(tile, pos)) bRenderedAnything = true;
 	}
 
@@ -2084,6 +2244,8 @@ bool TileRenderer::tesselateInWorld(Tile* tile, const TilePos& pos)
 			return tesselateLeverInWorld(tile, pos);
 		case SHAPE_DIODE:
 			return tesselateDiodeInWorld(tile, pos);
+		case SHAPE_FENCE_GATE:
+			return tesselateFenceGateInWorld(tile, pos);
 		case SHAPE_CACTUS:
 			return tesselateBlockInWorld(tile, pos);
 	}
@@ -3147,8 +3309,8 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 #ifndef USE_GL_NORMAL_LIGHTING
 	preshade = true;
 #endif
-
 	int shape = tileType->getRenderShape();
+	tileType->updateDefaultShape();
 	switch (shape)
 	{
 		case SHAPE_SOLID:
@@ -3276,7 +3438,48 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 			tileType->setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 			break;
 		}
-	}
+		case SHAPE_FENCE_GATE:
+			t.addOffset(-0.5f, -0.5f, -0.5f);
+			for (int o = 0; o < 3; o++) {
+				constexpr float r = 0.0625f;
+				if (o == 0) {
+					tileType->setShape(0.5f - r, 0.3f, 0.0f, 0.5f + r, 1.0f, r * 2.0f);
+				}
+
+				if (o == 1) {
+					tileType->setShape(0.5f - r, 0.3f, 1.0f - r * 2.0f, 0.5f + r, 1.0f, 1.0f);
+				}
+
+				if (o == 2) {
+					tileType->setShape(0.5f - r, 0.5f, 0.0f, 0.5f + r, 1.0f - r, 1.0f);
+				}
+
+				t.begin(24);
+				SHADE_DEFINE;
+				SHADE_PREPARE;
+				SHADE_IF_NEEDED(1.0f);
+				t.normal(0.0f, 1.0f, 0.0f);
+				renderFaceDown(tileType, Vec3::ZERO, tileType->getTexture(Facing::UP, tile.data));
+				SHADE_IF_NEEDED(0.5f);
+				t.normal(0.0f, -1.0f, 0.0f);
+				renderFaceUp(tileType, Vec3::ZERO, tileType->getTexture(Facing::DOWN, tile.data));
+				SHADE_IF_NEEDED(0.8f);
+				t.normal(0.0f, 0.0f, -1.0f);
+				renderNorth(tileType, Vec3::ZERO, tileType->getTexture(Facing::NORTH, tile.data));
+				t.normal(0.0f, 0.0f, 1.0f);
+				renderSouth(tileType, Vec3::ZERO, tileType->getTexture(Facing::SOUTH, tile.data));
+				SHADE_IF_NEEDED(0.6f);
+				t.normal(-1.0f, 0.0f, 0.0f);
+				renderWest(tileType, Vec3::ZERO, tileType->getTexture(Facing::WEST, tile.data));
+				t.normal(1.0f, 0.0f, 0.0f);
+				renderEast(tileType, Vec3::ZERO, tileType->getTexture(Facing::EAST, tile.data));
+				SHADE_IF_NEEDED(1.0f);
+				t.draw(material);
+			}
+			t.addOffset(0.5f, 0.5f, 0.5f);
+			tileType->setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+			break;
+		}
 }
 
 #ifdef ENH_USE_OWN_AO

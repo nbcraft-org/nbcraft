@@ -242,6 +242,7 @@ public: // static variables
 		* glowstone,
 		* web,
 		* fence,
+		* fenceGate,
 		* redStoneDust,
 		* lever,
 		* pressurePlate_stone,
@@ -258,7 +259,9 @@ public: // static variables
 		* musicBlock,
 		* chest,
 		* dispenser,
-		* recordPlayer;
+		* recordPlayer,
+		* cake,
+		* trapDoor;
 
 public:
 	int m_TextureFrame;
