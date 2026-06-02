@@ -19,5 +19,5 @@ public:
     bool stillValid(Player* player) const override;
 
 public:
-    std::vector<ItemStack> creativeItems;
+    std::vector<ItemStack> m_creativeItems;
 };
