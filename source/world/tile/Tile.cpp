@@ -15,7 +15,7 @@
 #include "world/item/SlabItem.hpp"
 //#include "world/item/PistonItem.hpp"
 
- // Include tile definitions here
+// Include tile definitions here
 #include "SandStoneTile.hpp"
 #include "SandTile.hpp"
 #include "HalfTransparentTile.hpp"
@@ -1235,8 +1235,8 @@ void Tile::spawnResources(Level* pLevel, const TilePos& pos, TileData data, floa
 			continue;
 
 		Vec3 o((pLevel->m_random.nextFloat() * 0.7f) + (1.0f - 0.7f) * 0.5f,
-			(pLevel->m_random.nextFloat() * 0.7f) + (1.0f - 0.7f) * 0.5f,
-			(pLevel->m_random.nextFloat() * 0.7f) + (1.0f - 0.7f) * 0.5f);
+			   (pLevel->m_random.nextFloat() * 0.7f) + (1.0f - 0.7f) * 0.5f,
+			   (pLevel->m_random.nextFloat() * 0.7f) + (1.0f - 0.7f) * 0.5f);
 
 		ItemStack item(id, 1, getSpawnResourcesAuxValue(data));
 		ItemEntity* pEntity = new ItemEntity(pLevel, Vec3(pos) + o, item);
