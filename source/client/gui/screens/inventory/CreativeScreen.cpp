@@ -11,6 +11,8 @@ Container* CreativeScreen::creativeGrid = new SimpleContainer(72, "Item selectio
 CreativeScreen::CreativeScreen(Container* inventory) : ContainerScreen(new CreativeMenu(inventory, creativeGrid))
 {
     m_imageHeight = 208;
+    m_scrolled = 0.0f;
+    m_bIsScrolling = false;
 }
 
 void CreativeScreen::slotClicked(Slot* slot, Container::SlotID slotId, MouseButtonType button, bool quick)

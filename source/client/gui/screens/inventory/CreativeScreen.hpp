@@ -22,6 +22,6 @@ protected:
     SlotDisplay _createSlotDisplay(const Slot& slot) override;
 
 private:
-    float m_scrolled = 0.0f;
-    bool m_bIsScrolling = false;
+    float m_scrolled;
+    bool m_bIsScrolling;
 };
