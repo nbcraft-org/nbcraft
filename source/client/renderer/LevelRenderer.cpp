@@ -1727,10 +1727,10 @@ void LevelRenderer::prepareAndRenderClouds(const Entity& camera, float f)
 	Fog::updateRange(renderDistance * 0.0f, renderDistance * 0.8f);
 	renderSky(camera, f);
 
-	Fog::updateRange(renderDistance * 0.25f * 0.6f, renderDistance * 1.0f);
+	Fog::updateRange(renderDistance * 0.25f, renderDistance * 1.0f);
 	renderClouds(camera, f);
 
-	Fog::updateRange(renderDistance * 0.25f * 0.6f, renderDistance * 1.0f);
+	Fog::updateRange(renderDistance * 0.25f, renderDistance * 1.0f);
 
 	Fog::disable();
 
