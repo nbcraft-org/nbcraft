@@ -415,9 +415,17 @@ void Gui::handleKeyPressed(int keyCode)
 
 void Gui::renderMessages(bool bShowAll)
 {
+	int scale = 1;  // Had to add scale because chatscreen behaves weirdly when messages are scaled globally in console ui mode, there's probably a better way
 	int topEdge = GuiHeight - 49;
+
+	if (!m_pMinecraft->m_pScreen)
+		scale = 2;
+
 	if (m_pMinecraft->isTouchscreen())
 		topEdge = 49;
+
+	if (m_pMinecraft->getOptions()->getUiTheme() == UI_CONSOLE)
+		topEdge = GuiHeight - 130 * scale;
 
 	for (size_t i = 0; i < m_guiMessages.size(); i++)
 	{
@@ -426,6 +434,9 @@ void Gui::renderMessages(bool bShowAll)
 			continue;
 
 		int bkgdColor = 0x7F000000, textColor = 0xFFFFFFFF;
+
+		if (m_pMinecraft->getOptions()->getUiTheme() == UI_CONSOLE)
+			bkgdColor = 0x59000000;
 
 		float fade = 1.0f;
 
@@ -446,10 +457,20 @@ void Gui::renderMessages(bool bShowAll)
 			}
 		}
 
-		fill(2, topEdge, 322, topEdge + 9, bkgdColor);
-		m_pMinecraft->m_pFont->drawShadow(msg.msg, 2, topEdge + 1, textColor);
+		if (m_pMinecraft->getOptions()->getUiTheme() == UI_CONSOLE)
+		{
+			fill(0, topEdge, GuiWidth, topEdge + 16 * scale, bkgdColor);
+			m_pMinecraft->m_pFont->drawScalableShadow(msg.msg, 30 * scale, topEdge + 5 * scale, textColor, scale);
 
-		topEdge -= 9;
+			topEdge -= 16 * scale;
+		}
+		else
+		{
+			fill(2, topEdge, 322, topEdge + 9, bkgdColor);
+			m_pMinecraft->m_pFont->drawShadow(msg.msg, 2, topEdge + 1, textColor);
+
+			topEdge -= 9;
+		}
 	}
 }
 
