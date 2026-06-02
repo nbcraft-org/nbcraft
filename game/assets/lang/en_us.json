@@ -123,5 +123,8 @@
   "playGame.inviteOnly": "Invite only",
   "playGame.gameMode": "Game Mode: ",
   "pauseMenu.resume": "Resume Game",
-  "pauseMenu.saveGame": "Save Game"
+  "pauseMenu.saveGame": "Save Game",
+  "deadMenu.death": "You Died!",
+  "deadMenu.respawn": "Respawn",
+  "deadMenu.quit":  "Exit Game"
 }

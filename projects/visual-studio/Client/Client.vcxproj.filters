@@ -692,6 +692,9 @@
     <ClInclude Include="$(MC_ROOT)\source\client\gui\ScreenChooser_Pocket.hpp">
       <Filter>Header Files\GUI</Filter>
     </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\DeathScreen_Console.hpp">
+      <Filter>Header Files\GUI\Screens</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\client\gui\components\AvailableGamesList.cpp">
@@ -1233,6 +1236,9 @@
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\client\gui\ScreenChooser_Pocket.cpp">
       <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\DeathScreen_Console.cpp">
+      <Filter>Source Files\GUI\Screens</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

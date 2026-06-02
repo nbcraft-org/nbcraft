@@ -114,6 +114,7 @@ add_library(nbcraft-core STATIC
     client/gui/screens/ConfirmScreen.cpp
     client/gui/screens/DeleteWorldScreen.cpp
     client/gui/screens/DeathScreen.cpp
+    client/gui/screens/DeathScreen_Console.cpp
     client/gui/screens/ChatScreen.cpp
     client/gui/screens/RenameMPLevelScreen.cpp
     client/gui/screens/ProgressScreen.cpp

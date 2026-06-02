@@ -7,6 +7,7 @@
 #include "screens/OptionsScreen_Console.hpp"
 #include "screens/CreateWorldScreen_Console.hpp"
 #include "screens/ProgressScreen_Console.hpp"
+#include "screens/DeathScreen_Console.hpp"
 
 ScreenChooser_Console::ScreenChooser_Console(Minecraft* mc) : ScreenChooser(mc, UI_CONSOLE)
 {
@@ -44,4 +45,9 @@ void ScreenChooser_Console::pushCreateWorldScreen(Screen* parent)
 void ScreenChooser_Console::pushCraftingScreen(Player* player, const TilePos& pos)
 {
 	m_pMinecraft->setScreen(new ClassicCraftingScreen_Console(player->m_pInventory, pos, player->m_pLevel));
+}
+
+void ScreenChooser_Console::pushDeathScreen()
+{
+	m_pMinecraft->setScreen(new DeathScreen_Console);
 }

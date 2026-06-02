@@ -11,7 +11,7 @@
 #include "screens/CreateWorldScreen.hpp"
 #include "screens/ProgressScreen.hpp"
 #include "screens/CreditsScreen.hpp"
-
+#include "screens/DeathScreen.hpp"
 #include "ScreenChooser_Pocket.hpp"
 #include "ScreenChooser_Console.hpp"
 
@@ -68,6 +68,11 @@ void ScreenChooser::pushChestScreen(Player* player, Container* container)
 void ScreenChooser::pushCreditsScreen(Screen* parent)
 {
 	m_pMinecraft->setScreen(new CreditsScreen(parent));
+}
+
+void ScreenChooser::pushDeathScreen()
+{
+	m_pMinecraft->setScreen(new DeathScreen());
 }
 
 ScreenChooser* ScreenChooser::Create(Minecraft* mc)

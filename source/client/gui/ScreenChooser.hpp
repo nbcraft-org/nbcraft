@@ -26,6 +26,7 @@ public:
     virtual void pushFurnaceScreen(Player*, FurnaceTileEntity*);
     virtual void pushChestScreen(Player*, Container*);
     virtual void pushCreditsScreen(Screen*);
+    virtual void pushDeathScreen();
 
     static ScreenChooser* Create(Minecraft*);
 
