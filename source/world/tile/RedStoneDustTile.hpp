@@ -31,5 +31,5 @@ public:
 
 public:
 	std::set<TilePos> m_toUpdate;
-	bool shouldSignal;
+	bool m_bShouldSignal;
 };

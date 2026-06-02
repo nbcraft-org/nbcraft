@@ -90,13 +90,13 @@
 
 std::string Tile::TILE_DESCRIPTION_PREFIX = "tile.";
 
-Tile* Tile::tiles[C_MAX_TILES];
-int   Tile::lightBlock[C_MAX_TILES];
+Tile* Tile::tiles        [C_MAX_TILES];
+int   Tile::lightBlock   [C_MAX_TILES];
 int   Tile::lightEmission[C_MAX_TILES];
-bool  Tile::shouldTick[C_MAX_TILES];
-bool  Tile::solid[C_MAX_TILES];
-bool  Tile::translucent[C_MAX_TILES];
-bool  Tile::isEntityTile[C_MAX_TILES];
+bool  Tile::shouldTick   [C_MAX_TILES];
+bool  Tile::solid        [C_MAX_TILES];
+bool  Tile::translucent  [C_MAX_TILES];
+bool  Tile::isEntityTile [C_MAX_TILES];
 
 
 void Tile::_init()
@@ -1302,16 +1302,16 @@ void Tile::playerWillDestroy(Player* player, const TilePos& pos, TileData data)
 }
 
 const Tile::SoundType
-Tile::SOUND_NORMAL("stone", 1.0f, 1.0f),
-Tile::SOUND_WOOD("wood", 1.0f, 1.0f),
-Tile::SOUND_GRAVEL("gravel", 1.0f, 1.0f),
-Tile::SOUND_GRASS("grass", 0.5f, 1.0f),
-Tile::SOUND_STONE("stone", 1.0f, 1.0f),
-Tile::SOUND_METAL("stone", 1.0f, 1.5f),
-Tile::SOUND_GLASS("stone",  /*"glass",*/1.0f, 1.0f),
-Tile::SOUND_CLOTH("cloth", 1.0f, 1.0f),
-Tile::SOUND_SAND("sand",  /*"gravel",*/ 1.0f, 1.0f),
-Tile::SOUND_SILENT("", 1.0f, 1.0f);
+	Tile::SOUND_NORMAL("stone",  1.0f, 1.0f),
+	Tile::SOUND_WOOD  ("wood",   1.0f, 1.0f),
+	Tile::SOUND_GRAVEL("gravel", 1.0f, 1.0f),
+	Tile::SOUND_GRASS ("grass",  0.5f, 1.0f),
+	Tile::SOUND_STONE ("stone",  1.0f, 1.0f),
+	Tile::SOUND_METAL ("stone",  1.0f, 1.5f),
+	Tile::SOUND_GLASS ("stone",  /*"glass",*/1.0f, 1.0f),
+	Tile::SOUND_CLOTH ("cloth",  1.0f, 1.0f),
+	Tile::SOUND_SAND  ("sand",  /*"gravel",*/ 1.0f, 1.0f),
+	Tile::SOUND_SILENT("",       1.0f, 1.0f);
 
 // @TODO: Refactor this so that Tile::fire is already a FireTile* etc
 Tile

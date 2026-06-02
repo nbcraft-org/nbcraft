@@ -3,7 +3,7 @@
 
 RedStoneDustTile::RedStoneDustTile(TileID id, int texture) : Tile(id, texture, Material::decoration)
 {
-	shouldSignal = true;
+	m_bShouldSignal = true;
 	m_TextureFrame = texture;
 	m_renderLayer = RENDER_LAYER_ALPHATEST;
 	setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f / 16.0f, 1.0f);
@@ -57,9 +57,9 @@ void RedStoneDustTile::updatePowerStrength(Level* level, const TilePos& pos1, co
 {
 	int var8 = level->getData(pos1);
 	int var9 = 0;
-	shouldSignal = false;
+	m_bShouldSignal = false;
 	bool var10 = level->hasNeighborSignal(pos1);
-	shouldSignal = true;
+	m_bShouldSignal = true;
 	int var11;
 	int var12;
 	int var13;
@@ -351,12 +351,12 @@ int RedStoneDustTile::getResource(TileData data, Random* random) const
 
 int RedStoneDustTile::getDirectSignal(const Level* level, const TilePos& pos, Facing::Name face) const
 {
-	return !shouldSignal ? 0 : getSignal(level, pos, face);
+	return !m_bShouldSignal ? 0 : getSignal(level, pos, face);
 }
 
 int RedStoneDustTile::getSignal(const LevelSource* level, const TilePos& pos, Facing::Name face) const
 {
-	if (!shouldSignal)
+	if (!m_bShouldSignal)
 	{
 		return 0;
 	}
@@ -403,7 +403,7 @@ int RedStoneDustTile::getSignal(const LevelSource* level, const TilePos& pos, Fa
 
 bool RedStoneDustTile::isSignalSource() const
 {
-	return shouldSignal;
+	return m_bShouldSignal;
 }
 
 void RedStoneDustTile::animateTick(Level* level, const TilePos& pos, Random* random)
