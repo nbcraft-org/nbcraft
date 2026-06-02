@@ -41,13 +41,13 @@ const UniformMetaData* ConstantBufferMetaData::getUniformMetaData(const std::str
     return nullptr;
 }
 
-unsigned int ConstantBufferMetaData::getRequiredSpaceForUniforms() const
+size_t ConstantBufferMetaData::getRequiredSpaceForUniforms() const
 {
     if (m_uniformMetaData.empty())
         return 0;
     
     const UniformMetaData& lastUniform = m_uniformMetaData.back();
-    unsigned int unalignedSize = lastUniform.getSize() + lastUniform.m_byteOffset;
+    size_t unalignedSize = lastUniform.getSize() + lastUniform.m_byteOffset;
 
     return AlignmentHelper::getAlignedOffset(unalignedSize, 16);
 }

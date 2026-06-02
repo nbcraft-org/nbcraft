@@ -21,8 +21,8 @@ void ConstantBufferMetaDataManager::allocateConstantBufferContainers()
         ConstantBufferMetaData& bufferMeta = m_constantBufferMetaDataList[i];
         ConstantBufferContainer buffer;
 
-        unsigned int uniformCount = bufferMeta.m_uniformMetaData.size();
-        unsigned int bufferSize = bufferMeta.getRequiredSpaceForUniforms();
+        size_t uniformCount = bufferMeta.m_uniformMetaData.size();
+        size_t bufferSize = bufferMeta.getRequiredSpaceForUniforms();
         buffer.reserveMemoryForShaderConstants(uniformCount, bufferSize);
 
         buffer.m_constantBufferName = bufferMeta.getConstantBufferName();

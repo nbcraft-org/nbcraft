@@ -4,7 +4,7 @@
 
 using namespace mce;
 
-int ShaderPrimitiveTypeHelper::sizeInBytesFromShaderPrimitiveType(ShaderPrimitiveTypes shaderPrimitiveType)
+size_t ShaderPrimitiveTypeHelper::sizeInBytesFromShaderPrimitiveType(ShaderPrimitiveTypes shaderPrimitiveType)
 {
     switch (shaderPrimitiveType)
     {

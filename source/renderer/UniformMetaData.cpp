@@ -11,7 +11,7 @@ UniformMetaData::UniformMetaData()
     m_constantBufferMetaDataParent = nullptr;
 }
 
-unsigned int UniformMetaData::getSize() const
+size_t UniformMetaData::getSize() const
 {
     return ShaderPrimitiveTypeHelper::sizeInBytesFromShaderPrimitiveType(m_shaderPrimitiveType);
 }
