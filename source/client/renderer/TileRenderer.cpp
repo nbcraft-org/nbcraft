@@ -20,7 +20,7 @@
 #include "world/tile/FenceTile.hpp"
 #include "GameMods.hpp"
 
-#define DEFAULT_LIGHT_COLOR 16711935
+#define DEFAULT_LIGHT_COLOR 0xFF00FF
 
 TileRenderer::Materials::Materials()
 {
@@ -202,8 +202,13 @@ void TileRenderer::renderEast(Tile* tile, const Vec3& pos, int texture)
 	}
 	else
 	{
+#ifdef ENH_BETA_1_7_TERRAIN_ATLAS
 		texV_u = C_RATIO * (texY + (1.0f - aabb.max.y) * 16.0f);
 		texV_d = C_RATIO * (texY + (1.0f - aabb.min.y) * 16.0f - 0.01f);
+#else
+		texV_u = C_RATIO * (texY + aabb.min.y * 16.0f);
+		texV_d = C_RATIO * (texY + aabb.max.y * 16.0f - 0.01f);
+#endif
 	}
 
 	Tesselator& t = m_tessellator;
@@ -279,8 +284,13 @@ void TileRenderer::renderWest(Tile* tile, const Vec3& pos, int texture)
 	}
 	else
 	{
+#ifdef ENH_BETA_1_7_TERRAIN_ATLAS
 		texV_u = C_RATIO * (texY + (1.0f - aabb.max.y) * 16.0f);
 		texV_d = C_RATIO * (texY + (1.0f - aabb.min.y) * 16.0f - 0.01f);
+#else
+		texV_u = C_RATIO * (texY + aabb.min.y * 16.0f);
+		texV_d = C_RATIO * (texY + aabb.max.y * 16.0f - 0.01f);
+#endif
 	}
 
 	Tesselator& t = m_tessellator;
@@ -356,8 +366,13 @@ void TileRenderer::renderSouth(Tile* tile, const Vec3& pos, int texture)
 	}
 	else
 	{
+#ifdef ENH_BETA_1_7_TERRAIN_ATLAS
 		texV_u = C_RATIO * (texY + (1.0f - aabb.max.y) * 16.0f);
 		texV_d = C_RATIO * (texY + (1.0f - aabb.min.y) * 16.0f - 0.01f);
+#else
+		texV_u = C_RATIO * (texY + aabb.min.y * 16.0f);
+		texV_d = C_RATIO * (texY + aabb.max.y * 16.0f - 0.01f);
+#endif
 	}
 
 	Tesselator& t = m_tessellator;
@@ -433,8 +448,13 @@ void TileRenderer::renderNorth(Tile* tile, const Vec3& pos, int texture)
 	}
 	else
 	{
+#ifdef ENH_BETA_1_7_TERRAIN_ATLAS
 		texV_u = C_RATIO * (texY + (1.0f - aabb.max.y) * 16.0f);
 		texV_d = C_RATIO * (texY + (1.0f - aabb.min.y) * 16.0f - 0.01f);
+#else
+		texV_u = C_RATIO * (texY + aabb.min.y * 16.0f);
+		texV_d = C_RATIO * (texY + aabb.max.y * 16.0f - 0.01f);
+#endif
 	}
 
 	Tesselator& t = m_tessellator;
