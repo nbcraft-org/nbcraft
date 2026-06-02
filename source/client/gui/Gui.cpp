@@ -415,7 +415,7 @@ void Gui::handleKeyPressed(int keyCode)
 
 void Gui::renderMessages(bool bShowAll)
 {
-	int scale = 1;  // Had to add scale because chatscreen behaves weirdly when messages are scaled globally in console ui mode, there's probably a better way
+	int scale = 1;  // scale is used to fix sizing issues when chatscreen is opened so it doesn't become enlarged in there, there's probably a better way to do this.
 	int topEdge = GuiHeight - 49;
 
 	if (!m_pMinecraft->m_pScreen)

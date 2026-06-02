@@ -76,11 +76,11 @@ void CreateWorldScreen_Console::init()
 	_addElement(m_btnGameMode);
 
 	m_difficultySlider.m_xPos = left;
-	m_difficultySlider.m_yPos = m_panel.y + 300; // 267 // 310
+	m_difficultySlider.m_yPos = m_panel.y + 300;
 	_addElement(m_difficultySlider);
 
 	m_btnCreate.m_xPos = left;
-	m_btnCreate.m_yPos = m_panel.y + 340; //322
+	m_btnCreate.m_yPos = m_panel.y + 340;
 	_addElement(m_btnCreate);
 
 	m_textName.init(m_pFont);
@@ -90,11 +90,11 @@ void CreateWorldScreen_Console::init()
 void CreateWorldScreen_Console::render(float f)
 {
 	PanelScreen_Console::render(f);
-	m_btnGameMode.setMessage(Language::get("playGame.gameMode") + GameTypeConv::GameTypeToNonLocString(m_gameMode));
 	Font& font = *m_pFont;
 	font.drawScalable(Language::get("selectWorld.enterName"), m_textName.m_xPos + 1, m_textName.m_yPos - 19, Color::TEXT_GREY);
 	font.drawScalable(Language::get("selectWorld.enterSeed"), m_textSeed.m_xPos + 1, m_textSeed.m_yPos - 19, Color::TEXT_GREY);
 	font.drawScalable(Language::get("selectWorld.seedInfo"), m_textSeed.m_xPos + 1, m_textSeed.m_yPos + 41, Color::TEXT_GREY);
+	m_btnGameMode.setMessage(Language::get("playGame.gameMode") + GameTypeConv::GameTypeToNonLocString(m_gameMode));
 }
 
 void CreateWorldScreen_Console::renderPanel(float f)

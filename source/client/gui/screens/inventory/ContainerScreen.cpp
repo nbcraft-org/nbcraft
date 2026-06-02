@@ -224,7 +224,7 @@ void ContainerScreen::render(float partialTicks)
                 ty -= 32;
                 blitNineSlice(*m_pMinecraft->m_pTextures, ScreenRenderer::POINTER_TEXT_PANEL_SLICES, tx - 6, ty - 6, w * 2 + 12, 34, 8);
                 MatrixStack::Ref tooltipMatrix = MatrixStack::World.push();
-                m_pFont->drawScalableShadow(name, tx, ty + 4, -1);
+                m_pFont->drawScalable(name, tx, ty + 4, -1);
             }
             else
             {
