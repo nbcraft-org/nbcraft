@@ -897,6 +897,10 @@
 		84E022F22F2A0211003C8FFE /* ContainerScreen.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84E022EC2F2A0211003C8FFE /* ContainerScreen.hpp */; };
 		84E022F32F2A0211003C8FFE /* InventoryScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E022ED2F2A0211003C8FFE /* InventoryScreen.cpp */; };
 		84E022F42F2A0211003C8FFE /* InventoryScreen.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84E022EE2F2A0211003C8FFE /* InventoryScreen.hpp */; };
+		84E023082F2A0211003C8FFE /* CreativeScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E023062F2A0211003C8FFE /* CreativeScreen.cpp */; };
+		84E023092F2A0211003C8FFE /* CreativeScreen.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84E023072F2A0211003C8FFE /* CreativeScreen.hpp */; };
+		84E0230C2F2A0245003C8FFE /* CreativeMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E0230A2F2A0245003C8FFE /* CreativeMenu.cpp */; };
+		84E0230D2F2A0245003C8FFE /* CreativeMenu.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84E0230B2F2A0245003C8FFE /* CreativeMenu.hpp */; };
 		84E022F72F2A021E003C8FFE /* MenuPointer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E022F52F2A021E003C8FFE /* MenuPointer.cpp */; };
 		84E022F82F2A021E003C8FFE /* MenuPointer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84E022F62F2A021E003C8FFE /* MenuPointer.hpp */; };
 		84E022FC2F2A0230003C8FFE /* Language.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E022FA2F2A0230003C8FFE /* Language.cpp */; };
@@ -2725,6 +2729,10 @@
 		84E022EC2F2A0211003C8FFE /* ContainerScreen.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ContainerScreen.hpp; sourceTree = "<group>"; };
 		84E022ED2F2A0211003C8FFE /* InventoryScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InventoryScreen.cpp; sourceTree = "<group>"; };
 		84E022EE2F2A0211003C8FFE /* InventoryScreen.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = InventoryScreen.hpp; sourceTree = "<group>"; };
+		84E023062F2A0211003C8FFE /* CreativeScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CreativeScreen.cpp; sourceTree = "<group>"; };
+		84E023072F2A0211003C8FFE /* CreativeScreen.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CreativeScreen.hpp; sourceTree = "<group>"; };
+		84E0230A2F2A0245003C8FFE /* CreativeMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CreativeMenu.cpp; sourceTree = "<group>"; };
+		84E0230B2F2A0245003C8FFE /* CreativeMenu.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CreativeMenu.hpp; sourceTree = "<group>"; };
 		84E022F52F2A021E003C8FFE /* MenuPointer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MenuPointer.cpp; sourceTree = "<group>"; };
 		84E022F62F2A021E003C8FFE /* MenuPointer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MenuPointer.hpp; sourceTree = "<group>"; };
 		84E022FA2F2A0230003C8FFE /* Language.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Language.cpp; sourceTree = "<group>"; };
@@ -5136,6 +5144,8 @@
 				8443371A2F405E1C00EB3115 /* ClassicCraftingScreen_Console.hpp */,
 				84E022EB2F2A0211003C8FFE /* ContainerScreen.cpp */,
 				84E022EC2F2A0211003C8FFE /* ContainerScreen.hpp */,
+				84E023062F2A0211003C8FFE /* CreativeScreen.cpp */,
+				84E023072F2A0211003C8FFE /* CreativeScreen.hpp */,
 				84DED1962F3095B8004001C5 /* CraftingScreen.cpp */,
 				84DED1972F3095B8004001C5 /* CraftingScreen.hpp */,
 				84E2A3C02FBAAC3A0026780B /* FurnaceScreen.cpp */,
@@ -5199,6 +5209,8 @@
 				84E7BF0B2F286A08002D3936 /* ArmorSlot.hpp */,
 				84E022FE2F2A0245003C8FFE /* ChestMenu.cpp */,
 				84E022FF2F2A0245003C8FFE /* ChestMenu.hpp */,
+				84E0230A2F2A0245003C8FFE /* CreativeMenu.cpp */,
+				84E0230B2F2A0245003C8FFE /* CreativeMenu.hpp */,
 				84E7BF2A2F286A20002D3936 /* CompoundContainer.cpp */,
 				84E7BF2B2F286A20002D3936 /* CompoundContainer.hpp */,
 				84E5F3952FC175CA00AE884C /* Container.cpp */,
@@ -6032,6 +6044,7 @@
 				84EB09CD2EE2CC86008FB007 /* CreeperModel.hpp in Headers */,
 				84AA8C122B32F3F3003F5B82 /* TripodCameraRenderer.hpp in Headers */,
 				84E022F22F2A0211003C8FFE /* ContainerScreen.hpp in Headers */,
+				84E023092F2A0211003C8FFE /* CreativeScreen.hpp in Headers */,
 				84AA8C172B32F3F3003F5B82 /* FoliageColor.hpp in Headers */,
 				84AA8C192B32F3F3003F5B82 /* Font.hpp in Headers */,
 				84AA8C1B2B32F3F3003F5B82 /* Frustum.hpp in Headers */,
@@ -6122,6 +6135,7 @@
 				84BF63922AF186C8008A9995 /* LevelChunk.hpp in Headers */,
 				84BF63932AF186C8008A9995 /* PerformanceTestChunkSource.hpp in Headers */,
 				84E023012F2A0245003C8FFE /* ChestMenu.hpp in Headers */,
+				84E0230D2F2A0245003C8FFE /* CreativeMenu.hpp in Headers */,
 				84B1E03A2E04FD7900ED000A /* Arrow.hpp in Headers */,
 				84BF63942AF186C8008A9995 /* RandomLevelSource.hpp in Headers */,
 				84BF63952AF186C8008A9995 /* TestChunkSource.hpp in Headers */,
@@ -7083,6 +7097,7 @@
 				84DED1982F3095B8004001C5 /* CraftingScreen.cpp in Sources */,
 				84B8AF102AF1896F008DE93D /* KeyboardInput.cpp in Sources */,
 				84E022F12F2A0211003C8FFE /* ContainerScreen.cpp in Sources */,
+				84E023082F2A0211003C8FFE /* CreativeScreen.cpp in Sources */,
 				84F948272F2F5CB700217B16 /* ResourcePackManifest.cpp in Sources */,
 				8443373A2F405E9400EB3115 /* SplashManager.cpp in Sources */,
 				84B8AF112AF1896F008DE93D /* Mouse.cpp in Sources */,
@@ -7424,6 +7439,7 @@
 				8477B3AC2C4DC3F6004E1AC5 /* TilePos.cpp in Sources */,
 				84AA8B562B32F39A003F5B82 /* PathFinder.cpp in Sources */,
 				84E023002F2A0245003C8FFE /* ChestMenu.cpp in Sources */,
+				84E0230C2F2A0245003C8FFE /* CreativeMenu.cpp in Sources */,
 				8477B3B32C4DC414004E1AC5 /* ChunkPos.cpp in Sources */,
 				84AA8B782B32F3B5003F5B82 /* Animal.cpp in Sources */,
 				84AA8B7A2B32F3B5003F5B82 /* Chicken.cpp in Sources */,
