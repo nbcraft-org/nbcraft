@@ -769,6 +769,8 @@
 		84C6142B2F323602008AC5BE /* WeaponItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C614272F323602008AC5BE /* WeaponItem.cpp */; };
 		84C90EA52AF8861A008973F9 /* OptionList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C90EA32AF8861A008973F9 /* OptionList.cpp */; };
 		84C90EA62AF8861A008973F9 /* OptionList.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84C90EA42AF8861A008973F9 /* OptionList.hpp */; };
+		84CA11342FD03A7900A83DD3 /* DeathScreen_Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84CA11322FD03A7900A83DD3 /* DeathScreen_Console.cpp */; };
+		84CA11352FD03A7900A83DD3 /* DeathScreen_Console.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84CA11332FD03A7900A83DD3 /* DeathScreen_Console.hpp */; };
 		84CCBC3F2E6183F300E251AF /* DataIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84CCBC3D2E6183F300E251AF /* DataIO.cpp */; };
 		84CCBC402E6183F300E251AF /* DataIO.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84CCBC3E2E6183F300E251AF /* DataIO.hpp */; };
 		84CCBC6D2E61857800E251AF /* CompoundTag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84CCBC4F2E61857800E251AF /* CompoundTag.cpp */; };
@@ -2606,6 +2608,8 @@
 		84C614272F323602008AC5BE /* WeaponItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WeaponItem.cpp; sourceTree = "<group>"; };
 		84C90EA32AF8861A008973F9 /* OptionList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OptionList.cpp; sourceTree = "<group>"; };
 		84C90EA42AF8861A008973F9 /* OptionList.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = OptionList.hpp; sourceTree = "<group>"; };
+		84CA11322FD03A7900A83DD3 /* DeathScreen_Console.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeathScreen_Console.cpp; sourceTree = "<group>"; };
+		84CA11332FD03A7900A83DD3 /* DeathScreen_Console.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = DeathScreen_Console.hpp; sourceTree = "<group>"; };
 		84CCBC3D2E6183F300E251AF /* DataIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataIO.cpp; sourceTree = "<group>"; };
 		84CCBC3E2E6183F300E251AF /* DataIO.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = DataIO.hpp; sourceTree = "<group>"; };
 		84CCBC452E61849800E251AF /* libNBT.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNBT.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3542,6 +3546,8 @@
 				9D3996262F10E9C6002945D3 /* CreditsScreen.hpp */,
 				840DD5A32AC810620006A435 /* DeathScreen.cpp */,
 				840DD5A42AC810620006A435 /* DeathScreen.hpp */,
+				84CA11322FD03A7900A83DD3 /* DeathScreen_Console.cpp */,
+				84CA11332FD03A7900A83DD3 /* DeathScreen_Console.hpp */,
 				840DD5A52AC810620006A435 /* DeleteWorldScreen.cpp */,
 				840DD5A62AC810620006A435 /* DeleteWorldScreen.hpp */,
 				840DD5A72AC810620006A435 /* DirectConnectScreen.cpp */,
@@ -5941,6 +5947,7 @@
 				84B8AF482AF189D8008DE93D /* DeleteWorldScreen.hpp in Headers */,
 				84B8AF492AF189D8008DE93D /* DirectConnectScreen.hpp in Headers */,
 				84EB09C42EE2CC86008FB007 /* ModelPart.hpp in Headers */,
+				84CA11352FD03A7900A83DD3 /* DeathScreen_Console.hpp in Headers */,
 				84B8AF4A2AF189D8008DE93D /* IngameBlockSelectionScreen.hpp in Headers */,
 				84B8AF4B2AF189D8008DE93D /* InvalidLicenseScreen.hpp in Headers */,
 				84B8AF4C2AF189D8008DE93D /* JoinGameScreen.hpp in Headers */,
@@ -7135,6 +7142,7 @@
 				84EB09F32EE2CCA8008FB007 /* RenderMaterialGroup.cpp in Sources */,
 				84B8AEF32AF1890A008DE93D /* Gui.cpp in Sources */,
 				84B8AEF42AF1890A008DE93D /* GuiComponent.cpp in Sources */,
+				84CA11342FD03A7900A83DD3 /* DeathScreen_Console.cpp in Sources */,
 				84B8AEF52AF1890A008DE93D /* Screen.cpp in Sources */,
 				84B8AEF62AF1890A008DE93D /* ChatScreen.cpp in Sources */,
 				84EB09C12EE2CC86008FB007 /* Cube.cpp in Sources */,
