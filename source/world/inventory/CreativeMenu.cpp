@@ -116,7 +116,7 @@ void CreativeMenu::initCreativeItems()
         }
     }
 #else
-    for (int i = 0; i < sizeof(creativeTiles) / sizeof(creativeTiles[0]); i++)
+    for (size_t i = 0; i < sizeof(creativeTiles) / sizeof(creativeTiles[0]); i++)
     {
         eTileID tileId = creativeTiles[i];
         Tile* tile = Tile::tiles[tileId];
