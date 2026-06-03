@@ -54,9 +54,7 @@ void DeathScreen_Console::render(float f)
 	int bkgdColor = (topAlpha << 24) | 0x0C002E;
 
 	fillGradient(0, 0, m_width, m_height, bkgdColor, bkgdColor);
-	{
-		m_pFont->drawOutlinedString(m_header, (m_width / 2) - ((m_pFont->width(m_header) * 4.5f) / 2), m_height / 4 - 50, Color::WHITE, Color::BLACK, 4.5f);
-	}
-
+	m_pFont->drawOutlinedString(m_header, (m_width / 2) - ((m_pFont->width(m_header) * 4.5f) / 2), m_height / 4 - 50, Color::WHITE, Color::BLACK, 4.5f);
+	
 	Screen::render(f);
 }
