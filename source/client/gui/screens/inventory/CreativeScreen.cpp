@@ -138,7 +138,7 @@ void CreativeScreen::pointerReleased(const MenuPointer& pointer, MouseButtonType
 void CreativeScreen::handleScrollWheel(float force)
 {
     CreativeMenu* creativeMenu = (CreativeMenu*)m_pMenu;
-    creativeMenu->updateScroll(m_scrolled = Mth::clamp(m_scrolled - (force / ((float)creativeMenu->m_creativeItems.size() / 8 - 8 + 1)), 0.0f, 1.0f));
+    creativeMenu->updateScroll(m_scrolled = Mth::clamp(m_scrolled - (force / ((float)CreativeMenu::getCreativeItems().size() / 8 - 8 + 1)), 0.0f, 1.0f));
 }
 
 void CreativeScreen::tick()
