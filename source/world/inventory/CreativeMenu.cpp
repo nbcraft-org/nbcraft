@@ -96,7 +96,7 @@ void CreativeMenu::initCreativeItems()
         Tile* tile = Tile::tiles[id];
         if (!tile) continue;
 
-        int maxAux = 0;
+        int maxAux;
         switch (id)
         {
             case TILE_CLOTH:          maxAux = 15; break;
@@ -104,6 +104,7 @@ void CreativeMenu::initCreativeItems()
             case TILE_TREE_TRUNK:     maxAux = 2;  break;
             case TILE_LEAVES:         maxAux = 2;  break;
             case TILE_SAPLING:        maxAux = 2;  break;
+            default:                  maxAux = 0;  break;
         }
         for (int aux = 0; aux <= maxAux; aux++)
             creativeItems.push_back(ItemStack(tile, 1, aux));
@@ -115,7 +116,7 @@ void CreativeMenu::initCreativeItems()
         Tile* tile = Tile::tiles[tileId];
         if (!tile) continue;
 
-        int maxAux = 0;
+        int maxAux;
         switch (tileId)
         {
             case TILE_CLOTH:          maxAux = 15; break;
@@ -123,6 +124,7 @@ void CreativeMenu::initCreativeItems()
             case TILE_TREE_TRUNK:     maxAux = 2;  break;
             case TILE_LEAVES:         maxAux = 2;  break;
             case TILE_SAPLING:        maxAux = 2;  break;
+            default:                  maxAux = 0;  break;
         }
         for (int aux = 0; aux <= maxAux; aux++)
             creativeItems.push_back(ItemStack(tile, 1, aux));
