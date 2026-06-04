@@ -4,10 +4,11 @@
 #include "world/tile/Tile.hpp"
 #include "world/item/Item.hpp"
 
-std::vector<ItemStack> CreativeMenu::s_creativeItems;
-bool CreativeMenu::s_initialized = false;
+std::vector<ItemStack> CreativeMenu::creativeItems;
+bool CreativeMenu::initialized = false;
+
 #if !defined(_DEBUG)
-static const eTileID creativeTiles[] =
+static const TileID creativeTiles[] =
 {
     TILE_STONEBRICK,
     TILE_STONE,
@@ -83,88 +84,63 @@ static const eTileID creativeTiles[] =
     TILE_ROCKET_LAUNCHER,
 };
 #endif
+
 void CreativeMenu::initCreativeItems()
 {
-    if (s_initialized) return;
-    s_initialized = true;
+    if (initialized) return;
+    initialized = true;
+
 #if defined(_DEBUG)
     for (int id = 1; id < C_MAX_TILES; id++)
     {
         Tile* tile = Tile::tiles[id];
         if (!tile) continue;
 
-        if (id == TILE_CLOTH) continue;
-
-        if (id == TILE_TREE_TRUNK)
+        int maxAux = 0;
+        switch (id)
         {
-            for (int aux = 0; aux < 3; aux++)
-                s_creativeItems.push_back(ItemStack(tile, 1, aux));
+            case TILE_CLOTH:          maxAux = 15; break;
+            case TILE_STONESLAB_HALF: maxAux = 3;  break;
+            case TILE_TREE_TRUNK:     maxAux = 2;  break;
+            case TILE_LEAVES:         maxAux = 2;  break;
+            case TILE_SAPLING:        maxAux = 2;  break;
         }
-        else if (id == TILE_STONESLAB_HALF)
-        {
-            for (int aux = 0; aux < 4; aux++)
-                s_creativeItems.push_back(ItemStack(tile, 1, aux));
-        }
-        else if (id == TILE_SAPLING)
-        {
-            for (int aux = 0; aux < 3; aux++)
-                s_creativeItems.push_back(ItemStack(tile, 1, aux));
-        }
-        else
-        {
-            s_creativeItems.push_back(ItemStack(tile, 1, 0));
-        }
+        for (int aux = 0; aux <= maxAux; aux++)
+            creativeItems.push_back(ItemStack(tile, 1, aux));
     }
 #else
     for (size_t i = 0; i < sizeof(creativeTiles) / sizeof(creativeTiles[0]); i++)
     {
-        eTileID tileId = creativeTiles[i];
+        TileID tileId = creativeTiles[i];
         Tile* tile = Tile::tiles[tileId];
         if (!tile) continue;
 
-        if (tileId == TILE_CLOTH)
+        int maxAux = 0;
+        switch (tileId)
         {
-            for (int aux = 0; aux < 16; aux++)
-                s_creativeItems.push_back(ItemStack(tile, 1, aux));
+            case TILE_CLOTH:          maxAux = 15; break;
+            case TILE_STONESLAB_HALF: maxAux = 3;  break;
+            case TILE_TREE_TRUNK:     maxAux = 2;  break;
+            case TILE_LEAVES:         maxAux = 2;  break;
+            case TILE_SAPLING:        maxAux = 2;  break;
         }
-        else if (tileId == TILE_STONESLAB_HALF)
-        {
-            for (int aux = 0; aux < 4; aux++)
-                s_creativeItems.push_back(ItemStack(tile, 1, aux));
-        }
-        else if (tileId == TILE_TREE_TRUNK)
-        {
-            for (int aux = 0; aux < 3; aux++)
-                s_creativeItems.push_back(ItemStack(tile, 1, aux));
-        }
-        else if (tileId == TILE_LEAVES)
-        {
-            for (int aux = 0; aux < 3; aux++)
-                s_creativeItems.push_back(ItemStack(tile, 1, aux));
-        }
-        else if (tileId == TILE_SAPLING)
-        {
-            for (int aux = 0; aux < 3; aux++)
-                s_creativeItems.push_back(ItemStack(tile, 1, aux));
-        }
-        else
-        {
-            s_creativeItems.push_back(ItemStack(tile, 1, 0));
-        }
+        for (int aux = 0; aux <= maxAux; aux++)
+            creativeItems.push_back(ItemStack(tile, 1, aux));
     }
 #endif
+
     for (int id = 256; id < C_MAX_ITEMS; id++)
     {
         Item* item = Item::items[id];
         if (!item) continue;
-        s_creativeItems.push_back(ItemStack(item, 1, 0));
+        creativeItems.push_back(ItemStack(item, 1, 0));
     }
 
     Item* dye = Item::items[ITEM_DYE_POWDER];
     if (dye)
     {
         for (int aux = 1; aux < 16; aux++)
-            s_creativeItems.push_back(ItemStack(dye, 1, aux));
+            creativeItems.push_back(ItemStack(dye, 1, aux));
     }
 }
 
@@ -193,7 +169,7 @@ CreativeMenu::CreativeMenu(Container* inventory, Container* container)
 
 void CreativeMenu::updateScroll(float scroll)
 {
-    int scrollLimit = s_creativeItems.size() / 8 - 8 + 1;
+    int scrollLimit = creativeItems.size() / 8 - 8 + 1;
     if (scrollLimit < 0) scrollLimit = 0;
     int scrollOffset = (int)((scroll * scrollLimit) + 0.5f);
 
@@ -202,9 +178,9 @@ void CreativeMenu::updateScroll(float scroll)
         for (int col = 0; col < 8; ++col)
         {
             int itemIndex = col + (row + scrollOffset) * 8;
-            if (itemIndex >= 0 && itemIndex < (int)s_creativeItems.size())
+            if (itemIndex >= 0 && itemIndex < (int)creativeItems.size())
             {
-                m_container->setItem(col + row * 8, s_creativeItems[itemIndex]);
+                m_container->setItem(col + row * 8, creativeItems[itemIndex]);
             }
             else
             {
