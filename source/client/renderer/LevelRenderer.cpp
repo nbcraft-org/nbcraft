@@ -1725,16 +1725,16 @@ void LevelRenderer::prepareAndRenderClouds(const Entity& camera, float f)
 	Fog::enable();
 
 	Fog::updateRange(renderDistance * 0.2f, renderDistance * 0.75f);
-//	Fog::updateRange(renderDistance * 0.0f, renderDistance * 0.8f);  // Java
+//	Fog::updateRange(renderDistance * 0.0f, renderDistance * 0.8f);  // @PARITY-JAVA: Values taken from B1.7.3.
 	renderSky(camera, f);
 
 	Fog::updateRange(renderDistance * 0.6f, renderDistance); 
-//  Fog::updateRange(renderDistance * 4.2f * 0.6f, renderDistance * 4.2f); // Vanilla PE's extra 4.2f calculation causes fog to be pushed extremely far on clouds, almost visibly non existent
-//	Fog::updateRange(renderDistance * 0.25f, renderDistance * 1.0f); // Java
+//  Fog::updateRange(renderDistance * 4.2f * 0.6f, renderDistance * 4.2f);  // @PARITY-PE: extra 4.2f calculation causes fog to be pushed extremely far on clouds, almost visibly non existent
+//	Fog::updateRange(renderDistance * 0.25f, renderDistance * 1.0f); // @PARITY-JAVA: Values taken from B1.7.3.
 	renderClouds(camera, f);
 
 	Fog::updateRange(renderDistance * 0.6f, renderDistance);
-//	Fog::updateRange(renderDistance * 0.25f, renderDistance * 1.0f); // Java
+//	Fog::updateRange(renderDistance * 0.25f, renderDistance * 1.0f); // @PARITY-JAVA: Values taken from B1.7.3.
 
 	Fog::disable();
 
