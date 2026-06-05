@@ -4,12 +4,13 @@
 
 class LeverTile : public Tile
 {
+public:
+	LeverTile(TileID id, int texture);
+
 private:
 	bool _checkCanSurvive(Level*, const TilePos& pos);
 
 public:
-	LeverTile(TileID id, int texture);
-
 	AABB* getAABB(const Level*, const TilePos& pos) override;
 	bool isSolidRender() const override;
 	bool isCubeShaped() const override;
