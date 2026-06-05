@@ -8,7 +8,7 @@ std::vector<ItemStack> CreativeMenu::creativeItems;
 bool CreativeMenu::initialized = false;
 
 #if !defined(_DEBUG)
-static const TileID creativeTiles[] =
+const TileID creativeTiles[] =
 {
     TILE_STONEBRICK,
     TILE_STONE,
@@ -85,6 +85,21 @@ static const TileID creativeTiles[] =
 };
 #endif
 
+static void addAuxTile(std::vector<ItemStack>& items, TileID tileId, Tile* tile)
+{
+    int maxAux = 0;
+    switch (tileId)
+    {
+        case TILE_CLOTH:          maxAux = 15; break;
+        case TILE_STONESLAB_HALF: maxAux = 3;  break;
+        case TILE_TREE_TRUNK:     maxAux = 2;  break;
+        case TILE_LEAVES:         maxAux = 2;  break;
+        case TILE_SAPLING:        maxAux = 2;  break;
+    }
+    for (int aux = 0; aux <= maxAux; aux++)
+        items.push_back(ItemStack(tile, 1, aux));
+}
+
 void CreativeMenu::initCreativeItems()
 {
     if (initialized) return;
@@ -95,19 +110,7 @@ void CreativeMenu::initCreativeItems()
     {
         Tile* tile = Tile::tiles[id];
         if (!tile) continue;
-
-        int maxAux;
-        switch (id)
-        {
-            case TILE_CLOTH:          maxAux = 15; break;
-            case TILE_STONESLAB_HALF: maxAux = 3;  break;
-            case TILE_TREE_TRUNK:     maxAux = 2;  break;
-            case TILE_LEAVES:         maxAux = 2;  break;
-            case TILE_SAPLING:        maxAux = 2;  break;
-            default:                  maxAux = 0;  break;
-        }
-        for (int aux = 0; aux <= maxAux; aux++)
-            creativeItems.push_back(ItemStack(tile, 1, aux));
+        addAuxTile(creativeItems, (TileID)id, tile);
     }
 #else
     for (size_t i = 0; i < sizeof(creativeTiles) / sizeof(creativeTiles[0]); i++)
@@ -115,19 +118,7 @@ void CreativeMenu::initCreativeItems()
         TileID tileId = creativeTiles[i];
         Tile* tile = Tile::tiles[tileId];
         if (!tile) continue;
-
-        int maxAux;
-        switch (tileId)
-        {
-            case TILE_CLOTH:          maxAux = 15; break;
-            case TILE_STONESLAB_HALF: maxAux = 3;  break;
-            case TILE_TREE_TRUNK:     maxAux = 2;  break;
-            case TILE_LEAVES:         maxAux = 2;  break;
-            case TILE_SAPLING:        maxAux = 2;  break;
-            default:                  maxAux = 0;  break;
-        }
-        for (int aux = 0; aux <= maxAux; aux++)
-            creativeItems.push_back(ItemStack(tile, 1, aux));
+        addAuxTile(creativeItems, tileId, tile);
     }
 #endif
 
