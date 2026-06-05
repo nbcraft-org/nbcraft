@@ -1,8 +1,6 @@
 #include "Squid.hpp"
 #include "world/entity/Player.hpp"
 
-ItemStack Squid::inkSack;
-
 Squid::Squid(Level* pLevel) : WaterAnimal(pLevel)
 {
 	m_pDescriptor = &EntityTypeDescriptor::squid;
@@ -22,10 +20,11 @@ Squid::Squid(Level* pLevel) : WaterAnimal(pLevel)
 	m_tentacleSpeed = 1.0f / (m_random.nextFloat() + 1.0f) * 0.2f;
 }
 
+//ItemStack Squid::inkSack;
 void Squid::dropDeathLoot()
 {
-	if (inkSack.isEmpty())
-		inkSack = ItemStack(Item::dye_powder, 1, 0);
+	//if (inkSack.isEmpty())
+	static ItemStack inkSack = ItemStack(Item::dye_powder, 1, 0);
 
 	int var1 = m_random.nextInt(3) + 1;
 

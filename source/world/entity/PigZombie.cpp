@@ -1,8 +1,6 @@
 #include "PigZombie.hpp"
 #include "nbt/CompoundTag.hpp"
 
-ItemStack PigZombie::sword;
-
 PigZombie::PigZombie(Level* pLevel) : Zombie(pLevel)
 {
 	m_pDescriptor = &EntityTypeDescriptor::pigZombie;
@@ -67,25 +65,27 @@ bool PigZombie::hurt(Entity* pCulprit, int damage)
 			if (!entities[i]->getDescriptor().isType(EntityType::PIG_ZOMBIE))
 				continue;
 
-			static_cast<PigZombie*>(entities[i])
-				->alert(pCulprit);
+			PigZombie* pigZombie = static_cast<PigZombie*>(entities[i]);
+			pigZombie->_alert(pCulprit);
 		}
 
-		alert(pCulprit);
+		_alert(pCulprit);
 	}
 
 	return Zombie::hurt(pCulprit, damage);
 }
 
-void PigZombie::alert(Entity* ent)
+void PigZombie::_alert(Entity* ent)
 {
 	m_pAttackTarget = ent;
 	m_angerTime = 400 + m_random.nextInt(400);
 	m_playAngrySoundIn = m_random.nextInt(40);
 }
 
+//ItemStack PigZombie::sword;
 ItemStack& PigZombie::getCarriedItem() const
 {
-	if (sword.isEmpty()) sword = ItemStack(Item::sword_gold, 1);
+	//if (sword.isEmpty()) sword = ItemStack(Item::sword_gold, 1);
+	static ItemStack sword = ItemStack(Item::sword_gold, 1);
 	return sword;
 }

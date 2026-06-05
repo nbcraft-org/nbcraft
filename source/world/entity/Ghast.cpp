@@ -38,7 +38,7 @@ void Ghast::updateAi()
 	if (m_floatDuration-- <= 0)
 	{
 		m_floatDuration += m_random.nextInt(5) + 2;
-		if (canReach(m_targetPos, var7))
+		if (_canReach(m_targetPos, var7))
 		{
 			m_vel.x += var1 / var7 * 0.1f;
 			m_vel.y += var3 / var7 * 0.1f;
@@ -109,7 +109,7 @@ void Ghast::updateAi()
 	m_texture = m_charge > 10 ? "mob/ghast_fire.png" : "mob/ghast.png";
 }
 
-bool Ghast::canReach(const Vec3& travel, float var7)
+bool Ghast::_canReach(const Vec3& travel, float var7)
 {
 	Vec3 var9 = (m_targetPos - m_pos) / var7;
 	AABB aabb = m_hitbox;

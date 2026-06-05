@@ -14,9 +14,9 @@
 #include "DynamicTexture.hpp"
 #include "texture/TextureAtlas.hpp"
 
-#define C_TERRAIN_NAME "terrain.png"
-#define C_ITEMS_NAME   "gui/items.png"
-#define C_BLOCKS_NAME  "gui/gui_blocks.png"
+#define C_TERRAIN_NAME    "terrain.png"
+#define C_ITEMS_NAME      "gui/items.png"
+#define C_BLOCKS_NAME     "gui/gui_blocks.png"
 #define C_PARTICLES_NAME  "particles.png"
 
 class DynamicTexture; // in case we are being included from DynamicTexture. We don't store complete references to that

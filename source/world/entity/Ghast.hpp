@@ -8,7 +8,7 @@ public:
 	Ghast(Level* pLevel);
 
 private:
-	bool canReach(const Vec3&, float);
+	bool _canReach(const Vec3&, float);
 
 public:
 	void updateAi() override;

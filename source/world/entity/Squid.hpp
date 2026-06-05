@@ -4,9 +4,9 @@
 
 class Squid : public WaterAnimal
 {
-private:
-	static ItemStack inkSack;
-
+//private:
+//	static ItemStack inkSack;
+//
 public:
 	Squid(Level* pLevel);
 

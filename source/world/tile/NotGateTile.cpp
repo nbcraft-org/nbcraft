@@ -132,7 +132,7 @@ void NotGateTile::tick(Level* level, const TilePos& pos, Random* random)
 {
 	bool neighborSignal = hasNeighborSignal(level, pos);
 
-	while (recentToggles.size() > 0 && level->getTime() - recentToggles.at(0).when > 100L)
+	while (recentToggles.size() > 0 && level->getTime() - recentToggles.at(0).when > 100)
 	{
 		recentToggles.erase(recentToggles.begin());
 	}

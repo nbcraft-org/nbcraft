@@ -1698,32 +1698,31 @@ bool TileRenderer::tesselateLeverInWorld(Tile* tile, const TilePos& pos)
 		m_fixedTexture = Tile::stoneBrick->m_TextureFrame;
 	}
 
-	float w1 = 0.25f;
-	float w2 = 0.1875f;
-	float h = 0.1875f;
-	if (dir == 5) 
+	constexpr float w1 = 0.25f;
+	constexpr float w2 = 0.1875f;
+	constexpr float h = 0.1875f;
+	switch (dir)
 	{
-		tile->setShape(0.5f - w2, 0.0f, 0.5f - w1, 0.5f + w2, h, 0.5f + w1);
-	}
-	else if (dir == 6)
-	{
-		tile->setShape(0.5f - w1, 0.0f, 0.5f - w2, 0.5f + w1, h, 0.5f + w2);
-	}
-	else if (dir == 4)
-	{
-		tile->setShape(0.5f - w2, 0.5f - w1, 1.0f - h, 0.5f + w2, 0.5f + w1, 1.0f);
-	}
-	else if (dir == 3)
-	{
-		tile->setShape(0.5f - w2, 0.5f - w1, 0.0f, 0.5f + w2, 0.5f + w1, h);
-	}
-	else if (dir == 2)
-	{
-		tile->setShape(1.0f - h, 0.5f - w1, 0.5f - w2, 1.0f, 0.5f + w1, 0.5f + w2);
-	}
-	else if (dir == 1)
-	{
+	case 1:
 		tile->setShape(0.0f, 0.5f - w1, 0.5f - w2, h, 0.5f + w1, 0.5f + w2);
+		break;
+	case 2:
+		tile->setShape(1.0f - h, 0.5f - w1, 0.5f - w2, 1.0f, 0.5f + w1, 0.5f + w2);
+		break;
+	case 3:
+		tile->setShape(0.5f - w2, 0.5f - w1, 0.0f, 0.5f + w2, 0.5f + w1, h);
+		break;
+	case 4:
+		tile->setShape(0.5f - w2, 0.5f - w1, 1.0f - h, 0.5f + w2, 0.5f + w1, 1.0f);
+		break;
+	case 5:
+		tile->setShape(0.5f - w2, 0.0f, 0.5f - w1, 0.5f + w2, h, 0.5f + w1);
+		break;
+	case 6:
+		tile->setShape(0.5f - w1, 0.0f, 0.5f - w2, 0.5f + w1, h, 0.5f + w2);
+		break;
+	default:
+		break;
 	}
 
 	tesselateBlockInWorld(tile, pos);
@@ -2125,28 +2124,28 @@ bool TileRenderer::tesselateDustInWorld(Tile* tile, const TilePos& pos)
 	float v1 = ((float(yt) + 15.99f) / 256.0f);
 	float o = 0.0f;
 	float r = 0.03125f;
-	bool w = RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.west()))
-		|| (!m_pTileSource->isSolidTile(TilePos(pos.west())) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.west().below())));
-	bool e = RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.east()))
-		|| (!m_pTileSource->isSolidTile(TilePos(pos.east())) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.east().below())));
-	bool n = RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.north()))
-		|| (!m_pTileSource->isSolidTile(TilePos(pos.north())) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.below().north())));
-	bool s = RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.south()))
-		|| (!m_pTileSource->isSolidTile(TilePos(pos.south())) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.below().south())));
-	if (!m_pTileSource->isSolidTile(TilePos(pos.above()))) {
-		if (m_pTileSource->isSolidTile(TilePos(pos.west())) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.west().above()))) {
+	bool w = RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.west())
+		|| (!m_pTileSource->isSolidTile(pos.west()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.west().below()));
+	bool e = RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.east())
+		|| (!m_pTileSource->isSolidTile(pos.east()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.east().below()));
+	bool n = RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.north())
+		|| (!m_pTileSource->isSolidTile(pos.north()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.below().north()));
+	bool s = RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.south())
+		|| (!m_pTileSource->isSolidTile(pos.south()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.below().south()));
+	if (!m_pTileSource->isSolidTile(pos.above())) {
+		if (m_pTileSource->isSolidTile(pos.west()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.west().above())) {
 			w = true;
 		}
 
-		if (m_pTileSource->isSolidTile(TilePos(pos.east())) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.east().above()))) {
+		if (m_pTileSource->isSolidTile(pos.east()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.east().above())) {
 			e = true;
 		}
 
-		if (m_pTileSource->isSolidTile(TilePos(pos.north())) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.above().north()))) {
+		if (m_pTileSource->isSolidTile(pos.north()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.above().north())) {
 			n = true;
 		}
 
-		if (m_pTileSource->isSolidTile(TilePos(pos.south())) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.above().south()))) {
+		if (m_pTileSource->isSolidTile(pos.south()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.above().south())) {
 			s = true;
 		}
 	}
@@ -2231,29 +2230,29 @@ bool TileRenderer::tesselateDustInWorld(Tile* tile, const TilePos& pos)
 	u1 = ((float(xt + 16) + 15.99f) / 256.0f);
 	v0 = (float(yt) / 256.0f);
 	v1 = ((float(yt) + 15.99f) / 256.0f);
-	if (!m_pTileSource->isSolidTile(TilePos(pos.above()))) {
-		if (m_pTileSource->isSolidTile(TilePos(pos.west())) && m_pTileSource->getTile(TilePos(pos.west().above())) == Tile::redStoneDust->m_ID) {
+	if (!m_pTileSource->isSolidTile(pos.above())) {
+		if (m_pTileSource->isSolidTile(pos.west()) && m_pTileSource->getTile(pos.west().above()) == Tile::redStoneDust->m_ID) {
 			t.vertexUV((float(pos.x) + r), (float(pos.y + 1) + o), (float(pos.z + 1) + o), u1, v0);
 			t.vertexUV((float(pos.x) + r), (float(pos.y + 0) - o), (float(pos.z + 1) + o), u0, v0);
 			t.vertexUV((float(pos.x) + r), (float(pos.y + 0) - o), (float(pos.z + 0) - o), u0, v1);
 			t.vertexUV((float(pos.x) + r), (float(pos.y + 1) + o), (float(pos.z + 0) - o), u1, v1);
 		}
 
-		if (m_pTileSource->isSolidTile(TilePos(pos.east())) && m_pTileSource->getTile(TilePos(pos.east().above())) == Tile::redStoneDust->m_ID) {
+		if (m_pTileSource->isSolidTile(pos.east()) && m_pTileSource->getTile(pos.east().above()) == Tile::redStoneDust->m_ID) {
 			t.vertexUV((float(pos.x + 1) - r), (float(pos.y + 0) - o), (float(pos.z + 1) + o), u0, v1);
 			t.vertexUV((float(pos.x + 1) - r), (float(pos.y + 1) + o), (float(pos.z + 1) + o), u1, v1);
 			t.vertexUV((float(pos.x + 1) - r), (float(pos.y + 1) + o), (float(pos.z + 0) - o), u1, v0);
 			t.vertexUV((float(pos.x + 1) - r), (float(pos.y + 0) - o), (float(pos.z + 0) - o), u0, v0);
 		}
 
-		if (m_pTileSource->isSolidTile(TilePos(pos.north())) && m_pTileSource->getTile(TilePos(pos.above().north())) == Tile::redStoneDust->m_ID) {
+		if (m_pTileSource->isSolidTile(pos.north()) && m_pTileSource->getTile(pos.above().north()) == Tile::redStoneDust->m_ID) {
 			t.vertexUV((float(pos.x + 1) + o), (float(pos.y + 0) - o), (float(pos.z) + r), u0, v1);
 			t.vertexUV((float(pos.x + 1) + o), (float(pos.y + 1) + o), (float(pos.z) + r), u1, v1);
 			t.vertexUV((float(pos.x + 0) - o), (float(pos.y + 1) + o), (float(pos.z) + r), u1, v0);
 			t.vertexUV((float(pos.x + 0) - o), (float(pos.y + 0) - o), (float(pos.z) + r), u0, v0);
 		}
 
-		if (m_pTileSource->isSolidTile(TilePos(pos.south())) && m_pTileSource->getTile(TilePos(pos.above().south())) == Tile::redStoneDust->m_ID) {
+		if (m_pTileSource->isSolidTile(pos.south()) && m_pTileSource->getTile(pos.above().south()) == Tile::redStoneDust->m_ID) {
 			t.vertexUV((float(pos.x + 1) + o), (float(pos.y + 1) + o), (float(pos.z + 1) - r), u1, v0);
 			t.vertexUV((float(pos.x + 1) + o), (float(pos.y + 0) - o), (float(pos.z + 1) - r), u0, v0);
 			t.vertexUV((float(pos.x + 0) - o), (float(pos.y + 0) - o), (float(pos.z + 1) - r), u0, v1);

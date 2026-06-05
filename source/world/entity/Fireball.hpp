@@ -37,5 +37,5 @@ private:
 public:
 	int m_shakeTime;
 	Mob* m_owner;
-	Vec3 m_powerPos;
+	Vec3 m_powerVel;
 };
