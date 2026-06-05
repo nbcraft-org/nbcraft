@@ -4,6 +4,16 @@
 
 class NotGateTile : public TorchTile
 {
+private:
+	struct Toggle {
+		TilePos pos;
+		int32_t when;
+
+		Toggle(const TilePos& p, int32_t w) : pos(p), when(w) {}
+	};
+
+	static std::vector<Toggle> recentToggles;
+
 public:
 	NotGateTile(int ID, int texture, bool on);
 
@@ -20,17 +30,8 @@ public:
 	void animateTick(Level*, const TilePos& pos, Random*) override;
 
 private:
-	struct Toggle {
-		TilePos pos;
-		int32_t when;
-
-		Toggle(const TilePos& p, int32_t w) : pos(p), when(w) {}
-	};
-
 	bool isToggledTooFrequently(Level* level, const TilePos& pos, bool add);
 	bool hasNeighborSignal(const Level* level, const TilePos& pos);
 	bool m_bOn;
-	static std::vector<Toggle> recentToggles;
 
 };
-
