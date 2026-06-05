@@ -66,7 +66,7 @@ const TileID creativeTiles[] =
     //TILE_PISTON_STICKY,
     //TILE_PISTON,
     TILE_FENCE,
-    //TILE_FENCE_GATE,
+    TILE_FENCE_GATE,
     TILE_LADDER,
     TILE_RAIL,
     TILE_RAIL_POWERED,
@@ -79,8 +79,8 @@ const TileID creativeTiles[] =
     TILE_PLATE_WOOD,
     TILE_NOT_GATE_ON,
     TILE_BUTTON_STONE,
-    //TILE_CAKE,
-    //TILE_TRAPDOOR,
+    TILE_CAKE,
+    TILE_TRAPDOOR,
     TILE_ROCKET_LAUNCHER,
 };
 #endif
