@@ -85,7 +85,7 @@ const TileID creativeTiles[] =
 };
 #endif
 
-static void addAuxTile(std::vector<ItemStack>& items, TileID tileId, Tile* tile)
+static void addCreativeTile(std::vector<ItemStack>& items, TileID tileId, Tile* tile)
 {
     int maxAux = 0;
     switch (tileId)
@@ -110,7 +110,7 @@ void CreativeMenu::initCreativeItems()
     {
         Tile* tile = Tile::tiles[id];
         if (!tile) continue;
-        addAuxTile(creativeItems, (TileID)id, tile);
+        addCreativeTile(creativeItems, (TileID)id, tile);
     }
 #else
     for (size_t i = 0; i < sizeof(creativeTiles) / sizeof(creativeTiles[0]); i++)
@@ -118,7 +118,7 @@ void CreativeMenu::initCreativeItems()
         TileID tileId = creativeTiles[i];
         Tile* tile = Tile::tiles[tileId];
         if (!tile) continue;
-        addAuxTile(creativeItems, tileId, tile);
+        addCreativeTile(creativeItems, tileId, tile);
     }
 #endif
 
