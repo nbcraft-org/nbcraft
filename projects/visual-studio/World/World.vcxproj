@@ -214,6 +214,7 @@
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\CompoundContainer.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\SimpleContainer.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\ChestMenu.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\inventory\CreativeMenu.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\item\DyeColor.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\item\ToolItem.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\item\ArmorItem.cpp" />
@@ -432,6 +433,7 @@
     <ClInclude Include="$(MC_ROOT)\source\world\inventory\CompoundContainer.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\inventory\SimpleContainer.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\inventory\ChestMenu.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\inventory\CreativeMenu.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\item\DyeColor.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\item\Tool.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\item\ToolItem.hpp" />

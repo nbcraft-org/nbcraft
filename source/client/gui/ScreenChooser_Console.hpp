@@ -15,4 +15,5 @@ public:
     void pushProgressScreen() override;
     void pushCreateWorldScreen(Screen*) override;
     void pushCraftingScreen(Player*, const TilePos&) override;
+    void pushDeathScreen() override;
 };

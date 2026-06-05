@@ -120,6 +120,7 @@ add_library(nbcraft-core STATIC
     client/gui/screens/ConfirmScreen.cpp
     client/gui/screens/DeleteWorldScreen.cpp
     client/gui/screens/DeathScreen.cpp
+    client/gui/screens/DeathScreen_Console.cpp
     client/gui/screens/ChatScreen.cpp
     client/gui/screens/RenameMPLevelScreen.cpp
     client/gui/screens/ProgressScreen.cpp
@@ -131,6 +132,7 @@ add_library(nbcraft-core STATIC
     client/gui/screens/DeathScreen.cpp
     client/gui/screens/PanelScreen_Console.cpp
     client/gui/screens/inventory/ContainerScreen.cpp
+    client/gui/screens/inventory/CreativeScreen.cpp
     client/gui/screens/inventory/InventoryScreen.cpp
     client/gui/screens/inventory/CraftingScreen.cpp
     client/gui/screens/inventory/ClassicCraftingScreen_Console.cpp
@@ -397,6 +399,7 @@ add_library(nbcraft-core STATIC
     world/inventory/FurnaceMenu.cpp
     world/inventory/ChestMenu.cpp
 	world/inventory/TrapMenu.cpp
+    world/inventory/CreativeMenu.cpp
     world/inventory/Slot.cpp
     world/inventory/ResultSlot.cpp
     world/inventory/ArmorSlot.cpp

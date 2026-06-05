@@ -8,6 +8,7 @@
 
 //#include "Gui.hpp" // apparently this breaks building on clang or something
 #include "client/app/Minecraft.hpp"
+#include "client/gui/screens/inventory/CreativeScreen.hpp"
 #include "client/gui/screens/IngameBlockSelectionScreen.hpp"
 #include "client/gui/screens/ChatScreen.hpp"
 #include "client/gui/screens/PauseScreen.hpp"
@@ -73,8 +74,11 @@ void Gui::addMessage(const std::string& s)
 	}
 
 	std::string str = s;
+	int maxChatWidth = 320;
+	if (m_pMinecraft->getOptions()->getUiTheme() == UI_CONSOLE)
+		maxChatWidth = GuiWidth - 50;
 
-	while (m_pMinecraft->m_pFont->width(str) > 320)
+	while (m_pMinecraft->m_pFont->width(str) > maxChatWidth)
 	{
 		size_t i = 2;
 		for (; i < str.size(); i++)
@@ -82,7 +86,7 @@ void Gui::addMessage(const std::string& s)
 			std::string sstr = str.substr(0, i);
 
 			// this sucks
-			if (m_pMinecraft->m_pFont->width(sstr) > 320)
+			if (m_pMinecraft->m_pFont->width(sstr) > maxChatWidth)
 				break;
 		}
 
@@ -341,7 +345,7 @@ void Gui::handleClick(int clickID, int mouseX, int mouseY)
 		if (m_pMinecraft->getLocalPlayerGameMode()->isSurvivalType())
 			m_pMinecraft->setScreen(new InventoryScreen(m_pMinecraft->m_pLocalPlayer));
 		else
-			m_pMinecraft->setScreen(new IngameBlockSelectionScreen());
+			m_pMinecraft->setScreen(new CreativeScreen(m_pMinecraft->m_pLocalPlayer->m_pInventory));
 	}
 	else
 		m_pMinecraft->m_pLocalPlayer->m_pInventory->selectSlot(slot);
@@ -371,12 +375,25 @@ void Gui::handleKeyPressed(int keyCode)
 {
 	Options* options = m_pMinecraft->getOptions();
 
-	if (options->isKey(KM_INVENTORY, keyCode))
+	if (options->isKey(KM_CRAFTING, keyCode))
 	{
 		if (m_pMinecraft->getLocalPlayerGameMode()->isSurvivalType())
 			m_pMinecraft->setScreen(new InventoryScreen(m_pMinecraft->m_pLocalPlayer));
 		else
-			m_pMinecraft->setScreen(new IngameBlockSelectionScreen);
+			m_pMinecraft->setScreen(new CreativeScreen(m_pMinecraft->m_pLocalPlayer->m_pInventory));
+		return;
+	}
+
+	if (options->isKey(KM_INVENTORY, keyCode))
+	{
+		m_pMinecraft->setScreen(new InventoryScreen(m_pMinecraft->m_pLocalPlayer));
+		return;
+	}
+
+	if (options->isKey(KM_FOG, keyCode))
+	{
+		Options& o = *m_pMinecraft->getOptions();
+		o.m_viewDistance.set((o.m_viewDistance.get() + 1) % 4);
 		return;
 	}
 
@@ -415,9 +432,17 @@ void Gui::handleKeyPressed(int keyCode)
 
 void Gui::renderMessages(bool bShowAll)
 {
+	int scale = 1;  // scale is used to fix sizing issues when chatscreen is opened so it doesn't become enlarged in there, there's probably a better way to do this.
 	int topEdge = GuiHeight - 49;
+
+	if (!m_pMinecraft->m_pScreen)
+		scale = 2;
+
 	if (m_pMinecraft->isTouchscreen())
 		topEdge = 49;
+
+	if (m_pMinecraft->getOptions()->getUiTheme() == UI_CONSOLE)
+		topEdge = GuiHeight - 130 * scale;
 
 	for (size_t i = 0; i < m_guiMessages.size(); i++)
 	{
@@ -426,6 +451,9 @@ void Gui::renderMessages(bool bShowAll)
 			continue;
 
 		int bkgdColor = 0x7F000000, textColor = 0xFFFFFFFF;
+
+		if (m_pMinecraft->getOptions()->getUiTheme() == UI_CONSOLE)
+			bkgdColor = 0x59000000;
 
 		float fade = 1.0f;
 
@@ -446,10 +474,20 @@ void Gui::renderMessages(bool bShowAll)
 			}
 		}
 
-		fill(2, topEdge, 322, topEdge + 9, bkgdColor);
-		m_pMinecraft->m_pFont->drawShadow(msg.msg, 2, topEdge + 1, textColor);
+		if (m_pMinecraft->getOptions()->getUiTheme() == UI_CONSOLE)
+		{
+			fill(0, topEdge, GuiWidth, topEdge + 16 * scale, bkgdColor);
+			m_pMinecraft->m_pFont->drawScalableShadow(msg.msg, 30 * scale, topEdge + 5 * scale, textColor, scale);
 
-		topEdge -= 9;
+			topEdge -= 16 * scale;
+		}
+		else
+		{
+			fill(2, topEdge, 322, topEdge + 9, bkgdColor);
+			m_pMinecraft->m_pFont->drawShadow(msg.msg, 2, topEdge + 1, textColor);
+
+			topEdge -= 9;
+		}
 	}
 }
 

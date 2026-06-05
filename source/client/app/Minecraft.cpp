@@ -841,7 +841,7 @@ void Minecraft::tick()
 	{
 		if (m_pLocalPlayer && m_pLocalPlayer->m_health <= 0)
 		{
-			setScreen(new DeathScreen);
+			getScreenChooser()->pushDeathScreen();
 		}
 	}
 

@@ -233,6 +233,7 @@
     <ClInclude Include="$(MC_ROOT)\source\client\resources\ResourcePackManager.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\ChestScreen.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\ContainerScreen.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\CreativeScreen.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\InventoryScreen.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\locale\Language.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\renderer\LogoRenderer.hpp" />
@@ -273,6 +274,7 @@
     <ClInclude Include="$(MC_ROOT)\source\client\gui\components\LargeImageButton.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\ScreenChooser_Pocket.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\StartMenuScreen_Pocket.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\DeathScreen_Console.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\client\app\App.cpp" />
@@ -422,6 +424,7 @@
     <ClCompile Include="$(MC_ROOT)\source\client\resources\ResourcePackManager.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\ChestScreen.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\ContainerScreen.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\CreativeScreen.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\InventoryScreen.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\locale\Language.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\renderer\LogoRenderer.cpp" />
@@ -464,6 +467,7 @@
     <ClCompile Include="$(MC_ROOT)\source\client\gui\components\LargeImageButton.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\ScreenChooser_Pocket.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\StartMenuScreen_Pocket.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\DeathScreen_Console.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">
