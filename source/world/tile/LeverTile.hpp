@@ -4,6 +4,9 @@
 
 class LeverTile : public Tile
 {
+private:
+	bool _checkCanSurvive(Level*, const TilePos& pos);
+
 public:
 	LeverTile(TileID id, int texture);
 
@@ -22,5 +25,4 @@ public:
 	int getDirectSignal(const Level*, const TilePos& pos, Facing::Name face) const override;
 	bool isSignalSource() const override;
 
-	bool checkCanSurvive(Level*, const TilePos& pos);
 };

@@ -74,7 +74,7 @@ void LeverTile::setPlacedOnFace(Level* level, const TilePos& pos, Facing::Name f
 
 void LeverTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
 {
-	if (!checkCanSurvive(level, pos))
+	if (!_checkCanSurvive(level, pos))
 		return;
 
 	TileData data = level->getData(pos) & 7;
@@ -93,7 +93,7 @@ void LeverTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
 	level->setTile(pos, TILE_AIR);
 }
 
-bool LeverTile::checkCanSurvive(Level* level, const TilePos& pos)
+bool LeverTile::_checkCanSurvive(Level* level, const TilePos& pos)
 {
 	if (mayPlace(level, pos))
 		return true;
