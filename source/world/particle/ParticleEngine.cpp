@@ -175,7 +175,7 @@ void ParticleEngine::render(const Entity& camera, float f)
 		else if (i == PT_ITEM)
 			m_pTextures->loadAndBindTexture(C_ITEMS_NAME);
 		else
-			m_pTextures->loadAndBindTexture("particles.png");
+			m_pTextures->loadAndBindTexture(C_PARTICLES_NAME);
 
 		t.begin(4 * m_particles[i].size());
 

@@ -791,7 +791,7 @@ void Tile::initTiles()
 		->setSoundType(Tile::SOUND_CLOTH)
 		->setDescriptionId("web");
 
-	Tile::redStoneDust = (new RedStoneDustTile(TILE_WIRE, TEXTURE_REDSTONE_DUST_CROSS))
+	Tile::redStoneDust = (new RedStoneDustTile(TILE_WIRE, TEXTURE_REDSTONE_DUST))
 		->init()
 		->setDestroyTime(0.0f)
 		->setSoundType(Tile::SOUND_NORMAL)
@@ -803,13 +803,13 @@ void Tile::initTiles()
 		->setSoundType(Tile::SOUND_WOOD)
 		->setDescriptionId("lever");
 
-	Tile::pressurePlate_stone = (new PressurePlateTile(TILE_PLATE_STONE, TEXTURE_STONE, PressurePlateTile::mobs))
+	Tile::pressurePlate_stone = (new PressurePlateTile(TILE_PLATE_STONE, TEXTURE_STONE, PressurePlateTile::SENSITIVITY_MOBS))
 		->init()
 		->setDestroyTime(0.5f)
 		->setSoundType(Tile::SOUND_STONE)
 		->setDescriptionId("pressurePlate");
 
-	Tile::pressurePlate_wood = (new PressurePlateTile(TILE_PLATE_WOOD, TEXTURE_PLANKS, PressurePlateTile::everything))
+	Tile::pressurePlate_wood = (new PressurePlateTile(TILE_PLATE_WOOD, TEXTURE_PLANKS, PressurePlateTile::SENSITIVITY_EVERYTHING))
 		->init()
 		->setDestroyTime(0.5f)
 		->setSoundType(Tile::SOUND_WOOD)

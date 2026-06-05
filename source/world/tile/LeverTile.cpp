@@ -80,11 +80,11 @@ void LeverTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
 	TileData data = level->getData(pos) & 7;
 
 	bool flag = false;
-	if (!level->isSolidTile(pos.west()) && data == 1) flag = true;
-	if (!level->isSolidTile(pos.east()) && data == 2) flag = true;
-	if (!level->isSolidTile(pos.north()) && data == 3) flag = true;
-	if (!level->isSolidTile(pos.south()) && data == 4) flag = true;
-	if (!level->isSolidTile(pos.below()) && data == 5) flag = true;
+	if (data == 1 && !level->isSolidTile(pos.west())) flag = true;
+	else if (data == 2 && !level->isSolidTile(pos.east())) flag = true;
+	else if (data == 3 && !level->isSolidTile(pos.north())) flag = true;
+	else if (data == 4 && !level->isSolidTile(pos.south())) flag = true;
+	else if (data == 5 && !level->isSolidTile(pos.below())) flag = true;
 
 	if (!flag)
 		return; // all good
@@ -137,40 +137,36 @@ void LeverTile::attack(Level* level, const TilePos& pos, Player* player)
 
 bool LeverTile::use(Level* level, const TilePos& pos, Player* player)
 {
-	if (level->m_bIsClientSide) // reminder to self: level->isOnline
-	{
+	if (level->m_bIsClientSide)
 		return true;
-	}
-	else
+	
+	TileData data = level->getData(pos);
+	int var7 = data & 7;
+	int var8 = 8 - (data & 8);
+	level->setData(pos, var7 + var8);
+	level->setTilesDirty(pos, pos);
+	level->playSound(pos + 0.5f, "random.click", 0.3f, var8 > 0 ? 0.6f : 0.5f);
+	level->updateNeighborsAt(pos, m_ID);
+	switch (var7)
 	{
-		TileData data = level->getData(pos);
-		int var7 = data & 7;
-		int var8 = 8 - (data & 8);
-		level->setData(pos, var7 + var8);
-		level->setTilesDirty(pos, pos);
-		level->playSound(pos + 0.5f, "random.click", 0.3f, var8 > 0 ? 0.6f : 0.5f);
-		level->updateNeighborsAt(pos, m_ID);
-		switch (var7)
-		{
-		case 1:
-			level->updateNeighborsAt(pos.west(), m_ID);
-			break;
-		case 2:
-			level->updateNeighborsAt(pos.east(), m_ID);
-			break;
-		case 3:
-			level->updateNeighborsAt(pos.north(), m_ID);
-			break;
-		case 4:
-			level->updateNeighborsAt(pos.south(), m_ID);
-			break;
-		default:
-			level->updateNeighborsAt(pos.below(), m_ID);
-			break;
-		}
+	case 1:
+		level->updateNeighborsAt(pos.west(), m_ID);
+		break;
+	case 2:
+		level->updateNeighborsAt(pos.east(), m_ID);
+		break;
+	case 3:
+		level->updateNeighborsAt(pos.north(), m_ID);
+		break;
+	case 4:
+		level->updateNeighborsAt(pos.south(), m_ID);
+		break;
+	default:
+		level->updateNeighborsAt(pos.below(), m_ID);
+		break;
+	}
 
-		return true;
-	}
+	return true;
 }
 
 void LeverTile::onRemove(Level* level, const TilePos& pos)

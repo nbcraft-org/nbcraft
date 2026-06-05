@@ -22,7 +22,7 @@ int SlimeRenderer::prepareArmor(const Mob& mob, int layer, float a)
     {
         if (layer == 1)
         {
-            currentShaderColor = Color(1.0f, 1.0f, 1.0f, 1.0f);
+            currentShaderColor = Color(Color::WHITE);
         }
         return 0;
     }

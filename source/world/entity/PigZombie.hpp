@@ -4,9 +4,16 @@
 
 class PigZombie : public Zombie
 {
+private:
+	static ItemStack sword;
+
 public:
 	PigZombie(Level* pLevel);
 
+private:
+	void alert(Entity*);
+
+public:
 	std::string getAmbientSound() const override { return "mob.zombiepig.zpig"; }
 	std::string getHurtSound() const override { return "mob.zombiepig.zpighurt"; }
 	std::string getDeathSound() const override { return "mob.zombiepig.zpigdeath"; }
@@ -23,9 +30,6 @@ public:
 	ItemStack& getCarriedItem() const override;
 
 private:
-	void alert(Entity*);
-
 	int m_angerTime;
 	int m_playAngrySoundIn;
-	static ItemStack m_sword;
 };

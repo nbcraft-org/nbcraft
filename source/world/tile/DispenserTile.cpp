@@ -18,32 +18,32 @@ void DispenserTile::onPlace(Level* level, const TilePos& pos)
 
 void DispenserTile::recalcLockDir(Level* level, const TilePos& pos)
 {
-    int var5 = level->getTile(pos.north());
-    int var6 = level->getTile(pos.south());
-    int var7 = level->getTile(pos.west());
-    int var8 = level->getTile(pos.east());
-    int var9 = 3;
-    if (Tile::solid[var5] && !Tile::solid[var6])
+    int north = level->getTile(pos.north());
+    int south = level->getTile(pos.south());
+    int west = level->getTile(pos.west());
+    int east = level->getTile(pos.east());
+    int data = 3;
+    if (Tile::solid[north] && !Tile::solid[south])
     {
-        var9 = 3;
+        data = 3;
     }
 
-    if (Tile::solid[var6] && !Tile::solid[var5])
+    if (Tile::solid[south] && !Tile::solid[north])
     {
-        var9 = 2;
+		data = 2;
     }
 
-    if (Tile::solid[var7] && !Tile::solid[var8])
+    if (Tile::solid[west] && !Tile::solid[east])
     {
-        var9 = 5;
+		data = 5;
     }
 
-    if (Tile::solid[var8] && !Tile::solid[var7])
+    if (Tile::solid[east] && !Tile::solid[west])
     {
-        var9 = 4;
+		data = 4;
     }
 
-    level->setData(pos, var9);
+    level->setData(pos, data);
 }
 
 int DispenserTile::getTexture(const LevelSource* level, const TilePos& pos, Facing::Name face) const
@@ -75,16 +75,12 @@ int DispenserTile::getTexture(Facing::Name face) const
 
 bool DispenserTile::use(Level* level, const TilePos& pos, Player* player)
 {
-    if (level->m_bIsClientSide) // reminder to self: level->isOnline
-    {
+    if (level->m_bIsClientSide)
         return true;
-    }
-    else
-    {
-        DispenserTileEntity* var6 = static_cast<DispenserTileEntity*>(level->getTileEntity(pos));
-        player->openTrap(var6);
-        return true;
-    }
+
+    DispenserTileEntity* var6 = static_cast<DispenserTileEntity*>(level->getTileEntity(pos));
+    player->openTrap(var6);
+    return true;
 }
 
 void DispenserTile::fireArrow(Level* level, const TilePos& pos, Random* random)
@@ -92,20 +88,18 @@ void DispenserTile::fireArrow(Level* level, const TilePos& pos, Random* random)
 	int var6 = level->getData(pos);
 	float var9 = 0.0f;
 	float var10 = 0.0f;
-	if (var6 == 3)
+	switch (var6)
 	{
-		var10 = 1.0f;
-	}
-	else if (var6 == 2)
-	{
+	case 2:
 		var10 = -1.0f;
-	}
-	else if (var6 == 5)
-	{
+		break;
+	case 3:
+		var10 = 1.0f;
+		break;
+	case 5:
 		var9 = 1.0f;
-	}
-	else
-	{
+		break;
+	default:
 		var9 = -1.0f;
 	}
 
@@ -117,55 +111,55 @@ void DispenserTile::fireArrow(Level* level, const TilePos& pos, Random* random)
 	if (var12.isEmpty())
 	{
 		level->playSound(pos, "random.click", 1.0f, 1.2f);
+		return;
+	}
+
+	float var20;
+	if (var12.getId() == Item::arrow->m_itemID)
+	{
+		Arrow* var19 = new Arrow(level, Vec3(var13, var15, var17));
+		var19->shoot(var9, 0.1f, var10, 1.1f, 6.0f);
+		level->addEntity(var19);
+		level->playSound(pos, "random.bow", 1.0f, 1.2f);
+	}
+	else if (var12.getId() == Item::egg->m_itemID)
+	{
+		ThrownEgg* var34 = new ThrownEgg(level, Vec3(var13, var15, var17));
+		var34->shoot(var9, 0.1f, var10, 1.1f, 6.0f);
+		level->addEntity(var34);
+		level->playSound(pos, "random.bow", 1.0f, 1.2f);
+	}
+	else if (var12.getId() == Item::snowBall->m_itemID)
+	{
+		Snowball* var35 = new Snowball(level, Vec3(var13, var15, var17));
+		var35->shoot(var9, 0.1f, var10, 1.1f, 6.0f);
+		level->addEntity(var35);
+		level->playSound(pos, "random.bow", 1.0f, 1.2f);
 	}
 	else
 	{
-		float var20;
-		if (var12.getId() == Item::arrow->m_itemID)
-		{
-			Arrow* var19 = new Arrow(level, Vec3(var13, var15, var17));
-			var19->shoot(var9, 0.1f, var10, 1.1f, 6.0f);
-			level->addEntity(var19);
-			level->playSound(pos, "random.bow", 1.0f, 1.2f);
-		}
-		else if (var12.getId() == Item::egg->m_itemID)
-		{
-			ThrownEgg* var34 = new ThrownEgg(level, Vec3(var13, var15, var17));
-			var34->shoot(var9, 0.1f, var10, 1.1f, 6.0f);
-			level->addEntity(var34);
-			level->playSound(pos, "random.bow", 1.0f, 1.2f);
-		}
-		else if (var12.getId() == Item::snowBall->m_itemID)
-		{
-			Snowball* var35 = new Snowball(level, Vec3(var13, var15, var17));
-			var35->shoot(var9, 0.1f, var10, 1.1f, 6.0f);
-			level->addEntity(var35);
-			level->playSound(pos, "random.bow", 1.0f, 1.2f);
-		}
-		else {
-			ItemEntity* var36 = new ItemEntity(level, Vec3(var13, var15 - 0.3f, var17), var12);
-			var20 = random->nextFloat() * 0.1f + 0.2f;
-			var36->m_vel.x = var9 * var20;
-			var36->m_vel.y = 0.2f;
-			var36->m_vel.z = var10 * var20;
-			var36->m_vel.x += random->nextGaussian() * 0.0075f * 6.0f;
-			var36->m_vel.y += random->nextGaussian() * 0.0075f * 6.0f;
-			var36->m_vel.z += random->nextGaussian() * 0.0075f * 6.0f;
-			level->addEntity(var36);
-			level->playSound(pos, "random.click", 1.0f, 1.0f);
-		}
+		ItemEntity* var36 = new ItemEntity(level, Vec3(var13, var15 - 0.3f, var17), var12);
+		var20 = random->nextFloat() * 0.1f + 0.2f;
+		var36->m_vel.x = var9 * var20;
+		var36->m_vel.y = 0.2f;
+		var36->m_vel.z = var10 * var20;
+		var36->m_vel.x += random->nextGaussian() * 0.0075f * 6.0f;
+		var36->m_vel.y += random->nextGaussian() * 0.0075f * 6.0f;
+		var36->m_vel.z += random->nextGaussian() * 0.0075f * 6.0f;
+		level->addEntity(var36);
+		level->playSound(pos, "random.click", 1.0f, 1.0f);
+	}
 
-		for (int var37 = 0; var37 < 10; ++var37)
-		{
-			var20 = random->nextFloat() * 0.2f + 0.01f;
-			float var22 = var13 + var9 * 0.01f + (random->nextFloat() - 0.5f) * var10 * 0.5f;
-			float var24 = var15 + (random->nextFloat() - 0.5f) * 0.5f;
-			float var26 = var17 + var10 * 0.01f + (random->nextFloat() - 0.5f) * var9 * 0.5f;
-			float var28 = var9 * var20 + random->nextGaussian() * 0.01f;
-			float var30 = -0.03f + random->nextGaussian() * 0.01f;
-			float var32 = var10 * var20 + random->nextGaussian() * 0.01f;
-			level->addParticle("smoke", Vec3(var22, var24, var26), Vec3(var28, var30, var32));
-		}
+	for (int var37 = 0; var37 < 10; ++var37)
+	{
+		var20 = random->nextFloat() * 0.2f + 0.01f;
+		float var22 = var13 + var9 * 0.01f + (random->nextFloat() - 0.5f) * var10 * 0.5f;
+		float var24 = var15 + (random->nextFloat() - 0.5f) * 0.5f;
+		float var26 = var17 + var10 * 0.01f + (random->nextFloat() - 0.5f) * var9 * 0.5f;
+		float var28 = var9 * var20 + random->nextGaussian() * 0.01f;
+		float var30 = -0.03f + random->nextGaussian() * 0.01f;
+		float var32 = var10 * var20 + random->nextGaussian() * 0.01f;
+		level->addParticle("smoke", Vec3(var22, var24, var26), Vec3(var28, var30, var32));
 	}
 }
 
@@ -193,7 +187,6 @@ TileEntity* DispenserTile::newTileEntity()
 {
 	return new DispenserTileEntity();
 }
-
 
 void DispenserTile::setPlacedBy(Level* level, const TilePos& pos, Mob* mob)
 {

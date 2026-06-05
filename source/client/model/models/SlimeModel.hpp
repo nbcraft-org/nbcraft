@@ -4,6 +4,15 @@
 
 class SlimeModel : public Model
 {
+protected:
+	class Materials
+	{
+	public:
+		mce::MaterialPtr slime_outer;
+
+		Materials();
+	};
+
 public:
 	SlimeModel(int);
 	~SlimeModel();
@@ -16,4 +25,7 @@ private:
 	ModelPart m_eye1;
 	ModelPart m_mouth;
 	int m_vOffs;
+
+protected:
+	Materials m_slimeMaterials;
 };

@@ -9,14 +9,15 @@ SquidRenderer::~SquidRenderer()
 {
 }
 
-void SquidRenderer::setupRotations(const Entity& mob, float bob, float bodyRot, Matrix& matrix, float a) {
+void SquidRenderer::setupRotations(const Entity& mob, float bob, float bodyRot, Matrix& matrix, float a)
+{
     const Squid& squid = (const Squid&)mob;
     float bodyXRot = squid.m_xBodyRotO + (squid.m_xBodyRot - squid.m_xBodyRotO) * a;
     float bodyZRot = squid.m_zBodyRotO + (squid.m_zBodyRot - squid.m_zBodyRotO) * a;
     matrix.translate(Vec3(0.0f, 0.5f, 0.0f));
-    matrix.rotate(180.0f - bodyRot, Vec3(0.0f, 1.0f, 0.0f));
-    matrix.rotate(bodyXRot, Vec3(1.0f, 0.0f, 0.0f));
-    matrix.rotate(bodyZRot, Vec3(0.0f, 1.0f, 0.0f));
+    matrix.rotate(180.0f - bodyRot, Vec3::UNIT_Y);
+    matrix.rotate(bodyXRot, Vec3::UNIT_X);
+    matrix.rotate(bodyZRot, Vec3::UNIT_Y);
     matrix.translate(Vec3(0.0f, -1.2f, 0.0f));
 }
 

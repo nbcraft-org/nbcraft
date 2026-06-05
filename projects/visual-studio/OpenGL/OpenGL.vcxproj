@@ -65,18 +65,8 @@
     <ProjectGuid>{2e1a5b55-a6d4-4743-a63a-4f27db03c0a1}</ProjectGuid>
     <RootNamespace>OpenGL</RootNamespace>
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug_SDL1|x64'">
-    <PlatformToolset>v142</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <PlatformToolset>v142</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <PlatformToolset>v142</PlatformToolset>
-  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>

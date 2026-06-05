@@ -1,7 +1,7 @@
 #include "NotGateTile.hpp"
 #include "world/level/Level.hpp"
 
-std::vector<NotGateTile::Toggle> NotGateTile::m_recentToggles;
+std::vector<NotGateTile::Toggle> NotGateTile::recentToggles;
 
 NotGateTile::NotGateTile(int ID, int texture, bool on) : TorchTile(ID, texture, Material::decoration)
 {
@@ -18,14 +18,14 @@ bool NotGateTile::isToggledTooFrequently(Level* level, const TilePos& pos, bool 
 {
 	if (add)
 	{
-		m_recentToggles.push_back(Toggle(pos, level->getTime()));
+		recentToggles.push_back(Toggle(pos, level->getTime()));
 	}
 
 	int count = 0;
 
-	for (int var7 = 0; var7 < (int)m_recentToggles.size(); var7++)
+	for (size_t var7 = 0; var7 < recentToggles.size(); var7++)
 	{
-		Toggle toggle = m_recentToggles.at(var7);
+		Toggle toggle = recentToggles.at(var7);
 		if (toggle.pos == pos)
 		{
 			count++;
@@ -78,32 +78,28 @@ void NotGateTile::onRemove(Level* level, const TilePos& pos)
 int NotGateTile::getSignal(const LevelSource* level, const TilePos& pos, Facing::Name face) const
 {
 	if (!m_bOn)
+		return false;
+
+	TileData data = level->getData(pos);
+	if (data == 5 && face == Facing::UP)
+	{
+		return false;
+	}
+	else if (data == 3 && face == Facing::SOUTH)
+	{
+		return false;
+	}
+	else if (data == 4 && face == Facing::NORTH)
+	{
+		return false;
+	}
+	else if (data == 1 && face == Facing::EAST)
 	{
 		return false;
 	}
 	else
 	{
-		TileData data = level->getData(pos);
-		if (data == 5 && face == Facing::UP)
-		{
-			return false;
-		}
-		else if (data == 3 && face == Facing::SOUTH)
-		{
-			return false;
-		}
-		else if (data == 4 && face == Facing::NORTH)
-		{
-			return false;
-		}
-		else if (data == 1 && face == Facing::EAST)
-		{
-			return false;
-		}
-		else
-		{
-			return data != 2 || face != Facing::WEST;
-		}
+		return data != 2 || face != Facing::WEST;
 	}
 }
 
@@ -136,9 +132,9 @@ void NotGateTile::tick(Level* level, const TilePos& pos, Random* random)
 {
 	bool neighborSignal = hasNeighborSignal(level, pos);
 
-	while (m_recentToggles.size() > 0 && level->getTime() - m_recentToggles.at(0).when > 100L)
+	while (recentToggles.size() > 0 && level->getTime() - recentToggles.at(0).when > 100L)
 	{
-		m_recentToggles.erase(m_recentToggles.begin());
+		recentToggles.erase(recentToggles.begin());
 	}
 
 	if (m_bOn)
@@ -193,8 +189,8 @@ void NotGateTile::animateTick(Level* level, const TilePos& pos, Random* random)
 	float x = (float(pos.x) + 0.5f) + (random->nextFloat() - 0.5f) * 0.2f; // var7
 	float y = (float(pos.y) + 0.7f) + (random->nextFloat() - 0.5f) * 0.2f; // var9
 	float z = (float(pos.z) + 0.5f) + (random->nextFloat() - 0.5f) * 0.2f; // var11
-	float var13 = 0.22f;
-	float var15 = 0.27f;
+	constexpr float var13 = 0.22f;
+	constexpr float var15 = 0.27f;
 
 	switch (data)
 	{

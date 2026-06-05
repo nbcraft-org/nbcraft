@@ -36,7 +36,7 @@ eRenderShape RedStoneDustTile::getRenderShape() const
 
 bool RedStoneDustTile::mayPlace(const Level* level, const TilePos& pos) const
 {
-	return level->isSolidTile(TilePos(pos.x, pos.y - 1, pos.z));
+	return level->isSolidTile(TilePos(pos.below()));
 }
 
 void RedStoneDustTile::updatePowerStrength(Level* level, const TilePos& pos)
@@ -98,7 +98,7 @@ void RedStoneDustTile::updatePowerStrength(Level* level, const TilePos& pos1, co
 				var9 = checkTarget(level, TilePos(var12, pos1.y, var13), var9);
 			}
 
-			if (level->isSolidTile(TilePos(var12, pos1.y, var13)) && !level->isSolidTile(TilePos(pos1.x, pos1.y + 1, pos1.z)))
+			if (level->isSolidTile(TilePos(var12, pos1.y, var13)) && !level->isSolidTile(TilePos(pos1.above())))
 			{
 				if (var12 != pos2.x || pos1.y + 1 != pos2.y || var13 != pos2.z)
 				{
@@ -187,12 +187,12 @@ void RedStoneDustTile::updatePowerStrength(Level* level, const TilePos& pos1, co
 		if (var8 == 0 || var9 == 0)
 		{
 			m_toUpdate.insert(pos1);
-			m_toUpdate.insert(TilePos(pos1.x - 1, pos1.y, pos1.z));
-			m_toUpdate.insert(TilePos(pos1.x + 1, pos1.y, pos1.z));
-			m_toUpdate.insert(TilePos(pos1.x, pos1.y - 1, pos1.z));
-			m_toUpdate.insert(TilePos(pos1.x, pos1.y + 1, pos1.z));
-			m_toUpdate.insert(TilePos(pos1.x, pos1.y, pos1.z - 1));
-			m_toUpdate.insert(TilePos(pos1.x, pos1.y, pos1.z + 1));
+			m_toUpdate.insert(TilePos(pos1.west()));
+			m_toUpdate.insert(TilePos(pos1.east()));
+			m_toUpdate.insert(TilePos(pos1.below()));
+			m_toUpdate.insert(TilePos(pos1.above()));
+			m_toUpdate.insert(TilePos(pos1.north()));
+			m_toUpdate.insert(TilePos(pos1.south()));
 		}
 	}
 }
@@ -202,61 +202,61 @@ void RedStoneDustTile::checkCornerChangeAt(Level* level, const TilePos& pos)
 	if (level->getTile(pos) == m_ID)
 	{
 		level->updateNeighborsAt(pos, m_ID);
-		level->updateNeighborsAt(TilePos(pos.x - 1, pos.y, pos.z), m_ID);
-		level->updateNeighborsAt(TilePos(pos.x + 1, pos.y, pos.z), m_ID);
-		level->updateNeighborsAt(TilePos(pos.x, pos.y, pos.z - 1), m_ID);
-		level->updateNeighborsAt(TilePos(pos.x, pos.y, pos.z + 1), m_ID);
-		level->updateNeighborsAt(TilePos(pos.x, pos.y - 1, pos.z), m_ID);
-		level->updateNeighborsAt(TilePos(pos.x, pos.y + 1, pos.z), m_ID);
+		level->updateNeighborsAt(TilePos(pos.west()), m_ID);
+		level->updateNeighborsAt(TilePos(pos.east()), m_ID);
+		level->updateNeighborsAt(TilePos(pos.north()), m_ID);
+		level->updateNeighborsAt(TilePos(pos.south()), m_ID);
+		level->updateNeighborsAt(TilePos(pos.below()), m_ID);
+		level->updateNeighborsAt(TilePos(pos.above()), m_ID);
 	}
 }
 
 void RedStoneDustTile::onPlace(Level* level, const TilePos& pos)
 {
 	Tile::onPlace(level, pos);
-	if (!level->m_bIsClientSide) // reminder to self: !level->isOnline
+	if (!level->m_bIsClientSide)
 	{
 		updatePowerStrength(level, pos);
-		level->updateNeighborsAt(TilePos(pos.x, pos.y + 1, pos.z), m_ID);
-		level->updateNeighborsAt(TilePos(pos.x, pos.y - 1, pos.z), m_ID);
-		checkCornerChangeAt(level, TilePos(pos.x - 1, pos.y, pos.z));
-		checkCornerChangeAt(level, TilePos(pos.x + 1, pos.y, pos.z));
-		checkCornerChangeAt(level, TilePos(pos.x, pos.y, pos.z - 1));
-		checkCornerChangeAt(level, TilePos(pos.x, pos.y, pos.z + 1));
-		if (level->isSolidTile(TilePos(pos.x - 1, pos.y, pos.z)))
+		level->updateNeighborsAt(TilePos(pos.above()), m_ID);
+		level->updateNeighborsAt(TilePos(pos.below()), m_ID);
+		checkCornerChangeAt(level, TilePos(pos.west()));
+		checkCornerChangeAt(level, TilePos(pos.east()));
+		checkCornerChangeAt(level, TilePos(pos.north()));
+		checkCornerChangeAt(level, TilePos(pos.south()));
+		if (level->isSolidTile(TilePos(pos.west())))
 		{
-			checkCornerChangeAt(level, TilePos(pos.x - 1, pos.y + 1, pos.z));
+			checkCornerChangeAt(level, TilePos(pos.west().above()));
 		}
 		else
 		{
-			checkCornerChangeAt(level, TilePos(pos.x - 1, pos.y - 1, pos.z));
+			checkCornerChangeAt(level, TilePos(pos.west().below()));
 		}
 
-		if (level->isSolidTile(TilePos(pos.x + 1, pos.y, pos.z)))
+		if (level->isSolidTile(TilePos(pos.east())))
 		{
-			checkCornerChangeAt(level, TilePos(pos.x + 1, pos.y + 1, pos.z));
+			checkCornerChangeAt(level, TilePos(pos.east().above()));
 		}
 		else
 		{
-			checkCornerChangeAt(level, TilePos(pos.x + 1, pos.y - 1, pos.z));
+			checkCornerChangeAt(level, TilePos(pos.east().below()));
 		}
 
-		if (level->isSolidTile(TilePos(pos.x, pos.y, pos.z - 1)))
+		if (level->isSolidTile(TilePos(pos.north())))
 		{
-			checkCornerChangeAt(level, TilePos(pos.x, pos.y + 1, pos.z - 1));
+			checkCornerChangeAt(level, TilePos(pos.above().north()));
 		}
 		else
 		{
-			checkCornerChangeAt(level, TilePos(pos.x, pos.y - 1, pos.z - 1));
+			checkCornerChangeAt(level, TilePos(pos.below().north()));
 		}
 
-		if (level->isSolidTile(TilePos(pos.x, pos.y, pos.z + 1)))
+		if (level->isSolidTile(TilePos(pos.south())))
 		{
-			checkCornerChangeAt(level, TilePos(pos.x, pos.y + 1, pos.z + 1));
+			checkCornerChangeAt(level, TilePos(pos.above().south()));
 		}
 		else
 		{
-			checkCornerChangeAt(level, TilePos(pos.x, pos.y - 1, pos.z + 1));
+			checkCornerChangeAt(level, TilePos(pos.below().south()));
 		}
 	}
 }
@@ -264,49 +264,49 @@ void RedStoneDustTile::onPlace(Level* level, const TilePos& pos)
 void RedStoneDustTile::onRemove(Level* level, const TilePos& pos)
 {
 	Tile::onRemove(level, pos);
-	if (!level->m_bIsClientSide) // reminder to self: !level->isOnline
+	if (!level->m_bIsClientSide)
 	{
-		level->updateNeighborsAt(TilePos(pos.x, pos.y + 1, pos.z), m_ID);
-		level->updateNeighborsAt(TilePos(pos.x, pos.y - 1, pos.z), m_ID);
+		level->updateNeighborsAt(TilePos(pos.above()), m_ID);
+		level->updateNeighborsAt(TilePos(pos.below()), m_ID);
 		updatePowerStrength(level, pos);
-		checkCornerChangeAt(level, TilePos(pos.x - 1, pos.y, pos.z));
-		checkCornerChangeAt(level, TilePos(pos.x + 1, pos.y, pos.z));
-		checkCornerChangeAt(level, TilePos(pos.x, pos.y, pos.z - 1));
-		checkCornerChangeAt(level, TilePos(pos.x, pos.y, pos.z + 1));
-		if (level->isSolidTile(TilePos(pos.x - 1, pos.y, pos.z)))
+		checkCornerChangeAt(level, TilePos(pos.west()));
+		checkCornerChangeAt(level, TilePos(pos.east()));
+		checkCornerChangeAt(level, TilePos(pos.north()));
+		checkCornerChangeAt(level, TilePos(pos.south()));
+		if (level->isSolidTile(TilePos(pos.west())))
 		{
-			checkCornerChangeAt(level, TilePos(pos.x - 1, pos.y + 1, pos.z));
+			checkCornerChangeAt(level, TilePos(pos.west().above()));
 		}
 		else
 		{
-			checkCornerChangeAt(level, TilePos(pos.x - 1, pos.y - 1, pos.z));
+			checkCornerChangeAt(level, TilePos(pos.west().below()));
 		}
 
-		if (level->isSolidTile(TilePos(pos.x + 1, pos.y, pos.z)))
+		if (level->isSolidTile(TilePos(pos.east())))
 		{
-			checkCornerChangeAt(level, TilePos(pos.x + 1, pos.y + 1, pos.z));
+			checkCornerChangeAt(level, TilePos(pos.east().above()));
 		}
 		else
 		{
-			checkCornerChangeAt(level, TilePos(pos.x + 1, pos.y - 1, pos.z));
+			checkCornerChangeAt(level, TilePos(pos.east().below()));
 		}
 
-		if (level->isSolidTile(TilePos(pos.x, pos.y, pos.z - 1)))
+		if (level->isSolidTile(TilePos(pos.north())))
 		{
-			checkCornerChangeAt(level, TilePos(pos.x, pos.y + 1, pos.z - 1));
+			checkCornerChangeAt(level, TilePos(pos.above().north()));
 		}
 		else
 		{
-			checkCornerChangeAt(level, TilePos(pos.x, pos.y - 1, pos.z - 1));
+			checkCornerChangeAt(level, TilePos(pos.below().north()));
 		}
 
-		if (level->isSolidTile(TilePos(pos.x, pos.y, pos.z + 1)))
+		if (level->isSolidTile(TilePos(pos.south())))
 		{
-			checkCornerChangeAt(level, TilePos(pos.x, pos.y + 1, pos.z + 1));
+			checkCornerChangeAt(level, TilePos(pos.above().south()));
 		}
 		else
 		{
-			checkCornerChangeAt(level, TilePos(pos.x, pos.y - 1, pos.z + 1));
+			checkCornerChangeAt(level, TilePos(pos.below().south()));
 		}
 	}
 }
@@ -326,7 +326,7 @@ int RedStoneDustTile::checkTarget(Level* level, const TilePos& pos, int somethin
 
 void RedStoneDustTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
 {
-	if (!level->m_bIsClientSide) // reminder to self: !level->isOnline
+	if (!level->m_bIsClientSide)
 	{
 		int var6 = level->getData(pos);
 		bool var7 = mayPlace(level, pos);
@@ -370,28 +370,28 @@ int RedStoneDustTile::getSignal(const LevelSource* level, const TilePos& pos, Fa
 	}
 	else
 	{
-		bool var6 = shouldConnectTo(level, TilePos(pos.x - 1, pos.y, pos.z)) || (!level->isSolidTile(TilePos(pos.x - 1, pos.y, pos.z)) && shouldConnectTo(level, TilePos(pos.x - 1, pos.y - 1, pos.z)));
-		bool var7 = shouldConnectTo(level, TilePos(pos.x + 1, pos.y, pos.z)) || (!level->isSolidTile(TilePos(pos.x + 1, pos.y, pos.z)) && shouldConnectTo(level, TilePos(pos.x + 1, pos.y - 1, pos.z)));
-		bool var8 = shouldConnectTo(level, TilePos(pos.x, pos.y, pos.z - 1)) || (!level->isSolidTile(TilePos(pos.x, pos.y, pos.z - 1)) && shouldConnectTo(level, TilePos(pos.x, pos.y - 1, pos.z - 1)));
-		bool var9 = shouldConnectTo(level, TilePos(pos.x, pos.y, pos.z + 1)) || (!level->isSolidTile(TilePos(pos.x, pos.y, pos.z + 1)) && shouldConnectTo(level, TilePos(pos.x, pos.y - 1, pos.z + 1)));
-		if (!level->isSolidTile(TilePos(pos.x, pos.y + 1, pos.z)))
+		bool var6 = shouldConnectTo(level, TilePos(pos.west())) || (!level->isSolidTile(TilePos(pos.west())) && shouldConnectTo(level, TilePos(pos.west().below())));
+		bool var7 = shouldConnectTo(level, TilePos(pos.east())) || (!level->isSolidTile(TilePos(pos.east())) && shouldConnectTo(level, TilePos(pos.east().below())));
+		bool var8 = shouldConnectTo(level, TilePos(pos.north())) || (!level->isSolidTile(TilePos(pos.north())) && shouldConnectTo(level, TilePos(pos.below().north())));
+		bool var9 = shouldConnectTo(level, TilePos(pos.south())) || (!level->isSolidTile(TilePos(pos.south())) && shouldConnectTo(level, TilePos(pos.below().south())));
+		if (!level->isSolidTile(TilePos(pos.above())))
 		{
-			if (level->isSolidTile(TilePos(pos.x - 1, pos.y, pos.z)) && shouldConnectTo(level, TilePos(pos.x - 1, pos.y + 1, pos.z)))
+			if (level->isSolidTile(TilePos(pos.west())) && shouldConnectTo(level, TilePos(pos.west().above())))
 			{
 				var6 = true;
 			}
 
-			if (level->isSolidTile(TilePos(pos.x + 1, pos.y, pos.z)) && shouldConnectTo(level, TilePos(pos.x + 1, pos.y + 1, pos.z)))
+			if (level->isSolidTile(TilePos(pos.east())) && shouldConnectTo(level, TilePos(pos.east().above())))
 			{
 				var7 = true;
 			}
 
-			if (level->isSolidTile(TilePos(pos.x, pos.y, pos.z - 1)) && shouldConnectTo(level, TilePos(pos.x, pos.y + 1, pos.z - 1)))
+			if (level->isSolidTile(TilePos(pos.north())) && shouldConnectTo(level, TilePos(pos.above().north())))
 			{
 				var8 = true;
 			}
 
-			if (level->isSolidTile(TilePos(pos.x, pos.y, pos.z + 1)) && shouldConnectTo(level, TilePos(pos.x, pos.y + 1, pos.z + 1)))
+			if (level->isSolidTile(TilePos(pos.south())) && shouldConnectTo(level, TilePos(pos.above().south())))
 			{
 				var9 = true;
 			}
@@ -434,7 +434,7 @@ void RedStoneDustTile::animateTick(Level* level, const TilePos& pos, Random* ran
 		}
 		*/
 
-		level->addParticle("reddust", Vec3(var7, var9, var11), Vec3(0.0f, 0.0f, 0.0f)); // var14, var15, var16
+		level->addParticle("reddust", Vec3(var7, var9, var11), Vec3(Vec3::ZERO)); // var14, var15, var16
 	}
 }
 

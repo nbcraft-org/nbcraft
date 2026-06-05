@@ -50,8 +50,8 @@ void FlyingMob::travel(const Vec2& pos)
 	}
 
 	m_walkAnimSpeedO = m_walkAnimSpeed;
-	double var10 = m_pos.x - m_oPos.x;
-	double var9 = m_pos.z - m_oPos.z;
+	float var10 = m_pos.x - m_oPos.x;
+	float var9 = m_pos.z - m_oPos.z;
 	float var7 = Mth::sqrt(var10 * var10 + var9 * var9) * 4.0f;
 	if (var7 > 1.0f)
 	{

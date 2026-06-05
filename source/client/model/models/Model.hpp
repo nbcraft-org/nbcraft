@@ -32,7 +32,6 @@ protected:
 		mce::MaterialPtr entity_color_overlay;
 		mce::MaterialPtr entity_glint;
 		mce::MaterialPtr entity_alphatest_glint;
-		mce::MaterialPtr slime_outer;
 
 		Materials();
 	};

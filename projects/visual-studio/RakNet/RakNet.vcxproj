@@ -32,15 +32,8 @@
     <ProjectGuid>{4b7fcc5f-7e38-4934-b272-2f5bbef51013}</ProjectGuid>
     <RootNamespace>RakNet</RootNamespace>
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <PlatformToolset>v142</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <PlatformToolset>v142</PlatformToolset>
-  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>

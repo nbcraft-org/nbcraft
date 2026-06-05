@@ -1566,7 +1566,8 @@ bool TileRenderer::tesselateDiodeInWorld(Tile* tile, const TilePos& pos)
 	tesselateBlockInWorld(tile, pos);
 	Tesselator& t = Tesselator::instance; // var8
 	float br = tile->getBrightness(m_pTileSource, pos); // var9
-	if (Tile::lightEmission[tile->m_ID] > 0) {
+	if (Tile::lightEmission[tile->m_ID] > 0)
+	{
 		br = (br + 1.0f) * 0.5f;
 	}
 
@@ -1576,7 +1577,8 @@ bool TileRenderer::tesselateDiodeInWorld(Tile* tile, const TilePos& pos)
 	float var14 = 0.0f;
 	float var16 = 0.0f;
 	float var18 = 0.0f;
-	switch (dir) {
+	switch (dir)
+	{
 	case 0:
 		var18 = -0.3125f;
 		var14 = DiodeTile::unk_a[flipped];
@@ -1604,6 +1606,7 @@ bool TileRenderer::tesselateDiodeInWorld(Tile* tile, const TilePos& pos)
 	float var27 = float(var22) / 256.0f;
 	float var29 = (float(var22) + 15.99f) / 256.0f;
 	float var31 = 2.0f / 16.0f;
+	/*
 	float var32 = float(pos.x + 1);
 	float var33 = float(pos.x + 1);
 	float var34 = float(pos.x + 0);
@@ -1612,28 +1615,16 @@ bool TileRenderer::tesselateDiodeInWorld(Tile* tile, const TilePos& pos)
 	float var37 = float(pos.z + 1);
 	float var38 = float(pos.z + 1);
 	float var39 = float(pos.z + 0);
+	*/
 	float var40 = float(pos.y) + var31;
-	if (dir == 2) {
-		var33 = float(pos.x + 0);
-		var32 = var33;
-		var35 = float(pos.x + 1);
-		var34 = var35;
-		var39 = float(pos.z + 1);
-		var36 = var39;
-		var38 = float(pos.z + 0);
-		var37 = var38;
-	}
-	else if (dir == 3) {
-		var35 = float(pos.x + 0);
-		var32 = var35;
-		var34 = float(pos.x + 1);
-		var33 = var34;
-		var37 = float(pos.z + 0);
-		var36 = var37;
-		var39 = float(pos.z + 1);
-		var38 = var39;
-	}
-	else if (dir == 1) {
+	TilePos pos1;
+	TilePos pos2;
+	TilePos pos3;
+	TilePos pos4;
+	switch (dir)
+	{
+	case 1:
+		/*
 		var35 = float(pos.x + 1);
 		var32 = var35;
 		var34 = float(pos.x + 0);
@@ -1642,12 +1633,56 @@ bool TileRenderer::tesselateDiodeInWorld(Tile* tile, const TilePos& pos)
 		var36 = var37;
 		var39 = float(pos.z + 0);
 		var38 = var39;
+		*/
+		pos1 = pos.east();
+		pos2 = pos;
+		pos3 = pos.south();
+		pos4 = pos.east().south();
+		break;
+	case 2:
+		/*
+		var33 = float(pos.x + 0);
+		var32 = var33;
+		var35 = float(pos.x + 1);
+		var34 = var35;
+		var39 = float(pos.z + 1);
+		var36 = var39;
+		var38 = float(pos.z + 0);
+		var37 = var38;
+		*/
+		pos1 = pos.east().south();
+		pos2 = pos.east();
+		pos3 = pos;
+		pos4 = pos.south();
+		break;
+	case 3:
+		/*
+		var35 = float(pos.x + 0);
+		var32 = var35;
+		var34 = float(pos.x + 1);
+		var33 = var34;
+		var37 = float(pos.z + 0);
+		var36 = var37;
+		var39 = float(pos.z + 1);
+		var38 = var39;
+		*/
+		pos1 = pos.south();
+		pos2 = pos.east().south();
+		pos3 = pos.east();
+		pos4 = pos;
+		break;
+	default:
+		pos1 = pos;
+		pos2 = pos.south();
+		pos3 = pos.east().south();
+		pos4 = pos.east();
+		break;
 	}
 
-	t.vertexUV(var35, var40, var39, var23, var27);
-	t.vertexUV(var34, var40, var38, var23, var29);
-	t.vertexUV(var33, var40, var37, var25, var29);
-	t.vertexUV(var32, var40, var36, var25, var27);
+	t.vertexUV(float(pos1.x), var40, float(pos1.z), var23, var27);
+	t.vertexUV(float(pos2.x), var40, float(pos2.z), var23, var29);
+	t.vertexUV(float(pos3.x), var40, float(pos3.z), var25, var29);
+	t.vertexUV(float(pos4.x), var40, float(pos4.z), var25, var27);
 	return true;
 }
 
@@ -1658,45 +1693,55 @@ bool TileRenderer::tesselateLeverInWorld(Tile* tile, const TilePos& pos)
 	bool flipped = (data & 8) > 0;
 	Tesselator& t = Tesselator::instance;
 	bool hadFixed = m_fixedTexture >= 0;
-	if (!hadFixed) {
+	if (!hadFixed)
+	{
 		m_fixedTexture = Tile::stoneBrick->m_TextureFrame;
 	}
 
 	float w1 = 0.25f;
 	float w2 = 0.1875f;
 	float h = 0.1875f;
-	if (dir == 5) {
+	if (dir == 5) 
+	{
 		tile->setShape(0.5f - w2, 0.0f, 0.5f - w1, 0.5f + w2, h, 0.5f + w1);
 	}
-	else if (dir == 6) {
+	else if (dir == 6)
+	{
 		tile->setShape(0.5f - w1, 0.0f, 0.5f - w2, 0.5f + w1, h, 0.5f + w2);
 	}
-	else if (dir == 4) {
+	else if (dir == 4)
+	{
 		tile->setShape(0.5f - w2, 0.5f - w1, 1.0f - h, 0.5f + w2, 0.5f + w1, 1.0f);
 	}
-	else if (dir == 3) {
+	else if (dir == 3)
+	{
 		tile->setShape(0.5f - w2, 0.5f - w1, 0.0f, 0.5f + w2, 0.5f + w1, h);
 	}
-	else if (dir == 2) {
+	else if (dir == 2)
+	{
 		tile->setShape(1.0f - h, 0.5f - w1, 0.5f - w2, 1.0f, 0.5f + w1, 0.5f + w2);
 	}
-	else if (dir == 1) {
+	else if (dir == 1)
+	{
 		tile->setShape(0.0f, 0.5f - w1, 0.5f - w2, h, 0.5f + w1, 0.5f + w2);
 	}
 
 	tesselateBlockInWorld(tile, pos);
-	if (!hadFixed) {
+	if (!hadFixed)
+	{
 		m_fixedTexture = -1;
 	}
 
 	float br = tile->getBrightness(m_pTileSource, pos);
-	if (Tile::lightEmission[tile->m_ID] > 0) {
+	if (Tile::lightEmission[tile->m_ID] > 0)
+	{
 		br = 1.0f;
 	}
 
 	t.color(br, br, br);
 	int tex = tile->getTexture(Facing::DOWN);
-	if (m_fixedTexture >= 0) {
+	if (m_fixedTexture >= 0)
+	{
 		tex = m_fixedTexture;
 	}
 
@@ -1721,35 +1766,43 @@ bool TileRenderer::tesselateLeverInWorld(Tile* tile, const TilePos& pos)
 	};
 
 	for (int i = 0; i < 8; ++i) {
-		if (flipped) {
+		if (flipped)
+		{
 			corners[i].z -= 0.0625;
 			corners[i].xRot(float(M_PI) * 2.0f / 9.0f);
 		}
-		else {
+		else
+		{
 			corners[i].z += 0.0625;
 			corners[i].xRot(float(-M_PI) * 2.0f / 9.0f);
 		}
 
-		if (dir == 6) {
+		if (dir == 6)
+		{
 			corners[i].yRot(float(M_PI / 2));
 		}
 
-		if (dir < 5) {
+		if (dir < 5)
+		{
 			corners[i].y -= 0.375;
 			corners[i].xRot(float(M_PI / 2));
-			if (dir == 4) {
+			if (dir == 4)
+			{
 				corners[i].yRot(0.0f);
 			}
 
-			if (dir == 3) {
+			if (dir == 3)
+			{
 				corners[i].yRot(float(M_PI));
 			}
 
-			if (dir == 2) {
+			if (dir == 2)
+			{
 				corners[i].yRot(float(M_PI / 2));
 			}
 
-			if (dir == 1) {
+			if (dir == 1)
+			{
 				corners[i].yRot(float(-M_PI / 2));
 			}
 
@@ -1757,7 +1810,8 @@ bool TileRenderer::tesselateLeverInWorld(Tile* tile, const TilePos& pos)
 			corners[i].y += pos.y + 0.5f;
 			corners[i].z += pos.z + 0.5;
 		}
-		else {
+		else
+		{
 			corners[i].x += pos.x + 0.5;
 			corners[i].y += pos.y + 0.125f;
 			corners[i].z += pos.z + 0.5;
@@ -1769,51 +1823,60 @@ bool TileRenderer::tesselateLeverInWorld(Tile* tile, const TilePos& pos)
 	Vec3 c2;
 	Vec3 c3;
 
-	for (int i = 0; i < 6; ++i) {
-		if (i == 0) {
+	for (int i = 0; i < 6; ++i)
+	{
+		if (i == 0)
+		{
 			u0 = float(xt + 7) / 256.0f;
 			u1 = (float(xt + 9) - 0.01f) / 256.0f;
 			v0 = float(yt + 6) / 256.0f;
 			v1 = (float(yt + 8) - 0.01f) / 256.0f;
 		}
-		else if (i == 2) {
+		else if (i == 2)
+		{
 			u0 = float(xt + 7) / 256.0f;
 			u1 = (float(xt + 9) - 0.01f) / 256.0f;
 			v0 = float(yt + 6) / 256.0f;
 			v1 = (float(yt + 16) - 0.01f) / 256.0f;
 		}
 
-		if (i == 0) {
+		if (i == 0)
+		{
 			c0 = corners[0];
 			c1 = corners[1];
 			c2 = corners[2];
 			c3 = corners[3];
 		}
-		else if (i == 1) {
+		else if (i == 1)
+		{
 			c0 = corners[7];
 			c1 = corners[6];
 			c2 = corners[5];
 			c3 = corners[4];
 		}
-		else if (i == 2) {
+		else if (i == 2)
+		{
 			c0 = corners[1];
 			c1 = corners[0];
 			c2 = corners[4];
 			c3 = corners[5];
 		}
-		else if (i == 3) {
+		else if (i == 3)
+		{
 			c0 = corners[2];
 			c1 = corners[1];
 			c2 = corners[5];
 			c3 = corners[6];
 		}
-		else if (i == 4) {
+		else if (i == 4)
+		{
 			c0 = corners[3];
 			c1 = corners[2];
 			c2 = corners[6];
 			c3 = corners[7];
 		}
-		else if (i == 5) {
+		else if (i == 5)
+		{
 			c0 = corners[0];
 			c1 = corners[3];
 			c2 = corners[7];
@@ -2062,28 +2125,28 @@ bool TileRenderer::tesselateDustInWorld(Tile* tile, const TilePos& pos)
 	float v1 = ((float(yt) + 15.99f) / 256.0f);
 	float o = 0.0f;
 	float r = 0.03125f;
-	bool w = RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.x - 1, pos.y, pos.z))
-		|| (!m_pTileSource->isSolidTile(TilePos(pos.x - 1, pos.y, pos.z)) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.x - 1, pos.y - 1, pos.z)));
-	bool e = RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.x + 1, pos.y, pos.z))
-		|| (!m_pTileSource->isSolidTile(TilePos(pos.x + 1, pos.y, pos.z)) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.x + 1, pos.y - 1, pos.z)));
-	bool n = RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.x, pos.y, pos.z - 1))
-		|| (!m_pTileSource->isSolidTile(TilePos(pos.x, pos.y, pos.z - 1)) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.x, pos.y - 1, pos.z - 1)));
-	bool s = RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.x, pos.y, pos.z + 1))
-		|| (!m_pTileSource->isSolidTile(TilePos(pos.x, pos.y, pos.z + 1)) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.x, pos.y - 1, pos.z + 1)));
-	if (!m_pTileSource->isSolidTile(TilePos(pos.x, pos.y + 1, pos.z))) {
-		if (m_pTileSource->isSolidTile(TilePos(pos.x - 1, pos.y, pos.z)) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.x - 1, pos.y + 1, pos.z))) {
+	bool w = RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.west()))
+		|| (!m_pTileSource->isSolidTile(TilePos(pos.west())) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.west().below())));
+	bool e = RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.east()))
+		|| (!m_pTileSource->isSolidTile(TilePos(pos.east())) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.east().below())));
+	bool n = RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.north()))
+		|| (!m_pTileSource->isSolidTile(TilePos(pos.north())) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.below().north())));
+	bool s = RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.south()))
+		|| (!m_pTileSource->isSolidTile(TilePos(pos.south())) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.below().south())));
+	if (!m_pTileSource->isSolidTile(TilePos(pos.above()))) {
+		if (m_pTileSource->isSolidTile(TilePos(pos.west())) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.west().above()))) {
 			w = true;
 		}
 
-		if (m_pTileSource->isSolidTile(TilePos(pos.x + 1, pos.y, pos.z)) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.x + 1, pos.y + 1, pos.z))) {
+		if (m_pTileSource->isSolidTile(TilePos(pos.east())) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.east().above()))) {
 			e = true;
 		}
 
-		if (m_pTileSource->isSolidTile(TilePos(pos.x, pos.y, pos.z - 1)) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.x, pos.y + 1, pos.z - 1))) {
+		if (m_pTileSource->isSolidTile(TilePos(pos.north())) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.above().north()))) {
 			n = true;
 		}
 
-		if (m_pTileSource->isSolidTile(TilePos(pos.x, pos.y, pos.z + 1)) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.x, pos.y + 1, pos.z + 1))) {
+		if (m_pTileSource->isSolidTile(TilePos(pos.south())) && RedStoneDustTile::shouldConnectTo(m_pTileSource, TilePos(pos.above().south()))) {
 			s = true;
 		}
 	}
@@ -2168,29 +2231,29 @@ bool TileRenderer::tesselateDustInWorld(Tile* tile, const TilePos& pos)
 	u1 = ((float(xt + 16) + 15.99f) / 256.0f);
 	v0 = (float(yt) / 256.0f);
 	v1 = ((float(yt) + 15.99f) / 256.0f);
-	if (!m_pTileSource->isSolidTile(TilePos(pos.x, pos.y + 1, pos.z))) {
-		if (m_pTileSource->isSolidTile(TilePos(pos.x - 1, pos.y, pos.z)) && m_pTileSource->getTile(TilePos(pos.x - 1, pos.y + 1, pos.z)) == Tile::redStoneDust->m_ID) {
+	if (!m_pTileSource->isSolidTile(TilePos(pos.above()))) {
+		if (m_pTileSource->isSolidTile(TilePos(pos.west())) && m_pTileSource->getTile(TilePos(pos.west().above())) == Tile::redStoneDust->m_ID) {
 			t.vertexUV((float(pos.x) + r), (float(pos.y + 1) + o), (float(pos.z + 1) + o), u1, v0);
 			t.vertexUV((float(pos.x) + r), (float(pos.y + 0) - o), (float(pos.z + 1) + o), u0, v0);
 			t.vertexUV((float(pos.x) + r), (float(pos.y + 0) - o), (float(pos.z + 0) - o), u0, v1);
 			t.vertexUV((float(pos.x) + r), (float(pos.y + 1) + o), (float(pos.z + 0) - o), u1, v1);
 		}
 
-		if (m_pTileSource->isSolidTile(TilePos(pos.x + 1, pos.y, pos.z)) && m_pTileSource->getTile(TilePos(pos.x + 1, pos.y + 1, pos.z)) == Tile::redStoneDust->m_ID) {
+		if (m_pTileSource->isSolidTile(TilePos(pos.east())) && m_pTileSource->getTile(TilePos(pos.east().above())) == Tile::redStoneDust->m_ID) {
 			t.vertexUV((float(pos.x + 1) - r), (float(pos.y + 0) - o), (float(pos.z + 1) + o), u0, v1);
 			t.vertexUV((float(pos.x + 1) - r), (float(pos.y + 1) + o), (float(pos.z + 1) + o), u1, v1);
 			t.vertexUV((float(pos.x + 1) - r), (float(pos.y + 1) + o), (float(pos.z + 0) - o), u1, v0);
 			t.vertexUV((float(pos.x + 1) - r), (float(pos.y + 0) - o), (float(pos.z + 0) - o), u0, v0);
 		}
 
-		if (m_pTileSource->isSolidTile(TilePos(pos.x, pos.y, pos.z - 1)) && m_pTileSource->getTile(TilePos(pos.x, pos.y + 1, pos.z - 1)) == Tile::redStoneDust->m_ID) {
+		if (m_pTileSource->isSolidTile(TilePos(pos.north())) && m_pTileSource->getTile(TilePos(pos.above().north())) == Tile::redStoneDust->m_ID) {
 			t.vertexUV((float(pos.x + 1) + o), (float(pos.y + 0) - o), (float(pos.z) + r), u0, v1);
 			t.vertexUV((float(pos.x + 1) + o), (float(pos.y + 1) + o), (float(pos.z) + r), u1, v1);
 			t.vertexUV((float(pos.x + 0) - o), (float(pos.y + 1) + o), (float(pos.z) + r), u1, v0);
 			t.vertexUV((float(pos.x + 0) - o), (float(pos.y + 0) - o), (float(pos.z) + r), u0, v0);
 		}
 
-		if (m_pTileSource->isSolidTile(TilePos(pos.x, pos.y, pos.z + 1)) && m_pTileSource->getTile(TilePos(pos.x, pos.y + 1, pos.z + 1)) == Tile::redStoneDust->m_ID) {
+		if (m_pTileSource->isSolidTile(TilePos(pos.south())) && m_pTileSource->getTile(TilePos(pos.above().south())) == Tile::redStoneDust->m_ID) {
 			t.vertexUV((float(pos.x + 1) + o), (float(pos.y + 1) + o), (float(pos.z + 1) - r), u1, v0);
 			t.vertexUV((float(pos.x + 1) + o), (float(pos.y + 0) - o), (float(pos.z + 1) - r), u0, v0);
 			t.vertexUV((float(pos.x + 0) - o), (float(pos.y + 0) - o), (float(pos.z + 1) - r), u0, v1);

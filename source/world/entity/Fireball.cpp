@@ -11,7 +11,7 @@ void Fireball::_init()
     m_renderType = RENDER_FIREBALL;
     setSize(1.0f, 1.0f);
 
-    m_tilePos = Vec3(-1, -1, -1);
+    m_tilePos = TilePos(-1, -1, -1);
     m_lastTile = 0;
     m_lastTileData = 0;
     m_bInGround = false;
@@ -20,9 +20,7 @@ void Fireball::_init()
     m_flightTime = 0;
     m_shakeTime = 0;
     m_owner = nullptr;
-    m_xPower = 0.0f;
-    m_yPower = 0.0f;
-    m_zPower = 0.0f;
+    m_powerPos = Vec3::ZERO;
 }
 
 Fireball::Fireball(Level* pLevel) : Entity(pLevel)
@@ -45,9 +43,9 @@ Fireball::Fireball(Level* pLevel, Mob* pMob, Vec3 pos) : Entity(pLevel)
     pos.y += sharedRandom.nextGaussian() * 0.4f;
     pos.z += sharedRandom.nextGaussian() * 0.4f;
     float var9 = float(Mth::sqrt(pos.x * pos.x + pos.y * pos.y + pos.z * pos.z));
-    m_xPower = pos.x / var9 * 0.1f;
-    m_yPower = pos.y / var9 * 0.1f;
-    m_zPower = pos.z / var9 * 0.1f;
+    m_powerPos.x = pos.x / var9 * 0.1f;
+    m_powerPos.y = pos.y / var9 * 0.1f;
+    m_powerPos.z = pos.z / var9 * 0.1f;
 }
 
 bool Fireball::shouldRenderAtSqrDistance(float distSqr) const
@@ -177,9 +175,7 @@ void Fireball::tick()
         dampening = 0.8f;
     }
 
-    m_vel.x += m_xPower;
-    m_vel.y += m_yPower;
-    m_vel.z += m_zPower;
+    m_vel += m_powerPos;
     m_vel *= dampening;
     m_pLevel->addParticle("smoke", Vec3(m_pos.x, m_pos.y + 0.5f, m_pos.z));
     setPos(m_pos);
@@ -218,9 +214,7 @@ bool Fireball::hurt(Entity* pCulprit, int damage)
         if (var3 != Vec3::ZERO)
         {
             m_vel = var3;
-            m_xPower = m_vel.x * 0.1f;
-            m_yPower = m_vel.y * 0.1f;
-            m_zPower = m_vel.z * 0.1f;
+            m_powerPos = m_vel * 0.1f;
         }
 
         return true;

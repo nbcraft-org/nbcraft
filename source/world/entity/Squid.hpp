@@ -4,18 +4,19 @@
 
 class Squid : public WaterAnimal
 {
+private:
+	static ItemStack inkSack;
+
 public:
 	Squid(Level* pLevel);
 
-	std::string getAmbientSound() const override { return ""; };
+	std::string getAmbientSound() const override { return ""; }
 	std::string getDeathSound() const override { return ""; }
 	std::string getHurtSound() const override { return ""; }
 	int getDeathLoot() const override { return 0; }
 	void dropDeathLoot() override;
 	int getMaxHealth() const override { return 10; }
 	float getSoundVolume() const override { return 0.4f; }
-	void addAdditionalSaveData(CompoundTag& tag) const override;
-	void readAdditionalSaveData(const CompoundTag& tag) override;
 	bool interact(Player* player) override;
 	bool isInWater() override;
 	void aiStep() override;

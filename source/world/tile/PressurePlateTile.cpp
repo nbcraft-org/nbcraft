@@ -40,10 +40,7 @@ void PressurePlateTile::onPlace(Level*, const TilePos& pos)
 
 void PressurePlateTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
 {
-	bool flag = false;
-	if (!level->isSolidTile(pos.below())) flag = true;
-
-	if (!flag)
+	if (level->isSolidTile(pos.below()))
 		return; // all good
 
 	spawnResources(level, pos, level->getData(pos));
@@ -82,11 +79,11 @@ void PressurePlateTile::checkPressed(Level* level, const TilePos& pos) const
 	EntityVector var8 = level->getEntities(nullptr, aabb);
 	switch (m_sensitivity)
 	{
-	case everything:
+	case SENSITIVITY_EVERYTHING:
 		var6 = !var8.empty();
 		break;
 
-	case mobs:
+	case SENSITIVITY_MOBS:
 		var6 = false;
 		for (size_t i = 0; i < var8.size(); i++)
 		{
@@ -98,7 +95,7 @@ void PressurePlateTile::checkPressed(Level* level, const TilePos& pos) const
 		}
 		break;
 
-	case players:
+	case SENSITIVITY_PLAYERS:
 		var6 = false;
 		for (size_t i = 0; i < var8.size(); i++)
 		{
@@ -175,8 +172,8 @@ bool PressurePlateTile::isSignalSource() const
 
 void PressurePlateTile::updateDefaultShape()
 {
-	float var1 = 0.5f;
-	float var2 = 2.0f / 16.0f;
-	float var3 = 0.5f;
+	constexpr float var1 = 0.5f;
+	constexpr float var2 = 2.0f / 16.0f;
+	constexpr float var3 = 0.5f;
 	setShape(0.5f - var1, 0.5f - var2, 0.5f - var3, 0.5f + var1, 0.5f + var2, 0.5f + var3);
 }

@@ -1,7 +1,7 @@
 #include "PigZombie.hpp"
 #include "nbt/CompoundTag.hpp"
 
-ItemStack PigZombie::m_sword;
+ItemStack PigZombie::sword;
 
 PigZombie::PigZombie(Level* pLevel) : Zombie(pLevel)
 {
@@ -54,18 +54,21 @@ void PigZombie::aiStep()
 
 bool PigZombie::hurt(Entity* pCulprit, int damage)
 {
-	if (pCulprit && pCulprit->isPlayer()) {
+	if (pCulprit && pCulprit->isPlayer())
+	{
 		AABB bb = m_hitbox;
+		// @PARITY-PE: 16x16x16 on PE
 		bb.grow(32.0f, 32.0f, 32.0f);
 		EntityVector entities = m_pLevel->getEntities(this, bb);
 
 		//for (Entity* entity : entities) {
-		for (int i = 0; i < (int)entities.size(); i++)
+		for (size_t i = 0; i < entities.size(); i++)
 		{
-			if (entities[i]->getDescriptor().isType(EntityType::PIG_ZOMBIE))
-			{
-				static_cast<PigZombie*>(entities[i])->alert(pCulprit);
-			}
+			if (!entities[i]->getDescriptor().isType(EntityType::PIG_ZOMBIE))
+				continue;
+
+			static_cast<PigZombie*>(entities[i])
+				->alert(pCulprit);
 		}
 
 		alert(pCulprit);
@@ -83,6 +86,6 @@ void PigZombie::alert(Entity* ent)
 
 ItemStack& PigZombie::getCarriedItem() const
 {
-	if (!m_sword) m_sword = ItemStack(Item::sword_gold, 1);
-	return m_sword;
+	if (sword.isEmpty()) sword = ItemStack(Item::sword_gold, 1);
+	return sword;
 }

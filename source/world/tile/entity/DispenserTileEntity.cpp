@@ -10,17 +10,21 @@ ItemStack DispenserTileEntity::removeRandomItem()
 	int var1 = -1;
 	int var2 = 1;
 
-	for (int var3 = 0; var3 < (int)m_items.size(); ++var3) {
-		if (!m_items[var3].isEmpty() && m_random.nextInt(var2) == 0) {
+	for (size_t var3 = 0; var3 < m_items.size(); ++var3)
+	{
+		if (!m_items[var3].isEmpty() && m_random.nextInt(var2) == 0)
+		{
 			var1 = var3;
 			++var2;
 		}
 	}
 
-	if (var1 >= 0) {
+	if (var1 >= 0)
+	{
 		return removeItem(var1, 1);
 	}
-	else {
+	else
+	{
 		return ItemStack::EMPTY;
 	}
 }

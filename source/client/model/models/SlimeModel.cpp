@@ -1,5 +1,12 @@
 #include "SlimeModel.hpp"
 #include "common/Mth.hpp"
+#include "client/renderer/renderer/RenderMaterialGroup.hpp"
+
+SlimeModel::Materials::Materials()
+{
+	MATERIAL_PTR(switchable, slime_outer);
+}
+
 
 SlimeModel::SlimeModel(int vOffs) :
 	Model(64, 32),
@@ -35,7 +42,7 @@ void SlimeModel::render(float a, float b, float c, float d, float e, float f)
 {
 	setupAnim(a, b, c, d, e, f);
 	//m_cube.render(f, &m_materials.entity_alphablend);
-	m_cube.render(f, &m_materials.slime_outer);
+	m_cube.render(f, &m_slimeMaterials.slime_outer);
 	if (m_vOffs > 0) {
 		m_eye0.render(f);
 		m_eye1.render(f);

@@ -20,7 +20,7 @@ void FireballRenderer::render(const Entity& entity, const Vec3& pos, float rot, 
 	glEnable(GL_RESCALE_NORMAL);
 #endif
 
-	float s = 2.0f;
+	constexpr float s = 2.0f;
 	matrix->scale(s / 1.0f);
 	int icon = Item::snowBall->getIcon(nullptr);
 	bindTexture(C_ITEMS_NAME);
@@ -35,7 +35,7 @@ void FireballRenderer::render(const Entity& entity, const Vec3& pos, float rot, 
 
 	Tesselator& t = Tesselator::instance;
 	t.begin(4);
-	t.color(Color::WHITE);
+	//t.color(Color::WHITE);
 	t.normal(Vec3::UNIT_Y);
 	t.vertexUV(-0.5f, -0.25f, 0.0f, float(16 * (icon % 16)) / 256.0f, float(16 * (icon / 16 + 1)) / 256.0f);
 	t.vertexUV(+0.5f, -0.25f, 0.0f, float(16 * (icon % 16 + 1)) / 256.0f, float(16 * (icon / 16 + 1)) / 256.0f);

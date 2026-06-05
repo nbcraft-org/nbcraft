@@ -41,8 +41,9 @@ void ButtonTile::setPlacedOnFace(Level* level, const TilePos& pos, Facing::Name 
 	TileData data = level->getData(pos);
 	int var7 = data & 8;
 	data &= 7;
+	data = unk_h(level, pos);
 
-	/*switch (face)
+	switch (face)
 	{
 	case Facing::NORTH:
 		if (level->isSolidTile(pos.south()))
@@ -61,10 +62,10 @@ void ButtonTile::setPlacedOnFace(Level* level, const TilePos& pos, Facing::Name 
 			data = 1;
 		break;
 	default:
-		data = unk_h(level, pos);
-	}*/
+		break;
+	}
 
-	if (face == Facing::NORTH && level->isSolidTile(pos.south()))
+	/*if (face == Facing::NORTH && level->isSolidTile(pos.south()))
 		data = 4;
 	else if (face == Facing::SOUTH && level->isSolidTile(pos.north()))
 		data = 3;
@@ -73,7 +74,7 @@ void ButtonTile::setPlacedOnFace(Level* level, const TilePos& pos, Facing::Name 
 	else if (face == Facing::EAST && level->isSolidTile(pos.west()))
 		data = 1;
 	else
-		data = unk_h(level, pos);
+		data = unk_h(level, pos);*/
 
 	level->setData(pos, data + var7);
 }
@@ -91,10 +92,10 @@ void ButtonTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
 	TileData data = level->getData(pos) & 7;
 
 	bool flag = false;
-	if (!level->isSolidTile(pos.west()) && data == 1) flag = true;
-	if (!level->isSolidTile(pos.east()) && data == 2) flag = true;
-	if (!level->isSolidTile(pos.north()) && data == 3) flag = true;
-	if (!level->isSolidTile(pos.south()) && data == 4) flag = true;
+	if (data == 1 && !level->isSolidTile(pos.west())) flag = true;
+	else if (data == 2 && !level->isSolidTile(pos.east())) flag = true;
+	else if (data == 3 && !level->isSolidTile(pos.north())) flag = true;
+	else if (data == 4 && !level->isSolidTile(pos.south())) flag = true;
 
 	if (!flag)
 		return; // all good
@@ -297,6 +298,6 @@ void ButtonTile::updateDefaultShape()
 {
 	float var1 = 3.0f / 16.0f;
 	float var2 = 2.0f / 16.0f;
-	float var3 = 2.0f / 16.0f;
-	setShape(0.5f - var1, 0.5f - var2, 0.5f - var3, 0.5f + var1, 0.5f + var2, 0.5f + var3);
+	//float var3 = 2.0f / 16.0f;
+	setShape(0.5f - var1, 0.5f - var2, 0.5f - var2, 0.5f + var1, 0.5f + var2, 0.5f + var2);
 }

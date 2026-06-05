@@ -49,7 +49,7 @@
 static bool g_bInittedItems = false;
 
 Item* Item::items[C_MAX_ITEMS];
-Random Item::m_random;
+Random Item::random;
 
 Item::Item(int itemID)
 {

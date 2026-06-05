@@ -10,6 +10,7 @@ FishingHookRenderer::~FishingHookRenderer()
 {
 }
 
+
 void FishingHookRenderer::render(const Entity& entity, const Vec3& pos, float rot, float a)
 {
 	const FishingHook& hook = reinterpret_cast<const FishingHook&>(entity);
@@ -24,7 +25,7 @@ void FishingHookRenderer::render(const Entity& entity, const Vec3& pos, float ro
 	matrix->scale(0.5f);
 	int xi = 1;
 	int yi = 2;
-	bindTexture("particles.png"); // TODO: use C_PARTICLES_NAME when that gets created
+	bindTexture(C_PARTICLES_NAME);
 
 	float texU_1 = float(xi * 8 + 0) / 128.0f; // u0
 	float texU_2 = float(xi * 8 + 8) / 128.0f; // u1
@@ -38,7 +39,7 @@ void FishingHookRenderer::render(const Entity& entity, const Vec3& pos, float ro
 
 	Tesselator& t = Tesselator::instance;
 	t.begin(4);
-	t.color(Color::WHITE);
+	//t.color(Color::WHITE);
 	t.normal(Vec3::UNIT_Y);
 	t.vertexUV(0.0f - xo, 0.0f - yo, 0.0f, texU_1, texV_2);
 	t.vertexUV(r - xo, 0.0f - yo, 0.0f, texU_2, texV_2);
@@ -49,9 +50,10 @@ void FishingHookRenderer::render(const Entity& entity, const Vec3& pos, float ro
 #if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
 	glDisable(GL_RESCALE_NORMAL);
 #endif
-	if (hook.m_owner) {
-		float rr = (hook.m_owner->m_oRot.y + (hook.m_owner->m_rot.y - hook.m_owner->m_oRot.y) * a) * float(M_PI) / 180.0f;
-		float rr2 = (hook.m_owner->m_oRot.x + (hook.m_owner->m_rot.x - hook.m_owner->m_oRot.x) * a) * float(M_PI) / 180.0f;
+	if (hook.m_owner)
+	{
+		float rr = (hook.m_owner->m_oRot.y + (hook.m_owner->m_rot.y - hook.m_owner->m_oRot.y) * a) * M_PI / 180.0f;
+		float rr2 = (hook.m_owner->m_oRot.x + (hook.m_owner->m_rot.x - hook.m_owner->m_oRot.x) * a) * M_PI / 180.0f;
 		float ss = Mth::sin(rr);
 		float cc = Mth::cos(rr);
 		float ss2 = Mth::sin(rr2);
@@ -59,8 +61,9 @@ void FishingHookRenderer::render(const Entity& entity, const Vec3& pos, float ro
 		float xp = hook.m_owner->m_oPos.x + (hook.m_owner->m_pos.x - hook.m_owner->m_oPos.x) * a - cc * 0.7f - ss * 0.5f * cc2;
 		float yp = hook.m_owner->m_oPos.y + (hook.m_owner->m_pos.y - hook.m_owner->m_oPos.y) * a - ss2 * 0.5f;
 		float zp = hook.m_owner->m_oPos.z + (hook.m_owner->m_pos.z - hook.m_owner->m_oPos.z) * a - ss * 0.7f + cc * 0.5f * cc2;
-		if (m_pDispatcher->m_pOptions->m_thirdPerson.get()) {
-			rr = (hook.m_owner->m_oRot.y + (hook.m_owner->m_rot.y - hook.m_owner->m_oRot.y) * a) * float(M_PI) / 180.0f;
+		if (m_pDispatcher->m_pOptions->m_thirdPerson.get())
+		{
+			rr = (hook.m_owner->m_yBodyRotO + (hook.m_owner->m_yBodyRot - hook.m_owner->m_yBodyRotO) * a) * M_PI / 180.0f;
 			ss = Mth::sin(rr);
 			cc = Mth::cos(rr);
 			xp = hook.m_owner->m_oPos.x + (hook.m_owner->m_pos.x - hook.m_owner->m_oPos.x) * a - cc * 0.35f - ss * 0.85f;
@@ -82,12 +85,13 @@ void FishingHookRenderer::render(const Entity& entity, const Vec3& pos, float ro
 		t.color(0);
 		int steps = 16;
 
-		for (int i = 0; i <= steps; i++) {
+		for (int i = 0; i <= steps; i++)
+		{
 			float aa = float(i) / float(steps);
 			t.vertex(pos.x + xa * aa, pos.y + ya * (aa * aa + aa) * 0.5f + 0.25f, pos.z + za * aa);
 		}
 
-		t.end();
+		t.draw(m_shaderMaterials.entity);
 #if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
 		glEnable(GL_LIGHTING);
 		glEnable(GL_TEXTURE_2D);

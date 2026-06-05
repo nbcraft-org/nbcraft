@@ -143,6 +143,6 @@ public:
 	TilePos m_respawnPos;
 	bool m_bHasRespawnPos;
 	bool m_destroyingBlock;
-	FishingHook* m_fishing;
+	FishingHook* m_pFishing;
 };
 

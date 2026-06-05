@@ -7,7 +7,7 @@ class FlyingMob : public Mob
 {
 public:
 	FlyingMob(Level* pLevel);
-	void causeFallDamage(float) override { return; }
+	void causeFallDamage(float) override { }
 	void travel(const Vec2& pos) override;
-	bool onLadder() const override { return false; };
+	bool onLadder() const override { return false; }
 };

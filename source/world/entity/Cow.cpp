@@ -28,8 +28,8 @@ void Cow::readAdditionalSaveData(const CompoundTag& tag)
 
 bool Cow::interact(Player* player)
 {
-	ItemStack& var2 = player->m_pInventory->getSelected();
-	if (!var2.isEmpty() && var2.getId() == Item::bucket_empty->m_itemID)
+	const ItemStack& tool = player->m_pInventory->getSelected();
+	if (!tool.isEmpty() && tool.getId() == Item::bucket_empty->m_itemID)
 	{
 		player->m_pInventory->setItem(player->m_pInventory->m_selectedStackId, ItemStack(Item::milk));
 		return true;

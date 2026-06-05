@@ -2043,7 +2043,7 @@ void Level::playStreamingMusic(const std::string& name, const TilePos& pos)
 	for (std::vector<LevelListener*>::iterator it = m_levelListeners.begin(); it != m_levelListeners.end(); it++)
 	{
 		LevelListener* pListener = *it;
-		pListener->playStreamingMusic(name, pos.x, pos.y, pos.z);
+		pListener->playStreamingMusic(name, pos);
 	}
 }
 

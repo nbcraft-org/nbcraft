@@ -108,7 +108,7 @@ public: // Static declarations
 
 	// The item array.
 	static Item* items[C_MAX_ITEMS];
-	static Random m_random;
+	static Random random;
 
 	// Common item definitions
 	static Item

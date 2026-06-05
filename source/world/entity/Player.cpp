@@ -22,7 +22,7 @@ void Player::_init()
 	m_bFlying = false;
 	m_jumpTriggerTime = 0;
 	m_destroyingBlock = false;
-	m_fishing = nullptr;
+	m_pFishing = nullptr;
 
 	m_abilities.bCanFly = false;
 	m_abilities.bInvulnerable = false;

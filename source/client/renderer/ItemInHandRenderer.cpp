@@ -14,6 +14,8 @@
 #include "renderer/ShaderConstants.hpp"
 #include "Lighting.hpp"
 
+ItemStack ItemInHandRenderer::stick;
+
 ItemInHandRenderer::Materials::Materials()
 {
     MATERIAL_PTR(switchable, entity);
@@ -76,10 +78,9 @@ void ItemInHandRenderer::render(float a)
 	currentShaderDarkColor = Color(fBright, fBright, fBright);
 
 	ItemStack* pItem = &m_selectedItem;
-	if (pLP->m_fishing)
+	if (pLP->m_pFishing)
     {
-        // We shouldn't do this, make this static or something
-        ItemStack stick = ItemStack(Item::stick);
+        if (stick.isEmpty()) stick = ItemStack(Item::stick);
 		pItem = &stick;
 	}
     

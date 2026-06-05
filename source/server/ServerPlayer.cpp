@@ -16,6 +16,7 @@
 #include "world/tile/entity/FurnaceTileEntity.hpp"
 #include "world/tile/entity/DispenserTileEntity.hpp"
 #include "world/inventory/Slot.hpp"
+#include "world/inventory/TrapMenu.hpp"
 
 ServerPlayer::ServerPlayer(Level* pLevel, GameType playerGameType)
 	: Player(pLevel, playerGameType)
@@ -129,7 +130,7 @@ void ServerPlayer::openTrap(DispenserTileEntity* trap)
 	);
 #endif
 
-	//setContainerMenu(new TrapMenu(m_pInventory, trap));
+	setContainerMenu(new TrapMenu(m_pInventory, trap));
 }
 
 void ServerPlayer::take(Entity* pEnt, int count)

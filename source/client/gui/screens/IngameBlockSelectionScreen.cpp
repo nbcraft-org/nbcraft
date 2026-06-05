@@ -87,14 +87,6 @@ IngameBlockSelectionScreen::IngameBlockSelectionScreen() :
 	addCreativeItem(Item::door_wood->m_itemID);
 	addCreativeItem(Item::door_iron->m_itemID);
 	addCreativeItem(Item::rocket->m_itemID);
-	addCreativeItem(Item::redStone->m_itemID);
-	addCreativeItem(Item::bucket_empty->m_itemID);
-	addCreativeItem(Item::milk->m_itemID);
-	addCreativeItem(Item::diode->m_itemID);
-	addCreativeItem(Item::snowBall->m_itemID);
-	addCreativeItem(Item::egg->m_itemID);
-	addCreativeItem(Item::record_01->m_itemID);
-	addCreativeItem(Item::record_02->m_itemID);
 
 	// more stuff
 	addCreativeItem(Tile::cloth->m_ID, 0);
@@ -114,16 +106,6 @@ IngameBlockSelectionScreen::IngameBlockSelectionScreen() :
 	addCreativeItem(Tile::soulSand->m_ID);
 	addCreativeItem(Tile::glowstone->m_ID);
 	addCreativeItem(Tile::web->m_ID);
-	addCreativeItem(Tile::lever->m_ID);
-	addCreativeItem(Tile::pressurePlate_stone->m_ID);
-	addCreativeItem(Tile::pressurePlate_wood->m_ID);
-	addCreativeItem(Tile::notGate_on->m_ID);
-	addCreativeItem(Tile::button->m_ID);
-	addCreativeItem(Tile::dispenser->m_ID);
-	addCreativeItem(Tile::recordPlayer->m_ID);
-	addCreativeItem(Tile::musicBlock->m_ID);
-	addCreativeItem(Tile::snow->m_ID);
-	addCreativeItem(Tile::topSnow->m_ID);
 
 	// test
 	//addCreativeItem(Tile::info_updateGame1->m_ID);

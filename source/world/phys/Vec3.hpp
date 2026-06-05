@@ -121,37 +121,32 @@ public:
 		intersection = interpolateTo(endPoint, t);
 		return true;
 	}
-	void xRot(float rot) {
+
+	void xRot(float rot)
+	{
 		float cos = Mth::cos(rot);
 		float sin = Mth::sin(rot);
-		float var4 = x;
-		float var6 = y * cos + z * sin;
-		float var8 = z * cos - y * sin;
-		x = var4;
-		y = var6;
-		z = var8;
+		float yo = y;
+		y = y * cos + z * sin;
+		z = z * cos - yo * sin;
 	}
 
-	void yRot(float rot) {
+	void yRot(float rot)
+	{
 		float cos = Mth::cos(rot);
 		float sin = Mth::sin(rot);
-		float var4 = x * cos + z * sin;
-		float var6 = y;
-		float var8 = z * cos - x * sin;
-		x = var4;
-		y = var6;
-		z = var8;
+		float xo = x;
+		x = x * cos + z * sin;
+		z = z * cos - xo * sin;
 	}
 
-	void zRot(float rot) {
+	void zRot(float rot)
+	{
 		float cos = Mth::cos(rot);
 		float sin = Mth::sin(rot);
-		float var4 = x * cos + y * sin;
-		float var6 = y * cos - x * sin;
-		float var8 = z;
-		x = var4;
-		y = var6;
-		z = var8;
+		float xo = x;
+		x = x * cos + y * sin;
+		y = y * cos - xo * sin;
 	}
 
 	Vec3 translate(float tx, float ty, float tz) const

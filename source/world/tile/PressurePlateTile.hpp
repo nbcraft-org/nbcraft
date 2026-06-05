@@ -7,9 +7,9 @@ class PressurePlateTile : public Tile
 public:
 	enum Sensitivity
 	{
-		everything,
-		mobs,
-		players
+		SENSITIVITY_EVERYTHING,
+		SENSITIVITY_MOBS,
+		SENSITIVITY_PLAYERS
 	};
 
 public:

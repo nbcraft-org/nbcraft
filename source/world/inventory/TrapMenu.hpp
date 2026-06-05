@@ -13,5 +13,5 @@ public:
     bool stillValid(Player* player) const override;
 
 private:
-    DispenserTileEntity* m_trap;
+    DispenserTileEntity* m_pTrap;
 };
