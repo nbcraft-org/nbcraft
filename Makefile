@@ -125,6 +125,10 @@ endif
 
 OBJS := $(addprefix build/,$(C_SRCS:.c=.c.o)) $(addprefix build/,$(CXX_SRCS:.cpp=.cpp.o))
 
+ifndef DISABLE_MMD
+DEPFLAGS = -MMD -MP
+endif
+
 all: build/nbcraft
 
 build/nbcraft: $(OBJS)
@@ -132,13 +136,13 @@ build/nbcraft: $(OBJS)
 	$(AR) rcs build/nbcraft.a $(OBJS)
 	$(CXX) $(LDFLAGS) build/nbcraft.a $(LIBS) -o $@
 
-build/%.cpp.o: %.cpp $(HEADERS)
+build/%.cpp.o: %.cpp $(if $(DISABLE_MMD),$(HEADERS))
 	@mkdir -p $(dir $@)
-	$(CXX) $(DEFINES) $(INCLUDES) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(DEFINES) $(INCLUDES) $(CXXFLAGS) $(DEPFLAGS) -c $< -o $@
 
-build/%.c.o: %.c $(HEADERS)
+build/%.c.o: %.c $(if $(DISABLE_MMD),$(HEADERS))
 	@mkdir -p $(dir $@)
-	$(CC) $(DEFINES) $(INCLUDES) $(CFLAGS) -c $< -o $@
+	$(CC) $(DEFINES) $(INCLUDES) $(CFLAGS) $(DEPFLAGS) -c $< -o $@
 
 clean:
 	rm -rf build
