@@ -170,17 +170,24 @@ static void handle_events()
                 break;
             }
             case SDL_MOUSEBUTTONDOWN:
+            {
+                const float scale = g_fPointToPixelScale;
                 if (event.button.button == SDL_BUTTON_WHEELUP)
                 {
-                    Mouse::feed(MOUSE_BUTTON_SCROLLWHEEL, false, Mouse::getX(), Mouse::getY());
+                    float x = event.button.x * scale;
+                    float y = event.button.y * scale;
+                    Mouse::feed(MOUSE_BUTTON_SCROLLWHEEL, false, x, y);
                     break;
                 }
                 else if (event.button.button == SDL_BUTTON_WHEELDOWN)
                 {
-                    Mouse::feed(MOUSE_BUTTON_SCROLLWHEEL, true, Mouse::getX(), Mouse::getY());
+                    float x = event.button.x * scale;
+                    float y = event.button.y * scale;
+                    Mouse::feed(MOUSE_BUTTON_SCROLLWHEEL, true, x, y);
                     break;
                 }
                 // fall through
+            }
             case SDL_MOUSEBUTTONUP:
             {
                 const float scale = g_fPointToPixelScale;
