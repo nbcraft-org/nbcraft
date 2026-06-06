@@ -170,6 +170,23 @@ static void handle_events()
                 break;
             }
             case SDL_MOUSEBUTTONDOWN:
+                if (event.button.button == SDL_BUTTON_WHEELUP)
+                {
+                    const float scale = g_fPointToPixelScale;
+                    float x = event.button.x * scale;
+                    float y = event.button.y * scale;
+                    Mouse::feed(MOUSE_BUTTON_SCROLLWHEEL, false, x, y);
+                    break;
+                }
+                else if (event.button.button == SDL_BUTTON_WHEELDOWN)
+                {
+                    const float scale = g_fPointToPixelScale;
+                    float x = event.button.x * scale;
+                    float y = event.button.y * scale;
+                    Mouse::feed(MOUSE_BUTTON_SCROLLWHEEL, true, x, y);
+                    break;
+                }
+                // fall through
             case SDL_MOUSEBUTTONUP:
             {
                 const float scale = g_fPointToPixelScale;
