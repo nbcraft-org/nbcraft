@@ -170,20 +170,27 @@ static void handle_events()
                 break;
             }
             case SDL_MOUSEBUTTONDOWN:
-            case SDL_MOUSEBUTTONUP:
                 if (event.button.button == SDL_BUTTON_WHEELUP)
+                {
                     Mouse::feed(MOUSE_BUTTON_SCROLLWHEEL, false, Mouse::getX(), Mouse::getY());
-                else if (event.button.button == SDL_BUTTON_WHEELDOWN)
-                    Mouse::feed(MOUSE_BUTTON_SCROLLWHEEL, true, Mouse::getX(), Mouse::getY());
-                else {
-                    const float scale = g_fPointToPixelScale;
-                    MouseButtonType type = UsedAppPlatform::GetMouseButtonType(event.button.button);
-                    bool state = UsedAppPlatform::GetMouseButtonState(event);
-                    float x = event.button.x * scale;
-                    float y = event.button.y * scale;
-                    Mouse::feed(type, state, x, y);
+                    break;
                 }
+                else if (event.button.button == SDL_BUTTON_WHEELDOWN)
+                {
+                    Mouse::feed(MOUSE_BUTTON_SCROLLWHEEL, true, Mouse::getX(), Mouse::getY());
+                    break;
+                }
+                // fall through
+            case SDL_MOUSEBUTTONUP:
+            {
+                const float scale = g_fPointToPixelScale;
+                MouseButtonType type = UsedAppPlatform::GetMouseButtonType(event.button.button);
+                bool state = UsedAppPlatform::GetMouseButtonState(event);
+                float x = event.button.x * scale;
+                float y = event.button.y * scale;
+                Mouse::feed(type, state, x, y);
                 break;
+            }
             case SDL_MOUSEMOTION:
             {
                 float scale = g_fPointToPixelScale;
