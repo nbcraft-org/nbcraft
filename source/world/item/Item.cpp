@@ -416,7 +416,7 @@ void Item::initItems()
 
 	Item::apple = NEW_X_ITEM(FoodItem, ITEM_APPLE, 4)
 		->setIcon(10, 0)
-		->setDescriptionId("appleGold");
+		->setDescriptionId("apple");
 
 	Item::apple_gold = NEW_X_ITEM(FoodItem, ITEM_APPLE_GOLD, 42)
 		->setIcon(11, 0)
