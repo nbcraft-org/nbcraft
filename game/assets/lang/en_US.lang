@@ -335,6 +335,8 @@ tile.deadBush.name=Dead Bush
 tile.deadBush.desc=
 tile.tallGrass.name=Tall Grass
 tile.tallGrass.desc=
+tile.cryingObsidian.name=Crying Obsidian
+tile.cryingObsidian.desc=
 
 item.shovelIron.name=Iron Shovel
 item.shovelIron.desc=
