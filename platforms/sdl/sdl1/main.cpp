@@ -130,17 +130,6 @@ static void teardown()
     }
 }
 
-// These macros aren't present in older versions of SDL 1.2.
-// In those versions, event.button.button will either never
-// equal these, or it will and scrolling works the same way,
-// so it's safe to define them ourselves.
-#ifndef SDL_BUTTON_WHEELUP
-#define SDL_BUTTON_WHEELUP 4
-#endif
-#ifndef SDL_BUTTON_WHEELDOWN
-#define SDL_BUTTON_WHEELDOWN 5
-#endif
-
 // Handle Events
 static bool window_resized = false;
 static void handle_events()
