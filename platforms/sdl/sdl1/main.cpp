@@ -152,6 +152,7 @@ static void handle_events()
         {
             case SDL_KEYDOWN:
             case SDL_KEYUP:
+            {
                 if (event.type == SDL_KEYDOWN && event.key.keysym.unicode > 0)
                 {
                     if ((event.key.keysym.unicode & 0xFF80) == 0)
@@ -167,8 +168,10 @@ static void handle_events()
 
                 g_pAppPlatform->handleKeyEvent(event);
                 break;
+            }
             case SDL_JOYBUTTONDOWN:
             case SDL_JOYBUTTONUP:
+            {
                 // Hate this hack
                 if (event.jbutton.button == SDL_CONTROLLER_BUTTON_START && event.jbutton.state == SDL_PRESSED)
                 {
@@ -176,6 +179,7 @@ static void handle_events()
                 }
                 g_pAppPlatform->handleControllerButtonEvent(event.jbutton.which, event.jbutton.button, event.jbutton.state);
                 break;
+            }
             case SDL_MOUSEBUTTONDOWN:
             case SDL_MOUSEBUTTONUP:
                 if (event.button.button == SDL_BUTTON_WHEELUP)
@@ -204,13 +208,17 @@ static void handle_events()
                 g_pAppPlatform->handleControllerAxisEvent(event.jaxis.which, event.jaxis.axis, event.jaxis.value);
                 break;
             case SDL_VIDEORESIZE:
+            {
                 screen = SDL_SetVideoMode(event.resize.w, event.resize.h, 0, VIDEO_FLAGS);
                 g_pApp->onGraphicsReset();
                 window_resized = true;
                 break;
+            }
             case SDL_QUIT:
+            {
                 g_pApp->quit();
                 break;
+            }
         }
     }
 }
