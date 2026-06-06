@@ -130,6 +130,17 @@ static void teardown()
     }
 }
 
+// These macros aren't present in older versions of SDL 1.2.
+// In those versions, event.button.button will either never
+// equal these, or it will and scrolling works the same way,
+// so it's safe to define them ourselves.
+#ifndef SDL_BUTTON_WHEELUP
+#define SDL_BUTTON_WHEELUP 4
+#endif
+#ifndef SDL_BUTTON_WHEELDOWN
+#define SDL_BUTTON_WHEELDOWN 5
+#endif
+
 // Handle Events
 static bool window_resized = false;
 static void handle_events()
@@ -141,7 +152,6 @@ static void handle_events()
         {
             case SDL_KEYDOWN:
             case SDL_KEYUP:
-            {
                 if (event.type == SDL_KEYDOWN && event.key.keysym.unicode > 0)
                 {
                     if ((event.key.keysym.unicode & 0xFF80) == 0)
@@ -157,10 +167,8 @@ static void handle_events()
 
                 g_pAppPlatform->handleKeyEvent(event);
                 break;
-            }
             case SDL_JOYBUTTONDOWN:
             case SDL_JOYBUTTONUP:
-            {
                 // Hate this hack
                 if (event.jbutton.button == SDL_CONTROLLER_BUTTON_START && event.jbutton.state == SDL_PRESSED)
                 {
@@ -168,18 +176,21 @@ static void handle_events()
                 }
                 g_pAppPlatform->handleControllerButtonEvent(event.jbutton.which, event.jbutton.button, event.jbutton.state);
                 break;
-            }
             case SDL_MOUSEBUTTONDOWN:
             case SDL_MOUSEBUTTONUP:
-            {
-                const float scale = g_fPointToPixelScale;
-                MouseButtonType type = UsedAppPlatform::GetMouseButtonType(event.button.button);
-                bool state = UsedAppPlatform::GetMouseButtonState(event);
-                float x = event.button.x * scale;
-                float y = event.button.y * scale;
-                Mouse::feed(type, state, x, y);
+                if (event.button.button == SDL_BUTTON_WHEELUP)
+                    Mouse::feed(MOUSE_BUTTON_SCROLLWHEEL, false, Mouse::getX(), Mouse::getY());
+                else if (event.button.button == SDL_BUTTON_WHEELDOWN)
+                    Mouse::feed(MOUSE_BUTTON_SCROLLWHEEL, false, Mouse::getX(), Mouse::getY());
+                else {
+                    const float scale = g_fPointToPixelScale;
+                    MouseButtonType type = UsedAppPlatform::GetMouseButtonType(event.button.button);
+                    bool state = UsedAppPlatform::GetMouseButtonState(event);
+                    float x = event.button.x * scale;
+                    float y = event.button.y * scale;
+                    Mouse::feed(type, state, x, y);
+                }
                 break;
-            }
             case SDL_MOUSEMOTION:
             {
                 float scale = g_fPointToPixelScale;
@@ -193,17 +204,13 @@ static void handle_events()
                 g_pAppPlatform->handleControllerAxisEvent(event.jaxis.which, event.jaxis.axis, event.jaxis.value);
                 break;
             case SDL_VIDEORESIZE:
-            {
                 screen = SDL_SetVideoMode(event.resize.w, event.resize.h, 0, VIDEO_FLAGS);
                 g_pApp->onGraphicsReset();
                 window_resized = true;
                 break;
-            }
             case SDL_QUIT:
-            {
                 g_pApp->quit();
                 break;
-            }
         }
     }
 }
