@@ -55,15 +55,13 @@ GFX_API := OGL
 ifeq ($(PLATFORM),sdl2)
 HEADERS += $(wildcard thirdparty/SDL/*.h)
 DEFINES += -DUSE_SDL -DUSE_SDL2
-LIBS += -lSDL2
+SDL2_LIBS := $(shell pkg-config --libs sdl2)
+LIBS += $(SDL2_LIBS)
 else
 HEADERS += $(wildcard thirdparty/SDL/*.h)
 DEFINES += -DUSE_SDL -DUSE_SDL1
-LIBS += -lSDL
-ifeq ($(OS),Darwin)
-LIBS += -framework AppKit
-PRELIBS := -lSDLmain
-endif
+SDL1_LIBS := $(shell pkg-config --libs sdl)
+LIBS += $(SDL1_LIBS)
 endif
 CXX_SRCS += platforms/sdl/$(PLATFORM)/main.cpp $(wildcard platforms/sdl/base/*.cpp) $(wildcard platforms/sdl/$(PLATFORM)/base/*.cpp) $(wildcard platforms/sdl/$(PLATFORM)/desktop/*.cpp)
 ifeq ($(GFX_API),OGL)
@@ -127,20 +125,26 @@ endif
 
 OBJS := $(addprefix build/,$(C_SRCS:.c=.c.o)) $(addprefix build/,$(CXX_SRCS:.cpp=.cpp.o))
 
+ifndef DISABLE_MMD
+DEPFLAGS = -MMD -MP
+endif
+
 all: build/nbcraft
+
+-include $(OBJS:.o=.d)
 
 build/nbcraft: $(OBJS)
 	ln -sf ../game/assets build
 	$(AR) rcs build/nbcraft.a $(OBJS)
-	$(CXX) $(LDFLAGS) $(PRELIBS) build/nbcraft.a $(LIBS) -o $@
+	$(CXX) $(LDFLAGS) build/nbcraft.a $(LIBS) -o $@
 
-build/%.cpp.o: %.cpp $(HEADERS)
+build/%.cpp.o: %.cpp $(if $(DISABLE_MMD),$(HEADERS))
 	@mkdir -p $(dir $@)
-	$(CXX) $(DEFINES) $(INCLUDES) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(DEFINES) $(INCLUDES) $(CXXFLAGS) $(DEPFLAGS) -c $< -o $@
 
-build/%.c.o: %.c $(HEADERS)
+build/%.c.o: %.c $(if $(DISABLE_MMD),$(HEADERS))
 	@mkdir -p $(dir $@)
-	$(CC) $(DEFINES) $(INCLUDES) $(CFLAGS) -c $< -o $@
+	$(CC) $(DEFINES) $(INCLUDES) $(CFLAGS) $(DEPFLAGS) -c $< -o $@
 
 clean:
 	rm -rf build
