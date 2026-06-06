@@ -331,6 +331,10 @@ tile.pistonBase.name=Piston
 tile.pistonBase.desc=
 tile.pistonStickyBase.name=Sticky Piston
 tile.pistonStickyBase.desc=
+tile.deadBush.name=Dead Bush
+tile.deadBush.desc=
+tile.tallGrass.name=Tall Grass
+tile.tallGrass.desc=
 
 item.shovelIron.name=Iron Shovel
 item.shovelIron.desc=
