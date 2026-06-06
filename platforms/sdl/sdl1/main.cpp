@@ -186,8 +186,8 @@ static void handle_events()
                     Mouse::feed(MOUSE_BUTTON_SCROLLWHEEL, true, x, y);
                     break;
                 }
-                // fall through
             }
+            // fall through
             case SDL_MOUSEBUTTONUP:
             {
                 const float scale = g_fPointToPixelScale;
