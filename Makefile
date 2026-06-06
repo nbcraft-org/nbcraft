@@ -55,15 +55,13 @@ GFX_API := OGL
 ifeq ($(PLATFORM),sdl2)
 HEADERS += $(wildcard thirdparty/SDL/*.h)
 DEFINES += -DUSE_SDL -DUSE_SDL2
-LIBS += -lSDL2
+SDL2_LIBS := $(shell pkg-config --libs sdl2)
+LIBS += $(SDL2_LIBS)
 else
 HEADERS += $(wildcard thirdparty/SDL/*.h)
 DEFINES += -DUSE_SDL -DUSE_SDL1
-LIBS += -lSDL
-ifeq ($(OS),Darwin)
-LIBS += -framework AppKit
-PRELIBS := -lSDLmain
-endif
+SDL1_LIBS := $(shell pkg-config --libs sdl)
+LIBS += $(SDL1_LIBS)
 endif
 CXX_SRCS += platforms/sdl/$(PLATFORM)/main.cpp $(wildcard platforms/sdl/base/*.cpp) $(wildcard platforms/sdl/$(PLATFORM)/base/*.cpp) $(wildcard platforms/sdl/$(PLATFORM)/desktop/*.cpp)
 ifeq ($(GFX_API),OGL)
