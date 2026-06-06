@@ -174,7 +174,7 @@ static void handle_events()
                 if (event.button.button == SDL_BUTTON_WHEELUP)
                     Mouse::feed(MOUSE_BUTTON_SCROLLWHEEL, false, Mouse::getX(), Mouse::getY());
                 else if (event.button.button == SDL_BUTTON_WHEELDOWN)
-                    Mouse::feed(MOUSE_BUTTON_SCROLLWHEEL, false, Mouse::getX(), Mouse::getY());
+                    Mouse::feed(MOUSE_BUTTON_SCROLLWHEEL, true, Mouse::getX(), Mouse::getY());
                 else {
                     const float scale = g_fPointToPixelScale;
                     MouseButtonType type = UsedAppPlatform::GetMouseButtonType(event.button.button);
