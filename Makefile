@@ -131,6 +131,8 @@ endif
 
 all: build/nbcraft
 
+-include $(OBJS:.o=.d)
+
 build/nbcraft: $(OBJS)
 	ln -sf ../game/assets build
 	$(AR) rcs build/nbcraft.a $(OBJS)
