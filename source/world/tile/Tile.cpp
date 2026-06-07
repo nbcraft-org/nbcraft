@@ -769,13 +769,13 @@ void Tile::initTiles()
 		->init()
 		->setDestroyTime(0.4f)
 		->setSoundType(Tile::SOUND_STONE)
-		->setDescriptionId("hellRock");
+		->setDescriptionId("hellrock");
 
 	Tile::soulSand = (new SoulSandTile(TILE_SOUL_SAND, TEXTURE_SOULSAND))
 		->init()
 		->setDestroyTime(0.5f)
 		->setSoundType(Tile::SOUND_SAND)
-		->setDescriptionId("hellSand");
+		->setDescriptionId("hellsand");
 
 	Tile::glowstone = (new GlowstoneTile(TILE_GLOWSTONE, TEXTURE_GLOWSTONE, Material::stone))
 		->init()
