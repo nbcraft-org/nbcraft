@@ -194,7 +194,10 @@ for target in $targets; do
         -DCMAKE_FIND_ROOT_PATH="$NBC_SDK/usr" \
         -DCMAKE_C_FLAGS="$cflags" \
         -DCMAKE_CXX_FLAGS="$cflags" \
-        -DWERROR="${WERROR:-OFF}"
+        -DWERROR="${WERROR:-OFF}" \
+        -DMC_BUILD_COMMIT_SHORT="$BUILD_SHORT_COMMIT" \
+        -DMC_BUILD_COMMIT_BRANCH="$BUILD_BRANCH_NAME" \
+        -DMC_BUILD_DATE="$BUILD_DATE"
     cmake --build . --parallel "$ncpus"
 
     cd ..

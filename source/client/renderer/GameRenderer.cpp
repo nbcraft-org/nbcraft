@@ -161,6 +161,12 @@ void GameRenderer::_renderDebugOverlay(float a)
 	debugText << C_GAME_NAME " " << m_pMinecraft->getVersionString();
 	debugText << " (" << m_shownFPS << " fps, " << m_shownChunkUpdates << " chunk updates)" << "\n";
 
+#if defined(MC_BUILD_COMMIT_SHORT) && defined(MC_BUILD_COMMIT_BRANCH) && defined(MC_BUILD_DATE)
+	debugText << "Commit " MC_BUILD_COMMIT_SHORT " (" MC_BUILD_COMMIT_BRANCH "), built at " MC_BUILD_DATE "\n";
+#else
+	debugText << "Local development build\n";
+#endif
+
 	/*
 	 * The "!m_pMinecraft->m_bPreparingLevel" check *needs* to be here.
 	 * If said check is not here, when getBiome() is called for the biome display,

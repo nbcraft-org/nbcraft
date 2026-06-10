@@ -87,6 +87,9 @@ fpbuild "$cmake" "$platformdir/../.." \
     -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
     -DNBC_PLATFORM="${NBC_PLATFORM:-sdl2}" \
     -DNBC_GFX_API="${NBC_GFX_API:-OGL}" \
+    -DMC_BUILD_COMMIT_SHORT="$BUILD_SHORT_COMMIT" \
+    -DMC_BUILD_COMMIT_BRANCH="$BUILD_BRANCH_NAME" \
+    -DMC_BUILD_DATE="$BUILD_DATE" \
     "$@"
 fpbuild "$cmake" --build . --parallel "$ncpus"
 fpbuild mkdir -p /app/bin /app/libexec /app/share/applications
