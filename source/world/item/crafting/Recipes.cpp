@@ -3,6 +3,7 @@
 //#include "world/tile/RecordPlayerTile.hpp"
 //#include "world/item/MapItem.hpp"
 #include "common/Logger.hpp"
+#include "compat/GameVersion.h"
 
 Recipes* Recipes::instance = nullptr;
 
