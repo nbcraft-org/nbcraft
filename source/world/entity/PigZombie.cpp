@@ -59,7 +59,6 @@ bool PigZombie::hurt(Entity* pCulprit, int damage)
 		bb.grow(32.0f, 32.0f, 32.0f);
 		EntityVector entities = m_pLevel->getEntities(this, bb);
 
-		//for (Entity* entity : entities) {
 		for (size_t i = 0; i < entities.size(); i++)
 		{
 			if (!entities[i]->getDescriptor().isType(EntityType::PIG_ZOMBIE))
@@ -82,10 +81,8 @@ void PigZombie::_alert(Entity* ent)
 	m_playAngrySoundIn = m_random.nextInt(40);
 }
 
-//ItemStack PigZombie::sword;
 ItemStack& PigZombie::getCarriedItem() const
 {
-	//if (sword.isEmpty()) sword = ItemStack(Item::sword_gold, 1);
 	static ItemStack sword = ItemStack(Item::sword_gold, 1);
 	return sword;
 }
