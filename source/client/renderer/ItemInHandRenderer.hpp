@@ -17,6 +17,9 @@ class Minecraft;
 
 class ItemInHandRenderer : public EntityShaderManager, public AppPlatformListener
 {
+private:
+	static ItemStack stick;
+
 protected:
 	class Materials
 	{

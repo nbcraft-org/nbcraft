@@ -2038,6 +2038,15 @@ void Level::playSound(const Vec3& pos, const std::string& name, float a, float b
 	}
 }
 
+void Level::playStreamingMusic(const std::string& name, const TilePos& pos)
+{
+	for (std::vector<LevelListener*>::iterator it = m_levelListeners.begin(); it != m_levelListeners.end(); it++)
+	{
+		LevelListener* pListener = *it;
+		pListener->playStreamingMusic(name, pos);
+	}
+}
+
 void Level::animateTick(const TilePos& pos)
 {
 	Random random;

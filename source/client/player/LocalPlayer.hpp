@@ -42,7 +42,7 @@ public:
 	void openFurnace(FurnaceTileEntity* furnace) override;
 	void openContainer(Container* container) override;
 	void closeContainer() override;
-	//void openTrap(DispenserTileEntity* tileEntity) override;
+	void openTrap(DispenserTileEntity* tileEntity) override;
 	//void openTextEdit(SignTileEntity* tileEntity) override;
 
 	virtual void hurtTo(int newHealth);

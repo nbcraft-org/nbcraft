@@ -16,6 +16,7 @@ public:
 	void openContainer(Container* container) override;
 	void closeContainer() override;
 	void openFurnace(FurnaceTileEntity* tileEntity);
+	void openTrap(DispenserTileEntity* tileEntity);
 	void take(Entity* pEnt, int count) override;
 	void checkFallDamage(float ya, bool onGround) override;
 	bool interpolateOnly() const override { return true; }

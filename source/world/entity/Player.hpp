@@ -14,11 +14,13 @@
 #include "world/entity/ItemEntity.hpp"
 #include "world/gamemode/GameType.hpp"
 #include "world/inventory/InventoryMenu.hpp"
+#include "world/entity/FishingHook.hpp"
 
 #define C_PLAYER_FLAG_USING_ITEM (4)
 
 class Inventory; // in case we're included from Inventory.hpp
 class FurnaceTileEntity;
+class DispenserTileEntity;
 
 class Player : public Mob
 {
@@ -77,7 +79,7 @@ public:
 	virtual void openFurnace(FurnaceTileEntity* tileEntity);
 	virtual void openContainer(Container* container);
 	virtual void closeContainer();
-	//virtual void openTrap(DispenserTileEntity* tileEntity);
+	virtual void openTrap(DispenserTileEntity* tileEntity);
 	//virtual void openTextEdit(SignTileEntity* tileEntity);
 	virtual bool isLocalPlayer() const { return false; }
 	virtual void take(Entity* pEnt, int count) {}
@@ -141,5 +143,6 @@ public:
 	TilePos m_respawnPos;
 	bool m_bHasRespawnPos;
 	bool m_destroyingBlock;
+	FishingHook* m_pFishing;
 };
 

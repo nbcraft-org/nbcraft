@@ -43,6 +43,7 @@ public:
 	void handleEntityEvent(EventType::ID eventId) override;
 	void addAdditionalSaveData(CompoundTag& tag) const override;
 	void readAdditionalSaveData(const CompoundTag& tag) override;
+	Vec3 getLookAngle() const override { return getViewVector(1.0f); }
 
 	// virtuals
 	virtual void knockback(Entity* pEnt, int a, float x, float z);
@@ -67,7 +68,6 @@ public:
 	virtual void beforeRemove() {}
 	virtual bool canSpawn();
 	virtual float getAttackAnim(float f) const;
-	virtual Vec3 getLookAngle(float f) const { return getViewVector(1.0f); }
 	virtual int getMaxSpawnClusterSize() const { return 4; }
 	virtual const ItemStack& getCarriedItem() const { return ItemStack::EMPTY; }
 	virtual bool isBaby() const { return false; }

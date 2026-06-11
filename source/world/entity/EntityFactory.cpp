@@ -9,6 +9,8 @@
 #include "Arrow.hpp"
 #include "Snowball.hpp"
 #include "ThrownEgg.hpp"
+#include "Fireball.hpp"
+#include "FishingHook.hpp"
 //#include "Painting.hpp"
 
 #define ENTS ENT(ITEM, ItemEntity) \
@@ -16,7 +18,9 @@
              ENT(FALLING_TILE, FallingTile) \
              ENT(ARROW, Arrow) \
              ENT(SNOWBALL, Snowball) \
-             ENT(THROWN_EGG, ThrownEgg)
+             ENT(THROWN_EGG, ThrownEgg) \
+             ENT(LARGE_FIREBALL, Fireball) \
+             ENT(FISHING_HOOK, FishingHook)
              //ENT(PAINTING, Painting)
 
 #define ENT(enumType, classType) case EntityType::enumType: return new classType(level);

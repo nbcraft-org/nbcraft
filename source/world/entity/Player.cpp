@@ -22,6 +22,7 @@ void Player::_init()
 	m_bFlying = false;
 	m_jumpTriggerTime = 0;
 	m_destroyingBlock = false;
+	m_pFishing = nullptr;
 
 	m_abilities.bCanFly = false;
 	m_abilities.bInvulnerable = false;
@@ -599,6 +600,11 @@ void Player::openContainer(Container* container)
 
 void Player::closeContainer()
 {
+}
+
+void Player::openTrap(DispenserTileEntity* tileEntity)
+{
+	_handleOpenedContainerMenu();
 }
 
 void Player::touch(Entity* pEnt)

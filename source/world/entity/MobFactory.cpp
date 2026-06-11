@@ -10,7 +10,11 @@
 #include "Creeper.hpp"
 #include "Skeleton.hpp"
 #include "Spider.hpp"
-//#include "PigZombie.hpp"
+#include "Slime.hpp"
+#include "Giant.hpp"
+#include "PigZombie.hpp"
+#include "Squid.hpp"
+#include "Ghast.hpp"
 
 #define ENTS ENT(CHICKEN, Chicken) \
              ENT(COW, Cow) \
@@ -20,7 +24,11 @@
              ENT(CREEPER, Creeper) \
              ENT(SKELETON, Skeleton) \
              ENT(SPIDER, Spider) \
-             //ENT(PIG_ZOMBIE, PigZombie)
+             ENT(GIANT, Giant) \
+             ENT(SLIME, Slime) \
+             ENT(GHAST, Ghast) \
+             ENT(PIG_ZOMBIE, PigZombie) \
+             ENT(SQUID, Squid)
 
 #define ENT(enumType, classType) case EntityType::enumType: return new classType(level);
 
@@ -50,7 +58,7 @@ void MobFactory::initMobLists()
     monsterList.insert(std::make_pair(EntityType::ZOMBIE,   10));
     monsterList.insert(std::make_pair(EntityType::SKELETON, 10));
     monsterList.insert(std::make_pair(EntityType::CREEPER,  10));
-    //monsterList.insert(std::make_pair(EntityType::SLIME,    10));
+    monsterList.insert(std::make_pair(EntityType::SLIME,    10));
 
     mobListsByCategory.insert(std::make_pair(EntityCategories::ANIMAL, &creatureList));
     creatureList.insert(std::make_pair(EntityType::SHEEP,   12));

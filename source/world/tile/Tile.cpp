@@ -1,7 +1,7 @@
 /********************************************************************
 	Minecraft: Pocket Edition - Decompilation Project
 	Copyright (C) 2023 iProgramInCpp
-	
+
 	The following code is licensed under the BSD 1 clause license.
 	SPDX-License-Identifier: BSD-1-Clause
  ********************************************************************/
@@ -53,7 +53,7 @@
 #include "BookshelfTile.hpp"
 #include "WireTile.hpp"
 #include "RocketLauncherTile.hpp"
-//#include "RedStoneDustTile.hpp"
+#include "RedStoneDustTile.hpp"
 #include "CraftingTableTile.hpp"
 #include "FurnaceTile.hpp"
 #include "TallGrass.hpp"
@@ -70,22 +70,22 @@
 //#include "BedTile.hpp"
 #include "CropsTile.hpp"
 #include "Web.hpp"
-//#include "SnowTile.hpp"
+#include "SnowTile.hpp"
 //#include "SignTile.hpp"
-//#include "LeverTile.hpp"
-//#include "PressurePlateTile.hpp"
+#include "LeverTile.hpp"
+#include "PressurePlateTile.hpp"
 //#include "RailTile.hpp"
 //#include "DetectorRailTile.hpp"
-//#include "ButtonTile.hpp"
+#include "ButtonTile.hpp"
 //#include "MobSpawnerTile.hpp"
-//#include "RedstoneTorchTile.hpp"
+#include "NotGateTile.hpp"
 #include "CakeTile.hpp"
-//#include "DispenserTile.hpp"
+#include "DispenserTile.hpp"
 #include "MusicTile.hpp"
-//#include "RecordPlayerTile.hpp"
+#include "RecordPlayerTile.hpp"
 #include "TrapDoorTile.hpp"
 //#include "PortalTile.hpp"
-//#include "RepeaterTile.hpp"
+#include "DiodeTile.hpp"
 //#include "Mushroom.hpp"
 
 std::string Tile::TILE_DESCRIPTION_PREFIX = "tile.";
@@ -222,7 +222,7 @@ eRenderShape Tile::getRenderShape() const
 
 void Tile::updateDefaultShape()
 {
-	
+
 }
 
 int Tile::getTexture(Facing::Name face) const
@@ -620,7 +620,7 @@ void Tile::initTiles()
 		->setDestroyTime(0.1f)
 		->setSoundType(Tile::SOUND_CLOTH)
 		->setDescriptionId("snow");
-	
+
 	Tile::ice = (new IceTile(TILE_ICE, TEXTURE_ICE, Material::ice))
 		->init()
 		->setDestroyTime(0.5f)
@@ -628,8 +628,7 @@ void Tile::initTiles()
 		->setSoundType(Tile::SOUND_GLASS)
 		->setDescriptionId("ice");
 
-	// @TODO: SnowTile class
-	Tile::snow = (new Tile(TILE_SNOW, TEXTURE_SNOW, Material::snow))
+	Tile::snow = (new SnowTile(TILE_SNOW, TEXTURE_SNOW))
 		->init()
 		->setDestroyTime(0.2f)
 		->setSoundType(Tile::SOUND_CLOTH)
@@ -746,7 +745,7 @@ void Tile::initTiles()
 		->setDestroyTime(1.0f)
 		->setSoundType(Tile::SOUND_WOOD)
 		->setDescriptionId("pumpkin");
-	
+
 	Tile::pumpkinLantern = (new PumpkinTile(TILE_PUMPKIN_LIT, true))
 		->init()
 		->setDestroyTime(1.0f)
@@ -792,6 +791,62 @@ void Tile::initTiles()
 		->setSoundType(Tile::SOUND_CLOTH)
 		->setDescriptionId("web");
 
+	Tile::redStoneDust = (new RedStoneDustTile(TILE_WIRE, TEXTURE_REDSTONE_DUST))
+		->init()
+		->setDestroyTime(0.0f)
+		->setSoundType(Tile::SOUND_NORMAL)
+		->setDescriptionId("redstoneDust");
+
+	Tile::lever = (new LeverTile(TILE_LEVER, TEXTURE_LEVER))
+		->init()
+		->setDestroyTime(0.5f)
+		->setSoundType(Tile::SOUND_WOOD)
+		->setDescriptionId("lever");
+
+	Tile::pressurePlate_stone = (new PressurePlateTile(TILE_PLATE_STONE, TEXTURE_STONE, PressurePlateTile::SENSITIVITY_MOBS))
+		->init()
+		->setDestroyTime(0.5f)
+		->setSoundType(Tile::SOUND_STONE)
+		->setDescriptionId("pressurePlate");
+
+	Tile::pressurePlate_wood = (new PressurePlateTile(TILE_PLATE_WOOD, TEXTURE_PLANKS, PressurePlateTile::SENSITIVITY_EVERYTHING))
+		->init()
+		->setDestroyTime(0.5f)
+		->setSoundType(Tile::SOUND_WOOD)
+		->setDescriptionId("pressurePlate");
+
+	Tile::notGate_off = (new NotGateTile(TILE_NOT_GATE_OFF, TEXTURE_TORCH_RED_STONE_OFF, false))
+		->init()
+		->setDestroyTime(0.0f)
+		->setSoundType(Tile::SOUND_WOOD)
+		->setDescriptionId("notGate");
+
+	Tile::notGate_on = (new NotGateTile(TILE_NOT_GATE_ON, TEXTURE_TORCH_RED_STONE, true))
+		->init()
+		->setDestroyTime(0.0f)
+		->setLightEmission(0.5f)
+		->setSoundType(Tile::SOUND_WOOD)
+		->setDescriptionId("notGate");
+
+	Tile::button = (new ButtonTile(TILE_BUTTON_STONE, TEXTURE_STONE))
+		->init()
+		->setDestroyTime(0.5f)
+		->setSoundType(Tile::SOUND_STONE)
+		->setDescriptionId("button");
+
+	Tile::diode_off = (new DiodeTile(TILE_REPEATER_OFF, false))
+		->init()
+		->setDestroyTime(0.0f)
+		->setSoundType(Tile::SOUND_WOOD)
+		->setDescriptionId("diode");
+
+	Tile::diode_on = (new DiodeTile(TILE_REPEATER_ON, true))
+		->init()
+		->setDestroyTime(0.0f)
+		->setLightEmission(10.0f / 16.0f)
+		->setSoundType(Tile::SOUND_WOOD)
+		->setDescriptionId("diode");
+
 	Tile::craftingTable = (new CraftingTableTile(TILE_WORKBENCH))
 		->init()
 		->setDestroyTime(2.5f)
@@ -828,6 +883,19 @@ void Tile::initTiles()
 		->setDestroyTime(2.5f)
 		->setSoundType(Tile::SOUND_WOOD)
 		->setDescriptionId("chest");
+
+	Tile::dispenser = (new DispenserTile(TILE_DISPENSER))
+		->init()
+		->setDestroyTime(3.5f)
+		->setSoundType(Tile::SOUND_STONE)
+		->setDescriptionId("dispenser");
+
+	Tile::recordPlayer = (new RecordPlayerTile(TILE_JUKEBOX, TEXTURE_JUKEBOX_SIDE))
+		->init()
+		->setDestroyTime(2.0f)
+		->setExplodeable(10.0f)
+		->setSoundType(Tile::SOUND_STONE)
+		->setDescriptionId("jukebox");
 
 	// Great
 	Item::items[Tile::cloth->m_ID] = (new ClothItem(Tile::cloth->m_ID - C_MAX_TILES))
@@ -980,7 +1048,7 @@ bool Tile::mayPlace(const Level* pLevel, const TilePos& pos) const
 	TileID tile = pLevel->getTile(pos);
 	if (!tile)
 		return true; // we can definitely place something over air
-	
+
 	return Tile::tiles[tile]->m_pMaterial->isLiquid();
 }
 
@@ -1320,11 +1388,22 @@ Tile
 	*Tile::web,
 	*Tile::fence,
 	*Tile::fenceGate,
+	*Tile::redStoneDust,
+	*Tile::lever,
+	*Tile::pressurePlate_stone,
+	*Tile::pressurePlate_wood,
+	*Tile::notGate_off,
+	*Tile::notGate_on,
+	*Tile::button,
+	*Tile::diode_off,
+	*Tile::diode_on,
 	*Tile::craftingTable,
 	*Tile::crops,
 	*Tile::musicBlock,
 	*Tile::furnace,
 	*Tile::furnaceLit,
 	*Tile::chest,
+	*Tile::dispenser,
+	*Tile::recordPlayer,
 	*Tile::cake,
 	*Tile::trapDoor;

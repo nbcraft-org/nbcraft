@@ -15,7 +15,7 @@ enum eParticleTexture
 {
 	PT_PARTICLES,
 	PT_TERRAIN,
-	PT_PARTICLES2,
+	PT_ITEM,
 	PT_PARTICLES3
 };
 

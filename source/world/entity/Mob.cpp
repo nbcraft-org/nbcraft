@@ -247,11 +247,11 @@ void Mob::baseTick()
     if (isAlive() && isInWall())
         hurt(nullptr, 1);
 
-    // @PARITY-JAVA: From Java
-    /*if (m_bFireImmune || m_pLevel->m_bIsClientSide)
+	// @PARITY-JAVA: From Java
+	// uncommenting this because otherwise pigmen will burn
     {
         m_fireTicks = 0;
-    }*/
+    }
 
 
     if (isAlive() && isUnderLiquid(Material::water) && !isWaterMob())

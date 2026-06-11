@@ -170,12 +170,12 @@ Recipes::Recipes()
         .add('#', Item::stick)
         .add('W', Tile::wood));
 #endif
-
-    //add(ShapedRecipeBuilder("###",
-    //                        "#X#",
-    //                        "###", ItemStack(Tile::recordPlayer, 1))
-    //    .add('#', Tile::wood)
-    //    .add('X', Item::emerald));
+  
+    add(ShapedRecipeBuilder("###",
+                            "#X#",
+                            "###", ItemStack(Tile::recordPlayer, 1))
+        .add('#', Tile::wood)
+        .add('X', Item::emerald));
 
     add(ShapedRecipeBuilder("###",
                             "#X#",
@@ -361,21 +361,21 @@ Recipes::Recipes()
         .add('#', Tile::goldBlock)
         .add('X', Item::apple));
 
-    //add(ShapedRecipeBuilder("X",
-    //                        "#", ItemStack(Tile::lever, 1))
-    //    .add('X', Item::stick)
-    //    .add('#', Tile::stoneBrick));
+    add(ShapedRecipeBuilder("X",
+                            "#", ItemStack(Tile::lever, 1))
+        .add('X', Item::stick)
+        .add('#', Tile::stoneBrick));
 
-    //add(ShapedRecipeBuilder("X",
-    //                        "#", ItemStack(Tile::redstoneTorchLit, 1))
-    //    .add('X', Item::redStone)
-    //    .add('#', Item::stick));
+    add(ShapedRecipeBuilder("X",
+                            "#", ItemStack(Tile::notGate_on, 1))
+        .add('X', Item::redStone)
+        .add('#', Item::stick));
 
-    //add(ShapedRecipeBuilder("#X#",
-    //                        "III", ItemStack(Item::diode, 1))
-    //    .add('#', Tile::redstoneTorchLit)
-    //    .add('X', Item::redStone)
-    //    .add('I', Tile::rock));
+    add(ShapedRecipeBuilder("#X#",
+                            "III", ItemStack(Item::diode, 1))
+        .add('#', Tile::notGate_on)
+        .add('X', Item::redStone)
+        .add('I', Tile::rock));
 
     add(ShapedRecipeBuilder(" # ",
                             "#X#",
@@ -395,21 +395,22 @@ Recipes::Recipes()
         .add('#', Item::paper)
         .add('X', Item::compass));
 
-    //add(ShapedRecipeBuilder("#", ItemStack(Tile::button, 1))
-    //    .add('#', Tile::rock));
+    add(ShapedRecipeBuilder("#",
+                            "#", ItemStack(Tile::button, 1))
+        .add('#', Tile::rock));
 
-    //add(ShapedRecipeBuilder("##", ItemStack(Tile::stonePressurePlate, 1))
-    //    .add('#', Tile::rock));
+    add(ShapedRecipeBuilder("##", ItemStack(Tile::pressurePlate_stone, 1))
+        .add('#', Tile::rock));
 
-    //add(ShapedRecipeBuilder("##", ItemStack(Tile::woodPressurePlate, 1))
-    //    .add('#', Tile::wood));
+    add(ShapedRecipeBuilder("##", ItemStack(Tile::pressurePlate_wood, 1))
+        .add('#', Tile::wood));
 
-    //add(ShapedRecipeBuilder("###",
-    //                        "#X#",
-    //                        "#R#", ItemStack(Tile::dispenser, 1))
-    //    .add('#', Tile::stoneBrick)
-    //    .add('X', Item::bow)
-    //    .add('R', Item::redStone));
+    add(ShapedRecipeBuilder("###",
+                            "#X#",
+                            "#R#", ItemStack(Tile::dispenser, 1))
+        .add('#', Tile::stoneBrick)
+        .add('X', Item::bow)
+        .add('R', Item::redStone));
 
     add(ShapedRecipeBuilder("###",
                             "XXX", ItemStack(Item::bed))

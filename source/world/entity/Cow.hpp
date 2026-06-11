@@ -23,6 +23,7 @@ public:
 	float getSoundVolume() const override { return 0.4f; }
 	void addAdditionalSaveData(CompoundTag& tag) const override;
 	void readAdditionalSaveData(const CompoundTag& tag) override;
+	bool interact(Player* player) override;
 
 	Entity* getBreedOffspring(Animal* pOther) { return new Cow(m_pLevel); }
 };
