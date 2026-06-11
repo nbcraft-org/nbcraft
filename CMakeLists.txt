@@ -5,11 +5,11 @@ project(nbcraft)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 
-# MC_VERSION string is an 8 digit number with 4 components, era, major, minor, and patch.
-# Each component takes 2 digits. Major, minor, and patch are self explanatory, era designates
-# if the version is from alpha, beta, or release. Alpha is 0, beta is 1, and release is 2.
+# MC_VERSION string is an 7 digit number with 4 components, era, major, minor, and patch.
+# Each component takes 2 digits, except era, which takes 1. Major, minor, and patch are self explanatory,
+# era designates if the version is from alpha, beta, or release. Alpha is 0, beta is 1, and release is 2.
 # In the future, this should be made an option that can be changed per-world, instead of a compile-time flag.
-set(MC_VERSION "01010703" CACHE STRING "Version to emulate")
+set(MC_VERSION "1010703" CACHE STRING "Version to emulate")
 add_compile_definitions(MC_VERSION=${MC_VERSION})
 
 set(CMAKE_C_STANDARD 99)
