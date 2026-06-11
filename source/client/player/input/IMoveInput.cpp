@@ -46,4 +46,3 @@ public:
 	bool m_bFlyUp;
 	bool m_bSneaking;
 };
-
