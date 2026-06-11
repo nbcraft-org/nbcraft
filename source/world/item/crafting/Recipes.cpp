@@ -163,7 +163,7 @@ Recipes::Recipes()
                             "###", ItemStack(Tile::fence, 2))
         .add('#', Item::stick));
 
-#if MC_VERSION >= 1010800
+#if MC_VERSION >= MC_VER_BETA(1, 8, 0)
     add(ShapedRecipeBuilder("#W#",
         "#W#", ItemStack(Tile::fenceGate, 1))
         .add('#', Item::stick)
@@ -323,7 +323,7 @@ Recipes::Recipes()
         .add('A', Item::ironIngot)
         .add('B', Item::flint));
 
-#if MC_VERSION >= 1010700
+#if MC_VERSION >= MC_VER_BETA(1, 7, 0)
     add(ShapedRecipeBuilder("A ",
                             " A", ItemStack(Item::shears, 1))
         .add('A', Item::ironIngot));
@@ -415,7 +415,7 @@ Recipes::Recipes()
         .add('#', Tile::cloth)
         .add('X', Tile::wood));
 
-#if MC_VERSION >= 1010700
+#if MC_VERSION >= MC_VER_BETA(1, 7, 0)
     //add(ShapedRecipeBuilder("###",
     //                        "XIX",
     //                        "XRX", ItemStack(Tile::piston))
