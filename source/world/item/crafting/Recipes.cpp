@@ -3,6 +3,7 @@
 //#include "world/tile/RecordPlayerTile.hpp"
 //#include "world/item/MapItem.hpp"
 #include "common/Logger.hpp"
+#include "compat/GameVersion.h"
 
 Recipes* Recipes::instance = nullptr;
 
@@ -163,10 +164,12 @@ Recipes::Recipes()
                             "###", ItemStack(Tile::fence, 2))
         .add('#', Item::stick));
 
-    //add(ShapedRecipeBuilder("#W#",
-    //    "#W#", ItemStack(Tile::fenceGate, 1))
-    //    .add('#', Item::stick)
-    //    .add('W', Tile::wood));
+#if MC_VERSION >= MC_VER_BETA(1, 8, 0)
+    add(ShapedRecipeBuilder("#W#",
+        "#W#", ItemStack(Tile::fenceGate, 1))
+        .add('#', Item::stick)
+        .add('W', Tile::wood));
+#endif
   
     add(ShapedRecipeBuilder("###",
                             "#X#",
@@ -321,9 +324,11 @@ Recipes::Recipes()
         .add('A', Item::ironIngot)
         .add('B', Item::flint));
 
+#if MC_VERSION >= MC_VER_BETA(1, 7, 0)
     add(ShapedRecipeBuilder("A ",
                             " A", ItemStack(Item::shears, 1))
         .add('A', Item::ironIngot));
+#endif
 
     add(ShapedRecipeBuilder("###", ItemStack(Item::bread, 1))
         .add('#', Item::wheat));
@@ -412,6 +417,7 @@ Recipes::Recipes()
         .add('#', Tile::cloth)
         .add('X', Tile::wood));
 
+#if MC_VERSION >= MC_VER_BETA(1, 7, 0)
     //add(ShapedRecipeBuilder("###",
     //                        "XIX",
     //                        "XRX", ItemStack(Tile::piston))
@@ -424,6 +430,7 @@ Recipes::Recipes()
     //                        "#", ItemStack(Tile::stickyPiston))
     //    .add('X', Item::slimeBall)
     //    .add('#', Tile::piston));
+#endif
 
     // ClothDyeRecipes
     for (int i = 0; i < 16; ++i)

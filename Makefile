@@ -13,6 +13,10 @@ OS := $(shell uname -s)
 DEFINES := -DHANDLE_CHARS_SEPARATELY -DRAPIDJSON_NO_THREAD_LOCAL -DSTBI_NO_THREAD_LOCALS
 INCLUDES := -I. -Isource -Ithirdparty/zlib -Ithirdparty/raknet -Ithirdparty/rapidjson -Ithirdparty/stb_image/include
 
+ifdef MC_VERSION
+DEFINES += -DMC_VERSION=$(MC_VERSION)
+endif
+
 ifeq ($(OS),Darwin)
 LIBS := -lmx
 else
