@@ -165,14 +165,18 @@ void OptionList::initControlsMenu()
 {
 	Options* pOptions = m_pMinecraft->getOptions();
 	int currentIndex = -1;
-	int idxSplit = -1, idxController = -1;
+	int idxSplit = -1, idxController = -1, idxSwapJumpSneak = -1, idxButtonSize = -1;
 
 	OPTIONS_LIST_CONTROLS_CONTROLS;
 	OPTIONS_LIST_CONTROLS_FEEDBACK;
 	OPTIONS_LIST_CONTROLS_EXPERIMENTAL;
 
 	if (!m_pMinecraft->isTouchscreen())
+	{
 		m_items[idxSplit]->setEnabled(false);
+		m_items[idxSwapJumpSneak]->setEnabled(false);
+		m_items[idxButtonSize]->setEnabled(false);
+	}
 	if (!m_pMinecraft->m_pPlatform->hasGamepad())
 		m_items[idxController]->setEnabled(false);
 }

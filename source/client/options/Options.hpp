@@ -495,8 +495,8 @@ public:
 	OPTION(m_sensitivity);                 \
 	OPTION(m_invertMouse);                 \
 	OPTION(m_splitControls); idxSplit = currentIndex; \
-	OPTION(m_swapJumpSneak);                \
-	OPTION(m_buttonSize);                   \
+	OPTION(m_swapJumpSneak); idxSwapJumpSneak = currentIndex; \
+	OPTION(m_buttonSize); idxButtonSize = currentIndex; \
 	OPTION(m_autoJump);                    \
 	OPTION(m_bUseController); idxController = currentIndex; \
 
