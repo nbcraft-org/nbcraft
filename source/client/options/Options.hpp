@@ -356,10 +356,10 @@ public:
 	void apply() override;
 };
 
-class ButtonSizeOption : public FloatOption
+class DpadSizeOption : public FloatOption
 {
 public:
-	ButtonSizeOption(const std::string& key, const std::string& name, float initial = 1.0f) : FloatOption(key, name, initial, 0.05f) {}
+	DpadSizeOption(const std::string& key, const std::string& name, float initial = 1.0f) : FloatOption(key, name, initial, 0.05f) {}
 
 	void apply() override;
 	void addUnit(int mul) override { set(Mth::clamp(get() + mul * m_unit, 0.5f, 1.5f)); }
@@ -432,7 +432,7 @@ public:
 	friend class SensitivityOption;
 	friend class IntOption;
 	friend class HUDSizeOption;
-	friend class ButtonSizeOption;
+	friend class DpadSizeOption;
 
 	FloatOption m_musicVolume;
 	FloatOption m_masterVolume;
@@ -451,7 +451,7 @@ public:
 	BoolOption m_thirdPerson;
 	BoolOption m_flightHax;
 	SwapJumpSneakOption m_swapJumpSneak;
-	ButtonSizeOption m_buttonSize;
+	DpadSizeOption m_dpadSize;
 	bool field_240; // seems like it's doing some sort of mouse smoothing
 	bool m_bFixedCamera;
 	float m_flySpeed;
@@ -496,7 +496,7 @@ public:
 	OPTION(m_invertMouse);                 \
 	OPTION(m_splitControls); idxSplit = currentIndex; \
 	OPTION(m_swapJumpSneak); idxSwapJumpSneak = currentIndex; \
-	OPTION(m_buttonSize); idxButtonSize = currentIndex; \
+	OPTION(m_dpadSize); idxDpadSize = currentIndex; \
 	OPTION(m_autoJump);                    \
 	OPTION(m_bUseController); idxController = currentIndex; \
 

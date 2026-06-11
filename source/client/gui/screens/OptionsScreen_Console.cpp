@@ -77,7 +77,7 @@ ControlsPanelScreen::ControlsPanelScreen(Screen* parent, Minecraft& mc) : PanelS
 {
 	Options& options = *mc.getOptions();
 	int currentIndex = -1;
-	int idxSplit = -1, idxController = -1, idxSwapJumpSneak = -1, idxButtonSize = -1;
+	int idxSplit = -1, idxController = -1, idxSwapJumpSneak = -1, idxDpadSize = -1;
 
 	OPTIONS_LIST_CONTROLS_CONTROLS;
 	OPTIONS_LIST_CONTROLS_FEEDBACK;
@@ -88,7 +88,7 @@ ControlsPanelScreen::ControlsPanelScreen(Screen* parent, Minecraft& mc) : PanelS
 	if (!mc.isTouchscreen()) {
 		m_layout.m_elements[idxSplit]->setEnabled(false);
 		m_layout.m_elements[idxSwapJumpSneak]->setEnabled(false);
-		m_layout.m_elements[idxButtonSize]->setEnabled(false);
+		m_layout.m_elements[idxDpadSize]->setEnabled(false);
 	}
 }
 

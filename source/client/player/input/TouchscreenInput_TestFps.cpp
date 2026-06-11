@@ -102,7 +102,7 @@ void TouchscreenInput_TestFps::setScreenSize(int width, int height)
 {
 	m_touchAreaModel.clear();
 
-	float sizeScale = m_pOptions->m_buttonSize.get();
+	float sizeScale = m_pOptions->m_dpadSize.get();
 	float widthM = float(width) * 0.094f * sizeScale;
 	float heightM = float(width) * 0.094f * sizeScale;
 
