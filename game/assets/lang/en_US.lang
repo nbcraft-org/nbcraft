@@ -105,6 +105,8 @@ options.guiScale.normal=Normal
 options.guiScale.large=Large
 options.gamma=Gamma
 options.enableVsync=V-Sync
+options.swapJumpSneak=Swap Jump and Sneak
+options.buttonSize=D-Pad Size
 
 performance.max=Max FPS
 performance.balanced=Balanced

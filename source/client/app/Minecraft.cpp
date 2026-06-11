@@ -95,6 +95,7 @@ Minecraft::Minecraft()
 	m_bIsTouchscreen = false;
 	m_progressPercent = 0;
 	m_bPreparingLevel = false;
+	m_bPendingResize = false;
 	m_pLevelStorageSource = nullptr; // TODO
 	field_D9C = 0;
 	field_DA0 = 0;
@@ -837,6 +838,12 @@ std::string Minecraft::getVersionString(const std::string& str) const
 
 void Minecraft::tick()
 {
+	if (m_bPendingResize)
+	{
+		m_bPendingResize = false;
+		sizeUpdate(width, height);
+	}
+
 	if (!m_pScreen)
 	{
 		if (m_pLocalPlayer && m_pLocalPlayer->m_health <= 0)

@@ -9,6 +9,7 @@
 #include "TouchscreenInput_TestFps.hpp"
 #include "Multitouch.hpp"
 #include "GameMods.hpp"
+#include "common/Utils.hpp"
 #include "client/app/Minecraft.hpp"
 #include "client/options/Options.hpp"
 #include "renderer/ShaderConstants.hpp"
@@ -28,13 +29,24 @@ TouchscreenInput_TestFps::TouchscreenInput_TestFps(Minecraft* pMinecraft, Option
 #ifdef ENH_NEW_TOUCH_CONTROLS
 	, m_pAreaForwardLeft(nullptr)
 	, m_pAreaForwardRight(nullptr)
+	, m_pAreaSneak(nullptr)
+	, m_pAreaFlyUp(nullptr)
+	, m_pAreaFlyDown(nullptr)
+	, m_bSneakBeingHeld(false)
+	, m_fLastSneakTapTime(-1.0f)
+	, m_fLastSneakToggleTime(-1.0f)
+	, m_bPersistentSneak(false)
+	, m_rightRectArea(0.0f, 0.0f, 0.0f, 0.0f)
+	, m_fButtonSize(0.0f)
+	, m_fRightSideX(0.0f)
+	, m_fMiddleY(0.0f)
+	, m_pSneakExcludeRef(nullptr)
 #endif
 {
 	for (int i = 0; i < 10; i++)
 		field_30[i] = 0;
 
-	// Note! Only the first five button entries are used.
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < 10; i++)
 		field_6C[i] = 0;
 
 	setScreenSize(Minecraft::width, Minecraft::height);
@@ -44,7 +56,7 @@ void TouchscreenInput_TestFps::releaseAllKeys()
 {
 	m_horzInput = 0.0f;
 	m_vertInput = 0.0f;
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < 10; i++)
 		field_6C[i] = false;
 }
 
@@ -90,8 +102,9 @@ void TouchscreenInput_TestFps::setScreenSize(int width, int height)
 {
 	m_touchAreaModel.clear();
 
-	float widthM = float(width) * 0.094f;
-	float heightM = float(width) * 0.094f;
+	float sizeScale = m_pOptions->m_buttonSize.get();
+	float widthM = float(width) * 0.094f * sizeScale;
+	float heightM = float(width) * 0.094f * sizeScale;
 
 	float x1[4], y1[4], x2[4], y2[4];
 
@@ -118,7 +131,6 @@ void TouchscreenInput_TestFps::setScreenSize(int width, int height)
 
 	TransformArray(4, x1, y1, x2, y2, middleX, middleY, 1.0f, 1.0f);
 	m_pAreaJump = new PolygonArea(4, x2, y2);
-	m_touchAreaModel.addArea(100 + INPUT_JUMP, m_pAreaJump);
 
 	TransformArray(4, x1, y1, x2, y2, middleX, middleY + heightM, 1.0f, 1.0f);
 	m_pAreaBackward = new PolygonArea(4, x2, y2);
@@ -140,7 +152,33 @@ void TouchscreenInput_TestFps::setScreenSize(int width, int height)
 	TransformArray(4, x1, y1, x2, y2, middleX + widthM, middleY - heightM, 1.0f, 1.0f);
 	m_pAreaForwardRight = new PolygonArea(4, x2, y2);
 	m_touchAreaModel.addArea(100 + INPUT_FORWARDRIGHT, m_pAreaForwardRight);
+
+	float rightSideX = float(width) - offX - 1.4f * widthM;
+	m_rightRectArea = RectangleArea(rightSideX, middleY - heightM, rightSideX + widthM, middleY + heightM * 2.0f);
+
+	m_fButtonSize = widthM;
+	m_fRightSideX = rightSideX;
+	m_fMiddleY = middleY;
+
+	TransformArray(4, x1, y1, x2, y2, rightSideX, middleY - heightM, 1.0f, 1.0f);
+	m_pAreaFlyUp = new PolygonArea(4, x2, y2);
+
+	TransformArray(4, x1, y1, x2, y2, rightSideX, middleY, 1.0f, 1.0f);
+	m_pAreaSneak = new PolygonArea(4, x2, y2);
+
+	TransformArray(4, x1, y1, x2, y2, rightSideX, middleY + heightM, 1.0f, 1.0f);
+	m_pAreaFlyDown = new PolygonArea(4, x2, y2);
+
+	// Swap jump and sneak positions: jump on right column, sneak in center of left grid
+	if (!m_pOptions->m_swapJumpSneak.get())
+	{
+		PolygonArea* pTemp = m_pAreaJump;
+		m_pAreaJump = m_pAreaSneak;
+		m_pAreaSneak = pTemp;
+	}
 #endif
+	m_touchAreaModel.addArea(100 + INPUT_JUMP, m_pAreaJump);
+
 	// NOTE: We are not leaking memory! Since by default IArea's constructor sets
 	// m_vertices to true, TouchAreaModel owns the pointers, so when it's destroyed,
 	// so are these areas we allocated.
@@ -154,19 +192,14 @@ void TouchscreenInput_TestFps::tick(Player* pPlayer)
 	m_vertInput = 0.0f;
 	m_bJumping = false;
 	m_bFlyUp = false;
-	m_bSneaking = false;
-	m_bForwardBeingHeld = false;
 
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < 10; i++)
 		field_6C[i] = false;
-	
+
 	const int* activePointers;
 	int activePointerCount = Multitouch::getActivePointerIds(&activePointers);
 
-	bool bJumpPressed = false, bForwardPressed = false;
-	bool flyUpPressed = false;
-	bool flyDownPressed = false;
-	bool flyJumpTap = false;
+	bool bJumpPressed = false, bForwardPressed = false, bSneakPressed = false;
 	bool flying = m_pOptions->m_flightHax.get() || m_pMinecraft->m_pLocalPlayer->m_bFlying;
 
 	for (int i = 0; i < activePointerCount; i++)
@@ -176,28 +209,39 @@ void TouchscreenInput_TestFps::tick(Player* pPlayer)
 		int y = Multitouch::getY(finger);
 		int pointerId = m_touchAreaModel.getPointerId(x, y, finger);
 
+		if (pointerId <= 99)
+		{
+			float fx = float(x);
+			float fy = float(y);
+			if (flying)
+			{
+				if (m_pAreaFlyUp && m_pAreaFlyUp->isInside(fx, fy))
+					pointerId = 100 + INPUT_FLYUP;
+				else if (m_pAreaFlyDown && m_pAreaFlyDown->isInside(fx, fy))
+					pointerId = 100 + INPUT_FLYDOWN;
+			}
+			else
+			{
+				if (m_pAreaSneak && m_pAreaSneak->isInside(fx, fy))
+					pointerId = 100 + INPUT_SNEAK;
+			}
+		}
+
 		if (pointerId > 99)
 			field_6C[pointerId - 100] = true;
 
-		if (pointerId == 100 + INPUT_SNEAK) // Unused
+		if (pointerId == 100 + INPUT_SNEAK) // sneak
 		{
-			if (pPlayer->isInWater())
-				m_bJumping = true;
-			else
-				bJumpPressed = true;
-
-			pointerId = 100; // forward
+			bSneakPressed = true;
 		}
 
 		if (pointerId == 100 + INPUT_JUMP) // jump
 		{
 			if (pPlayer->isInWater())
 				m_bJumping = true;
-			else if (flying && Multitouch::isPressed(finger))
-				flyJumpTap = true;
-			else if (Multitouch::isPressed(finger))
+			else if (Multitouch::isPressed(finger) || flying)
 				m_bJumping = true;
-			else if (m_bForwardBeingHeld && !flying)
+			else if (m_bForwardBeingHeld)
 			{
 				pointerId = 100; // forward
 				m_vertInput += 1.0f;
@@ -207,38 +251,29 @@ void TouchscreenInput_TestFps::tick(Player* pPlayer)
 
 		switch (pointerId)
 		{
-			case 100 + INPUT_FORWARD:
-				if (m_bJumpBeingHeld && flying)
-				{
-					m_bJumpBeingHeld = true;
-					m_bWasJumping = false;
-					bJumpPressed = true;
-					flyUpPressed = true;
-				} 
-				else
-				{
-					if (pPlayer->isInWater())
-						m_bJumping = true;
-					else
-						bForwardPressed = true;
+		case 100 + INPUT_FORWARD:
+			if (pPlayer->isInWater())
+				m_bJumping = true;
+			else
+			{
+				bForwardPressed = true;
+				m_vertInput += 1.0f;
+			}
+			break;
 
-					m_vertInput += 1.0f;
-				}
-				break;
+		case 100 + INPUT_BACKWARD:
+			m_vertInput -= 1.0f;
+			break;
 
-			case 100 + INPUT_BACKWARD:
-				if (m_bJumpBeingHeld && flying)
-				{
-					m_bJumpBeingHeld = true;
-					m_bWasJumping = false;
-					bJumpPressed = true;
-					flyDownPressed = true;
-				} 
-				else
-				{
-					m_vertInput -= 1.0f;
-				}
-				break;
+		case 100 + INPUT_FLYUP:
+			if (flying)
+				m_bFlyUp = true;
+			break;
+
+		case 100 + INPUT_FLYDOWN:
+			if (flying)
+				m_bSneaking = true;
+			break;
 
 			case 100 + INPUT_FORWARDLEFT:
 				if (m_bForwardBeingHeld)
@@ -257,7 +292,6 @@ void TouchscreenInput_TestFps::tick(Player* pPlayer)
 				}
 				break;
 
-
 			case 100 + INPUT_LEFT:
 				m_horzInput += 1.0f;
 				break;
@@ -266,8 +300,6 @@ void TouchscreenInput_TestFps::tick(Player* pPlayer)
 				m_horzInput -= 1.0f;
 				break;
 		}
-
-		IMoveInput::tick(pPlayer);
 	}
 
 	m_bForwardBeingHeld = bForwardPressed;
@@ -285,7 +317,6 @@ void TouchscreenInput_TestFps::tick(Player* pPlayer)
 			m_bWasJumping = false;
 			m_bJumpBeingHeld = false;
 		}
-
 	}
 	else
 	{
@@ -297,44 +328,92 @@ void TouchscreenInput_TestFps::tick(Player* pPlayer)
 		m_bJumpBeingHeld = false;
 	}
 
-	if (flying)
+	if (bSneakPressed)
 	{
-		m_bJumping = flyJumpTap;
-		m_bFlyUp = flyUpPressed;
-		m_bSneaking = flyDownPressed;
+		if (!m_bSneakBeingHeld)
+		{
+			float now = (float)getTimeS();
+			if (m_fLastSneakTapTime >= 0.0f && now - m_fLastSneakTapTime < 0.3f && now - m_fLastSneakToggleTime > 0.5f)
+			{
+				m_bPersistentSneak = !m_bPersistentSneak;
+				m_fLastSneakToggleTime = now;
+				m_fLastSneakTapTime = -1.0f;
+			}
+			else
+			{
+				m_fLastSneakTapTime = now;
+			}
+		}
+		m_bSneakBeingHeld = true;
 	}
+	else
+	{
+		m_bSneakBeingHeld = false;
+	}
+
+	if (!isButtonDown(100 + INPUT_FLYDOWN))
+		m_bSneaking = m_bPersistentSneak;
+
+#ifdef ENH_NEW_TOUCH_CONTROLS
+	if (m_pSneakExcludeRef)
+	{
+		if (flying)
+			*m_pSneakExcludeRef = RectangleArea(m_fRightSideX, m_fMiddleY - m_fButtonSize,
+				m_fRightSideX + m_fButtonSize, m_fMiddleY + m_fButtonSize * 2.0f);
+		else
+			*m_pSneakExcludeRef = RectangleArea(m_fRightSideX, m_fMiddleY,
+				m_fRightSideX + m_fButtonSize, m_fMiddleY + m_fButtonSize);
+	}
+#endif
+
+	IMoveInput::tick(pPlayer);
 }
 
-static void RenderTouchButton(Tesselator* t, PolygonArea* pArea, int srcX, int srcY)
+static void RenderTouchButton(Tesselator* t, PolygonArea* pArea, int srcX, int srcY, int size = -1, float visualScale = 1.0f, float offsetY = 0.0f)
 {
+	if (size == -1)
+	{
+#ifdef ENH_NEW_TOUCH_CONTROLS
+		size = 26;
+#else
+		size = 64;
+#endif
+	}
+
 	float tc[8];
 
 	tc[0] = float(srcX) / 256.0f;
 	tc[1] = float(srcY) / 256.0f;
-#ifdef ENH_NEW_TOUCH_CONTROLS
-	tc[2] = tc[0] + 26.0f / 256.0f;
-#else
-	tc[2] = tc[0] + 64.0f / 256.0f;
-#endif
+	tc[2] = tc[0] + float(size) / 256.0f;
 	tc[3] = tc[1];
 	tc[4] = tc[2];
-#ifdef ENH_NEW_TOUCH_CONTROLS
-	tc[5] = tc[1] + 26.0f / 256.0f;
-#else
-	tc[5] = tc[1] + 64.0f / 256.0f;
-#endif
+	tc[5] = tc[1] + float(size) / 256.0f;
 	tc[6] = tc[0];
 	tc[7] = tc[5];
 
+	float centerX = 0.0f, centerY = 0.0f;
+	if (visualScale < 1.0f)
+	{
+		for (int i = 0; i < pArea->m_count; i++)
+		{
+			centerX += pArea->m_xPos[i];
+			centerY += pArea->m_yPos[i];
+		}
+		centerX /= pArea->m_count;
+		centerY /= pArea->m_count;
+	}
+
 	for (int i = 0; i < pArea->m_count; i++)
 	{
-		t->vertexUV(
-			Gui::GuiScale * pArea->m_xPos[i],
-			Gui::GuiScale * pArea->m_yPos[i],
-			0.0f,
-			tc[(2 * i) % 8],
-			tc[(2 * i + 1) % 8]
-		);
+		float vx = pArea->m_xPos[i];
+		float vy = pArea->m_yPos[i];
+		if (visualScale < 1.0f)
+		{
+			vx = centerX + (vx - centerX) * visualScale;
+			vy = centerY + (vy - centerY) * visualScale;
+		}
+		vy += offsetY;
+		t->vertexUV(Gui::GuiScale * vx, Gui::GuiScale * vy, 0.0f, tc[(2 * i) % 8], tc[(2 * i + 1) % 8]);
 	}
 }
 
@@ -346,7 +425,6 @@ void TouchscreenInput_TestFps::render(float f)
     currentShaderDarkColor = Color::WHITE;
 
 	bool flying = m_pOptions->m_flightHax.get() || m_pMinecraft->m_pLocalPlayer->m_bFlying;
-	int horizontalAlpha = (flying && (m_bFlyUp || m_bJumpBeingHeld || m_bSneaking)) ? 0x20 : 0x80;
     
 	Tesselator& t = Tesselator::instance;
 	t.begin(0);
@@ -360,45 +438,44 @@ void TouchscreenInput_TestFps::render(float f)
 		RenderTouchButton(&t, m_pAreaForwardRight, 26, 132);
 	}
 
-	t.color(isButtonDown(100 + INPUT_LEFT) ? 0xC0C0C0 : 0xFFFFFF, horizontalAlpha);
+	t.color(isButtonDown(100 + INPUT_LEFT) ? 0xC0C0C0 : 0xFFFFFF, 0x80);
 	RenderTouchButton(&t, m_pAreaLeft, 26, 106);
 
-	t.color(isButtonDown(100 + INPUT_RIGHT) ? 0xC0C0C0 : 0xFFFFFF, horizontalAlpha);
+	t.color(isButtonDown(100 + INPUT_RIGHT) ? 0xC0C0C0 : 0xFFFFFF, 0x80);
 	RenderTouchButton(&t, m_pAreaRight, 78, 106);
 
 	t.color(isButtonDown(100 + INPUT_JUMP) ? 0xC0C0C0 : 0xFFFFFF, 0x80);
 	(flying) ?
 		RenderTouchButton(&t, m_pAreaJump, 104, 132) : RenderTouchButton(&t, m_pAreaJump, 104, 106);
 
-	if (flying && m_bJumpBeingHeld) 
-	{
-		t.color(isButtonDown(100 + INPUT_FORWARD) ? 0xC0C0C0 : 0xFFFFFF, 0x80);
-		RenderTouchButton(&t, m_pAreaForward, 52, 132);
+	t.color(isButtonDown(100 + INPUT_FORWARD) ? 0xC0C0C0 : 0xFFFFFF, 0x80);
+	RenderTouchButton(&t, m_pAreaForward, 0, 106);
 
-		t.color(isButtonDown(100 + INPUT_BACKWARD) ? 0xC0C0C0 : 0xFFFFFF, 0x80);
-		RenderTouchButton(&t, m_pAreaBackward, 78, 132);
-	}
-	else 
-	{
-		t.color(isButtonDown(100 + INPUT_FORWARD) ? 0xC0C0C0 : 0xFFFFFF, 0x80);
-		RenderTouchButton(&t, m_pAreaForward, 0, 106);
+	t.color(isButtonDown(100 + INPUT_BACKWARD) ? 0xC0C0C0 : 0xFFFFFF, 0x80);
+	RenderTouchButton(&t, m_pAreaBackward, 52, 106);
 
-		t.color(isButtonDown(100 + INPUT_BACKWARD) ? 0xC0C0C0 : 0xFFFFFF, 0x80);
-		RenderTouchButton(&t, m_pAreaBackward, 52, 106);
-	}
-	// @TODO: implement double tap sneak button
-	/*if (m_bSneaking)
+	if (flying)
 	{
-		// toggled on
-		t.color(m_bSneaking ? 0xFFFFFF : 0xFFFFFF, 0x80);
-		RenderTouchButton(&t, m_pAreaSneak, 0, 0); // @TODO: Find sneaking button texture coords
+		if (m_pAreaFlyUp)
+		{
+			t.color(isButtonDown(100 + INPUT_FLYUP) ? 0xC0C0C0 : 0xFFFFFF, 0x80);
+			RenderTouchButton(&t, m_pAreaFlyUp, 52, 132);
+		}
+		if (m_pAreaFlyDown)
+		{
+			t.color(isButtonDown(100 + INPUT_FLYDOWN) ? 0xC0C0C0 : 0xFFFFFF, 0x80);
+			RenderTouchButton(&t, m_pAreaFlyDown, 78, 132);
+		}
 	}
-	else
+	else if (m_pAreaSneak)
 	{
-		// toggled off
-		t.color(m_bSneaking ? 0xFFFFFF : 0xFFFFFF, 0x80);
-		RenderTouchButton(&t, m_pAreaSneak, 0, 0); // @TODO: Find sneaking button texture coords
-	}*/
+		t.color(m_bSneaking ? 0xC0C0C0 : 0xFFFFFF, 0x80);
+		if (m_bSneaking)
+			RenderTouchButton(&t, m_pAreaSneak, 218, 64, 18, 0.7f, 4.0f);
+		else
+			RenderTouchButton(&t, m_pAreaSneak, 218, 82, 18, 0.7f, 4.0f);
+	}
+
 #else
 	// Original pocket edition buttons
 	t.color(isButtonDown(100 + INPUT_LEFT) ? 0xC0C0C0 : 0xFFFFFF, 0x80);
@@ -424,9 +501,21 @@ RectangleArea TouchscreenInput_TestFps::getRectangleArea()
 	return m_rectArea;
 }
 
+RectangleArea TouchscreenInput_TestFps::getSneakArea()
+{
+	return m_rightRectArea;
+}
+
 bool TouchscreenInput_TestFps::isButtonDown(int key)
 {
 	if (key == 7) // mp
 		return m_bJumpBeingHeld;
 	return field_6C[key - 100];
+}
+
+void TouchscreenInput_TestFps::setSneakExcludeRef(RectangleArea* pRect)
+{
+#ifdef ENH_NEW_TOUCH_CONTROLS
+	m_pSneakExcludeRef = pRect;
+#endif
 }

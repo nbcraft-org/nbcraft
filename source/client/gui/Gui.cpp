@@ -58,6 +58,8 @@ Gui::Gui(Minecraft* pMinecraft)
     m_bRenderHunger = false;
 
 	m_pMinecraft = pMinecraft;
+
+	m_feedbackMeshesBuilt = false;
 }
 
 void Gui::addMessage(const std::string& s)
@@ -491,6 +493,51 @@ void Gui::renderMessages(bool bShowAll)
 	}
 }
 
+void Gui::_buildFeedbackMeshes()
+{
+	if (m_feedbackMeshesBuilt)
+		return;
+
+	m_feedbackMeshesBuilt = true;
+
+	constexpr int steps = 24;
+	constexpr float radius = 40.0f;
+	constexpr float radiusInner = radius * 0.95f;
+	constexpr float fstep = 6.283185f / steps;
+
+	Tesselator& t = Tesselator::instance;
+
+	t.begin(4 * steps);
+	for (int i = 0; i < steps; i++)
+	{
+		float a = i * fstep;
+		float b = a + fstep;
+
+		float aCos = Mth::cos(a);
+		float bCos = Mth::cos(b);
+		float aSin = Mth::sin(a);
+		float bSin = Mth::sin(b);
+
+		t.vertexUV(radiusInner * aCos, radiusInner * aSin, 0, 0, 1);
+		t.vertexUV(radiusInner * bCos, radiusInner * bSin, 0, 1, 1);
+		t.vertexUV(radius      * bCos, radius      * bSin, 0, 1, 0);
+		t.vertexUV(radius      * aCos, radius      * aSin, 0, 0, 0);
+	}
+	m_feedbackOuter = t.end("feedback_outer", false);
+
+	t.begin(mce::PRIMITIVE_MODE_TRIANGLE_LIST, steps * 3);
+	for (int i = 0; i < steps; i++)
+	{
+		float a = i * fstep;
+		float b = a + fstep;
+
+		t.vertex(0, 0, 0);
+		t.vertex(radiusInner * Mth::cos(b), radiusInner * Mth::sin(b), 0);
+		t.vertex(radiusInner * Mth::cos(a), radiusInner * Mth::sin(a), 0);
+	}
+	m_feedbackInner = t.end("feedback_inner", false);
+}
+
 void Gui::renderHearts(bool topLeft)
 {
 	m_random.setSeed(m_ticks * 312871);
@@ -513,8 +560,9 @@ void Gui::renderHearts(bool topLeft)
 		// Renders to the left of the hotbar, why?
 		/*heartX = cenX - 191; // why?
 		heartYStart = height - 10;*/
-
-		heartX = -91;
+		
+		int hotbarWidth = 2 + getNumSlots() * 20; // get hotbar width if number of slots change
+		heartX = -hotbarWidth / 2;
 		heartYStart = -32;
 	}
 
@@ -632,9 +680,9 @@ void Gui::renderProgressIndicator(int width, int height)
 {
 	Minecraft& mc = *m_pMinecraft;
 	Textures& textures = *mc.m_pTextures;
-    
-    currentShaderColor = Color::WHITE;
-    currentShaderDarkColor = Color::WHITE;
+
+	currentShaderColor = Color::WHITE;
+	currentShaderDarkColor = Color::WHITE;
 
 	if (m_pMinecraft->useSplitControls())
 	{
@@ -655,6 +703,7 @@ void Gui::renderProgressIndicator(int width, int height)
 		// "last progress". Well guess what? The game mode in question updates our m_sensitivity with
 		// the pre-interpolated break progress! Isn't that awesome?!
 		float breakProgress = m_progress;
+		float alpha = Mth::clamp(input.m_feedbackAlpha, 0.0f, 1.0f);
 
 		// don't know about this if-structure, it feels like it'd be like
 		// if (m_bFoggy >= 0.0f && breakProgress <= 0.0f)
@@ -665,29 +714,40 @@ void Gui::renderProgressIndicator(int width, int height)
 		{
 			if (breakProgress > 0.0f)
 			{
-				float xPos = input.m_feedbackX;
-				float yPos = input.m_feedbackY;
+				_buildFeedbackMeshes();
 
-				textures.loadAndBindTexture("gui/feedback_outer.png");
+				float xPos = GuiScale * input.m_feedbackX;
+				float yPos = GuiScale * input.m_feedbackY;
+
+				currentShaderColor = Color(1.0f, 1.0f, 1.0f, 0.8f * alpha);
+
+				MatrixStack::Ref matrix = MatrixStack::World.push();
+				matrix->translate(Vec3(xPos, yPos, 0.0f));
+				m_feedbackOuter.render(m_materials.ui_fill_color);
+
 				currentShaderColor = Color::WHITE;
-				blit(GuiScale * xPos - 44.0f, GuiScale * yPos - 44.0f, 0, 0, 88, 88, 256, 256, &m_guiMaterials.ui_overlay_textured);
+				float scale = 0.5f + 0.5f * breakProgress;
+				matrix->scale(Vec3(scale, scale, 1.0f));
+				m_feedbackInner.render(m_guiMaterials.ui_invert_overlay);
 
-				textures.loadAndBindTexture("gui/feedback_fill.png");
-
-				// note: scale starts from 4.0f
-				float halfWidth = (40.0f * breakProgress + 48.0f) / 2.0f;
-
-				blit(GuiScale * xPos - halfWidth, GuiScale * yPos - halfWidth, 0, 0, halfWidth * 2, halfWidth * 2, 256, 256, &m_guiMaterials.ui_invert_overlay_textured);
+				matrix.release();
 			}
 		}
 		else
 		{
-			float xPos = input.m_feedbackX;
-			float yPos = input.m_feedbackY;
+			_buildFeedbackMeshes();
 
-			textures.loadAndBindTexture("gui/feedback_outer.png");
-			currentShaderColor = Color(1.0f, 1.0f, 1.0f, Mth::Min(1.0f, input.m_feedbackAlpha));
-			blit(GuiScale * xPos - 44.0f, GuiScale * yPos - 44.0f, 0, 0, 88, 88, 256, 256, &m_guiMaterials.ui_overlay_textured);
+			float xPos = GuiScale * input.m_feedbackX;
+			float yPos = GuiScale * input.m_feedbackY;
+
+			float fadeAlpha = (alpha >= 0.5f) ? (0.8f * alpha) : Mth::Min(0.4f, alpha * 0.4f);
+
+			currentShaderColor = Color(1.0f, 1.0f, 1.0f, fadeAlpha);
+
+			MatrixStack::Ref matrix = MatrixStack::World.push();
+			matrix->translate(Vec3(xPos, yPos, 0.0f));
+			m_feedbackOuter.render(m_materials.ui_fill_color);
+			matrix.release();
 		}
 	}
 }
@@ -781,7 +841,7 @@ int Gui::getNumSlots()
     if (mc.getOptions()->getUiTheme() == UI_POCKET)
 		return 6;
 
-	return 9;
+	return 9 + m_pMinecraft->useTouchscreen();
 }
 
 int Gui::getNumUsableSlots()

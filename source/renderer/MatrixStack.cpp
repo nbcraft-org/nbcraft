@@ -182,6 +182,7 @@ void MatrixStack::Ref::release()
 
 Matrix* MatrixStack::Ref::operator->()
 {
+	m_pStack->m_bIsDirty = true;
     return m_pMatrix;
 }
 

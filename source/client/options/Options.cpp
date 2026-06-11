@@ -78,6 +78,8 @@ Options::Options(Minecraft* mc, const std::string& folderPath) :
 	, m_hideGui("gfx_hidegui", "options.hideGui", false)
 	, m_thirdPerson("gfx_thirdperson", "options.thirdPerson", false)
 	, m_flightHax("misc_flycheat", "options.flightHax", false)
+	, m_swapJumpSneak("ctrl_swapjumpsneak", "options.swapJumpSneak", false)
+	, m_buttonSize("ctrl_buttonsize", "options.buttonSize", 1.0f)
 	, m_guiScale("gfx_guiscale", "options.guiScale", 0, ValuesBuilder().add("options.guiScale.auto").add("options.guiScale.small").add("options.guiScale.normal").add(("options.guiScale.large")))
 	, m_gamma("gfx_gamma", "options.gamma", 0.50f)
 	, m_playerName("mp_username", "options.username", "Steve")
@@ -106,6 +108,8 @@ Options::Options(Minecraft* mc, const std::string& folderPath) :
 	add(m_invertMouse);
 	add(m_difficulty);
 	add(m_splitControls);
+	add(m_swapJumpSneak);
+	add(m_buttonSize);
 	add(m_sensitivity);
 	add(m_viewDistance);
 	add(m_viewBobbing);
@@ -823,6 +827,20 @@ void LogoTypeOption::apply()
 		LogoRenderer::singleton().init(m_pMinecraft);
 		LogoRenderer::singleton().build();
 	}
+}
+
+void SwapJumpSneakOption::apply()
+{
+	if (!m_pMinecraft || !m_pMinecraft->m_pInputHolder)
+		return;
+	m_pMinecraft->m_pInputHolder->setScreenSize(Minecraft::width, Minecraft::height);
+}
+
+void ButtonSizeOption::apply()
+{
+	if (!m_pMinecraft || !m_pMinecraft->m_pInputHolder)
+		return;
+	m_pMinecraft->m_pInputHolder->setScreenSize(Minecraft::width, Minecraft::height);
 }
 
 std::string HUDSizeOption::getDisplayValue() const

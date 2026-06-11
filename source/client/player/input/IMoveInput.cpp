@@ -6,43 +6,44 @@
 	SPDX-License-Identifier: BSD-1-Clause
  ********************************************************************/
 
-#include "IMoveInput.hpp"
+#pragma once
 
-IMoveInput::IMoveInput() :
-	m_horzInput(0.0f),
-	m_vertInput(0.0f),
-	m_bWasJumping(false),
-	m_bJumping(false),
-	m_bFlyUp(false),
-	m_bSneaking(false)
-{
-}
+#include "compat/LegacyCPP.hpp"
 
-IMoveInput::~IMoveInput()
-{
-}
+class Player;
 
-void IMoveInput::releaseAllKeys()
+enum
 {
-}
+	INPUT_FORWARD,
+	INPUT_BACKWARD,
+	INPUT_LEFT,
+	INPUT_RIGHT,
+	INPUT_JUMP,
+	INPUT_SNEAK,
+	INPUT_FORWARDLEFT,
+	INPUT_FORWARDRIGHT,
+	INPUT_FLYUP,
+	INPUT_FLYDOWN
+};
 
-void IMoveInput::render(float f)
+class IMoveInput
 {
-}
+public:
+	IMoveInput();
+	virtual ~IMoveInput();
 
-void IMoveInput::setKey(int eventKey, bool eventKeyState)
-{
-}
+	virtual void releaseAllKeys();
+	virtual void render(float f);
+	virtual void setKey(int eventKey, bool eventKeyState);
+	virtual void setScreenSize(int width, int height);
+	virtual void tick(Player*);
 
-void IMoveInput::setScreenSize(int width, int height)
-{
-}
+public:
+	float m_horzInput;
+	float m_vertInput;
+	bool m_bWasJumping;
+	bool m_bJumping;
+	bool m_bFlyUp;
+	bool m_bSneaking;
+};
 
-void IMoveInput::tick(Player* pPlayer)
-{
-	if (m_bSneaking)
-	{
-		m_horzInput = m_horzInput * 0.3f;
-		m_vertInput = m_vertInput * 0.3f;
-	}
-}
