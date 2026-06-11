@@ -59,7 +59,9 @@ Gui::Gui(Minecraft* pMinecraft)
 
 	m_pMinecraft = pMinecraft;
 
+#ifdef ENH_NEW_FEEDBACK_INDICATOR
 	m_feedbackMeshesBuilt = false;
+#endif
 }
 
 void Gui::addMessage(const std::string& s)
@@ -493,6 +495,7 @@ void Gui::renderMessages(bool bShowAll)
 	}
 }
 
+#ifdef ENH_NEW_FEEDBACK_INDICATOR
 void Gui::_buildFeedbackMeshes()
 {
 	if (m_feedbackMeshesBuilt)
@@ -537,6 +540,7 @@ void Gui::_buildFeedbackMeshes()
 	}
 	m_feedbackInner = t.end("feedback_inner", false);
 }
+#endif
 
 void Gui::renderHearts(bool topLeft)
 {
@@ -694,6 +698,7 @@ void Gui::renderProgressIndicator(int width, int height)
 			matrix->scale(mc.getOptions()->m_hudSize.get());
 		blit(-8, -8, 0, 0, 16, 16, 0, 0, &m_guiMaterials.ui_crosshair);
 	}
+#ifdef ENH_NEW_FEEDBACK_INDICATOR
 	else
 	{
 		IInputHolder& input = *mc.m_pInputHolder;
@@ -750,6 +755,41 @@ void Gui::renderProgressIndicator(int width, int height)
 			matrix.release();
 		}
 	}
+#else
+	else
+	{
+		IInputHolder& input = *mc.m_pInputHolder;
+		float breakProgress = m_progress;
+
+		if (breakProgress > 0.0f || input.m_feedbackAlpha < 0.0f)
+		{
+			if (breakProgress > 0.0f)
+			{
+				float xPos = input.m_feedbackX;
+				float yPos = input.m_feedbackY;
+
+				textures.loadAndBindTexture("gui/feedback_outer.png");
+				currentShaderColor = Color::WHITE;
+				blit(GuiScale * xPos - 44.0f, GuiScale * yPos - 44.0f, 0, 0, 88, 88, 256, 256, &m_guiMaterials.ui_overlay_textured);
+
+				textures.loadAndBindTexture("gui/feedback_fill.png");
+
+				float halfWidth = (40.0f * breakProgress + 48.0f) / 2.0f;
+
+				blit(GuiScale * xPos - halfWidth, GuiScale * yPos - halfWidth, 0, 0, halfWidth * 2, halfWidth * 2, 256, 256, &m_guiMaterials.ui_invert_overlay_textured);
+			}
+		}
+		else
+		{
+			float xPos = input.m_feedbackX;
+			float yPos = input.m_feedbackY;
+
+			textures.loadAndBindTexture("gui/feedback_outer.png");
+			currentShaderColor = Color(1.0f, 1.0f, 1.0f, Mth::Min(1.0f, input.m_feedbackAlpha));
+			blit(GuiScale * xPos - 44.0f, GuiScale * yPos - 44.0f, 0, 0, 88, 88, 256, 256, &m_guiMaterials.ui_overlay_textured);
+		}
+	}
+#endif
 }
 
 void Gui::renderExperience()
@@ -841,7 +881,7 @@ int Gui::getNumSlots()
     if (mc.getOptions()->getUiTheme() == UI_POCKET)
 		return 6;
 
-	return 9 + m_pMinecraft->useTouchscreen();
+	return 9 + (m_pMinecraft->useTouchscreen() ? 1 : 0);
 }
 
 int Gui::getNumUsableSlots()

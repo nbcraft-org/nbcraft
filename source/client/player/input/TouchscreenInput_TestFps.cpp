@@ -369,7 +369,7 @@ void TouchscreenInput_TestFps::tick(Player* pPlayer)
 	IMoveInput::tick(pPlayer);
 }
 
-static void RenderTouchButton(Tesselator* t, PolygonArea* pArea, int srcX, int srcY, int size = -1, float visualScale = 1.0f, float offsetY = 0.0f)
+void _renderTouchButton(Tesselator* t, PolygonArea* pArea, int srcX, int srcY, int size = -1, float visualScale = 1.0f, float offsetY = 0.0f)
 {
 	if (size == -1)
 	{
@@ -432,66 +432,66 @@ void TouchscreenInput_TestFps::render(float f)
 	if (m_bForwardBeingHeld && !isButtonDown(100 + INPUT_JUMP)) 
 	{
 		t.color(isButtonDown(100 + INPUT_FORWARDLEFT) ? 0xC0C0C0 : 0xFFFFFF, 0x80);
-		RenderTouchButton(&t, m_pAreaForwardLeft, 0, 132);
+		_renderTouchButton(&t, m_pAreaForwardLeft, 0, 132);
 		
 		t.color(isButtonDown(100 + INPUT_FORWARDRIGHT) ? 0xC0C0C0 : 0xFFFFFF, 0x80);
-		RenderTouchButton(&t, m_pAreaForwardRight, 26, 132);
+		_renderTouchButton(&t, m_pAreaForwardRight, 26, 132);
 	}
 
 	t.color(isButtonDown(100 + INPUT_LEFT) ? 0xC0C0C0 : 0xFFFFFF, 0x80);
-	RenderTouchButton(&t, m_pAreaLeft, 26, 106);
+	_renderTouchButton(&t, m_pAreaLeft, 26, 106);
 
 	t.color(isButtonDown(100 + INPUT_RIGHT) ? 0xC0C0C0 : 0xFFFFFF, 0x80);
-	RenderTouchButton(&t, m_pAreaRight, 78, 106);
+	_renderTouchButton(&t, m_pAreaRight, 78, 106);
 
 	t.color(isButtonDown(100 + INPUT_JUMP) ? 0xC0C0C0 : 0xFFFFFF, 0x80);
 	(flying) ?
-		RenderTouchButton(&t, m_pAreaJump, 104, 132) : RenderTouchButton(&t, m_pAreaJump, 104, 106);
+		_renderTouchButton(&t, m_pAreaJump, 104, 132) : _renderTouchButton(&t, m_pAreaJump, 104, 106);
 
 	t.color(isButtonDown(100 + INPUT_FORWARD) ? 0xC0C0C0 : 0xFFFFFF, 0x80);
-	RenderTouchButton(&t, m_pAreaForward, 0, 106);
+	_renderTouchButton(&t, m_pAreaForward, 0, 106);
 
 	t.color(isButtonDown(100 + INPUT_BACKWARD) ? 0xC0C0C0 : 0xFFFFFF, 0x80);
-	RenderTouchButton(&t, m_pAreaBackward, 52, 106);
+	_renderTouchButton(&t, m_pAreaBackward, 52, 106);
 
 	if (flying)
 	{
 		if (m_pAreaFlyUp)
 		{
 			t.color(isButtonDown(100 + INPUT_FLYUP) ? 0xC0C0C0 : 0xFFFFFF, 0x80);
-			RenderTouchButton(&t, m_pAreaFlyUp, 52, 132);
+			_renderTouchButton(&t, m_pAreaFlyUp, 52, 132);
 		}
 		if (m_pAreaFlyDown)
 		{
 			t.color(isButtonDown(100 + INPUT_FLYDOWN) ? 0xC0C0C0 : 0xFFFFFF, 0x80);
-			RenderTouchButton(&t, m_pAreaFlyDown, 78, 132);
+			_renderTouchButton(&t, m_pAreaFlyDown, 78, 132);
 		}
 	}
 	else if (m_pAreaSneak)
 	{
 		t.color(m_bSneaking ? 0xC0C0C0 : 0xFFFFFF, 0x80);
 		if (m_bSneaking)
-			RenderTouchButton(&t, m_pAreaSneak, 218, 64, 18, 0.7f, 4.0f);
+			_renderTouchButton(&t, m_pAreaSneak, 218, 64, 18, 0.7f, 4.0f);
 		else
-			RenderTouchButton(&t, m_pAreaSneak, 218, 82, 18, 0.7f, 4.0f);
+			_renderTouchButton(&t, m_pAreaSneak, 218, 82, 18, 0.7f, 4.0f);
 	}
 
 #else
 	// Original pocket edition buttons
 	t.color(isButtonDown(100 + INPUT_LEFT) ? 0xC0C0C0 : 0xFFFFFF, 0x80);
-	RenderTouchButton(&t, m_pAreaLeft, 64, 112);
+	_renderTouchButton(&t, m_pAreaLeft, 64, 112);
 
 	t.color(isButtonDown(100 + INPUT_RIGHT) ? 0xC0C0C0 : 0xFFFFFF, 0x80);
-	RenderTouchButton(&t, m_pAreaRight, 192, 112);
+	_renderTouchButton(&t, m_pAreaRight, 192, 112);
 
 	t.color(isButtonDown(100 + INPUT_FORWARD) ? 0xC0C0C0 : 0xFFFFFF, 0x80);
-	RenderTouchButton(&t, m_pAreaForward, 0, 112);
+	_renderTouchButton(&t, m_pAreaForward, 0, 112);
 
 	t.color(isButtonDown(100 + INPUT_BACKWARD) ? 0xC0C0C0 : 0xFFFFFF, 0x80);
-	RenderTouchButton(&t, m_pAreaBackward, 128, 112);
+	_renderTouchButton(&t, m_pAreaBackward, 128, 112);
 
 	t.color(isButtonDown(100 + INPUT_JUMP) ? 0xC0C0C0 : 0xFFFFFF, 0x80);
-	RenderTouchButton(&t, m_pAreaJump, 0, 176);
+	_renderTouchButton(&t, m_pAreaJump, 0, 176);
 #endif
 	t.draw(m_materials.ui_texture_and_color_nocull);
 }

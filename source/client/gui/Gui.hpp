@@ -50,10 +50,6 @@ public:
 private:
 	void renderPumpkin(int, int);
 	void renderVignette(float, int, int);
-	void _buildFeedbackMeshes();
-	mce::Mesh m_feedbackOuter;
-	mce::Mesh m_feedbackInner;
-	bool m_feedbackMeshesBuilt;
 
 public:
 	Gui(Minecraft* pMinecraft);
@@ -109,5 +105,13 @@ public:
 	bool field_A3C;
 	bool m_bRenderMessages;
     bool m_bRenderHunger;
+
+private:
+#ifdef ENH_NEW_FEEDBACK_INDICATOR
+	void _buildFeedbackMeshes();
+	mce::Mesh m_feedbackOuter;
+	mce::Mesh m_feedbackInner;
+	bool m_feedbackMeshesBuilt;
+#endif
 };
 
