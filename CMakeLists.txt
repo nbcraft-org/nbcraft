@@ -5,6 +5,13 @@ project(nbcraft)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 
+# MC_VERSION string is an 8 digit number with 4 components, era, major, minor, and patch.
+# Each component takes 2 digits. Major, minor, and patch are self explanatory, era designates
+# if the version is from alpha, beta, or release. Alpha is 0, beta is 1, and release is 2.
+# In the future, this should be made an option in options.txt that can be changed at runtime.
+set(MC_VERSION "01010703" CACHE STRING "Version to emulate")
+add_compile_definitions(MC_VERSION=${MC_VERSION})
+
 set(CMAKE_C_STANDARD 99)
 
 # Warnings

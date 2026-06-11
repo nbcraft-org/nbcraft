@@ -321,9 +321,11 @@ Recipes::Recipes()
         .add('A', Item::ironIngot)
         .add('B', Item::flint));
 
+#if MC_VERSION >= 01010700
     add(ShapedRecipeBuilder("A ",
                             " A", ItemStack(Item::shears, 1))
         .add('A', Item::ironIngot));
+#endif
 
     add(ShapedRecipeBuilder("###", ItemStack(Item::bread, 1))
         .add('#', Item::wheat));
@@ -411,6 +413,7 @@ Recipes::Recipes()
         .add('#', Tile::cloth)
         .add('X', Tile::wood));
 
+#if MC_VERSION >= 01010700
     //add(ShapedRecipeBuilder("###",
     //                        "XIX",
     //                        "XRX", ItemStack(Tile::piston))
@@ -423,6 +426,7 @@ Recipes::Recipes()
     //                        "#", ItemStack(Tile::stickyPiston))
     //    .add('X', Item::slimeBall)
     //    .add('#', Tile::piston));
+#endif
 
     // ClothDyeRecipes
     for (int i = 0; i < 16; ++i)
