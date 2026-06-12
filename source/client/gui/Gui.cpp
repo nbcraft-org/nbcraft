@@ -56,12 +56,9 @@ Gui::Gui(Minecraft* pMinecraft)
 	field_A3C = true;
 	m_bRenderMessages = true;
     m_bRenderHunger = false;
+	m_feedbackMeshesBuilt = false;
 
 	m_pMinecraft = pMinecraft;
-
-#ifdef ENH_NEW_FEEDBACK_INDICATOR
-	m_feedbackMeshesBuilt = false;
-#endif
 }
 
 void Gui::addMessage(const std::string& s)
@@ -495,7 +492,6 @@ void Gui::renderMessages(bool bShowAll)
 	}
 }
 
-#ifdef ENH_NEW_FEEDBACK_INDICATOR
 void Gui::_buildFeedbackMeshes()
 {
 	if (m_feedbackMeshesBuilt)
@@ -540,7 +536,6 @@ void Gui::_buildFeedbackMeshes()
 	}
 	m_feedbackInner = t.end("feedback_inner", false);
 }
-#endif
 
 void Gui::renderHearts(bool topLeft)
 {
