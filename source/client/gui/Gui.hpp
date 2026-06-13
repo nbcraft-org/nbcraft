@@ -42,9 +42,6 @@ protected:
 
 private:
 	static bool _isVignetteAvailable;
-	bool m_feedbackMeshesBuilt;
-	mce::Mesh m_feedbackOuter;
-	mce::Mesh m_feedbackInner;
 
 public:
 	static bool isVignetteAvailable() { return _isVignetteAvailable; }
@@ -109,5 +106,8 @@ public:
 	bool field_A3C;
 	bool m_bRenderMessages;
     bool m_bRenderHunger;
+	bool m_feedbackMeshesBuilt;
+	mce::Mesh m_feedbackOuter;
+	mce::Mesh m_feedbackInner;
 };
 
