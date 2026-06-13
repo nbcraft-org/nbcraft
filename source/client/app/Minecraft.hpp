@@ -170,6 +170,7 @@ public:
 	int m_progressPercent;
 	Timer m_timer;
 	bool m_bPreparingLevel;
+	bool m_bPendingResize;
 	LevelStorageSource* m_pLevelStorageSource; // TODO
 	int field_D9C;
 	int field_DA0;

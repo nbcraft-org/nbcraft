@@ -43,6 +43,7 @@ public:
 	RectangleArea m_screenArea;
 	RectangleArea field_40;
 	RectangleArea field_58;
+	RectangleArea m_sneakExclude;
 	IInputHolder* m_pInputHolder;
 	float field_78;
 	float field_7C;
