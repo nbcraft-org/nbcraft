@@ -42,6 +42,9 @@ protected:
 
 private:
 	static bool _isVignetteAvailable;
+	bool m_feedbackMeshesBuilt;
+	mce::Mesh m_feedbackOuter;
+	mce::Mesh m_feedbackInner;
 
 public:
 	static bool isVignetteAvailable() { return _isVignetteAvailable; }
@@ -51,9 +54,6 @@ private:
 	void renderPumpkin(int, int);
 	void renderVignette(float, int, int);
 	void _buildFeedbackMeshes();
-	bool m_feedbackMeshesBuilt;
-	mce::Mesh m_feedbackOuter;
-	mce::Mesh m_feedbackInner;
 
 public:
 	Gui(Minecraft* pMinecraft);
