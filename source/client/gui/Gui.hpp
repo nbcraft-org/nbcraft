@@ -106,8 +106,10 @@ public:
 	bool field_A3C;
 	bool m_bRenderMessages;
     bool m_bRenderHunger;
-	bool m_feedbackMeshesBuilt;
 	mce::Mesh m_feedbackOuter;
 	mce::Mesh m_feedbackInner;
+
+private:
+	bool m_feedbackMeshesBuilt;
 };
 
