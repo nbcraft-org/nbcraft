@@ -84,6 +84,11 @@ public:
 	static float GuiScale;
 	static int GuiWidth;
 	static int GuiHeight;
+    
+private:
+	bool m_feedbackMeshesBuilt;
+	mce::Mesh m_feedbackOuter;
+	mce::Mesh m_feedbackInner;
 
 protected:
 	Materials m_guiMaterials;
@@ -106,10 +111,5 @@ public:
 	bool field_A3C;
 	bool m_bRenderMessages;
     bool m_bRenderHunger;
-	mce::Mesh m_feedbackOuter;
-	mce::Mesh m_feedbackInner;
-
-private:
-	bool m_feedbackMeshesBuilt;
 };
 
