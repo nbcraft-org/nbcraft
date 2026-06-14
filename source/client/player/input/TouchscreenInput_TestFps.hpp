@@ -30,7 +30,11 @@ public:
 	void render(float f) override;
 
 	RectangleArea getRectangleArea();
+	RectangleArea getSneakArea();
 	bool isButtonDown(int key);
+#ifdef ENH_NEW_TOUCH_CONTROLS
+	void setSneakExcludeRef(RectangleArea* pRect);
+#endif
 
 private:
 	RectangleArea m_rectArea;
@@ -48,7 +52,19 @@ private:
 #ifdef ENH_NEW_TOUCH_CONTROLS
 	PolygonArea* m_pAreaForwardLeft;
 	PolygonArea* m_pAreaForwardRight;
+	PolygonArea* m_pAreaSneak;
+	PolygonArea* m_pAreaFlyUp;
+	PolygonArea* m_pAreaFlyDown;
+	float m_fButtonSize;
+	float m_fRightSideX;
+	float m_fMiddleY;
+	RectangleArea* m_pSneakExcludeRef;
 #endif
-	bool field_6C[8];
+	bool field_6C[10];
+	bool m_bSneakBeingHeld;
+	float m_fLastSneakTapTime;
+	float m_fLastSneakToggleTime;
+	bool m_bPersistentSneak;
+	RectangleArea m_rightRectArea;
 };
 
