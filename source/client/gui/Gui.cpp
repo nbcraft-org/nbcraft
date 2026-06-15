@@ -601,7 +601,7 @@ void Gui::renderArmor(bool topLeft)
 		return;
 	
 	int hotbarWidth = (topLeft) ? 0 : (2 + getNumSlots() * 20);
-	int armorX = (topLeft) ? (GuiWidth / 2 - 11) : - 91 + (hotbarWidth - 9);
+	int armorX = (topLeft) ? (GuiWidth / 2 - 11) : (hotbarWidth / 2 - 9); // get hotbar width if number of slots change
 	int armorY = (topLeft) ? 2 - GuiHeight : -32;
 
 	if (armor > 0)
@@ -657,7 +657,9 @@ void Gui::renderBubbles(bool topLeft)
             // Renders to the left of the hotbar, why?
             /*bubbleX = cenX - 191;
             bubbleY = height - 19;*/
-            bubbleX = -91;
+			
+            int hotbarWidth = 2 + getNumSlots() * 20; // get hotbar width if number of slots change
+            bubbleX = -hotbarWidth / 2;
             bubbleY = -41;
         }
         

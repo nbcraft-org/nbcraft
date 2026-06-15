@@ -150,6 +150,7 @@ public:
 	virtual bool isFree(const Vec3& off, float expand) const;
 	virtual bool isInWall() const;
 	virtual bool isInWater();
+	bool wasInWater() const { return m_bWasInWater; }
 	virtual bool isInLava() const;
 	virtual bool isUnderLiquid(Material*) const;
 	virtual float getHeadHeight() const { return 0.0f; }

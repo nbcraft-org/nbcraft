@@ -255,10 +255,9 @@ void TouchscreenInput_TestFps::tick(Player* pPlayer)
 			if (pPlayer->isInWater())
 				m_bJumping = true;
 			else
-			{
 				bForwardPressed = true;
-				m_vertInput += 1.0f;
-			}
+
+			m_vertInput += 1.0f;
 			break;
 
 		case 100 + INPUT_BACKWARD:
