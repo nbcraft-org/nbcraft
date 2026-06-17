@@ -233,6 +233,16 @@ void Minecraft::reloadInput()
 	getOptions()->m_bUseMouseForDigging = !isTouchscreen();
 }
 
+void Minecraft::resetInputMethod()
+{
+	if (platform()->hasGamepad())
+		SetInputMethod(InputMethod::CONTROLLER);
+	else if (platform()->isTouchscreen())
+		SetInputMethod(InputMethod::TOUCHSCREEN);
+	else
+		SetInputMethod(InputMethod::KEYBOARD);
+}
+
 int Minecraft::getLicenseId()
 {
 	if (m_licenseID < 0)
@@ -570,7 +580,7 @@ void Minecraft::handleBuildAction(const BuildActionIntention& action)
 void Minecraft::tickInput()
 {
 	if (!platform()->hasGamepad() && useController())
-		SetInputMethod(platform()->isTouchscreen() ? InputMethod::TOUCHSCREEN : InputMethod::KEYBOARD);
+		resetInputMethod();
 
 	if (!m_pInputHolder->allowsInputMethod(GetInputMethod()))
 		reloadInput();

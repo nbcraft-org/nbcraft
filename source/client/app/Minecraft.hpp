@@ -78,6 +78,7 @@ public:
 	void handleKeyboardClosed();
 	void resetInput();
 	void reloadInput();
+	void resetInputMethod();
 	void sendMessage(const std::string& message);
 	void respawnPlayer();
 	void freeResources(bool bCopyMap);

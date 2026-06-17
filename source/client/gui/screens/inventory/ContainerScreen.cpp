@@ -68,6 +68,9 @@ Slot* ContainerScreen::_findSlot()
 
 Slot* ContainerScreen::_findSlot(int mouseX, int mouseY)
 {
+    if (!m_pMenu)
+        return nullptr;
+
     for (std::vector<Slot*>::iterator it = m_pMenu->m_slots.begin(); it != m_pMenu->m_slots.end(); ++it)
     {
         Slot* slot = *it;
