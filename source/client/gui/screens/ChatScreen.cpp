@@ -58,7 +58,7 @@ void ChatScreen::render(float f)
 	Screen::render(f);
 }
 
-void ChatScreen::onUserAction(const ActionInfo& button)
+void ChatScreen::handleUserAction(const ActionInfo& button)
 {
 	if (!_useController())
 	{
@@ -66,7 +66,7 @@ void ChatScreen::onUserAction(const ActionInfo& button)
 			sendMessageAndExit();
 	}
 
-	Screen::onUserAction(button);
+	Screen::handleUserAction(button);
 }
 
 void ChatScreen::handleKeyboardClosed()

@@ -337,7 +337,7 @@ void IngameBlockSelectionScreen::removed()
 	m_pMinecraft->m_pGui->inventoryUpdated();
 }
 
-void IngameBlockSelectionScreen::onUserAction(const ActionInfo& info)
+void IngameBlockSelectionScreen::handleUserAction(const ActionInfo& info)
 {
     if (!_useController() && m_pMinecraft->getOptions()->isAction(AID_INVENTORY, info))
     {
@@ -345,7 +345,7 @@ void IngameBlockSelectionScreen::onUserAction(const ActionInfo& info)
     }
 	else
 	{
-        Screen::onUserAction(info);
+        Screen::handleUserAction(info);
 	}
 }
 

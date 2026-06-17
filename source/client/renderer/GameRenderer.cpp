@@ -863,6 +863,7 @@ void GameRenderer::renderPointer(const MenuPointer& pointer)
 
 	mtx->translate(Vec3(-(C_MENU_POINTER_WIDTH / 2), -(C_MENU_POINTER_HEIGHT / 2), 0));
 
+	currentShaderColor = Color::WHITE;
 	textures.loadAndBindTexture("gui/pointer.png", true);
 	m_pointerMesh.render(ScreenRenderer::singleton().m_materials.ui_textured);
 }

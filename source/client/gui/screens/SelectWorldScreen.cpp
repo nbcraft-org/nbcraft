@@ -76,7 +76,7 @@ bool SelectWorldScreen::isInGameScreen()
 	return true;
 }
 
-void SelectWorldScreen::onUserAction(const ActionInfo& button)
+void SelectWorldScreen::handleUserAction(const ActionInfo& button)
 {
 	Options& options = *m_pMinecraft->getOptions();
 #ifndef ORIGINAL_CODE
@@ -93,7 +93,7 @@ void SelectWorldScreen::onUserAction(const ActionInfo& button)
 			m_pWorldSelectionList->stepRight();
 	}
 
-	Screen::onUserAction(button);
+	Screen::handleUserAction(button);
 }
 
 static char g_SelectWorldFilterArray[] = { '/','\n','\r','\x09','\0','\xC','`','?','*','\\','<','>','|','"',':'};

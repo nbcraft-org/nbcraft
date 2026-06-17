@@ -137,6 +137,9 @@ public:
 	static const bool DEADMAU5_CAMERA_CHEATS;
 	static int customDebugId;
 
+private:
+	float m_lastBaseScale;
+
 protected:
 	Options* m_pOptions;
 	ScreenChooser* m_pScreenChooser;

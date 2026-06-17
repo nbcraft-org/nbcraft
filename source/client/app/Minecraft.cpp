@@ -67,6 +67,7 @@ const char* Minecraft::progressMessages[] =
 
 Minecraft::Minecraft()
 {
+	m_lastBaseScale = -1.0f;
 	m_pOptions = nullptr;
 	m_pScreenChooser = nullptr;
 	field_18 = false;
@@ -317,8 +318,6 @@ void Minecraft::setScreen(Screen* pScreen)
 		return;
 	}
 
-	float lastScale = getBestScaleForThisScreenSize(Minecraft::width, Minecraft::height);
-
 	if (m_pScreen)
 	{
 		m_pScreen->removed();
@@ -338,14 +337,7 @@ void Minecraft::setScreen(Screen* pScreen)
 		pScreen->init(this, Gui::GuiWidth, Gui::GuiHeight);
 	}
 
-	float scale = getBestScaleForThisScreenSize(Minecraft::width, Minecraft::height);
-
-	if (scale != lastScale)
-	{
-		sizeUpdate(Minecraft::width, Minecraft::height);
-		if (pScreen)
-			pScreen->initMenuPointer();
-	}
+	sizeUpdate(Minecraft::width, Minecraft::height);
 
 	if (pScreen)
 	{
@@ -1134,8 +1126,12 @@ void Minecraft::prepareLevel(const std::string& unused)
 
 void Minecraft::sizeUpdate(int newWidth, int newHeight)
 {
+	float baseScale = getBestScaleForThisScreenSize(newWidth, newHeight);
+	if (baseScale == m_lastBaseScale)
+		return;
+
 	// re-calculate the GUI scale.
-	Gui::GuiScale = getBestScaleForThisScreenSize(newWidth, newHeight) / GetRenderScaleMultiplier();
+	Gui::GuiScale = baseScale / GetRenderScaleMultiplier();
 
 	// The ceil gives an extra pixel to the screen's width and height, in case the GUI scale doesn't
 	// divide evenly into width or height, so that none of the game screen is uncovered.
@@ -1143,15 +1139,20 @@ void Minecraft::sizeUpdate(int newWidth, int newHeight)
 	Gui::GuiHeight = ceilf(Minecraft::height * Gui::GuiScale);
 
 	if (m_pScreen)
+	{
 		m_pScreen->setSize(
 			Gui::GuiWidth,
 			Gui::GuiHeight
 		);
+		m_pScreen->centerMenuPointer();
+	}
 
 	LogoRenderer::singleton().build(Gui::GuiWidth);
 
 	if (m_pInputHolder)
 		m_pInputHolder->setScreenSize(Minecraft::width, Minecraft::height);
+
+	m_lastBaseScale = baseScale;
 }
 
 void Minecraft::setTextboxText(const std::string& text)

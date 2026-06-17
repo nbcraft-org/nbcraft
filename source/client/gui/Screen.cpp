@@ -107,7 +107,7 @@ void Screen::_playSelectSound()
 
 void Screen::initMenuPointer()
 {
-	handlePointerLocation(m_width / 2, m_height / 2);
+	centerMenuPointer();
 }
 
 void Screen::_renderPointer()
@@ -151,7 +151,7 @@ void Screen::init(Minecraft* pMinecraft, int width, int height)
 	m_bLastPointerPressedState = false;
 }
 
-void Screen::onUserAction(const ActionInfo& action)
+void Screen::handleUserAction(const ActionInfo& action)
 {
 	Options& options = *m_pMinecraft->getOptions();
 	GuiElement* element = _getSelectedElement();
@@ -488,6 +488,11 @@ void Screen::setSize(int width, int height)
 	init();
 }
 
+void Screen::centerMenuPointer()
+{
+	handlePointerLocation(m_width / 2, m_height / 2);
+}
+
 void Screen::onRender(float f)
 {
 	m_yOffset = getYOffset();
@@ -774,7 +779,7 @@ void Screen::keyboardEvent()
 	}
 
 	if (Keyboard::getEventKeyState())
-		onUserAction(ActionInfo(Keyboard::getEventKey(), GameController::BUTTON_NONE));
+		handleUserAction(ActionInfo(Keyboard::getEventKey(), GameController::BUTTON_NONE));
 }
 
 void Screen::controllerEvent()
@@ -793,7 +798,7 @@ void Screen::controllerEvent()
 	}
 
 	if (GameControllerManager::getEventButtonState())
-		onUserAction(ActionInfo(-1, GameControllerManager::getEventButton()));
+		handleUserAction(ActionInfo(-1, GameControllerManager::getEventButton()));
 }
 
 void Screen::checkForPointerEvent(MouseButtonType button)

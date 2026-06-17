@@ -40,7 +40,7 @@ public:
 	void pointerPressed(const MenuPointer& pointer, MouseButtonType btn) override;
 	void pointerReleased(const MenuPointer& pointer, MouseButtonType btn) override;
 	void removed() override;
-    void onUserAction(const ActionInfo&) override;
+    void handleUserAction(const ActionInfo&) override;
 	bool isPauseScreen() override;
 
 private:

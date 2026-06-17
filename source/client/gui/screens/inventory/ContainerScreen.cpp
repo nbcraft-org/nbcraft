@@ -314,7 +314,7 @@ void ContainerScreen::slotClicked(const MenuPointer& pointer, MouseButtonType bu
     slotClicked(pointer, button, m_pMinecraft->m_pPlatform->shiftPressed());
 }
 
-void ContainerScreen::onUserAction(const ActionInfo& button)
+void ContainerScreen::handleUserAction(const ActionInfo& button)
 {
     Options& options = *m_pMinecraft->getOptions();
     if (!_useController() && options.isAction(AID_INVENTORY, button))
@@ -341,7 +341,7 @@ void ContainerScreen::onUserAction(const ActionInfo& button)
             return;
         }
 
-        Screen::onUserAction(button);
+        Screen::handleUserAction(button);
     }
 }
 

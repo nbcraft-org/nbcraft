@@ -67,6 +67,7 @@ protected:
 public:
 	void init(Minecraft*, int, int);
 	void setSize(int width, int height);
+	void centerMenuPointer();
 	void onRender(float f);
 	bool onBack(bool b);
 	bool selectElementById(GuiElement::ID id);
@@ -117,7 +118,7 @@ public:
 	virtual void onTextBoxUpdated(int id) {};
 	virtual void pointerPressed(const MenuPointer& pointer, MouseButtonType btn);
 	virtual void pointerReleased(const MenuPointer& pointer, MouseButtonType btn);
-	virtual void onUserAction(const ActionInfo& action);
+	virtual void handleUserAction(const ActionInfo& action);
 	virtual void handleTextChar(char);
 	virtual void keyboardTextPaste(const std::string& text);
 	virtual float getScale(int width, int height);

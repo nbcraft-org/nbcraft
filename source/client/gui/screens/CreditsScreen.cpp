@@ -53,9 +53,9 @@ bool CreditsScreen::isInGameScreen()
 	return true;
 }
 
-void CreditsScreen::onUserAction(const ActionInfo& info)
+void CreditsScreen::handleUserAction(const ActionInfo& info)
 {
-	Screen::onUserAction(info);
+	Screen::handleUserAction(info);
 }
 
 void CreditsScreen::tick()

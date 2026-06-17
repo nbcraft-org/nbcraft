@@ -24,7 +24,7 @@ public:
 	void init() override;
 	void removed() override;
 	void render(float f) override;
-	void onUserAction(const ActionInfo& info) override;
+	void handleUserAction(const ActionInfo& info) override;
 	void handleKeyboardClosed() override;
 	bool isPauseScreen() override;
 
