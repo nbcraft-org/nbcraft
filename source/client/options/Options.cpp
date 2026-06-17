@@ -422,190 +422,190 @@ std::vector<std::string> Options::getOptionStrings()
 void Options::loadControls()
 {
 	// Win32 key codes are being used by default
-#define BM(idx, name, code) m_buttonMappings[idx] = ButtonMapping(name, code)
-	BM(BM_FORWARD,      "key.forward",       'W');
-	BM(BM_LEFT,         "key.left",          'A');
-	BM(BM_BACKWARD,     "key.back",          'S');
-	BM(BM_RIGHT,        "key.right",         'D');
-	BM(BM_JUMP,         "key.jump",          ' ');
-	BM(BM_CRAFTING,     "key.crafting",      'E');
-	BM(BM_INVENTORY,    "key.inventory",     'I');
-	BM(BM_DROP,         "key.drop",          'Q');
-	BM(BM_CHAT,         "key.chat",          'T');
-	BM(BM_FOG,          "key.fog",           'F');
-	BM(BM_SNEAK,        "key.sneak",         0x10); // VK_SHIFT. In original, it's 10 (misspelling?)
-	BM(BM_DESTROY,      "key.destroy",       'K');  // was 'X'
-	BM(BM_PLACE,        "key.place",         'L');  // was 'C'
-	BM(BM_MENU_UP,      "key.menu.up",       0x26); // VK_UP
-	BM(BM_MENU_DOWN,    "key.menu.down",     0x28); // VK_DOWN
-	BM(BM_MENU_LEFT,    "key.menu.left",     0x25); // VK_LEFT
-	BM(BM_MENU_RIGHT,   "key.menu.right",    0x27); // VK_RIGHT
-	BM(BM_MENU_TAB_LEFT,"key.menu.tab.left", 0x25);	// VK_LEFT
-	BM(BM_MENU_TAB_RIGHT, "key.menu.tab.right", 0x27);// VK_RIGHT
-	BM(BM_MENU_OK,      "key.menu.ok",       0x0D); // VK_RETURN
-	BM(BM_MENU_CANCEL,  "key.menu.cancel",   0x1B); // VK_ESCAPE, was 0x08 = VK_BACK
-	BM(BM_MENU_PAUSE,	"key.menu.pause",	 0x1B); // VK_ESCAPE
-	BM(BM_SLOT_1,       "key.slot.1",        '1');
-	BM(BM_SLOT_2,       "key.slot.2",        '2');
-	BM(BM_SLOT_3,       "key.slot.3",        '3');
-	BM(BM_SLOT_4,       "key.slot.4",        '4');
-	BM(BM_SLOT_5,       "key.slot.5",        '5');
-	BM(BM_SLOT_6,       "key.slot.6",        '6');
-	BM(BM_SLOT_7,       "key.slot.7",        '7');
-	BM(BM_SLOT_8,       "key.slot.8",        '8');
-	BM(BM_SLOT_9,       "key.slot.9",        '9');
-	BM(BM_SLOT_L,       "key.slot.left",     'Y');
-	BM(BM_SLOT_R,       "key.slot.right",    'U');
-	BM(BM_CONTAINER_QUICKMOVE, "key.container.quickmove", 0x10); // VK_SHIFT
-	BM(BM_CONTAINER_SPLIT,     "key.container.split",     0xBF); // VK_OEM_2 (keymap is unused on mouse & keyboard)
-	BM(BM_TOGGLEGUI,    "key.fn.gui",        0x70); // VK_F1
-	BM(BM_SCREENSHOT,   "key.fn.screenshot", 0x71); // VK_F2
-	BM(BM_TOGGLEDEBUG,  "key.fn.debug",      0x72); // VK_F3
-	BM(BM_TOGGLEAO,     "key.fn.ao",         0x73); // VK_F4
-	BM(BM_TOGGLE3RD,    "key.fn.3rd",        0x74); // VK_F5
-	BM(BM_FLY_UP,       "key.fly.up",        'X');
-	BM(BM_FLY_DOWN,     "key.fly.down",      'C');
-	BM(BM_CHAT_CMD,     "key.chat.cmd",      0xBF); // VK_OEM_2
+#define BM(idx, name, code) m_inputMappings[idx] = InputMapping(name, code)
+	BM(AID_FORWARD,      "key.forward",       'W');
+	BM(AID_LEFT,         "key.left",          'A');
+	BM(AID_BACKWARD,     "key.back",          'S');
+	BM(AID_RIGHT,        "key.right",         'D');
+	BM(AID_JUMP,         "key.jump",          ' ');
+	BM(AID_CRAFTING,     "key.crafting",      'E');
+	BM(AID_INVENTORY,    "key.inventory",     'I');
+	BM(AID_DROP,         "key.drop",          'Q');
+	BM(AID_CHAT,         "key.chat",          'T');
+	BM(AID_FOG,          "key.fog",           'F');
+	BM(AID_SNEAK,        "key.sneak",         0x10); // VK_SHIFT. In original, it's 10 (misspelling?)
+	BM(AID_DESTROY,      "key.destroy",       'K');  // was 'X'
+	BM(AID_PLACE,        "key.place",         'L');  // was 'C'
+	BM(AID_MENU_UP,      "key.menu.up",       0x26); // VK_UP
+	BM(AID_MENU_DOWN,    "key.menu.down",     0x28); // VK_DOWN
+	BM(AID_MENU_LEFT,    "key.menu.left",     0x25); // VK_LEFT
+	BM(AID_MENU_RIGHT,   "key.menu.right",    0x27); // VK_RIGHT
+	BM(AID_MENU_TAB_LEFT,"key.menu.tab.left", 0x25);	// VK_LEFT
+	BM(AID_MENU_TAB_RIGHT, "key.menu.tab.right", 0x27);// VK_RIGHT
+	BM(AID_MENU_OK,      "key.menu.ok",       0x0D); // VK_RETURN
+	BM(AID_MENU_CANCEL,  "key.menu.cancel",   0x1B); // VK_ESCAPE, was 0x08 = VK_BACK
+	BM(AID_MENU_PAUSE,	"key.menu.pause",	 0x1B); // VK_ESCAPE
+	BM(AID_SLOT_1,       "key.slot.1",        '1');
+	BM(AID_SLOT_2,       "key.slot.2",        '2');
+	BM(AID_SLOT_3,       "key.slot.3",        '3');
+	BM(AID_SLOT_4,       "key.slot.4",        '4');
+	BM(AID_SLOT_5,       "key.slot.5",        '5');
+	BM(AID_SLOT_6,       "key.slot.6",        '6');
+	BM(AID_SLOT_7,       "key.slot.7",        '7');
+	BM(AID_SLOT_8,       "key.slot.8",        '8');
+	BM(AID_SLOT_9,       "key.slot.9",        '9');
+	BM(AID_SLOT_L,       "key.slot.left",     'Y');
+	BM(AID_SLOT_R,       "key.slot.right",    'U');
+	BM(AID_CONTAINER_QUICKMOVE, "key.container.quickmove", 0x10); // VK_SHIFT
+	BM(AID_CONTAINER_SPLIT,     "key.container.split",     0xBF); // VK_OEM_2 (keymap is unused on mouse & keyboard)
+	BM(AID_TOGGLEGUI,    "key.fn.gui",        0x70); // VK_F1
+	BM(AID_SCREENSHOT,   "key.fn.screenshot", 0x71); // VK_F2
+	BM(AID_TOGGLEDEBUG,  "key.fn.debug",      0x72); // VK_F3
+	BM(AID_TOGGLEAO,     "key.fn.ao",         0x73); // VK_F4
+	BM(AID_TOGGLE3RD,    "key.fn.3rd",        0x74); // VK_F5
+	BM(AID_FLY_UP,       "key.fly.up",        'X');
+	BM(AID_FLY_DOWN,     "key.fly.down",      'C');
+	BM(AID_CHAT_CMD,     "key.chat.cmd",      0xBF); // VK_OEM_2
 #undef BM
 
 	// @TODO: These should **really** not be defined in here. How about AppPlatform?
 
-#define BM(idx,code) m_buttonMappings[idx].info.keyId = code
+#define BM(idx,code) m_inputMappings[idx].info.keyId = code
 #ifdef USE_SDL
-	BM(BM_FORWARD,       SDLVK_w);
-	BM(BM_LEFT,          SDLVK_a);
-	BM(BM_BACKWARD,      SDLVK_s);
-	BM(BM_RIGHT,         SDLVK_d);
-	BM(BM_JUMP,          SDLVK_SPACE);
-	BM(BM_DESTROY,       SDLVK_x);
-	BM(BM_PLACE,         SDLVK_c);
-	BM(BM_MENU_UP,       SDLVK_UP);
-	BM(BM_MENU_DOWN,     SDLVK_DOWN);
-	BM(BM_MENU_LEFT,     SDLVK_LEFT);
-	BM(BM_MENU_RIGHT,    SDLVK_RIGHT);
-	BM(BM_MENU_TAB_LEFT, SDLVK_LEFT);
-	BM(BM_MENU_TAB_RIGHT, SDLVK_RIGHT);
-	BM(BM_MENU_OK,       SDLVK_RETURN);
-	BM(BM_MENU_CANCEL,   SDLVK_ESCAPE);
-	BM(BM_MENU_PAUSE,	 SDLVK_ESCAPE);
-	BM(BM_DROP,          SDLVK_q);
-	BM(BM_CHAT,          SDLVK_t);
-	BM(BM_FOG,           SDLVK_f);
-	BM(BM_CRAFTING,      SDLVK_e);
-	BM(BM_INVENTORY,     SDLVK_i);
-	BM(BM_SNEAK,         SDLVK_LSHIFT);
-	BM(BM_SLOT_1,        SDLVK_1);
-	BM(BM_SLOT_2,        SDLVK_2);
-	BM(BM_SLOT_3,        SDLVK_3);
-	BM(BM_SLOT_4,        SDLVK_4);
-	BM(BM_SLOT_5,        SDLVK_5);
-	BM(BM_SLOT_6,        SDLVK_6);
-	BM(BM_SLOT_7,        SDLVK_7);
-	BM(BM_SLOT_8,        SDLVK_8);
-	BM(BM_SLOT_9,        SDLVK_9);
-	BM(BM_CONTAINER_QUICKMOVE, SDLVK_LSHIFT);
-	BM(BM_TOGGLEGUI,     SDLVK_F1);
-	BM(BM_SCREENSHOT,    SDLVK_F2);
-	BM(BM_TOGGLEDEBUG,   SDLVK_F3);
-	BM(BM_TOGGLEAO,      SDLVK_F4);
-	BM(BM_TOGGLE3RD,     SDLVK_F5);
-	BM(BM_SLOT_L,        SDLVK_y);
-	BM(BM_SLOT_R,        SDLVK_u);
-	BM(BM_FLY_UP,        SDLVK_c);
-	BM(BM_FLY_DOWN,      SDLVK_x);
-	BM(BM_CHAT_CMD,      SDLVK_SLASH);
+	BM(AID_FORWARD,       SDLVK_w);
+	BM(AID_LEFT,          SDLVK_a);
+	BM(AID_BACKWARD,      SDLVK_s);
+	BM(AID_RIGHT,         SDLVK_d);
+	BM(AID_JUMP,          SDLVK_SPACE);
+	BM(AID_DESTROY,       SDLVK_x);
+	BM(AID_PLACE,         SDLVK_c);
+	BM(AID_MENU_UP,       SDLVK_UP);
+	BM(AID_MENU_DOWN,     SDLVK_DOWN);
+	BM(AID_MENU_LEFT,     SDLVK_LEFT);
+	BM(AID_MENU_RIGHT,    SDLVK_RIGHT);
+	BM(AID_MENU_TAB_LEFT, SDLVK_LEFT);
+	BM(AID_MENU_TAB_RIGHT, SDLVK_RIGHT);
+	BM(AID_MENU_OK,       SDLVK_RETURN);
+	BM(AID_MENU_CANCEL,   SDLVK_ESCAPE);
+	BM(AID_MENU_PAUSE,	 SDLVK_ESCAPE);
+	BM(AID_DROP,          SDLVK_q);
+	BM(AID_CHAT,          SDLVK_t);
+	BM(AID_FOG,           SDLVK_f);
+	BM(AID_CRAFTING,      SDLVK_e);
+	BM(AID_INVENTORY,     SDLVK_i);
+	BM(AID_SNEAK,         SDLVK_LSHIFT);
+	BM(AID_SLOT_1,        SDLVK_1);
+	BM(AID_SLOT_2,        SDLVK_2);
+	BM(AID_SLOT_3,        SDLVK_3);
+	BM(AID_SLOT_4,        SDLVK_4);
+	BM(AID_SLOT_5,        SDLVK_5);
+	BM(AID_SLOT_6,        SDLVK_6);
+	BM(AID_SLOT_7,        SDLVK_7);
+	BM(AID_SLOT_8,        SDLVK_8);
+	BM(AID_SLOT_9,        SDLVK_9);
+	BM(AID_CONTAINER_QUICKMOVE, SDLVK_LSHIFT);
+	BM(AID_TOGGLEGUI,     SDLVK_F1);
+	BM(AID_SCREENSHOT,    SDLVK_F2);
+	BM(AID_TOGGLEDEBUG,   SDLVK_F3);
+	BM(AID_TOGGLEAO,      SDLVK_F4);
+	BM(AID_TOGGLE3RD,     SDLVK_F5);
+	BM(AID_SLOT_L,        SDLVK_y);
+	BM(AID_SLOT_R,        SDLVK_u);
+	BM(AID_FLY_UP,        SDLVK_c);
+	BM(AID_FLY_DOWN,      SDLVK_x);
+	BM(AID_CHAT_CMD,      SDLVK_SLASH);
 #elif defined(USE_NATIVE_ANDROID)
 	// -- Original xperia play controls
-	//BM(BM_FORWARD,       AKEYCODE_DPAD_UP);
-	//BM(BM_LEFT,          AKEYCODE_DPAD_LEFT);
-	//BM(BM_BACKWARD,      AKEYCODE_DPAD_DOWN);
-	//BM(BM_RIGHT,         AKEYCODE_DPAD_RIGHT);
-	//BM(BM_JUMP,          AKEYCODE_DPAD_CENTER);
-	//BM(BM_DESTROY,       AKEYCODE_BUTTON_L1);
-	//BM(BM_PLACE,         AKEYCODE_BUTTON_R1);
-	//BM(BM_MENU_UP,       AKEYCODE_DPAD_UP);
-	//BM(BM_MENU_DOWN,     AKEYCODE_DPAD_DOWN);
-	//BM(BM_MENU_LEFT,     AKEYCODE_DPAD_LEFT);
-	//BM(BM_MENU_RIGHT,    AKEYCODE_DPAD_RIGHT);
-	//BM(BM_MENU_OK,       AKEYCODE_DPAD_CENTER);
-	//BM(BM_MENU_CANCEL,   AKEYCODE_BACK);
+	//BM(AID_FORWARD,       AKEYCODE_DPAD_UP);
+	//BM(AID_LEFT,          AKEYCODE_DPAD_LEFT);
+	//BM(AID_BACKWARD,      AKEYCODE_DPAD_DOWN);
+	//BM(AID_RIGHT,         AKEYCODE_DPAD_RIGHT);
+	//BM(AID_JUMP,          AKEYCODE_DPAD_CENTER);
+	//BM(AID_DESTROY,       AKEYCODE_BUTTON_L1);
+	//BM(AID_PLACE,         AKEYCODE_BUTTON_R1);
+	//BM(AID_MENU_UP,       AKEYCODE_DPAD_UP);
+	//BM(AID_MENU_DOWN,     AKEYCODE_DPAD_DOWN);
+	//BM(AID_MENU_LEFT,     AKEYCODE_DPAD_LEFT);
+	//BM(AID_MENU_RIGHT,    AKEYCODE_DPAD_RIGHT);
+	//BM(AID_MENU_OK,       AKEYCODE_DPAD_CENTER);
+	//BM(AID_MENU_CANCEL,   AKEYCODE_BACK);
 	//custom
-	//BM(BM_INVENTORY,     AKEYCODE_BUTTON_Y);
-	//BM(BM_SLOT_R,        AKEYCODE_BACK);
-	//BM(BM_SLOT_L,        AKEYCODE_BUTTON_X);
-	//BM(BM_FLY_UP,        AKEYCODE_BUTTON_R1);
-	//BM(BM_FLY_DOWN,      AKEYCODE_BUTTON_L1);
+	//BM(AID_INVENTORY,     AKEYCODE_BUTTON_Y);
+	//BM(AID_SLOT_R,        AKEYCODE_BACK);
+	//BM(AID_SLOT_L,        AKEYCODE_BUTTON_X);
+	//BM(AID_FLY_UP,        AKEYCODE_BUTTON_R1);
+	//BM(AID_FLY_DOWN,      AKEYCODE_BUTTON_L1);
 
 	//use controller input on android for now.
-	BM(BM_FORWARD,       AKEYCODE_W);
-	BM(BM_LEFT,          AKEYCODE_A);
-	BM(BM_BACKWARD,      AKEYCODE_S);
-	BM(BM_RIGHT,         AKEYCODE_D);
-	BM(BM_JUMP,			 AKEYCODE_BUTTON_A);
-	BM(BM_DESTROY,       AKEYCODE_X);
-	BM(BM_PLACE,         AKEYCODE_C);
-	BM(BM_MENU_UP,       AKEYCODE_DPAD_UP);
-	BM(BM_MENU_DOWN,     AKEYCODE_DPAD_DOWN);
-	BM(BM_MENU_LEFT,     AKEYCODE_DPAD_LEFT);
-	BM(BM_MENU_RIGHT,    AKEYCODE_DPAD_RIGHT);
-	BM(BM_MENU_TAB_LEFT, AKEYCODE_BUTTON_L1);
-	BM(BM_MENU_TAB_RIGHT, AKEYCODE_BUTTON_R1);
-	BM(BM_MENU_OK,       AKEYCODE_ENTER);
-	BM(BM_MENU_CANCEL,	 AKEYCODE_BUTTON_B);
-	BM(BM_MENU_PAUSE,	 AKEYCODE_BUTTON_START);
+	BM(AID_FORWARD,       AKEYCODE_W);
+	BM(AID_LEFT,          AKEYCODE_A);
+	BM(AID_BACKWARD,      AKEYCODE_S);
+	BM(AID_RIGHT,         AKEYCODE_D);
+	BM(AID_JUMP,			 AKEYCODE_BUTTON_A);
+	BM(AID_DESTROY,       AKEYCODE_X);
+	BM(AID_PLACE,         AKEYCODE_C);
+	BM(AID_MENU_UP,       AKEYCODE_DPAD_UP);
+	BM(AID_MENU_DOWN,     AKEYCODE_DPAD_DOWN);
+	BM(AID_MENU_LEFT,     AKEYCODE_DPAD_LEFT);
+	BM(AID_MENU_RIGHT,    AKEYCODE_DPAD_RIGHT);
+	BM(AID_MENU_TAB_LEFT, AKEYCODE_BUTTON_L1);
+	BM(AID_MENU_TAB_RIGHT, AKEYCODE_BUTTON_R1);
+	BM(AID_MENU_OK,       AKEYCODE_ENTER);
+	BM(AID_MENU_CANCEL,	 AKEYCODE_BUTTON_B);
+	BM(AID_MENU_PAUSE,	 AKEYCODE_BUTTON_START);
 	// custom
-	BM(BM_SLOT_L,		 AKEYCODE_BUTTON_L1);
-	BM(BM_SLOT_R,		 AKEYCODE_BUTTON_R1);
-	BM(BM_DROP,          AKEYCODE_Q);
-	BM(BM_CHAT,          AKEYCODE_T);
-	BM(BM_FOG,           AKEYCODE_F);
-	BM(BM_INVENTORY,	 AKEYCODE_BUTTON_Y);
-	BM(BM_SNEAK,         AKEYCODE_SHIFT_LEFT);
-	BM(BM_SLOT_1,        AKEYCODE_1);
-	BM(BM_SLOT_2,        AKEYCODE_2);
-	BM(BM_SLOT_3,        AKEYCODE_3);
-	BM(BM_SLOT_4,        AKEYCODE_4);
-	BM(BM_SLOT_5,        AKEYCODE_5);
-	BM(BM_SLOT_6,        AKEYCODE_6);
-	BM(BM_SLOT_7,        AKEYCODE_7);
-	BM(BM_SLOT_8,        AKEYCODE_8);
-	BM(BM_SLOT_9,        AKEYCODE_9);
-	BM(BM_CONTAINER_QUICKMOVE, AKEYCODE_BUTTON_Y);
-	BM(BM_CONTAINER_SPLIT,     AKEYCODE_BUTTON_X);
-	BM(BM_TOGGLEGUI,     AKEYCODE_F1);
-	BM(BM_SCREENSHOT,    AKEYCODE_F2);
-	BM(BM_TOGGLEDEBUG,   AKEYCODE_F3);
-	BM(BM_TOGGLEAO,      AKEYCODE_F4);
-	BM(BM_TOGGLE3RD,     AKEYCODE_F5);
-	BM(BM_FLY_UP,        AKEYCODE_C);
-	BM(BM_FLY_DOWN,      AKEYCODE_X);
-	BM(BM_CHAT_CMD,      AKEYCODE_SLASH);
+	BM(AID_SLOT_L,		 AKEYCODE_BUTTON_L1);
+	BM(AID_SLOT_R,		 AKEYCODE_BUTTON_R1);
+	BM(AID_DROP,          AKEYCODE_Q);
+	BM(AID_CHAT,          AKEYCODE_T);
+	BM(AID_FOG,           AKEYCODE_F);
+	BM(AID_INVENTORY,	 AKEYCODE_BUTTON_Y);
+	BM(AID_SNEAK,         AKEYCODE_SHIFT_LEFT);
+	BM(AID_SLOT_1,        AKEYCODE_1);
+	BM(AID_SLOT_2,        AKEYCODE_2);
+	BM(AID_SLOT_3,        AKEYCODE_3);
+	BM(AID_SLOT_4,        AKEYCODE_4);
+	BM(AID_SLOT_5,        AKEYCODE_5);
+	BM(AID_SLOT_6,        AKEYCODE_6);
+	BM(AID_SLOT_7,        AKEYCODE_7);
+	BM(AID_SLOT_8,        AKEYCODE_8);
+	BM(AID_SLOT_9,        AKEYCODE_9);
+	BM(AID_CONTAINER_QUICKMOVE, AKEYCODE_BUTTON_Y);
+	BM(AID_CONTAINER_SPLIT,     AKEYCODE_BUTTON_X);
+	BM(AID_TOGGLEGUI,     AKEYCODE_F1);
+	BM(AID_SCREENSHOT,    AKEYCODE_F2);
+	BM(AID_TOGGLEDEBUG,   AKEYCODE_F3);
+	BM(AID_TOGGLEAO,      AKEYCODE_F4);
+	BM(AID_TOGGLE3RD,     AKEYCODE_F5);
+	BM(AID_FLY_UP,        AKEYCODE_C);
+	BM(AID_FLY_DOWN,      AKEYCODE_X);
+	BM(AID_CHAT_CMD,      AKEYCODE_SLASH);
 #endif
 #undef BM
 
-#define BTN(idx,code) m_buttonMappings[idx].info.controllerButtonId = code
-	BTN(BM_TOGGLEDEBUG,			GameController::BUTTON_GUIDE);
-	BTN(BM_JUMP,				GameController::BUTTON_A);
-	BTN(BM_MENU_UP,				GameController::BUTTON_DPAD_UP);
-	BTN(BM_MENU_DOWN,			GameController::BUTTON_DPAD_DOWN);
-	BTN(BM_MENU_LEFT,			GameController::BUTTON_DPAD_LEFT);
-	BTN(BM_MENU_RIGHT,			GameController::BUTTON_DPAD_RIGHT);
-	BTN(BM_MENU_TAB_LEFT,		GameController::BUTTON_LEFTSHOULDER);
-	BTN(BM_MENU_TAB_RIGHT,		GameController::BUTTON_RIGHTSHOULDER);
-	BTN(BM_MENU_OK,				GameController::BUTTON_A);
-	BTN(BM_MENU_CANCEL,			GameController::BUTTON_B);
-	BTN(BM_MENU_PAUSE,			GameController::BUTTON_START);
-	BTN(BM_DROP,				GameController::BUTTON_B);
-	BTN(BM_CHAT,				GameController::BUTTON_BACK);
-	BTN(BM_INVENTORY,			GameController::BUTTON_Y);
-	BTN(BM_SNEAK,				GameController::BUTTON_RIGHTSTICK);
-	BTN(BM_CONTAINER_QUICKMOVE, GameController::BUTTON_Y);
-	BTN(BM_CONTAINER_SPLIT,		GameController::BUTTON_X);
-	BTN(BM_TOGGLE3RD,			GameController::BUTTON_LEFTSTICK);
-	BTN(BM_SLOT_L,				GameController::BUTTON_LEFTSHOULDER);
-	BTN(BM_SLOT_R,				GameController::BUTTON_RIGHTSHOULDER);
-	BTN(BM_FLY_UP,				GameController::BUTTON_A);
-	BTN(BM_FLY_DOWN,			GameController::BUTTON_RIGHTSTICK);
+#define BTN(idx,code) m_inputMappings[idx].info.controllerButtonId = code
+	BTN(AID_TOGGLEDEBUG,			GameController::BUTTON_GUIDE);
+	BTN(AID_JUMP,				GameController::BUTTON_A);
+	BTN(AID_MENU_UP,				GameController::BUTTON_DPAD_UP);
+	BTN(AID_MENU_DOWN,			GameController::BUTTON_DPAD_DOWN);
+	BTN(AID_MENU_LEFT,			GameController::BUTTON_DPAD_LEFT);
+	BTN(AID_MENU_RIGHT,			GameController::BUTTON_DPAD_RIGHT);
+	BTN(AID_MENU_TAB_LEFT,		GameController::BUTTON_LEFTSHOULDER);
+	BTN(AID_MENU_TAB_RIGHT,		GameController::BUTTON_RIGHTSHOULDER);
+	BTN(AID_MENU_OK,				GameController::BUTTON_A);
+	BTN(AID_MENU_CANCEL,			GameController::BUTTON_B);
+	BTN(AID_MENU_PAUSE,			GameController::BUTTON_START);
+	BTN(AID_DROP,				GameController::BUTTON_B);
+	BTN(AID_CHAT,				GameController::BUTTON_BACK);
+	BTN(AID_INVENTORY,			GameController::BUTTON_Y);
+	BTN(AID_SNEAK,				GameController::BUTTON_RIGHTSTICK);
+	BTN(AID_CONTAINER_QUICKMOVE, GameController::BUTTON_Y);
+	BTN(AID_CONTAINER_SPLIT,		GameController::BUTTON_X);
+	BTN(AID_TOGGLE3RD,			GameController::BUTTON_LEFTSTICK);
+	BTN(AID_SLOT_L,				GameController::BUTTON_LEFTSHOULDER);
+	BTN(AID_SLOT_R,				GameController::BUTTON_RIGHTSHOULDER);
+	BTN(AID_FLY_UP,				GameController::BUTTON_A);
+	BTN(AID_FLY_DOWN,			GameController::BUTTON_RIGHTSTICK);
 #undef BTN
 }
 

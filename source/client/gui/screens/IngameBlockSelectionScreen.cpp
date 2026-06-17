@@ -337,15 +337,15 @@ void IngameBlockSelectionScreen::removed()
 	m_pMinecraft->m_pGui->inventoryUpdated();
 }
 
-void IngameBlockSelectionScreen::buttonPressed(const ButtonInfo& info)
+void IngameBlockSelectionScreen::onUserAction(const ActionInfo& info)
 {
-    if (!_useController() && m_pMinecraft->getOptions()->isButton(BM_INVENTORY, info))
+    if (!_useController() && m_pMinecraft->getOptions()->isAction(AID_INVENTORY, info))
     {
         m_pMinecraft->handleBack(false);
     }
 	else
 	{
-        Screen::buttonPressed(info);
+        Screen::onUserAction(info);
 	}
 }
 

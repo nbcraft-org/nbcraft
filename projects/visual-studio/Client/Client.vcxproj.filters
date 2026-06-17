@@ -702,10 +702,10 @@
       <Filter>Header Files\Player\Input</Filter>
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\client\gui\components\ItemPane.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\GUI\Components</Filter>
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\client\gui\components\ScrollingPane.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\GUI\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1256,10 +1256,10 @@
       <Filter>Source Files\GUI\Screens</Filter>
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\client\gui\components\ItemPane.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\GUI\Components</Filter>
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\client\gui\components\ScrollingPane.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\GUI\Components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

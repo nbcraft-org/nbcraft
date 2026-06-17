@@ -311,34 +311,34 @@ void ContainerScreen::slotClicked(const MenuPointer& pointer, MouseButtonType bu
     slotClicked(pointer, button, m_pMinecraft->m_pPlatform->shiftPressed());
 }
 
-void ContainerScreen::buttonPressed(const ButtonInfo& button)
+void ContainerScreen::onUserAction(const ActionInfo& button)
 {
     Options& options = *m_pMinecraft->getOptions();
-    if (!_useController() && options.isButton(BM_INVENTORY, button))
+    if (!_useController() && options.isAction(AID_INVENTORY, button))
     {
         m_pMinecraft->handleBack(false);
     }
-    else if (options.isButton(BM_CONTAINER_QUICKMOVE, button) && _useController())
+    else if (options.isAction(AID_CONTAINER_QUICKMOVE, button) && _useController())
     {
         slotClicked(m_menuPointer, MOUSE_BUTTON_LEFT, true);
     }
-    else if (options.isButton(BM_CONTAINER_SPLIT, button) && _useController())
+    else if (options.isAction(AID_CONTAINER_SPLIT, button) && _useController())
     {
         slotClicked(m_menuPointer, MOUSE_BUTTON_RIGHT, false);
     }
     else
     {
         if (_useController() &&
-                ((options.isButton(BM_MENU_UP, button) && _selectSlotInDirection(AreaNavigation::UP)) ||
-                (options.isButton(BM_MENU_DOWN, button) && _selectSlotInDirection(AreaNavigation::DOWN)) ||
-                (options.isButton(BM_MENU_RIGHT, button) && _selectSlotInDirection(AreaNavigation::RIGHT)) ||
-                (options.isButton(BM_MENU_LEFT, button) && _selectSlotInDirection(AreaNavigation::LEFT))))
+                ((options.isAction(AID_MENU_UP, button) && _selectSlotInDirection(AreaNavigation::UP)) ||
+                (options.isAction(AID_MENU_DOWN, button) && _selectSlotInDirection(AreaNavigation::DOWN)) ||
+                (options.isAction(AID_MENU_RIGHT, button) && _selectSlotInDirection(AreaNavigation::RIGHT)) ||
+                (options.isAction(AID_MENU_LEFT, button) && _selectSlotInDirection(AreaNavigation::LEFT))))
         {
             _playSelectSound();
             return;
         }
 
-        Screen::buttonPressed(button);
+        Screen::onUserAction(button);
     }
 }
 

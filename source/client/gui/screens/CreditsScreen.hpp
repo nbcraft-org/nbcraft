@@ -15,7 +15,7 @@ private:
 public:
 	void init() override;
 	bool isInGameScreen() override;
-	void buttonPressed(const ButtonInfo&) override;
+	void onUserAction(const ActionInfo&) override;
 	void tick() override;
 	void render(float f) override;
 	bool handleBackEvent(bool b) override;

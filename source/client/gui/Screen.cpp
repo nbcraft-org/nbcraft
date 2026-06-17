@@ -151,44 +151,44 @@ void Screen::init(Minecraft* pMinecraft, int width, int height)
 	m_bLastPointerPressedState = false;
 }
 
-void Screen::buttonPressed(const ButtonInfo& info)
+void Screen::onUserAction(const ActionInfo& action)
 {
 	Options& options = *m_pMinecraft->getOptions();
 	GuiElement* element = _getSelectedElement();
 
-	if (options.isButton(BM_MENU_CANCEL, info))
+	if (options.isAction(AID_MENU_CANCEL, action))
 	{
 		m_pMinecraft->handleBack(false);
 	}
 
-	if (options.isButton(BM_MENU_TAB_LEFT, info))
+	if (options.isAction(AID_MENU_TAB_LEFT, action))
 	{
 		prevTab();
 	}
-	if (options.isButton(BM_MENU_TAB_RIGHT, info))
+	if (options.isAction(AID_MENU_TAB_RIGHT, action))
 	{
 		nextTab();
 	}
 
 	if (doElementTabbing())
 	{
-		if (options.isButton(BM_MENU_DOWN, info))
+		if (options.isAction(AID_MENU_DOWN, action))
 		{
 			_areaNavigation(AreaNavigation::DOWN);
 		}
-		else if (options.isButton(BM_MENU_UP, info))
+		else if (options.isAction(AID_MENU_UP, action))
 		{
 			_areaNavigation(AreaNavigation::UP);
 		}
-		else if (options.isButton(BM_MENU_RIGHT, info))
+		else if (options.isAction(AID_MENU_RIGHT, action))
 		{
 			_areaNavigation(AreaNavigation::RIGHT);
 		}
-		else if (options.isButton(BM_MENU_LEFT, info))
+		else if (options.isAction(AID_MENU_LEFT, action))
 		{
 			_areaNavigation(AreaNavigation::LEFT);
 		}
-		else if (options.isButton(BM_MENU_OK, info))
+		else if (options.isAction(AID_MENU_OK, action))
 		{
 			if (element && element->isEnabled())
 			{
@@ -205,7 +205,7 @@ void Screen::buttonPressed(const ButtonInfo& info)
 	
 	if (element && element->isEnabled())
 	{
-		element->handleButtonPress(m_pMinecraft, info);
+		element->handleUserAction(m_pMinecraft, action);
 	}
 }
 
@@ -763,7 +763,7 @@ void Screen::keyboardEvent()
 	// Ugly hack
 	if (!doElementTabbing())
 	{
-		if (Keyboard::getEventKeyState() && m_pMinecraft->getOptions()->isKey(BM_MENU_OK, Keyboard::getEventKey()))
+		if (Keyboard::getEventKeyState() && m_pMinecraft->getOptions()->isKey(AID_MENU_OK, Keyboard::getEventKey()))
 		{
 			m_menuPointer.isPressed = true;
 		}
@@ -774,7 +774,7 @@ void Screen::keyboardEvent()
 	}
 
 	if (Keyboard::getEventKeyState())
-		buttonPressed(ButtonInfo(Keyboard::getEventKey(), GameController::BUTTON_NONE));
+		onUserAction(ActionInfo(Keyboard::getEventKey(), GameController::BUTTON_NONE));
 }
 
 void Screen::controllerEvent()
@@ -782,7 +782,7 @@ void Screen::controllerEvent()
 	// Ugly hack x2
 	if (!doElementTabbing())
 	{
-		if (GameControllerManager::getEventButtonState() && m_pMinecraft->getOptions()->getButton(BM_MENU_OK).isControllerButton(GameControllerManager::getEventButton()))
+		if (GameControllerManager::getEventButtonState() && m_pMinecraft->getOptions()->getAction(AID_MENU_OK).isControllerButton(GameControllerManager::getEventButton()))
 		{
 			m_menuPointer.isPressed = true;
 		}
@@ -793,7 +793,7 @@ void Screen::controllerEvent()
 	}
 
 	if (GameControllerManager::getEventButtonState())
-		buttonPressed(ButtonInfo(-1, GameControllerManager::getEventButton()));
+		onUserAction(ActionInfo(-1, GameControllerManager::getEventButton()));
 }
 
 void Screen::checkForPointerEvent(MouseButtonType button)

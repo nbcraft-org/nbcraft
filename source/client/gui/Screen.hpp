@@ -117,7 +117,7 @@ public:
 	virtual void onTextBoxUpdated(int id) {};
 	virtual void pointerPressed(const MenuPointer& pointer, MouseButtonType btn);
 	virtual void pointerReleased(const MenuPointer& pointer, MouseButtonType btn);
-	virtual void buttonPressed(const ButtonInfo&);
+	virtual void onUserAction(const ActionInfo& action);
 	virtual void handleTextChar(char);
 	virtual void keyboardTextPaste(const std::string& text);
 	virtual float getScale(int width, int height);

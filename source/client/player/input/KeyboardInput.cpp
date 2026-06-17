@@ -29,17 +29,17 @@ void KeyboardInput::releaseAllKeys()
 		m_keys[i] = false;
 }
 
-void KeyboardInput::setKey(eButtonMappingIndex ctrl, bool eventKeyState)
+void KeyboardInput::setKey(UserActionID ctrl, bool eventKeyState)
 {
 	int index;
 	switch (ctrl)
 	{
-	case BM_FORWARD:	index = INPUT_FORWARD;	break;
-	case BM_BACKWARD:	index = INPUT_BACKWARD; break;
-	case BM_LEFT:		index = INPUT_LEFT;		break;
-	case BM_RIGHT:		index = INPUT_RIGHT;	break;
-	case BM_JUMP:		index = INPUT_JUMP;		break;
-	case BM_SNEAK:		index = INPUT_SNEAK;	break;
+	case AID_FORWARD:	index = INPUT_FORWARD;	break;
+	case AID_BACKWARD:	index = INPUT_BACKWARD; break;
+	case AID_LEFT:		index = INPUT_LEFT;		break;
+	case AID_RIGHT:		index = INPUT_RIGHT;	break;
+	case AID_JUMP:		index = INPUT_JUMP;		break;
+	case AID_SNEAK:		index = INPUT_SNEAK;	break;
 	default:			index = -1;				return;
 	}
 

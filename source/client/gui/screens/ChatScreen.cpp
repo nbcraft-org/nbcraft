@@ -58,15 +58,15 @@ void ChatScreen::render(float f)
 	Screen::render(f);
 }
 
-void ChatScreen::buttonPressed(const ButtonInfo& button)
+void ChatScreen::onUserAction(const ActionInfo& button)
 {
 	if (!_useController())
 	{
-		if (m_pMinecraft->getOptions()->isButton(BM_MENU_OK, button))
+		if (m_pMinecraft->getOptions()->isAction(AID_MENU_OK, button))
 			sendMessageAndExit();
 	}
 
-	Screen::buttonPressed(button);
+	Screen::onUserAction(button);
 }
 
 void ChatScreen::handleKeyboardClosed()

@@ -20,79 +20,81 @@
 #include "client/player/input/GameController.hpp"
 #include "client/resources/ResourcePackManager.hpp"
 
-enum eButtonMappingIndex
+// Named "UserActionID" instead of "PlayerActonID" since
+// these are not directly associated with a Player object.
+enum UserActionID
 {
-	BM_FORWARD,
-	BM_LEFT,
-	BM_BACKWARD,
-	BM_RIGHT,
-	BM_JUMP,
-	BM_CRAFTING,
-	BM_INVENTORY,
-	BM_DROP,
-	BM_CHAT,
-	BM_FOG,
-	BM_SNEAK,
-	BM_DESTROY,
-	BM_PLACE,
-	BM_MENU_UP,
-	BM_MENU_DOWN,
-	BM_MENU_LEFT,
-	BM_MENU_RIGHT,
-	BM_MENU_TAB_LEFT,
-	BM_MENU_TAB_RIGHT,
-	BM_MENU_OK,
-	BM_MENU_CANCEL, BM_BACK = BM_MENU_CANCEL,
-	BM_MENU_PAUSE,
-	BM_SLOT_1,
-	BM_SLOT_2,
-	BM_SLOT_3,
-	BM_SLOT_4,
-	BM_SLOT_5,
-	BM_SLOT_6,
-	BM_SLOT_7,
-	BM_SLOT_8,
-	BM_SLOT_9,
-	BM_SLOT_L,
-	BM_SLOT_R,
-	BM_CONTAINER_QUICKMOVE,
-	BM_CONTAINER_SPLIT,
-	BM_TOGGLEGUI,
-	BM_SCREENSHOT,
-	BM_TOGGLEDEBUG,
-	BM_TOGGLEAO,
-	BM_TOGGLE3RD,
-	BM_FLY_UP,
-	BM_FLY_DOWN,
-	BM_CHAT_CMD, // called "Open Chat" in Release 1.8
-	BM_COUNT
+	AID_FORWARD,
+	AID_LEFT,
+	AID_BACKWARD,
+	AID_RIGHT,
+	AID_JUMP,
+	AID_CRAFTING,
+	AID_INVENTORY,
+	AID_DROP,
+	AID_CHAT,
+	AID_FOG,
+	AID_SNEAK,
+	AID_DESTROY,
+	AID_PLACE,
+	AID_MENU_UP,
+	AID_MENU_DOWN,
+	AID_MENU_LEFT,
+	AID_MENU_RIGHT,
+	AID_MENU_TAB_LEFT,
+	AID_MENU_TAB_RIGHT,
+	AID_MENU_OK,
+	AID_MENU_CANCEL, AID_BACK = AID_MENU_CANCEL,
+	AID_MENU_PAUSE,
+	AID_SLOT_1,
+	AID_SLOT_2,
+	AID_SLOT_3,
+	AID_SLOT_4,
+	AID_SLOT_5,
+	AID_SLOT_6,
+	AID_SLOT_7,
+	AID_SLOT_8,
+	AID_SLOT_9,
+	AID_SLOT_L,
+	AID_SLOT_R,
+	AID_CONTAINER_QUICKMOVE,
+	AID_CONTAINER_SPLIT,
+	AID_TOGGLEGUI,
+	AID_SCREENSHOT,
+	AID_TOGGLEDEBUG,
+	AID_TOGGLEAO,
+	AID_TOGGLE3RD,
+	AID_FLY_UP,
+	AID_FLY_DOWN,
+	AID_CHAT_CMD, // called "Open Chat" in Release 1.8
+	AID_COUNT
 };
 
-struct ButtonInfo
+struct ActionInfo
 {
-	//@TODO: Replace this with an universal key
+	//@TODO: Replace this with a universal key
 	int keyId;
 	GameController::EngineButtonID controllerButtonId;
 
-	ButtonInfo() : keyId(-1), controllerButtonId(GameController::BUTTON_NONE) {}
-	ButtonInfo(int key, GameController::EngineButtonID button) : keyId(key), controllerButtonId(button) {}
+	ActionInfo() : keyId(-1), controllerButtonId(GameController::BUTTON_NONE) {}
+	ActionInfo(int key, GameController::EngineButtonID button) : keyId(key), controllerButtonId(button) {}
 
 	bool isKey(int key) const { return keyId >= 0 && key == keyId; }
 	bool isControllerButton(GameController::EngineButtonID button) const { return controllerButtonId > GameController::BUTTON_NONE && button == controllerButtonId; }
-	bool operator==(const ButtonInfo& other) const
+	bool operator==(const ActionInfo& other) const
 	{
 		return isKey(other.keyId) || isControllerButton(other.controllerButtonId);
 	}
 };
 
-struct ButtonMapping
+struct InputMapping
 {
 	std::string key;
-	ButtonInfo info;
+	ActionInfo info;
 	int timesPressed;
 
-	ButtonMapping() : timesPressed(0) {} // key is automatically clear when constructed
-	ButtonMapping(const char* keyName, int keyCode) : key(keyName), timesPressed(0)
+	InputMapping() : timesPressed(0) {} // key is automatically clear when constructed
+	InputMapping(const char* keyName, int keyCode) : key(keyName), timesPressed(0)
 	{
 		info.keyId = keyCode;
 	}
@@ -436,12 +438,12 @@ public:
 	const AsyncTask& save();
 	std::vector<std::string> getOptionStrings();
 	
-	int getKey(eButtonMappingIndex idx) const { return m_buttonMappings[idx].info.keyId; }
-	bool isKey(eButtonMappingIndex idx, int keyCode) const { return getKey(idx) == keyCode; }
+	int getKey(UserActionID idx) const { return m_inputMappings[idx].info.keyId; }
+	bool isKey(UserActionID idx, int keyCode) const { return getKey(idx) == keyCode; }
 
-	ButtonMapping& getButtonMapping(eButtonMappingIndex idx) { return m_buttonMappings[idx]; }
-	const ButtonInfo& getButton(eButtonMappingIndex idx) const { return m_buttonMappings[idx].info; }
-	bool isButton(eButtonMappingIndex idx, const ButtonInfo& info) const { return m_buttonMappings[idx].info == info; }
+	InputMapping& getInputMapping(UserActionID idx) { return m_inputMappings[idx]; }
+	const ActionInfo& getAction(UserActionID idx) const { return m_inputMappings[idx].info; }
+	bool isAction(UserActionID idx, const ActionInfo& info) const { return m_inputMappings[idx].info == info; }
 
 	void loadControls();
 	void reset();
@@ -455,7 +457,7 @@ private:
 	HashMap<std::string, OptionEntry*> m_options;
 	AsyncTask m_saveTask;
 	std::string m_filePath;
-	ButtonMapping m_buttonMappings[BM_COUNT];
+	InputMapping m_inputMappings[AID_COUNT];
 
 public:
 	friend class BoolOption;

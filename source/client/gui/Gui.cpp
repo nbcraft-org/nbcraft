@@ -372,11 +372,11 @@ void Gui::handleScrollWheel(bool down)
 	m_pMinecraft->m_pLocalPlayer->m_pInventory->selectSlot(stackId);
 }
 
-void Gui::handleButtonPressed(const ButtonInfo& info)
+void Gui::handleUserAction(const ActionInfo& info)
 {
 	Options* options = m_pMinecraft->getOptions();
 
-	if (options->isButton(BM_CRAFTING, info))
+	if (options->isAction(AID_CRAFTING, info))
 	{
 		if (m_pMinecraft->getLocalPlayerGameMode()->isSurvivalType())
 			m_pMinecraft->setScreen(new InventoryScreen(m_pMinecraft->m_pLocalPlayer));
@@ -385,21 +385,21 @@ void Gui::handleButtonPressed(const ButtonInfo& info)
 		return;
 	}
 
-	if (options->isButton(BM_INVENTORY, info))
+	if (options->isAction(AID_INVENTORY, info))
 	{
 		m_pMinecraft->setScreen(new InventoryScreen(m_pMinecraft->m_pLocalPlayer));
 		return;
 	}
 
-	if (options->isButton(BM_FOG, info))
+	if (options->isAction(AID_FOG, info))
 	{
 		Options& o = *m_pMinecraft->getOptions();
 		o.m_viewDistance.set((o.m_viewDistance.get() + 1) % 4);
 		return;
 	}
 
-	bool slotL = options->isButton(BM_SLOT_L, info);
-	bool slotR = options->isButton(BM_SLOT_R, info);
+	bool slotL = options->isAction(AID_SLOT_L, info);
+	bool slotR = options->isAction(AID_SLOT_R, info);
 	if (slotL || slotR)
 	{
 		int maxItems = getNumSlots() - 1;
@@ -424,10 +424,10 @@ void Gui::handleButtonPressed(const ButtonInfo& info)
 		return;
 	}
 
-	if (options->isButton(BM_CHAT, info) || options->isButton(BM_CHAT_CMD, info))
+	if (options->isAction(AID_CHAT, info) || options->isAction(AID_CHAT_CMD, info))
 	{
 		if (!m_pMinecraft->m_pScreen)
-			m_pMinecraft->setScreen(new ChatScreen(m_pMinecraft->getOptions()->isButton(BM_CHAT_CMD, info)));
+			m_pMinecraft->setScreen(new ChatScreen(m_pMinecraft->getOptions()->isAction(AID_CHAT_CMD, info)));
 	}
 }
 

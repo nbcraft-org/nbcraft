@@ -635,24 +635,24 @@ void Minecraft::tickInput()
 			bool bPressed = GameControllerManager::getEventButtonState() == GameController::BTN_STATE_DOWN;
 
 			if (bPressed)
-				m_pGui->handleButtonPressed(ButtonInfo(-1, button));
+				m_pGui->handleUserAction(ActionInfo(-1, button));
 
-			for (size_t i = 0; i < BM_COUNT; ++i)
+			for (size_t i = 0; i < AID_COUNT; ++i)
 			{
-				eButtonMappingIndex ctrl = (eButtonMappingIndex)i;
-				if (!getOptions()->getButton(ctrl).isControllerButton(button)) continue;
+				UserActionID ctrl = (UserActionID)i;
+				if (!getOptions()->getAction(ctrl).isControllerButton(button)) continue;
 
 				m_pLocalPlayer->m_pMoveInput->setKey(ctrl, bPressed);
 				if (bPressed)
-					getOptions()->getButtonMapping(ctrl).pressed();
+					getOptions()->getInputMapping(ctrl).pressed();
 				else
-					getOptions()->getButtonMapping(ctrl).reset();
+					getOptions()->getInputMapping(ctrl).reset();
 			}
 		}
 	}
 	else
 	{
-		//Clearing, so the events don't accumulate
+		// Clearing, so the events don't accumulate
 		GameControllerManager::clear();
 		while (Keyboard::next())
 		{
@@ -660,18 +660,18 @@ void Minecraft::tickInput()
 			bool bPressed = Keyboard::getEventKeyState() == Keyboard::DOWN;
 
 			if (bPressed)
-				m_pGui->handleButtonPressed(ButtonInfo(keyCode, GameController::BUTTON_NONE));
+				m_pGui->handleUserAction(ActionInfo(keyCode, GameController::BUTTON_NONE));
 
-			for (size_t i = 0; i < BM_COUNT; ++i)
+			for (size_t i = 0; i < AID_COUNT; ++i)
 			{
-				eButtonMappingIndex ctrl = (eButtonMappingIndex)i;
+				UserActionID ctrl = (UserActionID)i;
 				if (!getOptions()->isKey(ctrl, keyCode)) continue;
 
 				m_pLocalPlayer->m_pMoveInput->setKey(ctrl, bPressed);
 				if (bPressed)
-					getOptions()->getButtonMapping(ctrl).pressed();
+					getOptions()->getInputMapping(ctrl).pressed();
 				else
-					getOptions()->getButtonMapping(ctrl).reset();
+					getOptions()->getInputMapping(ctrl).reset();
 			}
 
 			if (getOptions()->m_bUseMouseForDigging)
@@ -680,13 +680,13 @@ void Minecraft::tickInput()
 			// @TODO: Replace with KeyboardBuildInput
 			if (getTimeMs() - field_2B4 <= 200)
 			{
-				if (getOptions()->isKey(BM_DESTROY, keyCode) && bPressed)
+				if (getOptions()->isKey(AID_DESTROY, keyCode) && bPressed)
 				{
 					BuildActionIntention intention(BuildActionIntention::KEY_DESTROY);
 					handleBuildAction(intention);
 				}
 
-				if (getOptions()->isKey(BM_PLACE, keyCode) && bPressed)
+				if (getOptions()->isKey(AID_PLACE, keyCode) && bPressed)
 				{
 					BuildActionIntention intention(BuildActionIntention::KEY_USE);
 					handleBuildAction(intention);
@@ -697,36 +697,36 @@ void Minecraft::tickInput()
 
 	for (int i = 0; i < m_pGui->getNumUsableSlots(); i++)
 	{
-		while (getOptions()->getButtonMapping(eButtonMappingIndex(BM_SLOT_1 + i)).consume())
+		while (getOptions()->getInputMapping(UserActionID(AID_SLOT_1 + i)).consume())
 			m_pLocalPlayer->m_pInventory->selectSlot(i);
 	}
 
-	while (getOptions()->getButtonMapping(BM_TOGGLE3RD).consume())
+	while (getOptions()->getInputMapping(AID_TOGGLE3RD).consume())
 	{
 		getOptions()->m_thirdPerson.toggle();
 	}
 
-	while (getOptions()->getButtonMapping(BM_MENU_PAUSE).consume())
+	while (getOptions()->getInputMapping(AID_MENU_PAUSE).consume())
 	{
 		handleBack(false);
 	}
 
-	while (getOptions()->getButtonMapping(BM_DROP).consume())
+	while (getOptions()->getInputMapping(AID_DROP).consume())
 	{
 		m_pLocalPlayer->drop();
 	}
 
-	while (getOptions()->getButtonMapping(BM_TOGGLEGUI).consume())
+	while (getOptions()->getInputMapping(AID_TOGGLEGUI).consume())
 	{
 		getOptions()->m_hideGui.toggle();
 	}
 
-	while (getOptions()->getButtonMapping(BM_TOGGLEDEBUG).consume())
+	while (getOptions()->getInputMapping(AID_TOGGLEDEBUG).consume())
 	{
 		getOptions()->m_debugText.toggle();
 	}
 #ifdef ENH_ALLOW_AO_TOGGLE
-	while (getOptions()->getButtonMapping(BM_TOGGLEAO).consume())
+	while (getOptions()->getInputMapping(AID_TOGGLEAO).consume())
 	{
 		// Toggle ambient occlusion.
 		getOptions()->m_ambientOcclusion.toggle();

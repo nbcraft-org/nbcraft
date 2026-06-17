@@ -36,7 +36,7 @@ public:
 
 	virtual void releaseAllKeys();
 	virtual void render(float f);
-	virtual void setKey(eButtonMappingIndex, bool eventKeyState);
+	virtual void setKey(UserActionID, bool eventKeyState);
 	virtual void setScreenSize(int width, int height);
 	virtual void tick(Player*);
 

@@ -65,7 +65,7 @@ public:
     void pointerPressed(const MenuPointer& pointer, MouseButtonType button) override;
     void pointerReleased(const MenuPointer& pointer, MouseButtonType button) override;
     void handlePointerPressed(bool isPressed) override;
-    void buttonPressed(const ButtonInfo&) override;
+    void onUserAction(const ActionInfo&) override;
 
     const SlotDisplay& getSlotDisplay(const Slot&) const;
 
