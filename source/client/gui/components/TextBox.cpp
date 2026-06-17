@@ -226,7 +226,7 @@ void TextBox::handleButtonPress(Minecraft* pMinecraft, const ButtonInfo& info)
 	}
 #endif
 
-	switch (bind.keyId)
+	switch (info.keyId)
 	{
 		case AKEYCODE_DEL:
 		{

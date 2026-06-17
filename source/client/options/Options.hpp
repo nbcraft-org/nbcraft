@@ -529,6 +529,7 @@ public:
 	OPTION(m_swapJumpSneak); idxSwapJumpSneak = currentIndex; \
 	OPTION(m_dpadSize); idxDpadSize = currentIndex; \
 	OPTION(m_autoJump);                    \
+	OPTION(m_bUseController); idxController = currentIndex; \
 
 #define OPTIONS_LIST_CONTROLS_FEEDBACK     \
 	/*HEADER("Feedback");*/                \

@@ -391,7 +391,7 @@ void Gui::handleButtonPressed(const ButtonInfo& info)
 		return;
 	}
 
-	if (options->isKey(KM_FOG, keyCode))
+	if (options->isButton(BM_FOG, info))
 	{
 		Options& o = *m_pMinecraft->getOptions();
 		o.m_viewDistance.set((o.m_viewDistance.get() + 1) % 4);

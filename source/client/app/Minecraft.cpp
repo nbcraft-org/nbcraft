@@ -573,7 +573,7 @@ void Minecraft::tickInput()
 		setInputType(platform()->isTouchscreen() ? InputType::TOUCHSCREEN : InputType::KEYBOARD);
 
 	if (!m_pInputHolder->allowsType(getInputType()))
-		_reloadInput();
+		reloadInput();
 
 	if (m_pScreen)
 	{
@@ -674,7 +674,7 @@ void Minecraft::tickInput()
 					getOptions()->getButtonMapping(ctrl).reset();
 			}
 
-			if (getOptions()->field_19)
+			if (getOptions()->m_bUseMouseForDigging)
 				continue;
 
 			// @TODO: Replace with KeyboardBuildInput
@@ -733,9 +733,6 @@ void Minecraft::tickInput()
 		m_pLevelRenderer->allChanged();
 	}
 #endif
-
-	//if (getOptions()->m_bUseMouseForDigging)
-	//	continue;
 
 	BuildActionIntention bai;
 	IBuildInput* buildInput = m_pInputHolder->getBuildInput();
@@ -1164,6 +1161,10 @@ float Minecraft::getBestScaleForThisScreenSize(int width, int height)
 	else if (m_pOptions->getUiTheme() == UI_CONSOLE)
 		return Screen::GetConsoleScale(height);
 
+#if MC_PLATFORM_XBOX
+#define USE_JAVA_SCREEN_SCALING
+#endif
+#ifdef USE_JAVA_SCREEN_SCALING
 	if (getUiTheme() == UI_JAVA)
 	{
 		int scale;
@@ -1172,6 +1173,7 @@ float Minecraft::getBestScaleForThisScreenSize(int width, int height)
 		}
 		return 1.0f / scale;
 	}
+#endif
 
 	if (height > 1800)
 		return 1.0f / 8.0f;
