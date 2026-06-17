@@ -27,7 +27,7 @@ void MouseDevice::feed(MouseButtonType buttonType, bool buttonState, int posX, i
 	if (buttonType != MOUSE_BUTTON_NONE)
 	{
 		_inputs.push_back(MouseAction(buttonType, buttonState, posX, posY, 0));
-		Minecraft::setInputType(InputType::MOUSE);
+		Minecraft::SetInputMethod(InputMethod::MOUSE);
 	}
 
 	// Make sure button type is valid

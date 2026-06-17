@@ -321,7 +321,7 @@ static void resize()
 	
 	// Update the scale multiplier. We use the same value, because we pass to `sizeUpdate`, the window width/height.
 	// They will be multiplied by the GUI scale multiplier, becoming the drawwidth and drawheight, times the decided on GUI scale.
-	Minecraft::setRenderScaleMultiplier(g_fPointToPixelScale);
+	Minecraft::SetRenderScaleMultiplier(g_fPointToPixelScale);
 	
 	// give it an update.
 	// As said before, internally, this multiplies by the GUI scale multiplier

@@ -11,7 +11,7 @@
 #include "IMoveInput.hpp"
 #include "ITurnInput.hpp"
 #include "IBuildInput.hpp"
-#include "InputType.hpp"
+#include "InputMethod.hpp"
 
 class IInputHolder
 {
@@ -20,7 +20,7 @@ public:
 	virtual ~IInputHolder();
 	virtual bool allowPicking();
 	virtual void setScreenSize(int width, int height);
-	virtual bool allowsType(InputType::Name) const;
+	virtual bool allowsInputMethod(InputMethod::Type) const;
 	virtual IMoveInput* getMoveInput() = 0;
 	virtual ITurnInput* getTurnInput() = 0;
 	virtual IBuildInput* getBuildInput() = 0;

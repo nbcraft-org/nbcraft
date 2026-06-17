@@ -33,7 +33,7 @@ void IInputHolder::setScreenSize(int width, int height)
 	getBuildInput()->setScreenSize(width, height);
 }
 
-bool IInputHolder::allowsType(InputType::Name type) const
+bool IInputHolder::allowsInputMethod(InputMethod::Type type) const
 {
-	return type == InputType::KEYBOARD || type == InputType::MOUSE;
+	return type == InputMethod::KEYBOARD || type == InputMethod::MOUSE;
 }

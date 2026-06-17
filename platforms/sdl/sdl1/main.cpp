@@ -233,7 +233,7 @@ static void resize()
 
     g_fPointToPixelScale = float(screen->w) / float(screen->w);
 
-    Minecraft::setRenderScaleMultiplier(g_fPointToPixelScale);
+    Minecraft::SetRenderScaleMultiplier(g_fPointToPixelScale);
 
     if (g_pApp)
         g_pApp->sizeUpdate(screen->w, screen->h);

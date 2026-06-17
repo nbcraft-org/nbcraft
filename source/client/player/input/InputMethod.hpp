@@ -1,9 +1,9 @@
 #pragma once
 
-class InputType
+class InputMethod
 {
 public:
-	enum Name
+	enum Type
 	{
 		KEYBOARD,
 		MOUSE,

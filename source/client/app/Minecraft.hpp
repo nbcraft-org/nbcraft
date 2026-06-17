@@ -118,17 +118,16 @@ public:
 	UITheme getUiTheme();
 	//const Entity& getCameraEntity() const { return *m_pCameraEntity; }
 
-	static InputType::Name getInputType() { return _inputType; }
-	static void setInputType(InputType::Name inputType) { _inputType = inputType; }
-
 private:
     // Value provided by the OS
     static float _renderScaleMultiplier;
-	static InputType::Name _inputType;
+	static InputMethod::Type _inputMethod;
 
 public:
-    static float getRenderScaleMultiplier() { return _renderScaleMultiplier; }
-    static void setRenderScaleMultiplier(float value) { _renderScaleMultiplier = value; }
+    static float GetRenderScaleMultiplier() { return _renderScaleMultiplier; }
+    static void SetRenderScaleMultiplier(float value) { _renderScaleMultiplier = value; }
+	static InputMethod::Type GetInputMethod() { return _inputMethod; }
+	static void SetInputMethod(InputMethod::Type inputType) { _inputMethod = inputType; }
     
 public:
 	static int width, height;

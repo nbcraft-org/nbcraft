@@ -51,7 +51,7 @@ void Multitouch::feed(MouseButtonType a1, bool a2, int a3, int a4, int fingerId)
 
 	MouseDevice* pDevice = g(fingerId);
 	pDevice->feed(a1, a2, a3, a4);
-	Minecraft::setInputType(InputType::TOUCHSCREEN);
+	Minecraft::SetInputMethod(InputMethod::TOUCHSCREEN);
 
 	if (a1 != MOUSE_BUTTON_NONE)
 	{

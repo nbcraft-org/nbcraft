@@ -51,7 +51,7 @@ int Minecraft::width  = C_DEFAULT_SCREEN_WIDTH;
 int Minecraft::height = C_DEFAULT_SCREEN_HEIGHT;
 bool Minecraft::useAmbientOcclusion = false;
 int Minecraft::customDebugId = 0;
-InputType::Name Minecraft::_inputType = InputType::KEYBOARD;
+InputMethod::Type Minecraft::_inputMethod = InputMethod::KEYBOARD;
 
 //@HUH: For the demo, this is defined as TRUE.
 //@HUH: deadmau5 had camera cheats? That's interesting.
@@ -386,7 +386,7 @@ bool Minecraft::isOnlineClient() const
 
 bool Minecraft::isTouchscreen() const
 {
-	return getInputType() == InputType::TOUCHSCREEN;
+	return GetInputMethod() == InputMethod::TOUCHSCREEN;
 }
 
 bool Minecraft::useTouchscreen() const
@@ -401,7 +401,7 @@ bool Minecraft::useSplitControls() const
 
 bool Minecraft::useController() const
 {
-	return getInputType() == InputType::CONTROLLER;
+	return GetInputMethod() == InputMethod::CONTROLLER;
 }
 
 void Minecraft::setGameMode(GameType gameType)
@@ -570,9 +570,9 @@ void Minecraft::handleBuildAction(const BuildActionIntention& action)
 void Minecraft::tickInput()
 {
 	if (!platform()->hasGamepad() && useController())
-		setInputType(platform()->isTouchscreen() ? InputType::TOUCHSCREEN : InputType::KEYBOARD);
+		SetInputMethod(platform()->isTouchscreen() ? InputMethod::TOUCHSCREEN : InputMethod::KEYBOARD);
 
-	if (!m_pInputHolder->allowsType(getInputType()))
+	if (!m_pInputHolder->allowsInputMethod(GetInputMethod()))
 		reloadInput();
 
 	if (m_pScreen)
@@ -1125,7 +1125,7 @@ void Minecraft::prepareLevel(const std::string& unused)
 void Minecraft::sizeUpdate(int newWidth, int newHeight)
 {
 	// re-calculate the GUI scale.
-	Gui::GuiScale = getBestScaleForThisScreenSize(newWidth, newHeight) / getRenderScaleMultiplier();
+	Gui::GuiScale = getBestScaleForThisScreenSize(newWidth, newHeight) / GetRenderScaleMultiplier();
 
 	// The ceil gives an extra pixel to the screen's width and height, in case the GUI scale doesn't
 	// divide evenly into width or height, so that none of the game screen is uncovered.

@@ -14,10 +14,10 @@ CustomInputHolder::CustomInputHolder(IMoveInput* pMoveInput, ITurnInput* pTurnIn
 	setInputs(pMoveInput, pTurnInput, pBuildInput);
 }
 
-bool CustomInputHolder::allowsType(InputType::Name type) const
+bool CustomInputHolder::allowsInputMethod(InputMethod::Type type) const
 {
-	if (m_bIsController) return type == InputType::CONTROLLER;
-	return IInputHolder::allowsType(type);
+	if (m_bIsController) return type == InputMethod::CONTROLLER;
+	return IInputHolder::allowsInputMethod(type);
 }
 
 IMoveInput* CustomInputHolder::getMoveInput()

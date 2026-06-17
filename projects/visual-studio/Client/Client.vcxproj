@@ -267,7 +267,7 @@
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\DeathScreen_Console.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\components\ItemPane.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\components\ScrollingPane.hpp" />
-    <ClInclude Include="$(MC_ROOT)\source\client\player\input\InputType.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\player\input\InputMethod.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\client\app\App.cpp" />

@@ -35,7 +35,7 @@ void GameControllerManager::feedButton(GameController::ButtonState state, GameCo
 		return;
 	}
 
-	Minecraft::setInputType(InputType::CONTROLLER);
+	Minecraft::SetInputMethod(InputMethod::CONTROLLER);
 
 	GameController::ButtonEvent event;
 	event.state = state;
@@ -118,7 +118,7 @@ void GameControllerManager::feedStickX(GameController::StickID stickId, bool tou
 	inReset = false;
 
 	if (x != 0.0f)
-		Minecraft::setInputType(InputType::CONTROLLER);
+		Minecraft::SetInputMethod(InputMethod::CONTROLLER);
 }
 
 void GameControllerManager::feedStickY(GameController::StickID stickId, bool touched, float y)
@@ -141,7 +141,7 @@ void GameControllerManager::feedStickY(GameController::StickID stickId, bool tou
 	inReset = false;
 
 	if (y != 0.0f)
-		Minecraft::setInputType(InputType::CONTROLLER);
+		Minecraft::SetInputMethod(InputMethod::CONTROLLER);
 }
 
 void GameControllerManager::feedStick(GameController::StickID stickId, bool touched, float x, float y)

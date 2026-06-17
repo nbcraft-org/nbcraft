@@ -106,9 +106,9 @@ void NinecraftApp::_initInput()
 
 	//If someone has a gamepad connected, certainly they want to use it
 	if (platform()->hasGamepad())
-		setInputType(InputType::CONTROLLER);
+		SetInputMethod(InputMethod::CONTROLLER);
 	else if (platform()->isTouchscreen())
-		setInputType(InputType::TOUCHSCREEN);
+		SetInputMethod(InputMethod::TOUCHSCREEN);
 
 	getOptions()->loadControls();
 	reloadInput();
