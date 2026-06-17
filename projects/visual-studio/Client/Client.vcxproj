@@ -265,6 +265,8 @@
     <ClInclude Include="$(MC_ROOT)\source\client\gui\ScreenChooser_Pocket.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\StartMenuScreen_Pocket.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\DeathScreen_Console.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\components\ItemPane.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\components\ScrollingPane.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\client\app\App.cpp" />
@@ -448,6 +450,8 @@
     <ClCompile Include="$(MC_ROOT)\source\client\gui\ScreenChooser_Pocket.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\StartMenuScreen_Pocket.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\DeathScreen_Console.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\components\ItemPane.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\components\ScrollingPane.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">
