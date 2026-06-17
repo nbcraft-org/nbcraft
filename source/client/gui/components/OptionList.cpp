@@ -171,7 +171,7 @@ void OptionList::initControlsMenu()
 	OPTIONS_LIST_CONTROLS_FEEDBACK;
 	OPTIONS_LIST_CONTROLS_EXPERIMENTAL;
 
-	if (!m_pMinecraft->isTouchscreen())
+	if (!m_pMinecraft->useTouchscreen())
 	{
 		m_items[idxSplit]->setEnabled(false);
 		m_items[idxSwapJumpSneak]->setEnabled(false);

@@ -231,7 +231,7 @@ void Minecraft::reloadInput()
 		m_pLocalPlayer->m_pMoveInput = m_pInputHolder->getMoveInput();
 	}
 
-	getOptions()->m_bUseMouseForDigging = !isTouchscreen();
+	getOptions()->m_bUseMouseForDigging = !useTouchscreen();
 }
 
 void Minecraft::resetInputMethod()
@@ -386,14 +386,9 @@ bool Minecraft::isOnlineClient() const
 	return m_pLevel->m_bIsClientSide;
 }
 
-bool Minecraft::isTouchscreen() const
-{
-	return GetInputMethod() == InputMethod::TOUCHSCREEN;
-}
-
 bool Minecraft::useTouchscreen() const
 {
-	return isTouchscreen(); // && !getOptions()->m_bUseController.get()
+	return GetInputMethod() == InputMethod::TOUCHSCREEN;
 }
 
 bool Minecraft::useSplitControls() const
@@ -1189,7 +1184,7 @@ float Minecraft::getBestScaleForThisScreenSize(int width, int height)
 	if (height > 1800)
 		return 1.0f / 8.0f;
 
-	if (isTouchscreen())
+	if (useTouchscreen())
 	{
 		if (height > 1100)
 			return 1.0f / 6.0f;

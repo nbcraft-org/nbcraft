@@ -83,7 +83,6 @@ public:
 	void respawnPlayer();
 	void freeResources(bool bCopyMap);
 	std::string getVersionString(const std::string& str = Util::EMPTY_STRING) const;
-	bool isTouchscreen() const;
 	bool useTouchscreen() const;
 	bool useSplitControls() const;
 	bool useController() const;

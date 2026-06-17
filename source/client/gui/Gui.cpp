@@ -314,7 +314,7 @@ void Gui::handleClick(int clickID, int mouseX, int mouseY)
 		return;
 
 	// @TODO: add InGamePlayScreen at some point
-	if (m_pMinecraft->isTouchscreen())
+	if (m_pMinecraft->useTouchscreen())
     {
 		int cenX = GuiWidth / 2;
         int scaledMouseX = int(mouseX * GuiScale);
@@ -439,7 +439,7 @@ void Gui::renderMessages(bool bShowAll)
 	if (!m_pMinecraft->m_pScreen)
 		scale = 2;
 
-	if (m_pMinecraft->isTouchscreen())
+	if (m_pMinecraft->useTouchscreen())
 		topEdge = 49;
 
 	if (m_pMinecraft->getOptions()->getUiTheme() == UI_CONSOLE)
@@ -828,7 +828,7 @@ void Gui::renderToolBar(float f, float alpha)
 	blit(-1 - hotbarWidth / 2 + 20 * inventory->m_selectedStackId, -23, 0, 22, 24, 22, 0, 0);
 
 	// chat and pause button for mobile devices
-	if (mc->isTouchscreen())
+	if (mc->useTouchscreen())
 	{
 		textures->loadAndBindTexture("gui/gui2.png");
 		

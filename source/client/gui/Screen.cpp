@@ -446,7 +446,7 @@ void Screen::pointerReleased(const MenuPointer& pointer, MouseButtonType btn)
 
 	if (m_pClickedElement)
 	{
-		if (m_pMinecraft->isTouchscreen() && m_pClickedElement->isHovered(m_pMinecraft, pointer))
+		if (m_pMinecraft->useTouchscreen() && m_pClickedElement->isHovered(m_pMinecraft, pointer))
 		{
 			m_pMinecraft->m_pSoundEngine->playUI(C_SOUND_BTN_RELEASE);
 			m_pClickedElement->pressed(m_pMinecraft, pointer);

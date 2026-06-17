@@ -93,7 +93,8 @@ ControlsPanelScreen::ControlsPanelScreen(Screen* parent, Minecraft& mc) : PanelS
 	OPTIONS_LIST_CONTROLS_FEEDBACK;
 	OPTIONS_LIST_CONTROLS_EXPERIMENTAL;
 
-	if (!mc.isTouchscreen()) {
+	if (!mc.useTouchscreen())
+	{
 		m_layout.m_elements[idxSplit]->setEnabled(false);
 		m_layout.m_elements[idxSwapJumpSneak]->setEnabled(false);
 		m_layout.m_elements[idxDpadSize]->setEnabled(false);
