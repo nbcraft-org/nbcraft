@@ -71,16 +71,21 @@ bool TextureAtlas::build()
     return true;
 }
 
-void TextureAtlas::_init()
+void TextureAtlas::reset()
 {
     m_texture.m_imageData.release();
-
+	
     int size = getWidth() * getHeight() * 4;
     uint8_t* mem = (uint8_t*)malloc(size);
     if (!mem)
         throw std::bad_alloc();
     m_texture.m_imageData.m_data = mem;
     memset(m_texture.m_imageData.m_data, 0, size);
+}
+
+void TextureAtlas::_init()
+{
+	reset();
 }
 
 bool TextureAtlas::pack()

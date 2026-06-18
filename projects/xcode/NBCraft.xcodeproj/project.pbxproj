@@ -326,6 +326,7 @@
 		8477B3B72C4DC414004E1AC5 /* EmptyLevelChunk.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8477B3B22C4DC414004E1AC5 /* EmptyLevelChunk.hpp */; };
 		8477B3BA2C4DC42E004E1AC5 /* Vec2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8477B3B82C4DC42E004E1AC5 /* Vec2.cpp */; };
 		8477B3BB2C4DC42E004E1AC5 /* Vec2.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8477B3B92C4DC42E004E1AC5 /* Vec2.hpp */; };
+		848793522FE371BB007B6D40 /* InputMethod.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 848793512FE371BB007B6D40 /* InputMethod.hpp */; };
 		8488C08A2B1EDD4F001AEC4F /* ShowKeyboardView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8488C0892B1EDD4F001AEC4F /* ShowKeyboardView.mm */; };
 		848AA3152F34E897007E9A3E /* DyePowderItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 848AA3142F34E897007E9A3E /* DyePowderItem.cpp */; };
 		848AA3162F34E897007E9A3E /* DyePowderItem.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 848AA3132F34E897007E9A3E /* DyePowderItem.hpp */; };
@@ -899,10 +900,6 @@
 		84E022F22F2A0211003C8FFE /* ContainerScreen.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84E022EC2F2A0211003C8FFE /* ContainerScreen.hpp */; };
 		84E022F32F2A0211003C8FFE /* InventoryScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E022ED2F2A0211003C8FFE /* InventoryScreen.cpp */; };
 		84E022F42F2A0211003C8FFE /* InventoryScreen.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84E022EE2F2A0211003C8FFE /* InventoryScreen.hpp */; };
-		84E023082F2A0211003C8FFE /* CreativeScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E023062F2A0211003C8FFE /* CreativeScreen.cpp */; };
-		84E023092F2A0211003C8FFE /* CreativeScreen.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84E023072F2A0211003C8FFE /* CreativeScreen.hpp */; };
-		84E0230C2F2A0245003C8FFE /* CreativeMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E0230A2F2A0245003C8FFE /* CreativeMenu.cpp */; };
-		84E0230D2F2A0245003C8FFE /* CreativeMenu.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84E0230B2F2A0245003C8FFE /* CreativeMenu.hpp */; };
 		84E022F72F2A021E003C8FFE /* MenuPointer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E022F52F2A021E003C8FFE /* MenuPointer.cpp */; };
 		84E022F82F2A021E003C8FFE /* MenuPointer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84E022F62F2A021E003C8FFE /* MenuPointer.hpp */; };
 		84E022FC2F2A0230003C8FFE /* Language.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E022FA2F2A0230003C8FFE /* Language.cpp */; };
@@ -911,6 +908,10 @@
 		84E023012F2A0245003C8FFE /* ChestMenu.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84E022FF2F2A0245003C8FFE /* ChestMenu.hpp */; };
 		84E023042F2A0255003C8FFE /* DyeColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E023022F2A0255003C8FFE /* DyeColor.cpp */; };
 		84E023052F2A0255003C8FFE /* DyeColor.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84E023032F2A0255003C8FFE /* DyeColor.hpp */; };
+		84E023082F2A0211003C8FFE /* CreativeScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E023062F2A0211003C8FFE /* CreativeScreen.cpp */; };
+		84E023092F2A0211003C8FFE /* CreativeScreen.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84E023072F2A0211003C8FFE /* CreativeScreen.hpp */; };
+		84E0230C2F2A0245003C8FFE /* CreativeMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E0230A2F2A0245003C8FFE /* CreativeMenu.cpp */; };
+		84E0230D2F2A0245003C8FFE /* CreativeMenu.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84E0230B2F2A0245003C8FFE /* CreativeMenu.hpp */; };
 		84E058FC2F383E9200F1E829 /* AsyncTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E058F82F383E9200F1E829 /* AsyncTask.cpp */; };
 		84E058FD2F383E9200F1E829 /* AsyncTask.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84E058F92F383E9200F1E829 /* AsyncTask.hpp */; };
 		84E058FE2F383E9200F1E829 /* CThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E058FA2F383E9200F1E829 /* CThread.cpp */; };
@@ -2424,6 +2425,7 @@
 		8477B3B82C4DC42E004E1AC5 /* Vec2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vec2.cpp; sourceTree = "<group>"; };
 		8477B3B92C4DC42E004E1AC5 /* Vec2.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Vec2.hpp; sourceTree = "<group>"; };
 		8484ABDC2B32935700076873 /* PlatformDefinitions_iOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformDefinitions_iOS.h; sourceTree = "<group>"; };
+		848793512FE371BB007B6D40 /* InputMethod.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = InputMethod.hpp; sourceTree = "<group>"; };
 		8488C0882B1EDD4F001AEC4F /* ShowKeyboardView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShowKeyboardView.h; sourceTree = "<group>"; };
 		8488C0892B1EDD4F001AEC4F /* ShowKeyboardView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ShowKeyboardView.mm; sourceTree = "<group>"; };
 		8489B0972A86D4B2004CA8EC /* NBCraftClient.SDL2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = NBCraftClient.SDL2; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2739,10 +2741,6 @@
 		84E022EC2F2A0211003C8FFE /* ContainerScreen.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ContainerScreen.hpp; sourceTree = "<group>"; };
 		84E022ED2F2A0211003C8FFE /* InventoryScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InventoryScreen.cpp; sourceTree = "<group>"; };
 		84E022EE2F2A0211003C8FFE /* InventoryScreen.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = InventoryScreen.hpp; sourceTree = "<group>"; };
-		84E023062F2A0211003C8FFE /* CreativeScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CreativeScreen.cpp; sourceTree = "<group>"; };
-		84E023072F2A0211003C8FFE /* CreativeScreen.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CreativeScreen.hpp; sourceTree = "<group>"; };
-		84E0230A2F2A0245003C8FFE /* CreativeMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CreativeMenu.cpp; sourceTree = "<group>"; };
-		84E0230B2F2A0245003C8FFE /* CreativeMenu.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CreativeMenu.hpp; sourceTree = "<group>"; };
 		84E022F52F2A021E003C8FFE /* MenuPointer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MenuPointer.cpp; sourceTree = "<group>"; };
 		84E022F62F2A021E003C8FFE /* MenuPointer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MenuPointer.hpp; sourceTree = "<group>"; };
 		84E022FA2F2A0230003C8FFE /* Language.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Language.cpp; sourceTree = "<group>"; };
@@ -2751,6 +2749,10 @@
 		84E022FF2F2A0245003C8FFE /* ChestMenu.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ChestMenu.hpp; sourceTree = "<group>"; };
 		84E023022F2A0255003C8FFE /* DyeColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DyeColor.cpp; sourceTree = "<group>"; };
 		84E023032F2A0255003C8FFE /* DyeColor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = DyeColor.hpp; sourceTree = "<group>"; };
+		84E023062F2A0211003C8FFE /* CreativeScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CreativeScreen.cpp; sourceTree = "<group>"; };
+		84E023072F2A0211003C8FFE /* CreativeScreen.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CreativeScreen.hpp; sourceTree = "<group>"; };
+		84E0230A2F2A0245003C8FFE /* CreativeMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CreativeMenu.cpp; sourceTree = "<group>"; };
+		84E0230B2F2A0245003C8FFE /* CreativeMenu.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CreativeMenu.hpp; sourceTree = "<group>"; };
 		84E058F82F383E9200F1E829 /* AsyncTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncTask.cpp; sourceTree = "<group>"; };
 		84E058F92F383E9200F1E829 /* AsyncTask.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = AsyncTask.hpp; sourceTree = "<group>"; };
 		84E058FA2F383E9200F1E829 /* CThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CThread.cpp; sourceTree = "<group>"; };
@@ -3665,6 +3667,7 @@
 				84E001042AF39E84009B9555 /* IMoveInput.hpp */,
 				84E001052AF39E84009B9555 /* IncludeExcludeArea.cpp */,
 				84E001062AF39E84009B9555 /* IncludeExcludeArea.hpp */,
+				848793512FE371BB007B6D40 /* InputMethod.hpp */,
 				84E001072AF39E84009B9555 /* ITouchScreenModel.cpp */,
 				84E001082AF39E84009B9555 /* ITouchScreenModel.hpp */,
 				840DD5D22AC810620006A435 /* ITurnInput.cpp */,
@@ -6112,6 +6115,7 @@
 				84E78C802B58B5CC00D515EF /* RocketRenderer.hpp in Headers */,
 				84F948262F2F5CB700217B16 /* ResourcePack.hpp in Headers */,
 				8470AF412BE9B80900BCA54E /* DisconnectionScreen.hpp in Headers */,
+				848793522FE371BB007B6D40 /* InputMethod.hpp in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

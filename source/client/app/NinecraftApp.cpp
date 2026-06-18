@@ -274,6 +274,7 @@ void NinecraftApp::onAppResumed()
 	Tesselator::instance.init();
     
 	m_pTextures->clear();
+	m_pTextures->setupAtlases(true);
 	_reloadTextures();
 	m_pFont->onGraphicsReset();
     

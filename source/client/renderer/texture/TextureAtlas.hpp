@@ -44,6 +44,7 @@ public:
     void addSprite(const std::string& name, uint8_t* data, int width, int height);
     void addSprite(const std::string& name, const TextureData&);
     bool build();
+	void reset();
     const TextureAtlasSprite* getSprite(const std::string& name) const;
     int getWidth() const;
     int getHeight() const;

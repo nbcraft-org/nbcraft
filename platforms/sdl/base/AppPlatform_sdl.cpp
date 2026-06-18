@@ -169,6 +169,31 @@ int AppPlatform_sdl::checkLicense()
 	return 1;
 }
 
+void AppPlatform_sdl::setVSyncEnabled(bool enabled)
+{
+#if MCE_GFX_API_OGL
+#if SDL_VERSION_ATLEAST(1, 3, 0)
+	SDL_GL_SetSwapInterval(enabled ? 1 : 0);
+#else // SDL_VERSION_ATLEAST(1, 3, 0)
+#if SDL_VERSION_ATLEAST(1, 2, 10)
+	SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, enabled ? 1 : 0);
+#else // SDL_VERSION_ATLEAST(1, 2, 10)
+	if (enabled)
+		LOG_W("VSync unsupported on old SDL versions (before 1.2.10)");
+#endif // !SDL_VERSION_ATLEAST(1, 2, 10)
+#endif // !SDL_VERSION_ATLEAST(1, 3, 0)
+#endif // MCE_GFX_API_OGL
+}
+
+bool AppPlatform_sdl::isVSyncSwitchable() const
+{
+#if MCE_GFX_API_OGL
+	return true;
+#else
+	return false;
+#endif
+}
+
 void AppPlatform_sdl::setMouseGrabbed(bool b)
 {
 	_setMouseGrabbed(b);

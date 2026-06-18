@@ -15,6 +15,7 @@ public:
 	QuadrupedModel(int, float);
 	~QuadrupedModel();
 
+	void onGraphicsReset() override;
 	void render(float, float, float, float, float, float) override;
 	void setupAnim(float, float, float, float, float, float) override;
 

@@ -39,7 +39,7 @@ public:
 	void addDynamicTexture(DynamicTexture* pTexture);
 	void addSprite(const std::string& name, TextureAtlas& atlas);
 	void setupAtlas(TextureAtlas&);
-	void setupAtlases();
+	void setupAtlases(bool forceReset = false);
 
 	const TextureAtlasSprite* getGuiSprite(const std::string&);
 

@@ -154,7 +154,6 @@ void Textures::clear()
 
 	m_textures.clear();
 	m_currBoundTex = -1;
-	setupAtlases();
 }
 
 Textures::Textures() :
@@ -258,8 +257,14 @@ void Textures::setupAtlas(TextureAtlas& atlas)
 	m_atlases[atlas.m_name] = &atlas;
 }
 
-void Textures::setupAtlases()
+void Textures::setupAtlases(bool forceReset)
 {
+	if (forceReset)
+	{
+		m_guiAtlas.reset();
+		m_filteredGuiAtlas.reset();
+	}
+	
 	addSprite("gui/console/Graphics/IconHolder.png", m_guiAtlas);
 	//addSprite("gui/console/Graphics/IconHolderRed.png", m_guiAtlas);
 	addSprite("gui/console/Graphics/Armour_Slot_Head.png", m_guiAtlas);

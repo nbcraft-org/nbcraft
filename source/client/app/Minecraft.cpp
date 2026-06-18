@@ -67,7 +67,6 @@ const char* Minecraft::progressMessages[] =
 
 Minecraft::Minecraft()
 {
-	m_lastBaseScale = -1.0f;
 	m_pOptions = nullptr;
 	m_pScreenChooser = nullptr;
 	field_18 = false;
@@ -1122,16 +1121,21 @@ void Minecraft::prepareLevel(const std::string& unused)
 void Minecraft::sizeUpdate(int newWidth, int newHeight)
 {
 	float baseScale = getBestScaleForThisScreenSize(newWidth, newHeight);
-	if (baseScale == m_lastBaseScale)
-		return;
-
+	
 	// re-calculate the GUI scale.
 	Gui::GuiScale = baseScale / GetRenderScaleMultiplier();
 
 	// The ceil gives an extra pixel to the screen's width and height, in case the GUI scale doesn't
 	// divide evenly into width or height, so that none of the game screen is uncovered.
-	Gui::GuiWidth  = ceilf(Minecraft::width * Gui::GuiScale);
-	Gui::GuiHeight = ceilf(Minecraft::height * Gui::GuiScale);
+	float newGuiWidth = ceilf(Minecraft::width * Gui::GuiScale);
+	float newGuiHeight = ceilf(Minecraft::height * Gui::GuiScale);
+	
+	// GuiSize did not change, bail out
+	if (newGuiWidth == Gui::GuiWidth && newGuiHeight == Gui::GuiHeight)
+		return;
+	
+	Gui::GuiWidth  = newGuiWidth;
+	Gui::GuiHeight = newGuiHeight;
 
 	if (m_pScreen)
 	{
@@ -1143,11 +1147,10 @@ void Minecraft::sizeUpdate(int newWidth, int newHeight)
 	}
 
 	LogoRenderer::singleton().build(Gui::GuiWidth);
+	
 
 	if (m_pInputHolder)
 		m_pInputHolder->setScreenSize(Minecraft::width, Minecraft::height);
-
-	m_lastBaseScale = baseScale;
 }
 
 void Minecraft::setTextboxText(const std::string& text)

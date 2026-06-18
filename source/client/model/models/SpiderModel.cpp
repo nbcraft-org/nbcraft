@@ -57,6 +57,21 @@ SpiderModel::~SpiderModel()
 {
 }
 
+void SpiderModel::onGraphicsReset()
+{
+	m_head.m_bCompiled = false;
+	m_body0.m_bCompiled = false;
+	m_body1.m_bCompiled = false;
+	m_leg0.m_bCompiled = false;
+	m_leg1.m_bCompiled = false;
+	m_leg2.m_bCompiled = false;
+	m_leg3.m_bCompiled = false;
+	m_leg4.m_bCompiled = false;
+	m_leg5.m_bCompiled = false;
+	m_leg6.m_bCompiled = false;
+	m_leg7.m_bCompiled = false;
+}
+
 void SpiderModel::render(float time, float r, float bob, float yRot, float xRot, float scale)
 {
     setupAnim(time, r, bob, yRot, xRot, scale);

@@ -8,6 +8,7 @@ public:
 	SpiderModel();
 	~SpiderModel();
 
+	void onGraphicsReset() override;
 	void render(float time, float r, float bob, float y_rot, float x_rot, float scale) override;
 	void setupAnim(float time, float r, float bob, float y_rot, float x_rot, float scale) override;
 
