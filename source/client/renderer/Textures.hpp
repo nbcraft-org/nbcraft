@@ -66,8 +66,5 @@ protected:
 	std::vector<DynamicTexture*> m_dynamicTextures;
 	TextureAtlas m_guiAtlas;
 	TextureAtlas m_filteredGuiAtlas;
-
-	// Why?
-	friend class StartMenuScreen;
 };
 

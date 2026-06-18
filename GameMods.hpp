@@ -45,7 +45,7 @@
 #define ENH_3D_INVENTORY_TILES  	       // Uses 3D rendered inventory tiles, use with ENH_SHADE_HELD_TILES to render correctly.
 #define ENH_MENU_BACKGROUND 		       // Renders a spinning panorama (if it's available) in the background of the main menu
 #define ENH_GUI_ITEM_POP 	               // Calls Inventory::tick() to create the "pop" animation for items that enter the hotbar. This function was not present on Pocket Edition.
-#define ENH_NEW_TOUCH_CONTROLS 	           // Use the 0.6.0 touch controls
+#define ENH_NEW_TOUCH_CONTROLS 	           // Use the new touch controls based off 0.12.1 alpha.
 //#define ENH_DISABLE_FORCED_SAVE_UPGRADES // Prevents the forced format-version upgrade of world/level saves, effectively opting-out of new save formats. See LEVEL_STORAGE_VERSION_DEFAULT in LevelData.hpp.
 //#define ENH_FACED_TERRAIN_PARTICLES 	   // Sets the TerrainParticle's texture depending on the face the block is being hit from. This is something Notch never did for whatever reason.
 #define ENH_NEW_LADDER_BEHAVIOR 	       // Use Java Beta 1.5 ladder behavior
@@ -53,6 +53,7 @@
 //#define ENH_RENDER_HAND_ARMOR            // Render the right arm of the chestplate you are wearing on top the first-person hand.
 #define ENH_SAVE_REMOTE_PLAYERS            // Save remote player data on the server, such as inventory, position, health, etc.
 //#define ENH_BETA_1_7_TERRAIN_ATLAS       // Enables support for the vertical shift of some textures from Beta 1.7, such as cake
+#define ENH_NEW_FEEDBACK_INDICATOR 	       // Use the new mesh-based interaction feedback indicator.
 
 // TODO: Implement this permanently?
 #define ENH_IMPROVED_SAVING     	       // Improve world saving. The original Minecraft doesn't always really save for some reason

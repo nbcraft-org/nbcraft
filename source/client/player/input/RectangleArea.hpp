@@ -10,6 +10,7 @@ public:
 
 protected:
 	friend class UnifiedTurnBuild;
+	friend class ItemPane;
 
 	float left;
 	float right;
