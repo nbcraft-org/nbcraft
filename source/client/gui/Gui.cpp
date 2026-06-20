@@ -346,7 +346,7 @@ void Gui::handleClick(int clickID, int mouseX, int mouseY)
 		if (m_pMinecraft->getLocalPlayerGameMode()->isSurvivalType())
 			m_pMinecraft->setScreen(new InventoryScreen(m_pMinecraft->m_pLocalPlayer));
 		else
-			m_pMinecraft->setScreen(new CreativeScreen(m_pMinecraft->m_pLocalPlayer->m_pInventory));
+			m_pMinecraft->getScreenChooser()->pushCreativeScreen();
 	}
 	else
 		m_pMinecraft->m_pLocalPlayer->m_pInventory->selectSlot(slot);
@@ -381,7 +381,7 @@ void Gui::handleUserAction(const ActionInfo& info)
 		if (m_pMinecraft->getLocalPlayerGameMode()->isSurvivalType())
 			m_pMinecraft->setScreen(new InventoryScreen(m_pMinecraft->m_pLocalPlayer));
 		else
-			m_pMinecraft->setScreen(new CreativeScreen(m_pMinecraft->m_pLocalPlayer->m_pInventory));
+			m_pMinecraft->getScreenChooser()->pushCreativeScreen();
 		return;
 	}
 

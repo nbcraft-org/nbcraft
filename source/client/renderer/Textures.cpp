@@ -285,6 +285,9 @@ void Textures::setupAtlases(bool forceReset)
 	addSprite("gui/console/Graphics/Tick.png", m_guiAtlas);
 	addSprite("gui/console/Graphics/Slider_Track.png", m_guiAtlas);
 	addSprite("gui/console/Graphics/Slider_Button.png", m_guiAtlas);
+	addSprite("gui/console/Graphics/Tab_Creative7_L.png", m_guiAtlas);
+	addSprite("gui/console/Graphics/Tab_Creative7_M.png", m_guiAtlas);
+	addSprite("gui/console/Graphics/Tab_Creative7_R.png", m_guiAtlas);
 	addSprite("gui/console/scrollDown.png", m_guiAtlas);
 	addSprite("gui/console/scrollUp.png", m_guiAtlas);
 	addSprite("gui/loading_block.png", m_guiAtlas);
@@ -292,6 +295,13 @@ void Textures::setupAtlases(bool forceReset)
 	addSprite("gui/slider_highlight.png", m_guiAtlas);
 	addSprite("gui/text_field.png", m_guiAtlas);
 	addSprite("gui/text_field_highlighted.png", m_guiAtlas);
+	addSprite("gui/console/icon_structures.png", m_guiAtlas);
+	addSprite("gui/console/icon_decoration.png", m_guiAtlas);
+	addSprite("gui/console/icon_Redstone_and_Transport.png", m_guiAtlas);
+	addSprite("gui/console/icon_materials.png", m_guiAtlas);
+	addSprite("gui/console/icon_food.png", m_guiAtlas);
+	addSprite("gui/console/icon_tools.png", m_guiAtlas);
+	addSprite("gui/console/icon_misc.png", m_guiAtlas);
 	//addSprite("gui/loading_bar.png", m_guiAtlas);
 	//addSprite("gui/loading_background.png", m_guiAtlas);
 

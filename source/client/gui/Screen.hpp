@@ -22,6 +22,7 @@
 
 class Button;
 class VerticalLayout;
+class TabLayout;
 
 typedef std::vector<GuiElement*> GuiElementList;
 
@@ -140,6 +141,7 @@ protected:
 
 public:
 	friend class VerticalLayout;
+	friend class TabLayout;
 
 	class Navigation : public AreaNavigation
 	{

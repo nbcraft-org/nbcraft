@@ -707,6 +707,15 @@
     <ClInclude Include="$(MC_ROOT)\source\client\gui\components\ScrollingPane.hpp">
       <Filter>Header Files\GUI\Components</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\source\client\gui\TabLayout.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\client\gui\components\TabButton.hpp">
+      <Filter>Header Files\GUI\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\client\gui\screens\inventory\CreativeScreen_Console.hpp">
+      <Filter>Header Files\GUI\Screens\Inventory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\client\gui\components\AvailableGamesList.cpp">
@@ -1260,6 +1269,15 @@
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\client\gui\components\ScrollingPane.cpp">
       <Filter>Source Files\GUI\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\client\gui\TabLayout.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\client\gui\components\TabButton.cpp">
+      <Filter>Source Files\GUI\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\client\gui\screens\inventory\CreativeScreen_Console.cpp">
+      <Filter>Source Files\GUI\Screens\Inventory</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

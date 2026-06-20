@@ -196,6 +196,7 @@ void Screen::handleUserAction(const ActionInfo& action)
 				element->pressed(m_pMinecraft);
 				if (element->getType() == GuiElement::TYPE_BUTTON)
 					_buttonClicked((Button*)element);
+				_guiElementClicked(*element);
 			}
 		}
 
@@ -392,7 +393,7 @@ void Screen::renderConsoleLoading(int x, int y, int blockSize, int blockDistance
 	currentShaderColor = Color::WHITE;
 }
 
-void Screen::pointerPressed(const MenuPointer& pointer, MouseButtonType btn) // d = clicked?
+void Screen::pointerPressed(const MenuPointer& pointer, MouseButtonType btn)
 {
 	if (btn == MOUSE_BUTTON_NONE) return;
 	
@@ -414,6 +415,7 @@ void Screen::pointerPressed(const MenuPointer& pointer, MouseButtonType btn) // 
 				element->pressed(m_pMinecraft, pointer);
 				if (m_pClickedElement->getType() == GuiElement::TYPE_BUTTON)
 					_buttonClicked((Button*)m_pClickedElement);
+				_guiElementClicked(*m_pClickedElement);
 			}
 		}
 	}
@@ -452,6 +454,7 @@ void Screen::pointerReleased(const MenuPointer& pointer, MouseButtonType btn)
 			m_pClickedElement->pressed(m_pMinecraft, pointer);
 			if (m_pClickedElement->getType() == GuiElement::TYPE_BUTTON)
 				_buttonClicked((Button*)m_pClickedElement);
+			_guiElementClicked(*m_pClickedElement);
 		}
 		m_pClickedElement->released(pointer);
 		m_pClickedElement = nullptr;

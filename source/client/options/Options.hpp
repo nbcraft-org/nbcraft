@@ -20,7 +20,7 @@
 #include "client/player/input/GameController.hpp"
 #include "client/resources/ResourcePackManager.hpp"
 
-// Named "UserActionID" instead of "PlayerActonID" since
+// Named "UserActionID" instead of "PlayerActionID" since
 // these are not directly associated with a Player object.
 enum UserActionID
 {

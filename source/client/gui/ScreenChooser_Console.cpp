@@ -3,6 +3,7 @@
 
 #include "screens/StartMenuScreen_Console.hpp"
 #include "screens/PauseScreen_Console.hpp"
+#include "screens/inventory/CreativeScreen_Console.hpp"
 #include "screens/inventory/ClassicCraftingScreen_Console.hpp"
 #include "screens/OptionsScreen_Console.hpp"
 #include "screens/CreateWorldScreen_Console.hpp"
@@ -35,6 +36,11 @@ void ScreenChooser_Console::pushOptionsScreen(Screen* parent)
 void ScreenChooser_Console::pushProgressScreen()
 {
 	m_pMinecraft->setScreen(new ProgressScreen_Console);
+}
+
+void ScreenChooser_Console::pushCreativeScreen()
+{
+	m_pMinecraft->setScreen(new CreativeScreen_Console(m_pMinecraft->m_pLocalPlayer->m_pInventory));
 }
 
 void ScreenChooser_Console::pushCreateWorldScreen(Screen* parent)

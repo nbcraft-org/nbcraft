@@ -8,6 +8,12 @@
 
 Container* CreativeScreen::creativeGrid = new SimpleContainer(72, "Item selection");
 
+CreativeScreen::CreativeScreen(ContainerMenu* menu) : ContainerScreen(menu)
+{
+    m_scrolled = 0.0f;
+    m_bIsScrolling = false;
+}
+
 CreativeScreen::CreativeScreen(Container* inventory) : ContainerScreen(new CreativeMenu(inventory, creativeGrid))
 {
     m_screenType = SCREEN_GENERIC;
@@ -23,7 +29,7 @@ void CreativeScreen::slotClicked(Slot* slot, Container::SlotID slotId, MouseButt
 
     if (slot)
     {
-        if (slot->m_pContainer == creativeGrid)
+        if (_isCreativeSlot(slot))
         {
             ItemStack& slotItem = slot->getItem();
 
@@ -95,9 +101,20 @@ void CreativeScreen::slotClicked(Slot* slot, Container::SlotID slotId, MouseButt
     }
 }
 
+void CreativeScreen::_updateScroll(float scroll)
+{
+    CreativeMenu* creativeMenu = (CreativeMenu*)m_pMenu;
+    creativeMenu->updateScroll(m_scrolled = scroll);
+}
+
+bool CreativeScreen::_isCreativeSlot(Slot* slot)
+{
+    return slot->m_pContainer == creativeGrid;
+}
+
 void CreativeScreen::_renderLabels()
 {
-    m_pFont->draw(creativeGrid->getName(), 8, 6, 0x404040);
+    m_pFont->draw(creativeGrid->getName(), 8, 6, Color::TEXT_GREY);
 }
 
 void CreativeScreen::_renderBg(float partialTicks)
@@ -138,8 +155,7 @@ void CreativeScreen::pointerReleased(const MenuPointer& pointer, MouseButtonType
 
 void CreativeScreen::handleScrollWheel(float force)
 {
-    CreativeMenu* creativeMenu = (CreativeMenu*)m_pMenu;
-    creativeMenu->updateScroll(m_scrolled = Mth::clamp(m_scrolled - (force / ((float)CreativeMenu::GetCreativeItems().size() / 8 - 8 + 1)), 0.0f, 1.0f));
+    _updateScroll(Mth::clamp(m_scrolled - (force / ((float)CreativeMenu::GetCreativeItems().size() / 8 - 8 + 1)), 0.0f, 1.0f));
 }
 
 void CreativeScreen::tick()
@@ -152,7 +168,6 @@ void CreativeScreen::tick()
 
     if (m_bIsScrolling)
     {
-        CreativeMenu* creativeMenu = (CreativeMenu*)m_pMenu;
-        creativeMenu->updateScroll(m_scrolled = Mth::clamp((float(m_menuPointer.y) - (m_topPos + 25)) / 144.0f, 0.0f, 1.0f));
+        _updateScroll(Mth::clamp((float(m_menuPointer.y) - (m_topPos + 25)) / 144.0f, 0.0f, 1.0f));
     }
 }
