@@ -221,6 +221,7 @@ void NinecraftApp::_initAll()
 	field_D9C = 0;
 
 	gotoMainMenu();
+	LogoRenderer::singleton().build(Gui::GuiWidth);
 }
 
 bool NinecraftApp::handleBack(bool b)
