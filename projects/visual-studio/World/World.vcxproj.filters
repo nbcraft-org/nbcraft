@@ -749,7 +749,7 @@
     <ClCompile Include="$(MC_ROOT)\source\world\tile\FenceGateTile.cpp">
       <Filter>Source Files\Tile</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\inventory\CreativeMenu_Console.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\inventory\CreativeMenu_Console.cpp">
       <Filter>Source Files\Inventory</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1324,7 +1324,7 @@
     <ClInclude Include="$(MC_ROOT)\source\world\tile\FenceGateTile.hpp">
       <Filter>Header Files\Tile</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\inventory\CreativeMenu_Console.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\inventory\CreativeMenu_Console.hpp">
       <Filter>Header Files\Inventory</Filter>
     </ClInclude>
   </ItemGroup>

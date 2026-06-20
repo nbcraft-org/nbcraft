@@ -127,6 +127,7 @@ add_library(nbcraft-core STATIC
     client/gui/screens/PanelScreen_Console.cpp
     client/gui/screens/inventory/ContainerScreen.cpp
     client/gui/screens/inventory/CreativeScreen.cpp
+    client/gui/screens/inventory/CreativeScreen_Console.cpp
     client/gui/screens/inventory/InventoryScreen.cpp
     client/gui/screens/inventory/CraftingScreen.cpp
     client/gui/screens/inventory/ClassicCraftingScreen_Console.cpp
@@ -147,12 +148,14 @@ add_library(nbcraft-core STATIC
     client/gui/components/ScrollRenderer_Console.cpp
 	client/gui/components/ImageButton.cpp
 	client/gui/components/LargeImageButton.cpp
+    client/gui/components/TabButton.cpp
     client/locale/Language.cpp
     client/gui/Gui.cpp
     client/gui/GuiComponent.cpp
     client/gui/GuiElement.cpp
     client/gui/MenuPointer.cpp
     client/gui/VerticalLayout.cpp
+    client/gui/TabLayout.cpp
     client/gui/AreaNavigation.cpp
     client/model/geom/PolygonQuad.cpp
     client/model/geom/Cube.cpp
@@ -381,6 +384,7 @@ add_library(nbcraft-core STATIC
     world/inventory/FurnaceMenu.cpp
     world/inventory/ChestMenu.cpp
     world/inventory/CreativeMenu.cpp
+    world/inventory/CreativeMenu_Console.cpp
     world/inventory/Slot.cpp
     world/inventory/ResultSlot.cpp
     world/inventory/ArmorSlot.cpp
