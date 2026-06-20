@@ -41,7 +41,7 @@ public:
 	void blitRect(Tesselator&, int, int, int, int, int);
 
 	void blit(int dx, int dy, int sx, int sy, int tw, int th);
-	void renderGuiItem(Font*, Textures*, ItemStack&, int, int, bool);
+	void renderGuiItem(Minecraft*, ItemStack&, int, int, bool);
 	void renderGuiItemOverlay(Font*, Textures*, ItemStack&, int, int);
 
 private:

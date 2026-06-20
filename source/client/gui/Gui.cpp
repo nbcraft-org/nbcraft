@@ -263,10 +263,8 @@ void Gui::renderSlot(int slot, int x, int y, float f)
 			matrix->translate(Vec3(-(x + 8), -(y + 12), 0));
 		}
 
-		ItemRenderer::singleton().renderGuiItem(m_pMinecraft->m_pFont, m_pMinecraft->m_pTextures, item, x, y, true);
+		ItemRenderer::singleton().renderGuiItem(m_pMinecraft, item, x, y, true);
 	}
-
-	//ItemRenderer::renderGuiItemDecorations(m_pMinecraft->m_pFont, m_pMinecraft->m_pTextures, item, x, y);
 }
 
 void Gui::renderSlotOverlay(int slot, int x, int y, float f)

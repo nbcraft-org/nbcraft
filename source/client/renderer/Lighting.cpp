@@ -20,3 +20,11 @@ void Lighting::turnOn(const Matrix& matrix)
 	renderContext.loadMatrix(MATRIX_VIEW, matrix);
 	turnOn();
 }
+
+void Lighting::turnOnItems()
+{
+	MatrixStack::Ref matrix = MatrixStack::World.push();
+	//@NOTE: Originally 120, but 145 is more accurate to LCE for some reason
+	matrix->rotate(145, Vec3::UNIT_X);
+	turnOn(matrix);
+}
