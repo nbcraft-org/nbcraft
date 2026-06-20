@@ -128,14 +128,14 @@ void TabLayout::startNavigation()
 		selectElementById(id, false);
 }
 
-void TabLayout::areaNavigation(AreaNavigation::Direction dir, bool cyclic)
+void TabLayout::areaNavigation(AreaNavigation::Direction dir)
 {
 	GuiElement* element = m_pSelectedElement;
 
 	if (!element) return;
 
 	AreaNavigation::ID id;
-	if (m_bCyclic && cyclic)
+	if (m_bCyclic)
 		id = Navigation(this).navigateCyclic(dir, element->m_xPos + element->m_width / 2, element->m_yPos + element->m_height / 2);
 	else
 		id = Navigation(this).navigate(dir, element->m_xPos + element->m_width / 2, element->m_yPos + element->m_height / 2);
@@ -200,7 +200,7 @@ void TabLayout::render(Minecraft* mc, const MenuPointer& pointer)
 {
 	for (size_t i = 0; i < m_elements.size(); ++i)
 	{
-		if (!m_pSelectedElement || i != m_pSelectedElement->getId())
+		if (!m_pSelectedElement || i != size_t(m_pSelectedElement->getId()))
 			m_elements[i]->render(mc, pointer);
 	}
 }
@@ -219,7 +219,7 @@ TabLayout::Navigation::Navigation(TabLayout* layout) : m_pLayout(layout)
 
 bool TabLayout::Navigation::next(int& x, int& y, bool cycle)
 {
-	while (++m_index < m_pLayout->m_elements.size())
+	while (++m_index < ID(m_pLayout->m_elements.size()))
 	{
 		GuiElement* element = m_pLayout->m_elements[m_index];
 

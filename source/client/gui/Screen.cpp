@@ -942,7 +942,7 @@ Screen::Navigation::Navigation(Screen* screen) : m_pScreen(screen)
 
 bool Screen::Navigation::next(int& x, int& y, bool cycle)
 {
-	while (++m_index < int(m_pScreen->m_elements.size()))
+	while (++m_index < ID(m_pScreen->m_elements.size()))
 	{
 		GuiElement* element = m_pScreen->m_elements[m_index];
 
