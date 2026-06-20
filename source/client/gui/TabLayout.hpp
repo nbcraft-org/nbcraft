@@ -9,10 +9,11 @@ public:
     ~TabLayout();
 
     GuiElement* getElement(ID) const;
-    bool selectElementById(ID, bool sound = true);
-    void selectElement(GuiElement*);
+    bool selectElementById(ID, bool sound = false);
+    bool selectElement(GuiElement*);
     ID getIndex() const;
 
+    virtual void onSelectElement(GuiElement*);
     void init(int x, int y, int spacing = 0, AreaNavigation::Direction organizeDir = AreaNavigation::RIGHT, bool cyclic = true);
     void organize();
     void clear();

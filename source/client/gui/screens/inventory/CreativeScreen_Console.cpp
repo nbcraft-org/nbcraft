@@ -4,6 +4,7 @@
 #include "world/entity/Player.hpp"
 #include "world/inventory/CreativeMenu_Console.hpp"
 #include "client/gui/components/TabButton.hpp"
+#include "client/locale/Language.hpp"
 #include "renderer/ShaderConstants.hpp"
 
 Container* CreativeScreen_Console::creativeGrid = new SimpleContainer(55, "Item selection");
@@ -15,13 +16,13 @@ CreativeScreen_Console::CreativeScreen_Console(Container* inventory) : CreativeS
     m_imageWidth = 647;
     m_imageHeight = 490;
 
-    _addTab("gui/console/icon_structures.png", "creativeMenu.console.structures");
-    _addTab("gui/console/icon_decoration.png", "creativeMenu.console.decoration");
-    _addTab("gui/console/icon_Redstone_and_Transport.png", "creativeMenu.console.redstone_and_transport");
-    _addTab("gui/console/icon_materials.png", "creativeMenu.console.materials");
-    _addTab("gui/console/icon_food.png", "creativeMenu.console.food");
-    _addTab("gui/console/icon_tools.png", "creativeMenu.console.tools");
-    _addTab("gui/console/icon_misc.png", "creativeMenu.console.misc");
+    _addTab("gui/console/icon_structures.png", "container.tab.structures");
+    _addTab("gui/console/icon_decoration.png", "container.tab.decoration");
+    _addTab("gui/console/icon_Redstone_and_Transport.png", "container.tab.redstone_and_transport");
+    _addTab("gui/console/icon_materials.png", "container.tab.materials");
+    _addTab("gui/console/icon_food.png", "container.tab.food");
+    _addTab("gui/console/icon_tools.png", "container.tab.tools");
+    _addTab("gui/console/icon_misc.png", "container.tab.misc");
 }
 
 void CreativeScreen_Console::render(float partialTicks)
@@ -50,15 +51,19 @@ bool CreativeScreen_Console::_isCreativeSlot(Slot* slot)
 
 void CreativeScreen_Console::_addTab(const std::string& sprite, const std::string& name)
 {
-    m_tabLayout.m_elements.push_back(new TabButton(95, 78, name, SpriteDef(m_tabLayout.m_elements.empty() ? "gui/console/Graphics/Tab_Creative7_L.png" : m_tabLayout.m_elements.size() == 6 ? "gui/console/Graphics/Tab_Creative7_R.png" : "gui/console/Graphics/Tab_Creative7_M.png", IntRectangle()), SpriteDef(), SpriteDef(sprite, IntRectangle(0, 0, 48, 48))));
+    m_tabLayout.m_elements.push_back(new TabButton(95, 78, name, SpriteDef(m_tabLayout.m_elements.empty() ? "gui/console/Graphics/Tab_Creative7_L.png" : m_tabLayout.m_elements.size() == 6 ? "gui/console/Graphics/Tab_Creative7_R.png" : "gui/console/Graphics/Tab_Creative7_M.png", IntRectangle()), SpriteDef(), SpriteDef(sprite, IntRectangle(0, 5, 48, 48))));
 }
 
-void CreativeScreen_Console::_guiElementClicked(GuiElement& element)
+bool CreativeScreen_Console::_nextTab()
 {
-    if (element.getId() == m_tabLayout.getId() && m_menuPointer.isPressed)
-    {
-        ((CreativeMenu_Console*)m_pMenu)->updateGrid(0.0f, m_tabLayout.getIndex());
-    }
+    m_tabLayout.areaNavigation(AreaNavigation::RIGHT);
+    return true;
+}
+
+bool CreativeScreen_Console::_prevTab()
+{
+    m_tabLayout.areaNavigation(AreaNavigation::LEFT);
+    return true;
 }
 
 void CreativeScreen_Console::_updateScroll(float)
@@ -69,7 +74,7 @@ void CreativeScreen_Console::_renderLabels()
 {
     if (m_tabLayout.m_pSelectedElement)
     {
-        const std::string& message = m_tabLayout.m_pSelectedElement->getMessage();
+        const std::string& message = Language::get(m_tabLayout.m_pSelectedElement->getMessage());
         m_pFont->drawScalable(message, m_imageWidth / 2 - m_pFont->width(message), 91, Color::TEXT_GREY);
     }
 }
@@ -89,4 +94,13 @@ SlotDisplay CreativeScreen_Console::_createSlotDisplay(const Slot& slot)
     int col = slot.m_stackId % 11;
     int row = slot.m_stackId / 11;
     return SlotDisplay(29 + col * slotSize, 124 + row * slotSize, slotSize, true);
+}
+
+CreativeScreen_Console::CreativeTabLayout::CreativeTabLayout(CreativeScreen_Console* screen) : TabLayout(screen)
+{
+}
+
+void CreativeScreen_Console::CreativeTabLayout::onSelectElement(GuiElement* element)
+{
+    ((CreativeMenu_Console*)((CreativeScreen_Console*)m_pScreen)->m_pMenu)->updateGrid(0.0f, getIndex());
 }

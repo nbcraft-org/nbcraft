@@ -36,7 +36,7 @@ bool TabLayout::selectElementById(ID id, bool sound)
 	return false;
 }
 
-void TabLayout::selectElement(GuiElement* element)
+bool TabLayout::selectElement(GuiElement* element)
 {
 	if (element != m_pSelectedElement)
 	{
@@ -45,12 +45,20 @@ void TabLayout::selectElement(GuiElement* element)
 		m_pSelectedElement = element;
 		if (m_pSelectedElement)
 			m_pSelectedElement->setSelected(true);
+		onSelectElement(element);
+		return true;
 	}
+
+	return false;
 }
 
 GuiElement::ID TabLayout::getIndex() const
 {
 	return m_pSelectedElement->getId();
+}
+
+void TabLayout::onSelectElement(GuiElement*)
+{
 }
 
 void TabLayout::init(int x, int y, int spacing, AreaNavigation::Direction organizeDir, bool cyclic)

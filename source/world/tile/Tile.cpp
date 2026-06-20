@@ -845,6 +845,9 @@ void Tile::initTiles()
 	Item::items[Tile::sapling->m_ID] = (new AuxTileItem(Tile::sapling->m_ID - C_MAX_TILES))
 		->setDescriptionId("sapling");
 
+	Item::items[Tile::tallGrass->m_ID] = (new AuxTileItem(Tile::tallGrass->m_ID - C_MAX_TILES))
+		->setDescriptionId("tallGrass");
+
 	//Item::items[Tile::piston->id] = (new PistonItem(Tile::piston->id - C_MAX_TILES));
 
 	//Item::items[Tile::stickyPiston->id] = (new PistonItem(Tile::stickyPiston->id - C_MAX_TILES));

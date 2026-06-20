@@ -32,8 +32,8 @@ public:
 private:
     static void initCreativeItems();
     static void _addAuxTile(Category, Tile* tile);
-    static void _addTile(Category, Tile* tile);
-    static void _addItem(Category, Item* item);
+    static void _addTile(Category, Tile* tile, TileData = 0);
+    static void _addItem(Category, Item* item, int data = 0);
 
 private:
     Container* m_container;

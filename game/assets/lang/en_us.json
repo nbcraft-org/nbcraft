@@ -125,5 +125,16 @@
     "pauseMenu.saveGame": "Save Game",
     "deadMenu.death": "You Died!",
     "deadMenu.respawn": "Respawn",
-    "deadMenu.quit":  "Exit Game"
+    "deadMenu.quit": "Exit Game",
+    "container.tab.decoration": "Decorations",
+    "container.tab.food": "Food",
+    "container.tab.materials": "Materials",
+    "container.tab.mechanisms": "Mechanisms",
+    "container.tab.misc": "Miscellaneous",
+    "container.tab.redstone_and_transport": "Redstone & Transportation",
+    "container.tab.structures": "Structures",
+    "container.tab.symbols": "Symbols",
+    "container.tab.tools": "Tools and Weapons",
+    "container.tab.tools_and_armour": "Tools, Weapons & Armor",
+    "container.tab.transport": "Transport"
 }
