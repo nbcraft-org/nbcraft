@@ -52,6 +52,7 @@
 //#define ENH_RENDER_HAND_ARMOR            // Render the right arm of the chestplate you are wearing on top the first-person hand.
 #define ENH_SAVE_REMOTE_PLAYERS            // Save remote player data on the server, such as inventory, position, health, etc.
 //#define ENH_BETA_1_7_TERRAIN_ATLAS       // Enables support for the vertical shift of some textures from Beta 1.7, such as cake
+//#define ENH_NEWER_CONSOLE_ITEM_LIGHTING  // Makes the Console UI tile items lighting based on Title Update 5
 #define ENH_NEW_FEEDBACK_INDICATOR 	       // Use the new mesh-based interaction feedback indicator.
 
 // TODO: Implement this permanently?

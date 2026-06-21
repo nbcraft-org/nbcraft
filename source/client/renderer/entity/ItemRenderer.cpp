@@ -287,13 +287,12 @@ void ItemRenderer::renderGuiItem(Minecraft* mc, ItemStack& item, int x, int y, b
 #if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
 		glEnable(GL_RESCALE_NORMAL);
 #endif
-		Lighting::turnOnItems();
-
 		MatrixStack::Ref matrix = MatrixStack::World.push();
 
 		// scale, rotate, and translate the tile onto the correct screen coordinate
 		if (mc->getUiTheme() == UI_CONSOLE)
 		{
+			Lighting::turnOnConsoleUiItems();
 			matrix->translate(Vec3(x, y, 0));
 			matrix->scale(16);
 			matrix->translate(Vec3(0.5f, 0.5f, 0.0f));
@@ -301,6 +300,7 @@ void ItemRenderer::renderGuiItem(Minecraft* mc, ItemStack& item, int x, int y, b
 		}
 		else
 		{
+			Lighting::turnOnItems();
 			matrix->translate(Vec3(x - 2, y + 3, 0));
 			matrix->scale(10);
 			matrix->translate(Vec3(1.0f, 0.5f, 1.0f));
