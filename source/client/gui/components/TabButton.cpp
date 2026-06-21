@@ -45,7 +45,7 @@ void TabButton::render(Minecraft* pMinecraft, const MenuPointer& pointer)
 {
 	if (!isVisible()) return;
 
-	if (m_color.a == 0.0f)i
+	if (m_color.a == 0.0f)
 		return;
 
 	currentShaderColor = m_color;

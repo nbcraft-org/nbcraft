@@ -25,7 +25,7 @@ CreativeScreen::CreativeScreen(Container* inventory) : ContainerScreen(new Creat
 void CreativeScreen::slotClicked(Slot* slot, Container::SlotID slotId, MouseButtonType button, bool quick)
 {
     Inventory* inv = m_pMinecraft->m_pLocalPlayer->m_pInventory;
-    ItemStack carried = inv->getCarried();
+    ItemStack& carried = inv->getCarried();
 
     if (slot)
     {
@@ -33,7 +33,7 @@ void CreativeScreen::slotClicked(Slot* slot, Container::SlotID slotId, MouseButt
         {
             ItemStack& slotItem = slot->getItem();
 
-            if (!carried.isEmpty() && slotItem.isValid() && carried.getId() == slotItem.getId())
+            if (!carried.isEmpty() && !slotItem.isEmpty() && carried.getId() == slotItem.getId())
             {
                 if (button == MOUSE_BUTTON_LEFT)
                 {
@@ -46,7 +46,7 @@ void CreativeScreen::slotClicked(Slot* slot, Container::SlotID slotId, MouseButt
                 {
                     if (carried.m_count <= 1)
                     {
-                        inv->setCarried(ItemStack());
+                        inv->setCarried(ItemStack::EMPTY);
                         return;
                     }
                     else
@@ -58,22 +58,17 @@ void CreativeScreen::slotClicked(Slot* slot, Container::SlotID slotId, MouseButt
             }
             else if (!carried.isEmpty())
             {
-                inv->setCarried(ItemStack());
+                inv->setCarried(ItemStack::EMPTY);
             }
-            else if (!slotItem.isValid())
+            else if (slotItem.isEmpty())
             {
-                inv->setCarried(ItemStack());
+                inv->setCarried(ItemStack::EMPTY);
             }
             else if (carried.isEmpty() || carried.getId() != slotItem.getId())
             {
-                ItemStack* newCarried = slotItem.copy();
-                if (newCarried)
-                {
-                    if (quick)
-                        newCarried->m_count = newCarried->getMaxStackSize();
-                    inv->setCarried(*newCarried);
-                    delete newCarried;
-                }
+                inv->setCarried(slotItem);
+                if (quick)
+                    carried.m_count = carried.getMaxStackSize();
             }
         }
         else
@@ -88,14 +83,14 @@ void CreativeScreen::slotClicked(Slot* slot, Container::SlotID slotId, MouseButt
             if (button == MOUSE_BUTTON_LEFT)
             {
                 m_pMinecraft->m_pLocalPlayer->drop(carried);
-                inv->setCarried(ItemStack());
+                inv->setCarried(ItemStack::EMPTY);
             }
             else if (button == MOUSE_BUTTON_RIGHT)
             {
                 ItemStack dropped = carried.remove(1);
                 m_pMinecraft->m_pLocalPlayer->drop(dropped);
                 if (carried.m_count <= 0)
-                    inv->setCarried(ItemStack());
+                    inv->setCarried(ItemStack::EMPTY);
             }
         }
     }

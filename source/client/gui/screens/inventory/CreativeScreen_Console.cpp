@@ -9,7 +9,7 @@
 
 Container* CreativeScreen_Console::creativeGrid = new SimpleContainer(55, "Item selection");
 
-CreativeScreen_Console::CreativeScreen_Console(Container* inventory) : CreativeScreen(new CreativeMenu_Console(inventory, creativeGrid))
+CreativeScreen_Console::CreativeScreen_Console(Container* inventory) : ContainerScreen(new CreativeMenu_Console(inventory, creativeGrid))
     , m_tabLayout(this)
 {
     m_uiTheme = UI_CONSOLE;
@@ -25,12 +25,9 @@ CreativeScreen_Console::CreativeScreen_Console(Container* inventory) : CreativeS
     _addTab("gui/console/icon_misc.png", "container.tab.misc");
 }
 
-void CreativeScreen_Console::render(float partialTicks)
+void CreativeScreen_Console::_renderFg(float partialTicks)
 {
-    blitTexture(*m_pMinecraft->m_pTextures, "gui/console/Graphics/Creative_Panel_7.png", m_leftPos, m_topPos, 0, 0, m_imageWidth, m_imageHeight, m_imageWidth, m_imageHeight);
-    CreativeScreen::render(partialTicks);
-
-    currentShaderColor = Color::WHITE;
+    ContainerScreen::_renderFg(partialTicks);
     m_tabLayout.renderSelected(m_pMinecraft, m_menuPointer);
 }
 
@@ -38,15 +35,95 @@ void CreativeScreen_Console::renderBackground()
 {
 }
 
-void CreativeScreen_Console::init()
+void CreativeScreen_Console::slotClicked(Slot* slot, Container::SlotID slotId, MouseButtonType button, bool quick)
 {
-    CreativeScreen::init();
-    m_tabLayout.init(m_leftPos, m_topPos - 3, -3);
+    Inventory* inv = m_pMinecraft->m_pLocalPlayer->m_pInventory;
+    ItemStack& carried = inv->getCarried();
+
+    if (slot)
+    {
+        if (slot->m_pContainer == creativeGrid)
+        {
+            ItemStack& slotItem = slot->getItem();
+
+            if (!carried.isEmpty() && !slotItem.isEmpty() && carried.getId() == slotItem.getId())
+            {
+                if (button == MOUSE_BUTTON_LEFT)
+                {
+                    if (quick)
+                        carried.m_count = carried.getMaxStackSize();
+                    else if (carried.m_count < carried.getMaxStackSize())
+                        carried.m_count++;
+                }
+                else if (button == MOUSE_BUTTON_RIGHT)
+                {
+                    if (carried.m_count <= 1)
+                    {
+                        inv->setCarried(ItemStack::EMPTY);
+                        return;
+                    }
+                    else
+                    {
+                        carried.m_count--;
+                    }
+                }
+                inv->setCarried(carried);
+            }
+            else if (!carried.isEmpty())
+            {
+                inv->setCarried(ItemStack::EMPTY);
+            }
+            else if (slotItem.isEmpty())
+            {
+                inv->setCarried(ItemStack::EMPTY);
+            }
+            else if (carried.isEmpty() || carried.getId() != slotItem.getId())
+            {
+                ItemStack picked = slotItem;
+                if (quick)
+                    picked.m_count = picked.getMaxStackSize();
+
+                ItemStack toMove = picked;
+
+                m_pMenu->moveItemStackTo(toMove, 55, 64, false);
+
+                if (!toMove.isEmpty())
+                {
+                    inv->setCarried(picked);
+                    _selectSlot(m_pMenu->getSlot(63));
+                }
+
+            }
+        }
+        else
+        {
+            ContainerScreen::slotClicked(slot, slotId, button, quick);
+        }
+    }
+    else
+    {
+        if (!carried.isEmpty())
+        {
+            if (button == MOUSE_BUTTON_LEFT)
+            {
+                m_pMinecraft->m_pLocalPlayer->drop(carried);
+                inv->setCarried(ItemStack::EMPTY);
+            }
+            else if (button == MOUSE_BUTTON_RIGHT)
+            {
+                ItemStack dropped = carried.remove(1);
+                m_pMinecraft->m_pLocalPlayer->drop(dropped);
+                if (carried.m_count <= 0)
+                    inv->setCarried(ItemStack::EMPTY);
+            }
+        }
+    }
 }
 
-bool CreativeScreen_Console::_isCreativeSlot(Slot* slot)
+void CreativeScreen_Console::init()
 {
-    return slot->m_pContainer == creativeGrid;
+    ContainerScreen::init();
+    m_tabLayout.init(m_leftPos, m_topPos - 3, -3);
 }
 
 void CreativeScreen_Console::_addTab(const std::string& sprite, const std::string& name)
@@ -66,10 +143,6 @@ bool CreativeScreen_Console::_prevTab()
     return true;
 }
 
-void CreativeScreen_Console::_updateScroll(float)
-{
-}
-
 void CreativeScreen_Console::_renderLabels()
 {
     if (m_tabLayout.m_pSelectedElement)
@@ -81,6 +154,8 @@ void CreativeScreen_Console::_renderLabels()
 
 void CreativeScreen_Console::_renderBg(float partialTicks)
 {
+    currentShaderColor = Color::WHITE;
+    blitTexture(*m_pMinecraft->m_pTextures, "gui/console/Graphics/Creative_Panel_7.png", m_leftPos, m_topPos, 0, 0, m_imageWidth, m_imageHeight, m_imageWidth, m_imageHeight);
 }
 
 SlotDisplay CreativeScreen_Console::_createSlotDisplay(const Slot& slot)
