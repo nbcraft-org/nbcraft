@@ -84,7 +84,7 @@ void CreativeMenu_Console::initCreativeItems()
     _addTile(DECORATION, Tile::cloth, ClothTile::BROWN);
 
     //_addTile(REDSTONE_AND_TRANSPORT, Tile::dispenser);
-    //_addTile(REDSTONE_AND_TRANSPORT, Tile::noteblock);
+    _addTile(REDSTONE_AND_TRANSPORT, Tile::musicBlock);
     //_addTile(REDSTONE_AND_TRANSPORT, Tile::piston);
     //_addTile(REDSTONE_AND_TRANSPORT, Tile::stickyPiston);
     _addTile(REDSTONE_AND_TRANSPORT, Tile::tnt);
@@ -164,7 +164,6 @@ void CreativeMenu_Console::initCreativeItems()
     //_addItem(FOOD, Item::cookedChicken);
     //_addItem(FOOD, Item::chicken);
     //_addItem(FOOD, Item::rottenFlesh);
-
 
     _addItem(TOOLS, Item::helmet_cloth);
     _addItem(TOOLS, Item::chestplate_cloth);
