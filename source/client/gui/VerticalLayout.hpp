@@ -8,6 +8,18 @@
 class VerticalLayout : public GuiElement
 {
 public:
+    class Navigation : public AreaNavigation
+    {
+    public:
+        Navigation(VerticalLayout*);
+
+        bool next(int& x, int& y, bool invert) override;
+
+        bool isValid(ID) override;
+    private:
+        VerticalLayout* m_pLayout;
+    };
+
     VerticalLayout(Screen* screen);
     ~VerticalLayout();
 
@@ -38,18 +50,6 @@ public:
     void render(Minecraft*, const MenuPointer&) override;
 
 public:
-    class Navigation : public AreaNavigation
-    {
-    public:
-        Navigation(VerticalLayout*);
-
-        bool next(int& x, int& y, bool invert) override;
-
-        bool isValid(ID) override;
-    private:
-        VerticalLayout* m_pLayout;
-    };
-
     Screen* m_pScreen;
     GuiElementList m_elements;
     GuiElement* m_pSelectedElement;

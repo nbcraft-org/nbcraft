@@ -52,6 +52,26 @@ public:
 	static void setIsMenuPanoramaAvailable(bool value) { _isPanoramaAvailable = value; }
 
 public:
+	class Navigation : public AreaNavigation
+	{
+	public:
+		Navigation(Screen*);
+
+		bool next(int& x, int& y, bool invert) override;
+
+		bool isValid(ID) override;
+
+	private:
+		Screen* m_pScreen;
+	};
+
+	enum Type
+	{
+		SCREEN_SPECIFIC,	// The Screen handles a specific UI Theme
+		SCREEN_GENERIC,		// The Screen is a Java / Pocket mix
+		SCREEN_UNIVERSAL	// The Screen automatically handles all UI themes
+	};
+
 	Screen();
 	virtual ~Screen();
 
@@ -142,26 +162,6 @@ protected:
 public:
 	friend class VerticalLayout;
 	friend class TabLayout;
-
-	class Navigation : public AreaNavigation
-	{
-	public:
-		Navigation(Screen*);
-
-		bool next(int& x, int& y, bool invert) override;
-
-		bool isValid(ID) override;
-
-	private:
-		Screen* m_pScreen;
-	};
-
-	enum Type
-	{
-		SCREEN_SPECIFIC,	// The Screen handles a specific UI Theme
-		SCREEN_GENERIC,		// The Screen is a Java / Pocket mix
-		SCREEN_UNIVERSAL	// The Screen automatically handles all UI themes
-	};
 
 	int m_width;
 	int m_height;
