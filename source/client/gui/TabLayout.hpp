@@ -5,6 +5,18 @@
 class TabLayout : public GuiElement
 {
 public:
+    class Navigation : public AreaNavigation
+    {
+    public:
+        Navigation(TabLayout*);
+
+        bool next(int& x, int& y, bool invert) override;
+
+        bool isValid(ID) override;
+    private:
+        TabLayout* m_pLayout;
+    };
+
     TabLayout(Screen* screen);
     ~TabLayout();
 
@@ -32,18 +44,6 @@ public:
     void renderSelected(Minecraft*, const MenuPointer&);
 
 public:
-    class Navigation : public AreaNavigation
-    {
-    public:
-        Navigation(TabLayout*);
-
-        bool next(int& x, int& y, bool invert) override;
-
-        bool isValid(ID) override;
-    private:
-        TabLayout* m_pLayout;
-    };
-
     Screen* m_pScreen;
     GuiElementList m_elements;
     GuiElement* m_pSelectedElement;

@@ -6,13 +6,30 @@ void TabButton::_renderImage(Minecraft& mc, const SpriteDef& image)
 	blitSprite(*mc.m_pTextures, image.sprite, m_xPos + image.rect.x + (m_width - image.rect.w) / 2, m_yPos + image.rect.y + (m_height - image.rect.h) / 2, image.rect.w, image.rect.h);
 }
 
-TabButton::TabButton(int width, int height, const std::string& text, const SpriteDef& highImage, const SpriteDef& downImage, const SpriteDef& iconImage) : Button(0, 0, width, height, text)
-, m_highImage(highImage)
-, m_downImage(downImage)
-, m_iconImage(iconImage)
+void TabButton::_init()
 {
 	m_highImage.rect.w = m_downImage.rect.w = m_width;
 	m_highImage.rect.h = m_downImage.rect.h = m_height;
+}
+
+TabButton::TabButton(int width, int height, const std::string& text, const SpriteDef& highImage, const SpriteDef& downImage, const SpriteDef& iconImage, const SpriteDef& downIconImage)
+	: Button(0, 0, width, height, text)
+	, m_highImage(highImage)
+	, m_downImage(downImage)
+	, m_iconImage(iconImage)
+	, m_downIconImage(downIconImage)
+{
+	_init();
+}
+
+TabButton::TabButton(int width, int height, const std::string& text, const SpriteDef& highImage, const SpriteDef& downImage, const SpriteDef& iconImage)
+	: Button(0, 0, width, height, text)
+	, m_highImage(highImage)
+	, m_downImage(downImage)
+	, m_iconImage(iconImage)
+	, m_downIconImage(iconImage)
+{
+	_init();
 }
 
 void TabButton::_renderMessage(Minecraft& mc)

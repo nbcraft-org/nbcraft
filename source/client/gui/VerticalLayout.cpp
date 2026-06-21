@@ -1,7 +1,7 @@
 #include "VerticalLayout.hpp"
 
-VerticalLayout::VerticalLayout(Screen* screen) :
-	m_pScreen(screen)
+VerticalLayout::VerticalLayout(Screen* screen)
+	: m_pScreen(screen)
 	, m_pSelectedElement(nullptr)
 	, m_pClickedElement(nullptr)
 	, m_spacing(0)

@@ -9,6 +9,20 @@ private:
     static Container* creativeGrid;
 
 public:
+    class CreativeTabLayout : public TabLayout
+    {
+    public:
+        CreativeTabLayout(CreativeScreen_Console*);
+
+        void onSelectElement(GuiElement*) override;
+
+    private:
+        CreativeScreen_Console* getScreen()
+        {
+            return (CreativeScreen_Console*) m_pScreen;
+        }
+    };
+
     CreativeScreen_Console(Container* inventory);
 
     void render(float partialTicks) override;
@@ -26,14 +40,5 @@ protected:
     SlotDisplay _createSlotDisplay(const Slot& slot) override;
 
 public:
-
-    class CreativeTabLayout : public TabLayout
-    {
-    public:
-        CreativeTabLayout(CreativeScreen_Console*);
-
-        void onSelectElement(GuiElement*) override;
-    };
-
     CreativeTabLayout m_tabLayout;
 };

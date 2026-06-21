@@ -188,7 +188,7 @@ void ItemRenderer::blit(int dx, int dy, int sx, int sy, int tw, int th)
 	t.draw(m_itemMaterials.ui_textured);
 }
 
-void ItemRenderer::renderGuiItemOverlay(Font* font, Textures* textures, ItemStack& item, int x, int y)
+void ItemRenderer::renderGuiItemOverlay(Minecraft& mc, ItemStack& item, int x, int y)
 {
 	if (item.isEmpty())
 		return;
@@ -220,12 +220,12 @@ void ItemRenderer::renderGuiItemOverlay(Font* font, Textures* textures, ItemStac
 	ss << item.m_count;
 	std::string amtstr = ss.str();
 
-	int width = font->width(amtstr);
+	int width = mc.m_pFont->width(amtstr);
 
-	font->drawShadow(amtstr, x + 17 - width, y + 6 + 3, 0xFFFFFF);
+	mc.m_pFont->drawShadow(amtstr, x + 17 - width, y + 6 + 3, 0xFFFFFF);
 }
 
-void ItemRenderer::renderGuiItem(Minecraft* mc, ItemStack& item, int x, int y, bool b)
+void ItemRenderer::renderGuiItem(Minecraft& mc, ItemStack& item, int x, int y, bool b)
 {
 	// @NOTE: Font unused but would presumably be used to draw the item amount.
 	// As if that actually works due to us blocking t.begin() and t.draw() calls...
@@ -235,7 +235,7 @@ void ItemRenderer::renderGuiItem(Minecraft* mc, ItemStack& item, int x, int y, b
 	if (!b)
 		return;
 
-	Textures& textures = *mc->m_pTextures;
+	Textures& textures = *mc.m_pTextures;
 
 	//Item* pItem = item->getItem();
 	Tile* pTile = item.getTile();
@@ -290,7 +290,7 @@ void ItemRenderer::renderGuiItem(Minecraft* mc, ItemStack& item, int x, int y, b
 		MatrixStack::Ref matrix = MatrixStack::World.push();
 
 		// scale, rotate, and translate the tile onto the correct screen coordinate
-		if (mc->getUiTheme() == UI_CONSOLE)
+		if (mc.getUiTheme() == UI_CONSOLE)
 		{
 			Lighting::turnOnConsoleUiItems();
 			matrix->translate(Vec3(x, y, 0));

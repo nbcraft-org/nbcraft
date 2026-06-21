@@ -10,7 +10,7 @@
 Container* CreativeScreen_Console::creativeGrid = new SimpleContainer(55, "Item selection");
 
 CreativeScreen_Console::CreativeScreen_Console(Container* inventory) : CreativeScreen(new CreativeMenu_Console(inventory, creativeGrid))
-, m_tabLayout(this)
+    , m_tabLayout(this)
 {
     m_uiTheme = UI_CONSOLE;
     m_imageWidth = 647;
@@ -102,5 +102,5 @@ CreativeScreen_Console::CreativeTabLayout::CreativeTabLayout(CreativeScreen_Cons
 
 void CreativeScreen_Console::CreativeTabLayout::onSelectElement(GuiElement* element)
 {
-    ((CreativeMenu_Console*)((CreativeScreen_Console*)m_pScreen)->m_pMenu)->updateGrid(0.0f, getIndex());
+    ((CreativeMenu_Console*)getScreen()->m_pMenu)->updateGrid(0.0f, getIndex());
 }

@@ -271,6 +271,7 @@
     <ClInclude Include="$(MC_ROOT)\source\client\gui\components\TabButton.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\CreativeScreen_Console.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\TabLayout.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\SpriteDef.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\client\app\App.cpp" />

@@ -1,7 +1,7 @@
 #include "TabLayout.hpp"
 
-TabLayout::TabLayout(Screen* screen) :
-	m_pScreen(screen)
+TabLayout::TabLayout(Screen* screen)
+	: m_pScreen(screen)
 	, m_pSelectedElement(nullptr)
 	, m_pClickedElement(nullptr)
 	, m_spacing(0)
