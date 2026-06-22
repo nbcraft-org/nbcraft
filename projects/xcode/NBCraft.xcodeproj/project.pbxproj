@@ -1038,6 +1038,19 @@
 		84EAE8E02AF1EAA9000894E8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84EAE8DF2AF1EAA9000894E8 /* CoreGraphics.framework */; };
 		84EAE8E42AF1EABE000894E8 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84EAE8E32AF1EABE000894E8 /* OpenGLES.framework */; };
 		84EAE8F72AF1EAFA000894E8 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84EAE8F12AF1EAFA000894E8 /* main.cpp */; };
+		84EAF81E2FE8CC1B00D54A38 /* ItemPane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84EAF8182FE8CC1B00D54A38 /* ItemPane.cpp */; };
+		84EAF81F2FE8CC1B00D54A38 /* ItemPane.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84EAF8192FE8CC1B00D54A38 /* ItemPane.hpp */; };
+		84EAF8202FE8CC1B00D54A38 /* ScrollingPane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84EAF81A2FE8CC1B00D54A38 /* ScrollingPane.cpp */; };
+		84EAF8212FE8CC1B00D54A38 /* ScrollingPane.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84EAF81B2FE8CC1B00D54A38 /* ScrollingPane.hpp */; };
+		84EAF8222FE8CC1B00D54A38 /* TabButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84EAF81C2FE8CC1B00D54A38 /* TabButton.cpp */; };
+		84EAF8232FE8CC1B00D54A38 /* TabButton.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84EAF81D2FE8CC1B00D54A38 /* TabButton.hpp */; };
+		84EAF8262FE8CC8200D54A38 /* CreativeScreen_Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84EAF8242FE8CC8200D54A38 /* CreativeScreen_Console.cpp */; };
+		84EAF8272FE8CC8200D54A38 /* CreativeScreen_Console.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84EAF8252FE8CC8200D54A38 /* CreativeScreen_Console.hpp */; };
+		84EAF82B2FE8CCCE00D54A38 /* SpriteDef.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84EAF8282FE8CCCE00D54A38 /* SpriteDef.hpp */; };
+		84EAF82C2FE8CCCE00D54A38 /* TabLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84EAF8292FE8CCCE00D54A38 /* TabLayout.cpp */; };
+		84EAF82D2FE8CCCE00D54A38 /* TabLayout.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84EAF82A2FE8CCCE00D54A38 /* TabLayout.hpp */; };
+		84EAF8302FE8E19E00D54A38 /* CreativeMenu_Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84EAF82E2FE8E19E00D54A38 /* CreativeMenu_Console.cpp */; };
+		84EAF8312FE8E19E00D54A38 /* CreativeMenu_Console.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84EAF82F2FE8E19E00D54A38 /* CreativeMenu_Console.hpp */; };
 		84EB09962EE2CC25008FB007 /* AppPlatformListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84EB09942EE2CC25008FB007 /* AppPlatformListener.cpp */; };
 		84EB09972EE2CC25008FB007 /* AppPlatformListener.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84EB09952EE2CC25008FB007 /* AppPlatformListener.hpp */; };
 		84EB099B2EE2CC3B008FB007 /* GuiElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84EB09982EE2CC3B008FB007 /* GuiElement.cpp */; };
@@ -2875,6 +2888,19 @@
 		84EAE8E32AF1EABE000894E8 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		84EAE8F02AF1EAFA000894E8 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		84EAE8F12AF1EAFA000894E8 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		84EAF8182FE8CC1B00D54A38 /* ItemPane.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ItemPane.cpp; sourceTree = "<group>"; };
+		84EAF8192FE8CC1B00D54A38 /* ItemPane.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ItemPane.hpp; sourceTree = "<group>"; };
+		84EAF81A2FE8CC1B00D54A38 /* ScrollingPane.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingPane.cpp; sourceTree = "<group>"; };
+		84EAF81B2FE8CC1B00D54A38 /* ScrollingPane.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ScrollingPane.hpp; sourceTree = "<group>"; };
+		84EAF81C2FE8CC1B00D54A38 /* TabButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TabButton.cpp; sourceTree = "<group>"; };
+		84EAF81D2FE8CC1B00D54A38 /* TabButton.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TabButton.hpp; sourceTree = "<group>"; };
+		84EAF8242FE8CC8200D54A38 /* CreativeScreen_Console.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CreativeScreen_Console.cpp; sourceTree = "<group>"; };
+		84EAF8252FE8CC8200D54A38 /* CreativeScreen_Console.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CreativeScreen_Console.hpp; sourceTree = "<group>"; };
+		84EAF8282FE8CCCE00D54A38 /* SpriteDef.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SpriteDef.hpp; sourceTree = "<group>"; };
+		84EAF8292FE8CCCE00D54A38 /* TabLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TabLayout.cpp; sourceTree = "<group>"; };
+		84EAF82A2FE8CCCE00D54A38 /* TabLayout.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TabLayout.hpp; sourceTree = "<group>"; };
+		84EAF82E2FE8E19E00D54A38 /* CreativeMenu_Console.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CreativeMenu_Console.cpp; sourceTree = "<group>"; };
+		84EAF82F2FE8E19E00D54A38 /* CreativeMenu_Console.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CreativeMenu_Console.hpp; sourceTree = "<group>"; };
 		84EB09942EE2CC25008FB007 /* AppPlatformListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AppPlatformListener.cpp; sourceTree = "<group>"; };
 		84EB09952EE2CC25008FB007 /* AppPlatformListener.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = AppPlatformListener.hpp; sourceTree = "<group>"; };
 		84EB09982EE2CC3B008FB007 /* GuiElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GuiElement.cpp; sourceTree = "<group>"; };
@@ -3496,6 +3522,9 @@
 				84E5A69A2FC963D400320694 /* ScreenChooser_Pocket.cpp */,
 				84E5A69B2FC963D400320694 /* ScreenChooser_Pocket.hpp */,
 				840DD59C2AC810620006A435 /* screens */,
+				84EAF8282FE8CCCE00D54A38 /* SpriteDef.hpp */,
+				84EAF8292FE8CCCE00D54A38 /* TabLayout.cpp */,
+				84EAF82A2FE8CCCE00D54A38 /* TabLayout.hpp */,
 				844336F32F405DCA00EB3115 /* VerticalLayout.cpp */,
 				844336F42F405DCA00EB3115 /* VerticalLayout.hpp */,
 			);
@@ -3511,6 +3540,8 @@
 				840DD58B2AC810620006A435 /* Button.hpp */,
 				84E5A68E2FC963B200320694 /* ImageButton.cpp */,
 				84E5A68F2FC963B200320694 /* ImageButton.hpp */,
+				84EAF8182FE8CC1B00D54A38 /* ItemPane.cpp */,
+				84EAF8192FE8CC1B00D54A38 /* ItemPane.hpp */,
 				84E5A6902FC963B200320694 /* LargeImageButton.cpp */,
 				84E5A6912FC963B200320694 /* LargeImageButton.hpp */,
 				84C90EA32AF8861A008973F9 /* OptionList.cpp */,
@@ -3519,6 +3550,8 @@
 				840DD58D2AC810620006A435 /* RolledSelectionList.hpp */,
 				840DD58E2AC810620006A435 /* ScrolledSelectionList.cpp */,
 				840DD58F2AC810620006A435 /* ScrolledSelectionList.hpp */,
+				84EAF81A2FE8CC1B00D54A38 /* ScrollingPane.cpp */,
+				84EAF81B2FE8CC1B00D54A38 /* ScrollingPane.hpp */,
 				844336E92F405D8E00EB3115 /* ScrollRenderer_Console.cpp */,
 				844336EA2F405D8E00EB3115 /* ScrollRenderer_Console.hpp */,
 				84EE49E92F387DBD00677881 /* SliderButton.cpp */,
@@ -3529,6 +3562,8 @@
 				84EE49EC2F387DBD00677881 /* SwitchButton.hpp */,
 				84EE49ED2F387DBD00677881 /* SwitchValuesButton.cpp */,
 				84EE49EE2F387DBD00677881 /* SwitchValuesButton.hpp */,
+				84EAF81C2FE8CC1B00D54A38 /* TabButton.cpp */,
+				84EAF81D2FE8CC1B00D54A38 /* TabButton.hpp */,
 				840DD5922AC810620006A435 /* TextBox.cpp */,
 				840DD5932AC810620006A435 /* TextBox.hpp */,
 				8443373C2F4060AD00EB3115 /* TickBox.cpp */,
@@ -5171,10 +5206,12 @@
 				8443371A2F405E1C00EB3115 /* ClassicCraftingScreen_Console.hpp */,
 				84E022EB2F2A0211003C8FFE /* ContainerScreen.cpp */,
 				84E022EC2F2A0211003C8FFE /* ContainerScreen.hpp */,
-				84E023062F2A0211003C8FFE /* CreativeScreen.cpp */,
-				84E023072F2A0211003C8FFE /* CreativeScreen.hpp */,
 				84DED1962F3095B8004001C5 /* CraftingScreen.cpp */,
 				84DED1972F3095B8004001C5 /* CraftingScreen.hpp */,
+				84E023062F2A0211003C8FFE /* CreativeScreen.cpp */,
+				84E023072F2A0211003C8FFE /* CreativeScreen.hpp */,
+				84EAF8242FE8CC8200D54A38 /* CreativeScreen_Console.cpp */,
+				84EAF8252FE8CC8200D54A38 /* CreativeScreen_Console.hpp */,
 				84E2A3C02FBAAC3A0026780B /* FurnaceScreen.cpp */,
 				84E2A3C12FBAAC3A0026780B /* FurnaceScreen.hpp */,
 				84E022ED2F2A0211003C8FFE /* InventoryScreen.cpp */,
@@ -5236,8 +5273,6 @@
 				84E7BF0B2F286A08002D3936 /* ArmorSlot.hpp */,
 				84E022FE2F2A0245003C8FFE /* ChestMenu.cpp */,
 				84E022FF2F2A0245003C8FFE /* ChestMenu.hpp */,
-				84E0230A2F2A0245003C8FFE /* CreativeMenu.cpp */,
-				84E0230B2F2A0245003C8FFE /* CreativeMenu.hpp */,
 				84E7BF2A2F286A20002D3936 /* CompoundContainer.cpp */,
 				84E7BF2B2F286A20002D3936 /* CompoundContainer.hpp */,
 				84E5F3952FC175CA00AE884C /* Container.cpp */,
@@ -5255,6 +5290,10 @@
 				84E7BF0F2F286A08002D3936 /* CraftingContainer.hpp */,
 				84DED19A2F3095FD004001C5 /* CraftingMenu.cpp */,
 				84DED19B2F3095FD004001C5 /* CraftingMenu.hpp */,
+				84E0230A2F2A0245003C8FFE /* CreativeMenu.cpp */,
+				84E0230B2F2A0245003C8FFE /* CreativeMenu.hpp */,
+				84EAF82E2FE8E19E00D54A38 /* CreativeMenu_Console.cpp */,
+				84EAF82F2FE8E19E00D54A38 /* CreativeMenu_Console.hpp */,
 				84E2A3C82FBAAC700026780B /* FurnaceMenu.cpp */,
 				84E2A3C92FBAAC700026780B /* FurnaceMenu.hpp */,
 				84E2A3CA2FBAAC700026780B /* FurnaceResultSlot.cpp */,
@@ -5938,6 +5977,7 @@
 				84B8AF392AF189D8008DE93D /* NinecraftApp.hpp in Headers */,
 				844337282F405E5500EB3115 /* LogoRenderer.hpp in Headers */,
 				84E022F02F2A0211003C8FFE /* ChestScreen.hpp in Headers */,
+				84EAF82B2FE8CCCE00D54A38 /* SpriteDef.hpp in Headers */,
 				84B8AF3A2AF189D8008DE93D /* AvailableGamesList.hpp in Headers */,
 				84B8AF3B2AF189D8008DE93D /* Button.hpp in Headers */,
 				8477B3A52C4DC374004E1AC5 /* ControllerMoveInput.hpp in Headers */,
@@ -5983,6 +6023,7 @@
 				84B8AF582AF189D8008DE93D /* ClientSideNetworkHandler.hpp in Headers */,
 				844337122F405E0600EB3115 /* PauseScreen_Console.hpp in Headers */,
 				84EE49F02F387DBD00677881 /* SliderButton.hpp in Headers */,
+				84EAF8212FE8CC1B00D54A38 /* ScrollingPane.hpp in Headers */,
 				84B8AF592AF189D8008DE93D /* Options.hpp in Headers */,
 				84F77A6F2EA1C27B0045C907 /* LocalPlayer.hpp in Headers */,
 				84EB09C62EE2CC86008FB007 /* PolygonQuad.hpp in Headers */,
@@ -5997,6 +6038,7 @@
 				84B8AF612AF189D8008DE93D /* User.hpp in Headers */,
 				84EB09CF2EE2CC86008FB007 /* HumanoidModel.hpp in Headers */,
 				84B8AF7E2AF189D8008DE93D /* SoundData.hpp in Headers */,
+				84EAF82D2FE8CCCE00D54A38 /* TabLayout.hpp in Headers */,
 				84F66DE82F18C9DA00DE508E /* GameController.hpp in Headers */,
 				84B8AF7F2AF189D8008DE93D /* SoundDefs.hpp in Headers */,
 				84EB09D32EE2CC86008FB007 /* PigModel.hpp in Headers */,
@@ -6048,6 +6090,7 @@
 				84EB09C22EE2CC86008FB007 /* Cube.hpp in Headers */,
 				84AA8BF42B32F3F3003F5B82 /* CowRenderer.hpp in Headers */,
 				849488372C9284DA006DB706 /* Lighting.hpp in Headers */,
+				84EAF8232FE8CC1B00D54A38 /* TabButton.hpp in Headers */,
 				84AA8BF62B32F3F3003F5B82 /* CreeperRenderer.hpp in Headers */,
 				84AA8BF82B32F3F3003F5B82 /* EntityRenderDispatcher.hpp in Headers */,
 				84AA8BFA2B32F3F3003F5B82 /* EntityRenderer.hpp in Headers */,
@@ -6062,9 +6105,11 @@
 				84AA8C042B32F3F3003F5B82 /* MobRenderer.hpp in Headers */,
 				84EB09D92EE2CC86008FB007 /* SheepModel.hpp in Headers */,
 				844336F62F405DCA00EB3115 /* AreaNavigation.hpp in Headers */,
+				84EAF81F2FE8CC1B00D54A38 /* ItemPane.hpp in Headers */,
 				84AA8C062B32F3F3003F5B82 /* PigRenderer.hpp in Headers */,
 				84AA8C082B32F3F3003F5B82 /* SheepFurRenderer.hpp in Headers */,
 				84F9482A2F2F5CB700217B16 /* ResourcePackRepository.hpp in Headers */,
+				84EAF8272FE8CC8200D54A38 /* CreativeScreen_Console.hpp in Headers */,
 				84EB09C92EE2CC86008FB007 /* ChickenModel.hpp in Headers */,
 				84AA8C0A2B32F3F3003F5B82 /* SheepRenderer.hpp in Headers */,
 				84AA8C0E2B32F3F3003F5B82 /* SpiderRenderer.hpp in Headers */,
@@ -6245,6 +6290,7 @@
 				8445E7AA2D769329008DC834 /* SynchedEntityData.hpp in Headers */,
 				84BF63BF2AF186C9008A9995 /* LeafTile.hpp in Headers */,
 				84BF63C02AF186C9008A9995 /* LiquidTile.hpp in Headers */,
+				84EAF8312FE8E19E00D54A38 /* CreativeMenu_Console.hpp in Headers */,
 				84E24C7C2FC969D9004C4D06 /* FurnaceTileEntity.hpp in Headers */,
 				84F77A622EA1C0610045C907 /* LevelEvent.hpp in Headers */,
 				84BF63C12AF186C9008A9995 /* LiquidTileDynamic.hpp in Headers */,
@@ -7165,6 +7211,7 @@
 				84B8AEF52AF1890A008DE93D /* Screen.cpp in Sources */,
 				84B8AEF62AF1890A008DE93D /* ChatScreen.cpp in Sources */,
 				84EB09C12EE2CC86008FB007 /* Cube.cpp in Sources */,
+				84EAF8222FE8CC1B00D54A38 /* TabButton.cpp in Sources */,
 				84EB09D02EE2CC86008FB007 /* Model.cpp in Sources */,
 				84B8AEF72AF1890A008DE93D /* ConfirmScreen.cpp in Sources */,
 				84E022EF2F2A0211003C8FFE /* ChestScreen.cpp in Sources */,
@@ -7235,6 +7282,7 @@
 				84AA8C0D2B32F3F3003F5B82 /* SpiderRenderer.cpp in Sources */,
 				844337132F405E0600EB3115 /* ProgressScreen_Console.cpp in Sources */,
 				8443370F2F405E0600EB3115 /* PanelScreen_Console.cpp in Sources */,
+				84EAF8262FE8CC8200D54A38 /* CreativeScreen_Console.cpp in Sources */,
 				84AA8C0F2B32F3F3003F5B82 /* TntRenderer.cpp in Sources */,
 				84AA8C112B32F3F3003F5B82 /* TripodCameraRenderer.cpp in Sources */,
 				84EB09D42EE2CC86008FB007 /* QuadrupedModel.cpp in Sources */,
@@ -7242,6 +7290,7 @@
 				844336F92F405DCA00EB3115 /* ScreenChooser.cpp in Sources */,
 				84F77A6A2EA1C0A10045C907 /* MultiplayerLocalPlayer.cpp in Sources */,
 				84AA8C152B32F3F3003F5B82 /* FireTexture.cpp in Sources */,
+				84EAF81E2FE8CC1B00D54A38 /* ItemPane.cpp in Sources */,
 				84AA8C162B32F3F3003F5B82 /* FoliageColor.cpp in Sources */,
 				84AA8C182B32F3F3003F5B82 /* Font.cpp in Sources */,
 				84AA8C1A2B32F3F3003F5B82 /* Frustum.cpp in Sources */,
@@ -7265,6 +7314,7 @@
 				84EB09D22EE2CC86008FB007 /* PigModel.cpp in Sources */,
 				84E5A6982FC963C900320694 /* StartMenuScreen_Pocket.cpp in Sources */,
 				84AA8C2C2B32F3F3003F5B82 /* PatchManager.cpp in Sources */,
+				84EAF82C2FE8CCCE00D54A38 /* TabLayout.cpp in Sources */,
 				84AA8C2E2B32F3F3003F5B82 /* RenderChunk.cpp in Sources */,
 				849488362C9284DA006DB706 /* Lighting.cpp in Sources */,
 				84AA8C302B32F3F3003F5B82 /* RenderList.cpp in Sources */,
@@ -7278,6 +7328,7 @@
 				84AA8C3B2B32F3F3003F5B82 /* WaterTexture.cpp in Sources */,
 				84EB09DC2EE2CC86008FB007 /* SpiderModel.cpp in Sources */,
 				84EB09F82EE2CCA8008FB007 /* ImageData.cpp in Sources */,
+				84EAF8202FE8CC1B00D54A38 /* ScrollingPane.cpp in Sources */,
 				8477B3A62C4DC374004E1AC5 /* MouseBuildInput.cpp in Sources */,
 				84E78C7F2B58B5CC00D515EF /* RocketRenderer.cpp in Sources */,
 				84E022F72F2A021E003C8FFE /* MenuPointer.cpp in Sources */,
@@ -7320,6 +7371,7 @@
 				84BF631D2AF18631008A9995 /* TilePlanterItem.cpp in Sources */,
 				84BF631E2AF18631008A9995 /* Dimension.cpp in Sources */,
 				84E2A3D22FBAAC700026780B /* FurnaceResultSlot.cpp in Sources */,
+				84EAF8302FE8E19E00D54A38 /* CreativeMenu_Console.cpp in Sources */,
 				84BF631F2AF18631008A9995 /* Explosion.cpp in Sources */,
 				84BF63202AF18631008A9995 /* Level.cpp in Sources */,
 				84C6142A2F323602008AC5BE /* BowItem.cpp in Sources */,
