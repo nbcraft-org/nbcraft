@@ -278,6 +278,7 @@
     <ClCompile Include="$(MC_ROOT)\source\world\tile\CakeTile.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\tile\TrapDoorTile.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\tile\FenceGateTile.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\inventory\CreativeMenu_Console.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Entity.hpp" />
@@ -492,6 +493,7 @@
     <ClInclude Include="$(MC_ROOT)\source\world\tile\CakeTile.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\tile\TrapDoorTile.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\tile\FenceGateTile.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\inventory\CreativeMenu_Console.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NBT\NBT.vcxproj">

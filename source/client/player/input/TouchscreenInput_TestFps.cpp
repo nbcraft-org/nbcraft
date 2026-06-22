@@ -60,7 +60,7 @@ void TouchscreenInput_TestFps::releaseAllKeys()
 		field_6C[i] = false;
 }
 
-void TouchscreenInput_TestFps::setKey(int eventKey, bool eventKeyState)
+void TouchscreenInput_TestFps::setKey(UserActionID, bool eventKeyState)
 {
 }
 

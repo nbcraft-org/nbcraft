@@ -35,6 +35,7 @@ public:
 	void drawSplash();
 
 	bool handleBackEvent(bool b) override;
+	bool validate(Minecraft*) override;
 
 protected:
 	Button* m_startButton;

@@ -40,7 +40,6 @@
 #define ENH_USE_OWN_AO          	       // Use own ambient occlusion engine - looks pretty much the same except it fixes the corners
 #define ENH_ADD_OPTIONS_PAUSE    	       // Add an 'options' button in the pause menu
 #define ENH_ALLOW_SAND_GRAVITY  	       // Allow sand to fall.
-#define ENH_USE_GUI_SCALE_2     	       // Use a 2x GUI scale instead of 3x. Looks better on PC
 #define ENH_ALLOW_SCROLL_WHEEL  	       // Allow use of the scroll wheel to change selected inventory slots
 #define ENH_3D_INVENTORY_TILES  	       // Uses 3D rendered inventory tiles, use with ENH_SHADE_HELD_TILES to render correctly.
 #define ENH_MENU_BACKGROUND 		       // Renders a spinning panorama (if it's available) in the background of the main menu
@@ -53,6 +52,7 @@
 //#define ENH_RENDER_HAND_ARMOR            // Render the right arm of the chestplate you are wearing on top the first-person hand.
 #define ENH_SAVE_REMOTE_PLAYERS            // Save remote player data on the server, such as inventory, position, health, etc.
 //#define ENH_BETA_1_7_TERRAIN_ATLAS       // Enables support for the vertical shift of some textures from Beta 1.7, such as cake
+//#define ENH_NEWER_CONSOLE_ITEM_LIGHTING  // Makes the Console UI tile items lighting based on Title Update 5
 #define ENH_NEW_FEEDBACK_INDICATOR 	       // Use the new mesh-based interaction feedback indicator.
 
 // TODO: Implement this permanently?

@@ -47,8 +47,10 @@ private:
     bool _isHovering(const Slot& slot, int mouseX, int mouseY) const;
 
 protected:
+    virtual void _renderContent(float partialTicks);
+    virtual void _renderFg(float partialTicks);
     virtual void _renderLabels() = 0;
-    virtual void _renderBg(float partialTick) = 0;
+    virtual void _renderBg(float partialTicks) = 0;
     virtual SlotDisplay _createSlotDisplay(const Slot&) = 0;
     virtual void _playInteractSound();
     virtual void _tryPlayInteractSound();
@@ -58,14 +60,14 @@ protected:
 
 public:
     void init() override;
-    void render(float partialTick) override;
+    void render(float partialTicks) override;
     void onClose() override;
     void tick() override;
     bool isPauseScreen() override;
     void pointerPressed(const MenuPointer& pointer, MouseButtonType button) override;
     void pointerReleased(const MenuPointer& pointer, MouseButtonType button) override;
     void handlePointerPressed(bool isPressed) override;
-    void keyPressed(int key) override;
+    void handleUserAction(const ActionInfo&) override;
 
     const SlotDisplay& getSlotDisplay(const Slot&) const;
 

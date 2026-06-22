@@ -7,4 +7,6 @@ public:
 	static void turnOff(bool teardown = true);
 	static void turnOn(bool init = true);
 	static void turnOn(const Matrix& matrix);
+	static void turnOnItems();
+	static void turnOnConsoleUiItems();
 };

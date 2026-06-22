@@ -168,6 +168,8 @@ void MobRenderer::render(const Entity& entity, const Vec3& pos, float rot, float
 void MobRenderer::onGraphicsReset()
 {
 	m_pModel->onGraphicsReset();
+	if (m_pArmorModel)
+		m_pArmorModel->onGraphicsReset();
 }
 
 void MobRenderer::renderName(const Mob& mob, const Vec3& pos)

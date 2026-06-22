@@ -70,6 +70,7 @@
     "loadingTip.woolFire": "Take caution when building structures made of wool in open air, as lightning from thunderstorms can set wool on fire.",
     "loading.initializing": "Initializing server",
     "loading.spawnArea": "Loading spawn area",
+    "options.animatedCharacter": "Animated Character",
     "options.thirdPerson": "Third Person View",
     "options.fancyGraphics": "Fancy Graphics",
     "options.blockOutlines": "Block Outlines",
@@ -79,7 +80,6 @@
     "options.dynamicHand": "Dynamic Hand Movement",
     "options.autoJump": "Auto Jump",
     "options.splitControls": "Split Controls",
-    "options.useController": "Use Controller",
     "options.flightHax": "Flight Hax",
     "options.serverVisibleDefault": "Local Server Multiplayer",
     "options.debugText": "Debug Text",
@@ -126,5 +126,16 @@
     "pauseMenu.saveGame": "Save Game",
     "deadMenu.death": "You Died!",
     "deadMenu.respawn": "Respawn",
-    "deadMenu.quit":  "Exit Game"
+    "deadMenu.quit": "Exit Game",
+    "container.tab.decoration": "Decorations",
+    "container.tab.food": "Food",
+    "container.tab.materials": "Materials",
+    "container.tab.mechanisms": "Mechanisms",
+    "container.tab.misc": "Miscellaneous",
+    "container.tab.redstone_and_transport": "Redstone & Transportation",
+    "container.tab.structures": "Structures",
+    "container.tab.symbols": "Symbols",
+    "container.tab.tools": "Tools and Weapons",
+    "container.tab.tools_and_armour": "Tools, Weapons & Armor",
+    "container.tab.transport": "Transport"
 }

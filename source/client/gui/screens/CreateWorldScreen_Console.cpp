@@ -43,8 +43,10 @@ void CreateWorldScreen_Console::_buttonClicked(Button* pButton)
 		LevelSettings levelSettings(seed, m_gameMode);
 		m_pMinecraft->selectLevel(levelUniqueName, levelNickname, levelSettings);
 	}
-	if (pButton->getId() == m_btnGameMode.getId())
+	else if (pButton->getId() == m_btnGameMode.getId())
+	{
 		m_gameMode = static_cast<GameType>((static_cast<int>(m_gameMode) + 1) % (GAME_TYPES_MAX + 1));
+	}
 }
 
 void CreateWorldScreen_Console::init()

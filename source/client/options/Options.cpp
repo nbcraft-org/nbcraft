@@ -90,7 +90,6 @@ Options::Options(Minecraft* mc, const std::string& folderPath) :
 	, m_fancyGrass("gfx_fancygrass", "options.fancyGrass", true)
 	, m_biomeColors("gfx_biomecolors", "options.biomeColors", true)
 	, m_splitControls("ctrl_split", "options.splitControls", false)
-	, m_bUseController("ctrl_usecontroller", "options.useController", false)
 	, m_dynamicHand("gfx_dynamichand", "options.dynamicHand", false)
 	, m_menuPanorama("misc_menupano", "options.menuPanorama", true)
 	, m_lang("gfx_lang", "options.lang", "en_us")
@@ -98,6 +97,7 @@ Options::Options(Minecraft* mc, const std::string& folderPath) :
 	, m_logoType("gfx_logotype", "options.logoType", LOGO_AUTO, ValuesBuilder().add("options.logoType.auto").add("options.logoType.pocket").add("options.logoType.java").add("options.logoType.console").add("options.logoType.xbox360").add("options.logoType.logo3d"))
 	, m_hudSize("gfx_hudsize", "options.hudSize", HUD_SIZE_2)
 	, m_classicCrafting("gfx_classiccrafting", "options.classicCrafting", true)
+	, m_animatedCharacter("gfx_animatedcharacter", "options.animatedCharacter", true)
 	//, m_limitFramerate("gfx_fpslimit", "options.framerateLimit", 0, ValuesBuilder().add(performance.max").add("performance.balanced").add("performance.powersaver"))
 	//, m_bMipmaps("gfx_mipmaps", "options.mipmaps")
 	//, m_moreWorldOptions("misc_moreworldoptions", "options.moreWorldOptions", true)
@@ -132,11 +132,11 @@ Options::Options(Minecraft* mc, const std::string& folderPath) :
 	add(m_playerName);
 	add(m_debugText);
 	add(m_lang);
-	add(m_bUseController);
 	add(m_hudSize);
 	add(m_uiTheme);
 	add(m_logoType);
 	add(m_classicCrafting);
+	add(m_animatedCharacter);
 	add(m_vSync);
 	_initDefaultValues();
 	if (folderPath.empty()) return;
@@ -160,9 +160,9 @@ void Options::_load()
 	{
 		std::string key = strings[i], value = strings[i + 1];
 
-		std::map<std::string, OptionEntry*>::iterator opt = m_options.find(key);
-		if (opt != m_options.end())
-			opt->second->load(value);
+		HashMap<std::string, OptionEntry*>::iterator it = m_options.find(key);
+		if (it != m_options.end())
+			it.value()->load(value);
 		else if (key == "misc_oldtitle")
 			logo3d = !readBool(value);
 		else if (key == "gfx_resourcepacks")
@@ -408,11 +408,11 @@ std::vector<std::string> Options::getOptionStrings()
 #define SO(optname, value) do { vec.push_back(optname); vec.push_back(value); } while (0)
 
 	std::stringstream ss;
-	for (std::map<std::string, OptionEntry*>::iterator it = m_options.begin(); it != m_options.end(); ++it)
+	for (HashMap<std::string, OptionEntry*>::iterator it = m_options.begin(); it != m_options.end(); ++it)
 	{
 		ss.str("");
-		it->second->save(ss);
-		SO(it->first, ss.str());
+		it.value()->save(ss);
+		SO(it.key(), ss.str());
 	}
 	SO("gfx_resourcepacks", savePackArray(m_resourcePacks));
 
@@ -422,225 +422,200 @@ std::vector<std::string> Options::getOptionStrings()
 void Options::loadControls()
 {
 	// Win32 key codes are being used by default
-#define KM(idx, name, code) m_keyMappings[idx] = KeyMapping(name, code)
-	KM(KM_FORWARD,      "key.forward",       'W');
-	KM(KM_LEFT,         "key.left",          'A');
-	KM(KM_BACKWARD,     "key.back",          'S');
-	KM(KM_RIGHT,        "key.right",         'D');
-	KM(KM_JUMP,         "key.jump",          ' ');
-	KM(KM_CRAFTING,     "key.crafting",      'E');
-	KM(KM_INVENTORY,    "key.inventory",     'I');
-	KM(KM_DROP,         "key.drop",          'Q');
-	KM(KM_CHAT,         "key.chat",          'T');
-	KM(KM_FOG,          "key.fog",           'F');
-	KM(KM_SNEAK,        "key.sneak",         0x10); // VK_SHIFT. In original, it's 10 (misspelling?)
-	KM(KM_DESTROY,      "key.destroy",       'K');  // was 'X'
-	KM(KM_PLACE,        "key.place",         'L');  // was 'C'
-	KM(KM_MENU_UP,      "key.menu.up",       0x26); // VK_UP
-	KM(KM_MENU_DOWN,    "key.menu.down",     0x28); // VK_DOWN
-	KM(KM_MENU_LEFT,    "key.menu.left",     0x25); // VK_LEFT
-	KM(KM_MENU_RIGHT,   "key.menu.right",    0x27); // VK_RIGHT
-	KM(KM_MENU_TAB_LEFT,"key.menu.tab.left", 0x25);	// VK_LEFT
-	KM(KM_MENU_TAB_RIGHT, "key.menu.tab.right", 0x27);// VK_RIGHT
-	KM(KM_MENU_OK,      "key.menu.ok",       0x0D); // VK_RETURN
-	KM(KM_MENU_CANCEL,  "key.menu.cancel",   0x1B); // VK_ESCAPE, was 0x08 = VK_BACK
-	KM(KM_MENU_PAUSE,	"key.menu.pause",	 0x1B); // VK_ESCAPE
-	KM(KM_SLOT_1,       "key.slot.1",        '1');
-	KM(KM_SLOT_2,       "key.slot.2",        '2');
-	KM(KM_SLOT_3,       "key.slot.3",        '3');
-	KM(KM_SLOT_4,       "key.slot.4",        '4');
-	KM(KM_SLOT_5,       "key.slot.5",        '5');
-	KM(KM_SLOT_6,       "key.slot.6",        '6');
-	KM(KM_SLOT_7,       "key.slot.7",        '7');
-	KM(KM_SLOT_8,       "key.slot.8",        '8');
-	KM(KM_SLOT_9,       "key.slot.9",        '9');
-	KM(KM_SLOT_L,       "key.slot.left",     'Y');
-	KM(KM_SLOT_R,       "key.slot.right",    'U');
-	KM(KM_CONTAINER_QUICKMOVE, "key.container.quickmove", 0x10); // VK_SHIFT
-	KM(KM_CONTAINER_SPLIT,     "key.container.split",     0xBF); // VK_OEM_2 (keymap is unused on mouse & keyboard)
-	KM(KM_TOGGLEGUI,    "key.fn.gui",        0x70); // VK_F1
-	KM(KM_SCREENSHOT,   "key.fn.screenshot", 0x71); // VK_F2
-	KM(KM_TOGGLEDEBUG,  "key.fn.debug",      0x72); // VK_F3
-	KM(KM_TOGGLEAO,     "key.fn.ao",         0x73); // VK_F4
-	KM(KM_TOGGLE3RD,    "key.fn.3rd",        0x74); // VK_F5
-	KM(KM_FLY_UP,       "key.fly.up",        'X');
-	KM(KM_FLY_DOWN,     "key.fly.down",      'C');
-	KM(KM_CHAT_CMD,     "key.chat.cmd",      0xBF); // VK_OEM_2
-#undef KM
+#define BM(idx, name, code) m_inputMappings[idx] = InputMapping(name, code)
+	BM(AID_FORWARD,      "key.forward",       'W');
+	BM(AID_LEFT,         "key.left",          'A');
+	BM(AID_BACKWARD,     "key.back",          'S');
+	BM(AID_RIGHT,        "key.right",         'D');
+	BM(AID_JUMP,         "key.jump",          ' ');
+	BM(AID_CRAFTING,     "key.crafting",      'E');
+	BM(AID_INVENTORY,    "key.inventory",     'I');
+	BM(AID_DROP,         "key.drop",          'Q');
+	BM(AID_CHAT,         "key.chat",          'T');
+	BM(AID_FOG,          "key.fog",           'F');
+	BM(AID_SNEAK,        "key.sneak",         0x10); // VK_SHIFT. In original, it's 10 (misspelling?)
+	BM(AID_DESTROY,      "key.destroy",       'K');  // was 'X'
+	BM(AID_PLACE,        "key.place",         'L');  // was 'C'
+	BM(AID_MENU_UP,      "key.menu.up",       0x26); // VK_UP
+	BM(AID_MENU_DOWN,    "key.menu.down",     0x28); // VK_DOWN
+	BM(AID_MENU_LEFT,    "key.menu.left",     0x25); // VK_LEFT
+	BM(AID_MENU_RIGHT,   "key.menu.right",    0x27); // VK_RIGHT
+	BM(AID_MENU_TAB_LEFT,  "key.menu.tab.left",  0x25);	// VK_LEFT
+	BM(AID_MENU_TAB_RIGHT, "key.menu.tab.right", 0x27); // VK_RIGHT
+	BM(AID_MENU_OK,      "key.menu.ok",       0x0D); // VK_RETURN
+	BM(AID_MENU_CANCEL,  "key.menu.cancel",   0x1B); // VK_ESCAPE, was 0x08 = VK_BACK
+	BM(AID_MENU_PAUSE,	 "key.menu.pause",	  0x1B); // VK_ESCAPE
+	BM(AID_SLOT_1,       "key.slot.1",        '1');
+	BM(AID_SLOT_2,       "key.slot.2",        '2');
+	BM(AID_SLOT_3,       "key.slot.3",        '3');
+	BM(AID_SLOT_4,       "key.slot.4",        '4');
+	BM(AID_SLOT_5,       "key.slot.5",        '5');
+	BM(AID_SLOT_6,       "key.slot.6",        '6');
+	BM(AID_SLOT_7,       "key.slot.7",        '7');
+	BM(AID_SLOT_8,       "key.slot.8",        '8');
+	BM(AID_SLOT_9,       "key.slot.9",        '9');
+	BM(AID_SLOT_L,       "key.slot.left",     'Y');
+	BM(AID_SLOT_R,       "key.slot.right",    'U');
+	BM(AID_CONTAINER_QUICKMOVE, "key.container.quickmove", 0x10); // VK_SHIFT
+	BM(AID_CONTAINER_SPLIT,     "key.container.split",     0xBF); // VK_OEM_2 (keymap is unused on mouse & keyboard)
+	BM(AID_TOGGLEGUI,    "key.fn.gui",        0x70); // VK_F1
+	BM(AID_SCREENSHOT,   "key.fn.screenshot", 0x71); // VK_F2
+	BM(AID_TOGGLEDEBUG,  "key.fn.debug",      0x72); // VK_F3
+	BM(AID_TOGGLEAO,     "key.fn.ao",         0x73); // VK_F4
+	BM(AID_TOGGLE3RD,    "key.fn.3rd",        0x74); // VK_F5
+	BM(AID_FLY_UP,       "key.fly.up",        'X');
+	BM(AID_FLY_DOWN,     "key.fly.down",      'C');
+	BM(AID_CHAT_CMD,     "key.chat.cmd",      0xBF); // VK_OEM_2
+#undef BM
 
 	// @TODO: These should **really** not be defined in here. How about AppPlatform?
 
-#define KM(idx,code) m_keyMappings[idx].value = code
+#define BM(idx,code) m_inputMappings[idx].info.keyId = code
 #ifdef USE_SDL
-	KM(KM_FORWARD,       SDLVK_w);
-	KM(KM_LEFT,          SDLVK_a);
-	KM(KM_BACKWARD,      SDLVK_s);
-	KM(KM_RIGHT,         SDLVK_d);
-	KM(KM_JUMP,          SDLVK_SPACE);
-	KM(KM_DESTROY,       SDLVK_x);
-	KM(KM_PLACE,         SDLVK_c);
-	KM(KM_MENU_UP,       SDLVK_UP);
-	KM(KM_MENU_DOWN,     SDLVK_DOWN);
-	KM(KM_MENU_LEFT,     SDLVK_LEFT);
-	KM(KM_MENU_RIGHT,    SDLVK_RIGHT);
-	KM(KM_MENU_TAB_LEFT, SDLVK_LEFT);
-	KM(KM_MENU_TAB_RIGHT, SDLVK_RIGHT);
-	KM(KM_MENU_OK,       SDLVK_RETURN);
-	KM(KM_MENU_CANCEL,   SDLVK_ESCAPE);
-	KM(KM_MENU_PAUSE,	 SDLVK_ESCAPE);
-	KM(KM_DROP,          SDLVK_q);
-	KM(KM_CHAT,          SDLVK_t);
-	KM(KM_FOG,           SDLVK_f);
-	KM(KM_CRAFTING,      SDLVK_e);
-	KM(KM_INVENTORY,     SDLVK_i);
-	KM(KM_SNEAK,         SDLVK_LSHIFT);
-	KM(KM_SLOT_1,        SDLVK_1);
-	KM(KM_SLOT_2,        SDLVK_2);
-	KM(KM_SLOT_3,        SDLVK_3);
-	KM(KM_SLOT_4,        SDLVK_4);
-	KM(KM_SLOT_5,        SDLVK_5);
-	KM(KM_SLOT_6,        SDLVK_6);
-	KM(KM_SLOT_7,        SDLVK_7);
-	KM(KM_SLOT_8,        SDLVK_8);
-	KM(KM_SLOT_9,        SDLVK_9);
-	KM(KM_CONTAINER_QUICKMOVE, SDLVK_LSHIFT);
-	KM(KM_TOGGLEGUI,     SDLVK_F1);
-	KM(KM_SCREENSHOT,    SDLVK_F2);
-	KM(KM_TOGGLEDEBUG,   SDLVK_F3);
-	KM(KM_TOGGLEAO,      SDLVK_F4);
-	KM(KM_TOGGLE3RD,     SDLVK_F5);
-	KM(KM_SLOT_L,        SDLVK_y);
-	KM(KM_SLOT_R,        SDLVK_u);
-	KM(KM_FLY_UP,        SDLVK_c);
-	KM(KM_FLY_DOWN,      SDLVK_x);
-	KM(KM_CHAT_CMD,      SDLVK_SLASH);
+	BM(AID_FORWARD,       SDLVK_w);
+	BM(AID_LEFT,          SDLVK_a);
+	BM(AID_BACKWARD,      SDLVK_s);
+	BM(AID_RIGHT,         SDLVK_d);
+	BM(AID_JUMP,          SDLVK_SPACE);
+	BM(AID_DESTROY,       SDLVK_x);
+	BM(AID_PLACE,         SDLVK_c);
+	BM(AID_MENU_UP,       SDLVK_UP);
+	BM(AID_MENU_DOWN,     SDLVK_DOWN);
+	BM(AID_MENU_LEFT,     SDLVK_LEFT);
+	BM(AID_MENU_RIGHT,    SDLVK_RIGHT);
+	BM(AID_MENU_TAB_LEFT, SDLVK_LEFT);
+	BM(AID_MENU_TAB_RIGHT, SDLVK_RIGHT);
+	BM(AID_MENU_OK,       SDLVK_RETURN);
+	BM(AID_MENU_CANCEL,   SDLVK_ESCAPE);
+	BM(AID_MENU_PAUSE,	  SDLVK_ESCAPE);
+	BM(AID_DROP,          SDLVK_q);
+	BM(AID_CHAT,          SDLVK_t);
+	BM(AID_FOG,           SDLVK_f);
+	BM(AID_CRAFTING,      SDLVK_e);
+	BM(AID_INVENTORY,     SDLVK_i);
+	BM(AID_SNEAK,         SDLVK_LSHIFT);
+	BM(AID_SLOT_1,        SDLVK_1);
+	BM(AID_SLOT_2,        SDLVK_2);
+	BM(AID_SLOT_3,        SDLVK_3);
+	BM(AID_SLOT_4,        SDLVK_4);
+	BM(AID_SLOT_5,        SDLVK_5);
+	BM(AID_SLOT_6,        SDLVK_6);
+	BM(AID_SLOT_7,        SDLVK_7);
+	BM(AID_SLOT_8,        SDLVK_8);
+	BM(AID_SLOT_9,        SDLVK_9);
+	BM(AID_CONTAINER_QUICKMOVE, SDLVK_LSHIFT);
+	BM(AID_TOGGLEGUI,     SDLVK_F1);
+	BM(AID_SCREENSHOT,    SDLVK_F2);
+	BM(AID_TOGGLEDEBUG,   SDLVK_F3);
+	BM(AID_TOGGLEAO,      SDLVK_F4);
+	BM(AID_TOGGLE3RD,     SDLVK_F5);
+	BM(AID_SLOT_L,        SDLVK_y);
+	BM(AID_SLOT_R,        SDLVK_u);
+	BM(AID_FLY_UP,        SDLVK_c);
+	BM(AID_FLY_DOWN,      SDLVK_x);
+	BM(AID_CHAT_CMD,      SDLVK_SLASH);
 #elif defined(USE_NATIVE_ANDROID)
 	// -- Original xperia play controls
-	//KM(KM_FORWARD,       AKEYCODE_DPAD_UP);
-	//KM(KM_LEFT,          AKEYCODE_DPAD_LEFT);
-	//KM(KM_BACKWARD,      AKEYCODE_DPAD_DOWN);
-	//KM(KM_RIGHT,         AKEYCODE_DPAD_RIGHT);
-	//KM(KM_JUMP,          AKEYCODE_DPAD_CENTER);
-	//KM(KM_DESTROY,       AKEYCODE_BUTTON_L1);
-	//KM(KM_PLACE,         AKEYCODE_BUTTON_R1);
-	//KM(KM_MENU_UP,       AKEYCODE_DPAD_UP);
-	//KM(KM_MENU_DOWN,     AKEYCODE_DPAD_DOWN);
-	//KM(KM_MENU_LEFT,     AKEYCODE_DPAD_LEFT);
-	//KM(KM_MENU_RIGHT,    AKEYCODE_DPAD_RIGHT);
-	//KM(KM_MENU_OK,       AKEYCODE_DPAD_CENTER);
-	//KM(KM_MENU_CANCEL,   AKEYCODE_BACK);
+	//BM(AID_FORWARD,       AKEYCODE_DPAD_UP);
+	//BM(AID_LEFT,          AKEYCODE_DPAD_LEFT);
+	//BM(AID_BACKWARD,      AKEYCODE_DPAD_DOWN);
+	//BM(AID_RIGHT,         AKEYCODE_DPAD_RIGHT);
+	//BM(AID_JUMP,          AKEYCODE_DPAD_CENTER);
+	//BM(AID_DESTROY,       AKEYCODE_BUTTON_L1);
+	//BM(AID_PLACE,         AKEYCODE_BUTTON_R1);
+	//BM(AID_MENU_UP,       AKEYCODE_DPAD_UP);
+	//BM(AID_MENU_DOWN,     AKEYCODE_DPAD_DOWN);
+	//BM(AID_MENU_LEFT,     AKEYCODE_DPAD_LEFT);
+	//BM(AID_MENU_RIGHT,    AKEYCODE_DPAD_RIGHT);
+	//BM(AID_MENU_OK,       AKEYCODE_DPAD_CENTER);
+	//BM(AID_MENU_CANCEL,   AKEYCODE_BACK);
 	//custom
-	//KM(KM_INVENTORY,     AKEYCODE_BUTTON_Y);
-	//KM(KM_SLOT_R,        AKEYCODE_BACK);
-	//KM(KM_SLOT_L,        AKEYCODE_BUTTON_X);
-	//KM(KM_FLY_UP,        AKEYCODE_BUTTON_R1);
-	//KM(KM_FLY_DOWN,      AKEYCODE_BUTTON_L1);
+	//BM(AID_INVENTORY,     AKEYCODE_BUTTON_Y);
+	//BM(AID_SLOT_R,        AKEYCODE_BACK);
+	//BM(AID_SLOT_L,        AKEYCODE_BUTTON_X);
+	//BM(AID_FLY_UP,        AKEYCODE_BUTTON_R1);
+	//BM(AID_FLY_DOWN,      AKEYCODE_BUTTON_L1);
 
 	//use controller input on android for now.
-	KM(KM_FORWARD,       AKEYCODE_W);
-	KM(KM_LEFT,          AKEYCODE_A);
-	KM(KM_BACKWARD,      AKEYCODE_S);
-	KM(KM_RIGHT,         AKEYCODE_D);
-	KM(KM_JUMP,			 AKEYCODE_BUTTON_A);
-	KM(KM_DESTROY,       AKEYCODE_X);
-	KM(KM_PLACE,         AKEYCODE_C);
-	KM(KM_MENU_UP,       AKEYCODE_DPAD_UP);
-	KM(KM_MENU_DOWN,     AKEYCODE_DPAD_DOWN);
-	KM(KM_MENU_LEFT,     AKEYCODE_DPAD_LEFT);
-	KM(KM_MENU_RIGHT,    AKEYCODE_DPAD_RIGHT);
-	KM(KM_MENU_TAB_LEFT, AKEYCODE_BUTTON_L1);
-	KM(KM_MENU_TAB_RIGHT, AKEYCODE_BUTTON_R1);
-	KM(KM_MENU_OK,       AKEYCODE_ENTER);
-	KM(KM_MENU_CANCEL,	 AKEYCODE_BUTTON_B);
-	KM(KM_MENU_PAUSE,	 AKEYCODE_BUTTON_START);
+	BM(AID_FORWARD,       AKEYCODE_W);
+	BM(AID_LEFT,          AKEYCODE_A);
+	BM(AID_BACKWARD,      AKEYCODE_S);
+	BM(AID_RIGHT,         AKEYCODE_D);
+	BM(AID_JUMP,	      AKEYCODE_BUTTON_A);
+	BM(AID_DESTROY,       AKEYCODE_X);
+	BM(AID_PLACE,         AKEYCODE_C);
+	BM(AID_MENU_UP,       AKEYCODE_DPAD_UP);
+	BM(AID_MENU_DOWN,     AKEYCODE_DPAD_DOWN);
+	BM(AID_MENU_LEFT,     AKEYCODE_DPAD_LEFT);
+	BM(AID_MENU_RIGHT,    AKEYCODE_DPAD_RIGHT);
+	BM(AID_MENU_TAB_LEFT, AKEYCODE_BUTTON_L1);
+	BM(AID_MENU_TAB_RIGHT, AKEYCODE_BUTTON_R1);
+	BM(AID_MENU_OK,       AKEYCODE_ENTER);
+	BM(AID_MENU_CANCEL,	  AKEYCODE_BUTTON_B);
+	BM(AID_MENU_PAUSE,	  AKEYCODE_BUTTON_START);
 	// custom
-	KM(KM_SLOT_L,		 AKEYCODE_BUTTON_L1);
-	KM(KM_SLOT_R,		 AKEYCODE_BUTTON_R1);
-	KM(KM_DROP,          AKEYCODE_Q);
-	KM(KM_CHAT,          AKEYCODE_T);
-	KM(KM_FOG,           AKEYCODE_F);
-	KM(KM_INVENTORY,	 AKEYCODE_BUTTON_Y);
-	KM(KM_SNEAK,         AKEYCODE_SHIFT_LEFT);
-	KM(KM_SLOT_1,        AKEYCODE_1);
-	KM(KM_SLOT_2,        AKEYCODE_2);
-	KM(KM_SLOT_3,        AKEYCODE_3);
-	KM(KM_SLOT_4,        AKEYCODE_4);
-	KM(KM_SLOT_5,        AKEYCODE_5);
-	KM(KM_SLOT_6,        AKEYCODE_6);
-	KM(KM_SLOT_7,        AKEYCODE_7);
-	KM(KM_SLOT_8,        AKEYCODE_8);
-	KM(KM_SLOT_9,        AKEYCODE_9);
-	KM(KM_CONTAINER_QUICKMOVE, AKEYCODE_BUTTON_Y);
-	KM(KM_CONTAINER_SPLIT,     AKEYCODE_BUTTON_X);
-	KM(KM_TOGGLEGUI,     AKEYCODE_F1);
-	KM(KM_SCREENSHOT,    AKEYCODE_F2);
-	KM(KM_TOGGLEDEBUG,   AKEYCODE_F3);
-	KM(KM_TOGGLEAO,      AKEYCODE_F4);
-	KM(KM_TOGGLE3RD,     AKEYCODE_F5);
-	KM(KM_FLY_UP,        AKEYCODE_C);
-	KM(KM_FLY_DOWN,      AKEYCODE_X);
-	KM(KM_CHAT_CMD,      AKEYCODE_SLASH);
+	BM(AID_SLOT_L,		  AKEYCODE_BUTTON_L1);
+	BM(AID_SLOT_R,		  AKEYCODE_BUTTON_R1);
+	BM(AID_DROP,          AKEYCODE_Q);
+	BM(AID_CHAT,          AKEYCODE_T);
+	BM(AID_FOG,           AKEYCODE_F);
+	BM(AID_CRAFTING,	  AKEYCODE_BUTTON_X);
+	BM(AID_INVENTORY,	  AKEYCODE_BUTTON_Y);
+	BM(AID_SNEAK,         AKEYCODE_SHIFT_LEFT);
+	BM(AID_SLOT_1,        AKEYCODE_1);
+	BM(AID_SLOT_2,        AKEYCODE_2);
+	BM(AID_SLOT_3,        AKEYCODE_3);
+	BM(AID_SLOT_4,        AKEYCODE_4);
+	BM(AID_SLOT_5,        AKEYCODE_5);
+	BM(AID_SLOT_6,        AKEYCODE_6);
+	BM(AID_SLOT_7,        AKEYCODE_7);
+	BM(AID_SLOT_8,        AKEYCODE_8);
+	BM(AID_SLOT_9,        AKEYCODE_9);
+	BM(AID_CONTAINER_QUICKMOVE, AKEYCODE_BUTTON_Y);
+	BM(AID_CONTAINER_SPLIT,     AKEYCODE_BUTTON_X);
+	BM(AID_TOGGLEGUI,     AKEYCODE_F1);
+	BM(AID_SCREENSHOT,    AKEYCODE_F2);
+	BM(AID_TOGGLEDEBUG,   AKEYCODE_F3);
+	BM(AID_TOGGLEAO,      AKEYCODE_F4);
+	BM(AID_TOGGLE3RD,     AKEYCODE_F5);
+	BM(AID_FLY_UP,        AKEYCODE_C);
+	BM(AID_FLY_DOWN,      AKEYCODE_X);
+	BM(AID_CHAT_CMD,      AKEYCODE_SLASH);
 #endif
-#undef KM
+#undef BM
 
-	if (m_bUseController.get())
-	{
-#define KM(idx,code) m_keyMappings[idx].value = code
-#ifdef USE_SDL
-		KM(KM_TOGGLEDEBUG,   SDL_CONTROLLER_BUTTON_GUIDE);
-		KM(KM_JUMP,          SDL_CONTROLLER_BUTTON_A);
-		KM(KM_MENU_UP,       SDL_CONTROLLER_BUTTON_DPAD_UP);
-		KM(KM_MENU_DOWN,     SDL_CONTROLLER_BUTTON_DPAD_DOWN);
-		KM(KM_MENU_LEFT,     SDL_CONTROLLER_BUTTON_DPAD_LEFT);
-		KM(KM_MENU_RIGHT,    SDL_CONTROLLER_BUTTON_DPAD_RIGHT);
-		KM(KM_MENU_TAB_LEFT, SDL_CONTROLLER_BUTTON_LEFTSHOULDER);
-		KM(KM_MENU_TAB_RIGHT, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
-		KM(KM_MENU_OK,       SDL_CONTROLLER_BUTTON_A);
-		KM(KM_MENU_CANCEL,   SDL_CONTROLLER_BUTTON_B);
-		KM(KM_DROP,          SDL_CONTROLLER_BUTTON_B);
-		KM(KM_CHAT,          SDL_CONTROLLER_BUTTON_BACK);
-		KM(KM_INVENTORY,     SDL_CONTROLLER_BUTTON_Y);
-		KM(KM_SNEAK,         SDL_CONTROLLER_BUTTON_RIGHTSTICK);
-		KM(KM_CONTAINER_QUICKMOVE, SDL_CONTROLLER_BUTTON_Y);
-		KM(KM_CONTAINER_SPLIT,     SDL_CONTROLLER_BUTTON_X);
-		KM(KM_TOGGLE3RD,     SDL_CONTROLLER_BUTTON_LEFTSTICK);
-		KM(KM_SLOT_L,        SDL_CONTROLLER_BUTTON_LEFTSHOULDER);
-		KM(KM_SLOT_R,        SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
-		KM(KM_FLY_UP,        SDL_CONTROLLER_BUTTON_A);
-		KM(KM_FLY_DOWN,      SDL_CONTROLLER_BUTTON_RIGHTSTICK);
-#else
-		KM(KM_TOGGLEDEBUG,   GameController::BUTTON_GUIDE);
-		KM(KM_JUMP,          GameController::BUTTON_A);
-		KM(KM_MENU_UP,       GameController::BUTTON_DPAD_UP);
-		KM(KM_MENU_DOWN,     GameController::BUTTON_DPAD_DOWN);
-		KM(KM_MENU_LEFT,     GameController::BUTTON_DPAD_LEFT);
-		KM(KM_MENU_RIGHT,    GameController::BUTTON_DPAD_RIGHT);
-		KM(KM_MENU_TAB_LEFT, GameController::BUTTON_LEFTSHOULDER);
-		KM(KM_MENU_TAB_RIGHT, GameController::BUTTON_RIGHTSHOULDER);
-		KM(KM_MENU_OK,       GameController::BUTTON_A);
-		KM(KM_MENU_CANCEL,   GameController::BUTTON_B);
-		KM(KM_MENU_PAUSE,	 GameController::BUTTON_START);
-		KM(KM_DROP,          GameController::BUTTON_B);
-		KM(KM_CHAT,          GameController::BUTTON_BACK);
-		KM(KM_INVENTORY,     GameController::BUTTON_Y);
-		KM(KM_SNEAK,         GameController::BUTTON_RIGHTSTICK);
-		KM(KM_CONTAINER_QUICKMOVE, GameController::BUTTON_Y);
-		KM(KM_CONTAINER_SPLIT,     GameController::BUTTON_X);
-		KM(KM_TOGGLE3RD,     GameController::BUTTON_LEFTSTICK);
-		KM(KM_SLOT_L,        GameController::BUTTON_LEFTSHOULDER);
-		KM(KM_SLOT_R,        GameController::BUTTON_RIGHTSHOULDER);
-		KM(KM_FLY_UP,        GameController::BUTTON_A);
-		KM(KM_FLY_DOWN,      GameController::BUTTON_RIGHTSTICK);
-#endif
-#undef KM
-	}
+#define BTN(idx,code) m_inputMappings[idx].info.controllerButtonId = code
+	BTN(AID_TOGGLEDEBUG,		 GameController::BUTTON_GUIDE);
+	BTN(AID_JUMP,				 GameController::BUTTON_A);
+	BTN(AID_MENU_UP,			 GameController::BUTTON_DPAD_UP);
+	BTN(AID_MENU_DOWN,			 GameController::BUTTON_DPAD_DOWN);
+	BTN(AID_MENU_LEFT,			 GameController::BUTTON_DPAD_LEFT);
+	BTN(AID_MENU_RIGHT,			 GameController::BUTTON_DPAD_RIGHT);
+	BTN(AID_MENU_TAB_LEFT,		 GameController::BUTTON_LEFTSHOULDER);
+	BTN(AID_MENU_TAB_RIGHT,		 GameController::BUTTON_RIGHTSHOULDER);
+	BTN(AID_MENU_OK,			 GameController::BUTTON_A);
+	BTN(AID_MENU_CANCEL,		 GameController::BUTTON_B);
+	BTN(AID_MENU_PAUSE,			 GameController::BUTTON_START);
+	BTN(AID_DROP,				 GameController::BUTTON_B);
+	BTN(AID_CHAT,				 GameController::BUTTON_BACK);
+	BTN(AID_CRAFTING,			 GameController::BUTTON_X);
+	BTN(AID_INVENTORY,			 GameController::BUTTON_Y);
+	BTN(AID_SNEAK,				 GameController::BUTTON_RIGHTSTICK);
+	BTN(AID_CONTAINER_QUICKMOVE, GameController::BUTTON_Y);
+	BTN(AID_CONTAINER_SPLIT,	 GameController::BUTTON_X);
+	BTN(AID_TOGGLE3RD,			 GameController::BUTTON_LEFTSTICK);
+	BTN(AID_SLOT_L,				 GameController::BUTTON_LEFTSHOULDER);
+	BTN(AID_SLOT_R,				 GameController::BUTTON_RIGHTSHOULDER);
+	BTN(AID_FLY_UP,				 GameController::BUTTON_A);
+	BTN(AID_FLY_DOWN,			 GameController::BUTTON_RIGHTSTICK);
+#undef BTN
 }
 
 void Options::reset()
 {
-	for (std::map<std::string, OptionEntry*>::iterator it = m_options.begin(); it != m_options.end(); ++it)
+	for (HashMap<std::string, OptionEntry*>::iterator it = m_options.begin(); it != m_options.end(); ++it)
 	{
-		it->second->reset();
+		it.value()->reset();
 	}
 }
 
@@ -766,15 +741,6 @@ void MinMaxOption::addGuiElement(std::vector<GuiElement*>& elements, UITheme uiT
 std::string SensitivityOption::getDisplayValue() const
 {
 	return get() == 0.0f ? Language::get("options.sensitivity.min") : get() == 1.0f ? Language::get("options.sensitivity.max") : Util::toString(int(get() * 200)) + "%";
-}
-
-void ControllerOption::apply()
-{
-	// @TODO: This works but ultimately needs to be a multi-select (KBM, controller, touch) instead of a single option.
-	// Either that or figure out an automatic way to switch between them based on input like how Minecraft Bedrock does
-	// For now, I just wanted to be able to switch to controller input on mobile devices.
-	if (m_pMinecraft && m_pMinecraft->m_pInputHolder)
-		m_pMinecraft->reloadInput();
 }
 
 void AOOption::apply()

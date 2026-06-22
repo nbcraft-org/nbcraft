@@ -9,13 +9,13 @@
 #pragma once
 
 #include <set>
-#include <map>
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #endif
 #include <math.h>
 #include <map>
 
+#include "common/utility/HashMap.hpp"
 #include "client/renderer/LightUpdate.hpp"
 #include "world/tile/Tile.hpp"
 #include "world/entity/Entity.hpp"
@@ -246,7 +246,7 @@ public:
 	PathFinder* m_pPathFinder;
 	MobSpawner* m_pMobSpawner;
 
-	std::map<EntityCategories::CategoriesMask, int> m_entityCountsByCategory;
+	HashMap<uint32_t, int> m_entityCountsByCategory;
 	TileEntityVector m_tileEntities;
 	TileEntityVector m_pendingTileEntities;
 };

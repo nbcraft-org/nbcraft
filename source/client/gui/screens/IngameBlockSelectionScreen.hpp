@@ -40,7 +40,8 @@ public:
 	void pointerPressed(const MenuPointer& pointer, MouseButtonType btn) override;
 	void pointerReleased(const MenuPointer& pointer, MouseButtonType btn) override;
 	void removed() override;
-    void keyPressed(int key) override;
+    void handleUserAction(const ActionInfo&) override;
+	bool isPauseScreen() override;
 
 private:
 	Container::SlotID m_selectedSlot;

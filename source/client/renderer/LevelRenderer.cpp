@@ -1342,7 +1342,7 @@ void LevelRenderer::renderHitOutline(const Entity& camera, const HitResult& hr, 
 	currentShaderDarkColor = Color::WHITE;
 
 	constexpr float distance = 0.002f;
-	float lineWidth = 2.0f * Minecraft::getRenderScaleMultiplier();
+	float lineWidth = 2.0f * Minecraft::GetRenderScaleMultiplier();
 
 	TileID tile = m_pLevel->getTile(hr.m_tilePos);
 	if (tile > 0)

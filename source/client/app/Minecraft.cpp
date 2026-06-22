@@ -51,6 +51,7 @@ int Minecraft::width  = C_DEFAULT_SCREEN_WIDTH;
 int Minecraft::height = C_DEFAULT_SCREEN_HEIGHT;
 bool Minecraft::useAmbientOcclusion = false;
 int Minecraft::customDebugId = 0;
+InputMethod::Type Minecraft::_inputMethod = InputMethod::KEYBOARD;
 
 //@HUH: For the demo, this is defined as TRUE.
 //@HUH: deadmau5 had camera cheats? That's interesting.
@@ -194,14 +195,21 @@ void Minecraft::reloadInput()
 	if (useTouchscreen())
 	{
 		m_pInputHolder = new TouchInputHolder(this, getOptions());
+
+		if (m_bGrabbedMouse)
+			platform()->setMouseGrabbed(false);
 	}
 	else if (useController())
 	{
 		m_pInputHolder = new CustomInputHolder(
 			new ControllerMoveInput(getOptions()),
 			new ControllerTurnInput(),
-			new ControllerBuildInput()
+			new ControllerBuildInput(),
+			true
 		);
+
+		if (m_bGrabbedMouse)
+			platform()->setMouseGrabbed(false);
 	}
 	else
 	{
@@ -210,6 +218,9 @@ void Minecraft::reloadInput()
 			new MouseTurnInput(this),
 			new MouseBuildInput()
 		);
+
+		if (m_bGrabbedMouse)
+			platform()->setMouseGrabbed(true);
 	}
 
 	m_mouseHandler.setTurnInput(m_pInputHolder->getTurnInput());
@@ -219,7 +230,17 @@ void Minecraft::reloadInput()
 		m_pLocalPlayer->m_pMoveInput = m_pInputHolder->getMoveInput();
 	}
 
-	getOptions()->m_bUseMouseForDigging = !isTouchscreen();
+	getOptions()->m_bUseMouseForDigging = !useTouchscreen();
+}
+
+void Minecraft::resetInputMethod()
+{
+	if (platform()->hasGamepad())
+		SetInputMethod(InputMethod::CONTROLLER);
+	else if (platform()->isTouchscreen())
+		SetInputMethod(InputMethod::TOUCHSCREEN);
+	else
+		SetInputMethod(InputMethod::KEYBOARD);
 }
 
 int Minecraft::getLicenseId()
@@ -275,7 +296,6 @@ void Minecraft::recenterMouse()
 
 void Minecraft::setScreen(Screen* pScreen)
 {
-	float lastScale = getBestScaleForThisScreenSize(Minecraft::width, Minecraft::height);
 #ifndef ORIGINAL_CODE
 	if (pScreen == nullptr && !isLevelGenerated())
 	{
@@ -290,7 +310,7 @@ void Minecraft::setScreen(Screen* pScreen)
 		return;
 	}
 
-	if (pScreen && pScreen->isErrorScreen())
+	if (pScreen && (pScreen->isErrorScreen() || !pScreen->validate(this)))
 	{
 		// not in original
 		delete pScreen;
@@ -316,14 +336,7 @@ void Minecraft::setScreen(Screen* pScreen)
 		pScreen->init(this, Gui::GuiWidth, Gui::GuiHeight);
 	}
 
-	float scale = getBestScaleForThisScreenSize(Minecraft::width, Minecraft::height);
-
-	if (scale != lastScale)
-	{
-		sizeUpdate(Minecraft::width, Minecraft::height);
-		if (pScreen)
-			pScreen->initMenuPointer();
-	}
+	sizeUpdate(Minecraft::width, Minecraft::height);
 
 	if (pScreen)
 	{
@@ -372,14 +385,9 @@ bool Minecraft::isOnlineClient() const
 	return m_pLevel->m_bIsClientSide;
 }
 
-bool Minecraft::isTouchscreen() const
-{
-	return m_bIsTouchscreen;
-}
-
 bool Minecraft::useTouchscreen() const
 {
-	return isTouchscreen() && !getOptions()->m_bUseController.get();
+	return GetInputMethod() == InputMethod::TOUCHSCREEN;
 }
 
 bool Minecraft::useSplitControls() const
@@ -389,7 +397,7 @@ bool Minecraft::useSplitControls() const
 
 bool Minecraft::useController() const
 {
-	return m_pPlatform->hasGamepad() && getOptions()->m_bUseController.get();
+	return GetInputMethod() == InputMethod::CONTROLLER;
 }
 
 void Minecraft::setGameMode(GameType gameType)
@@ -557,6 +565,12 @@ void Minecraft::handleBuildAction(const BuildActionIntention& action)
 
 void Minecraft::tickInput()
 {
+	if (!platform()->hasGamepad() && useController())
+		resetInputMethod();
+
+	if (!m_pInputHolder->allowsInputMethod(GetInputMethod()))
+		reloadInput();
+
 	if (m_pScreen)
 	{
 		if (!m_pScreen->m_bPassEvents)
@@ -606,73 +620,115 @@ void Minecraft::tickInput()
 #endif
 	}
 
-	while (Keyboard::next())
+	if (useController())
 	{
-		int keyCode = Keyboard::getEventKey();
-		bool bPressed = Keyboard::getEventKeyState() == 1;
+		//Clearing, so the events don't accumulate
+		Keyboard::reset();
 
-		m_pLocalPlayer->m_pMoveInput->setKey(keyCode, bPressed);
-
-		if (bPressed)
+		while (GameControllerManager::next())
 		{
-			m_pGui->handleKeyPressed(keyCode);
+			GameController::EngineButtonID button = GameControllerManager::getEventButton();
+			bool bPressed = GameControllerManager::getEventButtonState() == GameController::BTN_STATE_DOWN;
 
-			for (int i = 0; i < m_pGui->getNumUsableSlots(); i++)
-			{
-				if (getOptions()->isKey(eKeyMappingIndex(KM_SLOT_1 + i), keyCode))
-					m_pLocalPlayer->m_pInventory->selectSlot(i);
-			}
+			if (bPressed)
+				m_pGui->handleUserAction(ActionInfo(-1, button));
 
-			if (getOptions()->isKey(KM_TOGGLE3RD, keyCode))
+			for (size_t i = 0; i < AID_COUNT; ++i)
 			{
-				getOptions()->m_thirdPerson.toggle();
-			}
-			else if (getOptions()->isKey(KM_MENU_PAUSE, keyCode))
-			{
-				handleBack(false);
-			}
-			else if (getOptions()->isKey(KM_DROP, keyCode))
-			{
-				m_pLocalPlayer->drop();
-			}
-			else if (getOptions()->isKey(KM_TOGGLEGUI, keyCode))
-			{
-				getOptions()->m_hideGui.toggle();
-			}
-			else if (getOptions()->isKey(KM_TOGGLEDEBUG, keyCode))
-			{
-				getOptions()->m_debugText.toggle();
-			}
-#ifdef ENH_ALLOW_AO_TOGGLE
-			else if (getOptions()->isKey(KM_TOGGLEAO, keyCode))
-			{
-				// Toggle ambient occlusion.
-				getOptions()->m_ambientOcclusion.toggle();
-				Minecraft::useAmbientOcclusion = getOptions()->m_ambientOcclusion.get();
-				m_pLevelRenderer->allChanged();
-			}
-#endif
-		}
+				UserActionID ctrl = (UserActionID)i;
+				if (!getOptions()->getAction(ctrl).isControllerButton(button)) continue;
 
-		if (getOptions()->m_bUseMouseForDigging)
-			continue;
-
-		// @TODO: Replace with KeyboardBuildInput
-		if (!useController() && getTimeMs() - field_2B4 <= 200)
-		{
-			if (getOptions()->getKey(KM_DESTROY) == keyCode && bPressed)
-			{
-				BuildActionIntention intention(BuildActionIntention::KEY_DESTROY);
-				handleBuildAction(intention);
-			}
-
-			if (getOptions()->getKey(KM_PLACE) == keyCode && bPressed)
-			{
-				BuildActionIntention intention(BuildActionIntention::KEY_USE);
-				handleBuildAction(intention);
+				m_pLocalPlayer->m_pMoveInput->setKey(ctrl, bPressed);
+				if (bPressed)
+					getOptions()->getInputMapping(ctrl).pressed();
+				else
+					getOptions()->getInputMapping(ctrl).reset();
 			}
 		}
 	}
+	else
+	{
+		// Clearing, so the events don't accumulate
+		GameControllerManager::clear();
+		while (Keyboard::next())
+		{
+			int keyCode = Keyboard::getEventKey();
+			bool bPressed = Keyboard::getEventKeyState() == Keyboard::DOWN;
+
+			if (bPressed)
+				m_pGui->handleUserAction(ActionInfo(keyCode, GameController::BUTTON_NONE));
+
+			for (size_t i = 0; i < AID_COUNT; ++i)
+			{
+				UserActionID ctrl = (UserActionID)i;
+				if (!getOptions()->isKey(ctrl, keyCode)) continue;
+
+				m_pLocalPlayer->m_pMoveInput->setKey(ctrl, bPressed);
+				if (bPressed)
+					getOptions()->getInputMapping(ctrl).pressed();
+				else
+					getOptions()->getInputMapping(ctrl).reset();
+			}
+
+			if (getOptions()->m_bUseMouseForDigging)
+				continue;
+
+			// @TODO: Replace with KeyboardBuildInput
+			if (getTimeMs() - field_2B4 <= 200)
+			{
+				if (getOptions()->isKey(AID_DESTROY, keyCode) && bPressed)
+				{
+					BuildActionIntention intention(BuildActionIntention::KEY_DESTROY);
+					handleBuildAction(intention);
+				}
+
+				if (getOptions()->isKey(AID_PLACE, keyCode) && bPressed)
+				{
+					BuildActionIntention intention(BuildActionIntention::KEY_USE);
+					handleBuildAction(intention);
+				}
+			}
+		}
+	}
+
+	for (int i = 0; i < m_pGui->getNumUsableSlots(); i++)
+	{
+		while (getOptions()->getInputMapping(UserActionID(AID_SLOT_1 + i)).consume())
+			m_pLocalPlayer->m_pInventory->selectSlot(i);
+	}
+
+	while (getOptions()->getInputMapping(AID_TOGGLE3RD).consume())
+	{
+		getOptions()->m_thirdPerson.toggle();
+	}
+
+	while (getOptions()->getInputMapping(AID_MENU_PAUSE).consume())
+	{
+		handleBack(false);
+	}
+
+	while (getOptions()->getInputMapping(AID_DROP).consume())
+	{
+		m_pLocalPlayer->drop();
+	}
+
+	while (getOptions()->getInputMapping(AID_TOGGLEGUI).consume())
+	{
+		getOptions()->m_hideGui.toggle();
+	}
+
+	while (getOptions()->getInputMapping(AID_TOGGLEDEBUG).consume())
+	{
+		getOptions()->m_debugText.toggle();
+	}
+#ifdef ENH_ALLOW_AO_TOGGLE
+	while (getOptions()->getInputMapping(AID_TOGGLEAO).consume())
+	{
+		// Toggle ambient occlusion.
+		getOptions()->m_ambientOcclusion.toggle();
+		m_pLevelRenderer->allChanged();
+	}
+#endif
 
 	BuildActionIntention bai;
 	IBuildInput* buildInput = m_pInputHolder->getBuildInput();
@@ -680,9 +736,6 @@ void Minecraft::tickInput()
 		handleBuildAction(bai);
 
 	field_2B4 = getTimeMs();
-
-	Keyboard::reset();
-	Mouse::reset();
 }
 
 void Minecraft::tickMouse()
@@ -851,6 +904,10 @@ void Minecraft::tick()
 			getScreenChooser()->pushDeathScreen();
 		}
 	}
+	else
+	{
+		m_pScreen->validate(this);
+	}
 
 	tickInput();
 
@@ -907,6 +964,9 @@ void Minecraft::tick()
 			m_pScreen->tick();
 
 		Multitouch::reset();
+
+		// Actually pause the game, because fuck bedrock edition
+		m_bIsGamePaused = (!isOnline() || (m_pLevel && m_pLevel->m_players.size() == 1)) && (m_pScreen && m_pScreen->isPauseScreen());
 	}
 }
 
@@ -1060,22 +1120,34 @@ void Minecraft::prepareLevel(const std::string& unused)
 
 void Minecraft::sizeUpdate(int newWidth, int newHeight)
 {
+	float baseScale = getBestScaleForThisScreenSize(newWidth, newHeight);
+	
 	// re-calculate the GUI scale.
-	Gui::GuiScale =  getBestScaleForThisScreenSize(newWidth, newHeight) / getRenderScaleMultiplier();
+	Gui::GuiScale = baseScale / GetRenderScaleMultiplier();
 
 	// The ceil gives an extra pixel to the screen's width and height, in case the GUI scale doesn't
 	// divide evenly into width or height, so that none of the game screen is uncovered.
-	Gui::GuiHeight = ceilf(Minecraft::height * Gui::GuiScale);
-	Gui::GuiScale = float(Gui::GuiHeight) / height;
-	Gui::GuiWidth = ceilf(Minecraft::width * Gui::GuiScale);
+	float newGuiWidth = ceilf(Minecraft::width * Gui::GuiScale);
+	float newGuiHeight = ceilf(Minecraft::height * Gui::GuiScale);
+	
+	// GuiSize did not change, bail out
+	if (newGuiWidth == Gui::GuiWidth && newGuiHeight == Gui::GuiHeight)
+		return;
+	
+	Gui::GuiWidth  = newGuiWidth;
+	Gui::GuiHeight = newGuiHeight;
 
 	if (m_pScreen)
+	{
 		m_pScreen->setSize(
 			Gui::GuiWidth,
 			Gui::GuiHeight
 		);
+		m_pScreen->centerMenuPointer();
+	}
 
 	LogoRenderer::singleton().build(Gui::GuiWidth);
+	
 
 	if (m_pInputHolder)
 		m_pInputHolder->setScreenSize(Minecraft::width, Minecraft::height);
@@ -1102,21 +1174,20 @@ float Minecraft::getBestScaleForThisScreenSize(int width, int height)
 #define USE_JAVA_SCREEN_SCALING
 #endif
 #ifdef USE_JAVA_SCREEN_SCALING
-	// @HACK: the scaling code for Java/Pocket Screens when using the Console theme is pretty broken
-	if (m_pOptions->getUiTheme() != UI_CONSOLE)
+	if (getUiTheme() == UI_JAVA)
 	{
 		int scale;
 		for (scale = 1; width / (scale + 1) >= 320 && height / (scale + 1) >= 240; ++scale)
 		{
 		}
-		return scale;
+		return 1.0f / scale;
 	}
 #endif
 
 	if (height > 1800)
 		return 1.0f / 8.0f;
 
-	if (isTouchscreen())
+	if (useTouchscreen())
 	{
 		if (height > 1100)
 			return 1.0f / 6.0f;
@@ -1216,11 +1287,6 @@ bool Minecraft::pauseGame()
 {
 	if (isGamePaused() || m_pScreen) return false;
 
-	if (!isOnline() || m_pLevel->m_players.size() == 1)
-	{
-		// Actually pause the game, because fuck bedrock edition
-		m_bIsGamePaused = true;
-	}
 	m_pLevel->savePlayerData();
 	getScreenChooser()->pushPauseScreen();
 

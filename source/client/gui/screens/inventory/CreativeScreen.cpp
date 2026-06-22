@@ -8,8 +8,15 @@
 
 Container* CreativeScreen::creativeGrid = new SimpleContainer(72, "Item selection");
 
+CreativeScreen::CreativeScreen(ContainerMenu* menu) : ContainerScreen(menu)
+{
+    m_scrolled = 0.0f;
+    m_bIsScrolling = false;
+}
+
 CreativeScreen::CreativeScreen(Container* inventory) : ContainerScreen(new CreativeMenu(inventory, creativeGrid))
 {
+    m_screenType = SCREEN_GENERIC;
     m_imageHeight = 208;
     m_scrolled = 0.0f;
     m_bIsScrolling = false;
@@ -18,15 +25,15 @@ CreativeScreen::CreativeScreen(Container* inventory) : ContainerScreen(new Creat
 void CreativeScreen::slotClicked(Slot* slot, Container::SlotID slotId, MouseButtonType button, bool quick)
 {
     Inventory* inv = m_pMinecraft->m_pLocalPlayer->m_pInventory;
-    ItemStack carried = inv->getCarried();
+    ItemStack& carried = inv->getCarried();
 
     if (slot)
     {
-        if (slot->m_pContainer == creativeGrid)
+        if (_isCreativeSlot(slot))
         {
             ItemStack& slotItem = slot->getItem();
 
-            if (!carried.isEmpty() && slotItem.isValid() && carried.getId() == slotItem.getId())
+            if (!carried.isEmpty() && !slotItem.isEmpty() && carried.getId() == slotItem.getId())
             {
                 if (button == MOUSE_BUTTON_LEFT)
                 {
@@ -39,7 +46,7 @@ void CreativeScreen::slotClicked(Slot* slot, Container::SlotID slotId, MouseButt
                 {
                     if (carried.m_count <= 1)
                     {
-                        inv->setCarried(ItemStack());
+                        inv->setCarried(ItemStack::EMPTY);
                         return;
                     }
                     else
@@ -51,22 +58,17 @@ void CreativeScreen::slotClicked(Slot* slot, Container::SlotID slotId, MouseButt
             }
             else if (!carried.isEmpty())
             {
-                inv->setCarried(ItemStack());
+                inv->setCarried(ItemStack::EMPTY);
             }
-            else if (!slotItem.isValid())
+            else if (slotItem.isEmpty())
             {
-                inv->setCarried(ItemStack());
+                inv->setCarried(ItemStack::EMPTY);
             }
             else if (carried.isEmpty() || carried.getId() != slotItem.getId())
             {
-                ItemStack* newCarried = slotItem.copy();
-                if (newCarried)
-                {
-                    if (quick)
-                        newCarried->m_count = newCarried->getMaxStackSize();
-                    inv->setCarried(*newCarried);
-                    delete newCarried;
-                }
+                inv->setCarried(slotItem);
+                if (quick)
+                    carried.m_count = carried.getMaxStackSize();
             }
         }
         else
@@ -81,22 +83,33 @@ void CreativeScreen::slotClicked(Slot* slot, Container::SlotID slotId, MouseButt
             if (button == MOUSE_BUTTON_LEFT)
             {
                 m_pMinecraft->m_pLocalPlayer->drop(carried);
-                inv->setCarried(ItemStack());
+                inv->setCarried(ItemStack::EMPTY);
             }
             else if (button == MOUSE_BUTTON_RIGHT)
             {
                 ItemStack dropped = carried.remove(1);
                 m_pMinecraft->m_pLocalPlayer->drop(dropped);
                 if (carried.m_count <= 0)
-                    inv->setCarried(ItemStack());
+                    inv->setCarried(ItemStack::EMPTY);
             }
         }
     }
 }
 
+void CreativeScreen::_updateScroll(float scroll)
+{
+    CreativeMenu* creativeMenu = (CreativeMenu*)m_pMenu;
+    creativeMenu->updateScroll(m_scrolled = scroll);
+}
+
+bool CreativeScreen::_isCreativeSlot(Slot* slot)
+{
+    return slot->m_pContainer == creativeGrid;
+}
+
 void CreativeScreen::_renderLabels()
 {
-    m_pFont->draw(creativeGrid->getName(), 8, 6, 0x404040);
+    m_pFont->draw(creativeGrid->getName(), 8, 6, Color::TEXT_GREY);
 }
 
 void CreativeScreen::_renderBg(float partialTicks)
@@ -137,8 +150,7 @@ void CreativeScreen::pointerReleased(const MenuPointer& pointer, MouseButtonType
 
 void CreativeScreen::handleScrollWheel(float force)
 {
-    CreativeMenu* creativeMenu = (CreativeMenu*)m_pMenu;
-    creativeMenu->updateScroll(m_scrolled = Mth::clamp(m_scrolled - (force / ((float)CreativeMenu::GetCreativeItems().size() / 8 - 8 + 1)), 0.0f, 1.0f));
+    _updateScroll(Mth::clamp(m_scrolled - (force / ((float)CreativeMenu::GetCreativeItems().size() / 8 - 8 + 1)), 0.0f, 1.0f));
 }
 
 void CreativeScreen::tick()
@@ -151,7 +163,6 @@ void CreativeScreen::tick()
 
     if (m_bIsScrolling)
     {
-        CreativeMenu* creativeMenu = (CreativeMenu*)m_pMenu;
-        creativeMenu->updateScroll(m_scrolled = Mth::clamp((float(m_menuPointer.y) - (m_topPos + 25)) / 144.0f, 0.0f, 1.0f));
+        _updateScroll(Mth::clamp((float(m_menuPointer.y) - (m_topPos + 25)) / 144.0f, 0.0f, 1.0f));
     }
 }

@@ -15,74 +15,106 @@
 #include <vector>
 #include <map>
 
+#include "common/utility/HashMap.hpp"
 #include "common/threading/AsyncTask.hpp"
+#include "client/player/input/GameController.hpp"
 #include "client/resources/ResourcePackManager.hpp"
 
-enum eKeyMappingIndex
+// Named "UserActionID" instead of "PlayerActionID" since
+// these are not directly associated with a Player object.
+enum UserActionID
 {
-	KM_FORWARD,
-	KM_LEFT,
-	KM_BACKWARD,
-	KM_RIGHT,
-	KM_JUMP,
-	KM_CRAFTING,
-	KM_INVENTORY,
-	KM_DROP,
-	KM_CHAT,
-	KM_FOG,
-	KM_SNEAK,
-	KM_DESTROY,
-	KM_PLACE,
-	KM_MENU_UP,
-	KM_MENU_DOWN,
-	KM_MENU_LEFT,
-	KM_MENU_RIGHT,
-	KM_MENU_TAB_LEFT,
-	KM_MENU_TAB_RIGHT,
-	KM_MENU_OK,
-	KM_MENU_CANCEL, KM_BACK = KM_MENU_CANCEL,
-	KM_MENU_PAUSE,
-	KM_SLOT_1,
-	KM_SLOT_2,
-	KM_SLOT_3,
-	KM_SLOT_4,
-	KM_SLOT_5,
-	KM_SLOT_6,
-	KM_SLOT_7,
-	KM_SLOT_8,
-	KM_SLOT_9,
-	KM_SLOT_L,
-	KM_SLOT_R,
-	KM_CONTAINER_QUICKMOVE,
-	KM_CONTAINER_SPLIT,
-	KM_TOGGLEGUI,
-	KM_SCREENSHOT,
-	KM_TOGGLEDEBUG,
-	KM_TOGGLEAO,
-	KM_TOGGLE3RD,
-	KM_FLY_UP,
-	KM_FLY_DOWN,
-	KM_CHAT_CMD, // called "Open Chat" in Release 1.8
-	KM_COUNT
+	AID_FORWARD,
+	AID_LEFT,
+	AID_BACKWARD,
+	AID_RIGHT,
+	AID_JUMP,
+	AID_CRAFTING,
+	AID_INVENTORY,
+	AID_DROP,
+	AID_CHAT,
+	AID_FOG,
+	AID_SNEAK,
+	AID_DESTROY,
+	AID_PLACE,
+	AID_MENU_UP,
+	AID_MENU_DOWN,
+	AID_MENU_LEFT,
+	AID_MENU_RIGHT,
+	AID_MENU_TAB_LEFT,
+	AID_MENU_TAB_RIGHT,
+	AID_MENU_OK,
+	AID_MENU_CANCEL, AID_BACK = AID_MENU_CANCEL,
+	AID_MENU_PAUSE,
+	AID_SLOT_1,
+	AID_SLOT_2,
+	AID_SLOT_3,
+	AID_SLOT_4,
+	AID_SLOT_5,
+	AID_SLOT_6,
+	AID_SLOT_7,
+	AID_SLOT_8,
+	AID_SLOT_9,
+	AID_SLOT_L,
+	AID_SLOT_R,
+	AID_CONTAINER_QUICKMOVE,
+	AID_CONTAINER_SPLIT,
+	AID_TOGGLEGUI,
+	AID_SCREENSHOT,
+	AID_TOGGLEDEBUG,
+	AID_TOGGLEAO,
+	AID_TOGGLE3RD,
+	AID_FLY_UP,
+	AID_FLY_DOWN,
+	AID_CHAT_CMD, // called "Open Chat" in Release 1.8
+	AID_COUNT
 };
 
-struct KeyMapping
+struct ActionInfo
+{
+	//@TODO: Replace this with a universal key
+	int keyId;
+	GameController::EngineButtonID controllerButtonId;
+
+	ActionInfo() : keyId(-1), controllerButtonId(GameController::BUTTON_NONE) {}
+	ActionInfo(int key, GameController::EngineButtonID button) : keyId(key), controllerButtonId(button) {}
+
+	bool isKey(int key) const { return keyId >= 0 && key == keyId; }
+	bool isControllerButton(GameController::EngineButtonID button) const { return controllerButtonId > GameController::BUTTON_NONE && button == controllerButtonId; }
+	bool operator==(const ActionInfo& other) const
+	{
+		return isKey(other.keyId) || isControllerButton(other.controllerButtonId);
+	}
+};
+
+struct InputMapping
 {
 	std::string key;
-	int value;
+	ActionInfo info;
+	int timesPressed;
 
-	KeyMapping() : value(-1) {} // key is automatically clear when constructed
-	KeyMapping(const char* keyName, int keyCode) : key(keyName), value(keyCode) {}
+	InputMapping() : timesPressed(0) {} // key is automatically clear when constructed
+	InputMapping(const char* keyName, int keyCode) : key(keyName), timesPressed(0)
+	{
+		info.keyId = keyCode;
+	}
+
+	void pressed() { ++timesPressed; }
+	void reset() { timesPressed = 0; }
+	bool consume()
+	{
+		if (timesPressed == 0) return false;
+		
+		--timesPressed;
+		return true;
+	}
 };
 
 enum UITheme
 {
 	UI_POCKET,
 	UI_JAVA,
-	UI_CONSOLE,
-
-	UI_GENERIC, // The Screen is a Java / Pocket mix
-	UI_UNIVERSAL // The Screen automatically handles all UI themes
+	UI_CONSOLE
 };
 
 enum LogoType
@@ -267,14 +299,6 @@ public:
 	std::string getDisplayValue() const override;
 };
 
-class ControllerOption : public BoolOption
-{
-public:
-	ControllerOption(const std::string& key, const std::string& name, bool initial = true) : BoolOption(key, name, initial) {}
-
-	void apply() override;
-};
-
 class AOOption : public BoolOption
 {
 public:
@@ -369,9 +393,6 @@ public:
 
 class Options
 {
-public:
-	struct KeyBind;
-
 private:
 	static bool _hasResourcePack(const ResourcePack& pack, ResourcePackStack& packs);
 	static void _tryAddResourcePack(const std::string& name, ResourcePackStack& packs);
@@ -409,8 +430,12 @@ public:
 	const AsyncTask& save();
 	std::vector<std::string> getOptionStrings();
 	
-	int getKey(eKeyMappingIndex idx) const { return m_keyMappings[idx].value; }
-	bool isKey(eKeyMappingIndex idx, int keyCode) const { return getKey(idx) == keyCode; }
+	int getKey(UserActionID idx) const { return m_inputMappings[idx].info.keyId; }
+	bool isKey(UserActionID idx, int keyCode) const { return getKey(idx) == keyCode; }
+
+	InputMapping& getInputMapping(UserActionID idx) { return m_inputMappings[idx]; }
+	const ActionInfo& getAction(UserActionID idx) const { return m_inputMappings[idx].info; }
+	bool isAction(UserActionID idx, const ActionInfo& info) const { return m_inputMappings[idx].info == info; }
 
 	void loadControls();
 	void reset();
@@ -421,10 +446,10 @@ public:
 
 private:
 	Minecraft* m_pMinecraft;
-	std::map<std::string, OptionEntry*> m_options;
+	HashMap<std::string, OptionEntry*> m_options;
 	AsyncTask m_saveTask;
 	std::string m_filePath;
-	KeyMapping m_keyMappings[KM_COUNT];
+	InputMapping m_inputMappings[AID_COUNT];
 
 public:
 	friend class BoolOption;
@@ -466,7 +491,6 @@ public:
 	GraphicsOption m_fancyGrass;
 	GraphicsOption m_biomeColors;
 	BoolOption m_splitControls;
-	ControllerOption m_bUseController;
 	BoolOption m_dynamicHand;
 	BoolOption m_menuPanorama;
 	StringOption m_lang;
@@ -474,6 +498,7 @@ public:
 	LogoTypeOption m_logoType;
 	HUDSizeOption m_hudSize;
 	BoolOption m_classicCrafting;
+	BoolOption m_animatedCharacter;
 	VsyncOption m_vSync;
 	ResourcePackStack m_resourcePacks;
 };
@@ -498,7 +523,6 @@ public:
 	OPTION(m_swapJumpSneak); idxSwapJumpSneak = currentIndex; \
 	OPTION(m_dpadSize); idxDpadSize = currentIndex; \
 	OPTION(m_autoJump);                    \
-	OPTION(m_bUseController); idxController = currentIndex; \
 
 #define OPTIONS_LIST_CONTROLS_FEEDBACK     \
 	/*HEADER("Feedback");*/                \
@@ -527,6 +551,8 @@ public:
 	OPTION(m_dynamicHand);                 \
 	OPTION(m_uiTheme);                     \
 	OPTION(m_logoType);                    \
+	OPTION(m_hudSize);					   \
+	OPTION(m_animatedCharacter);           \
 
 #define OPTIONS_LIST_VIDEO_EXPERIMENTAL    \
 	HEADER("Experimental");                \

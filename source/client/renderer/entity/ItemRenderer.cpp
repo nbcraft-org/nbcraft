@@ -12,6 +12,8 @@
 #include "client/renderer/TileRenderer.hpp"
 #include "client/renderer/renderer/RenderMaterialGroup.hpp"
 #include "world/entity/ItemEntity.hpp"
+#include "client/renderer/Lighting.hpp"
+#include "client/app/Minecraft.hpp"
 
 #ifndef ENH_3D_INVENTORY_TILES
 const uint8_t g_ItemFrames[C_MAX_TILES] =
@@ -186,7 +188,7 @@ void ItemRenderer::blit(int dx, int dy, int sx, int sy, int tw, int th)
 	t.draw(m_itemMaterials.ui_textured);
 }
 
-void ItemRenderer::renderGuiItemOverlay(Font* font, Textures* textures, ItemStack& item, int x, int y)
+void ItemRenderer::renderGuiItemOverlay(Minecraft& mc, ItemStack& item, int x, int y)
 {
 	if (item.isEmpty())
 		return;
@@ -218,12 +220,12 @@ void ItemRenderer::renderGuiItemOverlay(Font* font, Textures* textures, ItemStac
 	ss << item.m_count;
 	std::string amtstr = ss.str();
 
-	int width = font->width(amtstr);
+	int width = mc.m_pFont->width(amtstr);
 
-	font->drawShadow(amtstr, x + 17 - width, y + 6 + 3, 0xFFFFFF);
+	mc.m_pFont->drawShadow(amtstr, x + 17 - width, y + 6 + 3, 0xFFFFFF);
 }
 
-void ItemRenderer::renderGuiItem(Font* font, Textures* textures, ItemStack& item, int x, int y, bool b)
+void ItemRenderer::renderGuiItem(Minecraft& mc, ItemStack& item, int x, int y, bool b)
 {
 	// @NOTE: Font unused but would presumably be used to draw the item amount.
 	// As if that actually works due to us blocking t.begin() and t.draw() calls...
@@ -232,6 +234,8 @@ void ItemRenderer::renderGuiItem(Font* font, Textures* textures, ItemStack& item
 
 	if (!b)
 		return;
+
+	Textures& textures = *mc.m_pTextures;
 
 	//Item* pItem = item->getItem();
 	Tile* pTile = item.getTile();
@@ -277,23 +281,42 @@ void ItemRenderer::renderGuiItem(Font* font, Textures* textures, ItemStack& item
 		t.vertexUV(float(x +  0), float(y +  0), 0.0f,  texU          / 512.0f,  texV          / 512.0f);
 		t.draw();
 #else
-		textures->loadAndBindTexture(C_TERRAIN_NAME);
 
+		textures.loadAndBindTexture(C_TERRAIN_NAME);
+
+#if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
+		glEnable(GL_RESCALE_NORMAL);
+#endif
 		MatrixStack::Ref matrix = MatrixStack::World.push();
 
 		// scale, rotate, and translate the tile onto the correct screen coordinate
-		matrix->translate(Vec3(x + 8, y + 8, -8));
-		matrix->scale(10);
+		if (mc.getUiTheme() == UI_CONSOLE)
+		{
+			Lighting::turnOnConsoleUiItems();
+			matrix->translate(Vec3(x, y, 0));
+			matrix->scale(16);
+			matrix->translate(Vec3(0.5f, 0.5f, 0.0f));
+			matrix->scale(Vec3(0.55f, 0.55f, -1.0f));
+		}
+		else
+		{
+			Lighting::turnOnItems();
+			matrix->translate(Vec3(x - 2, y + 3, 0));
+			matrix->scale(10);
+			matrix->translate(Vec3(1.0f, 0.5f, 1.0f));
+			matrix->scale(Vec3(1.0f, 1.0f, -1.0f));
+		}
 		matrix->rotate(210.0f, Vec3::UNIT_X);
 		matrix->rotate(45.0f, Vec3::UNIT_Y);
-
-		// TODO: Why can't we rotate stairs 90deg also? What's rotating them!?
-		if (pTile->getRenderShape() != SHAPE_STAIRS)
-		{
-			matrix->rotate(-90.0f, Vec3::UNIT_Y);
-		}
+		matrix->rotate(-90.0f, Vec3::UNIT_Y);
 		
-		m_pTileRenderer->renderTile(FullTile(pTile, item.getAuxValue()), m_itemMaterials.ui_item, 1.0f, true);
+		m_pTileRenderer->renderTile(FullTile(pTile, item.getAuxValue()), m_itemMaterials.ui_item, 1.0f);
+
+		Lighting::turnOff();
+
+#if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
+		glDisable(GL_RESCALE_NORMAL);
+#endif
 		#undef PARM_HACK
 #endif
 	}
@@ -302,9 +325,9 @@ void ItemRenderer::renderGuiItem(Font* font, Textures* textures, ItemStack& item
 		// @BUG: The last bound texture will be the texture that ALL items will take. This is because begin and end calls
 		// have been void'ed by a  t.voidBeginAndEndCalls call in Gui::render.
 		if (item.getTile())
-			textures->loadAndBindTexture(C_TERRAIN_NAME);
+			textures.loadAndBindTexture(C_TERRAIN_NAME);
 		else
-			textures->loadAndBindTexture(C_ITEMS_NAME);
+			textures.loadAndBindTexture(C_ITEMS_NAME);
 
 		blit(x, y, 16 * (item.getIcon() % 16), 16 * (item.getIcon() / 16), 16, 16);
 	}

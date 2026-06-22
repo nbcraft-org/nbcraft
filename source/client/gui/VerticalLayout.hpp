@@ -8,10 +8,23 @@
 class VerticalLayout : public GuiElement
 {
 public:
+    class Navigation : public AreaNavigation
+    {
+    public:
+        Navigation(VerticalLayout*);
+
+        bool next(int& x, int& y, bool invert) override;
+
+        bool isValid(ID) override;
+    private:
+        VerticalLayout* m_pLayout;
+    };
+
     VerticalLayout(Screen* screen);
     ~VerticalLayout();
 
     GuiElement* getElement(ID) const;
+    bool isLastIn(AreaNavigation::Direction dir);
     bool isTopElement(GuiElement& element) const { return element.m_yPos == m_yPos; };
     bool isBottomElement(GuiElement& element) const { return element.m_yPos == m_bottom; };
     bool selectElementById(ID, bool sound = true);
@@ -21,6 +34,7 @@ public:
     void organize();
     void clear();
 
+    void startNavigation();
     bool areaNavigation(Minecraft*, AreaNavigation::Direction) override;
     void areaNavigation(AreaNavigation::Direction, bool cyclic = false);
     void setSelected(bool);
@@ -36,18 +50,6 @@ public:
     void render(Minecraft*, const MenuPointer&) override;
 
 public:
-    class Navigation : public AreaNavigation
-    {
-    public:
-        Navigation(VerticalLayout*);
-
-        bool next(int& x, int& y, bool invert) override;
-
-        bool isValid(ID) override;
-    private:
-        VerticalLayout* m_pLayout;
-    };
-
     Screen* m_pScreen;
     GuiElementList m_elements;
     GuiElement* m_pSelectedElement;

@@ -78,11 +78,11 @@ public:
 	void handleKeyboardClosed();
 	void resetInput();
 	void reloadInput();
+	void resetInputMethod();
 	void sendMessage(const std::string& message);
 	void respawnPlayer();
 	void freeResources(bool bCopyMap);
 	std::string getVersionString(const std::string& str = Util::EMPTY_STRING) const;
-	bool isTouchscreen() const;
 	bool useTouchscreen() const;
 	bool useSplitControls() const;
 	bool useController() const;
@@ -121,10 +121,13 @@ public:
 private:
     // Value provided by the OS
     static float _renderScaleMultiplier;
+	static InputMethod::Type _inputMethod;
 
 public:
-    static float getRenderScaleMultiplier() { return _renderScaleMultiplier; }
-    static void setRenderScaleMultiplier(float value) { _renderScaleMultiplier = value; }
+    static float GetRenderScaleMultiplier() { return _renderScaleMultiplier; }
+    static void SetRenderScaleMultiplier(float value) { _renderScaleMultiplier = value; }
+	static InputMethod::Type GetInputMethod() { return _inputMethod; }
+	static void SetInputMethod(InputMethod::Type inputType) { _inputMethod = inputType; }
     
 public:
 	static int width, height;

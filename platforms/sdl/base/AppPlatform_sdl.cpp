@@ -169,6 +169,31 @@ int AppPlatform_sdl::checkLicense()
 	return 1;
 }
 
+void AppPlatform_sdl::setVSyncEnabled(bool enabled)
+{
+#if MCE_GFX_API_OGL
+#if SDL_VERSION_ATLEAST(1, 3, 0)
+	SDL_GL_SetSwapInterval(enabled ? 1 : 0);
+#else // SDL_VERSION_ATLEAST(1, 3, 0)
+#if SDL_VERSION_ATLEAST(1, 2, 10)
+	SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, enabled ? 1 : 0);
+#else // SDL_VERSION_ATLEAST(1, 2, 10)
+	if (enabled)
+		LOG_W("VSync unsupported on old SDL versions (before 1.2.10)");
+#endif // !SDL_VERSION_ATLEAST(1, 2, 10)
+#endif // !SDL_VERSION_ATLEAST(1, 3, 0)
+#endif // MCE_GFX_API_OGL
+}
+
+bool AppPlatform_sdl::isVSyncSwitchable() const
+{
+#if MCE_GFX_API_OGL
+	return true;
+#else
+	return false;
+#endif
+}
+
 void AppPlatform_sdl::setMouseGrabbed(bool b)
 {
 	_setMouseGrabbed(b);
@@ -311,10 +336,39 @@ void AppPlatform_sdl::handleKeyEvent(const SDL_Event& event)
 	return _handleKeyEvent(key, state);
 }
 
+static GameController::EngineButtonID _getEngineButton(uint8_t button)
+{
+	switch (button)
+	{
+	case SDL_CONTROLLER_BUTTON_A:				return GameController::BUTTON_A;
+	case SDL_CONTROLLER_BUTTON_B:				return GameController::BUTTON_B;
+	case SDL_CONTROLLER_BUTTON_X:				return GameController::BUTTON_X;
+	case SDL_CONTROLLER_BUTTON_Y:				return GameController::BUTTON_Y;
+	case SDL_CONTROLLER_BUTTON_DPAD_UP:			return GameController::BUTTON_DPAD_UP;
+	case SDL_CONTROLLER_BUTTON_DPAD_DOWN:		return GameController::BUTTON_DPAD_DOWN;
+	case SDL_CONTROLLER_BUTTON_DPAD_LEFT:		return GameController::BUTTON_DPAD_LEFT;
+	case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:		return GameController::BUTTON_DPAD_RIGHT;
+	case SDL_CONTROLLER_BUTTON_LEFTSTICK:		return GameController::BUTTON_LEFTSTICK;
+	case SDL_CONTROLLER_BUTTON_RIGHTSTICK:		return GameController::BUTTON_RIGHTSTICK;
+	case SDL_CONTROLLER_BUTTON_LEFTSHOULDER:	return GameController::BUTTON_LEFTSHOULDER;
+	case SDL_CONTROLLER_BUTTON_RIGHTSHOULDER:	return GameController::BUTTON_RIGHTSHOULDER;
+	case SDL_CONTROLLER_BUTTON_BACK:			return GameController::BUTTON_BACK;
+	case SDL_CONTROLLER_BUTTON_START:			return GameController::BUTTON_START;
+	case SDL_CONTROLLER_BUTTON_GUIDE:			return GameController::BUTTON_GUIDE;
+	case SDL_CONTROLLER_BUTTON_MISC1:			return GameController::BUTTON_MISC1;
+	case SDL_CONTROLLER_BUTTON_PADDLE1:			return GameController::BUTTON_PADDLE1;
+	case SDL_CONTROLLER_BUTTON_PADDLE2:			return GameController::BUTTON_PADDLE2;
+	case SDL_CONTROLLER_BUTTON_PADDLE3:			return GameController::BUTTON_PADDLE3;
+	case SDL_CONTROLLER_BUTTON_PADDLE4:			return GameController::BUTTON_PADDLE4;
+	case SDL_CONTROLLER_BUTTON_TOUCHPAD:		return GameController::BUTTON_TOUCHPAD;
+	default:									return GameController::BUTTON_NONE;
+	}
+}
+
 void AppPlatform_sdl::handleControllerButtonEvent(SDL_JoystickID controllerIndex, uint8_t button, uint8_t state)
 {
 	// Normal Key Press
-	Keyboard::feed(GetKeyState(state), button);
+	GameControllerManager::feedButton(state == SDL_PRESSED ? GameController::BTN_STATE_DOWN : GameController::BTN_STATE_UP, _getEngineButton(button));
 }
 
 void AppPlatform_sdl::handleControllerAxisEvent(SDL_JoystickID controllerIndex, uint8_t axis, int16_t value)

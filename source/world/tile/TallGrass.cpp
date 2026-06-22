@@ -28,10 +28,9 @@ int TallGrass::getColor(const LevelSource* levelSource, const TilePos& pos) cons
 	return 0xFFFFFF;
 }
 
-int TallGrass::getTexture(const LevelSource* level, const TilePos& pos, Facing::Name face) const
+int TallGrass::getTexture(Facing::Name face, TileData data) const
 {
-	TileData data = level->getData(pos);
-	return data == 1 ? m_TextureFrame : (data == 2 ? m_TextureFrame + 16 + 1 : (data == 0 ? m_TextureFrame + 16 : m_TextureFrame));
+	return data == 1 ? m_TextureFrame : (data == 2 ? m_TextureFrame + 16 + 1 : (data == 1 ? m_TextureFrame : m_TextureFrame + 16));
 }
 
 eRenderShape TallGrass::getRenderShape() const

@@ -8,6 +8,7 @@ private:
     static Container* creativeGrid;
 
 public:
+    CreativeScreen(ContainerMenu* menu);
     CreativeScreen(Container* inventory);
 
     void tick() override;
@@ -17,6 +18,9 @@ public:
     void handleScrollWheel(float force) override;
 
 protected:
+    virtual void _updateScroll(float);
+    virtual bool _isCreativeSlot(Slot*);
+
     void _renderLabels() override;
     void _renderBg(float partialTicks) override;
     SlotDisplay _createSlotDisplay(const Slot& slot) override;

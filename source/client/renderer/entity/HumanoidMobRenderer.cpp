@@ -172,7 +172,7 @@ void HumanoidMobRenderer::onGraphicsReset()
 
 void HumanoidMobRenderer::renderHand(const Entity& entity, float a)
 {
-	float brightness = m_pDispatcher->m_pMinecraft->m_pCameraEntity->getBrightness(1.0f);
+	float brightness = entity.getBrightness(1.0f);
 	m_pHumanoidModel->m_attackTime = 0;
 	m_pHumanoidModel->setBrightness(brightness);
 	m_pHumanoidModel->setupAnim(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0625f);
@@ -183,7 +183,8 @@ void HumanoidMobRenderer::renderHand(const Entity& entity, float a)
 #ifdef ENH_RENDER_HAND_ARMOR
 	if (entity.isPlayer())
 	{
-		ItemStack inst = static_cast<const Player&>(entity).m_pInventory->getArmor(Item::SLOT_CHEST);
+		const Player& player = (const Player&)entity;
+		ItemStack inst = player.m_pInventory->getArmor(Item::SLOT_CHEST);
 		if (!inst.isEmpty())
 		{
 			const std::string& texture = inst.getItem()->getArmorTexture();

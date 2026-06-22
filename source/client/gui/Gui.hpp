@@ -11,7 +11,6 @@
 #include "GuiComponent.hpp"
 #include "common/Random.hpp"
 #include "client/player/input/RectangleArea.hpp"
-#include "client/app/Minecraft.hpp"
 #include "client/renderer/RenderChunk.hpp"
 
 class Minecraft; // in case we're included from Minecraft.hpp
@@ -63,11 +62,12 @@ public:
 	void tick();
 	void renderSlot(int slot, int x, int y, float f);
 	void renderSlotOverlay(int slot, int x, int y, float f);
+	void renderAnimatedCharacter(int x, int y, float);
 	int  getSlotIdAt(int mx, int my);
 	bool isInside(int mx, int my);
 	void handleClick(int id, int mx, int my);
 	void handleScrollWheel(bool down);
-	void handleKeyPressed(int keyCode);
+	void handleUserAction(const ActionInfo&);
 	void renderMessages(bool bShowAll);
 	void renderHearts(bool topLeft);
 	void renderArmor(bool topLeft);
@@ -89,6 +89,7 @@ private:
 	bool m_feedbackMeshesBuilt;
 	mce::Mesh m_feedbackOuter;
 	mce::Mesh m_feedbackInner;
+	int m_animatedCharacterTimer;
 
 protected:
 	Materials m_guiMaterials;

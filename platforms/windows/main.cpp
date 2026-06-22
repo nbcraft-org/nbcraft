@@ -61,7 +61,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 				posY = Mouse::getY();
 			}
 			Mouse::feed(buttonType, buttonState, posX, posY);
-			Multitouch::feed(buttonType, buttonState, posX, posY, 0);
+			if (g_AppPlatform.isTouchscreen())
+				Multitouch::feed(buttonType, buttonState, posX, posY, 0);
 			break;
 		}
 
@@ -73,7 +74,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 
 			Minecraft::width  = width;
 			Minecraft::height = height;
-			Minecraft::setRenderScaleMultiplier(1.0f); // assume no meddling with the DPI stuff
+			Minecraft::SetRenderScaleMultiplier(1.0f); // assume no meddling with the DPI stuff
 
 			g_AppPlatform.setScreenSize(width, height);
 

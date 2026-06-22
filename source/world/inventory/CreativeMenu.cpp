@@ -177,7 +177,7 @@ void CreativeMenu::updateScroll(float scroll)
             }
             else
             {
-                m_container->setItem(col + row * 8, ItemStack());
+                m_container->setItem(col + row * 8, ItemStack::EMPTY);
             }
         }
     }

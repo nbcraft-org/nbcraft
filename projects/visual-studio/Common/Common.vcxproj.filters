@@ -133,5 +133,8 @@
     <ClInclude Include="$(MC_ROOT)\source\common\utility\ByteBuffer.hpp">
       <Filter>Header Files\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\common\utility\HashMap.hpp">
+      <Filter>Header Files\Utility</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
