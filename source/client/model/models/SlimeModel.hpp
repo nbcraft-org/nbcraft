@@ -4,6 +4,14 @@
 
 class SlimeModel : public Model
 {
+protected:
+	struct Materials
+	{
+		mce::MaterialPtr slime_outer;
+
+		Materials();
+	};
+
 public:
 	SlimeModel(int);
 	~SlimeModel();
@@ -18,13 +26,6 @@ private:
 	int m_vOffs;
 
 protected:
-	struct Materials
-	{
-		mce::MaterialPtr slime_outer;
-
-		Materials();
-	};
-
 	Materials m_slimeMaterials;
 
 };
