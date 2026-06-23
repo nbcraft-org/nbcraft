@@ -271,7 +271,7 @@ CreativeMenu_Console::CreativeMenu_Console(Container* inventory, Container* cont
     updateGrid(0.0f);
 }
 
-void CreativeMenu_Console::_addAuxTile(Category tab, Tile* tile)
+void CreativeMenu_Console::_addAuxTile(Group tab, Tile* tile)
 {
     int maxAux = 0;
     switch (tile->m_ID)
@@ -287,12 +287,12 @@ void CreativeMenu_Console::_addAuxTile(Category tab, Tile* tile)
         _addTile(tab, tile, aux);
 }
 
-void CreativeMenu_Console::_addTile(Category tab, Tile* tile, TileData data)
+void CreativeMenu_Console::_addTile(Group tab, Tile* tile, TileData data)
 {
     creativeItems[tab].push_back(ItemStack(tile, 1, data));
 }
 
-void CreativeMenu_Console::_addItem(Category tab, Item* item, int data)
+void CreativeMenu_Console::_addItem(Group tab, Item* item, int data)
 {
     creativeItems[tab].push_back(ItemStack(item, 1, data));
 }

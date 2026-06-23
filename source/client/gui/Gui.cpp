@@ -427,7 +427,7 @@ void Gui::handleClick(int clickID, int mouseX, int mouseY)
 		if (m_pMinecraft->getLocalPlayerGameMode()->isSurvivalType())
 			m_pMinecraft->setScreen(new InventoryScreen(m_pMinecraft->m_pLocalPlayer));
 		else
-			m_pMinecraft->getScreenChooser()->pushCreativeScreen();
+			m_pMinecraft->getScreenChooser()->pushCreativeScreen(m_pMinecraft->m_pLocalPlayer);
 	}
 	else
 		m_pMinecraft->m_pLocalPlayer->m_pInventory->selectSlot(slot);
@@ -460,9 +460,9 @@ void Gui::handleUserAction(const ActionInfo& info)
 	if (options->isAction(AID_CRAFTING, info))
 	{
 		if (m_pMinecraft->getLocalPlayerGameMode()->isSurvivalType())
-			m_pMinecraft->setScreen(new InventoryScreen(m_pMinecraft->m_pLocalPlayer));
+			m_pMinecraft->getScreenChooser()->pushPlayerCraftingScreen(m_pMinecraft->m_pLocalPlayer);
 		else
-			m_pMinecraft->getScreenChooser()->pushCreativeScreen();
+			m_pMinecraft->getScreenChooser()->pushCreativeScreen(m_pMinecraft->m_pLocalPlayer);
 		return;
 	}
 

@@ -102,6 +102,7 @@ public:
 	//formerly known as isNull
 	bool isEmpty() const;
 	void setEmpty();
+	bool sameIngredient(const ItemStack&) const;
 
 	// 0.12.1
 	int getBaseRepairCost() const;

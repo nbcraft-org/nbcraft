@@ -425,6 +425,23 @@ void ItemStack::setEmpty()
 	m_userData = nullptr;
 }
 
+bool ItemStack::sameIngredient(const ItemStack& other) const
+{
+	if (!other.isEmpty() || !isEmpty())
+	{
+		if ((other.isEmpty() && !isEmpty()) || (!other.isEmpty() && isEmpty()))
+			return false;
+
+		if (getId() != other.getId())
+			return false;
+
+		if (getAuxValue() != -1 && getAuxValue() != other.getAuxValue())
+			return false;
+	}
+
+	return true;
+}
+
 int ItemStack::getBaseRepairCost() const
 {
 	if (hasUserData() && m_userData->contains(TAG_REPAIR_COST))

@@ -297,6 +297,22 @@ bool Inventory::removeResource(int id)
 	}
 }
 
+int Inventory::removeIngredient(const ItemStack& ing)
+{
+	for (StackID i = 0; i < m_items.size(); i++)
+	{
+		ItemStack& item = m_items[i];
+
+		if (ing.sameIngredient(item))
+		{
+			item.shrink();
+			return i;
+		}
+	}
+
+	return -1;
+}
+
 // Doesn't exist in PE
 void Inventory::tick()
 {
@@ -421,6 +437,11 @@ void Inventory::setCarried(const ItemStack& carried)
 ItemStack& Inventory::getCarried()
 {
 	return m_carried;
+}
+
+const std::vector<ItemStack>& Inventory::getItems()
+{
+	return m_items;
 }
 
 void Inventory::pickItem(int itemID, int data, int maxHotBarSlot)

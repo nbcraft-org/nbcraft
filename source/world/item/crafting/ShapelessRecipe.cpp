@@ -29,8 +29,7 @@ bool ShapelessRecipe::matches(Container* container)
 
                 for (std::vector<ItemStack>::iterator it = ings.begin(); it != ings.end(); ++it)
                 {
-                    ItemStack& secondItem = *it;
-                    if (item.getId() == secondItem.getId() && (secondItem.getAuxValue() == -1 || item.getAuxValue() == secondItem.getAuxValue()))
+                    if (item.sameIngredient(*it))
                     {
                         matches = true;
                         ings.erase(it);
@@ -47,7 +46,12 @@ bool ShapelessRecipe::matches(Container* container)
     return ings.empty();
 }
 
-const ItemStack& ShapelessRecipe::assemble(Container* container)
+const std::vector<ItemStack>& ShapelessRecipe::getIngredients()
+{
+    return m_ingredients;
+}
+
+const ItemStack& ShapelessRecipe::getResultItem()
 {
     return m_result;
 }

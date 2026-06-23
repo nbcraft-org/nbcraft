@@ -66,6 +66,9 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <EnableASAN>false</EnableASAN>
+  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
@@ -272,6 +275,9 @@
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\CreativeScreen_Console.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\TabLayout.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\SpriteDef.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\components\CraftButton_Console.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\ClientCraftContext.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\CraftingScreen_Console.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\client\app\App.cpp" />
@@ -460,6 +466,9 @@
     <ClCompile Include="$(MC_ROOT)\source\client\gui\components\TabButton.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\CreativeScreen_Console.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\TabLayout.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\components\CraftButton_Console.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\ClientCraftContext.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\CraftingScreen_Console.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">

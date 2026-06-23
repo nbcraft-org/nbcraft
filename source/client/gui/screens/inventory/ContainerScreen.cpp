@@ -32,7 +32,7 @@ void ContainerScreen::_renderSlot(Slot& slot)
         MatrixStack::Ref matrix = MatrixStack::World.push();
         float off = 3 * display.size / 50.0f;
         matrix->translate(Vec3(-off, -off, 0.0f));
-        blitSprite(*m_pMinecraft->m_pTextures, "gui/console/Graphics/IconHolder.png", display.x, display.y, display.size, display.size);
+        blitSprite(*m_pMinecraft->m_pTextures, slot.hasItem() && display.bIsWarning ? "gui/console/Graphics/IconHolderRed.png" : "gui/console/Graphics/IconHolder.png", display.x, display.y, display.size, display.size);
     }
     MatrixStack::Ref matrix = MatrixStack::World.push();
     matrix->translate(Vec3(display.x, display.y, 0));
@@ -59,6 +59,15 @@ void ContainerScreen::_renderSlot(Slot& slot)
     }
     ItemRenderer::singleton().renderGuiItem(*m_pMinecraft, item, 0, 0, true);
     ItemRenderer::singleton().renderGuiItemOverlay(*m_pMinecraft, item, 0, 0);
+
+    matrix.release();
+    if (display.bIsWarning)
+    {
+        MatrixStack::Ref matrix = MatrixStack::World.push();
+        float off = 3 * display.size / 50.0f;
+        matrix->translate(Vec3(-off, -off, 0.0f));
+        blitSprite(*m_pMinecraft->m_pTextures, "gui/console/Graphics/Warning.png", display.x + 2, display.y + 2, 16, 16);
+    }
 }
 
 Slot* ContainerScreen::_findSlot()
@@ -87,7 +96,7 @@ bool ContainerScreen::_isHovering(const Slot& slot) const
 bool ContainerScreen::_isHovering(const Slot& slot, int mouseX, int mouseY) const
 {
     const SlotDisplay& display = getSlotDisplay(slot);
-    if (!display.bVisible) return false;
+    if (!display.isInteractable()) return false;
     mouseX -= m_leftPos;
     mouseY -= m_topPos;
     float off = 3 * display.size / 50.0f;
@@ -135,7 +144,7 @@ void ContainerScreen::_renderContent(float partialTick)
 
     if (!inv->getCarried() && hoveredSlot && hoveredSlot->hasItem())
     {
-        std::string name = Language::get(hoveredSlot->getItem().getDescriptionId() + ".name");
+        std::string name = Language::get(hoveredSlot->getItem().getItem()->getName());
         if (!name.empty())
         {
             int w = m_pFont->width(name);
@@ -355,6 +364,11 @@ const SlotDisplay& ContainerScreen::getSlotDisplay(const Slot& slot) const
     return m_slotDisplays[slot.m_id];
 }
 
+SlotDisplay& ContainerScreen::getSlotDisplay(int id)
+{
+    return m_slotDisplays[id];
+}
+
 void ContainerScreen::onClose()
 {
     if (m_pMinecraft->m_pLocalPlayer)
@@ -365,7 +379,7 @@ void ContainerScreen::tick()
 {
     Screen::tick();
     if (!m_pMinecraft->m_pLocalPlayer->isAlive() || m_pMinecraft->m_pLocalPlayer->m_bRemoved)
-        m_pMinecraft->m_pLocalPlayer->closeContainer();
+        onClose();
 }
 
 void ContainerScreen::slotsChanged(Container* container)

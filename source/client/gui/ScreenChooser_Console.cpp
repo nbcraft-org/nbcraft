@@ -4,6 +4,7 @@
 #include "screens/StartMenuScreen_Console.hpp"
 #include "screens/PauseScreen_Console.hpp"
 #include "screens/inventory/CreativeScreen_Console.hpp"
+#include "screens/inventory/CraftingScreen_Console.hpp"
 #include "screens/inventory/ClassicCraftingScreen_Console.hpp"
 #include "screens/OptionsScreen_Console.hpp"
 #include "screens/CreateWorldScreen_Console.hpp"
@@ -38,9 +39,17 @@ void ScreenChooser_Console::pushProgressScreen()
 	m_pMinecraft->setScreen(new ProgressScreen_Console);
 }
 
-void ScreenChooser_Console::pushCreativeScreen()
+void ScreenChooser_Console::pushPlayerCraftingScreen(Player* player)
 {
-	m_pMinecraft->setScreen(new CreativeScreen_Console(m_pMinecraft->m_pLocalPlayer->m_pInventory));
+	if (m_pMinecraft->getOptions()->m_classicCrafting.get())
+		ScreenChooser::pushPlayerCraftingScreen(player);
+	else
+		m_pMinecraft->setScreen(new CraftingScreen_Console(player->m_pInventory, player->m_pos, player->m_pLevel, true));
+}
+
+void ScreenChooser_Console::pushCreativeScreen(Player* player)
+{
+	m_pMinecraft->setScreen(new CreativeScreen_Console(player->m_pInventory));
 }
 
 void ScreenChooser_Console::pushCreateWorldScreen(Screen* parent)
@@ -50,7 +59,10 @@ void ScreenChooser_Console::pushCreateWorldScreen(Screen* parent)
 
 void ScreenChooser_Console::pushCraftingScreen(Player* player, const TilePos& pos)
 {
-	m_pMinecraft->setScreen(new ClassicCraftingScreen_Console(player->m_pInventory, pos, player->m_pLevel));
+	if (m_pMinecraft->getOptions()->m_classicCrafting.get())
+		m_pMinecraft->setScreen(new ClassicCraftingScreen_Console(player->m_pInventory, pos, player->m_pLevel));
+	else
+		m_pMinecraft->setScreen(new CraftingScreen_Console(player->m_pInventory, pos, player->m_pLevel, false));
 }
 
 void ScreenChooser_Console::pushDeathScreen()

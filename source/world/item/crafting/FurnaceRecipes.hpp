@@ -40,7 +40,7 @@ public:
 
     void add(SingleInputRecipe* recipe)
     {
-        m_furnaceRecipes.insert(std::make_pair(recipe->m_ingredient.getId(), recipe));
+        m_furnaceRecipes.insert(std::make_pair(recipe->getIngredients()[0].getId(), recipe));
     }
 
     const ItemStack& getItemFor(Container* container)
