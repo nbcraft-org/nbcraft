@@ -26,22 +26,8 @@
 	<MC_GFX_API>D3D9</MC_GFX_API>
   </PropertyGroup>
   
-  <!-- Properties - Win32 -->
-  <PropertyGroup Condition="'$(Platform)'=='Win32'">
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(Platform)\$(Configuration)\</IntDir>
-    <PlatformToolset Condition="'$(PlatformToolsetVersion)'=='' Or $(PlatformToolsetVersion)&gt;=141">v141_xp</PlatformToolset>
-	<WindowsTargetPlatformVersion>7.0</WindowsTargetPlatformVersion>
-  </PropertyGroup>
-  <!-- Properties - x64 -->
-  <PropertyGroup Condition="'$(Platform)'=='x64'">
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(Platform)\$(Configuration)\</IntDir>
-    <PlatformToolset Condition="'$(PlatformToolsetVersion)'=='' Or $(PlatformToolsetVersion)&gt;=143">v143</PlatformToolset>
-	<WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-  </PropertyGroup>
-  <!-- Properties - Xbox 360 -->
-  <PropertyGroup Condition="'$(Platform)'=='Xbox 360'">
+  <!-- Properties -->
+  <PropertyGroup>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>

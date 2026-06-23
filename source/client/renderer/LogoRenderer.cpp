@@ -81,10 +81,11 @@ void LogoRenderer::render(float f)
 
 void LogoRenderer::_initTextures()
 {
-	Textures* tx = m_pMinecraft->m_pTextures;
+	Textures& tx = *m_pMinecraft->m_pTextures;
+	Options& options = *m_pMinecraft->getOptions();
 	std::string path;
 
-	switch (m_pMinecraft->getOptions()->getLogoType())
+	switch (options.getLogoType())
 	{
 	case LOGO_POCKET:
 		path = C_TITLE_PATH_POCKET;
@@ -102,11 +103,11 @@ void LogoRenderer::_initTextures()
 		break;
 	}
 
-	if (!tx->getTextureData(path, false))
+	if (!tx.getTextureData(path, false))
 	{
 		path = C_TITLE_PATH_FALLBACK;
 		// "preload" texture data
-		tx->getTextureData(path, true);
+		tx.getTextureData(path, true);
 	}
 
 	m_p2dTitleTexPath = path;
@@ -118,7 +119,10 @@ void LogoRenderer::_build2dTitleMesh()
 
 	int yPos, width, height, left;
 
-	TextureData* pTex = m_pMinecraft->m_pTextures->getTextureData(m_p2dTitleTexPath, true);
+	Textures& textures = *m_pMinecraft->m_pTextures;
+	Options& options = *m_pMinecraft->getOptions();
+
+	TextureData* pTex = textures.getTextureData(m_p2dTitleTexPath, true);
 	if (!pTex)
 		return;
 
@@ -126,7 +130,9 @@ void LogoRenderer::_build2dTitleMesh()
 	bool isPocket = uiTheme == UI_POCKET;
 	bool isConsole = uiTheme == UI_CONSOLE;
 
-	switch (m_pMinecraft->getOptions()->getLogoType())
+	LogoType logoType = m_p2dTitleTexPath == C_TITLE_PATH_FALLBACK ? LOGO_POCKET : options.getLogoType();
+
+	switch (logoType)
 	{
 	case LOGO_POCKET:
 	{
