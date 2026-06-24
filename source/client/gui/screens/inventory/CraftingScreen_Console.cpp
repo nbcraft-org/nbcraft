@@ -108,7 +108,7 @@ void CraftingScreen_Console::_renderLabels()
     if (m_tabLayout.m_pSelectedElement)
     {
         const std::string& message = Language::get(m_tabLayout.m_pSelectedElement->getMessage());
-        m_pFont->drawScalable(message, m_imageWidth / 2 - m_pFont->width(message), 91, Color::TEXT_GREY);
+        m_pFont->drawScalable(message, m_imageWidth / 2 - m_pFont->width(message), 100, Color::TEXT_GREY);
     }
 
     const std::string& invName = m_pMinecraft->m_pLocalPlayer->m_pInventory->getName();
