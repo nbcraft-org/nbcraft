@@ -71,7 +71,8 @@ bool CraftContext::craft(Recipe* recipe)
 		pInventory->removeIngredient(ing);
 	}
 
-	pInventory->add(ItemStack(recipe->getResultItem()));
+	ItemStack resultItem = recipe->getResultItem();
+	pInventory->add(resultItem);
 
 	return true;
 }
