@@ -164,6 +164,9 @@ public:
     void add(Recipe* recipe, Group_Console group = DECORATION, int slotIndex = -1)
     {
         m_recipes.push_back(recipe);
+
+        if (group >= TOTAL_GROUP_CONSOLE) return;
+
         std::vector<RecipeList>& recipeLists = m_recipesByConsoleGroup[group];
 
         if (slotIndex >= 0)
@@ -189,7 +192,7 @@ public:
     }
 
     void addTools(const ItemStack& material, Item* sword, Item* pickaxe, Item* axe, Item* shovel, Item* hoe);
-    void addArmor(const ItemStack& material, Item* helmet, Item* chestplate, Item* leggings, Item* boots);
+    void addArmor(const ItemStack& material, Item* helmet, Item* chestplate, Item* leggings, Item* boots, Group_Console = ARMOUR);
     void addOre(const ItemStack& material, Tile* block, int unprocessGroup = 3);
 
     const ItemStack& getItemFor(CraftingContainer* container)

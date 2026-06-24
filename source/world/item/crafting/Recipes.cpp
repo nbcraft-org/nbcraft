@@ -40,25 +40,25 @@ void Recipes::addTools(const ItemStack& material, Item* sword, Item* pickaxe, It
         .add('#', Item::stick), TOOLS, 9);
 }
 
-void Recipes::addArmor(const ItemStack& material, Item* helmet, Item* chestplate, Item* leggings, Item* boots)
+void Recipes::addArmor(const ItemStack& material, Item* helmet, Item* chestplate, Item* leggings, Item* boots, Group_Console group)
 {
     add(ShapedRecipeBuilder("XXX",
                             "X X", ItemStack(helmet))
-        .add('X', material), ARMOUR, 0);
+        .add('X', material), group, 0);
 
     add(ShapedRecipeBuilder("X X",
                             "XXX",
                             "XXX", ItemStack(chestplate))
-        .add('X', material), ARMOUR, 1);
+        .add('X', material), group, 1);
 
     add(ShapedRecipeBuilder("XXX",
                             "X X",
                             "X X", ItemStack(leggings))
-        .add('X', material), ARMOUR, 2);
+        .add('X', material), group, 2);
 
     add(ShapedRecipeBuilder("X X",
                             "X X", ItemStack(boots))
-        .add('X', material), ARMOUR, 3);
+        .add('X', material), group, 3);
 }
 
 void Recipes::addOre(const ItemStack& material, Tile* block, int unprocessGroup)
@@ -177,7 +177,7 @@ Recipes::Recipes()
 
     // ArmorRecipes
     addArmor(ItemStack(Item::leather),   Item::helmet_cloth,   Item::chestplate_cloth,   Item::leggings_cloth,   Item::boots_cloth);
-    addArmor(ItemStack(Tile::fire),      Item::helmet_chain,   Item::chestplate_chain,   Item::leggings_chain,   Item::boots_chain);
+    addArmor(ItemStack(Tile::fire),      Item::helmet_chain,   Item::chestplate_chain,   Item::leggings_chain,   Item::boots_chain, TOTAL_GROUP_CONSOLE);
     addArmor(ItemStack(Item::ironIngot), Item::helmet_iron,    Item::chestplate_iron,    Item::leggings_iron,    Item::boots_iron);
     addArmor(ItemStack(Item::goldIngot), Item::helmet_gold,    Item::chestplate_gold,    Item::leggings_gold,    Item::boots_gold);
     addArmor(ItemStack(Item::emerald),   Item::helmet_diamond, Item::chestplate_diamond, Item::leggings_diamond, Item::boots_diamond);
