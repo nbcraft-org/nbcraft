@@ -143,13 +143,13 @@ void ItemRenderer::render(const Entity& entity, const Vec3& pos, float rot, floa
 			Tesselator& t = Tesselator::instance;
 			t.begin(4);
 
-			Color color = itemStack.getTile() ? Color(itemStack.getTile()->getColor(Facing::UP, itemStack.getAuxValue()), 1.0f) : Color::WHITE;
+			Color color = Color(itemStack.getItem()->getColor(itemStack.getAuxValue()), 1.0f);
 
 #ifdef ENH_SHADE_HELD_TILES
 			color.mulRGB(itemEntity.getBrightness(1.0f));
 #endif
-
-			t.color(color);
+			if (color != Color::WHITE)
+				t.color(color);
 			t.normal(Vec3::UNIT_Y);
 			t.vertexUV(-0.5f, -0.25f, 0.0f, float(16 * (icon % 16))     / 256.0f, float(16 * (icon / 16 + 1)) / 256.0f);
 			t.vertexUV(+0.5f, -0.25f, 0.0f, float(16 * (icon % 16 + 1)) / 256.0f, float(16 * (icon / 16 + 1)) / 256.0f);
@@ -327,14 +327,10 @@ void ItemRenderer::renderGuiItem(Minecraft& mc, const ItemStack& item, int x, in
 		// @BUG: The last bound texture will be the texture that ALL items will take. This is because begin and end calls
 		// have been void'ed by a  t.voidBeginAndEndCalls call in Gui::render.
 		if (item.getTile())
-		{
 			textures.loadAndBindTexture(C_TERRAIN_NAME);
-			blit(x, y, 16 * (item.getIcon() % 16), 16 * (item.getIcon() / 16), 16, 16, color * Color(item.getTile()->getColor(Facing::UP, item.getAuxValue()), 1.0f));
-		}
 		else
-		{
 			textures.loadAndBindTexture(C_ITEMS_NAME);
-			blit(x, y, 16 * (item.getIcon() % 16), 16 * (item.getIcon() / 16), 16, 16, color);
-		}
+
+		blit(x, y, 16 * (item.getIcon() % 16), 16 * (item.getIcon() / 16), 16, 16, color * Color(item.getItem()->getColor(item.getAuxValue()), 1.0f));
 	}
 }

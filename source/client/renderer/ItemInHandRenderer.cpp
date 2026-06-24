@@ -220,7 +220,7 @@ void ItemInHandRenderer::renderItem(const Entity& entity, const ItemStack& item,
         matrix->rotate(-90.0f, Vec3::UNIT_Y);
         matrix->translate(Vec3(0.0f, 0.0f, -16.0f));*/
         
-        Color color = item.getTile() ? Color(item.getTile()->getColor(Facing::UP, item.getAuxValue()), 1.0f) : Color::WHITE;
+        Color color = Color(item.getItem()->getColor(item.getAuxValue()), 1.0f);
 
         t.begin(264);
         SHADE_IF_NEEDED(1.0f);
@@ -269,8 +269,11 @@ void ItemInHandRenderer::renderItem(const Entity& entity, const ItemStack& item,
             t.vertexUV(0.0f, i * C_ONE_PIXEL, -C_ONE_PIXEL, texU_2, Mth::Lerp(texV_2, texV_1, i * C_ONE_PIXEL));
             t.vertexUV(1.0f, i * C_ONE_PIXEL, -C_ONE_PIXEL, texU_1, Mth::Lerp(texV_2, texV_1, i * C_ONE_PIXEL));
         }
-        
+#ifndef ENH_SHADE_HELD_TILES
         t.draw(color == Color::WHITE ? m_materials.item_in_hand : m_materials.item_in_hand_color);
+#else
+        t.draw(m_materials.item_in_hand_color);
+#endif
     }
 }
 

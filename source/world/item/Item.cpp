@@ -742,6 +742,11 @@ bool Item::isDamageable() const
 	return m_maxDamage > 0 && !m_bStackedByData;
 }
 
+int Item::getColor(int data) const
+{
+	return 0xFFFFFF;
+}
+
 int Item::buildIdAux(int16_t auxValue, const CompoundTag* userData) const
 {
 	return auxValue | (unsigned int)(m_itemID << 16);
