@@ -126,7 +126,7 @@ void CraftingScreen_Console::_renderLabels()
 
         if (i == 0) continue;
 
-        if ((i - 1) >= ings.size())
+        if (size_t(i - 1) >= ings.size())
         {
             slot->set(ItemStack::EMPTY);
             continue;
@@ -227,5 +227,5 @@ void CraftingScreen_Console::CraftingTabLayout::onSelectElement(GuiElement* elem
     int selectedIndex = screen->m_craftLayout.getIndex();
     std::vector<Recipes::RecipeList>& recipeLists = screen->m_craftContext.groupRecipes;
 
-    screen->m_craftContext.selectedRecipes = selectedIndex < recipeLists.size() ? recipeLists[selectedIndex] : Recipes::RecipeList();
+    screen->m_craftContext.selectedRecipes = size_t(selectedIndex) < recipeLists.size() ? recipeLists[selectedIndex] : Recipes::RecipeList();
 }
