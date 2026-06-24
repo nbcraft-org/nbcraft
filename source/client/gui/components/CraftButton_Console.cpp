@@ -35,7 +35,7 @@ void CraftButton_Console::renderBg(Minecraft* pMinecraft, const MenuPointer& poi
 		_renderResultItem(pMinecraft, recipeList[recipeList.size() - 1], m_xPos, m_yPos - m_height);
 		_renderResultItem(pMinecraft, recipeList[1], m_xPos, m_yPos + m_height);
 	}
-	else if (m_pCraftContext->selectedRecipes.size() > 1)
+	else if (recipeList.size() > 1)
 	{
 		blitSprite(*pMinecraft->m_pTextures, "gui/console/CraftingPanels/Crafting_2SlotLargeV.png", m_xPos - 13, m_yPos - 48, 80, 204);
 		_renderResultItem(pMinecraft, recipeList[1], m_xPos, m_yPos + m_height);
@@ -101,8 +101,6 @@ void CraftButton_Console::pressed(Minecraft*, const MenuPointer& pointer)
 void CraftButton_Console::handleScroll(float force)
 {
 	if (!isSelected()) return;
-
-	Recipes::RecipeList& recipeList = m_pCraftContext->selectedRecipes;
 
 	if (_canScroll())
 		m_pCraftContext->scrollSelectedRecipes(Mth::signum(force));
