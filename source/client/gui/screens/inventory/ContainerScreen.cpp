@@ -221,13 +221,13 @@ void ContainerScreen::initMenuPointer()
     //@NOTE: Calling this as a fallback, if for some reason, there isn't a slot available
     Screen::initMenuPointer();
 
-    if (!_useController()) return;
+    if (!_useController() || !m_bRenderPointer) return;
 
     for (std::vector<Slot*>::iterator it = m_pMenu->m_slots.begin(); it != m_pMenu->m_slots.end(); ++it)
     {
         Slot* slot = *it;
         //@NOTE: Selects the first hotbar slot
-        if (slot->m_id == 0 && m_pMinecraft->m_pLocalPlayer && slot->m_pContainer == m_pMinecraft->m_pLocalPlayer->m_pInventory)
+        if (slot->m_stackId == 0 && m_pMinecraft->m_pLocalPlayer && slot->m_pContainer == m_pMinecraft->m_pLocalPlayer->m_pInventory)
         {
             _selectSlot(slot);
             break;

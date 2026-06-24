@@ -1146,7 +1146,7 @@ void Minecraft::sizeUpdate(int newWidth, int newHeight)
 			Gui::GuiWidth,
 			Gui::GuiHeight
 		);
-		m_pScreen->centerMenuPointer();
+		m_pScreen->initMenuPointer();
 	}
 
 	LogoRenderer::singleton().build(Gui::GuiWidth);
