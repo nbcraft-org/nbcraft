@@ -171,7 +171,7 @@ public:
 
         if (slotIndex >= 0)
         {
-            while (recipeLists.size() <= slotIndex)
+            while (recipeLists.size() <= size_t(slotIndex))
             {
                 recipeLists.push_back(RecipeList());
             }

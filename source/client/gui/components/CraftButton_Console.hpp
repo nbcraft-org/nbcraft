@@ -26,7 +26,7 @@ public:
 			return m_pCraftContext->selectedRecipes.empty() ? nullptr : m_pCraftContext->selectedRecipes[0];
 
 		std::vector<Recipes::RecipeList>& recipeLists = m_pCraftContext->groupRecipes;
-		return m_slotIndex < recipeLists.size() ? recipeLists[m_slotIndex][0] : nullptr;
+		return size_t(m_slotIndex) < recipeLists.size() ? recipeLists[m_slotIndex][0] : nullptr;
 	}
 
 public:

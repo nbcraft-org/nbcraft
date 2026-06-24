@@ -24,7 +24,7 @@ struct ClientCraftContext : public CraftContext
 	Recipe* getSelectedRecipe()
 	{
 		int selectedIndex = selectionOffset == 1 ? 1 : selectionOffset == -1 ? selectedRecipes.size() - 1 : 0;
-		return selectedIndex >= 0 && selectedIndex < selectedRecipes.size() ? selectedRecipes[selectedIndex] : nullptr;
+		return selectedIndex >= 0 && size_t(selectedIndex) < selectedRecipes.size() ? selectedRecipes[selectedIndex] : nullptr;
 	};
 
 	void scrollSelectedRecipes(int offset)
