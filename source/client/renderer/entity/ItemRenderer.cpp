@@ -14,6 +14,7 @@
 #include "world/entity/ItemEntity.hpp"
 #include "client/renderer/Lighting.hpp"
 #include "client/app/Minecraft.hpp"
+#include "renderer/ShaderConstants.hpp"
 
 #ifndef ENH_3D_INVENTORY_TILES
 const uint8_t g_ItemFrames[C_MAX_TILES] =
@@ -142,10 +143,13 @@ void ItemRenderer::render(const Entity& entity, const Vec3& pos, float rot, floa
 			Tesselator& t = Tesselator::instance;
 			t.begin(4);
 
+			Color color = itemStack.getTile() ? Color(itemStack.getTile()->getColor(Facing::UP, itemStack.getAuxValue()), 1.0f) : Color::WHITE;
+
 #ifdef ENH_SHADE_HELD_TILES
-			float bright = itemEntity.getBrightness(1.0f);
-			t.color(bright, bright, bright);
+			color.mulRGB(itemEntity.getBrightness(1.0f));
 #endif
+
+			t.color(color);
 			t.normal(Vec3::UNIT_Y);
 			t.vertexUV(-0.5f, -0.25f, 0.0f, float(16 * (icon % 16))     / 256.0f, float(16 * (icon / 16 + 1)) / 256.0f);
 			t.vertexUV(+0.5f, -0.25f, 0.0f, float(16 * (icon % 16 + 1)) / 256.0f, float(16 * (icon / 16 + 1)) / 256.0f);
@@ -172,7 +176,7 @@ void ItemRenderer::blitRect(Tesselator& t, int x, int y, int w, int h, int color
 	t.draw(m_itemMaterials.ui_fill_gradient);
 }
 
-void ItemRenderer::blit(int dx, int dy, int sx, int sy, int tw, int th)
+void ItemRenderer::blit(int dx, int dy, int sx, int sy, int tw, int th, const Color& color)
 {
 	Tesselator& t = Tesselator::instance;
 
@@ -181,13 +185,13 @@ void ItemRenderer::blit(int dx, int dy, int sx, int sy, int tw, int th)
 	float vx = float(sx), vy = float(sy);
 
 	t.begin(4);
+	t.color(color);
 	t.vertexUV(ex,      ey + uh, 0.0f, float(vx)      / 256.0f, float(vy + uh) / 256.0f);
 	t.vertexUV(ex + uw, ey + uh, 0.0f, float(vx + uw) / 256.0f, float(vy + uh) / 256.0f);
 	t.vertexUV(ex + uw, ey,      0.0f, float(vx + uw) / 256.0f, float(vy)      / 256.0f);
 	t.vertexUV(ex,      ey,      0.0f, float(vx)      / 256.0f, float(vy)      / 256.0f);
-	t.draw(m_itemMaterials.ui_textured);
+	t.draw(m_itemMaterials.ui_texture_and_color);
 }
-
 void ItemRenderer::renderGuiItemOverlay(Minecraft& mc, const ItemStack& item, int x, int y)
 {
 	if (item.isEmpty())
@@ -202,7 +206,7 @@ void ItemRenderer::renderGuiItemOverlay(Minecraft& mc, const ItemStack& item, in
 
 		int duraBgColor = (((255 - duraPercent) / 4) << 16) | 0x3F00;
 		int duraColor = ((255 - duraPercent) << 16) | (duraPercent << 8);
-
+		
 		Tesselator& t = Tesselator::instance;
 		
 		blitRect(t, x + 2, y + 13, 13, 2, 0);
@@ -225,14 +229,11 @@ void ItemRenderer::renderGuiItemOverlay(Minecraft& mc, const ItemStack& item, in
 	mc.m_pFont->drawShadow(amtstr, x + 17 - width, y + 6 + 3, 0xFFFFFF);
 }
 
-void ItemRenderer::renderGuiItem(Minecraft& mc, const ItemStack& item, int x, int y, bool b)
+void ItemRenderer::renderGuiItem(Minecraft& mc, const ItemStack& item, int x, int y, const Color& color)
 {
 	// @NOTE: Font unused but would presumably be used to draw the item amount.
 	// As if that actually works due to us blocking t.begin() and t.draw() calls...
 	if (item.isEmpty() || !item.isValid())
-		return;
-
-	if (!b)
 		return;
 
 	Textures& textures = *mc.m_pTextures;
@@ -310,7 +311,7 @@ void ItemRenderer::renderGuiItem(Minecraft& mc, const ItemStack& item, int x, in
 		matrix->rotate(45.0f, Vec3::UNIT_Y);
 		matrix->rotate(-90.0f, Vec3::UNIT_Y);
 		
-		m_pTileRenderer->renderTile(FullTile(pTile, item.getAuxValue()), m_itemMaterials.ui_item, 1.0f);
+		m_pTileRenderer->renderTile(FullTile(pTile, item.getAuxValue()), m_itemMaterials.ui_item, color);
 
 		Lighting::turnOff();
 
@@ -325,10 +326,14 @@ void ItemRenderer::renderGuiItem(Minecraft& mc, const ItemStack& item, int x, in
 		// @BUG: The last bound texture will be the texture that ALL items will take. This is because begin and end calls
 		// have been void'ed by a  t.voidBeginAndEndCalls call in Gui::render.
 		if (item.getTile())
+		{
 			textures.loadAndBindTexture(C_TERRAIN_NAME);
+			blit(x, y, 16 * (item.getIcon() % 16), 16 * (item.getIcon() / 16), 16, 16, color * Color(item.getTile()->getColor(Facing::UP, item.getAuxValue()), 1.0f));
+		}
 		else
+		{
 			textures.loadAndBindTexture(C_ITEMS_NAME);
-
-		blit(x, y, 16 * (item.getIcon() % 16), 16 * (item.getIcon() / 16), 16, 16);
+			blit(x, y, 16 * (item.getIcon() % 16), 16 * (item.getIcon() / 16), 16, 16, color);
+		}
 	}
 }

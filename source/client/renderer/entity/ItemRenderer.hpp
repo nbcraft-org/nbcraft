@@ -38,10 +38,11 @@ public:
 	ItemRenderer();
 
 	void render(const Entity& entity, const Vec3& pos, float rot, float a) override;
-	void blitRect(Tesselator&, int, int, int, int, int);
 
-	void blit(int dx, int dy, int sx, int sy, int tw, int th);
-	void renderGuiItem(Minecraft&, const ItemStack&, int, int, bool);
+	void blitRect(Tesselator&, int, int, int, int, int);
+	void blit(int dx, int dy, int sx, int sy, int tw, int th, const Color&);
+
+	void renderGuiItem(Minecraft&, const ItemStack&, int, int, const Color& = Color::WHITE);
 	void renderGuiItemOverlay(Minecraft&, const ItemStack&, int, int);
 
 private:

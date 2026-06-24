@@ -64,7 +64,20 @@ public:
         _init(GET_RED(c), GET_GREEN(c), GET_BLUE(c), GET_ALPHA(c));
     }
 
+    Color(unsigned int c, float alpha)
+    {
+        _init(GET_RED(c), GET_GREEN(c), GET_BLUE(c), alpha);
+    }
+
     void fromHSB(float h, float s, float b);
+
+    Color& mulRGB(float mul)
+    {
+        r *= mul;
+        g *= mul;
+        b *= mul;
+        return *this;
+    }
 
     Color operator*(float f) const
     {

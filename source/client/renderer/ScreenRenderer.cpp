@@ -77,7 +77,7 @@ void ScreenRenderer::blit(mce::Mesh& mesh, const IntRectangle& rect)
     mesh = t.end();
 }
 
-void ScreenRenderer::blit(int dx, int dy, int sx, int sy, int tw, int th, int sw, int sh, mce::MaterialPtr* materialPtr)
+void ScreenRenderer::blit(int dx, int dy, int sx, int sy, int tw, int th, int sw, int sh, mce::MaterialPtr* materialPtr, const Color& color)
 {
     Tesselator& t = Tesselator::instance;
 
@@ -85,6 +85,7 @@ void ScreenRenderer::blit(int dx, int dy, int sx, int sy, int tw, int th, int sw
     if (!sw) sw = tw;
 
     t.begin(4);
+    t.color(color);
     t.vertexUV(dx + 0 , dy + th, m_blitOffset, float(sx + 0 ) / 256.0f, float(sy + sh) / 256.0f);
     t.vertexUV(dx + tw, dy + th, m_blitOffset, float(sx + sw) / 256.0f, float(sy + sh) / 256.0f);
     t.vertexUV(dx + tw, dy + 0 , m_blitOffset, float(sx + sw) / 256.0f, float(sy + 0 ) / 256.0f);

@@ -104,6 +104,7 @@ public: // virtual functions
 	virtual void attack(Level*, const TilePos& pos, Player*);
 	virtual void handleEntityInside(Level*, const TilePos& pos, const Entity*, Vec3&);
 	virtual int getColor(const LevelSource*, const TilePos& pos) const;
+	virtual int getColor(Facing::Name face, TileData) const;
 	virtual bool isSignalSource() const;
 	virtual int getSignal(const LevelSource*, const TilePos& pos) const;
 	virtual int getSignal(const LevelSource*, const TilePos& pos, Facing::Name face) const;

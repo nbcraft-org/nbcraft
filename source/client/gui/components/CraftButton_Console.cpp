@@ -15,14 +15,7 @@ void CraftButton_Console::_renderResultItem(Minecraft* mc, Recipe* recipe, int x
 	float off = 3 * m_width / 50.0f;
 	matrix->translate(Vec3(x + off, y + off, 0.0f));
 	matrix->scale(m_width / 18);
-	ItemRenderer::singleton().renderGuiItem(*mc, recipe->getResultItem(), 0, 0, true);
-
-	//@TODO: Replace this with the item translucency, using this only for testing for now
-	if (!m_pCraftContext->canCraft(recipe))
-	{
-		matrix.release();
-		blitSprite(*mc->m_pTextures, "gui/console/Graphics/Warning.png", x + 2, y + 2, 16, 16);
-	}
+	ItemRenderer::singleton().renderGuiItem(*mc, recipe->getResultItem(), 0, 0, Color(1.0f, 1.0f, 1.0f, m_pCraftContext->canCraft(recipe) ? 1.0f : 0.5f));
 }
 
 bool CraftButton_Console::_canScroll()

@@ -901,6 +901,11 @@ int Tile::getColor(const LevelSource* pSrc, const TilePos& pos) const
 	return 0xFFFFFF; // White
 }
 
+int Tile::getColor(Facing::Name face, TileData) const
+{
+	return 0xFFFFFF;
+}
+
 AABB* Tile::getAABB(const Level* pLevel, const TilePos& pos)
 {
 	Vec3 offset(pos);
