@@ -14,7 +14,7 @@ void CompoundTag::write(IDataOutput& dos) const
 {
     for (NamedTagMap::const_iterator it = m_tags.begin(); it != m_tags.end(); it++)
 	{
-		writeNamedTag(it.key(), *it.value(), dos);
+		writeNamedTag(it->first, *it->second, dos);
     }
 
     dos.writeInt8(TAG_TYPE_END);
@@ -146,14 +146,14 @@ bool CompoundTag::contains(const std::string& name, Tag::Type type) const
 const Tag* CompoundTag::get(const std::string& name) const
 {
 	NamedTagMap::const_iterator it = m_tags.find(name);
-	if (it != m_tags.end()) return it.value();
+	if (it != m_tags.end()) return it->second;
     return nullptr;
 }
 
 Tag* CompoundTag::get(const std::string& name)
 {
 	NamedTagMap::iterator it = m_tags.find(name);
-	if (it != m_tags.end()) return it.value();
+	if (it != m_tags.end()) return it->second;
 	return nullptr;
 }
 
@@ -301,7 +301,7 @@ CompoundTag* CompoundTag::uniqueClone() const
 
 	for (NamedTagMap::const_iterator it = m_tags.begin(); it != m_tags.end(); it++)
 	{
-		newTag->put(it.key(), it.value()->copy());
+		newTag->put(it->first, it->second->copy());
 	}
 
 	return newTag;
@@ -313,8 +313,8 @@ bool CompoundTag::remove(const std::string& name)
 	if (it == m_tags.end())
 		return false;
 
-	delete it.value();
-	m_tags.remove(name);
+	delete it->second;
+	m_tags.erase(name);
 
 	return true;
 }
@@ -325,7 +325,7 @@ void CompoundTag::deleteChildren()
     {
         for (NamedTagMap::iterator it = m_tags.begin(); it != m_tags.end(); it++)
         {
-            Tag* tag = it.value();
+            Tag* tag = it->second;
             tag->deleteChildren();
             delete tag;
         }
@@ -341,11 +341,11 @@ bool CompoundTag::operator==(const Tag& other) const
 	{
 		for (NamedTagMap::const_iterator it = m_tags.begin(); it != m_tags.end(); it++)
 		{
-			NamedTagMap::const_iterator it2 = other2.m_tags.find(it.key());
+			NamedTagMap::const_iterator it2 = other2.m_tags.find(it->first);
 			if (it2 == other2.m_tags.end())
 				return false; // Failed to find tag in other by name
 
-			if (it.value() != it2.value())
+			if (it->second != it2->second)
 				return false;
 		}
 

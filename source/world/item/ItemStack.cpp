@@ -160,8 +160,8 @@ CompoundTag* ItemStack::getNetworkUserData() const
 	const CompoundTag::NamedTagMap& tags = m_userData->rawView();
 	for (CompoundTag::NamedTagMap::const_iterator it = tags.begin(); it != tags.end(); it++)
 	{
-		const std::string& name = it.key();
-		const Tag* tag = it.value();
+		const std::string& name = it->first;
+		const Tag* tag = it->second;
 		if (!tag) continue;
 
 		if (name == TAG_REPAIR_COST)
