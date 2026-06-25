@@ -34,7 +34,7 @@ int GrassTile::getColor(Facing::Name face, TileData) const
 {
 	if (GetPatchManager()->IsGrassTinted() && face == Facing::UP)
 	{
-		return GrassColor::get(1.0, 0.5);
+		return GrassColor::get(1.0f, 0.5f);
 	}
 
 	return 0xffffff;

@@ -13,31 +13,31 @@ void Recipes::addTools(const ItemStack& material, Item* sword, Item* pickaxe, It
                             " # ",
                             " # ", ItemStack(pickaxe))
         .add('X', material)
-        .add('#', Item::stick), TOOLS, 0);
+        .add('#', Item::stick), CG_TOOLS, 0);
 
     add(ShapedRecipeBuilder("X",
                             "#",
                             "#", ItemStack(shovel))
         .add('X', material)
-        .add('#', Item::stick), TOOLS, 1);
+        .add('#', Item::stick), CG_TOOLS, 1);
 
     add(ShapedRecipeBuilder("XX",
         "X#",
         " #", ItemStack(axe))
         .add('X', material)
-        .add('#', Item::stick), TOOLS, 2);
+        .add('#', Item::stick), CG_TOOLS, 2);
 
     add(ShapedRecipeBuilder("XX",
                             " #",
                             " #", ItemStack(hoe))
         .add('X', material)
-        .add('#', Item::stick), TOOLS, 3);
+        .add('#', Item::stick), CG_TOOLS, 3);
 
     add(ShapedRecipeBuilder("X",
         "X",
         "#", ItemStack(sword))
         .add('X', material)
-        .add('#', Item::stick), TOOLS, 9);
+        .add('#', Item::stick), CG_TOOLS, 9);
 }
 
 void Recipes::addArmor(const ItemStack& material, Item* helmet, Item* chestplate, Item* leggings, Item* boots, Group_Console group)
@@ -66,10 +66,10 @@ void Recipes::addOre(const ItemStack& material, Tile* block, int unprocessGroup)
     add(ShapedRecipeBuilder("XXX",
                             "XXX",
                             "XXX", ItemStack(block))
-        .add('X', material), DECORATION, 2);
+        .add('X', material), CG_DECORATION, 2);
 
     add(ShapedRecipeBuilder("X", ItemStack(material.getId(), 9, material.getAuxValue()))
-        .add('X', block), DECORATION, unprocessGroup);
+        .add('X', block), CG_DECORATION, unprocessGroup);
 }
 
 class RecipeSorter
@@ -97,195 +97,195 @@ Recipes::Recipes()
 #if MC_VERSION >= MC_VER_BETA(1, 7, 0)
     add(ShapedRecipeBuilder("A ",
                             " A", ItemStack(Item::shears, 1))
-        .add('A', Item::ironIngot), TOOLS, 4);
+        .add('A', Item::ironIngot), CG_TOOLS, 4);
 #endif
 
     add(ShapedRecipeBuilder("A ",
                             " B", ItemStack(Item::flintAndSteel, 1))
         .add('A', Item::ironIngot)
-        .add('B', Item::flint), TOOLS, 4);
+        .add('B', Item::flint), CG_TOOLS, 4);
 
     add(ShapedRecipeBuilder("X#X",
                             "#X#",
                             "X#X", ItemStack(Tile::tnt, 1))
         .add('X', Item::sulphur)
-        .add('#', Tile::sand), TOOLS, 5);
+        .add('#', Tile::sand), CG_TOOLS, 5);
 
     add(ShapedRecipeBuilder("  #",
                             " #X",
                             "# X", ItemStack(Item::fishingRod, 1))
         .add('#', Item::stick)
-        .add('X', Item::string), TOOLS, 6);
+        .add('X', Item::string), CG_TOOLS, 6);
 
     add(ShapedRecipeBuilder(" #X",
                             "# X",
                             " #X", ItemStack(Item::bow))
         .add('X', Item::string)
-        .add('#', Item::stick), TOOLS, 7);
+        .add('#', Item::stick), CG_TOOLS, 7);
 
     add(ShapedRecipeBuilder("X",
                             "#",
                             "Y", ItemStack(Item::arrow, 4))
         .add('Y', Item::feather)
         .add('X', Item::flint)
-        .add('#', Item::stick), TOOLS, 7);
+        .add('#', Item::stick), CG_TOOLS, 7);
 
     add(ShapedRecipeBuilder("# #",
                             " # ", ItemStack(Item::bucket_empty, 1))
-        .add('#', Item::ironIngot), TOOLS, 8);
+        .add('#', Item::ironIngot), CG_TOOLS, 8);
 
     add(ShapedRecipeBuilder("# #",
                             " # ", ItemStack(Item::bowl, 4))
-        .add('#', Tile::wood), TOOLS, 8);
+        .add('#', Tile::wood), CG_TOOLS, 8);
 
     add(ShapedRecipeBuilder("X",
                             "#", ItemStack(Tile::torch, 4))
         .add('X', ItemStack(Item::coal, 1, 1))
-        .add('#', Item::stick), TOOLS, 10);
+        .add('#', Item::stick), CG_TOOLS, 10);
 
     add(ShapedRecipeBuilder("X",
                             "#", ItemStack(Tile::torch, 4))
         .add('X', Item::coal)
-        .add('#', Item::stick), TOOLS, 10);
+        .add('#', Item::stick), CG_TOOLS, 10);
 
     add(ShapedRecipeBuilder("##",
                             "##", ItemStack(Tile::glowstone))
-        .add('#', Item::yellowDust), TOOLS, 10);
+        .add('#', Item::yellowDust), CG_TOOLS, 10);
 
     add(ShapedRecipeBuilder("A",
         "B", ItemStack(Tile::pumpkinLantern, 1))
         .add('A', Tile::pumpkin)
-        .add('B', Tile::torch), TOOLS, 10);
+        .add('B', Tile::torch), CG_TOOLS, 10);
 
     add(ShapedRecipeBuilder(" # ",
                             "#X#",
                             " # ", ItemStack(Item::clock, 1))
         .add('#', Item::goldIngot)
-        .add('X', Item::redStone), TOOLS, 11);
+        .add('X', Item::redStone), CG_TOOLS, 11);
 
     add(ShapedRecipeBuilder(" # ",
                             "#X#",
                             " # ", ItemStack(Item::compass, 1))
         .add('#', Item::ironIngot)
-        .add('X', Item::redStone), TOOLS, 11);
+        .add('X', Item::redStone), CG_TOOLS, 11);
 
     add(ShapedRecipeBuilder("###",
                             "#X#",
                             "###", ItemStack(Item::map, 1))
         .add('#', Item::paper)
-        .add('X', Item::compass), TOOLS, 11);
+        .add('X', Item::compass), CG_TOOLS, 11);
 
     // ArmorRecipes
     addArmor(ItemStack(Item::leather),   Item::helmet_cloth,   Item::chestplate_cloth,   Item::leggings_cloth,   Item::boots_cloth);
-    addArmor(ItemStack(Tile::fire),      Item::helmet_chain,   Item::chestplate_chain,   Item::leggings_chain,   Item::boots_chain, GROUPS_COUNT);
+    addArmor(ItemStack(Tile::fire),      Item::helmet_chain,   Item::chestplate_chain,   Item::leggings_chain,   Item::boots_chain, CG_COUNT);
     addArmor(ItemStack(Item::ironIngot), Item::helmet_iron,    Item::chestplate_iron,    Item::leggings_iron,    Item::boots_iron);
     addArmor(ItemStack(Item::goldIngot), Item::helmet_gold,    Item::chestplate_gold,    Item::leggings_gold,    Item::boots_gold);
     addArmor(ItemStack(Item::emerald),   Item::helmet_diamond, Item::chestplate_diamond, Item::leggings_diamond, Item::boots_diamond);
 
     // StructureRecipes
     add(ShapedRecipeBuilder("#", ItemStack(Tile::wood, 4))
-        .add('#', Tile::treeTrunk), STRUCTURES, 0);
+        .add('#', Tile::treeTrunk), CG_STRUCTURES, 0);
 
     add(ShapedRecipeBuilder("#",
                             "#", ItemStack(Item::stick, 4))
-        .add('#', Tile::wood), STRUCTURES, 1);
+        .add('#', Tile::wood), CG_STRUCTURES, 1);
 
     add(ShapedRecipeBuilder("##",
                             "##", ItemStack(Tile::sandStone))
-        .add('#', Tile::sand), STRUCTURES, 2);
+        .add('#', Tile::sand), CG_STRUCTURES, 2);
 
     add(ShapedRecipeBuilder("##",
                             "##", ItemStack(Tile::snow, 1))
-        .add('#', Item::snowBall), STRUCTURES, 2);
+        .add('#', Item::snowBall), CG_STRUCTURES, 2);
 
     add(ShapedRecipeBuilder("##",
                             "##", ItemStack(Tile::clay, 1))
-        .add('#', Item::clay), STRUCTURES, 2);
+        .add('#', Item::clay), CG_STRUCTURES, 2);
 
     add(ShapedRecipeBuilder("##",
                             "##", ItemStack(Tile::redBrick, 1))
-        .add('#', Item::brick), STRUCTURES, 2);
+        .add('#', Item::brick), CG_STRUCTURES, 2);
 
     add(ShapedRecipeBuilder("##",
                             "##", ItemStack(Tile::craftingTable))
-        .add('#', Tile::wood), STRUCTURES, 3);
+        .add('#', Tile::wood), CG_STRUCTURES, 3);
 
     add(ShapedRecipeBuilder("###",
                             "# #",
                             "###", ItemStack(Tile::furnace))
-        .add('#', Tile::stoneBrick), STRUCTURES, 4);
+        .add('#', Tile::stoneBrick), CG_STRUCTURES, 4);
 
     add(ShapedRecipeBuilder("###",
                             "# #",
                             "###", ItemStack(Tile::chest))
-        .add('#', Tile::wood), STRUCTURES, 5);
+        .add('#', Tile::wood), CG_STRUCTURES, 5);
 
     add(ShapedRecipeBuilder("###",
                             "XXX", ItemStack(Item::bed))
         .add('#', Tile::cloth)
-        .add('X', Tile::wood), STRUCTURES, 6);
+        .add('X', Tile::wood), CG_STRUCTURES, 6);
 
     add(ShapedRecipeBuilder("# #",
                             "###",
                             "# #", ItemStack(Tile::ladder, 2))
-        .add('#', Item::stick), STRUCTURES, 7);
+        .add('#', Item::stick), CG_STRUCTURES, 7);
 
     add(ShapedRecipeBuilder("###",
                             "###", ItemStack(Tile::fence, 2))
-        .add('#', Item::stick), STRUCTURES, 8);
+        .add('#', Item::stick), CG_STRUCTURES, 8);
 
 #if MC_VERSION >= MC_VER_BETA(1, 8, 0)
     add(ShapedRecipeBuilder("#W#",
         "#W#", ItemStack(Tile::fenceGate, 1))
         .add('#', Item::stick)
-        .add('W', Tile::wood), STRUCTURES, 8);
+        .add('W', Tile::wood), CG_STRUCTURES, 8);
 #endif
 
     add(ShapedRecipeBuilder("##",
                             "##",
                             "##", ItemStack(Item::door_wood, 1))
-        .add('#', Tile::wood), STRUCTURES, 9);
+        .add('#', Tile::wood), CG_STRUCTURES, 9);
 
     add(ShapedRecipeBuilder("##",
                             "##",
                             "##", ItemStack(Item::door_iron, 1))
-        .add('#', Item::ironIngot), STRUCTURES, 9);
+        .add('#', Item::ironIngot), CG_STRUCTURES, 9);
 
     add(ShapedRecipeBuilder("###",
                             "###", ItemStack(Tile::trapDoor, 2))
-        .add('#', Tile::wood), STRUCTURES, 9);
+        .add('#', Tile::wood), CG_STRUCTURES, 9);
 
     add(ShapedRecipeBuilder("#  ",
                             "## ",
                             "###", ItemStack(Tile::stairs_wood, 4))
-        .add('#', Tile::wood), STRUCTURES, 10);
+        .add('#', Tile::wood), CG_STRUCTURES, 10);
 
     add(ShapedRecipeBuilder("#  ",
                             "## ",
                             "###", ItemStack(Tile::stairs_stone, 4))
-        .add('#', Tile::stoneBrick), STRUCTURES, 10);
+        .add('#', Tile::stoneBrick), CG_STRUCTURES, 10);
 
     add(ShapedRecipeBuilder("###", ItemStack(Tile::stoneSlabHalf, 3, 2))
-        .add('#', Tile::wood), STRUCTURES, 11);
+        .add('#', Tile::wood), CG_STRUCTURES, 11);
 
     add(ShapedRecipeBuilder("###", ItemStack(Tile::stoneSlabHalf, 3, 1))
-        .add('#', Tile::sandStone), STRUCTURES, 11);
+        .add('#', Tile::sandStone), CG_STRUCTURES, 11);
 
     add(ShapedRecipeBuilder("###", ItemStack(Tile::stoneSlabHalf, 3, 3))
-        .add('#', Tile::stoneBrick), STRUCTURES, 11);
+        .add('#', Tile::stoneBrick), CG_STRUCTURES, 11);
 
     add(ShapedRecipeBuilder("###", ItemStack(Tile::stoneSlabHalf, 3))
-        .add('#', Tile::rock), STRUCTURES, 11);
+        .add('#', Tile::rock), CG_STRUCTURES, 11);
 
     // FoodRecipes
     add(ShapedRecipeBuilder("YX#", ItemStack(Item::mushroomStew, 1))
         .add('X', Tile::mushroom1)
         .add('Y', Tile::mushroom2)
-        .add('#', Item::bowl), FOOD);
+        .add('#', Item::bowl), CG_FOOD);
 
     add(ShapedRecipeBuilder("#X#", ItemStack(Item::cookie, 1))
         .add('X', ItemStack(Item::dye_powder, 1, 3))
-        .add('#', Item::wheat), FOOD);
+        .add('#', Item::wheat), CG_FOOD);
 
     add(ShapedRecipeBuilder("AAA",
                             "BEB",
@@ -293,25 +293,25 @@ Recipes::Recipes()
         .add('A', Item::milk)
         .add('B', Item::sugar)
         .add('C', Item::wheat)
-        .add('E', Item::egg), FOOD);
+        .add('E', Item::egg), CG_FOOD);
 
     add(ShapedRecipeBuilder("#", ItemStack(Item::sugar, 1))
-        .add('#', Item::reeds), FOOD);
+        .add('#', Item::reeds), CG_FOOD);
 
     add(ShapedRecipeBuilder("###", ItemStack(Item::bread, 1))
-        .add('#', Item::wheat), FOOD);
+        .add('#', Item::wheat), CG_FOOD);
 
     add(ShapedRecipeBuilder("###",
                             "#X#",
                             "###", ItemStack(Item::apple_gold, 1))
         .add('#', Tile::goldBlock)
-        .add('X', Item::apple), FOOD);
+        .add('X', Item::apple), CG_FOOD);
 
     add(ShapedRecipeBuilder("###",
                             "#X#",
                             "###", ItemStack(Tile::musicBlock, 1))
         .add('#', Tile::wood)
-        .add('X', Item::redStone), MECHANISM);
+        .add('X', Item::redStone), CG_MECHANISM);
 
     //add(ShapedRecipeBuilder("X X",
     //                        "X#X",
@@ -321,21 +321,21 @@ Recipes::Recipes()
 
     add(ShapedRecipeBuilder("# #",
                             "###", ItemStack(Item::minecart, 1))
-        .add('#', Item::ironIngot), TRANSPORT);
+        .add('#', Item::ironIngot), CG_TRANSPORT);
 
     add(ShapedRecipeBuilder("A",
                             "B", ItemStack(Item::minecart_chest, 1))
         .add('A', Tile::chest)
-        .add('B', Item::minecart), TRANSPORT);
+        .add('B', Item::minecart), CG_TRANSPORT);
 
     add(ShapedRecipeBuilder("A",
                             "B", ItemStack(Item::minecart_furnace, 1))
         .add('A', Tile::furnace)
-        .add('B', Item::minecart), TRANSPORT);
+        .add('B', Item::minecart), CG_TRANSPORT);
 
     add(ShapedRecipeBuilder("# #",
                             "###", ItemStack(Item::boat, 1))
-        .add('#', Tile::wood), TRANSPORT);
+        .add('#', Tile::wood), CG_TRANSPORT);
 
 
     //add(ShapedRecipeBuilder("X",
@@ -390,74 +390,74 @@ Recipes::Recipes()
     {
         add(ShapelessRecipeBuilder(ItemStack(Tile::cloth, 1, ClothTile::getColorFromData(i)))
             .add(ItemStack(Item::dye_powder, 1, i))
-            .add(ItemStack(Tile::cloth, 1, 0)), DECORATION, 0);
+            .add(ItemStack(Tile::cloth, 1, 0)), CG_DECORATION, 0);
     }
 
     add(ShapedRecipeBuilder("###",
                             "###",
                             "###", ItemStack(Tile::cloth, 1))
-        .add('#', Item::string), DECORATION, 0);
+        .add('#', Item::string), CG_DECORATION, 0);
 
     add(ShapelessRecipeBuilder(ItemStack(Item::dye_powder, 2, 11))
-        .add(Tile::flower), DECORATION, 1);
+        .add(Tile::flower), CG_DECORATION, 1);
 
     add(ShapelessRecipeBuilder(ItemStack(Item::dye_powder, 2, 1))
-        .add(Tile::rose), DECORATION, 1);
+        .add(Tile::rose), CG_DECORATION, 1);
 
     add(ShapelessRecipeBuilder(ItemStack(Item::dye_powder, 3, 15))
-        .add(Item::bone), DECORATION, 1);
+        .add(Item::bone), CG_DECORATION, 1);
 
     add(ShapelessRecipeBuilder(ItemStack(Item::dye_powder, 2, 9))
         .add(ItemStack(Item::dye_powder, 1, 1))
-        .add(ItemStack(Item::dye_powder, 1, 15)), DECORATION, 1);
+        .add(ItemStack(Item::dye_powder, 1, 15)), CG_DECORATION, 1);
 
     add(ShapelessRecipeBuilder(ItemStack(Item::dye_powder, 2, 14))
         .add(ItemStack(Item::dye_powder, 1, 1))
-        .add(ItemStack(Item::dye_powder, 1, 11)), DECORATION, 1);
+        .add(ItemStack(Item::dye_powder, 1, 11)), CG_DECORATION, 1);
 
     add(ShapelessRecipeBuilder(ItemStack(Item::dye_powder, 2, 10))
         .add(ItemStack(Item::dye_powder, 1, 2))
-        .add(ItemStack(Item::dye_powder, 1, 15)), DECORATION, 1);
+        .add(ItemStack(Item::dye_powder, 1, 15)), CG_DECORATION, 1);
 
     add(ShapelessRecipeBuilder(ItemStack(Item::dye_powder, 2, 8))
         .add(ItemStack(Item::dye_powder, 1, 0))
-        .add(ItemStack(Item::dye_powder, 1, 15)), DECORATION, 1);
+        .add(ItemStack(Item::dye_powder, 1, 15)), CG_DECORATION, 1);
 
     add(ShapelessRecipeBuilder(ItemStack(Item::dye_powder, 2, 7))
         .add(ItemStack(Item::dye_powder, 1, 8))
-        .add(ItemStack(Item::dye_powder, 1, 15)), DECORATION, 1);
+        .add(ItemStack(Item::dye_powder, 1, 15)), CG_DECORATION, 1);
 
     add(ShapelessRecipeBuilder(ItemStack(Item::dye_powder, 3, 7))
         .add(ItemStack(Item::dye_powder, 1, 0))
         .add(ItemStack(Item::dye_powder, 1, 15))
-        .add(ItemStack(Item::dye_powder, 1, 15)), DECORATION, 1);
+        .add(ItemStack(Item::dye_powder, 1, 15)), CG_DECORATION, 1);
 
     add(ShapelessRecipeBuilder(ItemStack(Item::dye_powder, 2, 12))
         .add(ItemStack(Item::dye_powder, 1, 4))
-        .add(ItemStack(Item::dye_powder, 1, 15)), DECORATION, 1);
+        .add(ItemStack(Item::dye_powder, 1, 15)), CG_DECORATION, 1);
 
     add(ShapelessRecipeBuilder(ItemStack(Item::dye_powder, 2, 6))
         .add(ItemStack(Item::dye_powder, 1, 4))
-        .add(ItemStack(Item::dye_powder, 1, 2)), DECORATION, 1);
+        .add(ItemStack(Item::dye_powder, 1, 2)), CG_DECORATION, 1);
 
     add(ShapelessRecipeBuilder(ItemStack(Item::dye_powder, 2, 5))
         .add(ItemStack(Item::dye_powder, 1, 4))
-        .add(ItemStack(Item::dye_powder, 1, 1)), DECORATION, 1);
+        .add(ItemStack(Item::dye_powder, 1, 1)), CG_DECORATION, 1);
 
     add(ShapelessRecipeBuilder(ItemStack(Item::dye_powder, 2, 13))
         .add(ItemStack(Item::dye_powder, 1, 5))
-        .add(ItemStack(Item::dye_powder, 1, 9)), DECORATION, 1);
+        .add(ItemStack(Item::dye_powder, 1, 9)), CG_DECORATION, 1);
 
     add(ShapelessRecipeBuilder(ItemStack(Item::dye_powder, 3, 13))
         .add(ItemStack(Item::dye_powder, 1, 4))
         .add(ItemStack(Item::dye_powder, 1, 1))
-        .add(ItemStack(Item::dye_powder, 1, 9)), DECORATION, 1);
+        .add(ItemStack(Item::dye_powder, 1, 9)), CG_DECORATION, 1);
 
     add(ShapelessRecipeBuilder(ItemStack(Item::dye_powder, 4, 13))
         .add(ItemStack(Item::dye_powder, 1, 4))
         .add(ItemStack(Item::dye_powder, 1, 1))
         .add(ItemStack(Item::dye_powder, 1, 1))
-        .add(ItemStack(Item::dye_powder, 1, 15)), DECORATION, 1);
+        .add(ItemStack(Item::dye_powder, 1, 15)), CG_DECORATION, 1);
 
     // OreRecipes
     addOre(ItemStack(Item::goldIngot), Tile::goldBlock);

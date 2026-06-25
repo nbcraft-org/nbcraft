@@ -51,7 +51,7 @@ void CraftingScreen_Console::onClose()
         Slot* slot = m_pMenu->getSlot(i);
 
         // just to be sure
-        if (!getSlotDisplay(i).bInteractable)
+        if (!getSlotDisplay(i).isInteractable)
             slot->set(ItemStack::EMPTY);
     }
 
@@ -122,7 +122,7 @@ void CraftingScreen_Console::_renderLabels()
     for (int i = 0; i <= gridSize; ++i)
     {
         Slot* slot = m_pMenu->getSlot(i);
-        getSlotDisplay(i).bInteractable = false;
+        getSlotDisplay(i).isInteractable = false;
 
         if (i == 0) continue;
 
@@ -187,7 +187,7 @@ void CraftingScreen_Console::CraftingTabLayout::onSelectElement(GuiElement* elem
     {
         int index = screen->m_tabLayout.getIndex();
 
-        if (screen->m_craftContext.bIs2x2 && index >= Recipes::ARMOUR) index++;
+        if (screen->m_craftContext.bIs2x2 && index >= Recipes::CG_ARMOUR) index++;
 
         screen->m_craftContext.groupRecipes = Recipes::singleton().m_recipesByConsoleGroup[index];
 

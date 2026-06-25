@@ -9,7 +9,7 @@ struct SlotDisplay
 {
     int x, y, size, noItemIcon;
     std::string noItemSprite;
-    bool bVisible, bInteractable, bIsWarning, bIconHolder;
+    bool isVisible, isInteractable, isWarning, hasIconHolder;
 
     SlotDisplay() :
         x(0),
@@ -17,10 +17,10 @@ struct SlotDisplay
         size(0),
         noItemIcon(-1),
         noItemSprite(""),
-        bVisible(false),
-        bInteractable(false),
-        bIsWarning(false),
-        bIconHolder(false)
+        isVisible(false),
+        isInteractable(false),
+        isWarning(false),
+        hasIconHolder(false)
     {
     }
 
@@ -30,16 +30,16 @@ struct SlotDisplay
         size(size),
         noItemIcon(noItemIcon),
         noItemSprite(noItemSprite),
-        bVisible(true),
-        bInteractable(true),
-        bIsWarning(false),
-        bIconHolder(iconHolder)
+        isVisible(true),
+        isInteractable(true),
+        isWarning(false),
+        hasIconHolder(iconHolder)
     {
     }
 
     bool isInteractable() const
     {
-        return bVisible && bInteractable;
+        return isVisible && isInteractable;
     }
 };
 

@@ -12,7 +12,7 @@ public:
 
 	static void init();
 
-	static uint32_t get(double x, double y);
+	static uint32_t get(float x, float y);
 	
 
 private:

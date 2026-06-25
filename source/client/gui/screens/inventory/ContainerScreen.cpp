@@ -25,14 +25,14 @@ void ContainerScreen::_renderSlot(Slot& slot)
 {
     const SlotDisplay& display = getSlotDisplay(slot);
 
-    if (!display.bVisible) return;
+    if (!display.isVisible) return;
 
-    if (display.bIconHolder)
+    if (display.hasIconHolder)
     {
         MatrixStack::Ref matrix = MatrixStack::World.push();
         float off = 3.0f * display.size / 50.0f;
         matrix->translate(Vec3(-off, -off, 0.0f));
-        blitSprite(*m_pMinecraft->m_pTextures, slot.hasItem() && display.bIsWarning ? "gui/console/Graphics/IconHolderRed.png" : "gui/console/Graphics/IconHolder.png", display.x, display.y, display.size, display.size);
+        blitSprite(*m_pMinecraft->m_pTextures, slot.hasItem() && display.isWarning ? "gui/console/Graphics/IconHolderRed.png" : "gui/console/Graphics/IconHolder.png", display.x, display.y, display.size, display.size);
     }
     MatrixStack::Ref matrix = MatrixStack::World.push();
     matrix->translate(Vec3(display.x, display.y, 0));
@@ -61,7 +61,7 @@ void ContainerScreen::_renderSlot(Slot& slot)
     ItemRenderer::singleton().renderGuiItemOverlay(*m_pMinecraft, item, 0, 0);
 
     matrix.release();
-    if (display.bIsWarning)
+    if (display.isWarning)
     {
         MatrixStack::Ref matrix = MatrixStack::World.push();
         float off = 3.0f * display.size / 50.0f;
@@ -189,7 +189,7 @@ void ContainerScreen::_selectSlot(Slot* slot)
 {
     if (!slot) return;
     const SlotDisplay& display = getSlotDisplay(*slot);
-    if (!display.bVisible) return;
+    if (!display.isVisible) return;
     int off = 3.0f * display.size / 50;
     handlePointerLocation(m_leftPos + display.x - off + display.size / 2, m_topPos + display.y - off + display.size / 2);
 }
@@ -406,7 +406,7 @@ bool ContainerScreen::SlotNavigation::next(int& x, int& y, bool cycle)
     {
         const SlotDisplay& display = m_pScreen->m_slotDisplays[m_index];
 
-        if (!display.bVisible || !(cycle || isValid(m_index))) continue;
+        if (!display.isVisible || !(cycle || isValid(m_index))) continue;
 
         int off = 3 * display.size / 50;
         x = m_pScreen->m_leftPos + display.x - off + display.size / 2;

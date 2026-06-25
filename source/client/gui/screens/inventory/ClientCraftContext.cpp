@@ -17,5 +17,5 @@ bool ClientCraftContext::craft(Recipe* recipe)
 
 void ClientCraftContext::setWarning(int id, bool warning)
 {
-	slotDisplays->at(id).bIsWarning = warning;
+	slotDisplays->at(id).isWarning = warning;
 }

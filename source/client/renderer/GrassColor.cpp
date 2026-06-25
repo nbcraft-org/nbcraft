@@ -11,7 +11,7 @@ void GrassColor::init()
 	GrassColor::texture = Resource::loadTexture("misc/grasscolor.png");
 }
 
-uint32_t GrassColor::get(double x, double y)
+uint32_t GrassColor::get(float x, float y)
 {
 	y *= x;
 	uint32_t c = GrassColor::texture.getData()[(int)((1.0 - y) * 255.0) << 8 | (int)((1.0 - x) * 255.0)];
