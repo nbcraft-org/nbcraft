@@ -77,6 +77,8 @@ public:
 	float m_scrollAmount;
 	float m_accumulatedScroll;
 	float m_scrollBarGrabOffset;
+	float m_scrollVelocity;
+	bool m_bDecelerating;
 	float m_mouseYWhenPressed;
 	int m_lastClickedIndex;
 	int m_lastClickTime;

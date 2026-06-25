@@ -63,6 +63,13 @@ void GameRenderer::_init()
 	m_keepPic = 0;
 
 	m_envTexturePresence = 0;
+
+#ifdef ENH_FOV_MODIFIER
+	m_fovBase = 70.0f;
+	m_fovModPrev = 1.0f;
+	m_fovMod = 1.0f;
+	m_fovModTarget = 1.0f;
+#endif
 }
 
 GameRenderer::GameRenderer(Minecraft* pMinecraft) :
@@ -81,6 +88,9 @@ GameRenderer::GameRenderer(Minecraft* pMinecraft) :
 #endif
 
 	m_pMinecraft->getOptions()->m_gamma.apply();
+#ifdef ENH_FOV_MODIFIER
+	setFovBase(m_pMinecraft->getOptions()->m_fov.get());
+#endif
 }
 
 GameRenderer::~GameRenderer()
@@ -118,6 +128,13 @@ void GameRenderer::_clearFrameBuffer()
 
 void GameRenderer::_renderItemInHand(float f, int i)
 {
+#ifdef ENH_FOV_MODIFIER
+	Matrix projSave = MatrixStack::Projection.getTop();
+	MatrixStack::Projection.getTop() = Matrix::IDENTITY;
+	float fov = 70.0f;
+	MatrixStack::Projection.getTop().setPerspective(fov, float(Minecraft::width) / float(Minecraft::height), 0.05f, m_renderDistance * 1.2f);
+#endif
+
 	Matrix& viewMtx = MatrixStack::View.getTop();
 	viewMtx = Matrix::IDENTITY;
 
@@ -135,13 +152,13 @@ void GameRenderer::_renderItemInHand(float f, int i)
 		bobView(matrix, f);
 	}
 
-	if (!m_pMinecraft->getOptions()->m_thirdPerson.get() && !m_pMinecraft->getOptions()->m_hideGui.get())
+	if (m_pMinecraft->getOptions()->m_thirdPerson.get() == 0 && !m_pMinecraft->getOptions()->m_hideGui.get())
 	{
 		mce::RenderContextImmediate::get().clearDepthStencilBuffer();
 		m_pItemInHandRenderer->render(f);
 	}
 
-	if (!m_pMinecraft->getOptions()->m_thirdPerson.get())
+	if (m_pMinecraft->getOptions()->m_thirdPerson.get() == 0)
 	{
 		m_pItemInHandRenderer->renderScreenEffect(f);
 		bobHurt(matrix, f);
@@ -151,6 +168,10 @@ void GameRenderer::_renderItemInHand(float f, int i)
 	{
 		bobView(matrix, f);
 	}
+
+#ifdef ENH_FOV_MODIFIER
+	MatrixStack::Projection.getTop() = projSave;
+#endif
 }
 
 void GameRenderer::_renderDebugOverlay(float a)
@@ -313,7 +334,9 @@ void GameRenderer::moveCameraToPlayer(Matrix& matrix, float f)
 
 	matrix.rotate(field_5C + f * (field_58 - field_5C), Vec3::UNIT_Z);
 
-	if (m_pMinecraft->getOptions()->m_thirdPerson.get())
+	int thirdPerson = m_pMinecraft->getOptions()->m_thirdPerson.get();
+
+	if (thirdPerson != 0)
 	{
 		float v11 = field_30 + (field_2C - field_30) * f;
 		if (m_pMinecraft->getOptions()->m_bFixedCamera)
@@ -328,10 +351,11 @@ void GameRenderer::moveCameraToPlayer(Matrix& matrix, float f)
 			float mob_pitch = pMob->m_rot.y;
 
 			float pitchRad = mob_pitch / 180.0f * float(M_PI);
+			float yawRad = ((thirdPerson == 2 ? mob_yaw + 180.0f : mob_yaw) / 180.0f) * float(M_PI);
 
-			float aX = posX - (-(Mth::sin(mob_yaw / 180.0f * float(M_PI)) * Mth::cos(pitchRad)) * v11);
+			float aX = posX - (-(Mth::sin(yawRad) * Mth::cos(pitchRad)) * v11);
 			float aY = posY + (Mth::sin(pitchRad) * v11);
-			float aZ = posZ - ((Mth::cos(mob_yaw / 180.0f * float(M_PI)) * Mth::cos(pitchRad)) * v11);
+			float aZ = posZ - ((Mth::cos(yawRad) * Mth::cos(pitchRad)) * v11);
 
 			for (int i = 0; i < 8; i++)
 			{
@@ -357,7 +381,7 @@ void GameRenderer::moveCameraToPlayer(Matrix& matrix, float f)
 
 			matrix.rotate(pMob->m_rot.y - mob_pitch, Vec3::UNIT_X);
 			matrix.rotate(pMob->m_rot.x - mob_yaw, Vec3::UNIT_Y);
-			matrix.translate(Vec3::NEG_UNIT_Z * v11);
+			matrix.translate(Vec3(0.0f, 0.0f, -v11));
 			matrix.rotate(mob_yaw - pMob->m_rot.x, Vec3::UNIT_Y);
 			matrix.rotate(mob_pitch - pMob->m_rot.y, Vec3::UNIT_X);
 		}
@@ -370,7 +394,7 @@ void GameRenderer::moveCameraToPlayer(Matrix& matrix, float f)
 	if (!m_pMinecraft->getOptions()->m_bFixedCamera)
 	{
 		matrix.rotate(pMob->m_oRot.y + f * (pMob->m_rot.y - pMob->m_oRot.y), Vec3::UNIT_X);
-		matrix.rotate(pMob->m_oRot.x + f * (pMob->m_rot.x - pMob->m_oRot.x) + 180.0f, Vec3::UNIT_Y);
+		matrix.rotate(pMob->m_oRot.x + f * (pMob->m_rot.x - pMob->m_oRot.x) + (thirdPerson == 2 ? 0.0f : 180.0f), Vec3::UNIT_Y);
 	}
 
 	matrix.translate(Vec3::UNIT_Y * headHeightDiff);
@@ -449,11 +473,15 @@ void GameRenderer::renderNoCamera()
 }
 #endif
 
-float GameRenderer::getFov(float f)
+float GameRenderer::getFov(float f, bool applyFovMod)
 {
 	Mob* pMob = m_pMinecraft->m_pCameraEntity;
 
+#ifdef ENH_FOV_MODIFIER
+	float x1 = m_fovBase;
+#else
 	float x1 = 70.0f;
+#endif
 
 	if (pMob->isUnderLiquid(Material::water))
 		x1 = 60.0f;
@@ -463,6 +491,14 @@ float GameRenderer::getFov(float f)
 		float x2 = 1.0f + (-500.0f / ((pMob->m_deathTime + f) + 500.0f));
 		x1 /= (1.0f + 2.0f * x2);
 	}
+
+#ifdef ENH_FOV_MODIFIER
+	if (applyFovMod)
+	{
+		float fovMod = m_fovModPrev + (m_fovMod - m_fovModPrev) * f;
+		x1 *= fovMod;
+	}
+#endif
 
 	return field_54 + x1 + f * (field_50 - field_54);
 }
@@ -777,6 +813,25 @@ void GameRenderer::tick()
 	field_C++;
 
 	m_pItemInHandRenderer->tick();
+
+#ifdef ENH_FOV_MODIFIER
+	if (m_pMinecraft->m_pLocalPlayer)
+	{
+		Player* pPlayer = (Player*)m_pMinecraft->m_pCameraEntity;
+		if (pPlayer && pPlayer->isPlayer())
+		{
+			m_fovModTarget = 1.0f;
+			if (pPlayer->m_bFlying)
+				m_fovModTarget *= 1.1f;
+		}
+		else
+		{
+			m_fovModTarget = 1.0f;
+		}
+		m_fovModPrev = m_fovMod;
+		m_fovMod += (m_fovModTarget - m_fovMod) * 0.5f;
+	}
+#endif
 }
 
 void GameRenderer::renderWeather(float f)
@@ -887,10 +942,20 @@ void GameRenderer::setGamma(float gamma)
 	renderContext.setGamma(gamma * (INT16_MAX+1));
 }
 
+#ifdef ENH_FOV_MODIFIER
+void GameRenderer::setFovBase(float fov)
+{
+	m_fovBase = Mth::clamp(fov, 30.0f, 110.0f);
+}
+#endif
+
 void GameRenderer::onGraphicsReset()
 {
 	// We might not need this long-term, but putting it here just in case
 	m_pMinecraft->getOptions()->m_gamma.apply();
+#ifdef ENH_FOV_MODIFIER
+	m_pMinecraft->getOptions()->m_fov.apply();
+#endif
 }
 
 void GameRenderer::pick(float f)
@@ -901,7 +966,7 @@ void GameRenderer::pick(float f)
 	Mob* pMob = m_pMinecraft->m_pCameraEntity;
 	HitResult& mchr = m_pMinecraft->m_hitResult;
 	float dist = m_pMinecraft->getLocalPlayerGameMode()->getBlockReachDistance();
-	bool isFirstPerson = !m_pMinecraft->getOptions()->m_thirdPerson.get();
+	bool isFirstPerson = m_pMinecraft->getOptions()->m_thirdPerson.get() == 0;
 	Vec3 touchPosNear, touchPosFar;
 	bool bUseTouchCoords = false;
 

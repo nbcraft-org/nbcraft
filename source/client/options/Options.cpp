@@ -76,19 +76,20 @@ Options::Options(Minecraft* mc, const std::string& folderPath) :
 	, m_ambientOcclusion("gfx_smoothlighting", "options.ao", Minecraft::useAmbientOcclusion)
 	, m_difficulty("misc_difficulty", "options.difficulty", 2, ValuesBuilder().add("options.difficulty.peaceful").add("options.difficulty.easy").add("options.difficulty.normal").add("options.difficulty.hard"))
 	, m_hideGui("gfx_hidegui", "options.hideGui", false)
-	, m_thirdPerson("gfx_thirdperson", "options.thirdPerson", false)
+	, m_thirdPerson("gfx_thirdperson", "options.thirdPerson", 0)
 	, m_flightHax("misc_flycheat", "options.flightHax", false)
 	, m_swapJumpSneak("ctrl_swapjumpsneak", "options.swapJumpSneak", false)
 	, m_dpadSize("ctrl_dpadsize", "options.dpadSize", 1.0f)
 	, m_guiScale("gfx_guiscale", "options.guiScale", 0, ValuesBuilder().add("options.guiScale.auto").add("options.guiScale.small").add("options.guiScale.normal").add(("options.guiScale.large")))
 	, m_gamma("gfx_gamma", "options.gamma", 0.50f)
+	, m_fov("gfx_fov", "options.fov", 70.0f)
 	, m_playerName("mp_username", "options.username", "Steve")
 	, m_serverVisibleDefault("mp_server_visible_default", "options.serverVisibleDefault", true)
 	, m_autoJump("ctrl_autojump", "options.autoJump", mc->platform()->isTouchscreen())
 	, m_debugText("info_debugtext", "options.debugText", false)
 	, m_blockOutlines("gfx_blockoutlines", "options.blockOutlines", false)
-	, m_fancyGrass("gfx_fancygrass", "options.fancyGrass", true)
-	, m_biomeColors("gfx_biomecolors", "options.biomeColors", true)
+	, m_fancyGrass("gfx_fancygrass", "options.fancyGrass", false)
+	, m_biomeColors("gfx_biomecolors", "options.biomeColors", false)
 	, m_splitControls("ctrl_split", "options.splitControls", false)
 	, m_dynamicHand("gfx_dynamichand", "options.dynamicHand", false)
 	, m_menuPanorama("misc_menupano", "options.menuPanorama", true)
@@ -120,6 +121,7 @@ Options::Options(Minecraft* mc, const std::string& folderPath) :
 	add(m_ambientOcclusion);
 	add(m_guiScale);
 	add(m_gamma);
+	add(m_fov);
 	//add(m_limitFramerate);
 	add(m_autoJump);
 	//add(m_bMipmaps);
@@ -619,6 +621,51 @@ void Options::reset()
 	}
 }
 
+void Options::resetCategory(OptionsCategory cat)
+{
+	switch (cat)
+	{
+	case OC_GAMEPLAY:
+		m_difficulty.reset();
+		m_thirdPerson.reset();
+		m_serverVisibleDefault.reset();
+		m_musicVolume.reset();
+		m_masterVolume.reset();
+		break;
+	case OC_CONTROLS:
+		m_sensitivity.reset();
+		m_invertMouse.reset();
+		m_splitControls.reset();
+		m_swapJumpSneak.reset();
+		m_dpadSize.reset();
+		m_autoJump.reset();
+		m_flightHax.reset();
+		break;
+	case OC_VIDEO:
+		m_viewDistance.reset();
+		m_fov.reset();
+		m_gamma.reset();
+		m_ambientOcclusion.reset();
+		m_fancyGraphics.reset();
+		m_viewBobbing.reset();
+		m_anaglyphs.reset();
+		m_blockOutlines.reset();
+		m_vSync.reset();
+		m_fancyGrass.reset();
+		m_biomeColors.reset();
+		m_dynamicHand.reset();
+		m_uiTheme.reset();
+		m_logoType.reset();
+		m_hudSize.reset();
+		m_animatedCharacter.reset();
+		m_hideGui.reset();
+		m_debugText.reset();
+		m_menuPanorama.reset();
+		break;
+	}
+	save();
+}
+
 UITheme Options::getUiTheme() const
 {
 	return UITheme(m_uiTheme.get());
@@ -725,6 +772,25 @@ void BoolOption::addGuiElement(std::vector<GuiElement*>& elements, UITheme uiThe
 		elements.push_back(new SwitchButton(0, 0, this, getDisplayName()));
 }
 
+std::string ThirdPersonOption::getDisplayValue() const
+{
+	switch (get())
+	{
+		case 0: return Language::get("options.thirdPerson.off");
+		case 1: return Language::get("options.thirdPerson.behind");
+		case 2: return Language::get("options.thirdPerson.front");
+	}
+	return "";
+}
+
+void ThirdPersonOption::addGuiElement(std::vector<GuiElement*>& elements, UITheme uiTheme)
+{
+	if (uiTheme == UI_CONSOLE)
+		elements.push_back(new SliderButton(0, 0, 200, 32, this, getMessage(), toFloat()));
+	else
+		elements.push_back(new SwitchValuesButton(0, 0, this, getDisplayName()));
+}
+
 std::string ValuesOption::getDisplayValue() const
 {
 	return Language::get(getValue());
@@ -768,6 +834,23 @@ void GammaOption::apply()
 std::string GammaOption::getDisplayValue() const
 {
 	return Util::toString(int(get() * 100)) + "%";
+}
+
+void FovOption::apply()
+{
+	if (!m_pMinecraft || !m_pMinecraft->m_pGameRenderer)
+		return;
+	m_pMinecraft->m_pGameRenderer->setFovBase(get());
+}
+
+std::string FovOption::getDisplayValue() const
+{
+	float val = get();
+	if (val == 70.0f)
+		return Language::get("options.fov.normal");
+	if (val == 110.0f)
+		return Language::get("options.fov.quakePro");
+	return Util::toString(int(val));
 }
 
 void GraphicsOption::apply()

@@ -9,8 +9,20 @@
 #include "OptionList.hpp"
 #include "client/gui/components/Button.hpp"
 #include "client/options/Options.hpp"
+#include "client/locale/Language.hpp"
 
 #define C_OPTION_ITEM_HEIGHT (22)
+
+class ResetCategoryButton : public Button
+{
+	OptionsCategory m_cat;
+public:
+	ResetCategoryButton(OptionsCategory cat, const std::string& text) : Button(0, 0, text), m_cat(cat) {}
+	void pressed(Minecraft* mc, const MenuPointer& pointer) override
+	{
+		mc->getOptions()->resetCategory(m_cat);
+	}
+};
 
 OptionList::OptionList(Minecraft* pMinecraft, int width, int height, int something, int something2) :
 	ScrolledSelectionList(pMinecraft, width, height, something, something2, C_OPTION_ITEM_HEIGHT)
@@ -158,6 +170,9 @@ void OptionList::initGameplayMenu()
 #ifndef FEATURE_NETWORKING
 	m_items[currentIndex]->setEnabled(false);
 #endif
+
+	m_items.push_back(new ResetCategoryButton(OC_GAMEPLAY, Language::get("settingsMenu.resetToDefaults")));
+
 	(void)currentIndex; // compiler will warn about an unused variable sometimes if this isn't here
 }
 
@@ -177,6 +192,8 @@ void OptionList::initControlsMenu()
 		m_items[idxSwapJumpSneak]->setEnabled(false);
 		m_items[idxDpadSize]->setEnabled(false);
 	}
+
+	m_items.push_back(new ResetCategoryButton(OC_CONTROLS, Language::get("settingsMenu.resetToDefaults")));
 }
 
 void OptionList::initVideoMenu()
@@ -195,6 +212,8 @@ void OptionList::initVideoMenu()
 
 	if (!m_pMinecraft->platform()->isVSyncSwitchable())
 		m_items[idxVSync]->setEnabled(false);
+
+	m_items.push_back(new ResetCategoryButton(OC_VIDEO, Language::get("settingsMenu.resetToDefaults")));
 }
 
 OptionHeader::OptionHeader(const std::string& text)

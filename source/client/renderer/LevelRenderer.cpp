@@ -300,6 +300,10 @@ void LevelRenderer::_renderSunrise(float alpha)
 		matrix->rotate(90.0f, Vec3::UNIT_X);
 		matrix->rotate(m_pLevel->getTimeOfDay(alpha) > 0.5f ? 180 : 0, Vec3::UNIT_Z);
 
+		mce::RenderContext& rc = mce::RenderContextImmediate::get();
+		mce::ShadeMode prevShade = rc.m_currentState.m_shadeMode;
+		rc.setShadeMode(mce::SHADE_MODE_SMOOTH);
+
 		int steps = 16;
 
 		t.begin(mce::PRIMITIVE_MODE_TRIANGLE_STRIP, (steps * 2) + 2);
@@ -319,6 +323,8 @@ void LevelRenderer::_renderSunrise(float alpha)
 
 		// @HAL: sky.vertex shader will not work here, it ignores the vertex colors
 		t.draw(m_materials.sunrise);
+
+		rc.setShadeMode(prevShade);
 	}
 }
 
@@ -1373,7 +1379,7 @@ void LevelRenderer::takePicture(TripodCamera* pCamera, Entity* pOwner)
 {
 	Mob* pOldMob = m_pMinecraft->m_pCameraEntity;
 	bool bOldDontRenderGui = m_pMinecraft->getOptions()->m_hideGui.get();
-	bool bOldThirdPerson = m_pMinecraft->getOptions()->m_thirdPerson.get();
+	int bOldThirdPerson = m_pMinecraft->getOptions()->m_thirdPerson.get();
 
 #ifdef ENH_CAMERA_NO_PARTICLES
 	extern bool g_bDisableParticles;
@@ -1382,7 +1388,7 @@ void LevelRenderer::takePicture(TripodCamera* pCamera, Entity* pOwner)
 
 	m_pMinecraft->m_pCameraEntity = pCamera;
 	m_pMinecraft->getOptions()->m_hideGui.set(true);
-	m_pMinecraft->getOptions()->m_thirdPerson.set(false); // really from the perspective of the camera
+	m_pMinecraft->getOptions()->m_thirdPerson.set(0); // really from the perspective of the camera
 	m_pMinecraft->m_pGameRenderer->render(m_pMinecraft->m_timer);
 	m_pMinecraft->m_pCameraEntity = pOldMob;
 	m_pMinecraft->getOptions()->m_hideGui.set(bOldDontRenderGui);
@@ -1604,7 +1610,7 @@ void LevelRenderer::renderEntities(Vec3 pos, Culler* culler, float f)
 		if (!culler->isVisible(entity->m_hitbox))
 			continue;
 
-		if (m_pMinecraft->m_pCameraEntity == entity && !m_pMinecraft->getOptions()->m_thirdPerson.get())
+		if (m_pMinecraft->m_pCameraEntity == entity && m_pMinecraft->getOptions()->m_thirdPerson.get() == 0)
 			continue;
 
 		if (m_pLevel->hasChunkAt(entity->m_pos))
@@ -1715,26 +1721,26 @@ void LevelRenderer::prepareAndRenderClouds(const Entity& camera, float f)
 
 	MatrixStack::Ref projMtx = MatrixStack::Projection.pushIdentity();
 	// Java
-	//projMtx->setPerspective(fov, float(Minecraft::width) / float(Minecraft::height), 0.05f, renderDistance * 512.0f);
+	projMtx->setPerspective(fov, float(Minecraft::width) / float(Minecraft::height), 0.05f, renderDistance * 512.0f);
 	// PE (0.12.1)
-	projMtx->setPerspective(fov, float(Minecraft::width) / float(Minecraft::height), 2.0f, renderDistance * 5120.0f);
+	//projMtx->setPerspective(fov, float(Minecraft::width) / float(Minecraft::height), 2.0f, renderDistance * 5120.0f);
 
 	MatrixStack::Ref viewMtx = MatrixStack::View.push();
 	_setupFog(camera, 0);
 
 	Fog::enable();
 
-	Fog::updateRange(renderDistance * 0.2f, renderDistance * 0.75f);
-//	Fog::updateRange(renderDistance * 0.0f, renderDistance * 0.8f);  // @PARITY-JAVA: Values taken from B1.7.3.
+//	Fog::updateRange(renderDistance * 0.2f, renderDistance * 0.75f);
+	Fog::updateRange(renderDistance * 0.0f, renderDistance * 0.8f);  // @PARITY-JAVA: Values taken from B1.7.3.
 	renderSky(camera, f);
 
-	Fog::updateRange(renderDistance * 0.6f, renderDistance); 
+//	Fog::updateRange(renderDistance * 0.6f, renderDistance); 
 //  Fog::updateRange(renderDistance * 4.2f * 0.6f, renderDistance * 4.2f);  // @PARITY-PE: extra 4.2f calculation causes fog to be pushed extremely far on clouds, almost visibly non existent
-//	Fog::updateRange(renderDistance * 0.25f, renderDistance * 1.0f); // @PARITY-JAVA: Values taken from B1.7.3.
+	Fog::updateRange(renderDistance * 0.25f, renderDistance * 1.0f); // @PARITY-JAVA: Values taken from B1.7.3.
 	renderClouds(camera, f);
 
-	Fog::updateRange(renderDistance * 0.6f, renderDistance);
-//	Fog::updateRange(renderDistance * 0.25f, renderDistance * 1.0f); // @PARITY-JAVA: Values taken from B1.7.3.
+//	Fog::updateRange(renderDistance * 0.6f, renderDistance);
+	Fog::updateRange(renderDistance * 0.25f, renderDistance * 1.0f); // @PARITY-JAVA: Values taken from B1.7.3.
 
 	Fog::disable();
 

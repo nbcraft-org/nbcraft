@@ -26,6 +26,8 @@ ScrolledSelectionList::ScrolledSelectionList(Minecraft* minecraft, int a3, int a
 	m_scrollAmount(0.0f),
 	m_accumulatedScroll(0.0f),
 	m_scrollBarGrabOffset(1.0f),
+	m_scrollVelocity(0.0f),
+	m_bDecelerating(false),
 	m_mouseYWhenPressed(-2.0f),
 	m_lastClickedIndex(-1),
 	m_lastClickTime(0),
@@ -112,6 +114,7 @@ void ScrolledSelectionList::checkInput(const MenuPointer& pointer)
 	{
 		if (m_mouseYWhenPressed == -1.0f)
 		{
+			m_bDecelerating = false;
 			bool isValidClickArea = true;
 
 			if (pointer.x >= m_y0 && pointer.y <= m_y1)
@@ -173,7 +176,9 @@ void ScrolledSelectionList::checkInput(const MenuPointer& pointer)
 		}
 		else if (m_mouseYWhenPressed >= 0.0f)
 		{
-			m_scrollAmount -= (pointer.y - m_mouseYWhenPressed) * m_scrollBarGrabOffset;
+			float dragDelta = (pointer.y - m_mouseYWhenPressed) * m_scrollBarGrabOffset;
+			m_scrollAmount -= dragDelta;
+			m_scrollVelocity = -dragDelta;
 			m_mouseYWhenPressed = pointer.y;
 		}
 	}
@@ -184,6 +189,9 @@ void ScrolledSelectionList::checkInput(const MenuPointer& pointer)
 			onReleaseItem(m_lastClickedIndex, pointer);
 			m_lastClickedIndex = -1;
 		}
+
+		if (m_scrollBarGrabOffset == 1.0f && (m_scrollVelocity > 0.5f || m_scrollVelocity < -0.5f))
+			m_bDecelerating = true;
 
 		m_mouseYWhenPressed = -1.0f;
 	}
@@ -211,6 +219,15 @@ void ScrolledSelectionList::render(const MenuPointer& pointer, float f)
 	}
 
 	capYPosition();
+
+	if (m_bDecelerating)
+	{
+		m_scrollAmount += m_scrollVelocity;
+		m_scrollVelocity *= 0.92f;
+		if (m_scrollVelocity > -0.1f && m_scrollVelocity < 0.1f)
+			m_bDecelerating = false;
+		capYPosition();
+	}
 
 	m_pMinecraft->m_pTextures->loadAndBindTexture("gui/background.png");
 

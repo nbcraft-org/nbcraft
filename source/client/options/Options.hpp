@@ -70,6 +70,17 @@ enum UserActionID
 	AID_COUNT
 };
 
+enum OptionsCategory
+{
+	OC_GAMEPLAY,
+	OC_CONTROLS,
+	OC_VIDEO,
+
+	OC_MIN = OC_GAMEPLAY,
+	OC_MAX = OC_VIDEO,
+	OC_COUNT
+};
+
 struct ActionInfo
 {
 	//@TODO: Replace this with a universal key
@@ -235,6 +246,19 @@ public:
 	void save(std::stringstream& ss) const override { ss << get(); }
 };
 
+class ThirdPersonOption : public IntOption
+{
+public:
+	ThirdPersonOption(const std::string& key, const std::string& name, int initial = 0) : IntOption(key, name, initial) {}
+
+	void toggle() override { set((get() + 1) % 3); }
+	void addUnit(int mul) override { set(Mth::clamp(get() + mul, 0, 2)); }
+	void fromFloat(float v) override { set(Mth::round(v * 2.0f)); }
+	float toFloat() const override { return get() / 2.0f; }
+	std::string getDisplayValue() const override;
+	void addGuiElement(std::vector<GuiElement*>&, UITheme uiTheme) override;
+};
+
 class StringOption : public OptionInstance<std::string>
 {
 public:
@@ -391,6 +415,18 @@ public:
 	float toFloat() const override { return get() - 0.5f; }
 };
 
+class FovOption : public FloatOption
+{
+public:
+	FovOption(const std::string& key, const std::string& name, float initial = 70.0f) : FloatOption(key, name, initial, 1.0f) {}
+
+	void apply() override;
+	void addUnit(int mul) override { set(Mth::clamp(get() + mul * m_unit, 30.0f, 110.0f)); }
+	void fromFloat(float v) override { set(30.0f + v * 80.0f); }
+	float toFloat() const override { return (get() - 30.0f) / 80.0f; }
+	std::string getDisplayValue() const override;
+};
+
 class Options
 {
 private:
@@ -439,6 +475,7 @@ public:
 
 	void loadControls();
 	void reset();
+	void resetCategory(OptionsCategory cat);
 	void initResourceDependentOptions();
 
 	UITheme getUiTheme() const;
@@ -458,6 +495,7 @@ public:
 	friend class IntOption;
 	friend class HUDSizeOption;
 	friend class DpadSizeOption;
+	friend class FovOption;
 
 	FloatOption m_musicVolume;
 	FloatOption m_masterVolume;
@@ -473,7 +511,7 @@ public:
 	std::string m_skin;
 	ValuesOption m_difficulty;
 	BoolOption m_hideGui;
-	BoolOption m_thirdPerson;
+	ThirdPersonOption m_thirdPerson;
 	BoolOption m_flightHax;
 	SwapJumpSneakOption m_swapJumpSneak;
 	DpadSizeOption m_dpadSize;
@@ -483,6 +521,7 @@ public:
 	float field_248;
 	GuiScaleOption m_guiScale;
 	GammaOption m_gamma;
+	FovOption m_fov;
 	StringOption m_playerName;
 	BoolOption m_serverVisibleDefault;
 	BoolOption m_autoJump;
@@ -538,7 +577,7 @@ public:
 	OPTION(m_viewDistance);                \
 	/*OPTION(m_antiAliasing);*/            \
 	/*OPTION(m_guiScale);*/                \
-	/*OPTION(m_fov);*/                     \
+	OPTION(m_fov);                         \
 	OPTION(m_gamma);                       \
 	OPTION(m_ambientOcclusion);            \
 	OPTION(m_fancyGraphics);               \

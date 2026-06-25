@@ -62,7 +62,7 @@ Vec3 Dimension::getFogColor(float a, float b) const
 const float* Dimension::getSunriseColor(float a, float b)
 {
 	float radial = 0.4f;
-	float dot = Mth::cos(a * M_PI * 2.0f) - 0.125f; // * 2.0f + 0.5f;
+	float dot = Mth::cos(a * M_PI * 2.0f);
 	float center = -0.0f;
 
 	if (dot >= center - radial && dot <= center + radial)
@@ -72,7 +72,7 @@ const float* Dimension::getSunriseColor(float a, float b)
 		
 		m_sunriseColor[0] = norm * 0.3f + 0.7f;
 		m_sunriseColor[1] = norm * norm * 0.7f + 0.2f;
-		m_sunriseColor[2] = norm * norm * 0.0f + 0.2f;
+		m_sunriseColor[2] = 0.2f;
 		m_sunriseColor[3] = alpha * alpha;
 
 		return m_sunriseColor;

@@ -338,6 +338,9 @@ void Minecraft::setScreen(Screen* pScreen)
 
 	sizeUpdate(Minecraft::width, Minecraft::height);
 
+	if (m_pInputHolder)
+		m_pInputHolder->setScreenSize(Minecraft::width, Minecraft::height);
+
 	if (pScreen)
 	{
 		releaseMouse();
