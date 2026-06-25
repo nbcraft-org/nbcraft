@@ -461,6 +461,9 @@
     <ClCompile Include="$(MC_ROOT)\source\client\gui\components\TabButton.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\CreativeScreen_Console.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\TabLayout.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\ClockTexture.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\CompassTexture.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\PortalTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">
