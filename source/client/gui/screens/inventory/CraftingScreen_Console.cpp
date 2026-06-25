@@ -187,7 +187,7 @@ void CraftingScreen_Console::CraftingTabLayout::onSelectElement(GuiElement* elem
     {
         int index = screen->m_tabLayout.getIndex();
 
-        if (screen->m_craftContext.bIs2x2 && index >= Recipes::CG_ARMOUR) index++;
+        if (screen->m_craftContext.bIs2x2 && index >= Recipes::GC_ARMOUR) index++;
 
         screen->m_craftContext.groupRecipes = Recipes::singleton().m_recipesByConsoleGroup[index];
 

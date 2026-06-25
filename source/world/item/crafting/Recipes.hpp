@@ -137,14 +137,14 @@ public:
 
     enum Group_Console
     {
-        CG_STRUCTURES,
-        CG_TOOLS,
-        CG_FOOD,
-        CG_ARMOUR,
-        CG_MECHANISM,
-        CG_TRANSPORT,
-        CG_DECORATION,
-        CG_COUNT
+        GC_STRUCTURES,
+        GC_TOOLS,
+        GC_FOOD,
+        GC_ARMOUR,
+        GC_MECHANISM,
+        GC_TRANSPORT,
+        GC_DECORATION,
+        GC_COUNT
     };
 
 public:
@@ -161,11 +161,11 @@ public:
     }
 
     //@NOTE: -1 as the group index just adds to the end of the recipe list
-    void add(Recipe* recipe, Group_Console group = CG_DECORATION, int slotIndex = -1)
+    void add(Recipe* recipe, Group_Console group = GC_DECORATION, int slotIndex = -1)
     {
         m_recipes.push_back(recipe);
 
-        if (group >= CG_COUNT) return;
+        if (group >= GC_COUNT) return;
 
         std::vector<RecipeList>& recipeLists = m_recipesByConsoleGroup[group];
 
@@ -186,13 +186,13 @@ public:
         }
     }
 
-    void add(RecipeBuilder& recipe, Group_Console group = CG_DECORATION, int slotIndex = -1)
+    void add(RecipeBuilder& recipe, Group_Console group = GC_DECORATION, int slotIndex = -1)
     {
         add(recipe.build(), group, slotIndex);
     }
 
     void addTools(const ItemStack& material, Item* sword, Item* pickaxe, Item* axe, Item* shovel, Item* hoe);
-    void addArmor(const ItemStack& material, Item* helmet, Item* chestplate, Item* leggings, Item* boots, Group_Console = CG_ARMOUR);
+    void addArmor(const ItemStack& material, Item* helmet, Item* chestplate, Item* leggings, Item* boots, Group_Console = GC_ARMOUR);
     void addOre(const ItemStack& material, Tile* block, int unprocessGroup = 3);
 
     const ItemStack& getItemFor(CraftingContainer* container)
@@ -213,5 +213,5 @@ private:
 
 public:
     RecipeList m_recipes;
-    std::vector<RecipeList> m_recipesByConsoleGroup[CG_COUNT];
+    std::vector<RecipeList> m_recipesByConsoleGroup[GC_COUNT];
 };
