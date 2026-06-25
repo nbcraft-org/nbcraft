@@ -629,11 +629,12 @@ void Options::reset()
 
 void Options::resetCategory(OptionsCategory cat)
 {
-	auto it = m_categoryOptions.find(cat);
+	HashMap<OptionsCategory, std::vector<OptionEntry*> >::iterator it = m_categoryOptions.find(cat);
 	if (it != m_categoryOptions.end())
 	{
-		for (OptionEntry* entry : it->second)
-			entry->reset();
+		std::vector<OptionEntry*>& entries = it->second;
+		for (size_t i = 0; i < entries.size(); i++)
+			entries[i]->reset();
 	}
 	save();
 }
