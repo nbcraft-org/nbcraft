@@ -83,6 +83,9 @@ add_library(nbcraft-core STATIC
     client/renderer/LavaTexture.cpp
     client/renderer/LavaSideTexture.cpp
     client/renderer/FireTexture.cpp
+    client/renderer/CompassTexture.cpp
+    client/renderer/ClockTexture.cpp
+    client/renderer/PortalTexture.cpp
     client/renderer/FoliageColor.cpp
     client/renderer/GrassColor.cpp
     client/renderer/LogoRenderer.cpp
