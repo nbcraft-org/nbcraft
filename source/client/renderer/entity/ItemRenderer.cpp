@@ -32,7 +32,8 @@ const uint8_t g_ItemFrames[C_MAX_TILES] =
 
 ItemRenderer::Materials::Materials()
 {
-	MATERIAL_PTR(switchable, item_entity);
+	MATERIAL_PTR(switchable, item_entity_item);
+	MATERIAL_PTR(switchable, item_entity_tile);
 	MATERIAL_PTR(common, ui_fill_color);
 	MATERIAL_PTR(common, ui_fill_gradient);
 	MATERIAL_PTR(common, ui_textured);
@@ -117,7 +118,7 @@ void ItemRenderer::render(const Entity& entity, const Vec3& pos, float rot, floa
 					0.2f * (m_random.nextFloat() * 2.0f - 1.0f) / scale));
 			}
 
-			m_pTileRenderer->renderTile(FullTile(pTile, itemStack.getAuxValue()), m_itemMaterials.item_entity, itemEntity.getBrightness(1.0f));
+			m_pTileRenderer->renderTile(FullTile(pTile, itemStack.getAuxValue()), m_itemMaterials.item_entity_tile, itemEntity.getBrightness(1.0f));
 		}
 	}
 	else
@@ -148,15 +149,14 @@ void ItemRenderer::render(const Entity& entity, const Vec3& pos, float rot, floa
 #ifdef ENH_SHADE_HELD_TILES
 			color.mulRGB(itemEntity.getBrightness(1.0f));
 #endif
-			if (color != Color::WHITE)
-				t.color(color);
+			currentShaderColor = color;
 			t.normal(Vec3::UNIT_Y);
 			t.vertexUV(-0.5f, -0.25f, 0.0f, float(16 * (icon % 16))     / 256.0f, float(16 * (icon / 16 + 1)) / 256.0f);
 			t.vertexUV(+0.5f, -0.25f, 0.0f, float(16 * (icon % 16 + 1)) / 256.0f, float(16 * (icon / 16 + 1)) / 256.0f);
 			t.vertexUV(+0.5f, +0.75f, 0.0f, float(16 * (icon % 16 + 1)) / 256.0f, float(16 * (icon / 16))     / 256.0f);
 			t.vertexUV(-0.5f, +0.75f, 0.0f, float(16 * (icon % 16))     / 256.0f, float(16 * (icon / 16))     / 256.0f);
             
-			t.draw(m_itemMaterials.item_entity);
+			t.draw(m_itemMaterials.item_entity_item);
 		}
 	}
 

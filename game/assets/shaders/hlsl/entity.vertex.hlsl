@@ -70,6 +70,8 @@ VS_MAIN_BEGIN
 
 #ifdef USE_VERTEX_COLORS
 	PSInput.color = VSInput.color;
+#elif defined(USE_CURRENT_COLOR)
+	PSInput.color = CURRENT_COLOR;
 #endif
 
 #ifdef USE_OVERLAY

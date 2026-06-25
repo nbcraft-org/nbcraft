@@ -592,7 +592,7 @@ void Minecraft::tickInput()
 		}
 	}
 
-	if (!m_pLocalPlayer)
+	if (!m_pLocalPlayer || m_bPreparingLevel)
 		return;
 
 	//bool bIsInGUI = m_pGui->isInside(Mouse::getX(), Mouse::getY());
@@ -1007,9 +1007,12 @@ void Minecraft::update()
 
 	m_pGameRenderer->render(m_timer);
 
-	GameMode* pGameMode = getLocalPlayerGameMode();
-	if (pGameMode)
-		pGameMode->render(m_timer.m_renderTicks);
+	if (!m_bPreparingLevel)
+	{
+		GameMode* pGameMode = getLocalPlayerGameMode();
+		if (pGameMode)
+			pGameMode->render(m_timer.m_renderTicks);
+	}
 
 	renderContext.endRender();
 

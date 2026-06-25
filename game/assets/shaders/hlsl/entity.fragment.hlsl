@@ -51,7 +51,7 @@ PS_MAIN_BEGIN
 #ifdef USE_EMISSIVE
         //make glowy stuff
         color *= lerp( float( 1.0 ).xxxx, PSInput.light, color.a );
-#elif defined(USE_VERTEX_COLORS)
+#elif defined(USE_VERTEX_COLORS) || defined (USE_CURRENT_COLOR)
         color *= PSInput.color;
 #else
         color.rgb *= PSInput.light.xyz;
