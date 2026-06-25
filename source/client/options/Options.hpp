@@ -498,7 +498,7 @@ public:
 private:
 	Minecraft* m_pMinecraft;
 	HashMap<std::string, OptionEntry*> m_options;
-	HashMap<OptionsCategory, std::vector<OptionEntry*>> m_categoryOptions;
+	HashMap<OptionsCategory, std::vector<OptionEntry*> > m_categoryOptions;
 	AsyncTask m_saveTask;
 	std::string m_filePath;
 	InputMapping m_inputMappings[AID_COUNT];
