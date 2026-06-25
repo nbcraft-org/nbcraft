@@ -1381,6 +1381,7 @@ void LevelRenderer::takePicture(TripodCamera* pCamera, Entity* pOwner)
 	bool bOldDontRenderGui = m_pMinecraft->getOptions()->m_hideGui.get();
 	int bOldThirdPerson = m_pMinecraft->getOptions()->m_thirdPerson.get();
 
+
 #ifdef ENH_CAMERA_NO_PARTICLES
 	extern bool g_bDisableParticles;
 	g_bDisableParticles = true;
@@ -1388,7 +1389,7 @@ void LevelRenderer::takePicture(TripodCamera* pCamera, Entity* pOwner)
 
 	m_pMinecraft->m_pCameraEntity = pCamera;
 	m_pMinecraft->getOptions()->m_hideGui.set(true);
-	m_pMinecraft->getOptions()->m_thirdPerson.set(0); // really from the perspective of the camera
+	m_pMinecraft->getOptions()->m_thirdPerson.set(TPM_FIRST); // really from the perspective of the camera
 	m_pMinecraft->m_pGameRenderer->render(m_pMinecraft->m_timer);
 	m_pMinecraft->m_pCameraEntity = pOldMob;
 	m_pMinecraft->getOptions()->m_hideGui.set(bOldDontRenderGui);
@@ -1610,7 +1611,7 @@ void LevelRenderer::renderEntities(Vec3 pos, Culler* culler, float f)
 		if (!culler->isVisible(entity->m_hitbox))
 			continue;
 
-		if (m_pMinecraft->m_pCameraEntity == entity && m_pMinecraft->getOptions()->m_thirdPerson.get() == 0)
+		if (m_pMinecraft->m_pCameraEntity == entity && m_pMinecraft->getOptions()->m_thirdPerson.get() == TPM_FIRST)
 			continue;
 
 		if (m_pLevel->hasChunkAt(entity->m_pos))
@@ -1721,9 +1722,9 @@ void LevelRenderer::prepareAndRenderClouds(const Entity& camera, float f)
 
 	MatrixStack::Ref projMtx = MatrixStack::Projection.pushIdentity();
 	// Java
-	projMtx->setPerspective(fov, float(Minecraft::width) / float(Minecraft::height), 0.05f, renderDistance * 512.0f);
+	//projMtx->setPerspective(fov, float(Minecraft::width) / float(Minecraft::height), 0.05f, renderDistance * 512.0f);
 	// PE (0.12.1)
-	//projMtx->setPerspective(fov, float(Minecraft::width) / float(Minecraft::height), 2.0f, renderDistance * 5120.0f);
+	projMtx->setPerspective(fov, float(Minecraft::width) / float(Minecraft::height), 2.0f, renderDistance * 5120.0f);
 
 	MatrixStack::Ref viewMtx = MatrixStack::View.push();
 	_setupFog(camera, 0);

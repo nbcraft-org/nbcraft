@@ -190,7 +190,7 @@ void Gui::render(float f, bool bHaveScreen, int mouseX, int mouseY)
 
 	ItemStack& headGear = mc.m_pLocalPlayer->m_pInventory->getArmor(Item::SLOT_HEAD);
 
-	if (mc.getOptions()->m_thirdPerson.get() == 0 && !headGear.isEmpty() && headGear.getId() == Tile::pumpkin->m_ID)
+	if (mc.getOptions()->m_thirdPerson.get() == TPM_FIRST && !headGear.isEmpty() && headGear.getId() == Tile::pumpkin->m_ID)
 		renderPumpkin(GuiWidth, GuiHeight);
 
 	renderProgressIndicator(GuiWidth, GuiHeight, f);

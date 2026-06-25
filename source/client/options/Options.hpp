@@ -81,6 +81,19 @@ enum OptionsCategory
 	OC_COUNT
 };
 
+enum ThirdPersonMode
+{
+	TPM_FIRST = 0,
+	TPM_BEHIND = 1,
+	TPM_FRONT = 2
+};
+
+template<>
+struct HashFunction<OptionsCategory>
+{
+	size_t operator()(const OptionsCategory& key) const { return size_t(key); }
+};
+
 struct ActionInfo
 {
 	//@TODO: Replace this with a universal key
@@ -463,6 +476,7 @@ public:
 	Options(Minecraft*, const std::string& folderPath = "");
 
 	void add(OptionEntry&);
+	void add(OptionEntry&, OptionsCategory cat);
 	const AsyncTask& save();
 	std::vector<std::string> getOptionStrings();
 	
@@ -484,6 +498,7 @@ public:
 private:
 	Minecraft* m_pMinecraft;
 	HashMap<std::string, OptionEntry*> m_options;
+	HashMap<OptionsCategory, std::vector<OptionEntry*>> m_categoryOptions;
 	AsyncTask m_saveTask;
 	std::string m_filePath;
 	InputMapping m_inputMappings[AID_COUNT];
@@ -584,9 +599,11 @@ public:
 	OPTION(m_viewBobbing);                 \
 	OPTION(m_anaglyphs);                   \
 	OPTION(m_blockOutlines);               \
+	/*OPTION(m_limitFramerate);*/          \
 	OPTION(m_vSync); idxVSync = currentIndex; \
 	OPTION(m_fancyGrass);                  \
 	OPTION(m_biomeColors);                 \
+	/*OPTION(m_bMipmaps);*/                \
 	OPTION(m_dynamicHand);                 \
 	OPTION(m_uiTheme);                     \
 	OPTION(m_logoType);                    \

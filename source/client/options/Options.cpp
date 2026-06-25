@@ -44,7 +44,7 @@ void Options::_initDefaultValues()
 	m_bUseMouseForDigging = true;
 #ifdef ORIGINAL_CODE
 	m_viewDistance.set(2);
-	m_thirdPerson.set(0);
+	m_thirdPerson.set(TPM_FIRST);
 	m_bUseMouseToBreak = false;
 #endif
 
@@ -101,45 +101,45 @@ Options::Options(Minecraft* mc, const std::string& folderPath) :
 	, m_animatedCharacter("gfx_animatedcharacter", "options.animatedCharacter", true)
 	//, m_limitFramerate("gfx_fpslimit", "options.framerateLimit", 0, ValuesBuilder().add(performance.max").add("performance.balanced").add("performance.powersaver"))
 	//, m_bMipmaps("gfx_mipmaps", "options.mipmaps")
-	//, m_moreWorldOptions("misc_moreworldoptions", "options.moreWorldOptions", true)
 	, m_vSync("enableVsync", "options.enableVsync", true)
 {
-	add(m_musicVolume);
-	add(m_masterVolume);
-	add(m_invertMouse);
-	add(m_difficulty);
-	add(m_splitControls);
-	add(m_swapJumpSneak);
-	add(m_dpadSize);
-	add(m_sensitivity);
-	add(m_viewDistance);
-	add(m_viewBobbing);
-	add(m_anaglyphs);
-	add(m_fancyGraphics);
-	add(m_fancyGrass);
-	add(m_biomeColors);
-	add(m_ambientOcclusion);
-	add(m_guiScale);
-	add(m_gamma);
-	add(m_fov);
-	//add(m_limitFramerate);
-	add(m_autoJump);
-	//add(m_bMipmaps);
-	//add(m_moreWorldOptions);
-	add(m_blockOutlines);
-	add(m_dynamicHand);
-	add(m_menuPanorama);
-	add(m_thirdPerson);
-	add(m_hideGui);
+	add(m_musicVolume, OC_GAMEPLAY);
+	add(m_masterVolume, OC_GAMEPLAY);
+	add(m_invertMouse, OC_CONTROLS);
+	add(m_difficulty, OC_GAMEPLAY);
+	add(m_splitControls, OC_CONTROLS);
+	add(m_swapJumpSneak, OC_CONTROLS);
+	add(m_dpadSize, OC_CONTROLS);
+	add(m_sensitivity, OC_CONTROLS);
+	add(m_viewDistance, OC_VIDEO);
+	add(m_viewBobbing, OC_VIDEO);
+	add(m_anaglyphs, OC_VIDEO);
+	add(m_fancyGraphics, OC_VIDEO);
+	add(m_fancyGrass, OC_VIDEO);
+	add(m_biomeColors, OC_VIDEO);
+	add(m_ambientOcclusion, OC_VIDEO);
+	add(m_guiScale, OC_VIDEO);
+	add(m_gamma, OC_VIDEO);
+	add(m_fov, OC_VIDEO);
+	//add(m_limitFramerate, OC_VIDEO);
+	add(m_autoJump, OC_CONTROLS);
+	add(m_flightHax, OC_CONTROLS);
+	//add(m_bMipmaps, OC_VIDEO);
+	add(m_blockOutlines, OC_VIDEO);
+	add(m_dynamicHand, OC_VIDEO);
+	add(m_menuPanorama, OC_VIDEO);
+	add(m_thirdPerson, OC_GAMEPLAY);
+	add(m_serverVisibleDefault, OC_GAMEPLAY);
+	add(m_hideGui, OC_VIDEO);
 	add(m_playerName);
-	add(m_debugText);
+	add(m_debugText, OC_VIDEO);
 	add(m_lang);
-	add(m_hudSize);
-	add(m_uiTheme);
-	add(m_logoType);
+	add(m_hudSize, OC_VIDEO);
+	add(m_uiTheme, OC_VIDEO);
+	add(m_logoType, OC_VIDEO);
 	add(m_classicCrafting);
-	add(m_animatedCharacter);
-	add(m_vSync);
+	add(m_animatedCharacter, OC_VIDEO);
+	add(m_vSync, OC_VIDEO);
 	_initDefaultValues();
 	if (folderPath.empty()) return;
 	m_filePath = folderPath + "/options.txt";
@@ -150,6 +150,12 @@ void Options::add(OptionEntry& entry)
 {
 	entry.m_pMinecraft = m_pMinecraft;
 	m_options[entry.getKey()] = &entry;
+}
+
+void Options::add(OptionEntry& entry, OptionsCategory cat)
+{
+	add(entry);
+	m_categoryOptions[cat].push_back(&entry);
 }
 
 void Options::_load()
@@ -623,45 +629,11 @@ void Options::reset()
 
 void Options::resetCategory(OptionsCategory cat)
 {
-	switch (cat)
+	auto it = m_categoryOptions.find(cat);
+	if (it != m_categoryOptions.end())
 	{
-	case OC_GAMEPLAY:
-		m_difficulty.reset();
-		m_thirdPerson.reset();
-		m_serverVisibleDefault.reset();
-		m_musicVolume.reset();
-		m_masterVolume.reset();
-		break;
-	case OC_CONTROLS:
-		m_sensitivity.reset();
-		m_invertMouse.reset();
-		m_splitControls.reset();
-		m_swapJumpSneak.reset();
-		m_dpadSize.reset();
-		m_autoJump.reset();
-		m_flightHax.reset();
-		break;
-	case OC_VIDEO:
-		m_viewDistance.reset();
-		m_fov.reset();
-		m_gamma.reset();
-		m_ambientOcclusion.reset();
-		m_fancyGraphics.reset();
-		m_viewBobbing.reset();
-		m_anaglyphs.reset();
-		m_blockOutlines.reset();
-		m_vSync.reset();
-		m_fancyGrass.reset();
-		m_biomeColors.reset();
-		m_dynamicHand.reset();
-		m_uiTheme.reset();
-		m_logoType.reset();
-		m_hudSize.reset();
-		m_animatedCharacter.reset();
-		m_hideGui.reset();
-		m_debugText.reset();
-		m_menuPanorama.reset();
-		break;
+		for (OptionEntry* entry : it->second)
+			entry->reset();
 	}
 	save();
 }

@@ -129,10 +129,9 @@ void GameRenderer::_clearFrameBuffer()
 void GameRenderer::_renderItemInHand(float f, int i)
 {
 #ifdef ENH_FOV_MODIFIER
-	Matrix projSave = MatrixStack::Projection.getTop();
-	MatrixStack::Projection.getTop() = Matrix::IDENTITY;
-	float fov = 70.0f;
-	MatrixStack::Projection.getTop().setPerspective(fov, float(Minecraft::width) / float(Minecraft::height), 0.05f, m_renderDistance * 1.2f);
+	MatrixStack::Ref projRef = MatrixStack::Projection.pushIdentity();
+	constexpr float fov = 70.0f;
+	projRef->setPerspective(fov, float(Minecraft::width) / float(Minecraft::height), 0.05f, m_renderDistance * 1.2f);
 #endif
 
 	Matrix& viewMtx = MatrixStack::View.getTop();
@@ -152,13 +151,13 @@ void GameRenderer::_renderItemInHand(float f, int i)
 		bobView(matrix, f);
 	}
 
-	if (m_pMinecraft->getOptions()->m_thirdPerson.get() == 0 && !m_pMinecraft->getOptions()->m_hideGui.get())
+	if (m_pMinecraft->getOptions()->m_thirdPerson.get() == TPM_FIRST && !m_pMinecraft->getOptions()->m_hideGui.get())
 	{
 		mce::RenderContextImmediate::get().clearDepthStencilBuffer();
 		m_pItemInHandRenderer->render(f);
 	}
 
-	if (m_pMinecraft->getOptions()->m_thirdPerson.get() == 0)
+	if (m_pMinecraft->getOptions()->m_thirdPerson.get() == TPM_FIRST)
 	{
 		m_pItemInHandRenderer->renderScreenEffect(f);
 		bobHurt(matrix, f);
@@ -168,10 +167,6 @@ void GameRenderer::_renderItemInHand(float f, int i)
 	{
 		bobView(matrix, f);
 	}
-
-#ifdef ENH_FOV_MODIFIER
-	MatrixStack::Projection.getTop() = projSave;
-#endif
 }
 
 void GameRenderer::_renderDebugOverlay(float a)
@@ -336,7 +331,7 @@ void GameRenderer::moveCameraToPlayer(Matrix& matrix, float f)
 
 	int thirdPerson = m_pMinecraft->getOptions()->m_thirdPerson.get();
 
-	if (thirdPerson != 0)
+	if (thirdPerson != TPM_FIRST)
 	{
 		float v11 = field_30 + (field_2C - field_30) * f;
 		if (m_pMinecraft->getOptions()->m_bFixedCamera)
@@ -351,7 +346,7 @@ void GameRenderer::moveCameraToPlayer(Matrix& matrix, float f)
 			float mob_pitch = pMob->m_rot.y;
 
 			float pitchRad = mob_pitch / 180.0f * float(M_PI);
-			float yawRad = ((thirdPerson == 2 ? mob_yaw + 180.0f : mob_yaw) / 180.0f) * float(M_PI);
+			float yawRad = ((thirdPerson == TPM_FRONT ? mob_yaw + 180.0f : mob_yaw) / 180.0f) * float(M_PI);
 
 			float aX = posX - (-(Mth::sin(yawRad) * Mth::cos(pitchRad)) * v11);
 			float aY = posY + (Mth::sin(pitchRad) * v11);
@@ -394,7 +389,7 @@ void GameRenderer::moveCameraToPlayer(Matrix& matrix, float f)
 	if (!m_pMinecraft->getOptions()->m_bFixedCamera)
 	{
 		matrix.rotate(pMob->m_oRot.y + f * (pMob->m_rot.y - pMob->m_oRot.y), Vec3::UNIT_X);
-		matrix.rotate(pMob->m_oRot.x + f * (pMob->m_rot.x - pMob->m_oRot.x) + (thirdPerson == 2 ? 0.0f : 180.0f), Vec3::UNIT_Y);
+		matrix.rotate(pMob->m_oRot.x + f * (pMob->m_rot.x - pMob->m_oRot.x) + (thirdPerson == TPM_FRONT ? 0.0f : 180.0f), Vec3::UNIT_Y);
 	}
 
 	matrix.translate(Vec3::UNIT_Y * headHeightDiff);
@@ -815,19 +810,12 @@ void GameRenderer::tick()
 	m_pItemInHandRenderer->tick();
 
 #ifdef ENH_FOV_MODIFIER
+	m_fovModTarget = 1.0f;
 	if (m_pMinecraft->m_pLocalPlayer)
 	{
 		Player* pPlayer = (Player*)m_pMinecraft->m_pCameraEntity;
-		if (pPlayer && pPlayer->isPlayer())
-		{
-			m_fovModTarget = 1.0f;
-			if (pPlayer->m_bFlying)
-				m_fovModTarget *= 1.1f;
-		}
-		else
-		{
-			m_fovModTarget = 1.0f;
-		}
+		if (pPlayer && pPlayer->isPlayer() && pPlayer->m_bFlying)
+			m_fovModTarget = 1.1f;
 		m_fovModPrev = m_fovMod;
 		m_fovMod += (m_fovModTarget - m_fovMod) * 0.5f;
 	}
@@ -966,7 +954,7 @@ void GameRenderer::pick(float f)
 	Mob* pMob = m_pMinecraft->m_pCameraEntity;
 	HitResult& mchr = m_pMinecraft->m_hitResult;
 	float dist = m_pMinecraft->getLocalPlayerGameMode()->getBlockReachDistance();
-	bool isFirstPerson = m_pMinecraft->getOptions()->m_thirdPerson.get() == 0;
+	bool isFirstPerson = m_pMinecraft->getOptions()->m_thirdPerson.get() == TPM_FIRST;
 	Vec3 touchPosNear, touchPosFar;
 	bool bUseTouchCoords = false;
 
