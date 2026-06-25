@@ -71,6 +71,7 @@
     "loading.initializing": "Initializing server",
     "loading.spawnArea": "Loading spawn area",
     "options.animatedCharacter": "Animated Character",
+    "options.classicCrafting": "Classic Crafting",
     "options.thirdPerson": "Third Person View",
     "options.fancyGraphics": "Fancy Graphics",
     "options.blockOutlines": "Block Outlines",
@@ -134,8 +135,8 @@
     "container.tab.misc": "Miscellaneous",
     "container.tab.redstone_and_transport": "Redstone & Transportation",
     "container.tab.structures": "Structures",
-    "container.tab.symbols": "Symbols",
     "container.tab.tools": "Tools and Weapons",
     "container.tab.tools_and_armour": "Tools, Weapons & Armor",
-    "container.tab.transport": "Transport"
+    "container.tab.transport": "Transport",
+    "container.tab.armour": "Armour"
 }

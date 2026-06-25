@@ -509,6 +509,7 @@ public:
 	OPTION(m_difficulty);                  \
 	OPTION(m_thirdPerson);                 \
 	OPTION(m_serverVisibleDefault);        \
+	OPTION(m_classicCrafting);			   \
 
 #define OPTIONS_LIST_GAMEPLAY_AUDIO        \
 	HEADER("Audio");                       \

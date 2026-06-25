@@ -3,6 +3,7 @@
 
 #include "screens/StartMenuScreen.hpp"
 #include "screens/PauseScreen.hpp"
+#include "screens/inventory/InventoryScreen.hpp"
 #include "screens/inventory/CraftingScreen.hpp"
 #include "screens/inventory/ChestScreen.hpp"
 #include "screens/inventory/FurnaceScreen.hpp"
@@ -50,9 +51,14 @@ void ScreenChooser::pushProgressScreen()
 	m_pMinecraft->setScreen(new ProgressScreen);
 }
 
-void ScreenChooser::pushCreativeScreen()
+void ScreenChooser::pushCreativeScreen(Player* player)
 {
-	m_pMinecraft->setScreen(new CreativeScreen(m_pMinecraft->m_pLocalPlayer->m_pInventory));
+	m_pMinecraft->setScreen(new CreativeScreen(player->m_pInventory));
+}
+
+void ScreenChooser::pushPlayerCraftingScreen(Player* player)
+{
+	m_pMinecraft->setScreen(new InventoryScreen(player));
 }
 
 void ScreenChooser::pushCraftingScreen(Player* player, const TilePos& pos)

@@ -9,6 +9,7 @@
 #include "LeafTile.hpp"
 #include "world/level/Level.hpp"
 #include "client/renderer/PatchManager.hpp"
+#include "client/renderer/FoliageColor.hpp"
 
 #define C_REQUIRED_WOOD_RANGE 4
 #define C_UPDATE_LEAF_BIT 8 // 4 on b1.2_02 & 0.1.0
@@ -200,6 +201,19 @@ int LeafTile::getColor(const LevelSource* level, const TilePos& pos) const
 	}
 
 	return 0xffffff;
+}
+
+int LeafTile::getColor(Facing::Name face, TileData data) const
+{
+	if ((data & 1) == 1)
+	{
+		return FoliageColor::getEvergreenColor();
+	}
+	if ((data & 2) == 2)
+	{
+		return FoliageColor::getBirchColor();
+	}
+	return FoliageColor::getDefaultColor();
 }
 
 int LeafTile::getTexture(Facing::Name face, TileData data) const

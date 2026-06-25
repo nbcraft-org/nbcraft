@@ -1,8 +1,7 @@
 #include "TallGrass.hpp"
 #include "world/level/Level.hpp"
 #include "client/renderer/PatchManager.hpp"
-#include <client/renderer/GrassColor.hpp>
-#include <client/renderer/FoliageColor.hpp>
+#include "client/renderer/FoliageColor.hpp"
 
 TallGrass::TallGrass(TileID id, int texture) : Bush(id, texture)
 {
@@ -26,6 +25,11 @@ int TallGrass::getColor(const LevelSource* levelSource, const TilePos& pos) cons
 		return 0x339933;
 	}
 	return 0xFFFFFF;
+}
+
+int TallGrass::getColor(Facing::Name face, TileData data) const
+{
+	return data == 0 ? 0xFFFFFF : FoliageColor::getDefaultColor();
 }
 
 int TallGrass::getTexture(Facing::Name face, TileData data) const

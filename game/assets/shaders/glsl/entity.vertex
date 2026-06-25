@@ -4,18 +4,23 @@
 uniform MAT4 WORLDVIEWPROJ;
 uniform MAT4 WORLD;
 uniform vec4 TILE_LIGHT_COLOR;
+
 #ifdef USE_OVERLAY
 uniform vec4 OVERLAY_COLOR;
 #endif
+
 #ifdef USE_COLOR_MASK
 uniform vec4 CHANGE_COLOR;
 #endif
+
 uniform vec4 FOG_COLOR;
 uniform vec2 FOG_CONTROL;
 uniform float RENDER_DISTANCE;
+
 #ifdef USE_UV_ANIM
 uniform vec2 UV_ANIM;
 #endif
+
 #ifdef GLINT
 uniform vec2 UV_OFFSET;
 uniform vec2 UV_ROTATION;

@@ -200,7 +200,7 @@ public:
         return true;
     }
 
-    bool remove(const TKey& key)
+    bool erase(const TKey& key)
     {
         return erase(find(key)) != end();
     }
@@ -379,7 +379,7 @@ public:
 
         const TKey& key() { return m_entries->at(m_index).pair.first; }
         const TValue& value() { return m_entries->at(m_index).pair.second; }
-        const std::pair<TKey, TValue>* operator->() { return &m_entries->at(m_index); }
+        const std::pair<TKey, TValue>* operator->() { return &m_entries->at(m_index).pair; }
 
     private:
         const std::vector<HashMapEntry<TKey, TValue> >* m_entries;

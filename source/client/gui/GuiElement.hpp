@@ -9,6 +9,7 @@
 #define C_SOUND_UI_FOCUS    "ui.focus"
 #define C_SOUND_UI_PRESS    "ui.press"
 #define C_SOUND_UI_SCROLL   "ui.scroll"
+#define C_SOUND_UI_CRAFTFAIL "ui.craftfail"
 
 class Minecraft;
 

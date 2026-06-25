@@ -80,9 +80,12 @@ public: // Methods
 	virtual bool hasCraftingRemainingItem() const;
 	virtual std::string getName() const;
 	virtual std::string getHovertextName() const;
+	virtual std::string getName(ItemStack&) const;
+	virtual std::string getHovertextName(ItemStack&) const;
 	virtual void onCraftedBy(ItemStack*, Player*, Level*);
 	virtual void inventoryTick(ItemStack*, Level*, Entity*, int, bool);
 	virtual bool isDamageable() const;
+	virtual int getColor(int data) const;
 	virtual int buildIdAux(int16_t auxValue, const CompoundTag* userData = nullptr) const;
 
 	// Armor/defense methods

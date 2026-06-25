@@ -32,7 +32,12 @@ bool ShapedRecipe::matches(Container* container)
     return false;
 }
 
-const ItemStack& ShapedRecipe::assemble(Container* container)
+const std::vector<ItemStack>& ShapedRecipe::getIngredients()
+{
+    return m_ingredients;
+}
+
+const ItemStack& ShapedRecipe::getResultItem()
 {
 	return m_result;
 }
@@ -59,18 +64,7 @@ bool ShapedRecipe::matches(CraftingContainer* container, int i, int j, bool leni
                     ing = &m_ingredients[xd + yd * m_width];
             }
 
-            const ItemStack& secondItem = container->getItem(x, y);
-            if (!secondItem.isEmpty() || !ing->isEmpty())
-            {
-                if ((secondItem.isEmpty() && !ing->isEmpty()) || (!secondItem.isEmpty() && ing->isEmpty()))
-                    return false;
-
-                if (ing->getId() != secondItem.getId())
-                    return false;
-
-                if (ing->getAuxValue() != -1 && ing->getAuxValue() != secondItem.getAuxValue())
-                    return false;
-            }
+            if (!ing->sameIngredient(container->getItem(x, y))) return false;
         }
     }
 
@@ -79,5 +73,5 @@ bool ShapedRecipe::matches(CraftingContainer* container, int i, int j, bool leni
 
 bool ShapedRecipe::isShaped() const
 {
-    return false;
+    return true;
 }

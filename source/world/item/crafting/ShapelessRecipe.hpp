@@ -11,7 +11,8 @@ public:
     virtual ~ShapelessRecipe();
 
     bool matches(Container* container) override;
-    const ItemStack& assemble(Container* container) override;
+    const std::vector<ItemStack>& getIngredients() override;
+    const ItemStack& getResultItem() override;
     int size() const override;
 
 private:

@@ -3,7 +3,14 @@
 
 uniform sampler2D TEXTURE_0;
 uniform sampler2D TEXTURE_1;
+
+#if defined(USE_COLOR_MASK) && defined(GLINT)
 uniform vec4 TILE_LIGHT_COLOR;
+#endif
+
+#ifdef USE_CURRENT_COLOR
+uniform vec4 CURRENT_COLOR;
+#endif
 
 vec4 glintBlend(vec4 dest, vec4 source) {
 	// glBlendFuncSeparate(GL_SRC_COLOR, GL_ONE, GL_ONE, GL_ZERO)
@@ -51,7 +58,9 @@ void main()
 	//make glowy stuff
 	color *= mix(vec4(1.0), light, color.a );
 #elif defined(USE_VERTEX_COLORS)
-    color *= vertexColor;
+	color *= vertexColor;
+#elif defined(USE_CURRENT_COLOR)
+	color *= CURRENT_COLOR;
 #else
 	color *= light;
 #endif

@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <!-- Automatically select the best platform toolset version for the current VS version -->
-    <DefaultPlatformToolset Condition="'$(DefaultPlatformToolset)' == '' and '$(VisualStudioVersion)' == '10.0'">v100</DefaultPlatformToolset>
-    <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
+    <PlatformToolset Condition="'$(DefaultPlatformToolset)' != ''">$(DefaultPlatformToolset)</PlatformToolset>
   </PropertyGroup>
 </Project>

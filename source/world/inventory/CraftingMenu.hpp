@@ -7,7 +7,7 @@
 class CraftingMenu : public ContainerMenu
 {
 public:
-    CraftingMenu(Inventory* inventory, const TilePos& tilePos, Level* level);
+    CraftingMenu(Inventory* inventory, const TilePos& tilePos, Level* level, bool is2x2 = false);
     ~CraftingMenu();
 
     void slotsChanged(Container* container) override;

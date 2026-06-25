@@ -133,9 +133,11 @@ add_library(nbcraft-core STATIC
     client/gui/screens/inventory/CreativeScreen_Console.cpp
     client/gui/screens/inventory/InventoryScreen.cpp
     client/gui/screens/inventory/CraftingScreen.cpp
+    client/gui/screens/inventory/CraftingScreen_Console.cpp
     client/gui/screens/inventory/ClassicCraftingScreen_Console.cpp
     client/gui/screens/inventory/FurnaceScreen.cpp
     client/gui/screens/inventory/ChestScreen.cpp
+    client/gui/screens/inventory/ClientCraftContext.cpp
     client/gui/components/ScrolledSelectionList.cpp
     client/gui/components/AvailableGamesList.cpp
     client/gui/components/RolledSelectionList.cpp
@@ -152,6 +154,7 @@ add_library(nbcraft-core STATIC
 	client/gui/components/ImageButton.cpp
 	client/gui/components/LargeImageButton.cpp
     client/gui/components/TabButton.cpp
+    client/gui/components/CraftButton_Console.cpp
     client/locale/Language.cpp
     client/gui/Gui.cpp
     client/gui/GuiComponent.cpp
@@ -395,6 +398,7 @@ add_library(nbcraft-core STATIC
     world/inventory/CraftingContainer.cpp
     world/inventory/ResultContainer.cpp
     world/inventory/SimpleContainer.cpp
+    world/inventory/CraftContext.cpp
     world/item/DoorItem.cpp
     world/item/ItemStack.cpp
     world/item/RocketItem.cpp

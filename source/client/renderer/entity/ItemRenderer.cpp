@@ -14,6 +14,7 @@
 #include "world/entity/ItemEntity.hpp"
 #include "client/renderer/Lighting.hpp"
 #include "client/app/Minecraft.hpp"
+#include "renderer/ShaderConstants.hpp"
 
 #ifndef ENH_3D_INVENTORY_TILES
 const uint8_t g_ItemFrames[C_MAX_TILES] =
@@ -31,7 +32,8 @@ const uint8_t g_ItemFrames[C_MAX_TILES] =
 
 ItemRenderer::Materials::Materials()
 {
-	MATERIAL_PTR(switchable, item_entity);
+	MATERIAL_PTR(switchable, item_entity_item);
+	MATERIAL_PTR(switchable, item_entity_tile);
 	MATERIAL_PTR(common, ui_fill_color);
 	MATERIAL_PTR(common, ui_fill_gradient);
 	MATERIAL_PTR(common, ui_textured);
@@ -116,7 +118,7 @@ void ItemRenderer::render(const Entity& entity, const Vec3& pos, float rot, floa
 					0.2f * (m_random.nextFloat() * 2.0f - 1.0f) / scale));
 			}
 
-			m_pTileRenderer->renderTile(FullTile(pTile, itemStack.getAuxValue()), m_itemMaterials.item_entity, itemEntity.getBrightness(1.0f));
+			m_pTileRenderer->renderTile(FullTile(pTile, itemStack.getAuxValue()), m_itemMaterials.item_entity_tile, itemEntity.getBrightness(1.0f));
 		}
 	}
 	else
@@ -142,17 +144,19 @@ void ItemRenderer::render(const Entity& entity, const Vec3& pos, float rot, floa
 			Tesselator& t = Tesselator::instance;
 			t.begin(4);
 
+			Color color = Color(itemStack.getItem()->getColor(itemStack.getAuxValue()), 1.0f);
+
 #ifdef ENH_SHADE_HELD_TILES
-			float bright = itemEntity.getBrightness(1.0f);
-			t.color(bright, bright, bright);
+			color.mulRGB(itemEntity.getBrightness(1.0f));
 #endif
+			currentShaderColor = color;
 			t.normal(Vec3::UNIT_Y);
 			t.vertexUV(-0.5f, -0.25f, 0.0f, float(16 * (icon % 16))     / 256.0f, float(16 * (icon / 16 + 1)) / 256.0f);
 			t.vertexUV(+0.5f, -0.25f, 0.0f, float(16 * (icon % 16 + 1)) / 256.0f, float(16 * (icon / 16 + 1)) / 256.0f);
 			t.vertexUV(+0.5f, +0.75f, 0.0f, float(16 * (icon % 16 + 1)) / 256.0f, float(16 * (icon / 16))     / 256.0f);
 			t.vertexUV(-0.5f, +0.75f, 0.0f, float(16 * (icon % 16))     / 256.0f, float(16 * (icon / 16))     / 256.0f);
             
-			t.draw(m_itemMaterials.item_entity);
+			t.draw(m_itemMaterials.item_entity_item);
 		}
 	}
 
@@ -172,7 +176,7 @@ void ItemRenderer::blitRect(Tesselator& t, int x, int y, int w, int h, int color
 	t.draw(m_itemMaterials.ui_fill_gradient);
 }
 
-void ItemRenderer::blit(int dx, int dy, int sx, int sy, int tw, int th)
+void ItemRenderer::blit(int dx, int dy, int sx, int sy, int tw, int th, const Color& color)
 {
 	Tesselator& t = Tesselator::instance;
 
@@ -181,14 +185,15 @@ void ItemRenderer::blit(int dx, int dy, int sx, int sy, int tw, int th)
 	float vx = float(sx), vy = float(sy);
 
 	t.begin(4);
+	if (color != Color::WHITE)
+		t.color(color);
 	t.vertexUV(ex,      ey + uh, 0.0f, float(vx)      / 256.0f, float(vy + uh) / 256.0f);
 	t.vertexUV(ex + uw, ey + uh, 0.0f, float(vx + uw) / 256.0f, float(vy + uh) / 256.0f);
 	t.vertexUV(ex + uw, ey,      0.0f, float(vx + uw) / 256.0f, float(vy)      / 256.0f);
 	t.vertexUV(ex,      ey,      0.0f, float(vx)      / 256.0f, float(vy)      / 256.0f);
-	t.draw(m_itemMaterials.ui_textured);
+	t.draw(color == Color::WHITE ? m_itemMaterials.ui_textured : m_itemMaterials.ui_texture_and_color);
 }
-
-void ItemRenderer::renderGuiItemOverlay(Minecraft& mc, ItemStack& item, int x, int y)
+void ItemRenderer::renderGuiItemOverlay(Minecraft& mc, const ItemStack& item, int x, int y)
 {
 	if (item.isEmpty())
 		return;
@@ -202,7 +207,7 @@ void ItemRenderer::renderGuiItemOverlay(Minecraft& mc, ItemStack& item, int x, i
 
 		int duraBgColor = (((255 - duraPercent) / 4) << 16) | 0x3F00;
 		int duraColor = ((255 - duraPercent) << 16) | (duraPercent << 8);
-
+		
 		Tesselator& t = Tesselator::instance;
 		
 		blitRect(t, x + 2, y + 13, 13, 2, 0);
@@ -225,14 +230,11 @@ void ItemRenderer::renderGuiItemOverlay(Minecraft& mc, ItemStack& item, int x, i
 	mc.m_pFont->drawShadow(amtstr, x + 17 - width, y + 6 + 3, 0xFFFFFF);
 }
 
-void ItemRenderer::renderGuiItem(Minecraft& mc, ItemStack& item, int x, int y, bool b)
+void ItemRenderer::renderGuiItem(Minecraft& mc, const ItemStack& item, int x, int y, const Color& color)
 {
 	// @NOTE: Font unused but would presumably be used to draw the item amount.
 	// As if that actually works due to us blocking t.begin() and t.draw() calls...
 	if (item.isEmpty() || !item.isValid())
-		return;
-
-	if (!b)
 		return;
 
 	Textures& textures = *mc.m_pTextures;
@@ -310,7 +312,7 @@ void ItemRenderer::renderGuiItem(Minecraft& mc, ItemStack& item, int x, int y, b
 		matrix->rotate(45.0f, Vec3::UNIT_Y);
 		matrix->rotate(-90.0f, Vec3::UNIT_Y);
 		
-		m_pTileRenderer->renderTile(FullTile(pTile, item.getAuxValue()), m_itemMaterials.ui_item, 1.0f);
+		m_pTileRenderer->renderTile(FullTile(pTile, item.getAuxValue()), m_itemMaterials.ui_item, color);
 
 		Lighting::turnOff();
 
@@ -329,6 +331,6 @@ void ItemRenderer::renderGuiItem(Minecraft& mc, ItemStack& item, int x, int y, b
 		else
 			textures.loadAndBindTexture(C_ITEMS_NAME);
 
-		blit(x, y, 16 * (item.getIcon() % 16), 16 * (item.getIcon() / 16), 16, 16);
+		blit(x, y, 16 * (item.getIcon() % 16), 16 * (item.getIcon() / 16), 16, 16, color * Color(item.getItem()->getColor(item.getAuxValue()), 1.0f));
 	}
 }

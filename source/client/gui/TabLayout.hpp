@@ -32,13 +32,14 @@ public:
 
     void startNavigation();
     bool areaNavigation(Minecraft* pMinecraft, AreaNavigation::Direction) override;
-    void areaNavigation(AreaNavigation::Direction, bool cyclic = true);
+    bool areaNavigation(AreaNavigation::Direction, bool cyclic = true);
     void setSelected(bool);
 
     bool isHovered(Minecraft*, const MenuPointer& pointer) override;
     void pressed(Minecraft*, const MenuPointer& pointer) override;
     void released(const MenuPointer& pointer) override;
     void pressed(Minecraft*) override;
+    void handleScroll(float force) override;
 
     void render(Minecraft*, const MenuPointer&) override;
     void renderSelected(Minecraft*, const MenuPointer&);

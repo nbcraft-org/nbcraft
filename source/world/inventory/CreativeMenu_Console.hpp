@@ -10,7 +10,7 @@ class Player;
 class CreativeMenu_Console : public ContainerMenu
 {
 public:
-    enum Category
+    enum Group
     {
         STRUCTURES,
         DECORATION,
@@ -18,7 +18,8 @@ public:
         MATERIALS,
         FOOD,
         TOOLS,
-        MISC
+        MISC,
+        GROUP_COUNT
     };
 
     CreativeMenu_Console(Container* inventory, Container* container);
@@ -31,13 +32,13 @@ public:
 
 private:
     static void initCreativeItems();
-    static void _addAuxTile(Category, Tile* tile);
-    static void _addTile(Category, Tile* tile, TileData = 0);
-    static void _addItem(Category, Item* item, int data = 0);
+    static void _addAuxTile(Group, Tile* tile);
+    static void _addTile(Group, Tile* tile, TileData = 0);
+    static void _addItem(Group, Item* item, int data = 0);
 
 private:
     Container* m_container;
 
-    static std::vector<ItemStack> creativeItems[8];
+    static std::vector<ItemStack> creativeItems[GROUP_COUNT];
     static bool initialized;
 };

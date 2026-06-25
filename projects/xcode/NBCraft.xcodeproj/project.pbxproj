@@ -294,6 +294,14 @@
 		84498A9C2AF18CDA005EF5A5 /* uncompr.c in Sources */ = {isa = PBXBuildFile; fileRef = 840DD8652AC810630006A435 /* uncompr.c */; };
 		84498A9D2AF18CDA005EF5A5 /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 840DD8682AC810630006A435 /* zutil.c */; };
 		84498AA02AF18D08005EF5A5 /* libZLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 84498A832AF18C7A005EF5A5 /* libZLib.a */; };
+		845A8D302FEBAB0900D26FD2 /* CraftContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 845A8D2E2FEBAB0800D26FD2 /* CraftContext.cpp */; };
+		845A8D312FEBAB0900D26FD2 /* CraftContext.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 845A8D2F2FEBAB0900D26FD2 /* CraftContext.hpp */; };
+		845A8D342FEBAB1C00D26FD2 /* CraftButton_Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 845A8D322FEBAB1C00D26FD2 /* CraftButton_Console.cpp */; };
+		845A8D352FEBAB1C00D26FD2 /* CraftButton_Console.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 845A8D332FEBAB1C00D26FD2 /* CraftButton_Console.hpp */; };
+		845A8D3A2FEBAB3000D26FD2 /* ClientCraftContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 845A8D362FEBAB3000D26FD2 /* ClientCraftContext.cpp */; };
+		845A8D3B2FEBAB3000D26FD2 /* ClientCraftContext.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 845A8D372FEBAB3000D26FD2 /* ClientCraftContext.hpp */; };
+		845A8D3C2FEBAB3000D26FD2 /* CraftingScreen_Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 845A8D382FEBAB3000D26FD2 /* CraftingScreen_Console.cpp */; };
+		845A8D3D2FEBAB3000D26FD2 /* CraftingScreen_Console.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 845A8D392FEBAB3000D26FD2 /* CraftingScreen_Console.hpp */; };
 		845BBCB52F2EA81700C7232C /* ToolItem.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 845BBCB32F2EA81700C7232C /* ToolItem.hpp */; };
 		845BBCB62F2EA81700C7232C /* ToolItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 845BBCB42F2EA81700C7232C /* ToolItem.cpp */; };
 		84619B222AF1EDA300B0DE81 /* libZLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 84498A832AF18C7A005EF5A5 /* libZLib.a */; };
@@ -2408,6 +2416,14 @@
 		8445E79E2D769329008DC834 /* SynchedEntityData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SynchedEntityData.cpp; sourceTree = "<group>"; };
 		8445E79F2D769329008DC834 /* SynchedEntityData.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SynchedEntityData.hpp; sourceTree = "<group>"; };
 		84498A832AF18C7A005EF5A5 /* libZLib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libZLib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		845A8D2E2FEBAB0800D26FD2 /* CraftContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CraftContext.cpp; sourceTree = "<group>"; };
+		845A8D2F2FEBAB0900D26FD2 /* CraftContext.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CraftContext.hpp; sourceTree = "<group>"; };
+		845A8D322FEBAB1C00D26FD2 /* CraftButton_Console.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CraftButton_Console.cpp; sourceTree = "<group>"; };
+		845A8D332FEBAB1C00D26FD2 /* CraftButton_Console.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CraftButton_Console.hpp; sourceTree = "<group>"; };
+		845A8D362FEBAB3000D26FD2 /* ClientCraftContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClientCraftContext.cpp; sourceTree = "<group>"; };
+		845A8D372FEBAB3000D26FD2 /* ClientCraftContext.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ClientCraftContext.hpp; sourceTree = "<group>"; };
+		845A8D382FEBAB3000D26FD2 /* CraftingScreen_Console.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CraftingScreen_Console.cpp; sourceTree = "<group>"; };
+		845A8D392FEBAB3000D26FD2 /* CraftingScreen_Console.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CraftingScreen_Console.hpp; sourceTree = "<group>"; };
 		845BBCB32F2EA81700C7232C /* ToolItem.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ToolItem.hpp; sourceTree = "<group>"; };
 		845BBCB42F2EA81700C7232C /* ToolItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ToolItem.cpp; sourceTree = "<group>"; };
 		84619B3B2AF1FE4C00B0DE81 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
@@ -3544,6 +3560,8 @@
 				840DD5892AC810620006A435 /* AvailableGamesList.hpp */,
 				840DD58A2AC810620006A435 /* Button.cpp */,
 				840DD58B2AC810620006A435 /* Button.hpp */,
+				845A8D322FEBAB1C00D26FD2 /* CraftButton_Console.cpp */,
+				845A8D332FEBAB1C00D26FD2 /* CraftButton_Console.hpp */,
 				84E5A68E2FC963B200320694 /* ImageButton.cpp */,
 				84E5A68F2FC963B200320694 /* ImageButton.hpp */,
 				84EAF8182FE8CC1B00D54A38 /* ItemPane.cpp */,
@@ -5213,10 +5231,14 @@
 				84E022EA2F2A0211003C8FFE /* ChestScreen.hpp */,
 				844337192F405E1C00EB3115 /* ClassicCraftingScreen_Console.cpp */,
 				8443371A2F405E1C00EB3115 /* ClassicCraftingScreen_Console.hpp */,
+				845A8D362FEBAB3000D26FD2 /* ClientCraftContext.cpp */,
+				845A8D372FEBAB3000D26FD2 /* ClientCraftContext.hpp */,
 				84E022EB2F2A0211003C8FFE /* ContainerScreen.cpp */,
 				84E022EC2F2A0211003C8FFE /* ContainerScreen.hpp */,
 				84DED1962F3095B8004001C5 /* CraftingScreen.cpp */,
 				84DED1972F3095B8004001C5 /* CraftingScreen.hpp */,
+				845A8D382FEBAB3000D26FD2 /* CraftingScreen_Console.cpp */,
+				845A8D392FEBAB3000D26FD2 /* CraftingScreen_Console.hpp */,
 				84E023062F2A0211003C8FFE /* CreativeScreen.cpp */,
 				84E023072F2A0211003C8FFE /* CreativeScreen.hpp */,
 				84EAF8242FE8CC8200D54A38 /* CreativeScreen_Console.cpp */,
@@ -5295,6 +5317,8 @@
 				84E2A3C62FBAAC700026780B /* ContainerSizeChangeListener.cpp */,
 				84E2A3C72FBAAC700026780B /* ContainerSizeChangeListener.hpp */,
 				84DAF5732F3464B400D67310 /* ContainerType.hpp */,
+				845A8D2E2FEBAB0800D26FD2 /* CraftContext.cpp */,
+				845A8D2F2FEBAB0900D26FD2 /* CraftContext.hpp */,
 				84E7BF0E2F286A08002D3936 /* CraftingContainer.cpp */,
 				84E7BF0F2F286A08002D3936 /* CraftingContainer.hpp */,
 				84DED19A2F3095FD004001C5 /* CraftingMenu.cpp */,
@@ -6003,6 +6027,7 @@
 				84B8AF422AF189D8008DE93D /* GuiComponent.hpp in Headers */,
 				84B8AF432AF189D8008DE93D /* Screen.hpp in Headers */,
 				8477B3A32C4DC374004E1AC5 /* ControllerBuildInput.hpp in Headers */,
+				845A8D3B2FEBAB3000D26FD2 /* ClientCraftContext.hpp in Headers */,
 				84EB09F62EE2CCA8008FB007 /* ScreenRenderer.hpp in Headers */,
 				84B8AF442AF189D8008DE93D /* ChatScreen.hpp in Headers */,
 				84B8AF452AF189D8008DE93D /* ConfirmScreen.hpp in Headers */,
@@ -6114,7 +6139,9 @@
 				84AA8C042B32F3F3003F5B82 /* MobRenderer.hpp in Headers */,
 				84EB09D92EE2CC86008FB007 /* SheepModel.hpp in Headers */,
 				844336F62F405DCA00EB3115 /* AreaNavigation.hpp in Headers */,
+				845A8D352FEBAB1C00D26FD2 /* CraftButton_Console.hpp in Headers */,
 				84EAF81F2FE8CC1B00D54A38 /* ItemPane.hpp in Headers */,
+				845A8D3D2FEBAB3000D26FD2 /* CraftingScreen_Console.hpp in Headers */,
 				84AA8C062B32F3F3003F5B82 /* PigRenderer.hpp in Headers */,
 				84AA8C082B32F3F3003F5B82 /* SheepFurRenderer.hpp in Headers */,
 				84F9482A2F2F5CB700217B16 /* ResourcePackRepository.hpp in Headers */,
@@ -6220,6 +6247,7 @@
 				84BF63932AF186C8008A9995 /* PerformanceTestChunkSource.hpp in Headers */,
 				84E023012F2A0245003C8FFE /* ChestMenu.hpp in Headers */,
 				84E0230D2F2A0245003C8FFE /* CreativeMenu.hpp in Headers */,
+				845A8D312FEBAB0900D26FD2 /* CraftContext.hpp in Headers */,
 				84B1E03A2E04FD7900ED000A /* Arrow.hpp in Headers */,
 				84BF63942AF186C8008A9995 /* RandomLevelSource.hpp in Headers */,
 				84BF63952AF186C8008A9995 /* TestChunkSource.hpp in Headers */,
@@ -7156,6 +7184,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				84B8AEFB2AF1896F008DE93D /* DirectConnectScreen.cpp in Sources */,
+				845A8D3C2FEBAB3000D26FD2 /* CraftingScreen_Console.cpp in Sources */,
 				84B8AEFC2AF1896F008DE93D /* IngameBlockSelectionScreen.cpp in Sources */,
 				84B1E0632E05194A00ED000A /* stb_vorbis.c in Sources */,
 				84B8AEFD2AF1896F008DE93D /* InvalidLicenseScreen.cpp in Sources */,
@@ -7266,6 +7295,7 @@
 				84AA8BF12B32F3F3003F5B82 /* ChickenRenderer.cpp in Sources */,
 				84AA8BF32B32F3F3003F5B82 /* CowRenderer.cpp in Sources */,
 				84EB09CA2EE2CC86008FB007 /* CowModel.cpp in Sources */,
+				845A8D342FEBAB1C00D26FD2 /* CraftButton_Console.cpp in Sources */,
 				84AA8BF52B32F3F3003F5B82 /* CreeperRenderer.cpp in Sources */,
 				844337112F405E0600EB3115 /* PauseScreen_Console.cpp in Sources */,
 				84AA8BF72B32F3F3003F5B82 /* EntityRenderDispatcher.cpp in Sources */,
@@ -7313,6 +7343,7 @@
 				84AA8C1E2B32F3F3003F5B82 /* GameRenderer.cpp in Sources */,
 				84EB09F52EE2CCA8008FB007 /* ScreenRenderer.cpp in Sources */,
 				84AA8C202B32F3F3003F5B82 /* GrassColor.cpp in Sources */,
+				845A8D3A2FEBAB3000D26FD2 /* ClientCraftContext.cpp in Sources */,
 				84AA8C222B32F3F3003F5B82 /* ItemInHandRenderer.cpp in Sources */,
 				84AA8C242B32F3F3003F5B82 /* LavaSideTexture.cpp in Sources */,
 				84AA8C252B32F3F3003F5B82 /* LavaTexture.cpp in Sources */,
@@ -7562,6 +7593,7 @@
 				84E78C872B58B66B00D515EF /* RocketLauncherTile.cpp in Sources */,
 				8470AF2C2BE9B60A00BCA54E /* MobFactory.cpp in Sources */,
 				84E1C9E92E7FDC72007D2F5D /* SlabItem.cpp in Sources */,
+				845A8D302FEBAB0900D26FD2 /* CraftContext.cpp in Sources */,
 				84E7BF362F286A6A002D3936 /* ItemStack.cpp in Sources */,
 				8470AF3C2BE9B6FA00BCA54E /* FireworkParticle.cpp in Sources */,
 			);

@@ -190,7 +190,7 @@ void CCRakNetSlidingWindow::OnNAK(CCTimeType curTime, DatagramSequenceNumberType
 
 	if (_isContinuousSend && backoffThisBlock==false)
 	{
-		// WORKAROUND: MSVC for Xbox 360
+		// MC-WORKAROUND: MSVC for Xbox 360
 		// The compiler crashes on 'ssThresh=cwnd/2' with link-time code generation enabled.
 		// Moving to a local temp variable and using multiplication solves this issue.
 		double tempCwnd = cwnd;

@@ -50,9 +50,12 @@ public:
 	void setSelectedItem(const ItemStack& item);
 	ItemStack removeItem(StackID stackId, int count) override;
 	bool removeResource(int id);
+	int removeIngredient(const ItemStack&);
 
 	void setCarried(const ItemStack& item);
 	ItemStack& getCarried();
+
+	const std::vector<ItemStack>& getItems();
 
 	void pickItem(int itemID, int data, int maxHotBarSlot);
 	void selectItem(int itemID, int maxHotBarSlot);

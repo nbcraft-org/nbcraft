@@ -45,6 +45,7 @@
 #include "renderer/RenderContextImmediate.hpp"
 #include "client/renderer/LogoRenderer.hpp"
 
+Minecraft* Minecraft::_singletonPtr;
 float Minecraft::_renderScaleMultiplier = 1.0f;
 
 int Minecraft::width  = C_DEFAULT_SCREEN_WIDTH;
@@ -110,6 +111,8 @@ Minecraft::Minecraft()
 	m_fLastUpdated = 0;
 	m_fDeltaTime = 0;
 	m_lastInteractTime = 0;
+
+	_singletonPtr = this;
 }
 
 Minecraft::~Minecraft()
@@ -589,7 +592,7 @@ void Minecraft::tickInput()
 		}
 	}
 
-	if (!m_pLocalPlayer)
+	if (!m_pLocalPlayer || m_bPreparingLevel)
 		return;
 
 	//bool bIsInGUI = m_pGui->isInside(Mouse::getX(), Mouse::getY());
@@ -1004,9 +1007,12 @@ void Minecraft::update()
 
 	m_pGameRenderer->render(m_timer);
 
-	GameMode* pGameMode = getLocalPlayerGameMode();
-	if (pGameMode)
-		pGameMode->render(m_timer.m_renderTicks);
+	if (!m_bPreparingLevel)
+	{
+		GameMode* pGameMode = getLocalPlayerGameMode();
+		if (pGameMode)
+			pGameMode->render(m_timer.m_renderTicks);
+	}
 
 	renderContext.endRender();
 
@@ -1143,7 +1149,7 @@ void Minecraft::sizeUpdate(int newWidth, int newHeight)
 			Gui::GuiWidth,
 			Gui::GuiHeight
 		);
-		m_pScreen->centerMenuPointer();
+		m_pScreen->initMenuPointer();
 	}
 
 	LogoRenderer::singleton().build(Gui::GuiWidth);

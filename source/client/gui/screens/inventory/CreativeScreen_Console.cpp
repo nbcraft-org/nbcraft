@@ -21,7 +21,7 @@ CreativeScreen_Console::CreativeScreen_Console(Container* inventory) : Container
     _addTab("gui/console/icon_Redstone_and_Transport.png", "container.tab.redstone_and_transport");
     _addTab("gui/console/icon_materials.png", "container.tab.materials");
     _addTab("gui/console/icon_food.png", "container.tab.food");
-    _addTab("gui/console/icon_tools.png", "container.tab.tools");
+    _addTab("gui/console/icon_tools.png", "container.tab.tools_and_armour");
     _addTab("gui/console/icon_misc.png", "container.tab.misc");
 }
 

@@ -93,10 +93,7 @@
   "ui_item:ui_base": {
     "vertexShader": "shaders/color_uv.vertex",
     "fragmentShader": "shaders/color_texture.fragment",
-	
-	"states":["EnableAlphaTest", "Textured"],
-
-    "defines": [ "ALPHA_TEST" ]
+	  "states":["Textured"]
   },
 
   "ui_item_foil_stencil:ui_item": {
