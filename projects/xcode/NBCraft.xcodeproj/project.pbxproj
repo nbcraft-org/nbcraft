@@ -201,6 +201,9 @@
 		842B218A2F5414660006C1FA /* Default-736h@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 842B21882F5414660006C1FA /* Default-736h@3x.png */; };
 		8435BB192DCD47F400D38282 /* SoundStreamOAL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8435BB182DCD47F400D38282 /* SoundStreamOAL.cpp */; };
 		8435BB1A2DCD47F400D38282 /* SoundStreamOAL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8435BB182DCD47F400D38282 /* SoundStreamOAL.cpp */; };
+		8440D0302FED267E00FD4A51 /* ClockTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8440D02D2FED267E00FD4A51 /* ClockTexture.cpp */; };
+		8440D0312FED267E00FD4A51 /* CompassTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8440D02E2FED267E00FD4A51 /* CompassTexture.cpp */; };
+		8440D0322FED267E00FD4A51 /* PortalTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8440D02F2FED267E00FD4A51 /* PortalTexture.cpp */; };
 		8441F98F2DB4E911005977BD /* SoundSystemOAL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8441F9862DB4E911005977BD /* SoundSystemOAL.cpp */; };
 		8441F9962DB4E911005977BD /* SoundSystemOAL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8441F9862DB4E911005977BD /* SoundSystemOAL.cpp */; };
 		844336EB2F405D8E00EB3115 /* ScrollRenderer_Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 844336E92F405D8E00EB3115 /* ScrollRenderer_Console.cpp */; };
@@ -2341,6 +2344,9 @@
 		84336BA92B1EB9C200097DB0 /* Settings_macOS_Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Settings_macOS_Debug.xcconfig; path = Configuration/Settings_macOS_Debug.xcconfig; sourceTree = "<group>"; };
 		8435BB172DCD47F400D38282 /* SoundStreamOAL.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SoundStreamOAL.hpp; sourceTree = "<group>"; };
 		8435BB182DCD47F400D38282 /* SoundStreamOAL.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SoundStreamOAL.cpp; sourceTree = "<group>"; };
+		8440D02D2FED267E00FD4A51 /* ClockTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClockTexture.cpp; sourceTree = "<group>"; };
+		8440D02E2FED267E00FD4A51 /* CompassTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompassTexture.cpp; sourceTree = "<group>"; };
+		8440D02F2FED267E00FD4A51 /* PortalTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PortalTexture.cpp; sourceTree = "<group>"; };
 		8441F9852DB4E911005977BD /* CustomSoundSystem.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CustomSoundSystem.hpp; sourceTree = "<group>"; };
 		8441F9862DB4E911005977BD /* SoundSystemOAL.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SoundSystemOAL.cpp; sourceTree = "<group>"; };
 		844336E92F405D8E00EB3115 /* ScrollRenderer_Console.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollRenderer_Console.cpp; sourceTree = "<group>"; };
@@ -4987,6 +4993,8 @@
 			children = (
 				84AA8B992B32F3F3003F5B82 /* Chunk.cpp */,
 				84AA8B9A2B32F3F3003F5B82 /* Chunk.hpp */,
+				8440D02D2FED267E00FD4A51 /* ClockTexture.cpp */,
+				8440D02E2FED267E00FD4A51 /* CompassTexture.cpp */,
 				84AA8B9B2B32F3F3003F5B82 /* Culler.cpp */,
 				84AA8B9C2B32F3F3003F5B82 /* Culler.hpp */,
 				84AA8B9D2B32F3F3003F5B82 /* DynamicTexture.cpp */,
@@ -5023,6 +5031,7 @@
 				8443371E2F405E5500EB3115 /* LogoRenderer.hpp */,
 				84AA8BDB2B32F3F3003F5B82 /* PatchManager.cpp */,
 				84AA8BDC2B32F3F3003F5B82 /* PatchManager.hpp */,
+				8440D02F2FED267E00FD4A51 /* PortalTexture.cpp */,
 				84AA8BDD2B32F3F3003F5B82 /* RenderChunk.cpp */,
 				84AA8BDE2B32F3F3003F5B82 /* RenderChunk.hpp */,
 				84EB09E22EE2CCA8008FB007 /* renderer */,
@@ -7199,6 +7208,7 @@
 				84B8AEEE2AF1890A008DE93D /* RolledSelectionList.cpp in Sources */,
 				84B8AEEF2AF1890A008DE93D /* ScrolledSelectionList.cpp in Sources */,
 				84B8AEF02AF1890A008DE93D /* SmallButton.cpp in Sources */,
+				8440D0322FED267E00FD4A51 /* PortalTexture.cpp in Sources */,
 				84B8AEF12AF1890A008DE93D /* TextBox.cpp in Sources */,
 				844336F72F405DCA00EB3115 /* ScreenChooser_Console.cpp in Sources */,
 				84EB09F12EE2CCA8008FB007 /* EntityShaderManager.cpp in Sources */,
@@ -7280,6 +7290,7 @@
 				84E5A6922FC963B200320694 /* ImageButton.cpp in Sources */,
 				9D3996292F10E9C6002945D3 /* CreditsScreen.cpp in Sources */,
 				84AA8C0D2B32F3F3003F5B82 /* SpiderRenderer.cpp in Sources */,
+				8440D0302FED267E00FD4A51 /* ClockTexture.cpp in Sources */,
 				844337132F405E0600EB3115 /* ProgressScreen_Console.cpp in Sources */,
 				8443370F2F405E0600EB3115 /* PanelScreen_Console.cpp in Sources */,
 				84EAF8262FE8CC8200D54A38 /* CreativeScreen_Console.cpp in Sources */,
@@ -7332,6 +7343,7 @@
 				8477B3A62C4DC374004E1AC5 /* MouseBuildInput.cpp in Sources */,
 				84E78C7F2B58B5CC00D515EF /* RocketRenderer.cpp in Sources */,
 				84E022F72F2A021E003C8FFE /* MenuPointer.cpp in Sources */,
+				8440D0312FED267E00FD4A51 /* CompassTexture.cpp in Sources */,
 				8470AF402BE9B80900BCA54E /* DisconnectionScreen.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
