@@ -31,6 +31,7 @@ public:
 	virtual void clickedHeader(int x, int y);
 	virtual int getItemAtPosition(int x, int y);
 	virtual void capYPosition();
+	using GuiElement::render;
 	virtual void render(const MenuPointer& pointer, float f);
 	virtual void renderHoleBackground(float, float, int, int);
 	virtual void checkInput(const MenuPointer& pointer);
