@@ -27,8 +27,8 @@ void TakeAnimationParticle::render(Tesselator& t, float f, float a, float b, flo
 		Mth::Lerp(m_pThrower->m_posPrev.z, m_pThrower->m_pos.z, f)
 	);
 	Vec3 pos = m_pos + (tPos - m_pos) * p;
-	float bright = m_pLevel->getBrightness(TilePos(pos.x, pos.y + (m_heightOffset / 2.0F), pos.z));
-	glColor4f(bright, bright, bright, 1.0F);
+	float bright = m_pLevel->getBrightness(TilePos(pos.x, pos.y + (m_heightOffset / 2.0f), pos.z));
+	glColor4f(bright, bright, bright, 1.0f);
 	EntityRenderDispatcher::getInstance()->render(*m_pThrowed, Vec3(pos.x - xOff, pos.y - yOff, pos.z - zOff), m_pThrowed->m_rot.y, f);
 }
 
