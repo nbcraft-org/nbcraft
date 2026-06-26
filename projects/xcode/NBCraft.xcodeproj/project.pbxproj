@@ -1045,6 +1045,7 @@
 		84E7BF362F286A6A002D3936 /* ItemStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E7BF342F286A6A002D3936 /* ItemStack.cpp */; };
 		84E7BF372F286A6A002D3936 /* ItemStack.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84E7BF352F286A6A002D3936 /* ItemStack.hpp */; };
 		84E8DCE52E84ACBC00B30789 /* libRenderer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8406FD292AF1814500B09C1D /* libRenderer.a */; };
+		84EA32552FEE34CE00D49373 /* TakeAnimationParticle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84EA32542FEE34CE00D49373 /* TakeAnimationParticle.cpp */; };
 		84EAE8DE2AF1EAA1000894E8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84EAE8DD2AF1EAA1000894E8 /* UIKit.framework */; };
 		84EAE8E02AF1EAA9000894E8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84EAE8DF2AF1EAA9000894E8 /* CoreGraphics.framework */; };
 		84EAE8E42AF1EABE000894E8 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84EAE8E32AF1EABE000894E8 /* OpenGLES.framework */; };
@@ -2904,6 +2905,7 @@
 		84E7BF2E2F286A20002D3936 /* ContainerListener.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ContainerListener.hpp; sourceTree = "<group>"; };
 		84E7BF342F286A6A002D3936 /* ItemStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ItemStack.cpp; sourceTree = "<group>"; };
 		84E7BF352F286A6A002D3936 /* ItemStack.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ItemStack.hpp; sourceTree = "<group>"; };
+		84EA32542FEE34CE00D49373 /* TakeAnimationParticle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TakeAnimationParticle.cpp; sourceTree = "<group>"; };
 		84EAE8DD2AF1EAA1000894E8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		84EAE8DF2AF1EAA9000894E8 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		84EAE8E12AF1EAB5000894E8 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
@@ -4312,6 +4314,7 @@
 				840DD6D62AC810620006A435 /* ParticleEngine.hpp */,
 				840DD6D72AC810620006A435 /* RedDustParticle.cpp */,
 				840DD6D82AC810620006A435 /* SmokeParticle.cpp */,
+				84EA32542FEE34CE00D49373 /* TakeAnimationParticle.cpp */,
 				840DD6D92AC810620006A435 /* TerrainParticle.cpp */,
 			);
 			path = particle;
@@ -7424,6 +7427,7 @@
 				84BF63222AF18631008A9995 /* BiomeSource.cpp in Sources */,
 				84BF63232AF18631008A9995 /* ChunkCache.cpp in Sources */,
 				84E1C9CF2E7FDC26007D2F5D /* CactusTile.cpp in Sources */,
+				84EA32552FEE34CE00D49373 /* TakeAnimationParticle.cpp in Sources */,
 				84E7BF1A2F286A08002D3936 /* ArmorSlot.cpp in Sources */,
 				84E24C812FC969D9004C4D06 /* TileEntityType.cpp in Sources */,
 				84BF63242AF18631008A9995 /* ChunkSource.cpp in Sources */,
