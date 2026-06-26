@@ -80,7 +80,8 @@ GameRenderer::GameRenderer(Minecraft* pMinecraft) :
 	mce::GlobalConstantBuffers::getInstance().init();
 #endif
 
-	m_pMinecraft->getOptions()->m_gamma.apply();
+	Options& options = *m_pMinecraft->getOptions();
+	options.m_gamma.apply(*this);
 }
 
 GameRenderer::~GameRenderer()

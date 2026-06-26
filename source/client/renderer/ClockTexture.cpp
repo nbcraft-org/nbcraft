@@ -2,7 +2,11 @@
 #include "world/item/Item.hpp"
 #include "client/app/Minecraft.hpp"
 
-ClockTexture::ClockTexture(Minecraft* minecraft) : DynamicTexture(Item::clock->m_icon), m_pMinecraft(minecraft), m_rot(0), m_rota(0)
+ClockTexture::ClockTexture(Minecraft* minecraft)
+    : DynamicTexture(Item::clock->m_icon)
+    , m_pMinecraft(minecraft)
+    , m_rot(0)
+    , m_rota(0)
 {
     m_dialData = minecraft->m_pTextures->getTextureData("misc/dial.png", true)->getData();
     m_textureId = 1;
@@ -53,10 +57,17 @@ void ClockTexture::tick()
 
     for (int i = 0; i < 256; ++i)
     {
+#if MC_ENDIANNESS_BIG
+        int a = m_data[i] >> 0  & 255;
+        int r = m_data[i] >> 8  & 255;
+        int g = m_data[i] >> 16 & 255;
+        int b = m_data[i] >> 24 & 255;
+#else // MC_ENDIANNESS_LITTLE
         int a = m_data[i] >> 24 & 255;
         int r = m_data[i] >> 16 & 255;
-        int g = m_data[i] >> 8 & 255;
-        int b = m_data[i] >> 0 & 255;
+        int g = m_data[i] >> 8  & 255;
+        int b = m_data[i] >> 0  & 255;
+#endif
         //@NOTE Temporary fix
         std::swap(r, b);
         if (r == b && g == 0 && b > 0)
@@ -67,10 +78,17 @@ void ClockTexture::tick()
             int x = (int)((xo * cos + yo * sin + 0.5f) * 16.0f);
             int y = (int)((yo * cos - xo * sin + 0.5f) * 16.0f);
             int j = (x & 15) + (y & 15) * 16;
-            a = m_dialData[j] >> 24 & 255;
+#if MC_ENDIANNESS_BIG
+            a =  m_dialData[j] >> 0  & 255;
+            r = (m_dialData[j] >> 8  & 255) * r / 255;
+            g = (m_dialData[j] >> 16 & 255) * br / 255;
+            b = (m_dialData[j] >> 24 & 255) * br / 255;
+#else // MC_ENDIANNESS_LITTLE
+            a =  m_dialData[j] >> 24 & 255;
             r = (m_dialData[j] >> 16 & 255) * r / 255;
-            g = (m_dialData[j] >> 8 & 255) * br / 255;
-            b = (m_dialData[j] >> 0 & 255) * br / 255;
+            g = (m_dialData[j] >> 8  & 255) * br / 255;
+            b = (m_dialData[j] >> 0  & 255) * br / 255;
+#endif
             std::swap(r, b);
         }
 

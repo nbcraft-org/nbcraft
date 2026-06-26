@@ -138,6 +138,7 @@ enum HUDSize
 class Minecraft;
 class GuiElement;
 class Minecraft;
+class GameRenderer;
 
 class OptionEntry
 {
@@ -345,6 +346,7 @@ public:
 	GammaOption(const std::string& key, const std::string& name, float initial) : FloatOption(key, name, initial, 0.01f) {}
 
 	void apply() override;
+	void apply(GameRenderer& gameRenderer);
 	std::string getDisplayValue() const override;
 };
 

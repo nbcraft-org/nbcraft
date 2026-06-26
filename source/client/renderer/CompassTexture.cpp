@@ -25,10 +25,17 @@ void CompassTexture::tick()
 {
     for (int i = 0; i < 256; ++i)
     {
+#if MC_ENDIANNESS_BIG
+        int a = m_data[i] >> 0  & 255;
+        int r = m_data[i] >> 8  & 255;
+        int g = m_data[i] >> 16 & 255;
+        int b = m_data[i] >> 24 & 255;
+#else // MC_ENDIANNESS_LITTLE
         int a = m_data[i] >> 24 & 255;
         int r = m_data[i] >> 16 & 255;
-        int g = m_data[i] >> 8 & 255;
-        int b = m_data[i] >> 0 & 255;
+        int g = m_data[i] >> 8  & 255;
+        int b = m_data[i] >> 0  & 255;
+#endif
         if (m_bAnaglyph3d)
         {
             int rr = (r * 30 + g * 59 + b * 11) / 100;

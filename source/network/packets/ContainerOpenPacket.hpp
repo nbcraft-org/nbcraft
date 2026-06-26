@@ -37,7 +37,7 @@ public:
 
 public:
 	int8_t m_containerId;
-	Container::Type m_type;
+	int8_t m_type;
 	RakNet::RakString m_title;
 	int8_t m_size;
 };

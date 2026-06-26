@@ -757,12 +757,17 @@ void GuiScaleOption::apply()
 
 void GammaOption::apply()
 {
+	if (!m_pMinecraft->m_pGameRenderer)
+		return;
+	apply(*m_pMinecraft->m_pGameRenderer);
+}
+
+void GammaOption::apply(GameRenderer& gameRenderer)
+{
 	// Budget rounding since the 360 just doesn't have a round function
 	// @TODO: Then again, we don't need this level or precision to begin with
 	// I just don't wanna have to rework the SliderButton to support integers
-	if (!m_pMinecraft->m_pGameRenderer)
-		return;
-	m_pMinecraft->m_pGameRenderer->setGamma((float)Mth::floor(get() * 100) / 100);
+	gameRenderer.setGamma((float)Mth::floor(get() * 100) / 100);
 }
 
 std::string GammaOption::getDisplayValue() const
