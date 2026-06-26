@@ -8,6 +8,11 @@
 
 #include "OptionList.hpp"
 #include "client/gui/components/Button.hpp"
+#include "client/gui/components/SmallButton.hpp"
+#include "client/gui/components/SliderButton.hpp"
+#include "client/gui/components/SwitchButton.hpp"
+#include "client/gui/components/SwitchValuesButton.hpp"
+#include "client/gui/components/TickBox.hpp"
 #include "client/options/Options.hpp"
 #include "client/locale/Language.hpp"
 
@@ -16,12 +21,19 @@
 class ResetCategoryButton : public Button
 {
 	OptionsCategory m_cat;
+	OptionList& m_list;
 public:
-	ResetCategoryButton(OptionsCategory cat, const std::string& text) : Button(0, 0, text), m_cat(cat) {}
+	ResetCategoryButton(OptionList& list, OptionsCategory cat, const std::string& text)
+		: Button(0, 0, text)
+		, m_list(list)
+		, m_cat(cat)
+	{}
 	void pressed(Minecraft* mc, const MenuPointer& pointer) override
 	{
 		Button::pressed(mc, pointer);
 		mc->getOptions()->resetCategory(m_cat);
+
+		m_list.refreshOptionValues();
 	}
 };
 
@@ -149,6 +161,21 @@ void OptionList::clear()
 	m_items.clear();
 }
 
+void OptionList::refreshOptionValues()
+{
+	for (size_t i = 0; i < m_items.size(); i++)
+	{
+		GuiElement* pItem = m_items[i];
+
+		if (SliderButton* slider = dynamic_cast<SliderButton*>(pItem))
+			slider->updateValue();
+		else if (SmallButton* btn = dynamic_cast<SmallButton*>(pItem))
+			btn->setMessage(btn->getOption().getMessage());
+		else if (TickBox* tb = dynamic_cast<TickBox*>(pItem))
+			tb->m_bOn = tb->getOption().get();
+	}
+}
+
 void OptionList::initDefaultMenu()
 {
 	initVideoMenu();
@@ -158,8 +185,8 @@ void OptionList::initDefaultMenu()
 #define OPTION(name) do { pOptions->name.addGuiElement(m_items, m_uiTheme); currentIndex++; } while (0)
 #define RESET_BTN(category) do \
 { \
-	HEADER(""); HEADER(""); \
-	ResetCategoryButton* pBtn = new ResetCategoryButton(category, Language::get("settingsMenu.resetToDefaults")); \
+	HEADER(""); \
+	ResetCategoryButton* pBtn = new ResetCategoryButton(*this, category, Language::get("settingsMenu.resetToDefaults")); \
 	pBtn->m_uiTheme = m_uiTheme; \
 	m_items.push_back(pBtn); \
 } while (0)
