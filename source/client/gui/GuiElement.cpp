@@ -92,7 +92,10 @@ bool GuiElement::isHovered(Minecraft* pMinecraft, const MenuPointer& pointer)
 
 void GuiElement::pressed(Minecraft* pMinecraft)
 {
-	if (hasSound() &&pMinecraft->useController())
+	if (!isEnabled())
+		return;
+
+	if (hasSound() && pMinecraft->useController())
 		pMinecraft->m_pSoundEngine->playUI(C_SOUND_UI_PRESS);
 }
 
