@@ -45,6 +45,8 @@ bool Gui::_isVignetteAvailable = false; // false because PE never seemed to have
 Gui::Gui(Minecraft* pMinecraft)
 {
 	m_progress = 0;
+	m_lastProgress = 0;
+	m_feedbackAccum = 0;
 	field_C = "";
 	field_24 = 0;
 	field_28 = 0;
@@ -188,10 +190,10 @@ void Gui::render(float f, bool bHaveScreen, int mouseX, int mouseY)
 
 	ItemStack& headGear = mc.m_pLocalPlayer->m_pInventory->getArmor(Item::SLOT_HEAD);
 
-	if (!mc.getOptions()->m_thirdPerson.get() && !headGear.isEmpty() && headGear.getId() == Tile::pumpkin->m_ID)
+	if (mc.getOptions()->m_thirdPerson.get() == TPM_FIRST && !headGear.isEmpty() && headGear.getId() == Tile::pumpkin->m_ID)
 		renderPumpkin(GuiWidth, GuiHeight);
 
-	renderProgressIndicator(GuiWidth, GuiHeight);
+	renderProgressIndicator(GuiWidth, GuiHeight, f);
 
 	currentShaderColor = Color::WHITE;
 	currentShaderDarkColor = Color::WHITE;
@@ -286,7 +288,7 @@ void Gui::renderSlot(int slot, int x, int y, float f)
 			matrix->translate(Vec3(-(x + 8), -(y + 12), 0));
 		}
 
-		ItemRenderer::singleton().renderGuiItem(*m_pMinecraft, item, x, y, true);
+		ItemRenderer::singleton().renderGuiItem(*m_pMinecraft, item, x, y);
 	}
 }
 
@@ -427,7 +429,7 @@ void Gui::handleClick(int clickID, int mouseX, int mouseY)
 		if (m_pMinecraft->getLocalPlayerGameMode()->isSurvivalType())
 			m_pMinecraft->setScreen(new InventoryScreen(m_pMinecraft->m_pLocalPlayer));
 		else
-			m_pMinecraft->getScreenChooser()->pushCreativeScreen();
+			m_pMinecraft->getScreenChooser()->pushCreativeScreen(m_pMinecraft->m_pLocalPlayer);
 	}
 	else
 		m_pMinecraft->m_pLocalPlayer->m_pInventory->selectSlot(slot);
@@ -460,9 +462,9 @@ void Gui::handleUserAction(const ActionInfo& info)
 	if (options->isAction(AID_CRAFTING, info))
 	{
 		if (m_pMinecraft->getLocalPlayerGameMode()->isSurvivalType())
-			m_pMinecraft->setScreen(new InventoryScreen(m_pMinecraft->m_pLocalPlayer));
+			m_pMinecraft->getScreenChooser()->pushPlayerCraftingScreen(m_pMinecraft->m_pLocalPlayer);
 		else
-			m_pMinecraft->getScreenChooser()->pushCreativeScreen();
+			m_pMinecraft->getScreenChooser()->pushCreativeScreen(m_pMinecraft->m_pLocalPlayer);
 		return;
 	}
 
@@ -758,13 +760,17 @@ void Gui::renderBubbles(bool topLeft)
 	}
 }
 
-void Gui::renderProgressIndicator(int width, int height)
+void Gui::renderProgressIndicator(int width, int height, float f)
 {
 	Minecraft& mc = *m_pMinecraft;
 	Textures& textures = *mc.m_pTextures;
 
 	currentShaderColor = Color::WHITE;
 	currentShaderDarkColor = Color::WHITE;
+
+	float breakProgress = m_progress;
+	float smoothProgress = m_lastProgress + (breakProgress - m_lastProgress) * f;
+	m_lastProgress = breakProgress;
 
 	if (m_pMinecraft->useSplitControls())
 	{
@@ -776,54 +782,45 @@ void Gui::renderProgressIndicator(int width, int height)
 			matrix->scale(mc.getOptions()->m_hudSize.get());
 		blit(-8, -8, 0, 0, 16, 16, 0, 0, &m_guiMaterials.ui_crosshair);
 	}
-#ifdef ENH_NEW_FEEDBACK_INDICATOR
 	else
 	{
 		IInputHolder& input = *mc.m_pInputHolder;
-		// if needed, draw feedback
 
-		// NOTE: real Minecraft PE takes it directly from the gamemode as "current progress" and
-		// "last progress". Well guess what? The game mode in question updates our m_sensitivity with
-		// the pre-interpolated break progress! Isn't that awesome?!
-		float breakProgress = m_progress;
-		float alpha = Mth::clamp(input.m_feedbackAlpha, 0.0f, 1.0f);
+		// Accumulate absolute fade alpha from the frame delta
+		if (breakProgress > 0.0f)
+			m_feedbackAccum = 1.0f;
+		else if (input.m_feedbackAlpha >= -0.04f)
+			m_feedbackAccum = Mth::Min(m_feedbackAccum + 0.05f, 1.0f);
+		else
+			m_feedbackAccum = Mth::Max(m_feedbackAccum - 0.04f, 0.0f);
 
-		// don't know about this if-structure, it feels like it'd be like
-		// if (m_bFoggy >= 0.0f && breakProgress <= 0.0f)
-		//     that;
-		// else
-		//     this;
-		if (breakProgress > 0.0f || input.m_feedbackAlpha < 0.0f)
+#ifdef ENH_NEW_FEEDBACK_INDICATOR
+		if (m_feedbackAccum <= 0.0f && breakProgress <= 0.0f)
+			return;
+
+		_buildFeedbackMeshes();
+
+		float xPos = GuiScale * input.m_feedbackX;
+		float yPos = GuiScale * input.m_feedbackY;
+
+		if (breakProgress > 0.0f)
 		{
-			if (breakProgress > 0.0f)
-			{
-				_buildFeedbackMeshes();
+			currentShaderColor = Color(1.0f, 1.0f, 1.0f, 0.8f * m_feedbackAccum);
 
-				float xPos = GuiScale * input.m_feedbackX;
-				float yPos = GuiScale * input.m_feedbackY;
+			MatrixStack::Ref matrix = MatrixStack::World.push();
+			matrix->translate(Vec3(xPos, yPos, 0.0f));
+			m_feedbackOuter.render(m_materials.ui_fill_color);
 
-				currentShaderColor = Color(1.0f, 1.0f, 1.0f, 0.8f * alpha);
+			currentShaderColor = Color::WHITE;
+			float scale = 0.5f + 0.5f * smoothProgress;
+			matrix->scale(Vec3(scale, scale, 1.0f));
+			m_feedbackInner.render(m_guiMaterials.ui_invert_overlay);
 
-				MatrixStack::Ref matrix = MatrixStack::World.push();
-				matrix->translate(Vec3(xPos, yPos, 0.0f));
-				m_feedbackOuter.render(m_materials.ui_fill_color);
-
-				currentShaderColor = Color::WHITE;
-				float scale = 0.5f + 0.5f * breakProgress;
-				matrix->scale(Vec3(scale, scale, 1.0f));
-				m_feedbackInner.render(m_guiMaterials.ui_invert_overlay);
-
-				matrix.release();
-			}
+			matrix.release();
 		}
 		else
 		{
-			_buildFeedbackMeshes();
-
-			float xPos = GuiScale * input.m_feedbackX;
-			float yPos = GuiScale * input.m_feedbackY;
-
-			float fadeAlpha = (alpha >= 0.5f) ? (0.8f * alpha) : Mth::Min(0.4f, alpha * 0.4f);
+			float fadeAlpha = Mth::Min(m_feedbackAccum * 0.4f, 0.4f);
 
 			currentShaderColor = Color(1.0f, 1.0f, 1.0f, fadeAlpha);
 
@@ -832,42 +829,33 @@ void Gui::renderProgressIndicator(int width, int height)
 			m_feedbackOuter.render(m_materials.ui_fill_color);
 			matrix.release();
 		}
-	}
 #else
-	else
-	{
-		IInputHolder& input = *mc.m_pInputHolder;
-		float breakProgress = m_progress;
-
-		if (breakProgress > 0.0f || input.m_feedbackAlpha < 0.0f)
-		{
-			if (breakProgress > 0.0f)
-			{
-				float xPos = input.m_feedbackX;
-				float yPos = input.m_feedbackY;
-
-				textures.loadAndBindTexture("gui/feedback_outer.png");
-				currentShaderColor = Color::WHITE;
-				blit(GuiScale * xPos - 44.0f, GuiScale * yPos - 44.0f, 0, 0, 88, 88, 256, 256, &m_guiMaterials.ui_overlay_textured);
-
-				textures.loadAndBindTexture("gui/feedback_fill.png");
-
-				float halfWidth = (40.0f * breakProgress + 48.0f) / 2.0f;
-
-				blit(GuiScale * xPos - halfWidth, GuiScale * yPos - halfWidth, 0, 0, halfWidth * 2, halfWidth * 2, 256, 256, &m_guiMaterials.ui_invert_overlay_textured);
-			}
-		}
-		else
+		if (breakProgress > 0.0f)
 		{
 			float xPos = input.m_feedbackX;
 			float yPos = input.m_feedbackY;
 
 			textures.loadAndBindTexture("gui/feedback_outer.png");
-			currentShaderColor = Color(1.0f, 1.0f, 1.0f, Mth::Min(1.0f, input.m_feedbackAlpha));
+			currentShaderColor = Color::WHITE;
+			blit(GuiScale * xPos - 44.0f, GuiScale * yPos - 44.0f, 0, 0, 88, 88, 256, 256, &m_guiMaterials.ui_overlay_textured);
+
+			textures.loadAndBindTexture("gui/feedback_fill.png");
+
+			float halfWidth = (40.0f * smoothProgress + 48.0f) / 2.0f;
+
+			blit(GuiScale * xPos - halfWidth, GuiScale * yPos - halfWidth, 0, 0, halfWidth * 2, halfWidth * 2, 256, 256, &m_guiMaterials.ui_invert_overlay_textured);
+		}
+		else if (m_feedbackAccum > 0.0f)
+		{
+			float xPos = input.m_feedbackX;
+			float yPos = input.m_feedbackY;
+
+			textures.loadAndBindTexture("gui/feedback_outer.png");
+			currentShaderColor = Color(1.0f, 1.0f, 1.0f, m_feedbackAccum);
 			blit(GuiScale * xPos - 44.0f, GuiScale * yPos - 44.0f, 0, 0, 88, 88, 256, 256, &m_guiMaterials.ui_overlay_textured);
 		}
-	}
 #endif
+	}
 }
 
 void Gui::renderExperience()

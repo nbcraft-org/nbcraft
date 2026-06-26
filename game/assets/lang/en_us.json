@@ -71,7 +71,11 @@
     "loading.initializing": "Initializing server",
     "loading.spawnArea": "Loading spawn area",
     "options.animatedCharacter": "Animated Character",
+    "options.classicCrafting": "Classic Crafting",
     "options.thirdPerson": "Third Person View",
+    "options.thirdPerson.off": "Off",
+    "options.thirdPerson.behind": "Behind",
+    "options.thirdPerson.front": "Front",
     "options.fancyGraphics": "Fancy Graphics",
     "options.blockOutlines": "Block Outlines",
     "options.fancyGrass": "Fancy Grass",
@@ -85,6 +89,9 @@
     "options.debugText": "Debug Text",
     "options.2dTitleLogo": "2D Title Logo",
     "options.menuPanorama": "Menu Panorama",
+    "options.fov": "FOV",
+    "options.fov.normal": "Normal",
+    "options.fov.quakePro": "Quake Pro",
     "options.uiTheme": "UI Theme",
     "options.uiTheme.pocket": "Pocket",
     "options.uiTheme.java": "Java",
@@ -134,8 +141,8 @@
     "container.tab.misc": "Miscellaneous",
     "container.tab.redstone_and_transport": "Redstone & Transportation",
     "container.tab.structures": "Structures",
-    "container.tab.symbols": "Symbols",
     "container.tab.tools": "Tools and Weapons",
     "container.tab.tools_and_armour": "Tools, Weapons & Armor",
-    "container.tab.transport": "Transport"
+    "container.tab.transport": "Transport",
+    "container.tab.armour": "Armour"
 }

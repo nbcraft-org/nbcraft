@@ -17,6 +17,8 @@ void Button::_init()
 	m_lastX = 0;
 	m_lastY = 0;
 #endif
+
+	m_bHasSound = true;
 }
 
 void Button::_renderBg(Minecraft* mc, const MenuPointer& pointer)

@@ -11,6 +11,7 @@ public:
 protected:
 	friend class UnifiedTurnBuild;
 	friend class ItemPane;
+	friend class TouchscreenInput_TestFps;
 
 	float left;
 	float right;

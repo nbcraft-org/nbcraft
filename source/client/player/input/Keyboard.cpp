@@ -22,8 +22,6 @@ void Keyboard::feed(KeyState state, int key)
 	if (key >= KEYBOARD_STATES_SIZE || key < 0)
 		return;
 
-	Minecraft::SetInputMethod(InputMethod::KEYBOARD);
-
 	_inputs.push_back(KeyboardAction(key, state));
 
 	_states[key] = state;

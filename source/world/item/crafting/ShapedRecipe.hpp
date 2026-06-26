@@ -12,8 +12,12 @@ public:
     virtual ~ShapedRecipe();
 
     bool matches(Container* container) override;
-    const ItemStack& assemble(Container* container) override;
+    const std::vector<ItemStack>& getIngredients() override;
+    const ItemStack& getResultItem() override;
     int size() const override;
+
+    int getWidth() const { return m_width; }
+    int getHeight() const { return m_height; }
 
 private:
     bool matches(CraftingContainer* container, int i, int j, bool lenient);

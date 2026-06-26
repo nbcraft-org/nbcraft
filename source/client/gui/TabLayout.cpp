@@ -43,15 +43,17 @@ bool TabLayout::selectElement(GuiElement* element)
 		m_pSelectedElement->setSelected(false);
 	m_pSelectedElement = element;
 	if (m_pSelectedElement)
+	{
 		m_pSelectedElement->setSelected(true);
-	onSelectElement(element);
+		onSelectElement(element);
+	}
 
 	return true;
 }
 
 GuiElement::ID TabLayout::getIndex() const
 {
-	return m_pSelectedElement->getId();
+	return m_pSelectedElement ? m_pSelectedElement->getId() : 0;
 }
 
 void TabLayout::onSelectElement(GuiElement*)
@@ -125,16 +127,18 @@ void TabLayout::startNavigation()
 		selectElementById(id, false);
 }
 
-bool TabLayout::areaNavigation(Minecraft* pMinecraft, AreaNavigation::Direction)
+bool TabLayout::areaNavigation(Minecraft* mc, AreaNavigation::Direction dir)
 {
-	return false;
+	if (m_pSelectedElement && m_pSelectedElement->areaNavigation(mc, dir)) return true;
+
+	return areaNavigation(dir);
 }
 
-void TabLayout::areaNavigation(AreaNavigation::Direction dir, bool cyclic)
+bool TabLayout::areaNavigation(AreaNavigation::Direction dir, bool cyclic)
 {
 	GuiElement* element = m_pSelectedElement;
 
-	if (!element) return;
+	if (!element) return false;
 
 	AreaNavigation::ID id;
 	if (m_bCyclic && cyclic)
@@ -143,7 +147,9 @@ void TabLayout::areaNavigation(AreaNavigation::Direction dir, bool cyclic)
 		id = Navigation(this).navigate(dir, element->m_xPos + element->m_width / 2, element->m_yPos + element->m_height / 2);
 
 	if (id >= 0)
-		selectElementById(id);
+		return selectElementById(id);
+
+	return false;
 }
 
 void TabLayout::setSelected(bool b)
@@ -152,9 +158,6 @@ void TabLayout::setSelected(bool b)
 
 	if (b && !m_pSelectedElement && m_pScreen->_useController())
 		startNavigation();
-
-	if (!b)
-		selectElement(nullptr);
 }
 
 bool TabLayout::isHovered(Minecraft* mc, const MenuPointer& pointer)
@@ -176,8 +179,8 @@ void TabLayout::pressed(Minecraft* mc, const MenuPointer& pointer)
 		if (element->isHovered(mc, pointer)) 
 		{
 			m_pClickedElement = element;
-			selectElement(element);
 			element->pressed(mc, pointer);
+			selectElement(element);
 			return;
 		}
 	}
@@ -196,6 +199,12 @@ void TabLayout::pressed(Minecraft* mc)
 {
 	if (m_pSelectedElement)
 		m_pSelectedElement->pressed(mc);
+}
+
+void TabLayout::handleScroll(float force)
+{
+	if (m_pSelectedElement)
+		m_pSelectedElement->handleScroll(force);
 }
 
 void TabLayout::render(Minecraft* mc, const MenuPointer& pointer)

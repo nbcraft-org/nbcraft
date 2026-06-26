@@ -18,7 +18,8 @@ protected:
 	class Materials
 	{
 	public:
-		mce::MaterialPtr item_entity;
+		mce::MaterialPtr item_entity_item;
+		mce::MaterialPtr item_entity_tile;
 		mce::MaterialPtr ui_fill_color;
 		mce::MaterialPtr ui_fill_gradient;
 		mce::MaterialPtr ui_textured;
@@ -38,11 +39,12 @@ public:
 	ItemRenderer();
 
 	void render(const Entity& entity, const Vec3& pos, float rot, float a) override;
-	void blitRect(Tesselator&, int, int, int, int, int);
 
-	void blit(int dx, int dy, int sx, int sy, int tw, int th);
-	void renderGuiItem(Minecraft&, ItemStack&, int, int, bool);
-	void renderGuiItemOverlay(Minecraft&, ItemStack&, int, int);
+	void blitRect(Tesselator&, int, int, int, int, int);
+	void blit(int dx, int dy, int sx, int sy, int tw, int th, const Color&);
+
+	void renderGuiItem(Minecraft&, const ItemStack&, int, int, const Color& = Color::WHITE);
+	void renderGuiItemOverlay(Minecraft&, const ItemStack&, int, int);
 
 private:
 	TileRenderer* m_pTileRenderer;

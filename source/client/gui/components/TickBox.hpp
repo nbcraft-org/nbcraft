@@ -8,7 +8,6 @@ public:
 	TickBox(int x, int y, BoolOption*, const std::string&);
 	TickBox(int x, int y, bool, const std::string&);
 
-	void pressed(Minecraft*, const MenuPointer& pointer) override;
 	void pressed(Minecraft*) override;
 	void render(Minecraft*, const MenuPointer& pointer) override;
 

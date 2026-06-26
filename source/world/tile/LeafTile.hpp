@@ -25,6 +25,7 @@ private:
 
 public:
 	int getColor(const LevelSource*, const TilePos& pos) const override;
+	int getColor(Facing::Name face, TileData) const override;
 	int getTexture(Facing::Name face, TileData data) const override;
 	bool isSolidRender() const override;
 	void onRemove(Level*, const TilePos& pos) override;

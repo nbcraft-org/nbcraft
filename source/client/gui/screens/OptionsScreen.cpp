@@ -12,14 +12,16 @@
 
 #ifndef OLD_OPTIONS_SCREEN
 
-OptionsScreen::OptionsScreen(Screen* parent) :
-	m_pParent(parent),
-	m_pList(nullptr),
-	m_currentCategory(OC_MIN),
-	m_gameplayButton("Gameplay"),
-	m_controlsButton("Controls"),
-	m_videoButton("Video"),
-	m_backButton("Done")
+#define C_ELEMENT_INDEX_OFFSET 1
+
+OptionsScreen::OptionsScreen(Screen* parent)
+	: m_pParent(parent)
+	, m_pList(nullptr)
+	, m_currentCategory(OC_MIN)
+	, m_gameplayButton("Gameplay")
+	, m_controlsButton("Controls")
+	, m_videoButton("Video")
+	, m_backButton("Done")
 {
 	m_bRenderPointer = true;
 	m_bDeletePrevious = false;
@@ -62,13 +64,14 @@ void OptionsScreen::init()
 		SAFE_DELETE(m_pList);
 
 	m_pList = new OptionList(m_pMinecraft, m_width, m_height, 28, m_height - 28);
+	_addElement(*m_pList, false);
 	
 	Button* tabButtons[] = { &m_gameplayButton, &m_controlsButton, &m_videoButton};
 	constexpr int NUM_CATEGORY_BUTTONS = sizeof(tabButtons) / sizeof(tabButtons[0]);
-	int buttonWidth = 64;
-	int buttonHeight = 20;
-	int buttonSpacing = 5;
-	int totalWidth = (buttonWidth * NUM_CATEGORY_BUTTONS) + (buttonSpacing * (NUM_CATEGORY_BUTTONS - 1));
+	constexpr int buttonWidth = 64;
+	constexpr int buttonHeight = 20;
+	constexpr int buttonSpacing = 5;
+	constexpr int totalWidth = (buttonWidth * NUM_CATEGORY_BUTTONS) + (buttonSpacing * (NUM_CATEGORY_BUTTONS - 1));
 	int startX = (m_width - totalWidth) / 2;
 	
 	m_backButton.m_width = 100;
@@ -98,11 +101,6 @@ void OptionsScreen::init()
 
 void OptionsScreen::render(float f)
 {
-	if (!m_pList)
-		return;
-
-	m_pList->render(m_menuPointer, f);
-
 	Screen::render(f);
 
 	//drawCenteredString(*m_pFont, "Options", width / 2, 10, 0xFFFFFF);
@@ -116,9 +114,9 @@ void OptionsScreen::removed()
 }
 void OptionsScreen::setCategory(OptionsCategory category)
 {
-	_getElement(m_currentCategory)->setEnabled(true);
+	_getElement(m_currentCategory + C_ELEMENT_INDEX_OFFSET)->setEnabled(true);
 	m_currentCategory = category;
-	_getElement(m_currentCategory)->setEnabled(false);
+	_getElement(m_currentCategory + C_ELEMENT_INDEX_OFFSET)->setEnabled(false);
 	m_pList->clear();
 
 	switch (category)

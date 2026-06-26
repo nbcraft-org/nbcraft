@@ -9,7 +9,7 @@ struct SlotDisplay
 {
     int x, y, size, noItemIcon;
     std::string noItemSprite;
-    bool bVisible, bIconHolder;
+    bool isVisible, isInteractable, isWarning, hasIconHolder;
 
     SlotDisplay() :
         x(0),
@@ -17,8 +17,10 @@ struct SlotDisplay
         size(0),
         noItemIcon(-1),
         noItemSprite(""),
-        bVisible(false),
-        bIconHolder(false)
+        isVisible(false),
+        isInteractable(false),
+        isWarning(false),
+        hasIconHolder(false)
     {
     }
 
@@ -28,8 +30,10 @@ struct SlotDisplay
         size(size),
         noItemIcon(noItemIcon),
         noItemSprite(noItemSprite),
-        bVisible(true),
-        bIconHolder(iconHolder)
+        isVisible(true),
+        isInteractable(true),
+        isWarning(false),
+        hasIconHolder(iconHolder)
     {
     }
 };
@@ -70,6 +74,7 @@ public:
     void handleUserAction(const ActionInfo&) override;
 
     const SlotDisplay& getSlotDisplay(const Slot&) const;
+    SlotDisplay& getSlotDisplay(int id);
 
 public:
     virtual void initMenuPointer() override;

@@ -6,7 +6,12 @@ UseItemPacket::UseItemPacket(const TilePos& tilePos, int32_t tileFace, int32_t e
 	m_tilePos = tilePos;
 	m_tileFace = tileFace;
 	m_entityId = entityId;
-	if (!item.isEmpty())
+	if (item.isEmpty())
+	{
+		m_itemId = TILE_AIR;
+		m_itemAuxValue = 0;
+	}
+	else
 	{
 		m_itemId = item.getId();
 		m_itemAuxValue = item.getAuxValue();

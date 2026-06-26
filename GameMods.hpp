@@ -54,6 +54,7 @@
 //#define ENH_BETA_1_7_TERRAIN_ATLAS       // Enables support for the vertical shift of some textures from Beta 1.7, such as cake
 //#define ENH_NEWER_CONSOLE_ITEM_LIGHTING  // Makes the Console UI tile items lighting based on Title Update 5
 #define ENH_NEW_FEEDBACK_INDICATOR 	       // Use the new mesh-based interaction feedback indicator.
+#define ENH_FOV_MODIFIER 	               // Smooth FOV modifier - provides flying FOV boost and adjustable FOV slider
 
 // TODO: Implement this permanently?
 #define ENH_IMPROVED_SAVING     	       // Improve world saving. The original Minecraft doesn't always really save for some reason

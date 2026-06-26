@@ -8,12 +8,12 @@
 
 #pragma once
 
-#include "../GuiComponent.hpp"
+#include "../GuiElement.hpp"
 #include "client/app/Minecraft.hpp"
 
 #define C_SCROLLED_LIST_ITEM_WIDTH (220)
 
-class ScrolledSelectionList : public GuiComponent
+class ScrolledSelectionList : public GuiElement
 {
 public:
 	ScrolledSelectionList(Minecraft*, int, int, int, int, int);
@@ -31,7 +31,7 @@ public:
 	virtual void clickedHeader(int x, int y);
 	virtual int getItemAtPosition(int x, int y);
 	virtual void capYPosition();
-	virtual void render(const MenuPointer& pointer, float f);
+	void render(Minecraft* pMinecraft, const MenuPointer& pointer) override;
 	virtual void renderHoleBackground(float, float, int, int);
 	virtual void checkInput(const MenuPointer& pointer);
 	virtual void onClickItem(int index, const MenuPointer& pointer, int relMouseX, int relPointerY, bool doubleClick);
@@ -69,14 +69,14 @@ public:
 	float m_y0;
 	float m_y1;
 	int m_itemHeight;
-	int m_width;
-	int field_1C;
 	float m_x0;
 	float m_x1;
 	int field_28;
 	float m_scrollAmount;
 	float m_accumulatedScroll;
 	float m_scrollBarGrabOffset;
+	float m_scrollVelocity;
+	bool m_bDecelerating;
 	float m_mouseYWhenPressed;
 	int m_lastClickedIndex;
 	int m_lastClickTime;

@@ -63,7 +63,8 @@ public:
 	void pick(float);
 	void applyTurnDelta(const Vec2& turnDelta);
 
-	float getFov(float f);
+	float getFov(float f, bool applyFovMod = true);
+	void setFovBase(float fov);
 
 protected:
 	float field_14;
@@ -108,5 +109,12 @@ public:
 
 	int m_envTexturePresence;
 	Random m_random;
+
+#ifdef ENH_FOV_MODIFIER
+	float m_fovBase;
+	float m_fovModPrev;
+	float m_fovMod;
+	float m_fovModTarget;
+#endif
 };
 

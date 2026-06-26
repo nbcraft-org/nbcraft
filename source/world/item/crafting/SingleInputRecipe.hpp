@@ -10,11 +10,12 @@ public:
 
     bool matches(Container* container) override;
     bool matches(const ItemStack& input);
-    const ItemStack& assemble(Container* container) override;
-    int size() const override;
 
-    ItemStack m_ingredient;
+    const std::vector<ItemStack>& getIngredients() override;
+    const ItemStack& getResultItem() override;
+    int size() const override;
 
 private:
     ItemStack m_result;
+    std::vector<ItemStack> m_ingredients;
 };

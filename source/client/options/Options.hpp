@@ -70,6 +70,32 @@ enum UserActionID
 	AID_COUNT
 };
 
+enum OptionsCategory
+{
+	OC_GAMEPLAY,
+	OC_CONTROLS,
+	OC_VIDEO,
+
+	OC_MIN = OC_GAMEPLAY,
+	OC_MAX = OC_VIDEO,
+	OC_COUNT
+};
+
+enum ThirdPersonMode
+{
+	TPM_FIRST = 0,
+	TPM_BEHIND = 1,
+	TPM_FRONT = 2,
+
+	TPM_COUNT
+};
+
+template<>
+struct HashFunction<OptionsCategory>
+{
+	size_t operator()(const OptionsCategory& key) const { return size_t(key); }
+};
+
 struct ActionInfo
 {
 	//@TODO: Replace this with a universal key
@@ -138,6 +164,7 @@ enum HUDSize
 class Minecraft;
 class GuiElement;
 class Minecraft;
+class GameRenderer;
 
 class OptionEntry
 {
@@ -235,6 +262,19 @@ public:
 	void save(std::stringstream& ss) const override { ss << get(); }
 };
 
+class ThirdPersonOption : public IntOption
+{
+public:
+	ThirdPersonOption(const std::string& key, const std::string& name, int initial = 0) : IntOption(key, name, initial) {}
+
+	void toggle() override { set((get() + 1) % TPM_COUNT); }
+	void addUnit(int mul) override { set(Mth::clamp(get() + mul, 0, TPM_COUNT - 1)); }
+	void fromFloat(float v) override { set(Mth::round(v * 2.0f)); }
+	float toFloat() const override { return get() / 2.0f; }
+	std::string getDisplayValue() const override;
+	void addGuiElement(std::vector<GuiElement*>&, UITheme uiTheme) override;
+};
+
 class StringOption : public OptionInstance<std::string>
 {
 public:
@@ -263,6 +303,7 @@ public:
 	MinMaxOption(const std::string& key, const std::string& name, int initial, int min, int max) : IntOption(key, name, initial)
 		, m_min(min)
 		, m_max(max)
+		, m_bIsSlider(false)
 	{
 	}
 
@@ -274,14 +315,16 @@ public:
 
 public:
 	int m_min, m_max;
+	bool m_bIsSlider;
 };
 
 class ValuesOption : public MinMaxOption
 {
 public:
-	ValuesOption(const std::string& key, const std::string& name, int initial, const ValuesBuilder& values) : MinMaxOption(key, name, initial, 0, values.m_values.size())
+	ValuesOption(const std::string& key, const std::string& name, int initial, const ValuesBuilder& values, bool isSlider = false) : MinMaxOption(key, name, initial, 0, values.m_values.size())
 		, m_values(values.m_values)
 	{
+		m_bIsSlider = isSlider;
 	}
 
 	const std::string& getValue() const { return m_values[Mth::clamp(get(), m_min, m_max - 1)]; }
@@ -345,6 +388,7 @@ public:
 	GammaOption(const std::string& key, const std::string& name, float initial) : FloatOption(key, name, initial, 0.01f) {}
 
 	void apply() override;
+	void apply(GameRenderer& gameRenderer);
 	std::string getDisplayValue() const override;
 };
 
@@ -367,7 +411,10 @@ public:
 class HUDSizeOption : public MinMaxOption
 {
 public:
-	HUDSizeOption(const std::string& key, const std::string& name, int initial) : MinMaxOption(key, name, initial, HUD_SIZE_1, HUD_SIZE_3 + 1) {}
+	HUDSizeOption(const std::string& key, const std::string& name, int initial) : MinMaxOption(key, name, initial, HUD_SIZE_1, HUD_SIZE_3 + 1)
+	{
+		m_bIsSlider = true;
+	}
 
 	std::string getDisplayValue() const override;
 };
@@ -391,8 +438,23 @@ public:
 	float toFloat() const override { return get() - 0.5f; }
 };
 
+class FovOption : public FloatOption
+{
+public:
+	FovOption(const std::string& key, const std::string& name, float initial = 70.0f) : FloatOption(key, name, initial, 1.0f) {}
+
+	void apply() override;
+	void addUnit(int mul) override { set(Mth::clamp(get() + mul * m_unit, 30.0f, 110.0f)); }
+	void fromFloat(float v) override { set(30.0f + v * 80.0f); }
+	float toFloat() const override { return (get() - 30.0f) / 80.0f; }
+	std::string getDisplayValue() const override;
+};
+
 class Options
 {
+private:
+	typedef HashMap<OptionsCategory, std::vector<OptionEntry*> > CategoryMap;
+
 private:
 	static bool _hasResourcePack(const ResourcePack& pack, ResourcePackStack& packs);
 	static void _tryAddResourcePack(const std::string& name, ResourcePackStack& packs);
@@ -427,6 +489,7 @@ public:
 	Options(Minecraft*, const std::string& folderPath = "");
 
 	void add(OptionEntry&);
+	void add(OptionsCategory cat, OptionEntry&);
 	const AsyncTask& save();
 	std::vector<std::string> getOptionStrings();
 	
@@ -439,6 +502,7 @@ public:
 
 	void loadControls();
 	void reset();
+	void resetCategory(OptionsCategory cat);
 	void initResourceDependentOptions();
 
 	UITheme getUiTheme() const;
@@ -447,6 +511,7 @@ public:
 private:
 	Minecraft* m_pMinecraft;
 	HashMap<std::string, OptionEntry*> m_options;
+	CategoryMap m_categoryOptions;
 	AsyncTask m_saveTask;
 	std::string m_filePath;
 	InputMapping m_inputMappings[AID_COUNT];
@@ -458,6 +523,7 @@ public:
 	friend class IntOption;
 	friend class HUDSizeOption;
 	friend class DpadSizeOption;
+	friend class FovOption;
 
 	FloatOption m_musicVolume;
 	FloatOption m_masterVolume;
@@ -473,7 +539,7 @@ public:
 	std::string m_skin;
 	ValuesOption m_difficulty;
 	BoolOption m_hideGui;
-	BoolOption m_thirdPerson;
+	ThirdPersonOption m_thirdPerson;
 	BoolOption m_flightHax;
 	SwapJumpSneakOption m_swapJumpSneak;
 	DpadSizeOption m_dpadSize;
@@ -483,6 +549,7 @@ public:
 	float field_248;
 	GuiScaleOption m_guiScale;
 	GammaOption m_gamma;
+	FovOption m_fov;
 	StringOption m_playerName;
 	BoolOption m_serverVisibleDefault;
 	BoolOption m_autoJump;
@@ -509,6 +576,7 @@ public:
 	OPTION(m_difficulty);                  \
 	OPTION(m_thirdPerson);                 \
 	OPTION(m_serverVisibleDefault);        \
+	OPTION(m_classicCrafting);			   \
 
 #define OPTIONS_LIST_GAMEPLAY_AUDIO        \
 	HEADER("Audio");                       \
@@ -538,16 +606,18 @@ public:
 	OPTION(m_viewDistance);                \
 	/*OPTION(m_antiAliasing);*/            \
 	/*OPTION(m_guiScale);*/                \
-	/*OPTION(m_fov);*/                     \
+	OPTION(m_fov);                         \
 	OPTION(m_gamma);                       \
 	OPTION(m_ambientOcclusion);            \
 	OPTION(m_fancyGraphics);               \
 	OPTION(m_viewBobbing);                 \
 	OPTION(m_anaglyphs);                   \
 	OPTION(m_blockOutlines);               \
+	/*OPTION(m_limitFramerate);*/          \
 	OPTION(m_vSync); idxVSync = currentIndex; \
 	OPTION(m_fancyGrass);                  \
 	OPTION(m_biomeColors);                 \
+	/*OPTION(m_bMipmaps);*/                \
 	OPTION(m_dynamicHand);                 \
 	OPTION(m_uiTheme);                     \
 	OPTION(m_logoType);                    \

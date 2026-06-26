@@ -73,7 +73,7 @@ public:
 	void renderArmor(bool topLeft);
 	void renderHunger(bool topLeft);
 	void renderBubbles(bool topLeft);
-	void renderProgressIndicator(int width, int height);
+	void renderProgressIndicator(int width, int height, float f);
 	void renderExperience();
 	void renderToolBar(float f, float alpha);
 	int getNumSlots();					  // Gets the number of slots in the inventory. Includes the '...' if in touch mode.
@@ -89,6 +89,8 @@ private:
 	bool m_feedbackMeshesBuilt;
 	mce::Mesh m_feedbackOuter;
 	mce::Mesh m_feedbackInner;
+	float m_lastProgress;
+	float m_feedbackAccum;
 	int m_animatedCharacterTimer;
 
 protected:

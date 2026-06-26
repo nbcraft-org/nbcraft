@@ -74,3 +74,9 @@ bool TileItem::useOn(ItemStack* instance, Player* player, Level* level, const Ti
 	player->useItem(*instance);
 	return true;
 }
+
+int TileItem::getColor(int data) const
+{
+	//@NOTE: Used by tiles rendered as 2d items
+	return Tile::tiles[m_tile]->getColor(Facing::UP, data);
+}

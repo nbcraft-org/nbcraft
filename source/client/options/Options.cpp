@@ -32,7 +32,6 @@
 
 #include "renderer/RenderContextImmediate.hpp"
 
-
 void Options::_initDefaultValues()
 {
 	m_flySpeed = 1.0f;
@@ -44,7 +43,7 @@ void Options::_initDefaultValues()
 	m_bUseMouseForDigging = true;
 #ifdef ORIGINAL_CODE
 	m_viewDistance.set(2);
-	m_thirdPerson.set(0);
+	m_thirdPerson.set(TPM_FIRST);
 	m_bUseMouseToBreak = false;
 #endif
 
@@ -69,75 +68,84 @@ Options::Options(Minecraft* mc, const std::string& folderPath) :
 	, m_masterVolume("audio_master", "options.sound", 1.0f)
 	, m_sensitivity("ctrl_sensitivity", "options.sensitivity", 0.5f)
 	, m_invertMouse("ctrl_invertmouse", "options.invertMouse", false)
-	, m_viewDistance("gfx_viewdistance", "options.renderDistance", 1, ValuesBuilder().add("options.renderDistance.far").add("options.renderDistance.normal").add("options.renderDistance.short").add("options.renderDistance.tiny"))
+	, m_viewDistance("gfx_viewdistance", "options.renderDistance", 2, ValuesBuilder().add("options.renderDistance.tiny").add("options.renderDistance.short").add("options.renderDistance.normal").add("options.renderDistance.far"), true)
 	, m_viewBobbing("gfx_bobview", "options.viewBobbing", true)
 	, m_anaglyphs("gfx_3danaglyphs", "options.anaglyph", false)
 	, m_fancyGraphics("gfx_fancygraphics", "options.fancyGraphics", true)
 	, m_ambientOcclusion("gfx_smoothlighting", "options.ao", Minecraft::useAmbientOcclusion)
-	, m_difficulty("misc_difficulty", "options.difficulty", 2, ValuesBuilder().add("options.difficulty.peaceful").add("options.difficulty.easy").add("options.difficulty.normal").add("options.difficulty.hard"))
+	, m_difficulty("misc_difficulty", "options.difficulty", 2, ValuesBuilder().add("options.difficulty.peaceful").add("options.difficulty.easy").add("options.difficulty.normal").add("options.difficulty.hard"), true)
 	, m_hideGui("gfx_hidegui", "options.hideGui", false)
-	, m_thirdPerson("gfx_thirdperson", "options.thirdPerson", false)
+	, m_thirdPerson("gfx_thirdperson", "options.thirdPerson", 0)
 	, m_flightHax("misc_flycheat", "options.flightHax", false)
 	, m_swapJumpSneak("ctrl_swapjumpsneak", "options.swapJumpSneak", false)
 	, m_dpadSize("ctrl_dpadsize", "options.dpadSize", 1.0f)
 	, m_guiScale("gfx_guiscale", "options.guiScale", 0, ValuesBuilder().add("options.guiScale.auto").add("options.guiScale.small").add("options.guiScale.normal").add(("options.guiScale.large")))
 	, m_gamma("gfx_gamma", "options.gamma", 0.50f)
+	, m_fov("gfx_fov", "options.fov", 70.0f)
 	, m_playerName("mp_username", "options.username", "Steve")
 	, m_serverVisibleDefault("mp_server_visible_default", "options.serverVisibleDefault", true)
 	, m_autoJump("ctrl_autojump", "options.autoJump", mc->platform()->isTouchscreen())
 	, m_debugText("info_debugtext", "options.debugText", false)
-	, m_blockOutlines("gfx_blockoutlines", "options.blockOutlines", false)
+	, m_blockOutlines("gfx_blockoutlines", "options.blockOutlines", !mc->platform()->isTouchscreen())
 	, m_fancyGrass("gfx_fancygrass", "options.fancyGrass", true)
 	, m_biomeColors("gfx_biomecolors", "options.biomeColors", true)
 	, m_splitControls("ctrl_split", "options.splitControls", false)
-	, m_dynamicHand("gfx_dynamichand", "options.dynamicHand", false)
+	, m_dynamicHand("gfx_dynamichand", "options.dynamicHand", true)
 	, m_menuPanorama("misc_menupano", "options.menuPanorama", true)
 	, m_lang("gfx_lang", "options.lang", "en_us")
 	, m_uiTheme("gfx_uitheme", "options.uiTheme", GetDefaultUiTheme(m_pMinecraft), ValuesBuilder().add("options.uiTheme.pocket").add("options.uiTheme.java").add("options.uiTheme.console"))
 	, m_logoType("gfx_logotype", "options.logoType", LOGO_AUTO, ValuesBuilder().add("options.logoType.auto").add("options.logoType.pocket").add("options.logoType.java").add("options.logoType.console").add("options.logoType.xbox360").add("options.logoType.logo3d"))
 	, m_hudSize("gfx_hudsize", "options.hudSize", HUD_SIZE_2)
-	, m_classicCrafting("gfx_classiccrafting", "options.classicCrafting", true)
+	, m_classicCrafting("gfx_classiccrafting", "options.classicCrafting", false)
 	, m_animatedCharacter("gfx_animatedcharacter", "options.animatedCharacter", true)
 	//, m_limitFramerate("gfx_fpslimit", "options.framerateLimit", 0, ValuesBuilder().add(performance.max").add("performance.balanced").add("performance.powersaver"))
 	//, m_bMipmaps("gfx_mipmaps", "options.mipmaps")
-	//, m_moreWorldOptions("misc_moreworldoptions", "options.moreWorldOptions", true)
 	, m_vSync("enableVsync", "options.enableVsync", true)
 {
-	add(m_musicVolume);
-	add(m_masterVolume);
-	add(m_invertMouse);
-	add(m_difficulty);
-	add(m_splitControls);
-	add(m_swapJumpSneak);
-	add(m_dpadSize);
-	add(m_sensitivity);
-	add(m_viewDistance);
-	add(m_viewBobbing);
-	add(m_anaglyphs);
-	add(m_fancyGraphics);
-	add(m_fancyGrass);
-	add(m_biomeColors);
-	add(m_ambientOcclusion);
-	add(m_guiScale);
-	add(m_gamma);
-	//add(m_limitFramerate);
-	add(m_autoJump);
-	//add(m_bMipmaps);
-	//add(m_moreWorldOptions);
-	add(m_blockOutlines);
-	add(m_dynamicHand);
-	add(m_menuPanorama);
-	add(m_thirdPerson);
-	add(m_hideGui);
+	add(OC_GAMEPLAY, m_difficulty);
+	add(OC_GAMEPLAY, m_thirdPerson);
+	add(OC_GAMEPLAY, m_serverVisibleDefault);
+	add(OC_GAMEPLAY, m_classicCrafting);
+	add(OC_GAMEPLAY, m_musicVolume);
+	add(OC_GAMEPLAY, m_masterVolume);
+
+	add(OC_CONTROLS, m_sensitivity);
+	add(OC_CONTROLS, m_invertMouse);
+	add(OC_CONTROLS, m_splitControls);
+	add(OC_CONTROLS, m_swapJumpSneak);
+	add(OC_CONTROLS, m_dpadSize);
+	add(OC_CONTROLS, m_autoJump);
+	//add(OC_CONTROLS, m_vibrate);
+	add(OC_CONTROLS, m_flightHax);
+
+	//add(OC_VIDEO, m_brightness);
+	add(OC_VIDEO, m_viewDistance);
+	//add(OC_VIDEO, m_antiAliasing);
+	add(OC_VIDEO, m_guiScale);
+	add(OC_VIDEO, m_fov);
+	add(OC_VIDEO, m_gamma);
+	add(OC_VIDEO, m_ambientOcclusion);
+	add(OC_VIDEO, m_fancyGraphics);
+	add(OC_VIDEO, m_viewBobbing);
+	add(OC_VIDEO, m_anaglyphs);
+	add(OC_VIDEO, m_blockOutlines);
+	//add(OC_VIDEO, m_limitFramerate);
+	add(OC_VIDEO, m_vSync);
+	add(OC_VIDEO, m_fancyGrass);
+	add(OC_VIDEO, m_biomeColors);
+	//add(OC_VIDEO, m_bMipmaps);
+	add(OC_VIDEO, m_dynamicHand);
+	add(OC_VIDEO, m_uiTheme);
+	add(OC_VIDEO, m_logoType);
+	add(OC_VIDEO, m_hudSize);
+	add(OC_VIDEO, m_animatedCharacter);
+	add(OC_VIDEO, m_hideGui);
+	add(OC_VIDEO, m_debugText);
+	add(OC_VIDEO, m_menuPanorama);
+
 	add(m_playerName);
-	add(m_debugText);
 	add(m_lang);
-	add(m_hudSize);
-	add(m_uiTheme);
-	add(m_logoType);
-	add(m_classicCrafting);
-	add(m_animatedCharacter);
-	add(m_vSync);
+	
 	_initDefaultValues();
 	if (folderPath.empty()) return;
 	m_filePath = folderPath + "/options.txt";
@@ -148,6 +156,12 @@ void Options::add(OptionEntry& entry)
 {
 	entry.m_pMinecraft = m_pMinecraft;
 	m_options[entry.getKey()] = &entry;
+}
+
+void Options::add(OptionsCategory cat, OptionEntry& entry)
+{
+	add(entry);
+	m_categoryOptions[cat].push_back(&entry);
 }
 
 void Options::_load()
@@ -619,6 +633,18 @@ void Options::reset()
 	}
 }
 
+void Options::resetCategory(OptionsCategory cat)
+{
+	CategoryMap::iterator it = m_categoryOptions.find(cat);
+	if (it != m_categoryOptions.end())
+	{
+		std::vector<OptionEntry*>& entries = it->second;
+		for (size_t i = 0; i < entries.size(); i++)
+			entries[i]->reset();
+	}
+	save();
+}
+
 UITheme Options::getUiTheme() const
 {
 	return UITheme(m_uiTheme.get());
@@ -725,6 +751,25 @@ void BoolOption::addGuiElement(std::vector<GuiElement*>& elements, UITheme uiThe
 		elements.push_back(new SwitchButton(0, 0, this, getDisplayName()));
 }
 
+std::string ThirdPersonOption::getDisplayValue() const
+{
+	switch (get())
+	{
+		case 0: return Language::get("options.thirdPerson.off");
+		case 1: return Language::get("options.thirdPerson.behind");
+		case 2: return Language::get("options.thirdPerson.front");
+	}
+	return "";
+}
+
+void ThirdPersonOption::addGuiElement(std::vector<GuiElement*>& elements, UITheme uiTheme)
+{
+	if (uiTheme == UI_CONSOLE)
+		elements.push_back(new SliderButton(0, 0, 200, 32, this, getMessage(), toFloat()));
+	else
+		elements.push_back(new SwitchValuesButton(0, 0, this, getDisplayName()));
+}
+
 std::string ValuesOption::getDisplayValue() const
 {
 	return Language::get(getValue());
@@ -733,9 +778,16 @@ std::string ValuesOption::getDisplayValue() const
 void MinMaxOption::addGuiElement(std::vector<GuiElement*>& elements, UITheme uiTheme)
 {
 	if (uiTheme == UI_CONSOLE)
+	{
 		elements.push_back(new SliderButton(0, 0, 200, 32, this, getMessage(), toFloat()));
+	}
 	else
-		elements.push_back(new SwitchValuesButton(0, 0, this, getDisplayName()));
+	{
+		if (m_bIsSlider)
+			elements.push_back(new SliderButton(0, 0, 200, 32, this, getMessage(), toFloat()));
+		else
+			elements.push_back(new SwitchValuesButton(0, 0, this, getDisplayName()));
+	}
 }
 
 std::string SensitivityOption::getDisplayValue() const
@@ -757,17 +809,39 @@ void GuiScaleOption::apply()
 
 void GammaOption::apply()
 {
+	if (!m_pMinecraft->m_pGameRenderer)
+		return;
+	apply(*m_pMinecraft->m_pGameRenderer);
+}
+
+void GammaOption::apply(GameRenderer& gameRenderer)
+{
 	// Budget rounding since the 360 just doesn't have a round function
 	// @TODO: Then again, we don't need this level or precision to begin with
 	// I just don't wanna have to rework the SliderButton to support integers
-	if (!m_pMinecraft->m_pGameRenderer)
-		return;
-	m_pMinecraft->m_pGameRenderer->setGamma((float)Mth::floor(get() * 100) / 100);
+	gameRenderer.setGamma((float)Mth::floor(get() * 100) / 100);
 }
 
 std::string GammaOption::getDisplayValue() const
 {
 	return Util::toString(int(get() * 100)) + "%";
+}
+
+void FovOption::apply()
+{
+	if (!m_pMinecraft || !m_pMinecraft->m_pGameRenderer)
+		return;
+	m_pMinecraft->m_pGameRenderer->setFovBase(get());
+}
+
+std::string FovOption::getDisplayValue() const
+{
+	float val = get();
+	if (val == 70.0f)
+		return Language::get("options.fov.normal");
+	if (val == 110.0f)
+		return Language::get("options.fov.quakePro");
+	return Util::toString(int(val));
 }
 
 void GraphicsOption::apply()

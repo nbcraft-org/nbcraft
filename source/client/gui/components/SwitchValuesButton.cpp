@@ -20,7 +20,7 @@ void SwitchValuesButton::pressed(Minecraft* mc, const MenuPointer& pointer)
 {
 	if (pointer.x >= m_xPos + m_width - C_SWITCH_VALUES_WIDTH - 6 && pointer.x < m_xPos + m_width - 6)
 	{
-		pressed(mc);
+		Button::pressed(mc, pointer);
 	}
 }
 

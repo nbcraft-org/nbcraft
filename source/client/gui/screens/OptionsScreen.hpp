@@ -14,16 +14,7 @@
 #ifndef OLD_OPTIONS_SCREEN
 
 #include "../components/OptionList.hpp"
-enum OptionsCategory
-{
-	OC_GAMEPLAY,
-	OC_CONTROLS,
-	OC_VIDEO,
-
-	OC_MIN = OC_GAMEPLAY,
-	OC_MAX = OC_VIDEO,
-	OC_COUNT
-};
+#include "client/options/Options.hpp"
 
 class OptionsScreen : public Screen
 {

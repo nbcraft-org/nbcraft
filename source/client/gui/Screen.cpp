@@ -14,9 +14,6 @@
 #include "renderer/RenderContextImmediate.hpp"
 #include "renderer/hal/interface/RasterizerState.hpp"
 
-#define C_SOUND_BTN_CLICK   "random.click"
-#define C_SOUND_BTN_RELEASE "random.click"
-
 #define C_POINTER_FAST_MOVE_SPEED 0.09f
 #define C_POINTER_MINIMUM_SPEED 0.04f
 #define C_POINTER_DIAGONAL_SPEED 0.4f
@@ -192,10 +189,11 @@ void Screen::handleUserAction(const ActionInfo& action)
 		{
 			if (element && element->isEnabled())
 			{
-				m_pMinecraft->m_pSoundEngine->playUI(C_SOUND_UI_PRESS);
 				element->pressed(m_pMinecraft);
+
 				if (element->getType() == GuiElement::TYPE_BUTTON)
 					_buttonClicked((Button*)element);
+
 				_guiElementClicked(*element);
 			}
 		}
@@ -408,14 +406,12 @@ void Screen::pointerPressed(const MenuPointer& pointer, MouseButtonType btn)
 
 			if (!m_pMinecraft->useTouchscreen())
 			{
-				if (_useController())
-					m_pMinecraft->m_pSoundEngine->playUI(C_SOUND_UI_PRESS);
-				else
-					m_pMinecraft->m_pSoundEngine->playUI(C_SOUND_BTN_CLICK);
 				element->pressed(m_pMinecraft, pointer);
-				if (m_pClickedElement->getType() == GuiElement::TYPE_BUTTON)
-					_buttonClicked((Button*)m_pClickedElement);
-				_guiElementClicked(*m_pClickedElement);
+
+				if (element->getType() == GuiElement::TYPE_BUTTON)
+					_buttonClicked((Button*)element);
+
+				_guiElementClicked(*element);
 			}
 		}
 	}
@@ -450,10 +446,11 @@ void Screen::pointerReleased(const MenuPointer& pointer, MouseButtonType btn)
 	{
 		if (m_pMinecraft->useTouchscreen() && m_pClickedElement->isHovered(m_pMinecraft, pointer))
 		{
-			m_pMinecraft->m_pSoundEngine->playUI(C_SOUND_BTN_RELEASE);
 			m_pClickedElement->pressed(m_pMinecraft, pointer);
+
 			if (m_pClickedElement->getType() == GuiElement::TYPE_BUTTON)
 				_buttonClicked((Button*)m_pClickedElement);
+
 			_guiElementClicked(*m_pClickedElement);
 		}
 		m_pClickedElement->released(pointer);
@@ -517,8 +514,10 @@ void Screen::onRender(float f)
 bool Screen::onBack(bool b)
 {
 	bool result = handleBackEvent(b);
-	// Play the sound regardless, since NinecraftApp will set the current screen to null anyways
-	m_pMinecraft->m_pSoundEngine->playUI(C_SOUND_UI_BACK);
+
+	if (m_uiTheme == UI_CONSOLE)
+		m_pMinecraft->m_pSoundEngine->playUI(C_SOUND_UI_BACK);
+
 	return result;
 }
 

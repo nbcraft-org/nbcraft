@@ -223,7 +223,7 @@ void IngameBlockSelectionScreen::renderSlot(int index, int x, int y, float f)
 	if (item.isEmpty())
 		return;
 
-	ItemRenderer::singleton().renderGuiItem(*m_pMinecraft, item, x, y, true);
+	ItemRenderer::singleton().renderGuiItem(*m_pMinecraft, item, x, y);
 	ItemRenderer::singleton().renderGuiItemOverlay(*m_pMinecraft, item, x, y);
 }
 

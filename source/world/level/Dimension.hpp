@@ -34,7 +34,7 @@ public:
 	virtual bool isNaturalDimension() const;
 	virtual void init();
 	virtual bool mayRespawn() const;
-	virtual bool isValidSpawn(const TilePos& pos) const;
+    virtual bool isValidSpawn(const TilePos& pos) const;
 
 	const float* getSunriseColor(float, float);
 	float getTimeOfDay(int32_t, float) const;

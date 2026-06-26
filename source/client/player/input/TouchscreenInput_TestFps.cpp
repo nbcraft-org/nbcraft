@@ -208,6 +208,21 @@ void TouchscreenInput_TestFps::tick(Player* pPlayer)
 		int x = Multitouch::getX(finger);
 		int y = Multitouch::getY(finger);
 		int pointerId = m_touchAreaModel.getPointerId(x, y, finger);
+		bool bThisFingerDynamic = false;
+		{
+			float fx = float(x);
+			float fy = float(y);
+			if (m_rectArea.isInside(fx, fy) && m_bForwardBeingHeld)
+			{
+				bThisFingerDynamic = true;
+				bForwardPressed = true;
+				float centerX = (m_rectArea.left + m_rectArea.right) * 0.5f;
+				float centerY = (m_rectArea.top + m_rectArea.bottom) * 0.5f;
+				float angle = Mth::atan2(fy - centerY, fx - centerX) + float(M_PI);
+				m_vertInput = Mth::sin(angle);
+				m_horzInput = Mth::cos(angle);
+			}
+		}
 
 		if (pointerId <= 99)
 		{
@@ -228,7 +243,12 @@ void TouchscreenInput_TestFps::tick(Player* pPlayer)
 		}
 
 		if (pointerId > 99)
-			field_6C[pointerId - 100] = true;
+		{
+			int inputId = pointerId - 100;
+			if (!m_bForwardBeingHeld ||
+				(inputId != INPUT_LEFT && inputId != INPUT_RIGHT && inputId != INPUT_BACKWARD && inputId != INPUT_JUMP && inputId != INPUT_FORWARDLEFT && inputId != INPUT_FORWARDRIGHT))
+				field_6C[inputId] = true;
+		}
 
 		if (pointerId == 100 + INPUT_SNEAK) // sneak
 		{
@@ -244,7 +264,9 @@ void TouchscreenInput_TestFps::tick(Player* pPlayer)
 			else if (m_bForwardBeingHeld)
 			{
 				pointerId = 100; // forward
-				m_vertInput += 1.0f;
+				field_6C[INPUT_FORWARD] = true;
+				if (!bThisFingerDynamic)
+					m_vertInput += 1.0f;
 			}
 			bJumpPressed = true;
 		}
@@ -257,11 +279,13 @@ void TouchscreenInput_TestFps::tick(Player* pPlayer)
 			else
 				bForwardPressed = true;
 
-			m_vertInput += 1.0f;
+			if (!bThisFingerDynamic)
+				m_vertInput += 1.0f;
 			break;
 
 		case 100 + INPUT_BACKWARD:
-			m_vertInput -= 1.0f;
+			if (!m_bForwardBeingHeld)
+				m_vertInput -= 1.0f;
 			break;
 
 		case 100 + INPUT_FLYUP:
@@ -278,25 +302,33 @@ void TouchscreenInput_TestFps::tick(Player* pPlayer)
 				if (m_bForwardBeingHeld)
 				{
 					bForwardPressed = true;
-					m_vertInput += 1.0f;
-					m_horzInput += 1.0f;
+					if (!bThisFingerDynamic)
+					{
+						m_vertInput += 1.0f;
+						m_horzInput += 1.0f;
+					}
 				}
 				break;
 			case 100 + INPUT_FORWARDRIGHT:
 				if (m_bForwardBeingHeld)
 				{
 					bForwardPressed = true;
-					m_vertInput += 1.0f;
-					m_horzInput -= 1.0f;
+					if (!bThisFingerDynamic)
+					{
+						m_vertInput += 1.0f;
+						m_horzInput -= 1.0f;
+					}
 				}
 				break;
 
 			case 100 + INPUT_LEFT:
-				m_horzInput += 1.0f;
+				if (!m_bForwardBeingHeld)
+					m_horzInput += 1.0f;
 				break;
 
 			case 100 + INPUT_RIGHT:
-				m_horzInput -= 1.0f;
+				if (!m_bForwardBeingHeld)
+					m_horzInput -= 1.0f;
 				break;
 		}
 	}

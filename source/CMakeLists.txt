@@ -54,12 +54,12 @@ add_library(nbcraft-core STATIC
     client/renderer/entity/PigRenderer.cpp
     client/renderer/entity/ChickenRenderer.cpp
     client/renderer/entity/RocketRenderer.cpp
-	client/renderer/entity/SquidRenderer.cpp
-	client/renderer/entity/GiantMobRenderer.cpp
-	client/renderer/entity/SlimeRenderer.cpp
-	client/renderer/entity/FireballRenderer.cpp
-	client/renderer/entity/GhastRenderer.cpp
-	client/renderer/entity/FishingHookRenderer.cpp
+  	client/renderer/entity/SquidRenderer.cpp
+  	client/renderer/entity/GiantMobRenderer.cpp
+  	client/renderer/entity/SlimeRenderer.cpp
+  	client/renderer/entity/FireballRenderer.cpp
+  	client/renderer/entity/GhastRenderer.cpp
+  	client/renderer/entity/FishingHookRenderer.cpp
     client/renderer/renderer/EntityShaderManager.cpp
     client/renderer/renderer/RenderMaterialGroup.cpp
     client/renderer/renderer/ShaderGroup.cpp
@@ -89,6 +89,9 @@ add_library(nbcraft-core STATIC
     client/renderer/LavaTexture.cpp
     client/renderer/LavaSideTexture.cpp
     client/renderer/FireTexture.cpp
+    client/renderer/CompassTexture.cpp
+    client/renderer/ClockTexture.cpp
+    client/renderer/PortalTexture.cpp
     client/renderer/FoliageColor.cpp
     client/renderer/GrassColor.cpp
     client/renderer/LogoRenderer.cpp
@@ -101,13 +104,13 @@ add_library(nbcraft-core STATIC
     client/gui/Screen.cpp
     client/gui/ScreenChooser.cpp
     client/gui/ScreenChooser_Console.cpp
-	client/gui/ScreenChooser_Pocket.cpp
+  	client/gui/ScreenChooser_Pocket.cpp
     client/gui/screens/CreditsScreen.cpp
     client/gui/screens/OptionsScreen.cpp
     client/gui/screens/OptionsScreen_Console.cpp
     client/gui/screens/StartMenuScreen.cpp
     client/gui/screens/StartMenuScreen_Console.cpp
-	client/gui/screens/StartMenuScreen_Pocket.cpp
+	  client/gui/screens/StartMenuScreen_Pocket.cpp
     client/gui/screens/ConvertWorldScreen.cpp
     client/gui/screens/CreateWorldScreen.cpp
     client/gui/screens/CreateWorldScreen_Console.cpp
@@ -136,10 +139,12 @@ add_library(nbcraft-core STATIC
     client/gui/screens/inventory/CreativeScreen_Console.cpp
     client/gui/screens/inventory/InventoryScreen.cpp
     client/gui/screens/inventory/CraftingScreen.cpp
+    client/gui/screens/inventory/CraftingScreen_Console.cpp
     client/gui/screens/inventory/ClassicCraftingScreen_Console.cpp
     client/gui/screens/inventory/FurnaceScreen.cpp
     client/gui/screens/inventory/ChestScreen.cpp
-	client/gui/screens/inventory/TrapScreen.cpp
+	  client/gui/screens/inventory/TrapScreen.cpp
+    client/gui/screens/inventory/ClientCraftContext.cpp
     client/gui/components/ScrolledSelectionList.cpp
     client/gui/components/AvailableGamesList.cpp
     client/gui/components/RolledSelectionList.cpp
@@ -153,9 +158,10 @@ add_library(nbcraft-core STATIC
     client/gui/components/WorldSelectionList.cpp
     client/gui/components/OptionList.cpp
     client/gui/components/ScrollRenderer_Console.cpp
-	client/gui/components/ImageButton.cpp
-	client/gui/components/LargeImageButton.cpp
+	  client/gui/components/ImageButton.cpp
+	  client/gui/components/LargeImageButton.cpp
     client/gui/components/TabButton.cpp
+    client/gui/components/CraftButton_Console.cpp
     client/locale/Language.cpp
     client/gui/Gui.cpp
     client/gui/GuiComponent.cpp
@@ -180,9 +186,9 @@ add_library(nbcraft-core STATIC
     client/model/models/CreeperModel.cpp
     client/model/models/CowModel.cpp
     client/model/models/ChickenModel.cpp
-	client/model/models/SquidModel.cpp
-	client/model/models/SlimeModel.cpp
-	client/model/models/GhastModel.cpp
+	  client/model/models/SquidModel.cpp
+	  client/model/models/SlimeModel.cpp
+	  client/model/models/GhastModel.cpp
     client/multiplayer/MultiPlayerLevel.cpp
     client/multiplayer/MultiplayerLocalPlayer.cpp
     client/player/input/ControllerBuildInput.cpp
@@ -305,8 +311,8 @@ add_library(nbcraft-core STATIC
     world/entity/Spider.cpp
     world/entity/Zombie.cpp
     world/entity/Arrow.cpp
-	world/entity/ThrownEgg.cpp
-	world/entity/Snowball.cpp
+  	world/entity/ThrownEgg.cpp
+  	world/entity/Snowball.cpp
     world/entity/WaterAnimal.cpp
     world/entity/Monster.cpp
     world/entity/Rocket.cpp
@@ -323,14 +329,14 @@ add_library(nbcraft-core STATIC
     world/entity/EntityType.cpp
     world/entity/EntityTypeDescriptor.cpp
     world/entity/MobCategory.cpp
-	world/entity/Squid.cpp
-	world/entity/Giant.cpp
-	world/entity/Slime.cpp
-	world/entity/PigZombie.cpp
-	world/entity/Fireball.cpp
-	world/entity/FlyingMob.cpp
-	world/entity/Ghast.cpp
-	world/entity/FishingHook.cpp
+	  world/entity/Squid.cpp
+	  world/entity/Giant.cpp
+	  world/entity/Slime.cpp
+	  world/entity/PigZombie.cpp
+	  world/entity/Fireball.cpp
+	  world/entity/FlyingMob.cpp
+	  world/entity/Ghast.cpp
+	  world/entity/FishingHook.cpp
     world/level/Dimension.cpp
     world/level/Material.cpp
     world/level/LevelListener.cpp
@@ -401,7 +407,7 @@ add_library(nbcraft-core STATIC
     world/inventory/CraftingMenu.cpp
     world/inventory/FurnaceMenu.cpp
     world/inventory/ChestMenu.cpp
-	world/inventory/TrapMenu.cpp
+  	world/inventory/TrapMenu.cpp
     world/inventory/CreativeMenu.cpp
     world/inventory/CreativeMenu_Console.cpp
     world/inventory/Slot.cpp
@@ -411,11 +417,12 @@ add_library(nbcraft-core STATIC
     world/inventory/CraftingContainer.cpp
     world/inventory/ResultContainer.cpp
     world/inventory/SimpleContainer.cpp
+    world/inventory/CraftContext.cpp
     world/item/DoorItem.cpp
     world/item/ItemStack.cpp
     world/item/RocketItem.cpp
     world/item/Item.cpp
-	world/item/FlintAndSteelItem.cpp
+   	world/item/FlintAndSteelItem.cpp
     world/item/FoodItem.cpp
     world/item/SeedItem.cpp
     world/item/ArmorItem.cpp
@@ -428,24 +435,25 @@ add_library(nbcraft-core STATIC
     world/item/AuxTileItem.cpp
     world/item/ClothItem.cpp
     world/item/DyeColor.cpp
-	world/item/EggItem.cpp
+  	world/item/EggItem.cpp
     world/item/SlabItem.cpp
-	world/item/RedStoneItem.cpp
-	world/item/SnowballItem.cpp
-	world/item/FishingRodItem.cpp
-	world/item/RecordingItem.cpp
+  	world/item/RedStoneItem.cpp
+  	world/item/SnowballItem.cpp
+  	world/item/FishingRodItem.cpp
+  	world/item/RecordingItem.cpp
     world/particle/RedDustParticle.cpp
     world/particle/TerrainParticle.cpp
     world/particle/NoteParticle.cpp
     world/particle/BubbleParticle.cpp
     world/particle/ExplodeParticle.cpp
-	world/particle/ItemParticle.cpp
+  	world/particle/ItemParticle.cpp
     world/particle/ParticleEngine.cpp
     world/particle/FlameParticle.cpp
     world/particle/SmokeParticle.cpp
     world/particle/Particle.cpp
     world/particle/LavaParticle.cpp
     world/particle/FireworkParticle.cpp
+    world/particle/TakeAnimationParticle.cpp
     world/tile/InvisibleTile.cpp
     world/tile/Sapling.cpp
     world/tile/TreeTile.cpp
@@ -497,25 +505,25 @@ add_library(nbcraft-core STATIC
     world/tile/GlowstoneTile.cpp
     world/tile/Web.cpp
     world/tile/FenceTile.cpp
-	world/tile/RedStoneDustTile.cpp
-	world/tile/LeverTile.cpp
-	world/tile/PressurePlateTile.cpp
-	world/tile/NotGateTile.cpp
-	world/tile/ButtonTile.cpp
-	world/tile/DiodeTile.cpp
-	world/tile/SnowTile.cpp
+  	world/tile/RedStoneDustTile.cpp
+  	world/tile/LeverTile.cpp
+  	world/tile/PressurePlateTile.cpp
+  	world/tile/NotGateTile.cpp
+    world/tile/ButtonTile.cpp
+  	world/tile/DiodeTile.cpp
+  	world/tile/SnowTile.cpp
     world/tile/CraftingTableTile.cpp
-	world/tile/DispenserTile.cpp
-	world/tile/RecordPlayerTile.cpp
+  	world/tile/DispenserTile.cpp
+  	world/tile/RecordPlayerTile.cpp
     world/tile/FenceGateTile.cpp
-	world/tile/TrapDoorTile.cpp
-	world/tile/CakeTile.cpp
+  	world/tile/TrapDoorTile.cpp
+  	world/tile/CakeTile.cpp
     world/tile/entity/TileEntity.cpp
     world/tile/entity/TileEntityType.cpp
     world/tile/entity/ChestTileEntity.cpp
     world/tile/entity/FurnaceTileEntity.cpp
     world/tile/entity/MusicTileEntity.cpp
-	world/tile/entity/DispenserTileEntity.cpp
+  	world/tile/entity/DispenserTileEntity.cpp
     world/Facing.cpp
     renderer/GL/GL.cpp
     renderer/Attribute.cpp

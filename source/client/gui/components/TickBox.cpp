@@ -15,6 +15,7 @@ TickBox::TickBox(int x, int y, BoolOption* option, const std::string& message) :
 	m_width = C_DEFAULT_TICKBOX_WIDTH;
 	m_height = C_DEFAULT_TICKBOX_HEIGHT;
 	setMessage(message);
+	m_bHasSound = true;
 }
 
 TickBox::TickBox(int x, int y, bool initial, const std::string& message) :
@@ -26,15 +27,13 @@ TickBox::TickBox(int x, int y, bool initial, const std::string& message) :
 	m_width = C_DEFAULT_TICKBOX_WIDTH;
 	m_height = C_DEFAULT_TICKBOX_HEIGHT;
 	setMessage(message);
-}
-
-void TickBox::pressed(Minecraft* mc, const MenuPointer& pointer)
-{
-	pressed(mc);
+	m_bHasSound = true;
 }
 
 void TickBox::pressed(Minecraft* mc)
 {
+	GuiElement::pressed(mc);
+
 	if (!isEnabled()) return;
 	m_bOn ^= 1;
 	if (m_pOption)

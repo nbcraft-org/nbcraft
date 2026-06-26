@@ -157,7 +157,7 @@ void Textures::clear()
 }
 
 Textures::Textures() :
-	m_guiAtlas("gui_atlas"),
+	m_guiAtlas("gui_atlas", DEFAULT_ATLAS_SIZE * 2),
 	m_filteredGuiAtlas("filtered_gui_atlas", true)
 {
 	m_bClamp = false;
@@ -266,7 +266,8 @@ void Textures::setupAtlases(bool forceReset)
 	}
 	
 	addSprite("gui/console/Graphics/IconHolder.png", m_guiAtlas);
-	//addSprite("gui/console/Graphics/IconHolderRed.png", m_guiAtlas);
+	addSprite("gui/console/Graphics/IconHolderRed.png", m_guiAtlas);
+	addSprite("gui/console/Graphics/Warning.png", m_guiAtlas);
 	addSprite("gui/console/Graphics/Armour_Slot_Head.png", m_guiAtlas);
 	addSprite("gui/console/Graphics/Armour_Slot_Body.png", m_guiAtlas);
 	addSprite("gui/console/Graphics/Armour_Slot_Legs.png", m_guiAtlas);
@@ -288,6 +289,12 @@ void Textures::setupAtlases(bool forceReset)
 	addSprite("gui/console/Graphics/Tab_Creative7_L.png", m_guiAtlas);
 	addSprite("gui/console/Graphics/Tab_Creative7_M.png", m_guiAtlas);
 	addSprite("gui/console/Graphics/Tab_Creative7_R.png", m_guiAtlas);
+	addSprite("gui/console/Graphics/Tab_Left.png", m_guiAtlas);
+	addSprite("gui/console/Graphics/Tab_Middle.png", m_guiAtlas);
+	addSprite("gui/console/Graphics/Tab_Right.png", m_guiAtlas);
+	addSprite("gui/console/CraftingPanels/Craft_Highlight_L_Small.png", m_guiAtlas);
+	addSprite("gui/console/CraftingPanels/Crafting_2SlotLargeV.png", m_guiAtlas);
+	addSprite("gui/console/CraftingPanels/Crafting_3SlotLargeV.png", m_guiAtlas);
 	addSprite("gui/console/scrollDown.png", m_guiAtlas);
 	addSprite("gui/console/scrollUp.png", m_guiAtlas);
 	addSprite("gui/loading_block.png", m_guiAtlas);
@@ -302,6 +309,9 @@ void Textures::setupAtlases(bool forceReset)
 	addSprite("gui/console/icon_food.png", m_guiAtlas);
 	addSprite("gui/console/icon_tools.png", m_guiAtlas);
 	addSprite("gui/console/icon_misc.png", m_guiAtlas);
+	addSprite("gui/console/icon_mechanisms.png", m_guiAtlas);
+	addSprite("gui/console/icon_armour.png", m_guiAtlas);
+	addSprite("gui/console/icon_transport.png", m_guiAtlas);
 	//addSprite("gui/loading_bar.png", m_guiAtlas);
 	//addSprite("gui/loading_background.png", m_guiAtlas);
 

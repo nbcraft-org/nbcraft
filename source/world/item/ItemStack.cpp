@@ -160,8 +160,8 @@ CompoundTag* ItemStack::getNetworkUserData() const
 	const CompoundTag::NamedTagMap& tags = m_userData->rawView();
 	for (CompoundTag::NamedTagMap::const_iterator it = tags.begin(); it != tags.end(); it++)
 	{
-		const std::string& name = it.key();
-		const Tag* tag = it.value();
+		const std::string& name = it->first;
+		const Tag* tag = it->second;
 		if (!tag) continue;
 
 		if (name == TAG_REPAIR_COST)
@@ -232,12 +232,12 @@ std::string ItemStack::getDescriptionId()
 	return getItem()->getDescriptionId(this);
 }
 
-std::string ItemStack::getHovertextName() const
+std::string ItemStack::getHovertextName()
 {
 	if (hasCustomHoverName())
 		return getHoverName();
 	else
-		return getItem()->getHovertextName();
+		return getItem()->getHovertextName(*this);
 }
 
 float ItemStack::getDestroySpeed(const Tile* tile)
@@ -423,6 +423,23 @@ void ItemStack::setEmpty()
 	if (m_userData)
 		delete m_userData;
 	m_userData = nullptr;
+}
+
+bool ItemStack::sameIngredient(const ItemStack& other) const
+{
+	if (!other.isEmpty() || !isEmpty())
+	{
+		if ((other.isEmpty() && !isEmpty()) || (!other.isEmpty() && isEmpty()))
+			return false;
+
+		if (getId() != other.getId())
+			return false;
+
+		if (getAuxValue() != -1 && getAuxValue() != other.getAuxValue())
+			return false;
+	}
+
+	return true;
 }
 
 int ItemStack::getBaseRepairCost() const

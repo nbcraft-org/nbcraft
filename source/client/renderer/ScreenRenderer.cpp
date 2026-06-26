@@ -77,7 +77,7 @@ void ScreenRenderer::blit(mce::Mesh& mesh, const IntRectangle& rect)
     mesh = t.end();
 }
 
-void ScreenRenderer::blit(int dx, int dy, int sx, int sy, int tw, int th, int sw, int sh, mce::MaterialPtr* materialPtr)
+void ScreenRenderer::blit(int dx, int dy, int sx, int sy, int tw, int th, int sw, int sh, mce::MaterialPtr* materialPtr, const Color& color)
 {
     Tesselator& t = Tesselator::instance;
 
@@ -85,11 +85,13 @@ void ScreenRenderer::blit(int dx, int dy, int sx, int sy, int tw, int th, int sw
     if (!sw) sw = tw;
 
     t.begin(4);
+    if (color != Color::WHITE)
+        t.color(color);
     t.vertexUV(dx + 0 , dy + th, m_blitOffset, float(sx + 0 ) / 256.0f, float(sy + sh) / 256.0f);
     t.vertexUV(dx + tw, dy + th, m_blitOffset, float(sx + sw) / 256.0f, float(sy + sh) / 256.0f);
     t.vertexUV(dx + tw, dy + 0 , m_blitOffset, float(sx + sw) / 256.0f, float(sy + 0 ) / 256.0f);
     t.vertexUV(dx + 0 , dy + 0 , m_blitOffset, float(sx + 0 ) / 256.0f, float(sy + 0 ) / 256.0f);
-    t.draw(materialPtr ? *materialPtr : m_materials.ui_textured);
+    t.draw(materialPtr ? *materialPtr : color == Color::WHITE ? m_materials.ui_textured : m_materials.ui_texture_and_color);
 }
 
 void ScreenRenderer::blitTexture(Textures& textures, const std::string& texture, int x, int y, float u, float v, int width, int height, int uvWidth, int uvHeight, int textureWidth, int textureHeight, mce::MaterialPtr* materialPtr)

@@ -34,6 +34,7 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="..\NBCraft.Cpp.Default.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
@@ -279,6 +280,8 @@
     <ClCompile Include="$(MC_ROOT)\source\world\tile\TrapDoorTile.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\tile\FenceGateTile.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\CreativeMenu_Console.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\inventory\CraftContext.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\particle\TakeAnimationParticle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Entity.hpp" />
@@ -494,6 +497,7 @@
     <ClInclude Include="$(MC_ROOT)\source\world\tile\TrapDoorTile.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\tile\FenceGateTile.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\inventory\CreativeMenu_Console.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\inventory\CraftContext.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NBT\NBT.vcxproj">
