@@ -20,8 +20,8 @@
 
 class ResetCategoryButton : public Button
 {
-	OptionsCategory m_cat;
 	OptionList& m_list;
+	OptionsCategory m_cat;
 public:
 	ResetCategoryButton(OptionList& list, OptionsCategory cat, const std::string& text)
 		: Button(0, 0, text)
