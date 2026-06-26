@@ -8,6 +8,11 @@
 
 #include "OptionList.hpp"
 #include "client/gui/components/Button.hpp"
+#include "client/gui/components/SmallButton.hpp"
+#include "client/gui/components/SliderButton.hpp"
+#include "client/gui/components/SwitchButton.hpp"
+#include "client/gui/components/SwitchValuesButton.hpp"
+#include "client/gui/components/TickBox.hpp"
 #include "client/options/Options.hpp"
 #include "client/locale/Language.hpp"
 
@@ -16,11 +21,19 @@
 class ResetCategoryButton : public Button
 {
 	OptionsCategory m_cat;
+	OptionList* m_pList;
 public:
-	ResetCategoryButton(OptionsCategory cat, const std::string& text) : Button(0, 0, text), m_cat(cat) {}
+	ResetCategoryButton(OptionsCategory cat, const std::string& text, OptionList* pList) : Button(0, 0, text), m_cat(cat), m_pList(pList) {}
 	void pressed(Minecraft* mc, const MenuPointer& pointer) override
 	{
 		mc->getOptions()->resetCategory(m_cat);
+
+		if (mc->useController())
+			mc->m_pSoundEngine->playUI(C_SOUND_UI_PRESS);
+		else
+			mc->m_pSoundEngine->playUI("random.click");
+
+		m_pList->refreshOptionValues();
 	}
 };
 
@@ -149,6 +162,21 @@ void OptionList::clear()
 	}
 
 	m_items.clear();
+}
+
+void OptionList::refreshOptionValues()
+{
+	for (size_t i = 0; i < m_items.size(); i++)
+	{
+		GuiElement* pItem = m_items[i];
+
+		if (SliderButton* slider = dynamic_cast<SliderButton*>(pItem))
+			slider->updateValue();
+		else if (SmallButton* btn = dynamic_cast<SmallButton*>(pItem))
+			btn->setMessage(btn->getOption().getMessage());
+		else if (TickBox* tb = dynamic_cast<TickBox*>(pItem))
+			tb->m_bOn = tb->getOption().get();
+	}
 }
 
 void OptionList::initDefaultMenu()
