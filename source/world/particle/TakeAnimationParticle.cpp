@@ -1,6 +1,7 @@
 #include "Particle.hpp"
 #include "world/level/Level.hpp"
-#include <client/renderer/entity/EntityRenderDispatcher.hpp>
+#include "client/renderer/entity/EntityRenderDispatcher.hpp"
+#include "renderer/ShaderConstants.hpp"
 
 TakeAnimationParticle::TakeAnimationParticle(Level* level, Entity* throwed, Entity* thrower, float vel) 
 	: Particle(level, throwed->m_pos, throwed->m_vel)
@@ -28,7 +29,7 @@ void TakeAnimationParticle::render(Tesselator& t, float f, float a, float b, flo
 	);
 	Vec3 pos = m_pos + (tPos - m_pos) * p;
 	float bright = m_pLevel->getBrightness(TilePos(pos.x, pos.y + (m_heightOffset / 2.0f), pos.z));
-	glColor4f(bright, bright, bright, 1.0f);
+	currentShaderColor = Color(bright, bright, bright, 1.0f);
 	EntityRenderDispatcher::getInstance()->render(*m_pThrowed, Vec3(pos.x - xOff, pos.y - yOff, pos.z - zOff), m_pThrowed->m_rot.y, f);
 }
 
