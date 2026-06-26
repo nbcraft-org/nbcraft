@@ -264,6 +264,7 @@ void TouchscreenInput_TestFps::tick(Player* pPlayer)
 			else if (m_bForwardBeingHeld)
 			{
 				pointerId = 100; // forward
+				field_6C[INPUT_FORWARD] = true;
 				if (!bThisFingerDynamic)
 					m_vertInput += 1.0f;
 			}
@@ -333,9 +334,6 @@ void TouchscreenInput_TestFps::tick(Player* pPlayer)
 	}
 
 	m_bForwardBeingHeld = bForwardPressed;
-
-	if (m_bForwardBeingHeld)
-		field_6C[INPUT_FORWARD] = true;
 
 	if (bJumpPressed)
 	{
