@@ -85,7 +85,9 @@ enum ThirdPersonMode
 {
 	TPM_FIRST = 0,
 	TPM_BEHIND = 1,
-	TPM_FRONT = 2
+	TPM_FRONT = 2,
+
+	TPM_COUNT
 };
 
 template<>
@@ -265,8 +267,8 @@ class ThirdPersonOption : public IntOption
 public:
 	ThirdPersonOption(const std::string& key, const std::string& name, int initial = 0) : IntOption(key, name, initial) {}
 
-	void toggle() override { set((get() + 1) % 3); }
-	void addUnit(int mul) override { set(Mth::clamp(get() + mul, 0, 2)); }
+	void toggle() override { set((get() + 1) % TPM_COUNT); }
+	void addUnit(int mul) override { set(Mth::clamp(get() + mul, 0, TPM_COUNT - 1)); }
 	void fromFloat(float v) override { set(Mth::round(v * 2.0f)); }
 	float toFloat() const override { return get() / 2.0f; }
 	std::string getDisplayValue() const override;
@@ -478,7 +480,7 @@ public:
 	Options(Minecraft*, const std::string& folderPath = "");
 
 	void add(OptionEntry&);
-	void add(OptionEntry&, OptionsCategory cat);
+	void add(OptionsCategory cat, OptionEntry&);
 	const AsyncTask& save();
 	std::vector<std::string> getOptionStrings();
 	

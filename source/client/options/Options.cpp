@@ -32,6 +32,7 @@
 
 #include "renderer/RenderContextImmediate.hpp"
 
+typedef HashMap<OptionsCategory, std::vector<OptionEntry*> > CategoryOptions;
 
 void Options::_initDefaultValues()
 {
@@ -103,43 +104,43 @@ Options::Options(Minecraft* mc, const std::string& folderPath) :
 	//, m_bMipmaps("gfx_mipmaps", "options.mipmaps")
 	, m_vSync("enableVsync", "options.enableVsync", true)
 {
-	add(m_musicVolume, OC_GAMEPLAY);
-	add(m_masterVolume, OC_GAMEPLAY);
-	add(m_invertMouse, OC_CONTROLS);
-	add(m_difficulty, OC_GAMEPLAY);
-	add(m_splitControls, OC_CONTROLS);
-	add(m_swapJumpSneak, OC_CONTROLS);
-	add(m_dpadSize, OC_CONTROLS);
-	add(m_sensitivity, OC_CONTROLS);
-	add(m_viewDistance, OC_VIDEO);
-	add(m_viewBobbing, OC_VIDEO);
-	add(m_anaglyphs, OC_VIDEO);
-	add(m_fancyGraphics, OC_VIDEO);
-	add(m_fancyGrass, OC_VIDEO);
-	add(m_biomeColors, OC_VIDEO);
-	add(m_ambientOcclusion, OC_VIDEO);
-	add(m_guiScale, OC_VIDEO);
-	add(m_gamma, OC_VIDEO);
-	add(m_fov, OC_VIDEO);
-	//add(m_limitFramerate, OC_VIDEO);
-	add(m_autoJump, OC_CONTROLS);
-	add(m_flightHax, OC_CONTROLS);
-	//add(m_bMipmaps, OC_VIDEO);
-	add(m_blockOutlines, OC_VIDEO);
-	add(m_dynamicHand, OC_VIDEO);
-	add(m_menuPanorama, OC_VIDEO);
-	add(m_thirdPerson, OC_GAMEPLAY);
-	add(m_serverVisibleDefault, OC_GAMEPLAY);
-	add(m_hideGui, OC_VIDEO);
+	add(OC_GAMEPLAY, m_musicVolume);
+	add(OC_GAMEPLAY, m_masterVolume);
+	add(OC_CONTROLS, m_invertMouse);
+	add(OC_GAMEPLAY, m_difficulty);
+	add(OC_CONTROLS, m_splitControls);
+	add(OC_CONTROLS, m_swapJumpSneak);
+	add(OC_CONTROLS, m_dpadSize);
+	add(OC_CONTROLS, m_sensitivity);
+	add(OC_VIDEO, m_viewDistance);
+	add(OC_VIDEO, m_viewBobbing);
+	add(OC_VIDEO, m_anaglyphs);
+	add(OC_VIDEO, m_fancyGraphics);
+	add(OC_VIDEO, m_fancyGrass);
+	add(OC_VIDEO, m_biomeColors);
+	add(OC_VIDEO, m_ambientOcclusion);
+	add(OC_VIDEO, m_guiScale);
+	add(OC_VIDEO, m_gamma);
+	add(OC_VIDEO, m_fov);
+	//add(OC_VIDEO, m_limitFramerate);
+	add(OC_CONTROLS, m_autoJump);
+	add(OC_CONTROLS, m_flightHax);
+	//add(OC_VIDEO, m_bMipmaps);
+	add(OC_VIDEO, m_blockOutlines);
+	add(OC_VIDEO, m_dynamicHand);
+	add(OC_VIDEO, m_menuPanorama);
+	add(OC_GAMEPLAY, m_thirdPerson);
+	add(OC_GAMEPLAY, m_serverVisibleDefault);
+	add(OC_VIDEO, m_hideGui);
 	add(m_playerName);
-	add(m_debugText, OC_VIDEO);
+	add(OC_VIDEO, m_debugText);
 	add(m_lang);
-	add(m_hudSize, OC_VIDEO);
-	add(m_uiTheme, OC_VIDEO);
-	add(m_logoType, OC_VIDEO);
+	add(OC_VIDEO, m_hudSize);
+	add(OC_VIDEO, m_uiTheme);
+	add(OC_VIDEO, m_logoType);
 	add(m_classicCrafting);
-	add(m_animatedCharacter, OC_VIDEO);
-	add(m_vSync, OC_VIDEO);
+	add(OC_VIDEO, m_animatedCharacter);
+	add(OC_VIDEO, m_vSync);
 	_initDefaultValues();
 	if (folderPath.empty()) return;
 	m_filePath = folderPath + "/options.txt";
@@ -152,7 +153,7 @@ void Options::add(OptionEntry& entry)
 	m_options[entry.getKey()] = &entry;
 }
 
-void Options::add(OptionEntry& entry, OptionsCategory cat)
+void Options::add(OptionsCategory cat, OptionEntry& entry)
 {
 	add(entry);
 	m_categoryOptions[cat].push_back(&entry);
@@ -629,7 +630,7 @@ void Options::reset()
 
 void Options::resetCategory(OptionsCategory cat)
 {
-	HashMap<OptionsCategory, std::vector<OptionEntry*> >::iterator it = m_categoryOptions.find(cat);
+	CategoryOptions::iterator it = m_categoryOptions.find(cat);
 	if (it != m_categoryOptions.end())
 	{
 		std::vector<OptionEntry*>& entries = it->second;
