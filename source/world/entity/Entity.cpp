@@ -66,6 +66,7 @@ void Entity::_init()
 	m_nextStep = 1;
 	m_minBrightness = 0.0f;
 	m_pDescriptor = &EntityTypeDescriptor::unknown;
+	m_bCanBeDeleted = true;
 }
 
 Entity::Entity(Level* pLevel)

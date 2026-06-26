@@ -196,6 +196,11 @@ void LocalPlayer::animateRespawn()
 
 }
 
+void LocalPlayer::take(Entity* pEnt, int count)
+{
+	m_pMinecraft->m_pParticleEngine->add(new TakeAnimationParticle(m_pLevel, pEnt, this, -0.5f));
+}
+
 void LocalPlayer::hurtTo(int newHealth)
 {
     // only called by client network handler

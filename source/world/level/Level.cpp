@@ -1846,7 +1846,8 @@ void Level::tickEntities()
 			m_entities.erase(itErase);
 
 			entityRemoved(pEnt);
-			delete pEnt;
+			if (pEnt->m_bCanBeDeleted)
+				delete pEnt;
 
 			continue;
 		}

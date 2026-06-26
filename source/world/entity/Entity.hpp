@@ -306,6 +306,7 @@ public:
 	bool m_bFirstTick;
 	int m_nextStep;
 	float m_minBrightness;
+	bool m_bCanBeDeleted;
 
 public:
 	static Entity::ID entityCounter;

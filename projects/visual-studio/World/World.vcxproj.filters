@@ -755,6 +755,9 @@
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\CraftContext.cpp">
       <Filter>Source Files\Inventory</Filter>
     </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\particle\TakeAnimationParticle.cpp">
+      <Filter>Source Files\Particle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Entity.hpp">

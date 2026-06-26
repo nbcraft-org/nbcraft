@@ -259,6 +259,7 @@
     <ClCompile Include="$(MC_ROOT)\source\world\tile\FenceGateTile.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\CreativeMenu_Console.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\CraftContext.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\particle\TakeAnimationParticle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Entity.hpp" />
