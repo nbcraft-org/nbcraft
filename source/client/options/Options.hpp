@@ -453,6 +453,9 @@ public:
 class Options
 {
 private:
+	typedef HashMap<OptionsCategory, std::vector<OptionEntry*> > CategoryMap;
+
+private:
 	static bool _hasResourcePack(const ResourcePack& pack, ResourcePackStack& packs);
 	static void _tryAddResourcePack(const std::string& name, ResourcePackStack& packs);
 
@@ -508,7 +511,7 @@ public:
 private:
 	Minecraft* m_pMinecraft;
 	HashMap<std::string, OptionEntry*> m_options;
-	HashMap<OptionsCategory, std::vector<OptionEntry*> > m_categoryOptions;
+	CategoryMap m_categoryOptions;
 	AsyncTask m_saveTask;
 	std::string m_filePath;
 	InputMapping m_inputMappings[AID_COUNT];

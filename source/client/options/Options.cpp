@@ -635,7 +635,7 @@ void Options::reset()
 
 void Options::resetCategory(OptionsCategory cat)
 {
-	HashMap<OptionsCategory, std::vector<OptionEntry*> >::iterator it = m_categoryOptions.find(cat);
+	CategoryMap::iterator it = m_categoryOptions.find(cat);
 	if (it != m_categoryOptions.end())
 	{
 		std::vector<OptionEntry*>& entries = it->second;
