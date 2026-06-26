@@ -188,8 +188,8 @@ void OptionList::initDefaultMenu()
 #define OPTION(name) do { pOptions->name.addGuiElement(m_items, m_uiTheme); currentIndex++; } while (0)
 #define RESET_BTN(category) do \
 { \
-	HEADER(""); HEADER(""); \
-	ResetCategoryButton* pBtn = new ResetCategoryButton(category, Language::get("settingsMenu.resetToDefaults")); \
+	HEADER(""); \
+	ResetCategoryButton* pBtn = new ResetCategoryButton(category, Language::get("settingsMenu.resetToDefaults"), this); \
 	pBtn->m_uiTheme = m_uiTheme; \
 	m_items.push_back(pBtn); \
 } while (0)
