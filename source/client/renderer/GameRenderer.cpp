@@ -87,7 +87,8 @@ GameRenderer::GameRenderer(Minecraft* pMinecraft) :
 	mce::GlobalConstantBuffers::getInstance().init();
 #endif
 
-	m_pMinecraft->getOptions()->m_gamma.apply();
+	Options& options = *m_pMinecraft->getOptions();
+	options.m_gamma.apply(*this);
 #ifdef ENH_FOV_MODIFIER
 	setFovBase(m_pMinecraft->getOptions()->m_fov.get());
 #endif

@@ -31,8 +31,8 @@ public:
 protected:
     void init() override;
     void _addTab(const std::string& name, const std::string& sprite);
-    bool _nextTab();
-    bool _prevTab();
+    bool _nextTab() override;
+    bool _prevTab() override;
     void _renderLabels() override;
     void _renderFg(float partialTicks) override;
     void _renderBg(float partialTicks) override;

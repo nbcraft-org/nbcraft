@@ -97,7 +97,7 @@ Options::Options(Minecraft* mc, const std::string& folderPath) :
 	, m_uiTheme("gfx_uitheme", "options.uiTheme", GetDefaultUiTheme(m_pMinecraft), ValuesBuilder().add("options.uiTheme.pocket").add("options.uiTheme.java").add("options.uiTheme.console"))
 	, m_logoType("gfx_logotype", "options.logoType", LOGO_AUTO, ValuesBuilder().add("options.logoType.auto").add("options.logoType.pocket").add("options.logoType.java").add("options.logoType.console").add("options.logoType.xbox360").add("options.logoType.logo3d"))
 	, m_hudSize("gfx_hudsize", "options.hudSize", HUD_SIZE_2)
-	, m_classicCrafting("gfx_classiccrafting", "options.classicCrafting", true)
+	, m_classicCrafting("gfx_classiccrafting", "options.classicCrafting", false)
 	, m_animatedCharacter("gfx_animatedcharacter", "options.animatedCharacter", true)
 	//, m_limitFramerate("gfx_fpslimit", "options.framerateLimit", 0, ValuesBuilder().add(performance.max").add("performance.balanced").add("performance.powersaver"))
 	//, m_bMipmaps("gfx_mipmaps", "options.mipmaps")
@@ -796,12 +796,17 @@ void GuiScaleOption::apply()
 
 void GammaOption::apply()
 {
+	if (!m_pMinecraft->m_pGameRenderer)
+		return;
+	apply(*m_pMinecraft->m_pGameRenderer);
+}
+
+void GammaOption::apply(GameRenderer& gameRenderer)
+{
 	// Budget rounding since the 360 just doesn't have a round function
 	// @TODO: Then again, we don't need this level or precision to begin with
 	// I just don't wanna have to rework the SliderButton to support integers
-	if (!m_pMinecraft->m_pGameRenderer)
-		return;
-	m_pMinecraft->m_pGameRenderer->setGamma((float)Mth::floor(get() * 100) / 100);
+	gameRenderer.setGamma((float)Mth::floor(get() * 100) / 100);
 }
 
 std::string GammaOption::getDisplayValue() const

@@ -37,7 +37,7 @@ protected:
 public:
 	void blit(const IntRectangle& rect);
 	void blit(mce::Mesh& mesh, const IntRectangle& rect);
-	void blit(int dstX, int dstY, int srcX, int srcY, int dstWidth, int dstHeight, int srcWidth, int srcHeight, mce::MaterialPtr* materialPtr = nullptr);
+	void blit(int dstX, int dstY, int srcX, int srcY, int dstWidth, int dstHeight, int srcWidth, int srcHeight, mce::MaterialPtr* materialPtr = nullptr, const Color& color = Color::WHITE);
 	void blitTexture(Textures&, const std::string&, int x, int y, float u, float v, int width, int height, int uvWidth, int uvHeight, int textureWidth, int textureHeight, mce::MaterialPtr* materialPtr = nullptr);
 	void blitTexture(Textures&, const std::string&, int x, int y, float u, float v, int width, int height, int textureWidth, int textureHeight, mce::MaterialPtr* materialPtr = nullptr);
 	void blitTexture(Textures&, const std::string&, int x, int y, float u, float v, int width, int height, mce::MaterialPtr* materialPtr = nullptr);

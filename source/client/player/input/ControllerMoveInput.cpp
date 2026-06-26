@@ -7,6 +7,7 @@ ControllerMoveInput::ControllerMoveInput(Options *options)
 {
 	field_20 = false;
 	field_21 = false;
+    m_bFlying = false;
 }
 
 void ControllerMoveInput::tick(Player* player)
@@ -34,21 +35,23 @@ void ControllerMoveInput::tick(Player* player)
     //}
 //LABEL_3:
     if (player->isInWater() && GameControllerManager::isTouched(1))
-        m_bJumping = 1;
+        m_bJumping = true;
     m_bFlyUp = m_bJumping;
     m_keys[INPUT_LEFT] = m_keys[INPUT_FORWARD] || m_keys[INPUT_BACKWARD];
     if (m_keys[INPUT_LEFT])
         m_vertInput = 0.0f;
 
     IMoveInput::tick(player);
+
+    m_bFlying = player->m_bFlying;
 }
 
 void ControllerMoveInput::setKey(UserActionID ctrl, bool eventKeyState)
 {
-    if (ctrl == AID_SNEAK)
+    if (ctrl == AID_SNEAK && !m_bFlying)
     {
         if (eventKeyState)
-            KeyboardInput::setKey(ctrl, m_keys[INPUT_SNEAK] ^ 1);
+            KeyboardInput::setKey(ctrl, !m_keys[INPUT_SNEAK]);
     }
 	else 
         KeyboardInput::setKey(ctrl, eventKeyState);

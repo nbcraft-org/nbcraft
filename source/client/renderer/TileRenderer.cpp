@@ -489,7 +489,7 @@ void TileRenderer::renderNorth(Tile* tile, const Vec3& pos, int texture)
 		tile->updateShape(m_pTileSource, pos);
 }
 
-void TileRenderer::renderFaceDown(Tile* tile, const Vec3& pos, int texture)
+void TileRenderer::renderFaceUp(Tile* tile, const Vec3& pos, int texture)
 {
 	if (tile->getRenderShape() == SHAPE_CACTUS)
 		tile->setShape(0, 0, 0, 1, 1, 1);
@@ -560,7 +560,7 @@ void TileRenderer::renderFaceDown(Tile* tile, const Vec3& pos, int texture)
 		tile->updateShape(m_pTileSource, pos);
 }
 
-void TileRenderer::renderFaceUp(Tile* tile, const Vec3& pos, int texture)
+void TileRenderer::renderFaceDown(Tile* tile, const Vec3& pos, int texture)
 {
 	if (tile->getRenderShape() == SHAPE_CACTUS)
 		tile->setShape(0, 0, 0, 1, 1, 1);
@@ -773,7 +773,7 @@ bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, float r
 		float fLight = tile->getBrightness(m_pTileSource, pos.below());
 		t.color(r * 0.5f * fLight, g * 0.5f * fLight, b * 0.5f * fLight);
 
-		renderFaceUp(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::DOWN));
+		renderFaceDown(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::DOWN));
 	}
 
 	if (m_bNoCulling || tile->shouldRenderFace(m_pTileSource, pos.above(), Facing::UP))
@@ -786,7 +786,7 @@ bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, float r
 
 		t.color(topR * fLight, topG * fLight, topB * fLight);
 
-		renderFaceDown(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::UP));
+		renderFaceUp(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::UP));
 	}
 
 	if (m_bNoCulling || tile->shouldRenderFace(m_pTileSource, pos.north(), Facing::NORTH))
@@ -1028,7 +1028,7 @@ bool TileRenderer::tesselateWaterInWorld(Tile* tile1, const TilePos& pos)
 	label_7:
 		float bright = tile->getBrightness(m_pTileSource, pos.below());
 		t.color(bright * 0.5f, bright * 0.5f, bright * 0.5f);
-		renderFaceUp(tile1, pos, tile->getTexture(Facing::DOWN));
+		renderFaceDown(tile1, pos, tile->getTexture(Facing::DOWN));
 		bFlag1 = true;
 	}
 
@@ -1385,13 +1385,13 @@ bool TileRenderer::tesselateDoorInWorld(Tile* tile, const TilePos& pos)
 	if (tile->m_aabb.min.y > 0.0f)       fBright = fBrightHere;
 	if (Tile::lightEmission[tile->m_ID]) fBright = 1.0f;
 	t.color(fBright * 0.5f, fBright * 0.5f, fBright * 0.5f);
-	renderFaceUp(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::DOWN));
+	renderFaceDown(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::DOWN));
 
 	fBright = tile->getBrightness(m_pTileSource, pos.above());
 	if (tile->m_aabb.max.y < 1.0f)       fBright = fBrightHere;
 	if (Tile::lightEmission[tile->m_ID]) fBright = 1.0f;
 	t.color(fBright, fBright, fBright);
-	renderFaceDown(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::UP));
+	renderFaceUp(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::UP));
 
 	fBright = tile->getBrightness(m_pTileSource, pos.north());
 	if (tile->m_aabb.min.z > 0.0f)       fBright = fBrightHere;
@@ -2214,7 +2214,7 @@ LABEL_19:
 	this->m_vtxRed[3] = v62 * v65;
 	this->m_vtxBlue[3] = v62 * v67;
 	v70 = a2->getTexture(v68, pos, Facing::DOWN);
-	renderFaceUp(a2, pos, v70);
+	renderFaceDown(a2, pos, v70);
 LABEL_20:
 	if (this->m_bNoCulling || a2->shouldRenderFace(this->m_pTileSource, TilePos(pos.x, v216, pos.z), Facing::UP))
 	{
@@ -2297,7 +2297,7 @@ LABEL_20:
 				this->m_vtxGreen[3] = v87 * g;
 				this->m_vtxBlue[3] = v87 * b;
 				v91 = a2->getTexture(v90, pos, Facing::UP);
-				renderFaceDown(a2, pos, v91);
+				renderFaceUp(a2, pos, v91);
 				goto LABEL_37;
 			}
 		LABEL_141:
@@ -2813,52 +2813,21 @@ LABEL_102:
 	return result;
 }
 
-// this is very hacky
-#ifdef ENH_SHADE_HELD_TILES
-
-#ifdef MOD_DONT_COLOR_GRASS
-#	define SHADE_IS_DECOLOR_GRASS_DEFINED true
-#else
-#	define SHADE_IS_DECOLOR_GRASS_DEFINED false
-#endif
-
-#define SHADE_DEFINE float red = 1, grn = 1, blu = 1
-
-#define SHADE_PREPARE do { \
-	red = bright, grn = bright, blu = bright; \
-	if (GetPatchManager()->IsGrassTinted()) {           \
-		if (tileType->m_ID == Tile::leaves->m_ID)           \
-			red *= LeafTile::DEFAULT_COLOR.r, grn *= LeafTile::DEFAULT_COLOR.g, blu *= LeafTile::DEFAULT_COLOR.b;   \
-		if (tileType->m_ID == Tile::grass->m_ID) \
-			red *= GrassTile::DEFAULT_COLOR.r, grn *= GrassTile::DEFAULT_COLOR.g, blu *= GrassTile::DEFAULT_COLOR.b;   \
-	}                                                   \
-} while (0)
-
-#define SHADE_IF_NEEDED(col) if (preshade) t.color(col*red,col*grn,col*blu,1.0f); else t.color(red,grn,blu,1.0f)
-
-#define SHADE_FIXUP_GRASS do {  \
-	if (tileType->m_ID == Tile::grass->m_ID)          \
-		red = bright, grn = bright, blu = bright; \
-} while (0)
-
-#else
-
-#define SHADE_DEFINE           0
-#define SHADE_PREPARE          0
-#define SHADE_IF_NEEDED(col)   0
-#define SHADE_FIXUP_GRASS(col) 0
-#define SHADE_FIXUP_GRASS      0
-
-#endif
-
+Color getTileFaceColor(const FullTile& tile, Facing::Name face, float shading = 1.0f, bool preshade = false)
+{
+	Color color(tile.getType()->getColor(face, tile.data), 1.0f);
+	if (preshade) color.mulRGB(shading);
+	return color;
+}
 void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& material, float bright, bool preshade)
+{
+	renderTile(tile, material, Color(bright, bright, bright), preshade);
+}
+
+void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& material, const Color& color, bool preshade)
 {
 	Tesselator& t = m_tessellator;
 	Tile* tileType = tile.getType();
-
-#ifndef ENH_SHADE_HELD_TILES
-	bright = 1.0f; // 255
-#endif
 #ifndef USE_GL_NORMAL_LIGHTING
 	preshade = true;
 #endif
@@ -2875,30 +2844,24 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 
 			t.addOffset(-0.5f, -0.5f, -0.5f);
 			t.begin(24); // 4 to 24
-			SHADE_DEFINE;
-			SHADE_PREPARE;
-			SHADE_IF_NEEDED(1.0f);
-			// Despite how it looks, Facing::UP is necessary for this to function correctly
-			// Why? no idea
+			t.color(color * getTileFaceColor(tile, Facing::UP));
 			t.normal(0.0f, 1.0f, 0.0f);
-			renderFaceDown(tileType, Vec3::ZERO, tileType->getTexture(Facing::UP, tile.data));
-			SHADE_FIXUP_GRASS;
-			SHADE_IF_NEEDED(0.5f);
-			// Despite how it looks, Facing::DOWN is necessary for this to function correctly
-			// Why? no idea
+			renderFaceUp(tileType, Vec3::ZERO, tileType->getTexture(Facing::UP, tile.data));
+			t.color(color * getTileFaceColor(tile, Facing::DOWN, 0.5f, preshade));
 			t.normal(0.0f, -1.0f, 0.0f);
-			IF_NEEDED(renderFaceUp(tileType, Vec3::ZERO, tileType->getTexture(Facing::DOWN, tile.data)));
-			SHADE_IF_NEEDED(0.8f);
+			IF_NEEDED(renderFaceDown(tileType, Vec3::ZERO, tileType->getTexture(Facing::DOWN, tile.data)));
+			t.color(color * getTileFaceColor(tile, Facing::NORTH, 0.8f, preshade));
 			t.normal(0.0f, 0.0f, -1.0f);
 			IF_NEEDED(renderNorth(tileType, Vec3::ZERO, tileType->getTexture(Facing::NORTH, tile.data)));
+			t.color(color * getTileFaceColor(tile, Facing::SOUTH, 0.8f, preshade));
 			t.normal(0.0f, 0.0f, 1.0f);
 			IF_NEEDED(renderSouth(tileType, Vec3::ZERO, tileType->getTexture(Facing::SOUTH, tile.data)));
-			SHADE_IF_NEEDED(0.6f);
+			t.color(color * getTileFaceColor(tile, Facing::WEST, 0.6f, preshade));
 			t.normal(-1.0f, 0.0f, 0.0f);
 			IF_NEEDED(renderWest (tileType, Vec3::ZERO, tileType->getTexture(Facing::WEST, tile.data)));
 			t.normal(1.0f, 0.0f, 0.0f);
+			t.color(color * getTileFaceColor(tile, Facing::EAST, 0.6f, preshade));
 			IF_NEEDED(renderEast (tileType, Vec3::ZERO, tileType->getTexture(Facing::EAST, tile.data)));
-			SHADE_IF_NEEDED(1.0f);
 			t.draw(material);
 			t.addOffset(0.5f, 0.5f, 0.5f);
 			break;
@@ -2907,6 +2870,7 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 		{
 			// unused as cross items render like regular items in the hand
 			t.begin(16);
+			t.color(color * getTileFaceColor(tile, Facing::UP));
 			t.normal(Vec3::NEG_UNIT_Y);
 			tesselateCrossTexture(tile, Vec3(-0.5f, -0.5f, -0.5f), true);
 			t.draw(material);
@@ -2925,25 +2889,24 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 
 
 				t.begin(24);
-				SHADE_DEFINE;
-				SHADE_PREPARE;
-				SHADE_IF_NEEDED(0.5f);
+				t.color(color * getTileFaceColor(tile, Facing::DOWN, 0.5f, preshade));
 				t.normal(0.0f, -1.0f, 0.0f);
-				renderFaceUp  (tileType, Vec3::ZERO, tileType->getTexture(Facing::DOWN, tile.data));
-				SHADE_IF_NEEDED(1.0f);
+				renderFaceDown  (tileType, Vec3::ZERO, tileType->getTexture(Facing::DOWN, tile.data));
+				t.color(color * getTileFaceColor(tile, Facing::UP));
 				t.normal(0.0f, 1.0f, 0.0f);
-				renderFaceDown(tileType, Vec3::ZERO, tileType->getTexture(Facing::UP, tile.data));
-				SHADE_IF_NEEDED(0.6f);
+				renderFaceUp(tileType, Vec3::ZERO, tileType->getTexture(Facing::UP, tile.data));
+				t.color(color * getTileFaceColor(tile, Facing::NORTH, 0.6f, preshade));
 				t.normal(0.0f, 0.0f, -1.0f);
 				renderNorth   (tileType, Vec3::ZERO, tileType->getTexture(Facing::NORTH, tile.data));
+				t.color(color * getTileFaceColor(tile, Facing::SOUTH, 0.6f, preshade));
 				t.normal(0.0f, 0.0f, 1.0f);
 				renderSouth   (tileType, Vec3::ZERO, tileType->getTexture(Facing::SOUTH, tile.data));
-				SHADE_IF_NEEDED(0.8f);
+				t.color(color * getTileFaceColor(tile, Facing::WEST, 0.8f, preshade));
 				t.normal(-1.0f, 0.0f, 0.0f);
 				renderWest    (tileType, Vec3::ZERO, tileType->getTexture(Facing::WEST, tile.data));
+				t.color(color * getTileFaceColor(tile, Facing::EAST, 0.8f, preshade));
 				t.normal(1.0f, 0.0f, 0.0f);
 				renderEast    (tileType, Vec3::ZERO, tileType->getTexture(Facing::EAST, tile.data));
-				SHADE_IF_NEEDED(1.0f);
 				t.draw(material);
 			}
 			t.addOffset(0.5f, 0.5f, 0.5f);
@@ -2965,25 +2928,24 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 				}
 
 				t.begin(24);
-				SHADE_DEFINE;
-				SHADE_PREPARE;
-				SHADE_IF_NEEDED(1.0f);
+				t.color(color * getTileFaceColor(tile, Facing::UP));
 				t.normal(0.0f, 1.0f, 0.0f);
-				renderFaceDown(tileType, Vec3::ZERO, tileType->getTexture(Facing::UP, tile.data));
-				SHADE_IF_NEEDED(0.5f);
+				renderFaceUp(tileType, Vec3::ZERO, tileType->getTexture(Facing::UP, tile.data));
+				t.color(color * getTileFaceColor(tile, Facing::DOWN, 0.5f, preshade));
 				t.normal(0.0f, -1.0f, 0.0f);
-				renderFaceUp(tileType, Vec3::ZERO, tileType->getTexture(Facing::DOWN, tile.data));
-				SHADE_IF_NEEDED(0.8f);
+				renderFaceDown(tileType, Vec3::ZERO, tileType->getTexture(Facing::DOWN, tile.data));
+				t.color(color * getTileFaceColor(tile, Facing::NORTH, 0.8f, preshade));
 				t.normal(0.0f, 0.0f, -1.0f);
 				renderNorth(tileType, Vec3::ZERO, tileType->getTexture(Facing::NORTH, tile.data));
+				t.color(color * getTileFaceColor(tile, Facing::SOUTH, 0.8f, preshade));
 				t.normal(0.0f, 0.0f, 1.0f);
 				renderSouth(tileType, Vec3::ZERO, tileType->getTexture(Facing::SOUTH, tile.data));
-				SHADE_IF_NEEDED(0.6f);
+				t.color(color* getTileFaceColor(tile, Facing::WEST, 0.6f, preshade));
 				t.normal(-1.0f, 0.0f, 0.0f);
 				renderWest(tileType, Vec3::ZERO, tileType->getTexture(Facing::WEST, tile.data));
+				t.color(color* getTileFaceColor(tile, Facing::WEST, 0.6f, preshade));
 				t.normal(1.0f, 0.0f, 0.0f);
 				renderEast(tileType, Vec3::ZERO, tileType->getTexture(Facing::EAST, tile.data));
-				SHADE_IF_NEEDED(1.0f);
 				t.draw(material);
 			}
 			t.addOffset(0.5f, 0.5f, 0.5f);
@@ -3007,25 +2969,24 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 				}
 
 				t.begin(24);
-				SHADE_DEFINE;
-				SHADE_PREPARE;
-				SHADE_IF_NEEDED(1.0f);
+				t.color(color* getTileFaceColor(tile, Facing::UP, 1.0f, preshade));
 				t.normal(0.0f, 1.0f, 0.0f);
-				renderFaceDown(tileType, Vec3::ZERO, tileType->getTexture(Facing::UP, tile.data));
-				SHADE_IF_NEEDED(0.5f);
+				renderFaceUp(tileType, Vec3::ZERO, tileType->getTexture(Facing::UP, tile.data));
+				t.color(color* getTileFaceColor(tile, Facing::DOWN, 1.0f, preshade));
 				t.normal(0.0f, -1.0f, 0.0f);
-				renderFaceUp(tileType, Vec3::ZERO, tileType->getTexture(Facing::DOWN, tile.data));
-				SHADE_IF_NEEDED(0.8f);
+				renderFaceDown(tileType, Vec3::ZERO, tileType->getTexture(Facing::DOWN, tile.data));
+				t.color(color* getTileFaceColor(tile, Facing::NORTH, 0.8f, preshade));
 				t.normal(0.0f, 0.0f, -1.0f);
 				renderNorth(tileType, Vec3::ZERO, tileType->getTexture(Facing::NORTH, tile.data));
+				t.color(color* getTileFaceColor(tile, Facing::SOUTH, 0.8f, preshade));
 				t.normal(0.0f, 0.0f, 1.0f);
 				renderSouth(tileType, Vec3::ZERO, tileType->getTexture(Facing::SOUTH, tile.data));
-				SHADE_IF_NEEDED(0.6f);
+				t.color(color* getTileFaceColor(tile, Facing::WEST, 0.6f, preshade));
 				t.normal(-1.0f, 0.0f, 0.0f);
 				renderWest(tileType, Vec3::ZERO, tileType->getTexture(Facing::WEST, tile.data));
+				t.color(color* getTileFaceColor(tile, Facing::EAST, 0.6f, preshade));
 				t.normal(1.0f, 0.0f, 0.0f);
 				renderEast(tileType, Vec3::ZERO, tileType->getTexture(Facing::EAST, tile.data));
-				SHADE_IF_NEEDED(1.0f);
 				t.draw(material);
 			}
 			t.addOffset(0.5f, 0.5f, 0.5f);
@@ -3196,10 +3157,10 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 		switch (dir) 
 		{
 			case Facing::DOWN:
-				renderFaceUp  (tile, pos, tile->getTexture(m_pTileSource, pos, Facing::DOWN));
+				renderFaceDown  (tile, pos, tile->getTexture(m_pTileSource, pos, Facing::DOWN));
 				break;
 			case Facing::UP:
-				renderFaceDown(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::UP));
+				renderFaceUp(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::UP));
 				break;
 			case Facing::NORTH:
 				renderNorth   (tile, pos, tile->getTexture(m_pTileSource, pos, Facing::NORTH));
@@ -3245,10 +3206,10 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 			switch (dir) 
 			{
 				case Facing::DOWN:
-					renderFaceUp(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
+					renderFaceDown(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
 					break;
 				case Facing::UP:
-					renderFaceDown(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
+					renderFaceUp(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
 					break;
 				case Facing::NORTH:
 					renderNorth(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);

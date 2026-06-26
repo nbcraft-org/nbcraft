@@ -12,14 +12,16 @@
 
 DynamicTexture::DynamicTexture(int a2) : m_textureIndex(a2)
 {
+	m_bAnaglyph3d = false;
 	m_textureSize = 1;
+	m_textureId = 0;
 
 	memset(m_pixels, 0, sizeof m_pixels);
 }
 
 TextureData* DynamicTexture::bindTexture(Textures* pTextures)
 {
-	return pTextures->loadAndBindTexture(C_TERRAIN_NAME);
+	return pTextures->loadAndBindTexture(m_textureId == 0 ? C_TERRAIN_NAME : C_ITEMS_NAME);
 }
 
 DynamicTexture::~DynamicTexture()

@@ -1,4 +1,5 @@
 #include "ScrollingPane.hpp"
+#include "common/Utils.hpp"
 
 #define C_SCROLLBAR_WIDTH 2.3333f
 #define C_SCROLLBAR_HEIGHT 2.3333f

@@ -67,6 +67,13 @@
 	},
 	
 	"item_entity:entity_alphatest_cull": {
+	},
+	
+	"item_entity_item:item_entity": {
+		"defines": ["USE_CURRENT_COLOR"]
+	},
+	
+	"item_entity_tile:item_entity": {
 		"defines": ["USE_VERTEX_COLORS"]
 	},
 	

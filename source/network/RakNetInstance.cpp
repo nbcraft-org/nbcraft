@@ -22,7 +22,7 @@
 	2. Add the following code to RNS2_Berkley::SetSocketOptions():
 	```
 #if defined(_XBOX) || defined(_XBOX_720_WITH_XBOX_LIVE) || defined(X360)
-	// MCPE: Required to allow for "insecure" sockets on Xbox 360, which allows for cross-platform multiplayer
+	// MC-WORKAROUND: Required to allow for "insecure" sockets on Xbox 360, which allows for cross-platform multiplayer
 	// https://discord.com/channels/436450658531672064/761636912485105684/1425512825237012532
 	#define SO_MARKINSECURE        0x5801
 	BOOL opt_true = TRUE;

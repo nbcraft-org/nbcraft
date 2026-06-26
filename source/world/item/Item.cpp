@@ -729,6 +729,16 @@ std::string Item::getHovertextName() const
 	return getName();
 }
 
+std::string Item::getName(ItemStack& stack) const
+{
+	return getDescriptionId(&stack) + ".name";
+}
+
+std::string Item::getHovertextName(ItemStack& stack) const
+{
+	return getName(stack);
+}
+
 void Item::onCraftedBy(ItemStack*, Player*, Level*)
 {
 }
@@ -740,6 +750,11 @@ void Item::inventoryTick(ItemStack*, Level*, Entity*, int, bool)
 bool Item::isDamageable() const
 {
 	return m_maxDamage > 0 && !m_bStackedByData;
+}
+
+int Item::getColor(int data) const
+{
+	return 0xFFFFFF;
 }
 
 int Item::buildIdAux(int16_t auxValue, const CompoundTag* userData) const

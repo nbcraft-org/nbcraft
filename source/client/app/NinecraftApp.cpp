@@ -86,6 +86,9 @@ void NinecraftApp::_initTextures()
 
 	_reloadTextures();
 
+	m_pTextures->addDynamicTexture(new CompassTexture(this));
+	m_pTextures->addDynamicTexture(new ClockTexture(this));
+
 	if (GrassColor::isAvailable()) GrassColor::init();
 	if (FoliageColor::isAvailable()) FoliageColor::init();
 

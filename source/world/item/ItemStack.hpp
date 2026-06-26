@@ -66,7 +66,7 @@ public:
 	void set(int inCount);
 	bool canDestroySpecial(const Tile*);
 	std::string getDescriptionId();
-	std::string getHovertextName() const;
+	std::string getHovertextName();
 	float getDestroySpeed(const Tile*);
 	int getIcon() const;
 	int getMaxDamage() const;
@@ -102,6 +102,7 @@ public:
 	//formerly known as isNull
 	bool isEmpty() const;
 	void setEmpty();
+	bool sameIngredient(const ItemStack&) const;
 
 	// 0.12.1
 	int getBaseRepairCost() const;

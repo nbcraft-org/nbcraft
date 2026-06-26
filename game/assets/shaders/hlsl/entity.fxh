@@ -18,7 +18,7 @@ struct PS_Input
     float2 uv : TEXCOORD_0;
 #endif
 
-#ifdef USE_VERTEX_COLORS
+#if defined(USE_VERTEX_COLORS) || defined(USE_CURRENT_COLOR)
 	float4 color : COLOR;
 #endif
 

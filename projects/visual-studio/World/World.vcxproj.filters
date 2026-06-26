@@ -752,6 +752,9 @@
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\CreativeMenu_Console.cpp">
       <Filter>Source Files\Inventory</Filter>
     </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\inventory\CraftContext.cpp">
+      <Filter>Source Files\Inventory</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Entity.hpp">
@@ -1325,6 +1328,9 @@
       <Filter>Header Files\Tile</Filter>
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\world\inventory\CreativeMenu_Console.hpp">
+      <Filter>Header Files\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\inventory\CraftContext.hpp">
       <Filter>Header Files\Inventory</Filter>
     </ClInclude>
   </ItemGroup>

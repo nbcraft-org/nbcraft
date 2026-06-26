@@ -273,6 +273,9 @@
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\CreativeScreen_Console.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\TabLayout.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\SpriteDef.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\components\CraftButton_Console.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\ClientCraftContext.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\CraftingScreen_Console.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\client\app\App.cpp" />
@@ -461,6 +464,12 @@
     <ClCompile Include="$(MC_ROOT)\source\client\gui\components\TabButton.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\CreativeScreen_Console.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\TabLayout.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\ClockTexture.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\CompassTexture.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\PortalTexture.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\components\CraftButton_Console.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\ClientCraftContext.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\CraftingScreen_Console.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">

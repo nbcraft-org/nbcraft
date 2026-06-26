@@ -145,9 +145,9 @@ void ItemInHandRenderer::render(float a)
 }
 
 #ifdef ENH_SHADE_HELD_TILES
-#define SHADE_IF_NEEDED(col) t.color(col*bright,col*bright,col*bright,1.0f)
+#define SHADE_IF_NEEDED(col) t.color(color * Color(col*bright,col*bright,col*bright,1.0f))
 #else
-#define SHADE_IF_NEEDED(col)
+#define SHADE_IF_NEEDED(col) t.color(color)
 #endif
 
 void ItemInHandRenderer::renderItem(const Entity& entity, const ItemStack& item, float a)
@@ -220,6 +220,8 @@ void ItemInHandRenderer::renderItem(const Entity& entity, const ItemStack& item,
         matrix->rotate(-90.0f, Vec3::UNIT_Y);
         matrix->translate(Vec3(0.0f, 0.0f, -16.0f));*/
         
+        Color color = Color(item.getItem()->getColor(item.getAuxValue()), 1.0f);
+
         t.begin(264);
         SHADE_IF_NEEDED(1.0f);
         
@@ -267,11 +269,10 @@ void ItemInHandRenderer::renderItem(const Entity& entity, const ItemStack& item,
             t.vertexUV(0.0f, i * C_ONE_PIXEL, -C_ONE_PIXEL, texU_2, Mth::Lerp(texV_2, texV_1, i * C_ONE_PIXEL));
             t.vertexUV(1.0f, i * C_ONE_PIXEL, -C_ONE_PIXEL, texU_1, Mth::Lerp(texV_2, texV_1, i * C_ONE_PIXEL));
         }
-        
-#ifdef ENH_SHADE_HELD_TILES
-        t.draw(m_materials.item_in_hand_color);
+#ifndef ENH_SHADE_HELD_TILES
+        t.draw(color == Color::WHITE ? m_materials.item_in_hand : m_materials.item_in_hand_color);
 #else
-        t.draw(m_materials.item_in_hand);
+        t.draw(m_materials.item_in_hand_color);
 #endif
     }
 }

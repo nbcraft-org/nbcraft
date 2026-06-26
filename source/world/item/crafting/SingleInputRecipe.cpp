@@ -1,9 +1,9 @@
 #include "SingleInputRecipe.hpp"
 
 SingleInputRecipe::SingleInputRecipe(const ItemStack& ingredient, const ItemStack& result) :
-    m_ingredient(ingredient),
     m_result(result)
 {
+    m_ingredients.push_back(ingredient);
 }
 
 SingleInputRecipe::~SingleInputRecipe()
@@ -17,10 +17,15 @@ bool SingleInputRecipe::matches(Container* container)
 
 bool SingleInputRecipe::matches(const ItemStack& input)
 {
-    return input.getId() == m_ingredient.getId() && (m_ingredient.getAuxValue() == -1 || input.getAuxValue() == m_ingredient.getAuxValue());
+    return input.getId() == m_ingredients[0].getId() && (m_ingredients[0].getAuxValue() == -1 || input.getAuxValue() == m_ingredients[0].getAuxValue());
 }
 
-const ItemStack& SingleInputRecipe::assemble(Container* container)
+const std::vector<ItemStack>& SingleInputRecipe::getIngredients()
+{
+    return m_ingredients;
+}
+
+const ItemStack& SingleInputRecipe::getResultItem()
 {
     return m_result;
 }
