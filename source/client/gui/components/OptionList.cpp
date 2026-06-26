@@ -20,6 +20,7 @@ public:
 	ResetCategoryButton(OptionsCategory cat, const std::string& text) : Button(0, 0, text), m_cat(cat) {}
 	void pressed(Minecraft* mc, const MenuPointer& pointer) override
 	{
+		Button::pressed(mc, pointer);
 		mc->getOptions()->resetCategory(m_cat);
 	}
 };
@@ -110,11 +111,11 @@ void OptionList::renderScrollBackground()
 {
 	Tesselator& t = Tesselator::instance;
 	t.begin(4);
-	t.color(0x202020, 0x90);
-	t.vertexUV(m_x1, m_y1, 0.0f, m_x1 / 32.0f, (m_y1 + float(int(m_scrollAmount))) / 32.0f);
-	t.vertexUV(m_x0, m_y1, 0.0f, m_x0 / 32.0f, (m_y1 + float(int(m_scrollAmount))) / 32.0f);
-	t.vertexUV(m_x0, m_y0,  0.0f, m_x0 / 32.0f, (m_y0  + float(int(m_scrollAmount))) / 32.0f);
-	t.vertexUV(m_x1, m_y0,  0.0f, m_x1 / 32.0f, (m_y0  + float(int(m_scrollAmount))) / 32.0f);
+	t.color(0x202020, 144);
+	t.vertexUV(m_x1, m_y1,  0.0f, m_x1 / 32.0f, (m_y1 + float(int(m_scrollAmount))) / 32.0f);
+	t.vertexUV(m_x0, m_y1,  0.0f, m_x0 / 32.0f, (m_y1 + float(int(m_scrollAmount))) / 32.0f);
+	t.vertexUV(m_x0, m_y0,  0.0f, m_x0 / 32.0f, (m_y0 + float(int(m_scrollAmount))) / 32.0f);
+	t.vertexUV(m_x1, m_y0,  0.0f, m_x1 / 32.0f, (m_y0 + float(int(m_scrollAmount))) / 32.0f);
 	t.draw(m_materials.ui_fill_gradient);
 }
 
@@ -127,15 +128,12 @@ void OptionList::onClickItem(int index, const MenuPointer& pointer, int relMouse
 
 	if (index >= 0)
 	{
-		GuiElement* pItem = m_items[index];
-
-		if (pItem->getType() != GuiElement::TYPE_BUTTON) return;
-		
-		Button* button = ((Button*)pItem);
-
-		if (!button->isHovered(m_pMinecraft, pointer)) return;
-
-		button->pressed(m_pMinecraft, pointer);
+		GuiElement* element = m_items[index];
+		// Logic copied from Screen::pointerPressed()
+		if (element->isHovered(m_pMinecraft, pointer))
+		{
+			element->pressed(m_pMinecraft, pointer);
+		}
 	}
 }
 

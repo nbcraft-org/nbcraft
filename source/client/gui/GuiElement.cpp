@@ -14,6 +14,7 @@ GuiElement::GuiElement()
 	m_bSelected = false;
 	m_bHasFocus = false;
 	m_bNavigable = true;
+	m_bHasSound = false;
 }
 
 void GuiElement::setBackground(const Color& color)
@@ -96,6 +97,24 @@ void GuiElement::pressed(Minecraft* pMinecraft)
 void GuiElement::pressed(Minecraft* pMinecraft, const MenuPointer& pointer)
 {
 	pressed(pMinecraft);
+
+	if (!isEnabled())
+		return;
+
+	if (pointer.isPressed)
+	{
+		if (hasSound())
+		{
+			if (pMinecraft->useController())
+				pMinecraft->m_pSoundEngine->playUI(C_SOUND_UI_PRESS);
+			else
+				pMinecraft->m_pSoundEngine->playUI(C_SOUND_BTN_CLICK);
+		}
+	}
+	else
+	{
+		pMinecraft->m_pSoundEngine->playUI(C_SOUND_BTN_RELEASE);
+	}
 }
 
 void GuiElement::released(const MenuPointer& pointer)

@@ -5,11 +5,13 @@
 #include "GuiComponent.hpp"
 #include "AreaNavigation.hpp"
 
-#define C_SOUND_UI_BACK     "ui.back"
-#define C_SOUND_UI_FOCUS    "ui.focus"
-#define C_SOUND_UI_PRESS    "ui.press"
-#define C_SOUND_UI_SCROLL   "ui.scroll"
+#define C_SOUND_UI_BACK      "ui.back"
+#define C_SOUND_UI_FOCUS     "ui.focus"
+#define C_SOUND_UI_PRESS     "ui.press"
+#define C_SOUND_UI_SCROLL    "ui.scroll"
 #define C_SOUND_UI_CRAFTFAIL "ui.craftfail"
+#define C_SOUND_BTN_CLICK    "random.click"
+#define C_SOUND_BTN_RELEASE  "random.click"
 
 class Minecraft;
 
@@ -65,11 +67,12 @@ public:
 	virtual ID getId() const { return m_ID; }
 	
 public:
-	bool isEnabled() const { return m_bEnabled; }
-	bool isVisible() const { return m_bVisible; }
-	bool isSelected() const { return m_bSelected; }
-	bool hasFocus() const { return m_bHasFocus; }
+	bool isEnabled()   const { return m_bEnabled; }
+	bool isVisible()   const { return m_bVisible; }
+	bool isSelected()  const { return m_bSelected; }
+	bool hasFocus()    const { return m_bHasFocus; }
 	bool isNavigable() const { return m_bNavigable; }
+	bool hasSound()    const { return m_bHasSound; }
 
 private:
 	std::string m_message;
@@ -80,6 +83,9 @@ private:
 	bool m_bSelected;
 	bool m_bHasFocus;
 	bool m_bNavigable;
+
+protected:
+	bool m_bHasSound;
 
 public:
 	int m_width;

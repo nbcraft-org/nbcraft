@@ -14,7 +14,7 @@ void SwitchButton::pressed(Minecraft* mc, const MenuPointer& pointer)
 {
 	if (pointer.x >= m_xPos + m_width - C_ON_OFF_SWITCH_WIDTH - 6 && pointer.x < m_xPos + m_width - 6)
 	{
-		pressed(mc);
+		Button::pressed(mc, pointer);
 	}
 }
 

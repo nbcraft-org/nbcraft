@@ -1,10 +1,11 @@
 #include "SliderButton.hpp"
 #include "renderer/ShaderConstants.hpp"
 
-SliderButton::SliderButton(int x, int y, int width, int height, OptionEntry* option, const std::string& message, float initialValue) : Button(x, y, width, height, message),
-	m_pOption(option),
-	m_value(initialValue),
-	m_bDragging(false)
+SliderButton::SliderButton(int x, int y, int width, int height, OptionEntry* option, const std::string& message, float initialValue)
+	: Button(x, y, width, height, message)
+	, m_pOption(option)
+	, m_value(initialValue)
+	, m_bDragging(false)
 {
 }
 
@@ -33,6 +34,8 @@ bool SliderButton::areaNavigation(Minecraft* pMinecraft, AreaNavigation::Directi
 
 void SliderButton::pressed(Minecraft* mc, const MenuPointer& pointer)
 {
+	Button::pressed(mc, pointer);
+
 	m_value = (pointer.x - (m_xPos + 4)) / float(m_width - 8);
 
 	getOption().fromFloat(m_value = Mth::clamp(m_value, 0.0f, 1.0f));

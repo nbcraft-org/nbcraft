@@ -31,7 +31,7 @@ public:
 	virtual void clickedHeader(int x, int y);
 	virtual int getItemAtPosition(int x, int y);
 	virtual void capYPosition();
-	virtual void render(const MenuPointer& pointer, float f);
+	void render(Minecraft* pMinecraft, const MenuPointer& pointer) override;
 	virtual void renderHoleBackground(float, float, int, int);
 	virtual void checkInput(const MenuPointer& pointer);
 	virtual void onClickItem(int index, const MenuPointer& pointer, int relMouseX, int relPointerY, bool doubleClick);
