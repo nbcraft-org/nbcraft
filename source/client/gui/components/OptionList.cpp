@@ -157,7 +157,14 @@ void OptionList::initDefaultMenu()
 }
 
 #define HEADER(text) do { m_items.push_back(new OptionHeader(text)); currentIndex++; } while (0)
-#define OPTION(name) do { pOptions->name.addGuiElement(m_items, UI_POCKET); currentIndex++; } while (0)
+#define OPTION(name) do { pOptions->name.addGuiElement(m_items, m_uiTheme); currentIndex++; } while (0)
+#define RESET_BTN(category) do \
+{ \
+	HEADER(""); HEADER(""); \
+	ResetCategoryButton* pBtn = new ResetCategoryButton(category, Language::get("settingsMenu.resetToDefaults")); \
+	pBtn->m_uiTheme = m_uiTheme; \
+	m_items.push_back(pBtn); \
+} while (0)
 
 void OptionList::initGameplayMenu()
 {
@@ -171,7 +178,7 @@ void OptionList::initGameplayMenu()
 	m_items[currentIndex]->setEnabled(false);
 #endif
 
-	m_items.push_back(new ResetCategoryButton(OC_GAMEPLAY, Language::get("settingsMenu.resetToDefaults")));
+	RESET_BTN(OC_GAMEPLAY);
 
 	(void)currentIndex; // compiler will warn about an unused variable sometimes if this isn't here
 }
@@ -193,7 +200,7 @@ void OptionList::initControlsMenu()
 		m_items[idxDpadSize]->setEnabled(false);
 	}
 
-	m_items.push_back(new ResetCategoryButton(OC_CONTROLS, Language::get("settingsMenu.resetToDefaults")));
+	RESET_BTN(OC_CONTROLS);
 }
 
 void OptionList::initVideoMenu()
@@ -213,7 +220,7 @@ void OptionList::initVideoMenu()
 	if (!m_pMinecraft->platform()->isVSyncSwitchable())
 		m_items[idxVSync]->setEnabled(false);
 
-	m_items.push_back(new ResetCategoryButton(OC_VIDEO, Language::get("settingsMenu.resetToDefaults")));
+	RESET_BTN(OC_VIDEO);
 }
 
 OptionHeader::OptionHeader(const std::string& text)

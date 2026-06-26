@@ -62,6 +62,7 @@ void OptionsScreen::init()
 		SAFE_DELETE(m_pList);
 
 	m_pList = new OptionList(m_pMinecraft, m_width, m_height, 28, m_height - 28);
+	m_pList->m_uiTheme = m_uiTheme;
 	
 	Button* tabButtons[] = { &m_gameplayButton, &m_controlsButton, &m_videoButton};
 	constexpr int NUM_CATEGORY_BUTTONS = sizeof(tabButtons) / sizeof(tabButtons[0]);

@@ -8,12 +8,12 @@
 
 #pragma once
 
-#include "../GuiComponent.hpp"
+#include "../GuiElement.hpp"
 #include "client/app/Minecraft.hpp"
 
 #define C_SCROLLED_LIST_ITEM_WIDTH (220)
 
-class ScrolledSelectionList : public GuiComponent
+class ScrolledSelectionList : public GuiElement
 {
 public:
 	ScrolledSelectionList(Minecraft*, int, int, int, int, int);
@@ -69,8 +69,6 @@ public:
 	float m_y0;
 	float m_y1;
 	int m_itemHeight;
-	int m_width;
-	int field_1C;
 	float m_x0;
 	float m_x1;
 	int field_28;

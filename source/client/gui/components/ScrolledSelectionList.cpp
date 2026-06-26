@@ -14,28 +14,28 @@
 
 #define C_ITEM_WIDTH C_SCROLLED_LIST_ITEM_WIDTH
 
-ScrolledSelectionList::ScrolledSelectionList(Minecraft* minecraft, int a3, int a4, int a5, int a6, int a7) :
-	m_pMinecraft(minecraft),
-	m_y0(float(a5)),
-	m_y1(float(a6)),
-	m_itemHeight(a7),
-	m_width(a3),
-	field_1C(a4),
-	m_x0(float(a3)),
-	m_x1(0.0f),
-	m_scrollAmount(0.0f),
-	m_accumulatedScroll(0.0f),
-	m_scrollBarGrabOffset(1.0f),
-	m_scrollVelocity(0.0f),
-	m_bDecelerating(false),
-	m_mouseYWhenPressed(-2.0f),
-	m_lastClickedIndex(-1),
-	m_lastClickTime(0),
-	m_bRenderSelection(true),
-	m_bRenderHeader(false),
-	m_bRenderScrollbar(true),
-	m_headerHeight(0)
-{	
+ScrolledSelectionList::ScrolledSelectionList(Minecraft* minecraft, int width, int height, int a5, int a6, int a7)
+	: m_pMinecraft(minecraft)
+	, m_y0(float(a5))
+	, m_y1(float(a6))
+	, m_itemHeight(a7)
+	, m_x0(width)
+	, m_x1(0.0f)
+	, m_scrollAmount(0.0f)
+	, m_accumulatedScroll(0.0f)
+	, m_scrollBarGrabOffset(1.0f)
+	, m_scrollVelocity(0.0f)
+	, m_bDecelerating(false)
+	, m_mouseYWhenPressed(-2.0f)
+	, m_lastClickedIndex(-1)
+	, m_lastClickTime(0)
+	, m_bRenderSelection(true)
+	, m_bRenderHeader(false)
+	, m_bRenderScrollbar(true)
+	, m_headerHeight(0)
+{
+	m_width = width;
+	m_height = height;
 }
 
 void ScrolledSelectionList::setRenderSelection(bool b)
@@ -276,8 +276,8 @@ void ScrolledSelectionList::render(const MenuPointer& pointer, float f)
 		}
 	}
 
-	renderHoleBackground(0.0f, m_y0, 255, 255);
-	renderHoleBackground(m_y1, float(field_1C), 255, 255);
+	renderHoleBackground(0.0f, m_y0,     255, 255);
+	renderHoleBackground(m_y1, m_height, 255, 255);
 
 	renderContext.setShadeMode(mce::SHADE_MODE_SMOOTH);
 
