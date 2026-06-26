@@ -605,7 +605,7 @@ void LevelRenderer::allChanged()
 
 	m_lastViewDistance = m_pMinecraft->getOptions()->m_viewDistance.get();
 
-	int dist = 64 << (3 - m_lastViewDistance);
+	int dist = 64 << m_lastViewDistance;
 	if (dist > 400)
 		dist = 400;
 
@@ -1009,7 +1009,7 @@ const Color& LevelRenderer::setupClearColor(float f)
 	Level& level = *mc.m_pLevel;
 	const Entity& camera = *mc.m_pCameraEntity;
 
-	float x1 = 1.0f - powf(1.0f / float(4 - options.m_viewDistance.get()), 0.25f);
+	float x1 = 1.0f - powf(1.0f / (1 + options.m_viewDistance.get()), 0.25f);
 
 	Vec3 skyColor = level.getSkyColor(camera, f), fogColorVec = level.getFogColor(f);
 
@@ -1135,8 +1135,8 @@ void LevelRenderer::tick()
 	m_fogBrO = m_fogBr;
 
 	float bright = level.getBrightness(camera.m_pos);
-	float x3 = float(3 - options.m_viewDistance.get());
-	float x4 = x3 / 3.0f;
+	float viewDistance = options.m_viewDistance.get();
+	float x4 = viewDistance / 3.0f;
 	float x5 = (x4 + bright * (1.0f - x4) - m_fogBr) * 0.1f;
 
 	m_fogBr += x5;

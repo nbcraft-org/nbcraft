@@ -68,12 +68,12 @@ Options::Options(Minecraft* mc, const std::string& folderPath) :
 	, m_masterVolume("audio_master", "options.sound", 1.0f)
 	, m_sensitivity("ctrl_sensitivity", "options.sensitivity", 0.5f)
 	, m_invertMouse("ctrl_invertmouse", "options.invertMouse", false)
-	, m_viewDistance("gfx_viewdistance", "options.renderDistance", 1, ValuesBuilder().add("options.renderDistance.far").add("options.renderDistance.normal").add("options.renderDistance.short").add("options.renderDistance.tiny"))
+	, m_viewDistance("gfx_viewdistance", "options.renderDistance", 2, ValuesBuilder().add("options.renderDistance.tiny").add("options.renderDistance.short").add("options.renderDistance.normal").add("options.renderDistance.far"), true)
 	, m_viewBobbing("gfx_bobview", "options.viewBobbing", true)
 	, m_anaglyphs("gfx_3danaglyphs", "options.anaglyph", false)
 	, m_fancyGraphics("gfx_fancygraphics", "options.fancyGraphics", true)
 	, m_ambientOcclusion("gfx_smoothlighting", "options.ao", Minecraft::useAmbientOcclusion)
-	, m_difficulty("misc_difficulty", "options.difficulty", 2, ValuesBuilder().add("options.difficulty.peaceful").add("options.difficulty.easy").add("options.difficulty.normal").add("options.difficulty.hard"))
+	, m_difficulty("misc_difficulty", "options.difficulty", 2, ValuesBuilder().add("options.difficulty.peaceful").add("options.difficulty.easy").add("options.difficulty.normal").add("options.difficulty.hard"), true)
 	, m_hideGui("gfx_hidegui", "options.hideGui", false)
 	, m_thirdPerson("gfx_thirdperson", "options.thirdPerson", 0)
 	, m_flightHax("misc_flycheat", "options.flightHax", false)
@@ -86,11 +86,11 @@ Options::Options(Minecraft* mc, const std::string& folderPath) :
 	, m_serverVisibleDefault("mp_server_visible_default", "options.serverVisibleDefault", true)
 	, m_autoJump("ctrl_autojump", "options.autoJump", mc->platform()->isTouchscreen())
 	, m_debugText("info_debugtext", "options.debugText", false)
-	, m_blockOutlines("gfx_blockoutlines", "options.blockOutlines", false)
-	, m_fancyGrass("gfx_fancygrass", "options.fancyGrass", false)
-	, m_biomeColors("gfx_biomecolors", "options.biomeColors", false)
+	, m_blockOutlines("gfx_blockoutlines", "options.blockOutlines", !mc->platform()->isTouchscreen())
+	, m_fancyGrass("gfx_fancygrass", "options.fancyGrass", true)
+	, m_biomeColors("gfx_biomecolors", "options.biomeColors", true)
 	, m_splitControls("ctrl_split", "options.splitControls", false)
-	, m_dynamicHand("gfx_dynamichand", "options.dynamicHand", false)
+	, m_dynamicHand("gfx_dynamichand", "options.dynamicHand", true)
 	, m_menuPanorama("misc_menupano", "options.menuPanorama", true)
 	, m_lang("gfx_lang", "options.lang", "en_us")
 	, m_uiTheme("gfx_uitheme", "options.uiTheme", GetDefaultUiTheme(m_pMinecraft), ValuesBuilder().add("options.uiTheme.pocket").add("options.uiTheme.java").add("options.uiTheme.console"))
@@ -778,9 +778,16 @@ std::string ValuesOption::getDisplayValue() const
 void MinMaxOption::addGuiElement(std::vector<GuiElement*>& elements, UITheme uiTheme)
 {
 	if (uiTheme == UI_CONSOLE)
+	{
 		elements.push_back(new SliderButton(0, 0, 200, 32, this, getMessage(), toFloat()));
+	}
 	else
-		elements.push_back(new SwitchValuesButton(0, 0, this, getDisplayName()));
+	{
+		if (m_bIsSlider)
+			elements.push_back(new SliderButton(0, 0, 200, 32, this, getMessage(), toFloat()));
+		else
+			elements.push_back(new SwitchValuesButton(0, 0, this, getDisplayName()));
+	}
 }
 
 std::string SensitivityOption::getDisplayValue() const

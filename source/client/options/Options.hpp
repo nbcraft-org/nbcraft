@@ -303,6 +303,7 @@ public:
 	MinMaxOption(const std::string& key, const std::string& name, int initial, int min, int max) : IntOption(key, name, initial)
 		, m_min(min)
 		, m_max(max)
+		, m_bIsSlider(false)
 	{
 	}
 
@@ -314,14 +315,16 @@ public:
 
 public:
 	int m_min, m_max;
+	bool m_bIsSlider;
 };
 
 class ValuesOption : public MinMaxOption
 {
 public:
-	ValuesOption(const std::string& key, const std::string& name, int initial, const ValuesBuilder& values) : MinMaxOption(key, name, initial, 0, values.m_values.size())
+	ValuesOption(const std::string& key, const std::string& name, int initial, const ValuesBuilder& values, bool isSlider = false) : MinMaxOption(key, name, initial, 0, values.m_values.size())
 		, m_values(values.m_values)
 	{
+		m_bIsSlider = isSlider;
 	}
 
 	const std::string& getValue() const { return m_values[Mth::clamp(get(), m_min, m_max - 1)]; }
@@ -408,7 +411,10 @@ public:
 class HUDSizeOption : public MinMaxOption
 {
 public:
-	HUDSizeOption(const std::string& key, const std::string& name, int initial) : MinMaxOption(key, name, initial, HUD_SIZE_1, HUD_SIZE_3 + 1) {}
+	HUDSizeOption(const std::string& key, const std::string& name, int initial) : MinMaxOption(key, name, initial, HUD_SIZE_1, HUD_SIZE_3 + 1)
+	{
+		m_bIsSlider = true;
+	}
 
 	std::string getDisplayValue() const override;
 };

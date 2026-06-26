@@ -279,7 +279,7 @@ void GameRenderer::unZoomRegion()
 
 void GameRenderer::setupCamera(float f, int i)
 {
-	m_renderDistance = float(256 >> m_pMinecraft->getOptions()->m_viewDistance.get());
+	m_renderDistance = float(256 >> (3 - m_pMinecraft->getOptions()->m_viewDistance.get()));
 
 	Matrix& projMtx = MatrixStack::Projection.getTop();
 	projMtx = Matrix::IDENTITY;

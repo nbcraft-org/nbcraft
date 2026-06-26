@@ -514,8 +514,10 @@ void Screen::onRender(float f)
 bool Screen::onBack(bool b)
 {
 	bool result = handleBackEvent(b);
-	// Play the sound regardless, since NinecraftApp will set the current screen to null anyways
-	m_pMinecraft->m_pSoundEngine->playUI(C_SOUND_UI_BACK);
+
+	if (m_uiTheme == UI_CONSOLE)
+		m_pMinecraft->m_pSoundEngine->playUI(C_SOUND_UI_BACK);
+
 	return result;
 }
 

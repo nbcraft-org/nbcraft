@@ -50,7 +50,7 @@ float Minecraft::_renderScaleMultiplier = 1.0f;
 
 int Minecraft::width  = C_DEFAULT_SCREEN_WIDTH;
 int Minecraft::height = C_DEFAULT_SCREEN_HEIGHT;
-bool Minecraft::useAmbientOcclusion = false;
+bool Minecraft::useAmbientOcclusion = true;
 int Minecraft::customDebugId = 0;
 InputMethod::Type Minecraft::_inputMethod = InputMethod::KEYBOARD;
 
