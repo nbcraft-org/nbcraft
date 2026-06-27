@@ -25,8 +25,9 @@
 #include "thirdparty/GL/GL.hpp"
 #endif
 
-#include "thirdparty/stb_image/include/stb_image.h"
-#include "thirdparty/stb_image/include/stb_image_write.h"
+#include <stb_image.h>
+
+#include <stb_image_write.h>
 
 // Macros are cursed
 #define _STR(x) #x
