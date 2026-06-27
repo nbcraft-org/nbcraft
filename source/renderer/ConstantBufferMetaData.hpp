@@ -21,6 +21,6 @@ namespace mce
 
         const std::string& getConstantBufferName() const;
         const UniformMetaData* getUniformMetaData(const std::string& uniformName) const;
-        unsigned int getRequiredSpaceForUniforms() const;
+        size_t getRequiredSpaceForUniforms() const;
     };
 }

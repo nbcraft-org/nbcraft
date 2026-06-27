@@ -11,8 +11,8 @@ namespace mce
     {
     public:
         std::string m_name;
-        unsigned int m_numberOfElements;
-        unsigned int m_byteOffset;
+        size_t m_numberOfElements;
+        size_t m_byteOffset;
         ShaderPrimitiveTypes m_shaderPrimitiveType;
         bool m_dirty;
 
@@ -26,7 +26,7 @@ namespace mce
 
         void release();
         const std::string& getName() const { return m_name; }
-        unsigned int getSize() const { return ShaderPrimitiveTypeHelper::sizeInBytesFromShaderPrimitiveType(m_shaderPrimitiveType); }
+        size_t getSize() const { return ShaderPrimitiveTypeHelper::sizeInBytesFromShaderPrimitiveType(m_shaderPrimitiveType); }
         ShaderPrimitiveTypes getType() const { return m_shaderPrimitiveType; }
         bool isDirty() const { return m_dirty; }
 

@@ -49,7 +49,7 @@ void ConstantBufferContainerBase::_move(ConstantBufferContainerBase& other)
     other.m_bWriteEnabled = temp;
 }
 
-void ConstantBufferContainerBase::reserveMemoryForShaderConstants(unsigned int shaderConstSize, unsigned int constBufferSize)
+void ConstantBufferContainerBase::reserveMemoryForShaderConstants(size_t shaderConstSize, size_t constBufferSize)
 {
     m_shaderConstants->reserve(shaderConstSize);
     m_constantBufferBytes->resize(constBufferSize);

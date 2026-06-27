@@ -10,8 +10,8 @@ namespace mce
     class UniformMetaData
     {
     public:
-        unsigned int m_numberOfElements;
-        unsigned int m_byteOffset;
+        size_t m_numberOfElements;
+        size_t m_byteOffset;
         ShaderPrimitiveTypes m_shaderPrimitiveType;
         ConstantBufferMetaData* m_constantBufferMetaDataParent;
         std::string m_uniformName;
@@ -19,6 +19,6 @@ namespace mce
     public:
         UniformMetaData();
 
-        unsigned int getSize() const;
+        size_t getSize() const;
     };
 }

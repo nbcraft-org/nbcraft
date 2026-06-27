@@ -31,11 +31,11 @@ namespace mce
         void _move(ConstantBufferContainerBase& other);
 
     public:
-        void bindConstantBuffer(RenderContext& context, unsigned int, unsigned int) { }
+        void bindConstantBuffer(RenderContext& context, size_t, size_t) { }
 
         void sync(RenderContext& context) { }
         void allocateRenderContextBuffer(RenderContext& context) { }
-        void reserveMemoryForShaderConstants(unsigned int shaderConstSize, unsigned int constBufferSize);
+        void reserveMemoryForShaderConstants(size_t shaderConstSize, size_t constBufferSize);
         void registerReflectedShaderParameter(const UniformMetaData& uniMeta);
         void registerShaderParameter(const ShaderConstantBase &shaderConst);
         void finalizeConstantBufferLayout();
