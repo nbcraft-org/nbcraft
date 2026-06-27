@@ -73,12 +73,15 @@ bool CraftContext::craft(Recipe* recipe)
 		{
 			ItemStack remaining(ing.getItem()->getCraftingRemainingItem());
 			pInventory->add(remaining);
+			if (!remaining.isEmpty())
+				pInventory->m_pPlayer->drop(remaining);
 		}
 	}
 
 	ItemStack resultItem = recipe->getResultItem();
 	pInventory->add(resultItem);
-
+	if (!resultItem.isEmpty())
+		pInventory->m_pPlayer->drop(resultItem);
 
 	return true;
 }
