@@ -7,6 +7,8 @@
 
 Recipes* Recipes::instance = nullptr;
 
+// Recipe order is accurate to TU3
+
 void Recipes::addTools(const ItemStack& material, Item* sword, Item* pickaxe, Item* axe, Item* shovel, Item* hoe)
 {
     add(ShapedRecipeBuilder("XXX",
@@ -91,8 +93,8 @@ Recipes::Recipes()
     addTools(ItemStack(Tile::wood),       Item::sword_wood,    Item::pickAxe_wood,    Item::hatchet_wood,    Item::shovel_wood,    Item::hoe_wood);
     addTools(ItemStack(Tile::stoneBrick), Item::sword_stone,   Item::pickAxe_stone,   Item::hatchet_stone,   Item::shovel_stone,   Item::hoe_stone);
     addTools(ItemStack(Item::ironIngot),  Item::sword_iron,    Item::pickAxe_iron,    Item::hatchet_iron,    Item::shovel_iron,    Item::hoe_iron);
-    addTools(ItemStack(Item::goldIngot),  Item::sword_stone,   Item::pickAxe_gold,    Item::hatchet_gold,    Item::shovel_gold,    Item::hoe_gold);
     addTools(ItemStack(Item::emerald),    Item::sword_emerald, Item::pickAxe_emerald, Item::hatchet_emerald, Item::shovel_emerald, Item::hoe_emerald);
+    addTools(ItemStack(Item::goldIngot),  Item::sword_stone,   Item::pickAxe_gold,    Item::hatchet_gold,    Item::shovel_gold,    Item::hoe_gold);
 
 #if MC_VERSION >= MC_VER_BETA(1, 7, 0)
     add(ShapedRecipeBuilder("A ",
@@ -179,8 +181,8 @@ Recipes::Recipes()
     addArmor(ItemStack(Item::leather),   Item::helmet_cloth,   Item::chestplate_cloth,   Item::leggings_cloth,   Item::boots_cloth);
     addArmor(ItemStack(Tile::fire),      Item::helmet_chain,   Item::chestplate_chain,   Item::leggings_chain,   Item::boots_chain, GC_COUNT);
     addArmor(ItemStack(Item::ironIngot), Item::helmet_iron,    Item::chestplate_iron,    Item::leggings_iron,    Item::boots_iron);
-    addArmor(ItemStack(Item::goldIngot), Item::helmet_gold,    Item::chestplate_gold,    Item::leggings_gold,    Item::boots_gold);
     addArmor(ItemStack(Item::emerald),   Item::helmet_diamond, Item::chestplate_diamond, Item::leggings_diamond, Item::boots_diamond);
+    addArmor(ItemStack(Item::goldIngot), Item::helmet_gold,    Item::chestplate_gold,    Item::leggings_gold,    Item::boots_gold);
 
     // StructureRecipes
     add(ShapedRecipeBuilder("#", ItemStack(Tile::wood, 4))
@@ -225,21 +227,21 @@ Recipes::Recipes()
         .add('#', Tile::cloth)
         .add('X', Tile::wood), GC_STRUCTURES, 6);
 
-    add(ShapedRecipeBuilder("# #",
-                            "###",
-                            "# #", ItemStack(Tile::ladder, 2))
-        .add('#', Item::stick), GC_STRUCTURES, 7);
-
     add(ShapedRecipeBuilder("###",
                             "###", ItemStack(Tile::fence, 2))
-        .add('#', Item::stick), GC_STRUCTURES, 8);
+        .add('#', Item::stick), GC_STRUCTURES, 7);
 
 #if MC_VERSION >= MC_VER_BETA(1, 8, 0)
     add(ShapedRecipeBuilder("#W#",
         "#W#", ItemStack(Tile::fenceGate, 1))
         .add('#', Item::stick)
-        .add('W', Tile::wood), GC_STRUCTURES, 8);
+        .add('W', Tile::wood), GC_STRUCTURES, 7);
 #endif
+
+    add(ShapedRecipeBuilder("# #",
+        "###",
+        "# #", ItemStack(Tile::ladder, 2))
+        .add('#', Item::stick), GC_STRUCTURES, 8);
 
     add(ShapedRecipeBuilder("##",
                             "##",
@@ -271,11 +273,11 @@ Recipes::Recipes()
     add(ShapedRecipeBuilder("###", ItemStack(Tile::stoneSlabHalf, 3, 1))
         .add('#', Tile::sandStone), GC_STRUCTURES, 11);
 
-    add(ShapedRecipeBuilder("###", ItemStack(Tile::stoneSlabHalf, 3, 3))
-        .add('#', Tile::stoneBrick), GC_STRUCTURES, 11);
-
     add(ShapedRecipeBuilder("###", ItemStack(Tile::stoneSlabHalf, 3))
         .add('#', Tile::rock), GC_STRUCTURES, 11);
+
+    add(ShapedRecipeBuilder("###", ItemStack(Tile::stoneSlabHalf, 3, 3))
+        .add('#', Tile::stoneBrick), GC_STRUCTURES, 11);
 
     // FoodRecipes
     add(ShapedRecipeBuilder("YX#", ItemStack(Item::mushroomStew, 1))
@@ -323,14 +325,21 @@ Recipes::Recipes()
         .add('X', Item::redStone)
         .add('I', Tile::rock), GC_MECHANISM, 2);
 
-    add(ShapedRecipeBuilder("#", ItemStack(Tile::button, 1))
-        .add('#', Tile::rock), GC_MECHANISM, 3);
-
-    add(ShapedRecipeBuilder("##", ItemStack(Tile::pressurePlate_stone, 1))
-        .add('#', Tile::rock), GC_MECHANISM, 4);
+    add(ShapedRecipeBuilder(
+#if MC_VERSION >= MC_VER_RELEASE(1, 4, 2)
+        "#"
+#else
+        "#",
+        "#"
+#endif
+        , ItemStack(Tile::button, 1))
+        .add('#', Tile::rock) , GC_MECHANISM, 3);
 
     add(ShapedRecipeBuilder("##", ItemStack(Tile::pressurePlate_wood, 1))
         .add('#', Tile::wood), GC_MECHANISM, 4);
+
+    add(ShapedRecipeBuilder("##", ItemStack(Tile::pressurePlate_stone, 1))
+        .add('#', Tile::rock), GC_MECHANISM, 4);
 
     add(ShapedRecipeBuilder("###",
                             "#X#",
