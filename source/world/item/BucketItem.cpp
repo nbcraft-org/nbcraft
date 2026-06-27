@@ -61,7 +61,8 @@ bool BucketItem::use(ItemStack& item, Level* level, Player* player) const
                     else
                         level->setTileAndData(tp, m_content, 0);
 
-                    player->m_pInventory->setSelectedItem(Item::bucket_empty);
+                    if (!player->isCreative())
+                        player->m_pInventory->setSelectedItem(Item::bucket_empty);
                     return true;
                 }
             }
