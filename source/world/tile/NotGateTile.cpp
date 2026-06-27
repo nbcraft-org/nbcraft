@@ -185,6 +185,9 @@ bool NotGateTile::isSignalSource() const
 
 void NotGateTile::animateTick(Level* level, const TilePos& pos, Random* random)
 {
+	if (!m_bOn)
+		return;
+
 	TileData data = level->getData(pos);
 	float x = (float(pos.x) + 0.5f) + (random->nextFloat() - 0.5f) * 0.2f; // var7
 	float y = (float(pos.y) + 0.7f) + (random->nextFloat() - 0.5f) * 0.2f; // var9

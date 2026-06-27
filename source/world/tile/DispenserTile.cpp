@@ -75,6 +75,9 @@ int DispenserTile::getTexture(Facing::Name face) const
 
 bool DispenserTile::use(Level* level, const TilePos& pos, Player* player)
 {
+	if (player->isSneaking() && !player->getSelectedItem().isEmpty())
+		return false;
+
     if (level->m_bIsClientSide)
         return true;
 

@@ -19,12 +19,17 @@ public:
 	bool isSolidRender() const override;
 	bool isCubeShaped() const override;
 	bool use(Level* pLevel, const TilePos& pos, Player* player) override;
+	void neighborChanged(Level*, const TilePos& pos, TileID newTile) override;
 
-	int getDir(TileData data) const;
+	void setOpen(Level*, const TilePos& pos, bool bOpen, Player* pPlayer = nullptr);
 
-	// @NOTE: These are inlined.
-	inline static bool isOpen(TileData data)
+	static bool isOpen(TileData data)
 	{
 		return (data & C_OPEN_BIT) != 0;
+	}
+
+	static int getDir(TileData data)
+	{
+		return data & C_DIR_MASK;
 	}
 };
