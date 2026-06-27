@@ -7,10 +7,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 
 option(NIX_BUILD OFF)
 
-if(${NIX_BUILD})
-    add_compile_definitions(NIX_BUILD)
-endif() 
-
 # MC_VERSION string is an 7 digit number with 4 components, era, major, minor, and patch.
 # Each component takes 2 digits, except era, which takes 1. Major, minor, and patch are self explanatory,
 # era designates if the version is from alpha, beta, or release. Alpha is 1, beta is 2, and release is 3.
@@ -176,8 +172,6 @@ if(USE_GL_VBO_EMULATION)
 endif()
 
 # Disable warnings on third party libraries
-if(NOT ${NIX_BUILD})
-    target_compile_options(stb_vorbis PRIVATE -w)
-    target_compile_options(stb_image PRIVATE -w)
-endif()
+target_compile_options(stb_vorbis PRIVATE -w)
+target_compile_options(stb_image PRIVATE -w)
 target_compile_options(raknet PRIVATE -w)
