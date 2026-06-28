@@ -226,6 +226,7 @@
     <ClCompile Include="..\..\..\source\world\level\levelgen\chunk\Bounds.cpp" />
     <ClCompile Include="..\..\..\source\world\level\levelgen\chunk\ChunkRefCount.cpp" />
     <ClCompile Include="..\..\..\source\world\level\levelgen\chunk\ChunkViewSource.cpp" />
+    <ClCompile Include="..\..\..\source\world\level\levelgen\chunk\DBStorage.cpp" />
     <ClCompile Include="..\..\..\source\world\level\levelgen\chunk\EmptyChunkSource.cpp" />
     <ClCompile Include="..\..\..\source\world\level\levelgen\chunk\MainChunkSource.cpp" />
     <ClCompile Include="..\..\..\source\world\level\levelgen\chunk\NetworkChunkSource.cpp" />

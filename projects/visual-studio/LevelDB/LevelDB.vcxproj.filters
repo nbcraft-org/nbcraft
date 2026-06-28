@@ -1,0 +1,354 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\db">
+      <UniqueIdentifier>{7d0f9941-3463-4635-b106-5c2dd22962e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\db">
+      <UniqueIdentifier>{c70b5cec-49f2-48e9-a6fd-da4dd6962aa5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\helpers">
+      <UniqueIdentifier>{d079b2ef-1174-493c-8ff4-5df62bd6549a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\helpers\memenv">
+      <UniqueIdentifier>{e1b4f6f1-15c8-4f94-b7f1-017267eb59a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\leveldb">
+      <UniqueIdentifier>{f28dc8c7-584b-4b59-8bd5-ebcbeec073fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\port">
+      <UniqueIdentifier>{e891ba78-a847-4f27-ab60-e54530da29e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\table">
+      <UniqueIdentifier>{f473372c-1070-4b63-aeaf-d4c40b7c4270}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\util">
+      <UniqueIdentifier>{ca9364ca-f413-4c63-aa91-2aa6213868e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\helpers">
+      <UniqueIdentifier>{5e11c635-4094-47d4-97a9-208a5cece8ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\helpers\memenv">
+      <UniqueIdentifier>{149b71c2-dd37-47a4-bbfb-9633fde39103}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\port">
+      <UniqueIdentifier>{e05c7912-d5c7-464f-92c6-5505357a176d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\table">
+      <UniqueIdentifier>{1f025b7b-3d16-4ad8-a731-cea40bf30ddf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\util">
+      <UniqueIdentifier>{e13e52a3-6bcb-4300-958b-78f5b58a720a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\db\builder.h">
+      <Filter>Header Files\db</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\db\db_impl.h">
+      <Filter>Header Files\db</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\db\db_iter.h">
+      <Filter>Header Files\db</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\db\dbformat.h">
+      <Filter>Header Files\db</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\db\filename.h">
+      <Filter>Header Files\db</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\db\log_format.h">
+      <Filter>Header Files\db</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\db\log_reader.h">
+      <Filter>Header Files\db</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\db\log_writer.h">
+      <Filter>Header Files\db</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\db\memtable.h">
+      <Filter>Header Files\db</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\db\skiplist.h">
+      <Filter>Header Files\db</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\db\snapshot.h">
+      <Filter>Header Files\db</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\db\table_cache.h">
+      <Filter>Header Files\db</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\db\version_edit.h">
+      <Filter>Header Files\db</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\helpers\memenv\memenv.h">
+      <Filter>Header Files\helpers\memenv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\cache.h">
+      <Filter>Header Files\leveldb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\comparator.h">
+      <Filter>Header Files\leveldb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\compressor.h">
+      <Filter>Header Files\leveldb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\db.h">
+      <Filter>Header Files\leveldb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\decompress_allocator.h">
+      <Filter>Header Files\leveldb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\dumpfile.h">
+      <Filter>Header Files\leveldb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\env.h">
+      <Filter>Header Files\leveldb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\filter_policy.h">
+      <Filter>Header Files\leveldb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\iterator.h">
+      <Filter>Header Files\leveldb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\options.h">
+      <Filter>Header Files\leveldb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\slice.h">
+      <Filter>Header Files\leveldb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\snappy_compressor.h">
+      <Filter>Header Files\leveldb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\status.h">
+      <Filter>Header Files\leveldb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\table.h">
+      <Filter>Header Files\leveldb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\table_builder.h">
+      <Filter>Header Files\leveldb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\write_batch.h">
+      <Filter>Header Files\leveldb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\zlib_compressor.h">
+      <Filter>Header Files\leveldb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\zopfli_compressor.h">
+      <Filter>Header Files\leveldb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\zstd_compressor.h">
+      <Filter>Header Files\leveldb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\port\atomic_pointer.h">
+      <Filter>Header Files\port</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\port\port.h">
+      <Filter>Header Files\port</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\port\port_win.h">
+      <Filter>Header Files\port</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\port\thread_annotations.h">
+      <Filter>Header Files\port</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\table\block.h">
+      <Filter>Header Files\table</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\table\block_builder.h">
+      <Filter>Header Files\table</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\table\filter_block.h">
+      <Filter>Header Files\table</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\table\format.h">
+      <Filter>Header Files\table</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\table\iterator_wrapper.h">
+      <Filter>Header Files\table</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\table\merger.h">
+      <Filter>Header Files\table</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\table\two_level_iterator.h">
+      <Filter>Header Files\table</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\util\arena.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\util\coding.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\util\crc32c.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\util\Filepath.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\util\hash.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\util\histogram.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\util\logging.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\util\mutexlock.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\util\random.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\thirdparty\LevelDB\util\win_logger.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\builder.cc">
+      <Filter>Source Files\db</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\db_impl.cc">
+      <Filter>Source Files\db</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\db_iter.cc">
+      <Filter>Source Files\db</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\dbformat.cc">
+      <Filter>Source Files\db</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\filename.cc">
+      <Filter>Source Files\db</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\leveldbutil.cc">
+      <Filter>Source Files\db</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\log_reader.cc">
+      <Filter>Source Files\db</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\log_writer.cc">
+      <Filter>Source Files\db</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\memtable.cc">
+      <Filter>Source Files\db</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\repair.cc">
+      <Filter>Source Files\db</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\snappy_compressor.cc">
+      <Filter>Source Files\db</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\table_cache.cc">
+      <Filter>Source Files\db</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\version_edit.cc">
+      <Filter>Source Files\db</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\version_set.cc">
+      <Filter>Source Files\db</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\write_batch.cc">
+      <Filter>Source Files\db</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\zlib_compressor.cc">
+      <Filter>Source Files\db</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\zopfli_compressor.cc">
+      <Filter>Source Files\db</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\zstd_compressor.cc">
+      <Filter>Source Files\db</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\helpers\memenv\memenv.cc">
+      <Filter>Source Files\helpers\memenv</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\port\port_win.cc">
+      <Filter>Source Files\port</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\table\block.cc">
+      <Filter>Source Files\table</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\table\block_builder.cc">
+      <Filter>Source Files\table</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\table\filter_block.cc">
+      <Filter>Source Files\table</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\table\format.cc">
+      <Filter>Source Files\table</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\table\iterator.cc">
+      <Filter>Source Files\table</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\table\merger.cc">
+      <Filter>Source Files\table</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\table\table.cc">
+      <Filter>Source Files\table</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\table\table_builder.cc">
+      <Filter>Source Files\table</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\table\two_level_iterator.cc">
+      <Filter>Source Files\table</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\arena.cc">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\bloom.cc">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\cache.cc">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\coding.cc">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\comparator.cc">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\crc32c.cc">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\env.cc">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\env_winrt.cc">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\filter_policy.cc">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\hash.cc">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\histogram.cc">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\logging.cc">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\options.cc">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\status.cc">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\win_logger.cc">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

@@ -69,7 +69,7 @@
   <!-- Item Definitions -->
   <ItemDefinitionGroup>
     <ClCompile>
-	  <AdditionalIncludeDirectories>$(MC_ROOT);$(MC_ROOT)\source;$(MC_ROOT)\thirdparty;$(RAKNET_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	  <AdditionalIncludeDirectories>$(MC_ROOT);$(MC_ROOT)\source;$(MC_ROOT)\thirdparty;$(MC_ROOT)\thirdparty\LevelDB\include;$(RAKNET_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>HANDLE_CHARS_SEPARATELY;NOMINMAX;$(MC_GFX_API_MACRO);_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 	  <!-- Needed to allow __cplusplus to be set correctly -->
 	  <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>

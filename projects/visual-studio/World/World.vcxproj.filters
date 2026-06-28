@@ -677,6 +677,9 @@
     <ClCompile Include="..\..\..\source\world\level\levelgen\chunk\WorldLimitChunkSource.cpp">
       <Filter>Source Files\Level\LevelGen\Chunk</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\world\level\levelgen\chunk\DBStorage.cpp">
+      <Filter>Source Files\Level\LevelGen\Chunk</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Entity.hpp">
