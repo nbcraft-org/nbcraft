@@ -140,6 +140,12 @@ void FishingHook::tick()
     {
         if (!m_pLevel->m_bIsClientSide)
         {
+            if (!m_owner)
+            {
+                remove();
+                return;
+            }
+
             ItemStack var1 = m_owner->getSelectedItem();
             if (m_owner->m_bRemoved || !m_owner->isAlive() || !var1 || var1.getItem() != Item::fishingRod || distanceToSqr(m_owner) > 1024.0f)
             {

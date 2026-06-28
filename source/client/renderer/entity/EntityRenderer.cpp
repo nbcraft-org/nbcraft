@@ -15,6 +15,7 @@
 
 EntityRenderer::Materials::Materials()
 {
+	MATERIAL_PTR(switchable, entity_flat_color);
 	MATERIAL_PTR(switchable, entity_alphatest);
 	MATERIAL_PTR(switchable, entity_alphatest_cull);
 	MATERIAL_PTR(switchable, entity_alphatest_glint);
