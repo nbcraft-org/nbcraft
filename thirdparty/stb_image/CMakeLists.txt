@@ -3,7 +3,7 @@ project(stb_image)
 
 set(STB_IMAGE_SOURCE src/stb_image_impl.c)
 
-if(NOT NIX_BUILD)
+if(NOT NBC_NIX_BUILD)
     set(STB_VORBIS_SOURCE include/stb_vorbis.c)
     set(STB_INCLUDE include)
 endif()

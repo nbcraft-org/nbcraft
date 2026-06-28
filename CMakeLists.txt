@@ -5,7 +5,7 @@ project(nbcraft)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 
-option(NIX_BUILD OFF)
+option(NBC_NIX_BUILD OFF)
 
 # MC_VERSION string is an 7 digit number with 4 components, era, major, minor, and patch.
 # Each component takes 2 digits, except era, which takes 1. Major, minor, and patch are self explanatory,

@@ -10,7 +10,6 @@
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
-[Rr]esult
 x64/
 x86/
 [Ww][Ii][Nn]32/
@@ -144,3 +143,6 @@ xcuserdata/
 
 # Clangd
 .clangd
+
+# Nix derivation result outputs
+[Rr]esult
