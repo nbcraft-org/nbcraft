@@ -80,6 +80,14 @@ public:
 		}
 	}
 
+	static void stringReplace(std::string& in, char what, char with)
+	{
+		for (size_t i = 0; (i = in.find(what, i)) != std::string::npos; i++)
+		{
+			in[i] = with;
+		}
+	}
+
 	static int32_t hashCode(const std::string& str)
 	{
 		int32_t result = 0;

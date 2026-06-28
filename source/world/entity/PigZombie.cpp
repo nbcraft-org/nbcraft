@@ -47,7 +47,7 @@ Entity* PigZombie::findAttackTarget()
 
 void PigZombie::aiStep()
 {
-	Zombie::aiStep();
+	Monster::aiStep();
 }
 
 bool PigZombie::hurt(Entity* pCulprit, int damage)

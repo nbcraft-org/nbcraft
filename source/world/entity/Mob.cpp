@@ -248,10 +248,7 @@ void Mob::baseTick()
         hurt(nullptr, 1);
 
 	// @PARITY-JAVA: From Java
-	// uncommenting this because otherwise pigmen will burn
-    {
-        m_fireTicks = 0;
-    }
+    //m_fireTicks = 0;
 
 
     if (isAlive() && isUnderLiquid(Material::water) && !isWaterMob())
