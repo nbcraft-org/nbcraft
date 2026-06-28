@@ -56,7 +56,7 @@ public: // Methods
 	virtual bool useOn(ItemStack*, Level*, const TilePos& pos, Facing::Name face) const;
 	virtual bool useOn(ItemStack*, Player*, Level*, const TilePos& pos, Facing::Name face) const;
 	virtual float getDestroySpeed(ItemStack*, const Tile*) const;
-	virtual ItemStack* use(ItemStack*, Level*, Mob*) const;
+	virtual bool use(ItemStack&, Level*, Mob& user) const;
 	virtual void releaseUsing(ItemStack&, Level&, Mob&, int durationLeft) const;
 	virtual int getMaxStackSize() const;
 	virtual TileData getLevelDataForAuxValue(int x) const;

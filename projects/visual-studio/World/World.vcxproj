@@ -282,6 +282,7 @@
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\CreativeMenu_Console.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\CraftContext.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\particle\TakeAnimationParticle.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\item\BucketItem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Entity.hpp" />
@@ -498,6 +499,7 @@
     <ClInclude Include="$(MC_ROOT)\source\world\tile\FenceGateTile.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\inventory\CreativeMenu_Console.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\inventory\CraftContext.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\item\BucketItem.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NBT\NBT.vcxproj">

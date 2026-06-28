@@ -6,7 +6,7 @@
 	SPDX-License-Identifier: BSD-1-Clause
  ********************************************************************/
 #include "Cow.hpp"
-#include "world/entity/Player.hpp"
+#include "Player.hpp"
 
 Cow::Cow(Level* pLevel) : Animal(pLevel)
 {
@@ -28,14 +28,12 @@ void Cow::readAdditionalSaveData(const CompoundTag& tag)
 
 bool Cow::interact(Player* player)
 {
-	const ItemStack& tool = player->m_pInventory->getSelected();
-	if (!tool.isEmpty() && tool.getId() == Item::bucket_empty->m_itemID)
+	ItemStack& selected = player->m_pInventory->getSelected();
+	if (selected.getId() == Item::bucket_empty->m_itemID)
 	{
-		player->m_pInventory->setItem(player->m_pInventory->m_selectedStackId, ItemStack(Item::milk));
+		player->m_pInventory->setSelectedItem(Item::milk);
 		return true;
 	}
-	else
-	{
-		return false;
-	}
+		
+	return false;
 }

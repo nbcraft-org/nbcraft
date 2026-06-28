@@ -8,5 +8,5 @@ public:
 	SnowballItem(int);
 
 public:
-	ItemStack* use(ItemStack* inst, Level* level, Mob* user) const;
+	bool use(ItemStack&, Level*, Mob&) const override;
 };

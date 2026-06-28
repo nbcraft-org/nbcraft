@@ -992,6 +992,8 @@
 		84E2A3F92FBAAD6A0026780B /* MusicTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E2A3E72FBAAD6A0026780B /* MusicTile.cpp */; };
 		84E2A3FA2FBAAD6A0026780B /* MusicTile.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84E2A3E82FBAAD6A0026780B /* MusicTile.hpp */; };
 		84E2A3FC2FBAAD7D0026780B /* Facing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E2A3FB2FBAAD7D0026780B /* Facing.cpp */; };
+		84E30F852FF08F1500F5671B /* BucketItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E30F832FF08F1500F5671B /* BucketItem.cpp */; };
+		84E30F862FF08F1500F5671B /* BucketItem.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84E30F842FF08F1500F5671B /* BucketItem.hpp */; };
 		84E4BFB62AE9869A0023E16A /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840DD6282AC810620006A435 /* Logger.cpp */; };
 		84E4BFB82AE9869A0023E16A /* Mth.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840DD62D2AC810620006A435 /* Mth.cpp */; };
 		84E4BFB92AE9869A0023E16A /* Random.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840DD62F2AC810620006A435 /* Random.cpp */; };
@@ -2922,6 +2924,8 @@
 		84E2A3E72FBAAD6A0026780B /* MusicTile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MusicTile.cpp; sourceTree = "<group>"; };
 		84E2A3E82FBAAD6A0026780B /* MusicTile.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MusicTile.hpp; sourceTree = "<group>"; };
 		84E2A3FB2FBAAD7D0026780B /* Facing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Facing.cpp; sourceTree = "<group>"; };
+		84E30F832FF08F1500F5671B /* BucketItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BucketItem.cpp; sourceTree = "<group>"; };
+		84E30F842FF08F1500F5671B /* BucketItem.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = BucketItem.hpp; sourceTree = "<group>"; };
 		84E4BFAE2AE9854B0023E16A /* libCommon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCommon.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		84E5A68E2FC963B200320694 /* ImageButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageButton.cpp; sourceTree = "<group>"; };
 		84E5A68F2FC963B200320694 /* ImageButton.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ImageButton.hpp; sourceTree = "<group>"; };
@@ -4249,6 +4253,8 @@
 				84E1C9E02E7FDC72007D2F5D /* AuxTileItem.hpp */,
 				84C614252F323602008AC5BE /* BowItem.cpp */,
 				84C614242F323602008AC5BE /* BowItem.hpp */,
+				84E30F832FF08F1500F5671B /* BucketItem.cpp */,
+				84E30F842FF08F1500F5671B /* BucketItem.hpp */,
 				840DD6702AC810620006A435 /* CameraItem.cpp */,
 				840DD6712AC810620006A435 /* CameraItem.hpp */,
 				84E1C9E12E7FDC72007D2F5D /* ClothItem.cpp */,
@@ -6476,6 +6482,7 @@
 				84E1C9D62E7FDC26007D2F5D /* GlowstoneTile.hpp in Headers */,
 				84DAF5762F3464DD00D67310 /* TileEvent.hpp in Headers */,
 				848CCB4A2F3A974000031D1F /* FoodItem.hpp in Headers */,
+				84E30F862FF08F1500F5671B /* BucketItem.hpp in Headers */,
 				84BF639D2AF186C8008A9995 /* Material.hpp in Headers */,
 				84E1C9D02E7FDC26007D2F5D /* CactusTile.hpp in Headers */,
 				84DED1B22F309611004001C5 /* ShapelessRecipe.hpp in Headers */,
@@ -7689,6 +7696,7 @@
 				848CCB472F3A38E800031D1F /* MobSpawner.cpp in Sources */,
 				84E2A3D02FBAAC700026780B /* FurnaceMenu.cpp in Sources */,
 				84BF632F2AF18631008A9995 /* OreFeature.cpp in Sources */,
+				84E30F852FF08F1500F5671B /* BucketItem.cpp in Sources */,
 				84BF63302AF18631008A9995 /* PineFeature.cpp in Sources */,
 				84BF63312AF18631008A9995 /* ReedsFeature.cpp in Sources */,
 				84BF63322AF18631008A9995 /* SpringFeature.cpp in Sources */,

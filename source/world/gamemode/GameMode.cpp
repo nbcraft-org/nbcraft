@@ -143,18 +143,14 @@ void GameMode::handleCloseInventory(int a, Player* player)
 
 bool GameMode::useItem(Player* player, Level* level, ItemStack& item)
 {
-	int oldCount = item.m_count;
-	ItemStack* result = item.use(level, player);
+	bool result = item.use(level, *player);
 
 	if (level->m_bIsClientSide)
 	{
 		_level.m_pRakNetInstance->send(new UseItemPacket(TilePos::ZERO, 255, player->m_EntityID, item));
 	}
 
-	if (&item == result)
-		return item.m_count != oldCount;
-
-	return true;
+	return result;
 }
 
 bool GameMode::useItemOn(Player* player, Level* level, ItemStack& item, const TilePos& pos, Facing::Name face)
