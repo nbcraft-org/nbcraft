@@ -97,10 +97,10 @@ Options::Options(Minecraft* mc, const std::string& folderPath) :
 	, m_logoType("gfx_logotype", "options.logoType", LOGO_AUTO, ValuesBuilder().add("options.logoType.auto").add("options.logoType.pocket").add("options.logoType.java").add("options.logoType.console").add("options.logoType.xbox360").add("options.logoType.logo3d"))
 	, m_hudSize("gfx_hudsize", "options.hudSize", HUD_SIZE_2)
 	, m_classicCrafting("gfx_classiccrafting", "options.classicCrafting", false)
-	, m_animatedCharacter("gfx_animatedcharacter", "options.animatedCharacter", true)
+	, m_beautifulSkies("gfx_beautifulskies", "options.beautifulSkies", true)
 	//, m_limitFramerate("gfx_fpslimit", "options.framerateLimit", 0, ValuesBuilder().add(performance.max").add("performance.balanced").add("performance.powersaver"))
 	//, m_bMipmaps("gfx_mipmaps", "options.mipmaps")
-	, m_beautifulSkies("gfx_beautifulskies", "options.beautifulSkies", true)
+	, m_animatedCharacter("gfx_animatedcharacter", "options.animatedCharacter", true)
 	, m_vSync("enableVsync", "options.enableVsync", true)
 {
 	add(OC_GAMEPLAY, m_difficulty);
