@@ -260,7 +260,7 @@ bool Tile::mayPick() const
 	return true;
 }
 
-bool Tile::mayPick(TileData data, bool y) const
+bool Tile::mayPick(TileData data, bool includeLiquid) const
 {
 	return mayPick();
 }

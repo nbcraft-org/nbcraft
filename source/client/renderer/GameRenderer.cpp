@@ -518,7 +518,8 @@ void GameRenderer::renderLevel(float f)
 		}
 	}
 
-	pick(f);
+	if (!m_pMinecraft->m_bIsGamePaused)
+		pick(f);
 
 	const Entity& camera = *pCamera;
 	Vec3 camPos = camera.m_posPrev + (camera.m_pos - camera.m_posPrev) * f;
@@ -1020,11 +1021,11 @@ void GameRenderer::pick(float f)
 		{
 			if (isFirstPerson)
 			{
-				mchr = m_pMinecraft->m_pLevel->clip(foundPosNear, foundPosFar, false);
+				mchr = m_pMinecraft->m_pLevel->clip(foundPosNear, foundPosFar, false, true);
 			}
 			else
 			{
-				HitResult hr = m_pMinecraft->m_pLevel->clip(foundPosNear, foundPosFar, false);
+				HitResult hr = m_pMinecraft->m_pLevel->clip(foundPosNear, foundPosFar, false, true);
 
 				float diffX = float(hr.m_tilePos.x) - m_pMinecraft->m_pCameraEntity->m_pos.x;
 				float diffY = float(hr.m_tilePos.y) - m_pMinecraft->m_pCameraEntity->m_pos.y;
@@ -1040,7 +1041,7 @@ void GameRenderer::pick(float f)
 	else
 	{
 		// easy case: pick from the middle of the screen
-		HitResult hrMob = pMob->pick(dist, f);
+		HitResult hrMob = pMob->pick(dist, f, true);
 		mchr = hrMob;
 	}
 

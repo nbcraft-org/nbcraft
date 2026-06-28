@@ -126,9 +126,9 @@ bool StairTile::mayPick() const
 	return m_pParent->mayPick();
 }
 
-bool StairTile::mayPick(TileData data, bool b) const
+bool StairTile::mayPick(TileData data, bool includeLiquid) const
 {
-	return m_pParent->mayPick(data, b);
+	return m_pParent->mayPick(data, includeLiquid);
 }
 
 bool StairTile::mayPlace(const Level* level, const TilePos& pos) const
