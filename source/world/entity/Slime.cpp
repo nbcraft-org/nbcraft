@@ -16,7 +16,7 @@ Slime::Slime(Level* pLevel) : Mob(pLevel)
 void Slime::setSize(int size)
 {
 	m_size = size;
-	Mob::setSize(0.6f * float(size), 0.6f * float(size));
+	Mob::setSize(0.6f * size, 0.6f * size);
 	m_health = size * size;
 	setPos(m_pos);
 }

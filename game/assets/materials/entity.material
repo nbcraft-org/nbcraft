@@ -43,8 +43,7 @@
 	},
 
 	"entity_alphablend:entity_nocull": {
-		"states" : [
-			"Blending"]
+		"states" : ["Blending"]
 	},
 
 	"entity_emissive:entity": {
@@ -85,10 +84,6 @@
 		
 		"vertexShader" : "shaders/position.vertex",
 		"fragmentShader" : "shaders/current_color.fragment"
-	},
-
-	"slime_outer:entity": {
-		"states" : ["Blending"]
 	},
 
 	"item_in_hand:entity_alphatest_cull": {

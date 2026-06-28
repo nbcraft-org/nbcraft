@@ -12,10 +12,12 @@ SlimeRenderer::~SlimeRenderer()
 
 int SlimeRenderer::prepareArmor(const Mob& mob, int layer, float a)
 {
-    //const Slime& slime = (const Slime&)mob;
     if (layer == 0)
     {
         setArmor(m_armor);
+#if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
+        glEnable(GL_RESCALE_NORMAL);
+#endif
         return 1;
     }
     else
