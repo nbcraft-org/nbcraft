@@ -38,14 +38,15 @@ Fireball::Fireball(Level* pLevel, Mob* pMob, Vec3 pos) : Entity(pLevel)
 
     setPos(m_pos);
 
-    m_vel = Vec3(0.0f, 0.0f, 0.0f);
+    m_vel = Vec3::ZERO;
     pos.x += sharedRandom.nextGaussian() * 0.4f;
     pos.y += sharedRandom.nextGaussian() * 0.4f;
     pos.z += sharedRandom.nextGaussian() * 0.4f;
-    float var9 = float(Mth::sqrt(pos.x * pos.x + pos.y * pos.y + pos.z * pos.z));
-    m_powerVel.x = pos.x / var9 * 0.1f;
-    m_powerVel.y = pos.y / var9 * 0.1f;
-    m_powerVel.z = pos.z / var9 * 0.1f;
+
+    float len = pos.length();
+    m_powerVel.x = pos.x / len * 0.1f;
+    m_powerVel.y = pos.y / len * 0.1f;
+    m_powerVel.z = pos.z / len * 0.1f;
 }
 
 bool Fireball::shouldRenderAtSqrDistance(float distSqr) const

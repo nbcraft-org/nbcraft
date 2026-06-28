@@ -13,7 +13,7 @@ GhastRenderer::~GhastRenderer()
 
 void GhastRenderer::scale(const Mob& mob, Matrix& matrix, float a)
 {
-	const Ghast& ghast = reinterpret_cast<const Ghast&>(mob);
+	const Ghast& ghast = static_cast<const Ghast&>(mob);
 	float ss = (float(ghast.m_oCharge) + float(ghast.m_charge - ghast.m_oCharge) * a) / 20.0f;
 	if (ss < 0.0f)
 	{
@@ -24,6 +24,4 @@ void GhastRenderer::scale(const Mob& mob, Matrix& matrix, float a)
 	float s = (8.0f + ss) / 2.0f;
 	float hs = (8.0f + 1.0f / ss) / 2.0f;
 	matrix.scale(Vec3(hs, s, hs));
-	//glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-	//currentShaderColor = Color(1.0f, 1.0f, 1.0f, 1.0f);
 }

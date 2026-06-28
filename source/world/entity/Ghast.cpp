@@ -57,7 +57,7 @@ void Ghast::updateAi()
 
 	if (!m_target || m_retargetTime-- <= 0)
 	{
-		m_target = m_pLevel->getNearestPlayer(*this, 100.0f);
+		m_target = m_pLevel->getNearestAttackablePlayer(*this, 100.0f);
 		if (m_target)
 		{
 			m_retargetTime = 20;

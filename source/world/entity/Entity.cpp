@@ -705,21 +705,25 @@ Vec3 Entity::getViewVector(float f) const
 
 	if (f == 1.0)
 	{
-		Vec3 x(Mth::cos(-(m_rot.x * MTH_DEG_TO_RAD) - C_PI),
-			Mth::sin(-(m_rot.x * MTH_DEG_TO_RAD) - C_PI),
-			-Mth::cos(-(m_rot.y * MTH_DEG_TO_RAD)));
+		Vec3 vec(Mth::cos(-(m_rot.x * MTH_DEG_TO_RAD) - C_PI),
+			   Mth::sin(-(m_rot.x * MTH_DEG_TO_RAD) - C_PI),
+			  -Mth::cos(-(m_rot.y * MTH_DEG_TO_RAD)));
 
-		return Vec3(x.x * x.z, Mth::sin(-(m_rot.y * MTH_DEG_TO_RAD)), x.y * x.z);
+		float y = Mth::sin(-m_rot.y * MTH_DEG_TO_RAD);
+		return Vec3(vec.y * vec.z, y, vec.x * vec.z);
 	}
-
-	float x1 = m_oRot.y + (m_rot.y - m_oRot.y) * f;
-	float x2 = -((m_oRot.x + (m_rot.x - m_oRot.x) * f) * MTH_DEG_TO_RAD) - C_PI;
-	float x3 = Mth::cos(x2);
-	float x4 = Mth::sin(x2);
-	float x5 = -(x1 * MTH_DEG_TO_RAD);
-	float x6 = -Mth::cos(x5);
-
-	return Vec3(x4 * x6, Mth::sin(x5), x3 * x6);
+	else
+	{
+		float var2 = m_oRot.y + (m_rot.y - m_oRot.y) * f;
+		float var3 = m_oRot.x + (m_rot.x - m_oRot.x) * f;
+		float varA = -var2 * MTH_DEG_TO_RAD;
+		float varB = -var3 * MTH_DEG_TO_RAD - C_PI;
+		float var4 = Mth::cos(varB);
+		float var5 = Mth::sin(varB);
+		float var6 = -Mth::cos(varA);
+		float var7 = Mth::sin(varA);
+		return Vec3(var5 * var6, var7, var4 * var6);
+	}
 }
 
 Entity::AuxValue Entity::getAuxValue() const
