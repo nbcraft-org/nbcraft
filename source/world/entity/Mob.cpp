@@ -578,13 +578,13 @@ void Mob::heal(int health)
 	m_invulnerableTime = m_invulnerableDuration / 2;
 }
 
-HitResult Mob::pick(float f1, float f2, bool onlyPickable)
+HitResult Mob::pick(float f1, float f2)
 {
 	Vec3 pos = getPos(f2);
 	Vec3 view = getViewVector(f2);
 
 	Vec3 limit = pos + view * f1;
-	return m_pLevel->clip(pos, limit, false, onlyPickable);
+	return m_pLevel->clip(pos, limit, false, false);
 }
 
 void Mob::travel(const Vec2& pos)

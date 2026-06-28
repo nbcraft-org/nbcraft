@@ -1879,7 +1879,7 @@ void Level::tickEntities()
 	m_bUpdatingTileEntities = false;
 }
 
-HitResult Level::clip(Vec3 v1, Vec3 v2, bool includeLiquid, bool onlyPickable) const
+HitResult Level::clip(Vec3 v1, Vec3 v2, bool includeLiquid, bool includeInvisible) const
 {
 	TilePos tp1(v1), tp2(v2);
 	int counter = 200;
@@ -1965,7 +1965,7 @@ HitResult Level::clip(Vec3 v1, Vec3 v2, bool includeLiquid, bool onlyPickable) c
 		int    data = getData(tp1);
 		Tile* pTile = Tile::tiles[tile];
 
-		if (tile > 0 && (!onlyPickable || pTile->mayPick(data, includeLiquid)))
+		if (tile > 0 && ((includeInvisible && tile == Tile::invisible_bedrock->m_ID) || pTile->mayPick(data, includeLiquid)))
 		{
 			HitResult hr = pTile->clip(this, tp1, v1, v2);
 			if (hr.isHit())

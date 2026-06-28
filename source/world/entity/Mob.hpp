@@ -57,7 +57,7 @@ public:
 	virtual int getAmbientSoundInterval() const;
 	virtual void superTick() { Entity::tick(); }
 	virtual void heal(int health);
-	virtual HitResult pick(float, float, bool onlyPickable = false);
+	virtual HitResult pick(float, float);
 	virtual void travel(const Vec2& pos);
 	virtual void updateWalkAnim();
 	virtual void aiStep();

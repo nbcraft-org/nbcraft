@@ -183,7 +183,7 @@ public:
 	float getSunAngle(float f) const;
 	void swap(const TilePos& pos1, const TilePos& pos2);
 
-	HitResult clip(Vec3 a, Vec3 b, bool includeLiquid = false, bool onlyPickable = false) const;
+	HitResult clip(Vec3 a, Vec3 b, bool includeLiquid = false, bool includeInvisible = true) const;
 	Entity* getEntity(Entity::ID id) const;
 	unsigned int getEntityCount(const EntityCategories&) const;
 	const EntityMap* getAllEntities() const;
