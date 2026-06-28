@@ -8,24 +8,28 @@ FishingRodItem::FishingRodItem(int id) : Item(id)
 	m_maxDamage = 64;
 }
 
-ItemStack* FishingRodItem::use(ItemStack* inst, Level* level, Mob* mob) const
+bool FishingRodItem::use(ItemStack& item, Level* level, Mob& user) const
 {
-	Player* player = reinterpret_cast<Player*>(mob);
-	if (player->m_pFishing)
+	if (!user.isPlayer())
+		return false;
+
+	Player& player = static_cast<Player&>(user);
+	if (player.m_pFishing)
 	{
-		int var4 = player->m_pFishing->retrieve();
-		inst->hurt(var4);
-		mob->swing();
+		int var4 = player.m_pFishing->retrieve();
+		item.hurt(var4);
+		user.swing();
 	}
 	else
 	{
-		level->playSound(mob, "random.bow", 0.5f, 0.4f / (random.nextFloat() * 0.4f + 0.8f));
-		if (!level->m_bIsClientSide) {
-			level->addEntity(new FishingHook(level, player));
+		level->playSound(&user, "random.bow", 0.5f, 0.4f / (random.nextFloat() * 0.4f + 0.8f));
+		if (!level->m_bIsClientSide)
+		{
+			level->addEntity(new FishingHook(level, &player));
 		}
 
-		mob->swing();
+		user.swing();
 	}
 
-	return inst;
+	return true;
 }
