@@ -368,9 +368,9 @@ std::string ItemStack::toString() const
 	return ss.str();
 }
 
-ItemStack* ItemStack::use(Level* level, Mob* user)
+bool ItemStack::use(Level* level, Mob& mob)
 {
-	return getItem()->use(this, level, user);
+	return getItem()->use(*this, level, mob);
 }
 
 void ItemStack::releaseUsing(Level& level, Mob& user, int durationLeft)

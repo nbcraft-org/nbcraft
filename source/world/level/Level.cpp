@@ -1965,7 +1965,7 @@ HitResult Level::clip(Vec3 v1, Vec3 v2, bool flag) const
 		int    data = getData(tp1);
 		Tile* pTile = Tile::tiles[tile];
 
-		if (tile > 0 && pTile->mayPick(data, false))
+		if (tile > 0 && pTile->mayPick(data, flag))
 		{
 			HitResult hr = pTile->clip(this, tp1, v1, v2);
 			if (hr.isHit())

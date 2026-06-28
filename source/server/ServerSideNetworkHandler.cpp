@@ -666,7 +666,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, UseItemPac
 	}
 	else
 	{
-		item.use(m_pLevel, &player);
+		item.use(m_pLevel, player);
 	}
 
 	player.swing();

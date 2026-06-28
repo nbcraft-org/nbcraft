@@ -110,7 +110,7 @@ options.dpadSize=D-Pad Size
 
 performance.max=Max FPS
 performance.balanced=Balanced
-performance.powersaver=Power saver
+performance.powersaver=Power Saver
 
 controls.title=Controls
 
@@ -256,7 +256,7 @@ tile.cactus.name=Cactus
 tile.cactus.desc=
 tile.clay.name=Clay
 tile.clay.desc=
-tile.reeds.name=Sugar cane
+tile.reeds.name=Sugar Cane
 tile.reeds.desc=
 tile.jukebox.name=Jukebox
 tile.jukebox.desc=
@@ -470,7 +470,7 @@ item.chestplateGold.name=Golden Chestplate
 item.chestplateGold.desc=
 item.leggingsGold.name=Golden Leggings
 item.leggingsGold.desc=
-item.bootsGold.name=Golden boots
+item.bootsGold.name=Golden Boots
 item.bootsGold.desc=
 item.flint.name=Flint
 item.flint.desc=
@@ -490,7 +490,7 @@ item.bucket.name=Bucket
 item.bucket.desc=
 item.bucketWater.name=Water Bucket
 item.bucketWater.desc=
-item.bucketLava.name=Lava bucket
+item.bucketLava.name=Lava Bucket
 item.bucketLava.desc=
 item.minecart.name=Minecart
 item.minecart.desc=

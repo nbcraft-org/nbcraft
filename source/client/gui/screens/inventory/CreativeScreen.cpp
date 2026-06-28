@@ -33,7 +33,7 @@ void CreativeScreen::slotClicked(Slot* slot, Container::SlotID slotId, MouseButt
         {
             ItemStack& slotItem = slot->getItem();
 
-            if (!carried.isEmpty() && !slotItem.isEmpty() && carried.getId() == slotItem.getId())
+            if (!carried.isEmpty() && !slotItem.isEmpty() && carried.getId() == slotItem.getId() && carried.getAuxValue() == slotItem.getAuxValue())
             {
                 if (button == MOUSE_BUTTON_LEFT)
                 {

@@ -441,6 +441,7 @@ add_library(nbcraft-core STATIC
   	world/item/SnowballItem.cpp
   	world/item/FishingRodItem.cpp
   	world/item/RecordingItem.cpp
+    world/item/BucketItem.cpp
     world/particle/RedDustParticle.cpp
     world/particle/TerrainParticle.cpp
     world/particle/NoteParticle.cpp
