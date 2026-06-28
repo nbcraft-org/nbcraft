@@ -269,9 +269,6 @@
     <ClCompile Include="$(MC_ROOT)\source\world\level\storage\LevelData.cpp">
       <Filter>Source Files\Level\Storage</Filter>
     </ClCompile>
-    <ClCompile Include="$(MC_ROOT)\source\world\level\storage\LevelStorage.cpp">
-      <Filter>Source Files\Level\Storage</Filter>
-    </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\world\level\storage\LevelStorageSource.cpp">
       <Filter>Source Files\Level\Storage</Filter>
     </ClCompile>
@@ -677,8 +674,8 @@
     <ClCompile Include="..\..\..\source\world\level\levelgen\chunk\WorldLimitChunkSource.cpp">
       <Filter>Source Files\Level\LevelGen\Chunk</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\level\levelgen\chunk\DBStorage.cpp">
-      <Filter>Source Files\Level\LevelGen\Chunk</Filter>
+    <ClCompile Include="..\..\..\source\world\level\storage\DBStorage.cpp">
+      <Filter>Source Files\Level\Storage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1221,6 +1218,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\world\phys\Vec3Int32.hpp">
       <Filter>Header Files\Phys</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\world\level\storage\DBStorage.hpp">
+      <Filter>Header Files\Level\Storage</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

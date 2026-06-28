@@ -100,7 +100,6 @@
     <ClCompile Include="$(MC_ROOT)\source\world\level\storage\ExternalFileLevelStorage.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\storage\ExternalFileLevelStorageSource.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\storage\LevelData.cpp" />
-    <ClCompile Include="$(MC_ROOT)\source\world\level\storage\LevelStorage.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\storage\LevelStorageSource.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\storage\MemoryChunkStorage.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\storage\MemoryLevelStorage.cpp" />
@@ -226,13 +225,13 @@
     <ClCompile Include="..\..\..\source\world\level\levelgen\chunk\Bounds.cpp" />
     <ClCompile Include="..\..\..\source\world\level\levelgen\chunk\ChunkRefCount.cpp" />
     <ClCompile Include="..\..\..\source\world\level\levelgen\chunk\ChunkViewSource.cpp" />
-    <ClCompile Include="..\..\..\source\world\level\levelgen\chunk\DBStorage.cpp" />
     <ClCompile Include="..\..\..\source\world\level\levelgen\chunk\EmptyChunkSource.cpp" />
     <ClCompile Include="..\..\..\source\world\level\levelgen\chunk\MainChunkSource.cpp" />
     <ClCompile Include="..\..\..\source\world\level\levelgen\chunk\NetworkChunkSource.cpp" />
     <ClCompile Include="..\..\..\source\world\level\levelgen\chunk\PlayerChunkSource.cpp" />
     <ClCompile Include="..\..\..\source\world\level\levelgen\chunk\PostprocessingManager.cpp" />
     <ClCompile Include="..\..\..\source\world\level\levelgen\chunk\WorldLimitChunkSource.cpp" />
+    <ClCompile Include="..\..\..\source\world\level\storage\DBStorage.cpp" />
     <ClCompile Include="..\..\..\source\world\level\TileSource.cpp" />
     <ClCompile Include="..\..\..\source\world\level\TileTickingQueue.cpp" />
   </ItemGroup>
@@ -412,6 +411,7 @@
     <ClInclude Include="..\..\..\source\world\level\levelgen\chunk\PlayerChunkSource.hpp" />
     <ClInclude Include="..\..\..\source\world\level\levelgen\chunk\PostprocessingManager.hpp" />
     <ClInclude Include="..\..\..\source\world\level\levelgen\chunk\WorldLimitChunkSource.hpp" />
+    <ClInclude Include="..\..\..\source\world\level\storage\DBStorage.hpp" />
     <ClInclude Include="..\..\..\source\world\level\Tick.hpp" />
     <ClInclude Include="..\..\..\source\world\level\TileSource.hpp" />
     <ClInclude Include="..\..\..\source\world\level\TileSourceListener.hpp" />
