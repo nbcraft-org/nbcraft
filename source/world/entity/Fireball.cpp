@@ -204,6 +204,9 @@ void Fireball::readAdditionalSaveData(const CompoundTag& tag)
     m_shakeTime = tag.getInt8("shake") & 255;
     m_bInGround = tag.getBoolean("inGround");
     m_bIsPlayerOwned = tag.getBoolean("player");
+
+    // re-init driving force from velocity
+    m_powerVel = m_vel;
 }
 
 bool Fireball::hurt(Entity* pCulprit, int damage)
