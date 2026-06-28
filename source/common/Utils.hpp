@@ -569,6 +569,8 @@ int getTimeMs();
 
 void sleepMs(int ms);
 
+int32_t getUniqueSeed();
+
 #ifdef _WIN32
 void toDosPath(char* path);
 #endif

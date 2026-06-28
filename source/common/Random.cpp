@@ -18,11 +18,6 @@
 #define UPPER_MASK 0x80000000UL /* most significant w-r bits */
 #define LOWER_MASK 0x7fffffffUL /* least significant r bits */
 
-Random::Random(int32_t seed)
-{
-	setSeed(seed);
-}
-
 void Random::setSeed(int32_t seed)
 {
 	rseed = seed;

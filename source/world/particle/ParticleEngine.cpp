@@ -114,7 +114,7 @@ void ParticleEngine::destroyEffect(const TilePos& pos)
 	TileID tileID = m_pLevel->getTile(pos);
 	if (!tileID) return;
 
-	float timeS = getTimeS();
+	//float timeS = getTimeS();
 
 	Tile* pTile = Tile::tiles[tileID];
 
@@ -136,8 +136,8 @@ void ParticleEngine::destroyEffect(const TilePos& pos)
 		}
 	}
 
-	if (timeS != -1.0)
-		getTimeS();
+	//if (timeS != -1.0)
+	//	getTimeS();
 
 	// @NOTE: Useless string creation
 #ifdef ORIGINAL_CODE

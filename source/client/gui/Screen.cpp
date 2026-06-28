@@ -364,7 +364,7 @@ void Screen::renderMenuBackground(float f)
 void Screen::renderConsolePanorama(bool isNight)
 {
 	m_pMinecraft->m_pTextures->setSmoothing(true);
-	blitTexture(*m_pMinecraft->m_pTextures, isNight ? "gui/console/Panorama_Background_N.png" : "gui/console/Panorama_Background_S.png", 0, 0, getTimeS() * 1000 * m_height / 360 / 66.32f, 1, m_width, m_height + 2, m_height * 820 / 144, m_height + 2);
+	blitTexture(*m_pMinecraft->m_pTextures, isNight ? "gui/console/Panorama_Background_N.png" : "gui/console/Panorama_Background_S.png", 0, 0, getTimeMs() * m_height / 360 / 66.32f, 1, m_width, m_height + 2, m_height * 820 / 144, m_height + 2);
 	m_pMinecraft->m_pTextures->setSmoothing(false);
 }
 
