@@ -87,7 +87,7 @@ bool FurnaceTile::use(Level* level, const TilePos& pos, Player* player)
 
 void FurnaceTile::setPlacedBy(Level* level, const TilePos& pos, Mob* mob)
 {
-	int rot = Mth::floor(0.5f + (mob->m_rot.x * 4.0f / 360.0f)) & 3;
+	int rot = Mth::floor(0.5f + (mob->m_rot.yaw * 4.0f / 360.0f)) & 3;
 	int data = 4;
 
 	switch (rot)

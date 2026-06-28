@@ -12,7 +12,7 @@ MoveEntityPacket_PosRot::MoveEntityPacket_PosRot()
 	_init();
 }
 
-MoveEntityPacket_PosRot::MoveEntityPacket_PosRot(int32_t entityId, const Vec3& pos, const Vec2& rot)
+MoveEntityPacket_PosRot::MoveEntityPacket_PosRot(int32_t entityId, const Vec3& pos, const Rot2& rot)
 {
 	_init();
 	m_entityId = entityId;
@@ -32,8 +32,8 @@ void MoveEntityPacket_PosRot::write(RakNet::BitStream& bs)
 	bs.Write(m_pos.x);
 	bs.Write(m_pos.y);
 	bs.Write(m_pos.z);
-	bs.Write(m_rot.x);
-	bs.Write(m_rot.y);
+	bs.Write(m_rot.yaw);
+	bs.Write(m_rot.pitch);
 }
 
 void MoveEntityPacket_PosRot::read(RakNet::BitStream& bs)
@@ -42,6 +42,6 @@ void MoveEntityPacket_PosRot::read(RakNet::BitStream& bs)
 	bs.Read(m_pos.x);
 	bs.Read(m_pos.y);
 	bs.Read(m_pos.z);
-	bs.Read(m_rot.x);
-	bs.Read(m_rot.y);
+	bs.Read(m_rot.yaw);
+	bs.Read(m_rot.pitch);
 }

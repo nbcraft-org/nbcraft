@@ -64,7 +64,7 @@ public:
 	Level* m_pLevel;
 	Minecraft* m_pMinecraft;
 	const Mob* m_pCamera;
-	Vec2 m_rot;
+	Rot2 m_rot;
 	Options* m_pOptions;
 	Vec3 m_pos;
 	Font* m_pFont;

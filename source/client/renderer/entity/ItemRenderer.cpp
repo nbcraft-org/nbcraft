@@ -139,7 +139,7 @@ void ItemRenderer::render(const Entity& entity, const Vec3& pos, float rot, floa
 					0.2f * (m_random.nextFloat() * 2.0f - 1.0f) * 0.3f));
 			}
 
-			matrix->rotate(180.0f - m_pDispatcher->m_rot.x, Vec3::UNIT_Y);
+			matrix->rotate(180.0f - m_pDispatcher->m_rot.yaw, Vec3::UNIT_Y);
 
 			Tesselator& t = Tesselator::instance;
 			t.begin(4);

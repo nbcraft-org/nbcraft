@@ -22,12 +22,12 @@ void LocalPlayer::_init()
 	m_nAutoJumpFrames = 0;
 	// multiplayer related
 	m_lastSentPos = Vec3::ZERO;
-	m_lastSentRot = Vec2::ZERO;
+	m_lastSentRot = Rot2::ZERO;
 	m_lastSelectedStackId = m_pInventory->m_selectedStackId;
 	// multiplayer related -- end
 
-	m_renderArmRot = Vec2::ZERO;
-	m_lastRenderArmRot = Vec2::ZERO;
+	m_renderArmRot = Rot2::ZERO;
+	m_lastRenderArmRot = Rot2::ZERO;
 }
 
 LocalPlayer::LocalPlayer(Minecraft* pMinecraft, Level* pLevel, User* pUser, GameType playerGameType, int dimensionId) : Player(pLevel, playerGameType)
@@ -80,8 +80,8 @@ void LocalPlayer::aiStep()
 		m_ySlideOffset = 0.2f;
 
 	m_lastRenderArmRot = m_renderArmRot;
-	m_renderArmRot.x = Mth::Lerp(m_renderArmRot.x, m_rot.x, 0.5f);
-	m_renderArmRot.y = Mth::Lerp(m_renderArmRot.y, m_rot.y, 0.5f);
+	m_renderArmRot.yaw = Mth::Lerp(m_renderArmRot.yaw, m_rot.yaw, 0.5f);
+	m_renderArmRot.pitch = Mth::Lerp(m_renderArmRot.pitch, m_rot.pitch, 0.5f);
 
 	// timer for switching flight states
 	if (m_abilities.bCanFly && m_pMoveInput->m_bJumping && !wasJumping)
@@ -410,8 +410,8 @@ void LocalPlayer::sendPosition()
 	if (fabsf(m_pos.x - m_lastSentPos.x) > 0.1f ||
 		fabsf(m_pos.y - m_lastSentPos.y) > 0.01f ||
 		fabsf(m_pos.z - m_lastSentPos.z) > 0.1f ||
-		fabsf(m_lastSentRot.y - m_rot.y) > 1.0f ||
-		fabsf(m_lastSentRot.x - m_rot.x) > 1.0f)
+		fabsf(m_lastSentRot.pitch - m_rot.pitch) > 1.0f ||
+		fabsf(m_lastSentRot.yaw - m_rot.yaw) > 1.0f)
 	{
 		m_pMinecraft->m_pRakNetInstance->send(new MovePlayerPacket(m_EntityID, Vec3(m_pos.x, m_pos.y - m_heightOffset, m_pos.z), m_rot));
 		m_lastSentPos = m_pos;

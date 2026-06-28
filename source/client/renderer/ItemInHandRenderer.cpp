@@ -54,8 +54,8 @@ void ItemInHandRenderer::render(float a)
     // Apply lighting
     {
         MatrixStack::Ref matrix = MatrixStack::World.push();
-        matrix->rotate(pLP->m_oRot.y + (pLP->m_rot.y - pLP->m_oRot.y) * a, Vec3::UNIT_X);
-        matrix->rotate(pLP->m_oRot.x + (pLP->m_rot.x - pLP->m_oRot.x) * a, Vec3::UNIT_Y);
+        matrix->rotate(pLP->m_oRot.pitch + (pLP->m_rot.pitch - pLP->m_oRot.pitch) * a, Vec3::UNIT_X);
+        matrix->rotate(pLP->m_oRot.yaw + (pLP->m_rot.yaw - pLP->m_oRot.yaw) * a, Vec3::UNIT_Y);
 
         Lighting::turnOn(matrix);
     }
@@ -65,10 +65,10 @@ void ItemInHandRenderer::render(float a)
 
 	if (m_pMinecraft->getOptions()->m_dynamicHand.get() && m_pMinecraft->m_pCameraEntity == pLP)
 	{
-		float rYaw   = Mth::Lerp(pLP->m_lastRenderArmRot.x, pLP->m_renderArmRot.x, a);
-		float rPitch = Mth::Lerp(pLP->m_lastRenderArmRot.y, pLP->m_renderArmRot.y, a);
-		matrix->rotate((pLP->m_rot.y - rPitch) * 0.1f, Vec3::UNIT_X);
-		matrix->rotate((pLP->m_rot.x - rYaw  ) * 0.1f, Vec3::UNIT_Y);
+		float rYaw   = Mth::Lerp(pLP->m_lastRenderArmRot.yaw, pLP->m_renderArmRot.yaw, a);
+		float rPitch = Mth::Lerp(pLP->m_lastRenderArmRot.pitch, pLP->m_renderArmRot.pitch, a);
+		matrix->rotate((pLP->m_rot.pitch - rPitch) * 0.1f, Vec3::UNIT_X);
+		matrix->rotate((pLP->m_rot.yaw - rYaw  ) * 0.1f, Vec3::UNIT_Y);
 	}
 
 	float fBright = m_pMinecraft->m_pLevel->getBrightness(pLP->m_pos);
@@ -326,8 +326,8 @@ void ItemInHandRenderer::renderWater(float a)
     constexpr float y0  = -1.0f;
     constexpr float y1  =  1.0f;
     constexpr float z0  = -0.5f;
-    float uo = -player.m_rot.x / 64.0f;
-    float vo = player.m_rot.y / 64.0f;
+    float uo = -player.m_rot.yaw / 64.0f;
+    float vo = player.m_rot.pitch / 64.0f;
     Tesselator& t = Tesselator::instance;
     t.begin(4);
     t.vertexUV(x0, y0, z0, (size + uo), (size + vo));
@@ -429,7 +429,7 @@ void ItemInHandRenderer::tick()
 	}
 }
 
-void ItemInHandRenderer::turn(const Vec2& rot)
+void ItemInHandRenderer::turn(const Rot2& rot)
 {
 }
 

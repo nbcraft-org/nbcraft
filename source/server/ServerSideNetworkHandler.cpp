@@ -103,7 +103,7 @@ void ServerSideNetworkHandler::_handleMovePlayer(Player& player, MovePlayerPacke
 	// Initial positioning
 	Vec3 oPos = player.m_pos;
 	Vec3 pos;
-	Vec2 rot;
+	Rot2 rot;
 
 	// Handle the player riding state
 	if (player.isRiding())

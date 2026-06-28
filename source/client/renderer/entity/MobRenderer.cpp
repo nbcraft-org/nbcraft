@@ -100,8 +100,8 @@ void MobRenderer::render(const Entity& entity, const Vec3& pos, float rot, float
 			m_pArmorModel->m_attackTime = m_pModel->m_attackTime;
 		}
 
-		float aYaw = mob.m_oRot.x + (mob.m_rot.x - mob.m_oRot.x) * a;
-		float aPitch = mob.m_oRot.y + (mob.m_rot.y - mob.m_oRot.y) * a;
+		float aYaw = mob.m_oRot.yaw + (mob.m_rot.yaw - mob.m_oRot.yaw) * a;
+		float aPitch = mob.m_oRot.pitch + (mob.m_rot.pitch - mob.m_oRot.pitch) * a;
 		float fBob = getBob(mob, a);
 		float fSmth = mob.m_yBodyRotO + (mob.m_yBodyRot - mob.m_yBodyRotO) * a;
 
@@ -205,8 +205,8 @@ void MobRenderer::renderNameTag(const Mob& mob, const std::string& str, const Ve
 	matrix->translate(Vec3(pos.x + 0.0f, pos.y + 2.3f, pos.z));
 
 	// billboard the name towards the camera
-	matrix->rotate(-m_pDispatcher->m_rot.x, Vec3::UNIT_Y);
-	matrix->rotate(+m_pDispatcher->m_rot.y, Vec3::UNIT_X);
+	matrix->rotate(-m_pDispatcher->m_rot.yaw, Vec3::UNIT_Y);
+	matrix->rotate(+m_pDispatcher->m_rot.pitch, Vec3::UNIT_X);
 	matrix->scale(Vec3(-0.026667f, -0.026667f, 0.026667f));
 	
 	currentShaderColor = Color(0.0f, 0.0f, 0.0f, 0.25f);

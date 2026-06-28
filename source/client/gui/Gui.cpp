@@ -328,9 +328,9 @@ void Gui::renderAnimatedCharacter(int x, int y, float partialTick)
 	matrix->scale(Vec3(-scale, scale, scale));
 	matrix->rotate(180.0f, Vec3(0.0f, 0.0f, 1.0f));
 
-	float prevXRot = player->m_rot.x;
-	float prevYRot = player->m_rot.y;
-	float prevXORot = player->m_oRot.x;
+	float prevYRot = player->m_rot.yaw;
+	float prevXRot = player->m_rot.pitch;
+	float prevYORot = player->m_oRot.yaw;
 
 	constexpr float dx = -40;
 	constexpr float dy = 10;
@@ -341,21 +341,21 @@ void Gui::renderAnimatedCharacter(int x, int y, float partialTick)
 
 	matrix->rotate(-Mth::atan(dy / 40.0f) * 20.0f, Vec3(1.0f, 0.0f, 0.0f));
 	matrix->rotate(player->m_yBodyRot - (Mth::atan(dx / 40.0f) * 20), Vec3(0.0f, 1.0, 0.0f));
-	player->m_rot.x = player->m_yBodyRot - 15.0f;
-	player->m_oRot.x = player->m_rot.x;
-	player->m_rot.y = -Mth::atan(dy / 40.0f) * 20.0f;
+	player->m_rot.yaw = player->m_yBodyRot - 15.0f;
+	player->m_oRot.yaw = player->m_rot.yaw;
+	player->m_rot.pitch = -Mth::atan(dy / 40.0f) * 20.0f;
 
 	EntityRenderer* renderer = EntityRenderDispatcher::instance->getRenderer(player->m_renderType);
 	float oldShadowRadius = renderer->m_shadowRadius;
 	renderer->m_shadowRadius = 0.0f;
 	player->m_minBrightness = 1.0f;
-	EntityRenderDispatcher::instance->m_rot.y = 180;
+	EntityRenderDispatcher::instance->m_rot.pitch = 180.0f;
 	EntityRenderDispatcher::instance->render(*player, Vec3::ZERO, 0.0f, 1.0f);
 	player->m_minBrightness = 0.0f;
 	renderer->m_shadowRadius = oldShadowRadius;
-	player->m_rot.x = prevXRot;
-	player->m_oRot.x = prevXORot;
-	player->m_rot.y = prevYRot;
+	player->m_rot.yaw = prevYRot;
+	player->m_oRot.yaw = prevYORot;
+	player->m_rot.pitch = prevXRot;
 
 	Lighting::turnOff();
 #if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)

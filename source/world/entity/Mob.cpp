@@ -52,7 +52,7 @@ void Mob::_init()
 	m_bDead = false;
 	m_lSteps = 0;
 	m_lPos = Vec3::ZERO;
-	m_lRot = Vec2::ZERO;
+	m_lRot = Rot2::ZERO;
 	m_lastHurt = 0;
 	m_entLookedAtId = 0;
 	m_bSwinging = false;
@@ -72,7 +72,7 @@ Mob::Mob(Level* pLevel) : Entity(pLevel)
 	m_rotA = (Mth::random() + 1.0f) * 0.01f;
 	setPos(m_pos);
 	m_timeOffs = Mth::random() * 12398.0f;
-	m_rot.x = float(Mth::random() * M_PI);
+	m_rot.yaw = float(Mth::random() * M_PI);
 	m_footSize = 0.5f;
 }
 
@@ -91,7 +91,7 @@ void Mob::reset()
 	_init();
 }
 
-void Mob::lerpTo(const Vec3& pos, const Vec2& rot, int steps)
+void Mob::lerpTo(const Vec3& pos, const Rot2& rot, int steps)
 {
 	m_lPos = pos;
 	m_lPos.y += m_heightOffset;
@@ -111,12 +111,12 @@ void Mob::tick()
 
 		// Similar to rotlerp
 		// I'm pretty sure this is super inefficient and its trying to do what I have it doing in setRot already.
-		float ang = m_lRot.x - m_rot.x;
+		float ang = m_lRot.yaw - m_rot.yaw;
 		while (ang < -180.0f) ang += 360.0f;
 		while (ang >= 180.0f) ang -= 360.0f;
 
-		setRot(Vec2(m_rot.x + ((m_lRot.x - m_rot.x) / float(m_lSteps)),
-			        m_rot.y + ((m_lRot.y - m_rot.y) / float(m_lSteps))));
+		setRot(Rot2(m_rot.yaw + ((m_lRot.yaw - m_rot.yaw) / float(m_lSteps)),
+			        m_rot.pitch + ((m_lRot.pitch - m_rot.pitch) / float(m_lSteps))));
 
 		m_lSteps--;
 	}
@@ -151,9 +151,9 @@ void Mob::tick()
 
 	x4 = m_attackAnim;
 	if (x4 <= 0.0f)
-		x4 = m_rot.x;
+		x4 = m_rot.yaw;
 	else
-		x4 = x1 = m_rot.x;
+		x4 = x1 = m_rot.yaw;
 
 	if (!m_bOnGround)
 		x3 = 0.0f;
@@ -213,11 +213,11 @@ LABEL_31:
 
 	// Similar to rotlerp
 	// I'm pretty sure this is super inefficient and its trying to do what I have it doing in setRot already.
-	while (x4 - m_oRot.x < -180.0f)
-		m_oRot.x -= 360.0f;
+	while (x4 - m_oRot.yaw < -180.0f)
+		m_oRot.yaw -= 360.0f;
 
-	while (x4 - m_oRot.x >= 180.0f)
-		m_oRot.x += 360.0f;
+	while (x4 - m_oRot.yaw >= 180.0f)
+		m_oRot.yaw += 360.0f;
 
 	while (m_yBodyRot - m_yBodyRotO < -180.0f)
 		m_yBodyRotO -= 360.0f;
@@ -225,11 +225,11 @@ LABEL_31:
 	while (m_yBodyRot - m_yBodyRotO >= 180.0f)
 		m_yBodyRotO += 360.0f;
 	
-	while (m_rot.y - m_oRot.y < -180.0f)
-		m_oRot.y -= 360.0f;
+	while (m_rot.pitch - m_oRot.pitch < -180.0f)
+		m_oRot.pitch -= 360.0f;
 
-	while (m_rot.y - m_oRot.y >= 180.0f)
-		m_oRot.y += 360.0f;
+	while (m_rot.pitch - m_oRot.pitch >= 180.0f)
+		m_oRot.pitch += 360.0f;
 
 	m_animStep += x2;
 }
@@ -322,8 +322,8 @@ void Mob::baseTick()
 		if (fabsf(m_pos.x - m_lastSentPos.x) > 0.1f ||
 			fabsf(m_pos.y - m_lastSentPos.y) > 0.01f ||
 			fabsf(m_pos.z - m_lastSentPos.z) > 0.1f ||
-			fabsf(m_lastSentRot.y - m_rot.y) > 1.0f ||
-			fabsf(m_lastSentRot.x - m_rot.x) > 1.0f)
+			fabsf(m_lastSentRot.pitch - m_rot.pitch) > 1.0f ||
+			fabsf(m_lastSentRot.yaw - m_rot.yaw) > 1.0f)
 		{
 			m_pLevel->m_pRakNetInstance->send(new MoveEntityPacket_PosRot(m_EntityID, Vec3(m_pos.x, m_pos.y - m_heightOffset, m_pos.z), m_rot));
 			m_lastSentPos = m_pos;
@@ -402,7 +402,7 @@ bool Mob::hurt(Entity *pAttacker, int damage)
             }
 
             float ang = Mth::atan2(zd, xd);
-            m_hurtDir = ang * (180.0f / float(M_PI)) - m_rot.x;
+            m_hurtDir = ang * (180.0f / float(M_PI)) - m_rot.yaw;
 
             knockback(pAttacker, damage, xd, zd);
         }
@@ -784,8 +784,8 @@ void Mob::lookAt(Entity* pEnt, float a3, float a4)
 	float x1 = atan2f(diffZ, diffX);
 	float x2 = atan2f(q1, p1);
 
-	setRot(Vec2(rotlerp(m_rot.x, x1 * 180.0f / float(M_PI) - 90.0f, a4),
-	              -rotlerp(m_rot.y, x2 * 180.0f / float(M_PI), a3)));
+	setRot(Rot2(rotlerp(m_rot.yaw, x1 * 180.0f / float(M_PI) - 90.0f, a4),
+	              -rotlerp(m_rot.pitch, x2 * 180.0f / float(M_PI), a3)));
 }
 
 Entity* Mob::getLookingAt() const
@@ -871,8 +871,8 @@ void Mob::updateAi()
 			m_yRotA = (m_random.nextFloat() - 0.5f) * 20.0f;
 
 		// oh my god, our X and Y rot are mixed around
-		m_rot.x += m_yRotA;
-		m_rot.y = m_defaultLookAngle;
+		m_rot.yaw += m_yRotA;
+		m_rot.pitch = m_defaultLookAngle;
 	}
 
 	if (wasInWater() || isInLava())

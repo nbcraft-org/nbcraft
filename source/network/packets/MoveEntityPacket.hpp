@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Packet.hpp"
-#include "world/phys/Vec2.hpp"
+#include "world/phys/Rot2.hpp"
 #include "world/phys/Vec3.hpp"
 
 class MoveEntityPacket : public Packet
@@ -18,6 +18,6 @@ public:
 public:
 	int32_t m_entityId;
 	Vec3 m_pos;
-	Vec2 m_rot;
+	Rot2 m_rot;
 	bool m_bHasRot;
 };

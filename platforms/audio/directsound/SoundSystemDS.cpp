@@ -128,15 +128,15 @@ void SoundSystemDS::setListenerPos(const Vec3& pos)
 }
 
 
-void SoundSystemDS::setListenerAngle(const Vec2& rot)
+void SoundSystemDS::setListenerAngle(const Rot2& rot)
 {
 	if (!isAvailable())
 	{
 		return;
 	}
 
-	float yaw = rot.x * M_PI / 180.f;
-	float pitch = rot.y * M_PI / 180.f;
+	float yaw = rot.yaw * M_PI / 180.f;
+	float pitch = rot.pitch * M_PI / 180.f;
 
 	float lx = cosf(pitch) * sinf(yaw);
 	float ly = -sinf(pitch);

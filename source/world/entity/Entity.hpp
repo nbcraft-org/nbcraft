@@ -11,6 +11,7 @@
 #include "common/math/Color.hpp"
 #include "world/phys/Vec3.hpp"
 #include "world/phys/Vec2.hpp"
+#include "world/phys/Rot2.hpp"
 #include "world/phys/AABB.hpp"
 #include "world/level/Dimension.hpp"
 #include "world/level/Material.hpp"
@@ -28,28 +29,28 @@ class ItemEntity;
 struct EntityPos
 {
 	Vec3 m_pos;
-	Vec2 m_rot;
+	Rot2 m_rot;
 	bool m_bHasRot, m_bHasPos;
 
 	EntityPos()
-		: m_pos(Vec3::ZERO), m_rot(Vec2::ZERO)
+		: m_pos(Vec3::ZERO), m_rot(Rot2::ZERO)
 	{
         m_bHasRot = false; m_bHasPos = false;
 	};
 
 	EntityPos(const Vec3& pos)
-		: m_pos(pos), m_rot(Vec2::ZERO)
+		: m_pos(pos), m_rot(Rot2::ZERO)
 	{
 		m_bHasPos = true; m_bHasRot = false;
 	}
 
-	EntityPos(const Vec2& rot)
+	EntityPos(const Rot2& rot)
 		: m_pos(Vec3::ZERO), m_rot(rot)
 	{
 		m_bHasPos = false; m_bHasRot = true;
 	}
 
-	EntityPos(const Vec3& pos, const Vec2& rot)
+	EntityPos(const Vec3& pos, const Rot2& rot)
 		: m_pos(pos), m_rot(rot)
 	{
 		m_bHasPos = true; m_bHasRot = true;
@@ -134,15 +135,15 @@ public:
 	virtual void remove();
 	virtual void move(const Vec3& posIn);
 	virtual void moveTo(const Vec3& pos);
-	virtual void moveTo(const Vec3& pos, const Vec2& rot);
+	virtual void moveTo(const Vec3& pos, const Rot2& rot);
 	virtual void absMoveTo(const Vec3& pos);
-	virtual void absMoveTo(const Vec3& pos, const Vec2& rot);
+	virtual void absMoveTo(const Vec3& pos, const Rot2& rot);
 	virtual void moveRelative(const Vec3& pos);
 	virtual void lerpTo(const Vec3& pos);
-	virtual void lerpTo(const Vec3& pos, const Vec2& rot, int steps = 3);
+	virtual void lerpTo(const Vec3& pos, const Rot2& rot, int steps = 3);
 	virtual void lerpMotion(const Vec3& pos);
-	virtual void turn(const Vec2& rot);
-	virtual void interpolateTurn(const Vec2& rot);
+	virtual void turn(const Rot2& rot);
+	virtual void interpolateTurn(const Rot2& rot);
 	virtual void tick();
 	virtual void baseTick();
 	virtual bool intersects(const Vec3& min, const Vec3& max) const;
@@ -158,7 +159,7 @@ public:
 	virtual float getBrightness(float f) const;
 	virtual DimensionId getDimensionId() const { return m_dimensionId; }
 	virtual Vec3 getPos(float f) const;
-	virtual Vec2 getRot(float f) const;
+	virtual Rot2 getRot(float f) const;
 	virtual Vec3 getViewVector(float f) const;
 	virtual AuxValue getAuxValue() const;
 	virtual void setAuxValue(AuxValue value);
@@ -196,7 +197,7 @@ public:
 	virtual ItemEntity* spawnAtLocation(int, int, float);
 	virtual void awardKillScore(Entity* pKilled, int score);
 	virtual void setEquippedSlot(int, int, int);
-	virtual void setRot(const Vec2& rot, bool rebound = false);
+	virtual void setRot(const Rot2& rot, bool rebound = false);
 	virtual void setSize(float rad, float height);
 	virtual void setPos(EntityPos*);
 	virtual void resetPos(bool respawn = false);
@@ -268,9 +269,9 @@ public:
 	Level* m_pLevel;
 	Vec3 m_oPos; // "o" in Java or "xo" "yo" "zo"
 	Vec3 m_vel;
-	Vec2 m_rot;
-	Vec2 m_oRot; // "RotO" in Java or "xRotO" "yRotO"
-	Vec2 m_rideRot;
+	Rot2 m_rot;
+	Rot2 m_oRot; // "RotO" in Java or "xRotO" "yRotO"
+	Rot2 m_rideRot;
 	Color m_tintColor;
 	AABB m_hitbox;
 	bool m_bOnGround;

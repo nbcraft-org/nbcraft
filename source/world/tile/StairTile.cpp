@@ -189,7 +189,7 @@ void StairTile::stepOn(Level* level, const TilePos& pos, Entity* entity)
 
 void StairTile::setPlacedBy(Level* level, const TilePos& pos, Mob* mob)
 {
-	int rot = Mth::floor(0.5f + (mob->m_rot.x * 4.0f / 360.0f)) & 3;
+	int rot = Mth::floor(0.5f + (mob->m_rot.yaw * 4.0f / 360.0f)) & 3;
 
 	TileData data = 0;
 

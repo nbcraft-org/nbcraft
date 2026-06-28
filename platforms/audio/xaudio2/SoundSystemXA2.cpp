@@ -128,12 +128,12 @@ void SoundSystemXA2::setListenerPos(const Vec3& pos)
     _update3D();
 }
 
-void SoundSystemXA2::setListenerAngle(const Vec2& rot)
+void SoundSystemXA2::setListenerAngle(const Rot2& rot)
 {
     if (!isAvailable()) return;
 
-    float yaw = rot.x * MTH_DEG_TO_RAD;
-    float pitch = rot.y * MTH_DEG_TO_RAD;
+    float yaw = rot.yaw * MTH_DEG_TO_RAD;
+    float pitch = rot.pitch * MTH_DEG_TO_RAD;
 
     // Calculate Look/Front Vector
     float lx = Mth::cos(pitch) * Mth::sin(yaw);

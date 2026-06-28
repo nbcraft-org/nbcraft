@@ -22,7 +22,7 @@ SurvivalMode::SurvivalMode(Minecraft* pMC, Level& level) : GameMode(pMC, level),
 
 void SurvivalMode::initPlayer(Player* p)
 {
-	p->m_rot.x = -180.0f;
+	p->m_rot.yaw = -180.0f;
 	p->m_pInventory->prepareSurvivalInventory();
 }
 

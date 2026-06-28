@@ -26,8 +26,8 @@ void AddMobPacket::write(RakNet::BitStream& bs)
 	bs.Write(m_pos.x);
 	bs.Write(m_pos.y);
 	bs.Write(m_pos.z);
-	bs.Write(PacketUtil::Rot_degreesToChar(m_rot.x));
-	bs.Write(PacketUtil::Rot_degreesToChar(m_rot.y));
+	bs.Write(PacketUtil::Rot_degreesToChar(m_rot.yaw));
+	bs.Write(PacketUtil::Rot_degreesToChar(m_rot.pitch));
 
 	RakDataOutput dos(bs);
 	m_entityData.packAll(dos);
@@ -41,13 +41,13 @@ void AddMobPacket::read(RakNet::BitStream& bs)
 	bs.Read(m_pos.y);
 	bs.Read(m_pos.z);
 
-	char pitch, yaw;
-	bs.Read(pitch);
+	char yaw, pitch;
 	bs.Read(yaw);
+	bs.Read(pitch);
 
 	RakDataInput dis(bs);
 	m_unpack = SynchedEntityData::Unpack(dis);
 
-	m_rot.x = PacketUtil::Rot_charToDegrees(pitch);
-	m_rot.y = PacketUtil::Rot_charToDegrees(yaw);
+	m_rot.yaw = PacketUtil::Rot_charToDegrees(yaw);
+	m_rot.pitch = PacketUtil::Rot_charToDegrees(pitch);
 }

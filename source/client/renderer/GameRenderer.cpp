@@ -343,8 +343,8 @@ void GameRenderer::moveCameraToPlayer(Matrix& matrix, float f)
 		}
 		else
 		{
-			float mob_yaw = pMob->m_rot.x;
-			float mob_pitch = pMob->m_rot.y;
+			float mob_yaw = pMob->m_rot.yaw;
+			float mob_pitch = pMob->m_rot.pitch;
 
 			float pitchRad = mob_pitch / 180.0f * float(M_PI);
 			float yawRad = ((thirdPerson == TPM_FRONT ? mob_yaw + 180.0f : mob_yaw) / 180.0f) * float(M_PI);
@@ -375,11 +375,11 @@ void GameRenderer::moveCameraToPlayer(Matrix& matrix, float f)
 				}
 			}
 
-			matrix.rotate(pMob->m_rot.y - mob_pitch, Vec3::UNIT_X);
-			matrix.rotate(pMob->m_rot.x - mob_yaw, Vec3::UNIT_Y);
+			matrix.rotate(pMob->m_rot.pitch - mob_pitch, Vec3::UNIT_X);
+			matrix.rotate(pMob->m_rot.yaw - mob_yaw, Vec3::UNIT_Y);
 			matrix.translate(Vec3(0.0f, 0.0f, -v11));
-			matrix.rotate(mob_yaw - pMob->m_rot.x, Vec3::UNIT_Y);
-			matrix.rotate(mob_pitch - pMob->m_rot.y, Vec3::UNIT_X);
+			matrix.rotate(mob_yaw - pMob->m_rot.yaw, Vec3::UNIT_Y);
+			matrix.rotate(mob_pitch - pMob->m_rot.pitch, Vec3::UNIT_X);
 		}
 	}
 	else
@@ -389,8 +389,8 @@ void GameRenderer::moveCameraToPlayer(Matrix& matrix, float f)
 
 	if (!m_pMinecraft->getOptions()->m_bFixedCamera)
 	{
-		matrix.rotate(pMob->m_oRot.y + f * (pMob->m_rot.y - pMob->m_oRot.y), Vec3::UNIT_X);
-		matrix.rotate(pMob->m_oRot.x + f * (pMob->m_rot.x - pMob->m_oRot.x) + (thirdPerson == TPM_FRONT ? 0.0f : 180.0f), Vec3::UNIT_Y);
+		matrix.rotate(pMob->m_oRot.pitch + f * (pMob->m_rot.pitch - pMob->m_oRot.pitch), Vec3::UNIT_X);
+		matrix.rotate(pMob->m_oRot.yaw + f * (pMob->m_rot.yaw - pMob->m_oRot.yaw) + (thirdPerson == TPM_FRONT ? 0.0f : 180.0f), Vec3::UNIT_Y);
 	}
 
 	matrix.translate(Vec3::UNIT_Y * headHeightDiff);
@@ -669,7 +669,7 @@ void GameRenderer::render(const Timer& timer)
 			m_turnDelta = pMC->m_mouseHandler.m_delta;
 		}
 
-		Vec2 rot(m_turnDelta.x * diff_field_84,
+		Rot2 rot(m_turnDelta.x * diff_field_84,
 			     m_turnDelta.y * diff_field_84 * multPitch);
 		m_pItemInHandRenderer->turn(rot);
 		pMC->m_pLocalPlayer->turn(rot);

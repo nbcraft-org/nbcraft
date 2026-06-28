@@ -51,7 +51,7 @@ private:
     int field_40;
     Random m_random;
     Vec3 m_listenerPosition;
-    Vec2 m_listenerOrientation;
+    Rot2 m_listenerOrientation;
     float m_soundDistance;
     int m_noMusicDelay;
     int field_A20;

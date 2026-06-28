@@ -285,6 +285,7 @@ add_library(nbcraft-core STATIC
     world/phys/Vec2.cpp
     world/phys/Vec3.cpp
     world/phys/AABB.cpp
+    world/phys/Rot2.cpp
     world/gamemode/SurvivalMode.cpp
     world/gamemode/GameMode.cpp
     world/gamemode/CreativeMode.cpp

@@ -25,7 +25,7 @@ protected:
 public:
 	// overrides
 	void reset() override;
-	void lerpTo(const Vec3& pos, const Vec2& rot, int steps = 3) override;
+	void lerpTo(const Vec3& pos, const Rot2& rot, int steps = 3) override;
 	void tick() override;
 	void baseTick() override;
 	float getHeadHeight() const override { return 0.85f * m_bbHeight; }
@@ -94,7 +94,7 @@ public:
 private:
      int m_ambientSoundTime;
 	 Vec3 m_lastSentPos;
-	 Vec2 m_lastSentRot;
+	 Rot2 m_lastSentRot;
 	 Vec3 m_lastSentVel;
 
 public:
@@ -139,7 +139,7 @@ public:
 	bool m_bDead;
 	int m_lSteps;
 	Vec3 m_lPos;
-	Vec2 m_lRot;
+	Rot2 m_lRot;
 	int m_lastHurt;
 	Entity::ID m_entLookedAtId;
 

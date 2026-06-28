@@ -261,6 +261,7 @@
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\CraftContext.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\particle\TakeAnimationParticle.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\item\BucketItem.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\phys\Rot2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Entity.hpp" />
@@ -456,6 +457,7 @@
     <ClInclude Include="$(MC_ROOT)\source\world\inventory\CreativeMenu_Console.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\inventory\CraftContext.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\item\BucketItem.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\phys\Rot2.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NBT\NBT.vcxproj">

@@ -374,7 +374,7 @@ void Entity::moveTo(const Vec3& pos)
 	m_posPrev = newPos;
 }
 
-void Entity::moveTo(const Vec3& pos, const Vec2& rot)
+void Entity::moveTo(const Vec3& pos, const Rot2& rot)
 {
 	moveTo(pos);
 	m_rot = rot;
@@ -388,7 +388,7 @@ void Entity::absMoveTo(const Vec3& pos)
 	m_oPos = pos;
 }
 
-void Entity::absMoveTo(const Vec3& pos, const Vec2& rot)
+void Entity::absMoveTo(const Vec3& pos, const Rot2& rot)
 {
 	absMoveTo(pos);
 
@@ -396,11 +396,11 @@ void Entity::absMoveTo(const Vec3& pos, const Vec2& rot)
 	setRot(rot);
 
 	// This looks like a rebounding check for the angle
-	float dyRot = (m_oRot.y - m_rot.y);
+	float dyRot = (m_oRot.pitch - m_rot.pitch);
 	if (dyRot < -180.0f)
-		m_oRot.y += 360.0f;
+		m_oRot.pitch += 360.0f;
 	if (dyRot >= 180.0f)
-		m_oRot.y -= 360.0f;
+		m_oRot.pitch -= 360.0f;
 }
 
 void Entity::moveRelative(const Vec3& pos)
@@ -416,7 +416,7 @@ void Entity::moveRelative(const Vec3& pos)
 	vel.x *= vel.y;
 	vel.z *= vel.y;
 
-	float yaw = m_rot.x * float(M_PI);
+	float yaw = m_rot.yaw * float(M_PI);
 	float syaw = sinf(yaw / 180.0f);
 	float cyaw = cosf(yaw / 180.0f);
 
@@ -429,7 +429,7 @@ void Entity::lerpTo(const Vec3& pos)
 	setPos(pos);
 }
 
-void Entity::lerpTo(const Vec3& pos, const Vec2& rot, int steps)
+void Entity::lerpTo(const Vec3& pos, const Rot2& rot, int steps)
 {
 	lerpTo(pos);
 	setRot(rot);
@@ -440,16 +440,16 @@ void Entity::lerpMotion(const Vec3& pos)
 	m_vel = pos;
 }
 
-void Entity::turn(const Vec2& rot)
+void Entity::turn(const Rot2& rot)
 {
-	if (rot == Vec2::ZERO) return;
+	if (rot == Rot2::ZERO) return;
 
-	Vec2 rotOld = m_rot;
+	Rot2 rotOld = m_rot;
 
 	interpolateTurn(rot);
 
-	m_oRot.x += m_rot.x - rotOld.x;
-	m_oRot.y += m_rot.y - rotOld.y;
+	m_oRot.yaw += m_rot.yaw - rotOld.yaw;
+	m_oRot.pitch += m_rot.pitch - rotOld.pitch;
 }
 
 void Entity::reset()
@@ -463,18 +463,18 @@ void Entity::reset()
 	m_fireTicks = 0;
 }
 
-void Entity::interpolateTurn(const Vec2& rot)
+void Entity::interpolateTurn(const Rot2& rot)
 {
-	setRot(Vec2(
-		m_rot.x + rot.x * 0.15f,
-		m_rot.y - rot.y * 0.15f
+	setRot(Rot2(
+		m_rot.yaw + rot.yaw * 0.15f,
+		m_rot.pitch - rot.pitch * 0.15f
 	));
 
 	// can't rotate more than facing fully up or fully down
-	if (m_rot.y < -90.0f)
-		m_rot.y = -90.0f;
-	if (m_rot.y > 90.0f)
-		m_rot.y = 90.0f;
+	if (m_rot.pitch < -90.0f)
+		m_rot.pitch = -90.0f;
+	if (m_rot.pitch > 90.0f)
+		m_rot.pitch = 90.0f;
 }
 
 void Entity::tick()
@@ -691,11 +691,11 @@ Vec3 Entity::getPos(float f) const
 }
 
 // renamed to getInterpolatedRotation in 0.12.1
-Vec2 Entity::getRot(float f) const
+Rot2 Entity::getRot(float f) const
 {
-	return Vec2(
-		Mth::Lerp(m_oRot.x, m_rot.x, f),
-		Mth::Lerp(m_oRot.y, m_rot.y, f)
+	return Rot2(
+		Mth::Lerp(m_oRot.yaw, m_rot.yaw, f),
+		Mth::Lerp(m_oRot.pitch, m_rot.pitch, f)
 	);
 }
 
@@ -705,15 +705,15 @@ Vec3 Entity::getViewVector(float f) const
 
 	if (f == 1.0)
 	{
-		Vec3 x(Mth::cos(-(m_rot.x * MTH_DEG_TO_RAD) - C_PI),
-			Mth::sin(-(m_rot.x * MTH_DEG_TO_RAD) - C_PI),
-			-Mth::cos(-(m_rot.y * MTH_DEG_TO_RAD)));
+		Vec3 x(Mth::cos(-(m_rot.yaw * MTH_DEG_TO_RAD) - C_PI),
+			Mth::sin(-(m_rot.yaw * MTH_DEG_TO_RAD) - C_PI),
+			-Mth::cos(-(m_rot.pitch * MTH_DEG_TO_RAD)));
 
-		return Vec3(x.x * x.z, Mth::sin(-(m_rot.y * MTH_DEG_TO_RAD)), x.y * x.z);
+		return Vec3(x.x * x.z, Mth::sin(-(m_rot.pitch * MTH_DEG_TO_RAD)), x.y * x.z);
 	}
 
-	float x1 = m_oRot.y + (m_rot.y - m_oRot.y) * f;
-	float x2 = -((m_oRot.x + (m_rot.x - m_oRot.x) * f) * MTH_DEG_TO_RAD) - C_PI;
+	float x1 = m_oRot.pitch + (m_rot.pitch - m_oRot.pitch) * f;
+	float x2 = -((m_oRot.yaw + (m_rot.yaw - m_oRot.yaw) * f) * MTH_DEG_TO_RAD) - C_PI;
 	float x3 = Mth::cos(x2);
 	float x4 = Mth::sin(x2);
 	float x5 = -(x1 * MTH_DEG_TO_RAD);
@@ -851,12 +851,12 @@ void Entity::setEquippedSlot(int a, int b, int c)
 
 }
 
-void Entity::setRot(const Vec2& rot, bool rebound)
+void Entity::setRot(const Rot2& rot, bool rebound)
 {
 	if (rebound)
 	{
-		m_rot.x = Mth::abs(rot.x) > 360.0f ? fmod(rot.x, 360.0f) : rot.x;
-		m_rot.y = Mth::abs(rot.y) > 360.0f ? fmod(rot.y, 360.0f) : rot.y;
+		m_rot.yaw = Mth::abs(rot.yaw) > 360.0f ? fmod(rot.yaw, 360.0f) : rot.yaw;
+		m_rot.pitch = Mth::abs(rot.pitch) > 360.0f ? fmod(rot.pitch, 360.0f) : rot.pitch;
 	}
 	else
 	{
@@ -908,7 +908,7 @@ void Entity::resetPos(bool respawn)
 	}
 
 	m_vel = Vec3::ZERO;
-	m_rot.y = 0.0f;
+	m_rot.pitch = 0.0f;
 }
 
 void Entity::outOfWorld()
@@ -989,29 +989,29 @@ void Entity::rideTick()
 	tick();
 
 	riding->positionRider();
-	m_rideRot.x += riding->m_rot.x - riding->m_oRot.x;
-	m_rideRot.y += riding->m_rot.y - riding->m_oRot.y;
-	while (m_rideRot.y >= 180.0f)
-		m_rideRot.y -= 360.0f;
-	while (m_rideRot.y < -180.0f)
-		m_rideRot.y += 360.0f;
-	while (m_rideRot.x >= 180.0f)
-		m_rideRot.x -= 360.0f;
-	while (m_rideRot.x < -180.0f)
-		m_rideRot.x += 360.0f;
+	m_rideRot.yaw += riding->m_rot.yaw - riding->m_oRot.yaw;
+	m_rideRot.pitch += riding->m_rot.pitch - riding->m_oRot.pitch;
+	while (m_rideRot.pitch >= 180.0f)
+		m_rideRot.pitch -= 360.0f;
+	while (m_rideRot.pitch < -180.0f)
+		m_rideRot.pitch += 360.0f;
+	while (m_rideRot.yaw >= 180.0f)
+		m_rideRot.yaw -= 360.0f;
+	while (m_rideRot.yaw < -180.0f)
+		m_rideRot.yaw += 360.0f;
 	
-	float rotX = m_rideRot.x * 0.5f;
-	float rotY = m_rideRot.y * 0.5f;
+	float yaw = m_rideRot.yaw * 0.5f;
+	float pitch = m_rideRot.pitch * 0.5f;
 
 	constexpr float lookLimiter = 10.0f;
-	rotX = Mth::clamp(rotX, -lookLimiter, lookLimiter);
-	rotY = Mth::clamp(rotY, -lookLimiter, lookLimiter);
+	yaw = Mth::clamp(yaw, -lookLimiter, lookLimiter);
+	pitch = Mth::clamp(pitch, -lookLimiter, lookLimiter);
 
-	m_rideRot.x -= rotX;
-	m_rideRot.y -= rotY;
+	m_rideRot.yaw -= yaw;
+	m_rideRot.pitch -= pitch;
 
-	m_rot.x += rotX;
-	m_rot.y += rotY;
+	m_rot.yaw += yaw;
+	m_rot.pitch += pitch;
 }
 
 void Entity::handleInsidePortal()
@@ -1034,7 +1034,7 @@ void Entity::positionRider()
 
 void Entity::ride(Entity* newRiding)
 {
-	m_rideRot = Vec2::ZERO;
+	m_rideRot = Rot2::ZERO;
 	Entity* oldRiding = getRiding();
 
 	// Dismount current ride if nullptr is fed in
@@ -1148,8 +1148,8 @@ void Entity::load(const CompoundTag& tag)
 	m_posPrev.x = m_oPos.x = m_pos.x = posTag->getFloat(0);
 	m_posPrev.y = m_oPos.y = m_pos.y = posTag->getFloat(1);
 	m_posPrev.z = m_oPos.z = m_pos.z = posTag->getFloat(2);
-	m_oRot.y = m_rot.y = rotTag->getFloat(0);
-	m_oRot.x = m_rot.x = rotTag->getFloat(1);
+	m_oRot.pitch = m_rot.pitch = rotTag->getFloat(0);
+	m_oRot.yaw = m_rot.yaw = rotTag->getFloat(1);
 	m_distanceFallen = tag.getFloat("FallDistance");
 	m_fireTicks = tag.getInt16("Fire");
 	m_airSupply = tag.getInt16("Air");
@@ -1179,7 +1179,7 @@ void Entity::saveWithoutId(CompoundTag& tag) const
 {
 	tag.put("Pos", ListTagFloatAdder(m_pos.x)(m_pos.y + m_ySlideOffset)(m_pos.z));
 	tag.put("Motion", ListTagFloatAdder(m_vel.x)(m_vel.y)(m_vel.z));
-	tag.put("Rotation", ListTagFloatAdder(m_rot.y)(m_rot.x));
+	tag.put("Rotation", ListTagFloatAdder(m_rot.pitch)(m_rot.yaw));
 	tag.putFloat("FallDistance", m_distanceFallen);
 	tag.putInt16("Fire", m_fireTicks);
 	tag.putInt16("Air", m_airSupply);

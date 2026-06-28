@@ -80,7 +80,7 @@ void EntityRenderer::renderFlame(const Entity& entity, const Vec3& pos, float a)
 
 	matrix->translate(ePos);
 	matrix->scale(s);
-	matrix->rotate(-m_pDispatcher->m_rot.x, Vec3::UNIT_Y);
+	matrix->rotate(-m_pDispatcher->m_rot.yaw, Vec3::UNIT_Y);
 	matrix->translate(Vec3(0.0f, 0.0f, -0.4f + (float)((int)h) * 0.02f));
 	
 	bindTexture(C_TERRAIN_NAME);

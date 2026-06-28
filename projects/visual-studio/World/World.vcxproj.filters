@@ -761,6 +761,9 @@
     <ClCompile Include="$(MC_ROOT)\source\world\item\BucketItem.cpp">
       <Filter>Source Files\Item</Filter>
     </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\phys\Rot2.cpp">
+      <Filter>Source Files\Phys</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Entity.hpp">
@@ -1341,6 +1344,9 @@
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\world\item\BucketItem.hpp">
       <Filter>Header Files\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\phys\Rot2.hpp">
+      <Filter>Header Files\Phys</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -59,7 +59,7 @@ void CompassTexture::tick()
     {
         rotd = m_pMinecraft->m_pLevel->getSharedSpawnPos().x - m_pMinecraft->m_pLocalPlayer->m_pos.x;
         sin = m_pMinecraft->m_pLevel->getSharedSpawnPos().z - m_pMinecraft->m_pLocalPlayer->m_pos.z;
-        rott = (m_pMinecraft->m_pLocalPlayer->m_rot.y - 90.0f) * M_PI / 180.0f - Mth::atan2(sin, rotd);
+        rott = (m_pMinecraft->m_pLocalPlayer->m_rot.pitch - 90.0f) * M_PI / 180.0f - Mth::atan2(sin, rotd);
         if (m_pMinecraft->m_pLevel->m_pDimension->m_bFoggy) {
             rott = Mth::random() * M_PI * 2.0f;
         }
