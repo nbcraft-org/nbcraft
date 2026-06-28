@@ -1,6 +1,7 @@
 #include <cstring>
 
 #include "ScrollRenderer_Console.hpp"
+#include "common/Utils.hpp"
 #include "renderer/ShaderConstants.hpp"
 
 std::string ScrollRenderer_Console::SCROLLS[] = { "gui/console/scrollUp.png", "gui/console/scrollDown.png", "gui/console/scrollLeft.png", "gui/console/scrollRight.png" };

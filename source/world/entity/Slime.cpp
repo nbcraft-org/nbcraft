@@ -62,7 +62,7 @@ void Slime::tick()
 
 void Slime::updateAi()
 {
-	Player* nearestPlayer = m_pLevel->getNearestPlayer(*this, 16.0f);
+	Player* nearestPlayer = m_pLevel->getNearestAttackablePlayer(*this, 16.0f);
 	if (nearestPlayer)
 	{
 		lookAt(nearestPlayer, 10.0f, 10.0f);
@@ -125,5 +125,5 @@ void Slime::playerTouch(Player* player)
 bool Slime::canSpawn()
 {
 	LevelChunk* var1 = m_pLevel->getChunkAt(m_pos);
-	return (m_size == 1 || m_pLevel->m_difficulty > 0) && m_random.nextInt(10) == 0 && var1->getRandom(987234911L).nextInt(10) == 0 && m_pos.y < 16.0f;
+	return (m_size == 1 || m_pLevel->m_difficulty > 0) && m_random.nextInt(10) == 0 && var1->getRandom(987234911).nextInt(10) == 0 && m_pos.y < 16.0f;
 }
