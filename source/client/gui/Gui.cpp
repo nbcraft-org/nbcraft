@@ -320,6 +320,7 @@ void Gui::renderAnimatedCharacter(int x, int y, float partialTick)
 #if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
 	glEnable(GL_RESCALE_NORMAL);
 #endif
+
 	MatrixStack::Ref matrix = MatrixStack::World.push();
 
 	constexpr int scale = 12;
@@ -358,6 +359,7 @@ void Gui::renderAnimatedCharacter(int x, int y, float partialTick)
 	player->m_rot.y = prevYRot;
 
 	Lighting::turnOff();
+
 #if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
 	glDisable(GL_RESCALE_NORMAL);
 #endif

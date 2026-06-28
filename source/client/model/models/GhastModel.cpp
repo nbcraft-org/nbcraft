@@ -39,12 +39,20 @@ void GhastModel::render(float time, float r, float bob, float yRot, float xRot, 
 {
     setupAnim(time, r, bob, yRot, xRot, scale);
 
+#if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
+    glEnable(GL_RESCALE_NORMAL);
+#endif
+
     m_body.render(scale);
 
     for (int i = 0; i < 9; ++i)
     {
         m_tentacles[i]->render(scale);
     }
+
+#if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
+    glDisable(GL_RESCALE_NORMAL);
+#endif
 }
 
 void GhastModel::setupAnim(float time, float r, float bob, float yRot, float xRot, float scale)
