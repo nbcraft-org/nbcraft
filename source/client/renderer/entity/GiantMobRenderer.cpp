@@ -12,5 +12,5 @@ GiantMobRenderer::~GiantMobRenderer()
 
 void GiantMobRenderer::scale(const Mob& mob, Matrix& matrix, float a)
 {
-	matrix.scale(Vec3(m_scale, m_scale, m_scale));
+	matrix.scale(m_scale);
 }
