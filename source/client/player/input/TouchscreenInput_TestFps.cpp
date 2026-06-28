@@ -396,10 +396,8 @@ void TouchscreenInput_TestFps::tick(Player* pPlayer)
 #endif
 
 	{
-		if (m_vertInput > 1.0f) m_vertInput = 1.0f;
-		if (m_vertInput < -1.0f) m_vertInput = -1.0f;
-		if (m_horzInput > 1.0f) m_horzInput = 1.0f;
-		if (m_horzInput < -1.0f) m_horzInput = -1.0f;
+		m_vertInput = Mth::clamp(m_vertInput, -1.0f, 1.0f);
+		m_horzInput = Mth::clamp(m_horzInput, -1.0f, 1.0f);
 	}
 
 	IMoveInput::tick(pPlayer);

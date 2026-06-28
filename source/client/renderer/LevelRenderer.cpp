@@ -1716,7 +1716,7 @@ void LevelRenderer::renderSky(const Entity& camera, float alpha)
 
 void LevelRenderer::prepareAndRenderClouds(const Entity& camera, float f)
 {
-	if (!m_pMinecraft->getOptions()->m_beautifulSkies.get())
+	if (!m_pMinecraft->getOptions()->m_fancySkies.get())
 		return;
 
 	GameRenderer& gameRenderer = *m_pMinecraft->m_pGameRenderer;

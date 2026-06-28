@@ -73,7 +73,7 @@ Options::Options(Minecraft* mc, const std::string& folderPath) :
 	, m_anaglyphs("gfx_3danaglyphs", "options.anaglyph", false)
 	, m_fancyGraphics("gfx_fancygraphics", "options.fancyGraphics", true)
 	, m_ambientOcclusion("gfx_smoothlighting", "options.ao", Minecraft::useAmbientOcclusion)
-	, m_beautifulSkies("gfx_beautifulskies", "options.beautifulSkies", true)
+	, m_fancySkies("gfx_fancyskies", "options.fancySkies", true)
 	, m_difficulty("misc_difficulty", "options.difficulty", 2, ValuesBuilder().add("options.difficulty.peaceful").add("options.difficulty.easy").add("options.difficulty.normal").add("options.difficulty.hard"), true)
 	, m_hideGui("gfx_hidegui", "options.hideGui", false)
 	, m_thirdPerson("gfx_thirdperson", "options.thirdPerson", 0)
@@ -127,8 +127,8 @@ Options::Options(Minecraft* mc, const std::string& folderPath) :
 	add(OC_VIDEO, m_gamma);
 	add(OC_VIDEO, m_ambientOcclusion);
 	add(OC_VIDEO, m_fancyGraphics);
-	add(OC_VIDEO, m_beautifulSkies);
-	//add(OC_VIDEO, m_animatedWater);
+	add(OC_VIDEO, m_fancySkies);
+	//add(OC_VIDEO, m_animatedTextures);
 	add(OC_VIDEO, m_viewBobbing);
 	add(OC_VIDEO, m_anaglyphs);
 	add(OC_VIDEO, m_blockOutlines);
