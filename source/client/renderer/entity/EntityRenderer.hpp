@@ -29,6 +29,7 @@ protected:
 		mce::MaterialPtr name_tag;
 		mce::MaterialPtr name_tag_depth_tested;
 		mce::MaterialPtr name_text_depth_tested;
+		mce::MaterialPtr particles_alpha;
 
 		Materials();
 	};

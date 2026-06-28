@@ -1,6 +1,7 @@
 // copied from wilyicaro's PEtoLE
 #include "SquidModel.hpp"
 #include "common/Mth.hpp"
+#include "common/Utils.hpp"
 
 SquidModel::SquidModel() :
     Model(64, 32),
@@ -8,7 +9,7 @@ SquidModel::SquidModel() :
 {
     //m_body.setModel(this);
 
-    int yoffs = -16;
+    constexpr int yoffs = -16;
     m_body.addBox(-6.0f, -8.0f, -6.0f, 12, 16, 12);
     m_body.m_pos.y += (float)(24 + yoffs);
 

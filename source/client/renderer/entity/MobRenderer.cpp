@@ -109,7 +109,7 @@ void MobRenderer::render(const Entity& entity, const Vec3& pos, float rot, float
 		setupRotations(mob, fBob, fSmth, matrix, a);
 
 		constexpr float fScale = 0.0625f; // the scale variable according to b1.2_02
-		matrix->scale(Vec3(-1.0f, -1.0f, 1.0f));
+		matrix->scale(Vec3(-1.0f, -1.0f, 1.0f)); // flip mobs right-side-up
 		scale(mob, matrix, a);
 		matrix->translate(Vec3(0.0f, -24.0f * fScale - (1.0f / 128.0f), 0.0f));
 

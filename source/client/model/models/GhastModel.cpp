@@ -8,14 +8,14 @@ GhastModel::GhastModel() :
 {
     //m_body.setModel(this);
 
-    int yoffs = -16;
+    constexpr int yoffs = -16;
     m_body.addBox(-8.0f, -8.0f, -8.0f, 16, 16, 16);
     m_body.m_pos.y += float(24 + yoffs);
-    Random* random = new Random(1660L);
+    Random* random = new Random(1660);
 
     for (int i = 0; i < 9; ++i)
     {
-        m_tentacles[i] = new ModelPart(this, 48, 0);
+        m_tentacles[i] = new ModelPart(this, 0, 0);
         //m_tentacles[i]->setModel(this);
         float xo = ((float(i % 3) - float(i / 3 % 2) * 0.5f + 0.25f) / 2.0f * 2.0f - 1.0f) * 5.0f;
         float yo = (float(i / 3) / 2.0f * 2.0f - 1.0f) * 5.0f;

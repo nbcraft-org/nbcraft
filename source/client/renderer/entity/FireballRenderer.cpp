@@ -35,7 +35,6 @@ void FireballRenderer::render(const Entity& entity, const Vec3& pos, float rot, 
 
 	Tesselator& t = Tesselator::instance;
 	t.begin(4);
-	//t.color(Color::WHITE);
 	t.normal(Vec3::UNIT_Y);
 	t.vertexUV(-0.5f, -0.25f, 0.0f, float(16 * (icon % 16)) / 256.0f, float(16 * (icon / 16 + 1)) / 256.0f);
 	t.vertexUV(+0.5f, -0.25f, 0.0f, float(16 * (icon % 16 + 1)) / 256.0f, float(16 * (icon / 16 + 1)) / 256.0f);
