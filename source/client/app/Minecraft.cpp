@@ -473,6 +473,7 @@ void Minecraft::handleBuildAction(const BuildActionIntention& action)
 				pkt.m_channel = CHANNEL_PLAYER_EVENTS;
 				m_pRakNetInstance->send(pkt);
 
+				m_pInputHolder->m_feedbackAlpha = 1.0f;
 				pGameMode->attack(player, pTarget);
 				m_lastBlockBreakTime = getTimeMs();
 			}
@@ -1005,14 +1006,14 @@ void Minecraft::update()
 
 	renderContext.beginRender();
 
-	m_pGameRenderer->render(m_timer);
-
 	if (!m_bPreparingLevel)
 	{
 		GameMode* pGameMode = getLocalPlayerGameMode();
 		if (pGameMode)
 			pGameMode->render(m_timer.m_renderTicks);
 	}
+
+	m_pGameRenderer->render(m_timer);
 
 	renderContext.endRender();
 

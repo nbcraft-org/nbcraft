@@ -55,6 +55,27 @@ void UnifiedTurnBuild::setScreenSize(int width, int height)
 	m_touchAreaModel.addArea(100, &m_includeExcludeArea);
 }
 
+static float stepToward(float current, float target)
+{
+	if (target < current)
+	{
+		float r = current - 0.04f;
+		if (r > 1.0f) return 1.0f;
+		if (r > target) return r;
+		return target;
+	}
+	if (target > current)
+	{
+		float r = current + 0.02f;
+		if (r <= target)
+		{
+			if (r > 0.0f) return r;
+		}
+		return target;
+	}
+	return current;
+}
+
 Vec2 UnifiedTurnBuild::getTurnDelta()
 {
 	double timeS = getTimeS();
@@ -142,17 +163,17 @@ Vec2 UnifiedTurnBuild::getTurnDelta()
 
 	if (field_D4)
 	{
-		// Yes, again, this is what IDA gave me. It was either a switch that the compiler
-		// for some reason forgot to optimize into a jump table, or was actually an if chain.
-		// I believe it's the latter though because the build I'm reversing (0.1.1j) is unoptimized)
 		if (field_D8 == 1)
-			m_pInputHolder->m_feedbackAlpha = m_smoothFloat.getNewDeltaValue((timeS - field_B8) / 0.4f, 0.05f);
+		{
+			float t = (timeS - field_B8) / 0.4f;
+			m_pInputHolder->m_feedbackAlpha = t * t;
+		}
 		else if (field_D8 == 3)
-			m_pInputHolder->m_feedbackAlpha = m_smoothFloat.getNewDeltaValue(1.0f, 0.25f);
+			m_pInputHolder->m_feedbackAlpha = stepToward(m_pInputHolder->m_feedbackAlpha, 1.0f);
 		else if (field_D8 == 2)
-			m_pInputHolder->m_feedbackAlpha = m_smoothFloat.getNewDeltaValue(-0.05f, 0.5f);
+			m_pInputHolder->m_feedbackAlpha = stepToward(m_pInputHolder->m_feedbackAlpha, 0.0f);
 		else if (field_D8 == 0)
-			m_pInputHolder->m_feedbackAlpha = m_smoothFloat.getNewDeltaValue(-0.05f, 0.5f);
+			m_pInputHolder->m_feedbackAlpha = stepToward(m_pInputHolder->m_feedbackAlpha, 0.0f);
 	}
 	else
 	{

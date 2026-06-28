@@ -11,7 +11,6 @@
 #include "ITurnInput.hpp"
 #include "IBuildInput.hpp"
 #include "IInputHolder.hpp"
-#include "common/SmoothFloat.hpp"
 #include "RectangleArea.hpp"
 #include "IncludeExcludeArea.hpp"
 #include "TouchAreaModel.hpp"
@@ -38,7 +37,6 @@ public:
 public:
 	int field_C;
 	int field_10;
-	SmoothFloat m_smoothFloat;
 	bool field_24;
 	RectangleArea m_screenArea;
 	RectangleArea field_40;

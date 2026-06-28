@@ -131,7 +131,7 @@ void GameRenderer::_renderItemInHand(float f, int i)
 {
 #ifdef ENH_FOV_MODIFIER
 	MatrixStack::Ref projRef = MatrixStack::Projection.pushIdentity();
-	constexpr float fov = 70.0f;
+	float fov = getFov(f, false);
 	projRef->setPerspective(fov, float(Minecraft::width) / float(Minecraft::height), 0.05f, m_renderDistance * 1.2f);
 #endif
 
@@ -143,29 +143,39 @@ void GameRenderer::_renderItemInHand(float f, int i)
 		viewMtx.translate(Vec3(float(2 * i - 1) * 0.1f, 0.0f, 0.0f));
 	}
 
-	MatrixStack::Ref matrix = MatrixStack::World.push();
-
-	bobHurt(matrix, f);
-
-	if (m_pMinecraft->getOptions()->m_viewBobbing.get())
 	{
-		bobView(matrix, f);
-	}
+		MatrixStack::Ref matrix = MatrixStack::World.pushIdentity();
 
-	if (m_pMinecraft->getOptions()->m_thirdPerson.get() == TPM_FIRST && !m_pMinecraft->getOptions()->m_hideGui.get())
-	{
-		mce::RenderContextImmediate::get().clearDepthStencilBuffer();
-		m_pItemInHandRenderer->render(f);
+		bobHurt(matrix, f);
+
+		if (m_pMinecraft->getOptions()->m_viewBobbing.get())
+		{
+			bobView(matrix, f);
+		}
+
+		if (m_pMinecraft->getOptions()->m_thirdPerson.get() == TPM_FIRST && !m_pMinecraft->getOptions()->m_hideGui.get())
+		{
+			mce::RenderContextImmediate::get().clearDepthStencilBuffer();
+			m_pItemInHandRenderer->render(f);
+		}
 	}
 
 	if (m_pMinecraft->getOptions()->m_thirdPerson.get() == TPM_FIRST)
 	{
-		m_pItemInHandRenderer->renderScreenEffect(f);
-		bobHurt(matrix, f);
+		{
+			MatrixStack::Ref matrix = MatrixStack::World.pushIdentity();
+			m_pItemInHandRenderer->renderScreenEffect(f);
+			bobHurt(matrix, f);
+			if (m_pMinecraft->getOptions()->m_viewBobbing.get())
+			{
+				bobView(matrix, f);
+			}
+		}
 	}
 
 	if (m_pMinecraft->getOptions()->m_viewBobbing.get())
 	{
+		MatrixStack::Ref matrix = MatrixStack::World.pushIdentity();
 		bobView(matrix, f);
 	}
 }

@@ -37,6 +37,11 @@ void DeathScreen::tick()
 	m_tickCounter++;
 }
 
+bool DeathScreen::isPauseScreen()
+{
+	return false;
+}
+
 void DeathScreen::render(float f)
 {
 	fillGradient(0, 0, m_width, m_height, 0xA0303080, 0x60000050);

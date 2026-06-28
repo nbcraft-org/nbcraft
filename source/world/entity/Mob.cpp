@@ -408,8 +408,7 @@ bool Mob::hurt(Entity *pAttacker, int damage)
         }
 		else
 		{
-			// b1.2, might not be present in PE
-			m_hurtDir = (Mth::random() * 2.0f) * 180.0f;
+			m_hurtDir = float(int(Mth::random() * 2.0f)) * 180.0f;
 		}
     }
 
@@ -592,9 +591,6 @@ HitResult Mob::pick(float f1, float f2)
 
 void Mob::travel(const Vec2& pos)
 {
-	if (isImmobile())
-		return;
-
 	float x2, dragFactor;
 	float oldYPos = m_pos.y;
 	if (isSlowedByLiquids() && (wasInWater() || isInLava()))

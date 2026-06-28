@@ -41,6 +41,11 @@ void DeathScreen_Console::tick()
 	m_tickCounter++;
 }
 
+bool DeathScreen_Console::isPauseScreen()
+{
+	return false;
+}
+
 void DeathScreen_Console::render(float f)
 {
 	float fade = float(m_tickCounter) / 30.0f;

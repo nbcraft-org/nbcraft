@@ -100,6 +100,7 @@ Options::Options(Minecraft* mc, const std::string& folderPath) :
 	, m_animatedCharacter("gfx_animatedcharacter", "options.animatedCharacter", true)
 	//, m_limitFramerate("gfx_fpslimit", "options.framerateLimit", 0, ValuesBuilder().add(performance.max").add("performance.balanced").add("performance.powersaver"))
 	//, m_bMipmaps("gfx_mipmaps", "options.mipmaps")
+	, m_beautifulSkies("gfx_beautifulskies", "options.beautifulSkies", true)
 	, m_vSync("enableVsync", "options.enableVsync", true)
 {
 	add(OC_GAMEPLAY, m_difficulty);
@@ -126,6 +127,8 @@ Options::Options(Minecraft* mc, const std::string& folderPath) :
 	add(OC_VIDEO, m_gamma);
 	add(OC_VIDEO, m_ambientOcclusion);
 	add(OC_VIDEO, m_fancyGraphics);
+	add(OC_VIDEO, m_beautifulSkies);
+	//add(OC_VIDEO, m_animatedWater);
 	add(OC_VIDEO, m_viewBobbing);
 	add(OC_VIDEO, m_anaglyphs);
 	add(OC_VIDEO, m_blockOutlines);

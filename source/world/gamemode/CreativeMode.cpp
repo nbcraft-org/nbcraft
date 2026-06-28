@@ -54,7 +54,6 @@ void CreativeMode::stopDestroyBlock()
 
 void CreativeMode::tick()
 {
-	m_lastDestroyProgress = m_destroyProgress;
 	GameMode::tick();
 }
 
@@ -63,14 +62,20 @@ void CreativeMode::render(float f)
 	if (m_destroyProgress <= 0.0f)
 	{
 		m_pMinecraft->m_pGui->m_progress = 0.0f;
+		m_pMinecraft->m_pGui->m_lastDestroyProgress = 0.0f;
+		m_pMinecraft->m_pGui->m_destroyProgress = 0.0f;
 		m_pMinecraft->m_pLevelRenderer->m_destroyProgress = 0.0f;
 	}
 	else
 	{
 		float x = m_lastDestroyProgress + (m_destroyProgress - m_lastDestroyProgress) * f;
 		m_pMinecraft->m_pGui->m_progress = x;
+		m_pMinecraft->m_pGui->m_lastDestroyProgress = m_lastDestroyProgress;
+		m_pMinecraft->m_pGui->m_destroyProgress = m_destroyProgress;
 		m_pMinecraft->m_pLevelRenderer->m_destroyProgress = x;
 	}
+
+	m_lastDestroyProgress = m_destroyProgress;
 }
 
 void CreativeMode::initPlayer(Player* p)

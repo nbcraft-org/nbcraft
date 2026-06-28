@@ -11,7 +11,8 @@
 
 IInputHolder::IInputHolder() :
 	m_feedbackX(0),
-	m_feedbackY(0)
+	m_feedbackY(0),
+	m_feedbackAlpha(0)
 {
 }
 

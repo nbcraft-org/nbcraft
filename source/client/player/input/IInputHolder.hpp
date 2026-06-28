@@ -29,6 +29,7 @@ protected:
 	friend class UnifiedTurnBuild;
 	friend class GameRenderer;
 	friend class Gui;
+	friend class Minecraft;
 	float m_feedbackX;
 	float m_feedbackY;
 	float m_feedbackAlpha;
