@@ -16,6 +16,8 @@ void ItemSpriteRenderer::render(const Entity& entity, const Vec3& pos, float rot
 	glEnable(GL_RESCALE_NORMAL);
 #endif
 
+	//_setupShaderParameters(entity, Color::NIL, a);
+
 	matrix->scale(0.5f);
 
 	bindTexture(C_ITEMS_NAME);
@@ -30,7 +32,6 @@ void ItemSpriteRenderer::render(const Entity& entity, const Vec3& pos, float rot
 
 	Tesselator& t = Tesselator::instance;
 	t.begin(4);
-	t.color(Color::WHITE);
 	t.normal(Vec3::UNIT_Y);
 	t.vertexUV(-0.5f, -0.25f, 0.0f, float(16 * (m_sprite % 16))     / 256.0f, float(16 * (m_sprite / 16 + 1)) / 256.0f);
 	t.vertexUV(+0.5f, -0.25f, 0.0f, float(16 * (m_sprite % 16 + 1)) / 256.0f, float(16 * (m_sprite / 16 + 1)) / 256.0f);
