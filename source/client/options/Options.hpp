@@ -535,7 +535,7 @@ public:
 	bool m_bLimitFramerate;
 	FancyGraphicsOption m_fancyGraphics;
 	AOOption m_ambientOcclusion;
-	BoolOption m_fancySkies;
+	BoolOption m_fancySky;
 	bool m_bUseMouseForDigging;
 	std::string m_skin;
 	ValuesOption m_difficulty;
@@ -611,8 +611,8 @@ public:
 	OPTION(m_gamma);                       \
 	OPTION(m_ambientOcclusion);            \
 	OPTION(m_fancyGraphics);               \
-	OPTION(m_fancySkies);                  \
-	/*OPTION(m_animatedTextures);*/           \
+	OPTION(m_fancySky);                    \
+	/*OPTION(m_animatedTextures);*/        \
 	OPTION(m_viewBobbing);                 \
 	OPTION(m_anaglyphs);                   \
 	OPTION(m_blockOutlines);               \
