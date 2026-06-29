@@ -819,8 +819,7 @@ void Gui::renderProgressIndicator(int width, int height, float f)
 	}
 	else
 	{
-		HitResult::HitResultType hitType = mc.m_hitResult.m_hitType;
-		float displayAlpha = Mth::Min(feedbackAlpha * 0.4f, 0.4f); feedbackAlpha * 0.8f;
+		float displayAlpha = Mth::Min(feedbackAlpha * 0.4f, 0.4f);
 
 		if (displayAlpha <= 0.0f)
 			return;
