@@ -25,6 +25,10 @@ std::string ScreenRenderer::POINTER_TEXT_PANEL_SLICES[] = { "gui/console/Graphic
                                                             "gui/console/Graphics/PointerTextPanel_ML.png", "gui/console/Graphics/PointerTextPanel_MM.png", "gui/console/Graphics/PointerTextPanel_MR.png",
                                                             "gui/console/Graphics/PointerTextPanel_BL.png", "gui/console/Graphics/PointerTextPanel_BM.png", "gui/console/Graphics/PointerTextPanel_BR.png" };
 
+std::string ScreenRenderer::PANEL_SQUARE_RECESS_SLICES[] = { "gui/console/Graphics/Square_Recess_Top_L.png", "gui/console/Graphics/Square_Recess_Top_M.png", "gui/console/Graphics/Square_Recess_Top_R.png",
+                                                      "gui/console/Graphics/Square_Recess_Mid_L.png", "gui/console/Graphics/Square_Recess_Mid_M.png", "gui/console/Graphics/Square_Recess_Mid_R.png",
+                                                      "gui/console/Graphics/Square_Recess_Bot_L.png", "gui/console/Graphics/Square_Recess_Bot_M.png", "gui/console/Graphics/Square_Recess_Bot_R.png" };
+
 ScreenRenderer::Materials::Materials()
 {
     MATERIAL_PTR(common, ui_textured);
