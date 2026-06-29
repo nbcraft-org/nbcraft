@@ -204,7 +204,7 @@ void Gui::render(float f, bool bHaveScreen, int mouseX, int mouseY)
 	matrix->translate(Vec3(GuiWidth / 2, GuiHeight, 0));
 	if (isConsole)
 	{
-		matrix->translate(Vec3(0, -35, 0));
+		matrix->translate(Vec3(-3, -43, 0));
 		matrix->scale(mc.getOptions()->m_hudSize.get());
 	}
 	if (mc.getLocalPlayerGameMode()->canHurtPlayer())
@@ -523,7 +523,7 @@ void Gui::renderMessages(bool bShowAll)
 		topEdge = 49;
 
 	if (m_pMinecraft->getOptions()->getUiTheme() == UI_CONSOLE)
-		topEdge = GuiHeight - 130 * scale;
+		topEdge = GuiHeight - 123 * scale;
 
 	for (size_t i = 0; i < m_guiMessages.size(); i++)
 	{
@@ -534,7 +534,7 @@ void Gui::renderMessages(bool bShowAll)
 		int bkgdColor = 0x7F000000, textColor = 0xFFFFFFFF;
 
 		if (m_pMinecraft->getOptions()->getUiTheme() == UI_CONSOLE)
-			bkgdColor = 0x59000000;
+			bkgdColor = 0x6B000000;
 
 		float fade = 1.0f;
 
@@ -557,10 +557,10 @@ void Gui::renderMessages(bool bShowAll)
 
 		if (m_pMinecraft->getOptions()->getUiTheme() == UI_CONSOLE)
 		{
-			fill(0, topEdge, GuiWidth, topEdge + 16 * scale, bkgdColor);
-			m_pMinecraft->m_pFont->drawScalableShadow(msg.msg, 30 * scale, topEdge + 5 * scale, textColor, scale);
+			fill(0, topEdge, GuiWidth, topEdge + 17 * scale, bkgdColor);
+			m_pMinecraft->m_pFont->drawScalable(msg.msg, 35 * scale, topEdge + 3 * scale, textColor, scale);
 
-			topEdge -= 16 * scale;
+			topEdge -= 17 * scale;
 		}
 		else
 		{
