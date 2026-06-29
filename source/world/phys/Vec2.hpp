@@ -136,14 +136,12 @@ public:
 
 	bool operator==(const Vec2& b) const
 	{
-		return x == b.x &&
-			y == b.y;
+		return x == b.x && y == b.y;
 	}
 
 	bool operator!=(const Vec2& b) const
 	{
-		return x != b.x &&
-			y != b.y;
+		return x != b.x && y != b.y;
 	}
 };
 

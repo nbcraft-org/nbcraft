@@ -98,13 +98,11 @@ public:
 
 	bool operator==(const Rot2& b) const
 	{
-		return yaw == b.yaw &&
-			pitch == b.pitch;
+		return yaw == b.yaw && pitch == b.pitch;
 	}
 
 	bool operator!=(const Rot2& b) const
 	{
-		return yaw != b.yaw &&
-			pitch != b.pitch;
+		return yaw != b.yaw && pitch != b.pitch;
 	}
 };
