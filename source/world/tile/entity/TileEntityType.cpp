@@ -3,7 +3,7 @@
 #include "ChestTileEntity.hpp"
 #include "MusicTileEntity.hpp"
 // #include "MobSpawnerTileEntity.hpp"
-// #include "DispenserTileEntity.hpp"
+#include "DispenserTileEntity.hpp"
 // #include "SignTileEntity.hpp"
 // #include "RecordPlayerTileEntity.hpp"
 // #include "PistonMovingTileEntity.hpp"
@@ -20,7 +20,7 @@ void TileEntityFactory::initTileEntities()
 	TileEntityType::furnace =       registerTileEntity<FurnaceTileEntity>("Furnace");
 	TileEntityType::chest =         registerTileEntity<ChestTileEntity>("Chest");
     TileEntityType::noteblock =     registerTileEntity<MusicTileEntity>("Music");
-    TileEntityType::dispenser =     registerTileEntity<MusicTileEntity>("Trap");
+    TileEntityType::dispenser =     registerTileEntity<DispenserTileEntity>("Trap");
 }
 
 void TileEntityFactory::teardownTileEntities()
