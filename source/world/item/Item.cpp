@@ -484,7 +484,7 @@ void Item::initItems()
 		->setIcon(7, 6)
 		->setDescriptionId("leather");
 
-	Item::milk = NEW_ITEM(ITEM_BUCKET_MILK)
+	Item::milk = NEW_X_ITEM(BucketItem, ITEM_BUCKET_MILK, TILE_PISTON_MOVING)
 		->setIcon(13, 4)
 		->setDescriptionId("milk")
 		->setMaxStackSize(1)

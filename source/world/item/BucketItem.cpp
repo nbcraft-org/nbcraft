@@ -57,15 +57,18 @@ bool BucketItem::use(ItemStack& item, Level* level, Mob& user) const
 
                 if (level->isEmptyTile(tp) || !level->getMaterial(tp)->isSolid())
                 {
-                    if (level->m_pDimension->m_bUltraWarm && m_content == Tile::water->m_ID)
+                    if (m_content != TILE_PISTON_MOVING) // milk
                     {
-                        level->playSound(headPos + 0.5f, "random.fizz", 0.5f, 2.6f + (level->m_random.nextFloat() - level->m_random.nextFloat()) * 0.8f);
+                        if (level->m_pDimension->m_bUltraWarm && m_content == Tile::water->m_ID)
+                        {
+                            level->playSound(headPos + 0.5f, "random.fizz", 0.5f, 2.6f + (level->m_random.nextFloat() - level->m_random.nextFloat()) * 0.8f);
 
-                        for (int i = 0; i < 8; ++i)
-                            level->addParticle("largesmoke", Vec3(tp.x + Mth::random(), tp.y + Mth::random(), tp.z + Mth::random()));
+                            for (int i = 0; i < 8; ++i)
+                                level->addParticle("largesmoke", Vec3(tp.x + Mth::random(), tp.y + Mth::random(), tp.z + Mth::random()));
+                        }
+                        else
+                            level->setTileAndData(tp, m_content, 0);
                     }
-                    else
-                        level->setTileAndData(tp, m_content, 0);
 
                     if (!player->isCreative())
                         player->m_pInventory->setSelectedItem(Item::bucket_empty);
