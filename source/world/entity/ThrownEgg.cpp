@@ -8,6 +8,8 @@ void ThrownEgg::_init()
 {
     m_pDescriptor = &EntityTypeDescriptor::thrownEgg;
     m_renderType = RENDER_THROWN_EGG;
+    setSize(0.25f, 0.25f);
+
     m_tilePos = TilePos(-1, -1, -1);
 	m_lastTile = 0;
 	m_lastTileData = 0; 
@@ -19,40 +21,43 @@ void ThrownEgg::_init()
 	m_owner = nullptr; 
 }
 
-ThrownEgg::ThrownEgg(Level* pLevel) : Entity(pLevel) 
+ThrownEgg::ThrownEgg(Level* pLevel)
+    : Entity(pLevel) 
 {
 	_init();
-	setSize(0.25f, 0.25f);
 }
 
-ThrownEgg::ThrownEgg(Level* pLevel, Mob* pMob) : Entity(pLevel) 
+ThrownEgg::ThrownEgg(Level* pLevel, Mob* pMob)
+    : Entity(pLevel) 
 {
 	_init();
 
 	m_owner = pMob;
-	setSize(0.25f, 0.25f);
 	m_bIsPlayerOwned = m_owner->isPlayer();
+
 	moveTo(Vec3(pMob->m_pos.x, pMob->m_pos.y + pMob->getHeadHeight(), pMob->m_pos.z), Vec2(pMob->m_rot.y, pMob->m_rot.x));
 
 	m_pos.x -= Mth::cos(m_rot.y / 180.0f * M_PI) * 0.16f;
 	m_pos.y -= 0.1f;
 	m_pos.z -= Mth::sin(m_rot.y / 180.0f * M_PI) * 0.16f;
 	setPos(m_pos);
+
     constexpr float f = 0.4f;
 	m_vel.x = -Mth::sin(m_rot.y / 180.0f * M_PI) * Mth::cos(m_rot.x / 180.0f * M_PI) * f;
 	m_vel.z = Mth::cos(m_rot.y / 180.0f * M_PI) * Mth::cos(m_rot.x / 180.0f * M_PI) * f;
 	m_vel.y = -Mth::sin(m_rot.x / 180.0f * M_PI) * f;
+
 	shoot(m_vel, 1.5f, 1.0f);
 }
 
-ThrownEgg::ThrownEgg(Level* pLevel, const Vec3& pos) 
+ThrownEgg::ThrownEgg(Level* pLevel, const Vec3& pos, bool isPlayerOwned)
+    : Entity(pLevel)
 {
     _init();
 
-	m_life = 0;
-	setSize(0.25f, 0.25f);
-	setPos(m_pos);
-	//eyeHeight = 0.0F;
+	setPos(pos);
+	//eyeHeight = 0.0f;
+    m_bIsPlayerOwned = isPlayerOwned;
 }
 
 void ThrownEgg::shoot(Vec3 vel, float speed, float r)

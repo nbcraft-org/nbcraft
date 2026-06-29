@@ -21,7 +21,7 @@ public:
 public:
 	ThrownEgg(Level* pLevel);
 	ThrownEgg(Level* pLevel, Mob* pMob);
-	ThrownEgg(Level* pLevel, const Vec3& pos);
+	ThrownEgg(Level* pLevel, const Vec3& pos, bool isPlayerOwned = false);
 private:
 	void _lerpMotion(const Vec3& vel);
 	void _lerpMotion2(const Vec3& vel);

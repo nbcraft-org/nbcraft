@@ -108,9 +108,12 @@ void DispenserTile::fireArrow(Level* level, const TilePos& pos, Random* random)
 
 	DispenserTileEntity* var11 = static_cast<DispenserTileEntity*>(level->getTileEntity(pos));
 	ItemStack var12 = var11->removeRandomItem();
-	float var13 = pos.x + var9 * 0.5f + 0.5f;
-	float var15 = pos.y + 0.5f;
-	float var17 = pos.z + var10 * 0.5f + 0.5f;
+	Vec3 exitPos(
+		pos.x + var9 * 0.5f + 0.5f,
+		pos.y + 0.5f,
+		pos.z + var10 * 0.5f + 0.5f
+	);
+
 	if (var12.isEmpty())
 	{
 		level->playSound(pos, "random.click", 1.0f, 1.2f);
@@ -120,28 +123,28 @@ void DispenserTile::fireArrow(Level* level, const TilePos& pos, Random* random)
 	float var20;
 	if (var12.getId() == Item::arrow->m_itemID)
 	{
-		Arrow* var19 = new Arrow(level, Vec3(var13, var15, var17));
+		Arrow* var19 = new Arrow(level, exitPos, true);
 		var19->shoot(var9, 0.1f, var10, 1.1f, 6.0f);
 		level->addEntity(var19);
 		level->playSound(pos, "random.bow", 1.0f, 1.2f);
 	}
 	else if (var12.getId() == Item::egg->m_itemID)
 	{
-		ThrownEgg* var34 = new ThrownEgg(level, Vec3(var13, var15, var17));
+		ThrownEgg* var34 = new ThrownEgg(level, exitPos, true);
 		var34->shoot(var9, 0.1f, var10, 1.1f, 6.0f);
 		level->addEntity(var34);
 		level->playSound(pos, "random.bow", 1.0f, 1.2f);
 	}
 	else if (var12.getId() == Item::snowBall->m_itemID)
 	{
-		Snowball* var35 = new Snowball(level, Vec3(var13, var15, var17));
+		Snowball* var35 = new Snowball(level, exitPos, true);
 		var35->shoot(var9, 0.1f, var10, 1.1f, 6.0f);
 		level->addEntity(var35);
 		level->playSound(pos, "random.bow", 1.0f, 1.2f);
 	}
 	else
 	{
-		ItemEntity* var36 = new ItemEntity(level, Vec3(var13, var15 - 0.3f, var17), var12);
+		ItemEntity* var36 = new ItemEntity(level, Vec3(exitPos.x, exitPos.y - 0.3f, exitPos.z), var12);
 		var20 = random->nextFloat() * 0.1f + 0.2f;
 		var36->m_vel.x = var9 * var20;
 		var36->m_vel.y = 0.2f;
@@ -150,19 +153,25 @@ void DispenserTile::fireArrow(Level* level, const TilePos& pos, Random* random)
 		var36->m_vel.y += random->nextGaussian() * 0.0075f * 6.0f;
 		var36->m_vel.z += random->nextGaussian() * 0.0075f * 6.0f;
 		level->addEntity(var36);
-		level->playSound(pos, "random.click", 1.0f, 1.0f);
+		level->playSound(pos, "random.click");
 	}
 
-	for (int var37 = 0; var37 < 10; ++var37)
+	for (int i = 0; i < 10; i++)
 	{
 		var20 = random->nextFloat() * 0.2f + 0.01f;
-		float var22 = var13 + var9 * 0.01f + (random->nextFloat() - 0.5f) * var10 * 0.5f;
-		float var24 = var15 + (random->nextFloat() - 0.5f) * 0.5f;
-		float var26 = var17 + var10 * 0.01f + (random->nextFloat() - 0.5f) * var9 * 0.5f;
-		float var28 = var9 * var20 + random->nextGaussian() * 0.01f;
-		float var30 = -0.03f + random->nextGaussian() * 0.01f;
-		float var32 = var10 * var20 + random->nextGaussian() * 0.01f;
-		level->addParticle("smoke", Vec3(var22, var24, var26), Vec3(var28, var30, var32));
+
+		Vec3 smokePos = exitPos;
+		smokePos.x += var9 * 0.01f + (random->nextFloat() - 0.5f) * var10 * 0.5f;
+		smokePos.y += (random->nextFloat() - 0.5f) * 0.5f;
+		smokePos.z += var10 * 0.01f + (random->nextFloat() - 0.5f) * var9 * 0.5f;
+
+		Vec3 smokeDir(
+			var9 * var20 + random->nextGaussian() * 0.01f,
+			-0.03f + random->nextGaussian() * 0.01f,
+			var10 * var20 + random->nextGaussian() * 0.01f
+		);
+
+		level->addParticle("smoke", smokePos, smokeDir);
 	}
 }
 

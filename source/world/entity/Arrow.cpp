@@ -22,19 +22,23 @@ void Arrow::_init()
     m_owner = nullptr;
 }
 
-Arrow::Arrow(Level* pLevel) : Entity(pLevel)
+Arrow::Arrow(Level* pLevel)
+    : Entity(pLevel)
 {
     _init();
 }
 
-Arrow::Arrow(Level* pLevel, const Vec3& pos) : Entity(pLevel)
+Arrow::Arrow(Level* pLevel, const Vec3& pos, bool isPlayerOwned)
+    : Entity(pLevel)
 {
     _init();
 
 	setPos(pos);
+    m_bIsPlayerOwned = isPlayerOwned;
 }
 
-Arrow::Arrow(Level* pLevel, Mob* pMob) : Entity(pLevel)
+Arrow::Arrow(Level* pLevel, Mob* pMob)
+    : Entity(pLevel)
 {
     _init();
 

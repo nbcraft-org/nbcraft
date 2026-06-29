@@ -12,7 +12,7 @@ private:
 
 public:
 	Arrow(Level* pLevel);
-	Arrow(Level* pLevel, const Vec3& pos);
+	Arrow(Level* pLevel, const Vec3& pos, bool isPlayerOwned = false);
 	Arrow(Level* pLevel, Mob* pMob);
 
 private:
