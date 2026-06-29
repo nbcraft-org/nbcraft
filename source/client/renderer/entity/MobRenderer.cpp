@@ -12,6 +12,7 @@
 #include "client/app/Minecraft.hpp"
 #include "renderer/ShaderConstants.hpp"
 #include "EntityRenderDispatcher.hpp"
+#include "client/renderer/Lighting.hpp"
 
 MobRenderer::MobRenderer(Model* pModel, float f)
 {
@@ -201,6 +202,8 @@ void MobRenderer::renderNameTag(const Mob& mob, const std::string& str, const Ve
 
 	Font* font = getFont();
 
+	Lighting::turnOff(false);
+
 	MatrixStack::Ref matrix = MatrixStack::World.push();
 	matrix->translate(Vec3(pos.x + 0.0f, pos.y + 2.3f, pos.z));
 
@@ -208,14 +211,14 @@ void MobRenderer::renderNameTag(const Mob& mob, const std::string& str, const Ve
 	matrix->rotate(-m_pDispatcher->m_rot.yaw, Vec3::UNIT_Y);
 	matrix->rotate(+m_pDispatcher->m_rot.pitch, Vec3::UNIT_X);
 	matrix->scale(Vec3(-0.026667f, -0.026667f, 0.026667f));
-	
-	currentShaderColor = Color(0.0f, 0.0f, 0.0f, 0.25f);
-
-	Tesselator& t = Tesselator::instance;
-	t.begin(4);
 
 	int width = font->width(str);
 	float widthHalf = float(width / 2);
+	Tesselator& t = Tesselator::instance;
+
+	currentShaderColor = Color(0.0f, 0.0f, 0.0f, 0.25f);
+
+	t.begin(4);
 
 	t.normal(Vec3::UNIT_Y);
 	t.vertex(-1.0f - widthHalf, -1.0f, 0.0f);
@@ -224,6 +227,36 @@ void MobRenderer::renderNameTag(const Mob& mob, const std::string& str, const Ve
 	t.vertex(widthHalf + 1.0f, -1.0f, 0.0f);
 	t.draw(m_materials.name_tag);
 
+	currentShaderColor = Color(0.0f, 1.0f, 0.0f, 1.0f);
+
+#if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
+	// Maximize Line Width
+	glEnable(GL_LINE_SMOOTH);
+
+	float range[2];
+	glGetFloatv(GL_SMOOTH_LINE_WIDTH_RANGE, range);
+
+	float lineWidth = 2.0f;
+	if (lineWidth > range[1])
+		lineWidth = range[1];
+
+	glLineWidth(lineWidth);
+#endif
+	if (m_pDispatcher->m_pMinecraft->getUiTheme() == UI_CONSOLE)
+	{
+		t.begin(mce::PRIMITIVE_MODE_LINE_STRIP, 5);
+
+		t.normal(Vec3::UNIT_Y);
+		t.vertex(-1.0f - widthHalf, -1.0f, 0.0f);
+		t.vertex(-1.0f - widthHalf, 8.0f, 0.0f);
+		t.vertex(widthHalf + 1.0f, 8.0f, 0.0f);
+		t.vertex(widthHalf + 1.0f, -1.0f, 0.0f);
+		t.vertex(-1.0f - widthHalf, -1.0f, 0.0f);
+		t.draw(m_materials.name_tag);
+	}
+
 	font->draw(str, -font->width(str) / 2, 0, 0x20FFFFFF);
 	font->draw(str, -font->width(str) / 2, 0, 0xFFFFFFFF);
+
+	Lighting::turnOn(false);
 }
