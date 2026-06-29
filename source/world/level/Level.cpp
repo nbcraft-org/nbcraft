@@ -1747,7 +1747,12 @@ void Level::tick(Entity* pEnt, bool shouldTick)
 
 		if (hasChunk(cp))
 		{
-			getChunk(cp)->addEntity(pEnt);
+			LevelChunk* pChunk = getChunk(cp);
+			pChunk->addEntity(pEnt);
+
+			// force the idea that we're in a chunk if we're out-of-bounds
+			if (pChunk->isEmpty())
+				pEnt->m_bInAChunk = true;
 		}
 		else
 		{
