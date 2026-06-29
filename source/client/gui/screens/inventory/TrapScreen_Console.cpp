@@ -18,8 +18,6 @@ void TrapScreen_Console::renderBackground()
 
 void TrapScreen_Console::_renderLabels()
 {
-    TrapMenu* trapMenu = (TrapMenu*)m_pMenu;
-
     m_pFont->drawScalable(CONTAINER_NAME, m_imageWidth / 2 - m_pFont->width(CONTAINER_NAME), 17, Color::TEXT_GREY);
     m_pFont->drawScalable(m_pMinecraft->m_pLocalPlayer->m_pInventory->getName(), 28, 213, Color::TEXT_GREY);
 }
