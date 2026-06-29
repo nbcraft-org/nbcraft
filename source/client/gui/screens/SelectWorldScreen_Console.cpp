@@ -119,7 +119,7 @@ bool SelectWorldScreen_Console::handleBackEvent(bool b)
 
 void SelectWorldScreen_Console::renderPanel(float f)
 {
-	PanelScreen_Console::renderPanel(f);
+	blitNineSlice(*m_pMinecraft->m_pTextures, ScreenRenderer::PANEL_SLICES, m_panel.x, m_panel.y, m_panel.w, m_panel.h, 32);
 	blitNineSlice(*m_pMinecraft->m_pTextures, ScreenRenderer::PANEL_RECESS_SLICES, m_startPanel.x, m_startPanel.y, m_startPanel.w, m_startPanel.h, 16);
 	currentShaderColor.a = 0.5f;
 	blitNineSlice(*m_pMinecraft->m_pTextures, ScreenRenderer::PANEL_RECESS_SLICES, m_joinPanel.x, m_joinPanel.y, m_joinPanel.w, m_joinPanel.h, 16, &m_materials.ui_textured_and_glcolor);

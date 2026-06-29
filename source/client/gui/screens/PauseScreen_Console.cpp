@@ -20,7 +20,7 @@ PauseScreen_Console::PauseScreen_Console() :
 
 void PauseScreen_Console::init()
 {
-	Button* layoutButtons[] = { &m_btnResume, &m_btnLeaderboards, &m_btnAchievements, &m_btnHelpAndOptions, &m_btnSaveGame, &m_btnExitGame };
+	Button* layoutButtons[] = { &m_btnResume, &m_btnHelpAndOptions, &m_btnLeaderboards, &m_btnAchievements, &m_btnSaveGame, &m_btnExitGame };
 
 	int buttonsWidth = 400;
 	int buttonsHeight = 40;
