@@ -185,6 +185,9 @@ cmake "$platformdir/../.." \
     -DNBC_PLATFORM="${NBC_PLATFORM:-windows}" \
     -DNBC_GFX_API="${NBC_GFX_API:-OGL}" \
     -DWERROR="${WERROR:-OFF}" \
+    -DMC_BUILD_COMMIT_SHORT="$BUILD_SHORT_COMMIT" \
+    -DMC_BUILD_COMMIT_BRANCH="$BUILD_BRANCH_NAME" \
+    -DMC_BUILD_DATE="$BUILD_DATE" \
     "$@"
 make -j"$ncpus"
 

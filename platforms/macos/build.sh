@@ -420,6 +420,9 @@ for target in $targets; do
         -DCMAKE_C_FLAGS="$target_cflags" \
         -DCMAKE_CXX_FLAGS="$target_cflags" \
         -DWERROR="${WERROR:-OFF}" \
+        -DMC_BUILD_COMMIT_SHORT="$BUILD_SHORT_COMMIT" \
+        -DMC_BUILD_COMMIT_BRANCH="$BUILD_BRANCH_NAME" \
+        -DMC_BUILD_DATE="$BUILD_DATE" \
         "$@"
     cmake --build . --parallel "$ncpus"
 

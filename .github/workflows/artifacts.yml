@@ -4,6 +4,9 @@ on:
   push:
     branches: [ 'master' ]
 
+env:
+  BUILD_BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
+
 jobs:
     linux:
         strategy:
@@ -41,7 +44,12 @@ jobs:
         steps:
           - name: Get Time
             id: get-time
-            run: echo "time=$(date -u '+%Y-%m-%d-%H:%M:%S')" >> $GITHUB_OUTPUT
+            run: | 
+              echo "time=$(date -u '+%Y-%m-%d-%H:%M:%S')" >> $GITHUB_OUTPUT
+              echo "BUILD_DATE=$(date -u '+%d/$m/$Y %H:%M:%S')" >> $GITHUB_ENV
+          - name: Get Commit Information
+            id: get-commit-info
+            run: echo "BUILD_SHORT_COMMIT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           - uses: actions/cache@v5
             with:
               path: ~/ccache.tar.xz
@@ -73,6 +81,9 @@ jobs:
                     -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
                     -DCMAKE_C_COMPILER_LAUNCHER=ccache \
                     -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+                    -DMC_BUILD_COMMIT_SHORT="${{ env.BUILD_SHORT_COMMIT }}" \
+                    -DMC_BUILD_COMMIT_BRANCH="${{ env.BUILD_BRANCH_NAME }}" \
+                    -DMC_BUILD_DATE="${{ env.BUILD_DATE }}" \
                     ${{ matrix.flags }}
                 cmake --build .
           - uses: actions/upload-artifact@v6
@@ -110,7 +121,12 @@ jobs:
         steps:
           - name: Get Time
             id: get-time
-            run: echo "time=$(date -u '+%Y-%m-%d-%H:%M:%S')" >> $GITHUB_OUTPUT
+            run: | 
+              echo "time=$(date -u '+%Y-%m-%d-%H:%M:%S')" >> $GITHUB_OUTPUT
+              echo "BUILD_DATE=$(date -u '+%d/$m/$Y %H:%M:%S')" >> $GITHUB_ENV
+          - name: Get Commit Information
+            id: get-commit-info
+            run: echo "BUILD_SHORT_COMMIT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           - uses: actions/cache@v5
             with:
               path: ~/ccache.tar.xz
@@ -155,7 +171,12 @@ jobs:
                 submodules: true
           - name: Get Time
             id: get-time
-            run: echo "time=$(date -u '+%Y-%m-%d-%H:%M:%S')" >> $GITHUB_OUTPUT
+            run: | 
+              echo "time=$(date -u '+%Y-%m-%d-%H:%M:%S')" >> $GITHUB_OUTPUT
+              echo "BUILD_DATE=$(date -u '+%d/$m/$Y %H:%M:%S')" >> $GITHUB_ENV
+          - name: Get Commit Information
+            id: get-commit-info
+            run: echo "BUILD_SHORT_COMMIT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           - uses: actions/cache@v5
             with:
               path: ~/ccache.tar.xz
@@ -207,7 +228,12 @@ jobs:
                 submodules: true
           - name: Get Time
             id: get-time
-            run: echo "time=$(date -u '+%Y-%m-%d-%H:%M:%S')" >> $GITHUB_OUTPUT
+            run: | 
+              echo "time=$(date -u '+%Y-%m-%d-%H:%M:%S')" >> $GITHUB_OUTPUT
+              echo "BUILD_DATE=$(date -u '+%d/$m/$Y %H:%M:%S')" >> $GITHUB_ENV
+          - name: Get Commit Information
+            id: get-commit-info
+            run: echo "BUILD_SHORT_COMMIT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           - uses: actions/cache@v5
             with:
               path: ~/ccache.tar.xz
@@ -265,7 +291,12 @@ jobs:
         steps:
           - name: Get Time
             id: get-time
-            run: echo "time=$(date -u '+%Y-%m-%d-%H:%M:%S')" >> $GITHUB_OUTPUT
+            run: | 
+              echo "time=$(date -u '+%Y-%m-%d-%H:%M:%S')" >> $GITHUB_OUTPUT
+              echo "BUILD_DATE=$(date -u '+%d/$m/$Y %H:%M:%S')" >> $GITHUB_ENV
+          - name: Get Commit Information
+            id: get-commit-info
+            run: echo "BUILD_SHORT_COMMIT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           - uses: actions/cache@v5
             with:
               path: ~/ccache.tar.xz
@@ -346,7 +377,12 @@ jobs:
                 submodules: true
           - name: Get Time
             id: get-time
-            run: echo "time=$(date -u '+%Y-%m-%d-%H:%M:%S')" >> $GITHUB_OUTPUT
+            run: | 
+              echo "time=$(date -u '+%Y-%m-%d-%H:%M:%S')" >> $GITHUB_OUTPUT
+              echo "BUILD_DATE=$(date -u '+%d/$m/$Y %H:%M:%S')" >> $GITHUB_ENV
+          - name: Get Commit Information
+            id: get-commit-info
+            run: echo "BUILD_SHORT_COMMIT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           - uses: actions/cache@v5
             with:
               path: ~/ccache.tar.xz
@@ -392,7 +428,12 @@ jobs:
         steps:
           - name: Get Time
             id: get-time
-            run: echo "time=$(date -u '+%Y-%m-%d-%H:%M:%S')" >> $GITHUB_OUTPUT
+            run: | 
+              echo "time=$(date -u '+%Y-%m-%d-%H:%M:%S')" >> $GITHUB_OUTPUT
+              echo "BUILD_DATE=$(date -u '+%d/$m/$Y %H:%M:%S')" >> $GITHUB_ENV
+          - name: Get Commit Information
+            id: get-commit-info
+            run: echo "BUILD_SHORT_COMMIT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           - uses: actions/cache@v5
             with:
               path: ~/ccache.tar.xz
@@ -414,7 +455,10 @@ jobs:
                     -DCMAKE_BUILD_TYPE=Release \
                     -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
                     -DCMAKE_C_COMPILER_LAUNCHER=ccache \
-                    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+                    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+                    -DMC_BUILD_COMMIT_SHORT="${{ env.BUILD_SHORT_COMMIT }}" \
+                    -DMC_BUILD_COMMIT_BRANCH="${{ env.BUILD_BRANCH_NAME }}" \
+                    -DMC_BUILD_DATE="${{ env.BUILD_DATE }}" \
                 /opt/devkitpro/portlibs/switch/bin/aarch64-none-elf-cmake --build .
                 mv platforms/sdl/sdl2/nbcraft.nro .
           - uses: actions/upload-artifact@v6
