@@ -34,8 +34,9 @@ void ControllerMoveInput::tick(Player* player)
         m_keys[INPUT_BACKWARD] = field_21;
     //}
 //LABEL_3:
-    if (player->isInWater() && GameControllerManager::isTouched(1))
-        m_bJumping = true;
+    // I don't really know why this was here, but it came from an old PE version
+    //if (player->isInWater() && GameControllerManager::isTouched(1))
+    //    m_bJumping = true;
     m_bFlyUp = m_bJumping;
     m_keys[INPUT_LEFT] = m_keys[INPUT_FORWARD] || m_keys[INPUT_BACKWARD];
     if (m_keys[INPUT_LEFT])
