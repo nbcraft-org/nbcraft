@@ -137,7 +137,7 @@ void MobRenderer::render(const Entity& entity, const Vec3& pos, float rot, float
 		additionalRendering(mob, a);
 
 		Color overlayColor = getOverlayColor(mob, a);
-		if (overlayColor.a > 0)
+		if (overlayColor.a > 0.0f)
 		{
 			currentShaderColor = overlayColor;
 			mce::MaterialPtr* pMaterial = m_pModel->m_pMaterial;

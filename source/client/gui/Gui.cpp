@@ -346,6 +346,7 @@ void Gui::renderAnimatedCharacter(int x, int y, float partialTick)
 	float oldShadowRadius = renderer->m_shadowRadius;
 	renderer->m_shadowRadius = 0.0f;
 	player->m_minBrightness = 1.0f;
+	currentShaderColor = Color::WHITE;
 	EntityRenderDispatcher::instance->m_rot.y = 180;
 	EntityRenderDispatcher::instance->render(*player, Vec3::ZERO, 0.0f, 1.0f);
 	player->m_minBrightness = 0.0f;
