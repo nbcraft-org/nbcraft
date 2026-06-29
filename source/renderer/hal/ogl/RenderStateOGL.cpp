@@ -7,6 +7,7 @@ using namespace mce;
 RenderStateOGL::RenderStateOGL()
 {
     m_bTexture = false;
+    m_bRescaleNormals = false;
 }
 
 void RenderStateOGL::createRenderState(RenderContext& context, const RenderStateDescription& desc)
@@ -14,6 +15,7 @@ void RenderStateOGL::createRenderState(RenderContext& context, const RenderState
     RenderStateBase::createRenderState(context, desc);
 
     m_bTexture = desc.enableTexture;
+    m_bRescaleNormals = desc.rescaleNormals;
 
     if (!context.m_currentState.m_bBoundRenderState)
     {
@@ -32,6 +34,13 @@ bool RenderStateOGL::bindRenderState(RenderContext& context, bool forceBind)
         if (m_bTexture) glEnable(GL_TEXTURE_2D);
         else            glDisable(GL_TEXTURE_2D);
         ctxDesc.enableTexture = m_description.enableTexture;
+    }
+
+    if (forceBind || ctxDesc.rescaleNormals != m_description.rescaleNormals)
+    {
+        if (m_bRescaleNormals) glEnable(GL_RESCALE_NORMAL);
+        else                   glDisable(GL_RESCALE_NORMAL);
+        ctxDesc.rescaleNormals = m_description.rescaleNormals;
     }
 
     return RenderStateBase::bindRenderState(context);

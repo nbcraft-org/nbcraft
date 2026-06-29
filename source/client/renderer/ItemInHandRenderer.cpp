@@ -60,9 +60,6 @@ void ItemInHandRenderer::render(float a)
         matrix->rotate(pLP->m_oRot.x + (pLP->m_rot.x - pLP->m_oRot.x) * a, Vec3::UNIT_Y);
 
         Lighting::turnOn(matrix);
-#if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
-        glEnable(GL_RESCALE_NORMAL);
-#endif
     }
 #endif
 
@@ -136,9 +133,6 @@ void ItemInHandRenderer::render(float a)
         pRenderer->renderHand(*pLP, a);
 	}
 
-#if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
-    glDisable(GL_RESCALE_NORMAL);
-#endif
 	Lighting::turnOff();
 }
 

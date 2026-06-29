@@ -20,6 +20,7 @@ namespace mce
         m["EnableStencilTest"] = RS_ENABLE_STENCIL_TEST;
         m["EnableAlphaTest"] = RS_ENABLE_ALPHA_TEST;
         m["Textured"] = RS_ENABLE_TEXTURE;
+        m["RescaleNormals"] = RS_RESCALE_NORMALS;
         return m;
     }
     const std::map<std::string, RenderStateType> _renderStateTypeMap = _CreateRenderStateTypeMap();

@@ -1,6 +1,6 @@
 {
 	"entity_static": {
-		"states":["Textured"],
+		"states":["Textured","RescaleNormals"],
 		"vertexShader" : "shaders/entity.vertex",
 		"fragmentShader" : "shaders/entity.fragment"
 	},

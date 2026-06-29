@@ -22,10 +22,6 @@ void FishingHookRenderer::render(const Entity& entity, const Vec3& pos, float ro
 
 		matrix->translate(pos);
 
-#if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
-		glEnable(GL_RESCALE_NORMAL);
-#endif
-
 		matrix->scale(0.5f);
 		constexpr int xi = 1;
 		constexpr int yi = 2;
@@ -48,10 +44,6 @@ void FishingHookRenderer::render(const Entity& entity, const Vec3& pos, float ro
 		t.vertexUV(r - xo, 1.0f - yo, 0.0f, texU_2, texV_1);
 		t.vertexUV(0.0f - xo, 1.0f - yo, 0.0f, texU_1, texV_1);
 		t.draw(m_shaderMaterials.entity_alphatest);
-
-#if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
-		glDisable(GL_RESCALE_NORMAL);
-#endif
 	}
 
 	if (hook.m_owner)

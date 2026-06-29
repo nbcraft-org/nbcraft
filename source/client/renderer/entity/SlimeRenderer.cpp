@@ -10,19 +10,6 @@ SlimeRenderer::~SlimeRenderer()
 {
 }
 
-void SlimeRenderer::render(const Entity& entity, const Vec3& pos, float rot, float a)
-{
-#if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
-    glEnable(GL_RESCALE_NORMAL);
-#endif
-
-    MobRenderer::render(entity, pos, rot, a);
-
-#if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
-    glDisable(GL_RESCALE_NORMAL);
-#endif
-}
-
 int SlimeRenderer::prepareArmor(const Mob& mob, int layer, float a)
 {
     if (layer == 0)

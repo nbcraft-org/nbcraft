@@ -7,6 +7,7 @@ namespace mce
 	struct RenderStateDescription
 	{
 		bool enableTexture;
+		bool rescaleNormals;
 
 		RenderStateDescription();
 
