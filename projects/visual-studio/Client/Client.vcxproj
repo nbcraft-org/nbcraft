@@ -287,6 +287,8 @@
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\ClientCraftContext.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\CraftingScreen_Console.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\TrapScreen_Console.hpp" />
+    <ClInclude Include="..\..\..\source\client\gui\screens\AutosaveWarningScreen_Console.hpp" />
+    <ClInclude Include="..\..\..\source\client\gui\screens\LoadSaveScreen_Console.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\client\app\App.cpp" />
@@ -492,6 +494,8 @@
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\ClientCraftContext.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\CraftingScreen_Console.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\TrapScreen_Console.cpp" />
+    <ClCompile Include="..\..\..\source\client\gui\screens\AutosaveWarningScreen_Console.cpp" />
+    <ClCompile Include="..\..\..\source\client\gui\screens\LoadSaveScreen_Console.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">

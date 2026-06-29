@@ -14,6 +14,7 @@
 #include "client/player/input/GameControllerHandler.hpp"
 #include "client/player/input/Multitouch.hpp"
 #include "client/gui/screens/StartMenuScreen.hpp"
+#include "client/gui/screens/AutosaveWarningScreen_Console.hpp"
 #include "client/renderer/FoliageColor.hpp"
 #include "client/renderer/GrassColor.hpp"
 #include "client/renderer/Lighting.hpp"
@@ -223,7 +224,15 @@ void NinecraftApp::_initAll()
 
 	field_D9C = 0;
 
-	gotoMainMenu();
+	if (getOptions()->getUiTheme() == UI_CONSOLE)
+	{
+		setScreen(new AutosaveWarningScreen_Console(m_pScreen));
+	}
+	else
+	{
+		gotoMainMenu();
+	}
+
 	LogoRenderer::singleton().build(Gui::GuiWidth);
 }
 
