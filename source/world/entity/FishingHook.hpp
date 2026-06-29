@@ -20,13 +20,13 @@ private:
 	void _lerpMotion2(const Vec3& vel);
 
 public:
-	bool shouldRenderAtSqrDistance(float distSqr) const;
+	bool shouldRenderAtSqrDistance(float distSqr) const override;
 	void shoot(float x, float y, float z, float speed, float r) { shoot(Vec3(x, y, z), speed, r); };
 	void shoot(Vec3 pos, float speed, float r);
 
 	void lerpTo(const Vec3& pos, const Vec2& rot, int steps) override;
 	void lerpMotion(float x, float y, float z) { lerpMotion(Vec3(x, y, z)); };
-	void lerpMotion(const Vec3& vel);
+	void lerpMotion(const Vec3& vel) override;
 
 	void tick() override;
 	void remove() override;

@@ -17,6 +17,6 @@ public:
     void pushCreativeScreen(Player*) override;
     void pushCreateWorldScreen(Screen*) override;
     void pushCraftingScreen(Player*, const TilePos&) override;
-    void pushTrapScreen(Player*, DispenserTileEntity*);
+    void pushTrapScreen(Player*, DispenserTileEntity*) override;
     void pushDeathScreen() override;
 };

@@ -37,7 +37,7 @@ public:
     void startNavigation();
     bool areaNavigation(Minecraft*, AreaNavigation::Direction) override;
     void areaNavigation(AreaNavigation::Direction, bool cyclic = false);
-    void setSelected(bool);
+    void setSelected(bool) override;
     
     bool handleScroll(bool up);
     void handleScroll(float) override;
