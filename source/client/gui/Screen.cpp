@@ -900,7 +900,10 @@ void Screen::renderBackground(int vo)
 	{
 		// draw the background offset by the Y offset so that the smaller virtual
 		// keyboards don't reveal undrawn areas
-		fillGradient(0, m_yOffset, m_width, m_height, Color(16, 16, 16, 192), Color(16, 16, 16, 208)); // 0xC0101010, 0xD0101010
+		if (m_uiTheme == UI_CONSOLE)
+			fillGradient(0, m_yOffset, m_width, m_height, Color(16, 16, 16, 100), Color(16, 16, 16, 112)); // 0x64101010, 0x70101010
+		else
+			fillGradient(0, m_yOffset, m_width, m_height, Color(16, 16, 16, 192), Color(16, 16, 16, 208)); // 0xC0101010, 0xD0101010
 	}
 	else
 	{

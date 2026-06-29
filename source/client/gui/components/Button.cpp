@@ -40,8 +40,6 @@ void Button::_renderBgConsole(Minecraft* mc, const MenuPointer& pointer)
 {
 	Textures& texs = *mc->m_pTextures;
 
-	if (!isEnabled())
-		currentShaderColor.a *= 0.5f;
 	blitSprite(texs, isSelected() && !hasFocus() ? "gui/console/Graphics/MainMenuButton_Over.png" : "gui/console/Graphics/MainMenuButton_Norm.png", m_xPos, m_yPos, m_width, m_height, &m_materials.ui_textured_and_glcolor);
 	if (hasFocus())
 	{
@@ -80,10 +78,10 @@ void Button::_renderMessageConsole(Font& font)
 		textColor = Color(224, 224, 224); // 0xE0E0E0U
 
 	if (!isEnabled())
-		textColor.a *= 0.5f;
+		textColor = Color(167, 167, 167);
 
 	int textWidth = font.width(getMessage()) * 2;
-	font.drawScalableShadow(getMessage(), m_xPos + (m_width - textWidth) / 2, m_yPos + (m_height - 16) / 2, textColor);
+	font.drawScalableShadow(getMessage(), (m_xPos + (m_width - textWidth) / 2) + 2, (m_yPos + (m_height - 16) / 2) + 1, textColor);
 }
 
 Button::Button(int x, int y, int width, int height, const std::string& text)

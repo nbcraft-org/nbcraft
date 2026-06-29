@@ -42,6 +42,8 @@ void Font::init(Options* pOpts)
 		if (i == 32) // space
 		{
 			widthMax = 2;
+			if (m_pOptions->getUiTheme() == UI_CONSOLE)
+				widthMax = 4;
 		}
 		else
 		{
