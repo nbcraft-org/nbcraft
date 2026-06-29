@@ -46,25 +46,46 @@ void FenceGateTile::setPlacedBy(Level* pLevel, const TilePos& pos, Mob* mob)
 
 bool FenceGateTile::use(Level* pLevel, const TilePos& pos, Player* player)
 {
-    int i = pLevel->getData(pos);
-    if (isOpen(i)) {
-        pLevel->setData(pos, i & C_CLOSE_MASK);
-    }
-    else {
-        int j = (Mth::floor(player->m_rot.yaw * 4.0f / 360.0f + 0.5) & 3) % 4;
-        int k = getDir(i);
-        if (k == (j + 2) % 4) {
-            i = j;
-        }
-
-        pLevel->setData(pos, i | C_OPEN_BIT);
-    }
-
-    pLevel->levelEvent(LevelEvent(LevelEvent::SOUND_DOOR, pos, 0, player));
+    setOpen(pLevel, pos, !isOpen(pLevel->getData(pos)), player);
     return true;
 }
 
-int FenceGateTile::getDir(TileData data) const
+void FenceGateTile::setOpen(Level* pLevel, const TilePos& pos, bool bOpen, Player* player)
 {
-    return data & C_DIR_MASK;
+    int data = pLevel->getData(pos);
+
+    if (isOpen(data) == bOpen)
+        return;
+
+    if (!bOpen)
+    {
+        pLevel->setData(pos, data & C_CLOSE_MASK);
+    }
+    else
+    {
+        int j = 1;
+
+        if (player)
+            j = (Mth::floor(player->m_rot.yaw * 4.0f / 360.0f + 0.5) & 3) % 4;
+
+        int k = getDir(data);
+        if (k == (j + 2) % 4)
+            data = j;
+
+        pLevel->setData(pos, data | C_OPEN_BIT);
+    }
+
+    pLevel->levelEvent(LevelEvent(LevelEvent::SOUND_DOOR, pos, 0, player));
+}
+
+void FenceGateTile::neighborChanged(Level* level, const TilePos& pos, TileID newTile)
+{
+	if (newTile > 0 && Tile::tiles[newTile]->isSignalSource())
+	{
+		bool bOpen = false;
+		if (level->hasNeighborSignal(pos) || level->hasNeighborSignal(pos.above()))
+			bOpen = true;
+
+		setOpen(level, pos, bOpen);
+	}
 }

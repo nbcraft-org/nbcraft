@@ -207,12 +207,9 @@ bool LiquidTile::isSolidRender() const
 	return false;
 }
 
-bool LiquidTile::mayPick(TileData data, bool b) const
+bool LiquidTile::mayPick(TileData data, bool includeLiquid) const
 {
-	if (!b)
-		return false;
-
-	return data == 0;
+	return includeLiquid && data == 0;
 }
 
 void LiquidTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)

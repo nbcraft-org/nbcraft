@@ -1747,7 +1747,12 @@ void Level::tick(Entity* pEnt, bool shouldTick)
 
 		if (hasChunk(cp))
 		{
-			getChunk(cp)->addEntity(pEnt);
+			LevelChunk* pChunk = getChunk(cp);
+			pChunk->addEntity(pEnt);
+
+			// force the idea that we're in a chunk if we're out-of-bounds
+			if (pChunk->isEmpty())
+				pEnt->m_bInAChunk = true;
 		}
 		else
 		{
@@ -1879,7 +1884,7 @@ void Level::tickEntities()
 	m_bUpdatingTileEntities = false;
 }
 
-HitResult Level::clip(Vec3 v1, Vec3 v2, bool flag) const
+HitResult Level::clip(Vec3 v1, Vec3 v2, bool includeLiquid, bool includeInvisible) const
 {
 	TilePos tp1(v1), tp2(v2);
 	int counter = 200;
@@ -1965,7 +1970,7 @@ HitResult Level::clip(Vec3 v1, Vec3 v2, bool flag) const
 		int    data = getData(tp1);
 		Tile* pTile = Tile::tiles[tile];
 
-		if (tile > 0 && pTile->mayPick(data, flag))
+		if (tile > 0 && ((includeInvisible && tile == Tile::invisible_bedrock->m_ID) || pTile->mayPick(data, includeLiquid)))
 		{
 			HitResult hr = pTile->clip(this, tp1, v1, v2);
 			if (hr.isHit())
@@ -1974,11 +1979,6 @@ HitResult Level::clip(Vec3 v1, Vec3 v2, bool flag) const
 	}
 
 	return HitResult();
-}
-
-HitResult Level::clip(const Vec3& a, const Vec3& b) const
-{
-	return clip(a, b, false);
 }
 
 void Level::addToTickNextTick(const TilePos& tilePos, int d, int delay)
@@ -2039,6 +2039,15 @@ void Level::playSound(const Vec3& pos, const std::string& name, float a, float b
 	{
 		LevelListener* pListener = *it;
 		pListener->playSound(name, pos, a, b);
+	}
+}
+
+void Level::playStreamingMusic(const std::string& name, const TilePos& pos)
+{
+	for (std::vector<LevelListener*>::iterator it = m_levelListeners.begin(); it != m_levelListeners.end(); it++)
+	{
+		LevelListener* pListener = *it;
+		pListener->playStreamingMusic(name, pos);
 	}
 }
 

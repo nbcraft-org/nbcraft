@@ -27,27 +27,7 @@ bool DoorTile::use(Level* level, const TilePos& pos, Player* player)
 	if (m_pMaterial == Material::metal)
 		return true;
 
-	TileData data = level->getData(pos);
-
-	// if we're the top tile
-	if (data & 8)
-	{
-		if (level->getTile(pos.below()) == m_ID)
-			use(level, pos.below(), player);
-	}
-	else
-	{
-		data ^= 4;
-		if (level->getTile(pos.above()) == m_ID)
-			level->setData(pos.above(), data + 8);
-
-		level->setData(pos, data);
-
-		// @BUG: marking the wrong tiles as dirty? No problem because setData sends an update immediately anyways
-		level->setTilesDirty(pos.below(), pos);
-
-		level->levelEvent(LevelEvent(LevelEvent::SOUND_DOOR, pos, 0, player));
-	}
+	setOpen(level, pos, !isOpen(level->getData(pos)), player);
 
 	return true;
 }
@@ -171,7 +151,7 @@ void DoorTile::updateShape(const LevelSource* level, const TilePos& pos)
 	setShape(getDir(level->getData(pos)));
 }
 
-void DoorTile::setOpen(Level* level, const TilePos& pos, bool bOpen)
+void DoorTile::setOpen(Level* level, const TilePos& pos, bool bOpen, Player* player)
 {
 	TileData data = level->getData(pos);
 	if (isTop(data))
@@ -183,19 +163,16 @@ void DoorTile::setOpen(Level* level, const TilePos& pos, bool bOpen)
 
 	if (isOpen(level->getData(pos)) != bOpen)
 	{
-		if (level->getTile(pos.above()) == m_ID)
-			level->setData(pos.above(), (data ^ 4) + 8);
+		data ^= 4;
 
-		level->setData(pos, data ^ 4);
+		if (level->getTile(pos.above()) == m_ID)
+			level->setData(pos.above(), data + 8);
+
+		level->setData(pos, data);
+		// @BUG: marking the wrong tiles as dirty? No problem because setData sends an update immediately anyways
 		level->setTilesDirty(pos.below(), pos);
 
-		std::string snd;
-		if (Mth::random() < 0.5f)
-			snd = "random.door_open";
-		else
-			snd = "random.door_close";
-
-		level->playSound(Vec3(pos) + 0.5f, snd, 1.0f, 0.9f + 0.1f * level->m_random.nextFloat());
+		level->levelEvent(LevelEvent(LevelEvent::SOUND_DOOR, pos, 0, player));
 	}
 }
 

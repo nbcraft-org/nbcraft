@@ -247,11 +247,8 @@ void Mob::baseTick()
     if (isAlive() && isInWall())
         hurt(nullptr, 1);
 
-    // @PARITY-JAVA: From Java
-    /*if (m_bFireImmune || m_pLevel->m_bIsClientSide)
-    {
-        m_fireTicks = 0;
-    }*/
+	// @PARITY-JAVA: From Java
+    //m_fireTicks = 0;
 
 
     if (isAlive() && isUnderLiquid(Material::water) && !isWaterMob())
@@ -587,7 +584,7 @@ HitResult Mob::pick(float f1, float f2)
 	Vec3 view = getViewVector(f2);
 
 	Vec3 limit = pos + view * f1;
-	return m_pLevel->clip(pos, limit);
+	return m_pLevel->clip(pos, limit, false, false);
 }
 
 void Mob::travel(const Vec2& pos)

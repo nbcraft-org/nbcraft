@@ -228,6 +228,7 @@ void RenderMaterial::_applyRenderStates()
     m_depthStencilStateDescription.stencilTestEnabled = hasState(RS_ENABLE_STENCIL_TEST);
     m_blendStateDescription.enableBlend = hasState(RS_BLENDING);
     m_renderStateDescription.enableTexture = hasState(RS_ENABLE_TEXTURE);
+    m_renderStateDescription.rescaleNormals = hasState(RS_RESCALE_NORMALS);
     m_alphaStateDescription.enableAlphaTest = hasState(RS_ENABLE_ALPHA_TEST);
 
     float polygonOffsetLevel = 0.0f;

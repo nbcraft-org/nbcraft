@@ -168,6 +168,7 @@ public:
 	void addParticle(const std::string& name, const Vec3& pos, const Vec3& dir = Vec3::ZERO);
 	void playSound(Entity*, const std::string& name, float volume = 1.0f, float pitch = 1.0f);
 	void playSound(const Vec3& pos, const std::string& name, float volume = 1.0f, float pitch = 1.0f);
+	void playStreamingMusic(const std::string& name, const TilePos& pos);
 	void animateTick(const TilePos& pos);
 	float getSeenPercent(Vec3, AABB) const;
 	void explode(Entity*, const Vec3& pos, float power);
@@ -182,8 +183,7 @@ public:
 	float getSunAngle(float f) const;
 	void swap(const TilePos& pos1, const TilePos& pos2);
 
-	HitResult clip(const Vec3& a, const Vec3& b) const;
-	HitResult clip(Vec3 a, Vec3 b, bool c) const;
+	HitResult clip(Vec3 a, Vec3 b, bool includeLiquid = false, bool includeInvisible = true) const;
 	Entity* getEntity(Entity::ID id) const;
 	unsigned int getEntityCount(const EntityCategories&) const;
 	const EntityMap* getAllEntities() const;

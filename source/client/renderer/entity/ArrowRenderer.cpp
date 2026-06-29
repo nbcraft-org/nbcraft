@@ -63,7 +63,7 @@ void ArrowRenderer::onAppSuspended()
 
 void ArrowRenderer::render(const Entity& entity, const Vec3& pos, float rot, float a)
 {
-    const Arrow& arrow = reinterpret_cast<const Arrow&>(entity);
+    const Arrow& arrow = static_cast<const Arrow&>(entity);
 
     if (!m_mesh.isValid())
         _buildMesh();

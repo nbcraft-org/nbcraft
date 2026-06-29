@@ -8,7 +8,7 @@ MobCategory MobCategory::waterCreature = MobCategory(EntityCategories(EntityCate
 const MobCategory* MobCategory::all[] = {
 	&MobCategory::monster,
 	&MobCategory::creature,
-	// &MobCategory::waterCreature
+	&MobCategory::waterCreature
 };
 const unsigned int MobCategory::allCount = sizeof(MobCategory::all) / sizeof(MobCategory*);
 

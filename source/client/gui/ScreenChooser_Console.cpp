@@ -6,6 +6,7 @@
 #include "screens/inventory/CreativeScreen_Console.hpp"
 #include "screens/inventory/CraftingScreen_Console.hpp"
 #include "screens/inventory/ClassicCraftingScreen_Console.hpp"
+#include "screens/inventory/TrapScreen_Console.hpp"
 #include "screens/OptionsScreen_Console.hpp"
 #include "screens/CreateWorldScreen_Console.hpp"
 #include "screens/ProgressScreen_Console.hpp"
@@ -63,6 +64,11 @@ void ScreenChooser_Console::pushCraftingScreen(Player* player, const TilePos& po
 		m_pMinecraft->setScreen(new ClassicCraftingScreen_Console(player->m_pInventory, pos, player->m_pLevel));
 	else
 		m_pMinecraft->setScreen(new CraftingScreen_Console(player->m_pInventory, pos, player->m_pLevel, false));
+}
+
+void ScreenChooser_Console::pushTrapScreen(Player* player, DispenserTileEntity* dispenser)
+{
+	m_pMinecraft->setScreen(new TrapScreen_Console(player->m_pInventory, dispenser));
 }
 
 void ScreenChooser_Console::pushDeathScreen()

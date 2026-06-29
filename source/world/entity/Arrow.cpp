@@ -22,19 +22,23 @@ void Arrow::_init()
     m_owner = nullptr;
 }
 
-Arrow::Arrow(Level* pLevel) : Entity(pLevel)
+Arrow::Arrow(Level* pLevel)
+    : Entity(pLevel)
 {
     _init();
 }
 
-Arrow::Arrow(Level* pLevel, const Vec3& pos) : Entity(pLevel)
+Arrow::Arrow(Level* pLevel, const Vec3& pos, bool isPlayerOwned)
+    : Entity(pLevel)
 {
     _init();
 
 	setPos(pos);
+    m_bIsPlayerOwned = isPlayerOwned;
 }
 
-Arrow::Arrow(Level* pLevel, Mob* pMob) : Entity(pLevel)
+Arrow::Arrow(Level* pLevel, Mob* pMob)
+    : Entity(pLevel)
 {
     _init();
 
@@ -194,7 +198,7 @@ void Arrow::tick()
     }
 
     m_pos += m_vel;
-    float var17 = m_vel.length();
+    float var17 = Vec2(m_vel.x, m_vel.z).length();
     m_rot.pitch = Mth::atan2(m_vel.x, m_vel.z) * 180.0f / M_PI;
 
     for (m_rot.yaw = Mth::atan2(m_vel.y, var17) * 180.0f / M_PI; m_rot.yaw - m_oRot.yaw < -180.0f; m_oRot.yaw -= 360.0f);

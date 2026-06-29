@@ -14,6 +14,7 @@
 #include "client/gui/screens/inventory/CraftingScreen.hpp"
 #include "client/gui/screens/inventory/ChestScreen.hpp"
 #include "client/gui/screens/inventory/FurnaceScreen.hpp"
+#include "client/gui/screens/inventory/TrapScreen.hpp"
 
 int dword_250ADC, dword_250AE0;
 
@@ -171,12 +172,12 @@ void LocalPlayer::closeContainer()
 	m_pMinecraft->setScreen(nullptr);
 }
 
-/*void LocalPlayer::openTrap(DispenserTileEntity* tileEntity)
+void LocalPlayer::openTrap(DispenserTileEntity* tileEntity)
 {
-	m_pMinecraft->setScreen(new TrapScreen(m_pInventory, tileEntity));
+	m_pMinecraft->getScreenChooser()->pushTrapScreen(this, tileEntity);
 
 	Player::openTrap(tileEntity);
-}*/
+}
 
 /*void LocalPlayer::openTextEdit(SignTileEntity* tileEntity)
 {

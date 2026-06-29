@@ -14,6 +14,8 @@
 #include "renderer/ShaderConstants.hpp"
 #include "Lighting.hpp"
 
+ItemStack ItemInHandRenderer::stick;
+
 ItemInHandRenderer::Materials::Materials()
 {
     MATERIAL_PTR(switchable, entity);
@@ -76,11 +78,11 @@ void ItemInHandRenderer::render(float a)
 	currentShaderDarkColor = Color(fBright, fBright, fBright);
 
 	ItemStack* pItem = &m_selectedItem;
-	/*if (pLP->m_fishing != null)
+	if (pLP->m_pFishing)
     {
-        // We shouldn't do this, make this static or something
-		pItem = new ItemStack(Item::stick);
-	}*/
+        if (stick.isEmpty()) stick = ItemStack(Item::stick);
+		pItem = &stick;
+	}
     
     float swing2, swing3;
     float fAnim = pLP->getAttackAnim(a);
@@ -92,10 +94,6 @@ void ItemInHandRenderer::render(float a)
         matrix->translate(Vec3(-0.4f * Mth::sin(float(M_PI) * Mth::sqrt(fAnim)), 0.2f * Mth::sin(2.0f * float(M_PI) * Mth::sqrt(fAnim)), -0.2f * Mth::sin(float(M_PI) * fAnim)));
         matrix->translate(Vec3(0.7f * d, -0.65f * d - (1.0f - h) * 0.6f, -0.9f * d));
         matrix->rotate(45.0f, Vec3::UNIT_Y);
-
-#if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
-        glEnable(GL_RESCALE_NORMAL);
-#endif
 
         swing3 = Mth::sin(float(M_PI) * fAnim * fAnim);
         swing2 = Mth::sin(float(M_PI) * Mth::sqrt(fAnim));
@@ -117,9 +115,6 @@ void ItemInHandRenderer::render(float a)
         matrix->translate(Vec3(-0.3f * Mth::sin(float(M_PI) * Mth::sqrt(fAnim)), 0.4f * Mth::sin(2.0f * float(M_PI) * Mth::sqrt(fAnim)), -0.4f * Mth::sin(float(M_PI) * fAnim)));
         matrix->translate(Vec3(0.8f * d, -0.75f * d - (1.0f - h) * 0.6f, -0.9f * d));
         matrix->rotate(45.0f, Vec3::UNIT_Y);
-#if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
-        glEnable(GL_RESCALE_NORMAL);
-#endif
 
         matrix->rotate(Mth::sin(float(M_PI) * Mth::sqrt(fAnim)) * 70.0f, Vec3::UNIT_Y);
         matrix->rotate(Mth::sin(float(M_PI) * fAnim * fAnim) * -20.0f, Vec3::UNIT_Z);
@@ -138,9 +133,6 @@ void ItemInHandRenderer::render(float a)
         pRenderer->renderHand(*pLP, a);
 	}
 
-#if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
-    glDisable(GL_RESCALE_NORMAL);
-#endif
 	Lighting::turnOff();
 }
 

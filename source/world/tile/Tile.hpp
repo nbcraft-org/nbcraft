@@ -76,7 +76,7 @@ public: // virtual functions
 	virtual AABB getTileAABB(const Level*, const TilePos& pos);
 	virtual bool isSolidRender() const;
 	virtual bool mayPick() const;
-	virtual bool mayPick(TileData, bool) const;
+	virtual bool mayPick(TileData, bool includeLiquid) const;
 	virtual bool hasTileEntity() const;
 	virtual bool mayPlace(const Level*, const TilePos& pos) const;
 	virtual int getTickDelay() const;
@@ -244,12 +244,23 @@ public: // static variables
 		* web,
 		* fence,
 		* fenceGate,
+		* redStoneDust,
+		* lever,
+		* pressurePlate_stone,
+		* pressurePlate_wood,
+		* notGate_off,
+		* notGate_on,
+		* button,
+		* diode_off,
+		* diode_on,
 		* craftingTable,
 		* crops,
 		* furnace,
 		* furnaceLit,
 		* musicBlock,
 		* chest,
+		* dispenser,
+		* recordPlayer,
 		* cake,
 		* trapDoor;
 

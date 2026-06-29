@@ -1486,7 +1486,23 @@ void LevelRenderer::addParticle(const std::string& name, const Vec3& pos, const 
 		pe->add(new ItemParticle(m_pLevel, pos, Item::snowBall));
 		return;
 	}
+	if (name == "slime")
+	{
+		pe->add(new ItemParticle(m_pLevel, pos, Item::slimeBall));
+		return;
+	}
+
 	LOG_W("Unknown particle type: %s", name.c_str());
+}
+
+void LevelRenderer::playStreamingMusic(const std::string& name, const TilePos& pos)
+{
+	if (name != Util::EMPTY_STRING)
+	{
+		m_pMinecraft->m_pGui->setNowPlaying("C418 - " + name);
+	}
+
+	//m_pMinecraft->m_pSoundEngine->playStreaming(name, pos, 1.0f, 1.0f);
 }
 
 void LevelRenderer::playSound(const std::string& name, const Vec3& pos, float volume, float pitch)

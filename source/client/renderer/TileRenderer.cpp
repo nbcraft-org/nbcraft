@@ -13,8 +13,10 @@
 #include "client/renderer/FoliageColor.hpp"
 #include "client/renderer/renderer/RenderMaterialGroup.hpp"
 #include "world/tile/FireTile.hpp"
+#include "world/tile/RedStoneDustTile.hpp"
 #include "world/tile/GrassTile.hpp"
 #include "world/tile/LiquidTile.hpp"
+#include "world/tile/DiodeTile.hpp"
 #include "world/tile/LeafTile.hpp"
 
 #include "world/tile/FenceTile.hpp"
@@ -1556,6 +1558,339 @@ bool TileRenderer::tesselateTorchInWorld(Tile* tile, const TilePos& pos)
 	return true;
 }
 
+bool TileRenderer::tesselateDiodeInWorld(Tile* tile, const TilePos& pos)
+{
+	int data = m_pTileSource->getData(pos); // var5
+	int dir = data & 3; // var6
+	int flipped = (data & 12) >> 2; // var7
+	tesselateBlockInWorld(tile, pos);
+	Tesselator& t = Tesselator::instance; // var8
+	float br = tile->getBrightness(m_pTileSource, pos); // var9
+	if (Tile::lightEmission[tile->m_ID] > 0)
+	{
+		br = (br + 1.0f) * 0.5f;
+	}
+
+	t.color(br, br, br);
+	float var10 = -0.1875f;
+	float var12 = 0.0f;
+	float var14 = 0.0f;
+	float var16 = 0.0f;
+	float var18 = 0.0f;
+	switch (dir)
+	{
+	case 0:
+		var18 = -0.3125f;
+		var14 = DiodeTile::unk_a[flipped];
+		break;
+	case 1:
+		var16 = 0.3125f;
+		var12 = -DiodeTile::unk_a[flipped];
+		break;
+	case 2:
+		var18 = 0.3125f;
+		var14 = -DiodeTile::unk_a[flipped];
+		break;
+	case 3:
+		var16 = -0.3125f;
+		var12 = DiodeTile::unk_a[flipped];
+	}
+
+	tesselateTorch(tile, Vec3(float(pos.x) + var12, float(pos.y) + var10, float(pos.z) + var14), 0.0f, 0.0f);
+	tesselateTorch(tile, Vec3(float(pos.x) + var16, float(pos.y) + var10, float(pos.z) + var18), 0.0f, 0.0f);
+	int var20 = tile->getTexture(Facing::UP);
+	int var21 = (var20 & 15) << 4;
+	int var22 = var20 & 240;
+	float var23 = float(var21) / 256.0f;
+	float var25 = (float(var21) + 15.99f) / 256.0f;
+	float var27 = float(var22) / 256.0f;
+	float var29 = (float(var22) + 15.99f) / 256.0f;
+	float var31 = 2.0f / 16.0f;
+	/*
+	float var32 = float(pos.x + 1);
+	float var33 = float(pos.x + 1);
+	float var34 = float(pos.x + 0);
+	float var35 = float(pos.x + 0);
+	float var36 = float(pos.z + 0);
+	float var37 = float(pos.z + 1);
+	float var38 = float(pos.z + 1);
+	float var39 = float(pos.z + 0);
+	*/
+	float var40 = float(pos.y) + var31;
+	TilePos pos1;
+	TilePos pos2;
+	TilePos pos3;
+	TilePos pos4;
+	switch (dir)
+	{
+	case 1:
+		/*
+		var35 = float(pos.x + 1);
+		var32 = var35;
+		var34 = float(pos.x + 0);
+		var33 = var34;
+		var37 = float(pos.z + 1);
+		var36 = var37;
+		var39 = float(pos.z + 0);
+		var38 = var39;
+		*/
+		pos1 = pos.east();
+		pos2 = pos;
+		pos3 = pos.south();
+		pos4 = pos.east().south();
+		break;
+	case 2:
+		/*
+		var33 = float(pos.x + 0);
+		var32 = var33;
+		var35 = float(pos.x + 1);
+		var34 = var35;
+		var39 = float(pos.z + 1);
+		var36 = var39;
+		var38 = float(pos.z + 0);
+		var37 = var38;
+		*/
+		pos1 = pos.east().south();
+		pos2 = pos.east();
+		pos3 = pos;
+		pos4 = pos.south();
+		break;
+	case 3:
+		/*
+		var35 = float(pos.x + 0);
+		var32 = var35;
+		var34 = float(pos.x + 1);
+		var33 = var34;
+		var37 = float(pos.z + 0);
+		var36 = var37;
+		var39 = float(pos.z + 1);
+		var38 = var39;
+		*/
+		pos1 = pos.south();
+		pos2 = pos.east().south();
+		pos3 = pos.east();
+		pos4 = pos;
+		break;
+	default:
+		pos1 = pos;
+		pos2 = pos.south();
+		pos3 = pos.east().south();
+		pos4 = pos.east();
+		break;
+	}
+
+	t.vertexUV(float(pos1.x), var40, float(pos1.z), var23, var27);
+	t.vertexUV(float(pos2.x), var40, float(pos2.z), var23, var29);
+	t.vertexUV(float(pos3.x), var40, float(pos3.z), var25, var29);
+	t.vertexUV(float(pos4.x), var40, float(pos4.z), var25, var27);
+	return true;
+}
+
+bool TileRenderer::tesselateLeverInWorld(Tile* tile, const TilePos& pos)
+{
+	int data = m_pTileSource->getData(pos);
+	int dir = data & 7;
+	bool flipped = (data & 8) > 0;
+	Tesselator& t = Tesselator::instance;
+	bool hadFixed = m_fixedTexture >= 0;
+	if (!hadFixed)
+	{
+		m_fixedTexture = Tile::stoneBrick->m_TextureFrame;
+	}
+
+	constexpr float w1 = 0.25f;
+	constexpr float w2 = 0.1875f;
+	constexpr float h = 0.1875f;
+	switch (dir)
+	{
+	case 1:
+		tile->setShape(0.0f, 0.5f - w1, 0.5f - w2, h, 0.5f + w1, 0.5f + w2);
+		break;
+	case 2:
+		tile->setShape(1.0f - h, 0.5f - w1, 0.5f - w2, 1.0f, 0.5f + w1, 0.5f + w2);
+		break;
+	case 3:
+		tile->setShape(0.5f - w2, 0.5f - w1, 0.0f, 0.5f + w2, 0.5f + w1, h);
+		break;
+	case 4:
+		tile->setShape(0.5f - w2, 0.5f - w1, 1.0f - h, 0.5f + w2, 0.5f + w1, 1.0f);
+		break;
+	case 5:
+		tile->setShape(0.5f - w2, 0.0f, 0.5f - w1, 0.5f + w2, h, 0.5f + w1);
+		break;
+	case 6:
+		tile->setShape(0.5f - w1, 0.0f, 0.5f - w2, 0.5f + w1, h, 0.5f + w2);
+		break;
+	default:
+		break;
+	}
+
+	tesselateBlockInWorld(tile, pos);
+	if (!hadFixed)
+	{
+		m_fixedTexture = -1;
+	}
+
+	float br = tile->getBrightness(m_pTileSource, pos);
+	if (Tile::lightEmission[tile->m_ID] > 0)
+	{
+		br = 1.0f;
+	}
+
+	t.color(br, br, br);
+	int tex = tile->getTexture(Facing::DOWN);
+	if (m_fixedTexture >= 0)
+	{
+		tex = m_fixedTexture;
+	}
+
+	int xt = (tex & 15) << 4;
+	int yt = tex & 240;
+	float u0 = (float)xt / 256.0f;
+	float u1 = ((float)xt + 15.99f) / 256.0f;
+	float v0 = (float)yt / 256.0f;
+	float v1 = ((float)yt + 15.99f) / 256.0f;
+	float xv = 0.0625f;
+	float zv = 0.0625f;
+	float yv = 0.625f;
+	Vec3 corners[8] = {
+		Vec3(-xv, 0.0f, -zv),
+		Vec3(xv, 0.0f, -zv),
+		Vec3(xv, 0.0f,  zv),
+		Vec3(-xv, 0.0f,  zv),
+		Vec3(-xv, yv, -zv),
+		Vec3(xv, yv, -zv),
+		Vec3(xv, yv,  zv),
+		Vec3(-xv, yv,  zv)
+	};
+
+	for (int i = 0; i < 8; ++i) {
+		if (flipped)
+		{
+			corners[i].z -= 0.0625;
+			corners[i].xRot(float(M_PI) * 2.0f / 9.0f);
+		}
+		else
+		{
+			corners[i].z += 0.0625;
+			corners[i].xRot(float(-M_PI) * 2.0f / 9.0f);
+		}
+
+		if (dir == 6)
+		{
+			corners[i].yRot(float(M_PI / 2));
+		}
+
+		if (dir < 5)
+		{
+			corners[i].y -= 0.375;
+			corners[i].xRot(float(M_PI / 2));
+			if (dir == 4)
+			{
+				corners[i].yRot(0.0f);
+			}
+
+			if (dir == 3)
+			{
+				corners[i].yRot(float(M_PI));
+			}
+
+			if (dir == 2)
+			{
+				corners[i].yRot(float(M_PI / 2));
+			}
+
+			if (dir == 1)
+			{
+				corners[i].yRot(float(-M_PI / 2));
+			}
+
+			corners[i].x += pos.x + 0.5;
+			corners[i].y += pos.y + 0.5f;
+			corners[i].z += pos.z + 0.5;
+		}
+		else
+		{
+			corners[i].x += pos.x + 0.5;
+			corners[i].y += pos.y + 0.125f;
+			corners[i].z += pos.z + 0.5;
+		}
+	}
+
+	Vec3 c0;
+	Vec3 c1;
+	Vec3 c2;
+	Vec3 c3;
+
+	for (int i = 0; i < 6; ++i)
+	{
+		if (i == 0)
+		{
+			u0 = float(xt + 7) / 256.0f;
+			u1 = (float(xt + 9) - 0.01f) / 256.0f;
+			v0 = float(yt + 6) / 256.0f;
+			v1 = (float(yt + 8) - 0.01f) / 256.0f;
+		}
+		else if (i == 2)
+		{
+			u0 = float(xt + 7) / 256.0f;
+			u1 = (float(xt + 9) - 0.01f) / 256.0f;
+			v0 = float(yt + 6) / 256.0f;
+			v1 = (float(yt + 16) - 0.01f) / 256.0f;
+		}
+
+		if (i == 0)
+		{
+			c0 = corners[0];
+			c1 = corners[1];
+			c2 = corners[2];
+			c3 = corners[3];
+		}
+		else if (i == 1)
+		{
+			c0 = corners[7];
+			c1 = corners[6];
+			c2 = corners[5];
+			c3 = corners[4];
+		}
+		else if (i == 2)
+		{
+			c0 = corners[1];
+			c1 = corners[0];
+			c2 = corners[4];
+			c3 = corners[5];
+		}
+		else if (i == 3)
+		{
+			c0 = corners[2];
+			c1 = corners[1];
+			c2 = corners[5];
+			c3 = corners[6];
+		}
+		else if (i == 4)
+		{
+			c0 = corners[3];
+			c1 = corners[2];
+			c2 = corners[6];
+			c3 = corners[7];
+		}
+		else if (i == 5)
+		{
+			c0 = corners[0];
+			c1 = corners[3];
+			c2 = corners[7];
+			c3 = corners[4];
+		}
+
+		t.vertexUV(c0.x, c0.y, c0.z, u0, v1);
+		t.vertexUV(c1.x, c1.y, c1.z, u1, v1);
+		t.vertexUV(c2.x, c2.y, c2.z, u1, v0);
+		t.vertexUV(c3.x, c3.y, c3.z, u0, v0);
+	}
+
+	return true;
+}
+
 bool TileRenderer::tesselateLadderInWorld(Tile* tile, const TilePos& pos)
 {
 	constexpr float C_RATIO = 1.0f / 256.0f;
@@ -1760,6 +2095,174 @@ bool TileRenderer::tesselateFireInWorld(Tile* tile, const TilePos& pos)
 	return true;
 }
 
+bool TileRenderer::tesselateDustInWorld(Tile* tile, const TilePos& pos)
+{
+	Tesselator& t = Tesselator::instance; // var5
+	int data = m_pTileSource->getData(pos); // var6
+	int texture = tile->getTexture(Facing::UP, data); // var7
+	if (m_fixedTexture >= 0)
+	{
+		texture = m_fixedTexture;
+	}
+
+	float bright = tile->getBrightness(m_pTileSource, pos); // var8
+	float power = float(data) / 15.0f; // var9
+	float rt = power * 0.6f + 0.4f; // var10
+	if (data == 0)
+		rt = 0.3f;
+	float gt = power * power * 0.7f - 0.5f; // var11
+	float bt = power * power * 0.6f - 0.7f; // var12
+	if (gt < 0.0f) gt = 0.0f;
+	if (bt < 0.0f) bt = 0.0f;
+
+	t.color(bright * rt, bright * gt, bright * bt);
+	int xt = (texture & 15) << 4;
+	int yt = texture & 240;
+	float u0 = (float(xt) / 256.0f);
+	float u1 = ((float(xt) + 15.99f) / 256.0f);
+	float v0 = (float(yt) / 256.0f);
+	float v1 = ((float(yt) + 15.99f) / 256.0f);
+	float o = 0.0f;
+	float r = 0.03125f;
+	bool w = RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.west())
+		|| (!m_pTileSource->isSolidTile(pos.west()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.west().below()));
+	bool e = RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.east())
+		|| (!m_pTileSource->isSolidTile(pos.east()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.east().below()));
+	bool n = RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.north())
+		|| (!m_pTileSource->isSolidTile(pos.north()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.below().north()));
+	bool s = RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.south())
+		|| (!m_pTileSource->isSolidTile(pos.south()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.below().south()));
+	if (!m_pTileSource->isSolidTile(pos.above())) {
+		if (m_pTileSource->isSolidTile(pos.west()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.west().above())) {
+			w = true;
+		}
+
+		if (m_pTileSource->isSolidTile(pos.east()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.east().above())) {
+			e = true;
+		}
+
+		if (m_pTileSource->isSolidTile(pos.north()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.above().north())) {
+			n = true;
+		}
+
+		if (m_pTileSource->isSolidTile(pos.south()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.above().south())) {
+			s = true;
+		}
+	}
+
+	float d = 5.0f / 16.0f;
+	float x0 = float(pos.x + 0);
+	float x1 = float(pos.x + 1);
+	float z0 = float(pos.z + 0);
+	float z1 = float(pos.z + 1);
+	int pic = 0;
+	if ((w || e) && !n && !s) {
+		pic = 1;
+	}
+
+	if ((n || s) && !e && !w) {
+		pic = 2;
+	}
+
+	if (pic != 0) {
+		u0 = (float(xt + 16) / 256.0f);
+		u1 = ((float(xt + 16) + 15.99f) / 256.0f);
+		v0 = (float(yt) / 256.0f);
+		v1 = ((float(yt) + 15.99f) / 256.0f);
+	}
+
+	if (pic == 0) {
+		if (e || n || s || w) {
+			if (!w) {
+				x0 += d;
+			}
+
+			if (!w) {
+				u0 += (d / 16.0f);
+			}
+
+			if (!e) {
+				x1 -= d;
+			}
+
+			if (!e) {
+				u1 -= (d / 16.0f);
+			}
+
+			if (!n) {
+				z0 += d;
+			}
+
+			if (!n) {
+				v0 += (d / 16.0f);
+			}
+
+			if (!s) {
+				z1 -= d;
+			}
+
+			if (!s) {
+				v1 -= (d / 16.0f);
+			}
+		}
+
+		t.vertexUV((x1 + o), (float(pos.y) + r), (z1 + o), u1, v1);
+		t.vertexUV((x1 + o), (float(pos.y) + r), (z0 - o), u1, v0);
+		t.vertexUV((x0 - o), (float(pos.y) + r), (z0 - o), u0, v0);
+		t.vertexUV((x0 - o), (float(pos.y) + r), (z1 + o), u0, v1);
+	}
+
+	if (pic == 1) {
+		t.vertexUV((x1 + o), (float(pos.y) + r), (z1 + o), u1, v1);
+		t.vertexUV((x1 + o), (float(pos.y) + r), (z0 - o), u1, v0);
+		t.vertexUV((x0 - o), (float(pos.y) + r), (z0 - o), u0, v0);
+		t.vertexUV((x0 - o), (float(pos.y) + r), (z1 + o), u0, v1);
+	}
+
+	if (pic == 2) {
+		t.vertexUV((x1 + o), (float(pos.y) + r), (z1 + o), u1, v1);
+		t.vertexUV((x1 + o), (float(pos.y) + r), (z0 - o), u0, v1);
+		t.vertexUV((x0 - o), (float(pos.y) + r), (z0 - o), u0, v0);
+		t.vertexUV((x0 - o), (float(pos.y) + r), (z1 + o), u1, v0);
+	}
+
+	u0 = (float(xt + 16) / 256.0f);
+	u1 = ((float(xt + 16) + 15.99f) / 256.0f);
+	v0 = (float(yt) / 256.0f);
+	v1 = ((float(yt) + 15.99f) / 256.0f);
+	if (!m_pTileSource->isSolidTile(pos.above())) {
+		if (m_pTileSource->isSolidTile(pos.west()) && m_pTileSource->getTile(pos.west().above()) == Tile::redStoneDust->m_ID) {
+			t.vertexUV((float(pos.x) + r), (float(pos.y + 1) + o), (float(pos.z + 1) + o), u1, v0);
+			t.vertexUV((float(pos.x) + r), (float(pos.y + 0) - o), (float(pos.z + 1) + o), u0, v0);
+			t.vertexUV((float(pos.x) + r), (float(pos.y + 0) - o), (float(pos.z + 0) - o), u0, v1);
+			t.vertexUV((float(pos.x) + r), (float(pos.y + 1) + o), (float(pos.z + 0) - o), u1, v1);
+		}
+
+		if (m_pTileSource->isSolidTile(pos.east()) && m_pTileSource->getTile(pos.east().above()) == Tile::redStoneDust->m_ID) {
+			t.vertexUV((float(pos.x + 1) - r), (float(pos.y + 0) - o), (float(pos.z + 1) + o), u0, v1);
+			t.vertexUV((float(pos.x + 1) - r), (float(pos.y + 1) + o), (float(pos.z + 1) + o), u1, v1);
+			t.vertexUV((float(pos.x + 1) - r), (float(pos.y + 1) + o), (float(pos.z + 0) - o), u1, v0);
+			t.vertexUV((float(pos.x + 1) - r), (float(pos.y + 0) - o), (float(pos.z + 0) - o), u0, v0);
+		}
+
+		if (m_pTileSource->isSolidTile(pos.north()) && m_pTileSource->getTile(pos.above().north()) == Tile::redStoneDust->m_ID) {
+			t.vertexUV((float(pos.x + 1) + o), (float(pos.y + 0) - o), (float(pos.z) + r), u0, v1);
+			t.vertexUV((float(pos.x + 1) + o), (float(pos.y + 1) + o), (float(pos.z) + r), u1, v1);
+			t.vertexUV((float(pos.x + 0) - o), (float(pos.y + 1) + o), (float(pos.z) + r), u1, v0);
+			t.vertexUV((float(pos.x + 0) - o), (float(pos.y + 0) - o), (float(pos.z) + r), u0, v0);
+		}
+
+		if (m_pTileSource->isSolidTile(pos.south()) && m_pTileSource->getTile(pos.above().south()) == Tile::redStoneDust->m_ID) {
+			t.vertexUV((float(pos.x + 1) + o), (float(pos.y + 1) + o), (float(pos.z + 1) - r), u1, v0);
+			t.vertexUV((float(pos.x + 1) + o), (float(pos.y + 0) - o), (float(pos.z + 1) - r), u0, v0);
+			t.vertexUV((float(pos.x + 0) - o), (float(pos.y + 0) - o), (float(pos.z + 1) - r), u0, v1);
+			t.vertexUV((float(pos.x + 0) - o), (float(pos.y + 1) + o), (float(pos.z + 1) - r), u1, v1);
+		}
+	}
+
+	return true;
+}
+
 bool TileRenderer::tesselateInWorld(Tile* tile, const TilePos& pos)
 {
 	int shape = tile->getRenderShape();
@@ -1789,6 +2292,8 @@ bool TileRenderer::tesselateInWorld(Tile* tile, const TilePos& pos)
 			return tesselateRowInWorld(tile, pos);
 		case SHAPE_TORCH:
 			return tesselateTorchInWorld(tile, pos);
+		case SHAPE_DUST:
+			return tesselateDustInWorld(tile, pos);
 		case SHAPE_LADDER:
 			return tesselateLadderInWorld(tile, pos);
 		case SHAPE_DOOR:
@@ -1797,6 +2302,10 @@ bool TileRenderer::tesselateInWorld(Tile* tile, const TilePos& pos)
 			return tesselateStairsInWorld(tile, pos);
 		case SHAPE_FENCE:
 			return tesselateFenceInWorld(tile, pos);
+		case SHAPE_LEVER:
+			return tesselateLeverInWorld(tile, pos);
+		case SHAPE_DIODE:
+			return tesselateDiodeInWorld(tile, pos);
 		case SHAPE_FENCE_GATE:
 			return tesselateFenceGateInWorld(tile, pos);
 		case SHAPE_CACTUS:
@@ -2842,6 +3351,7 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 			// This is a hack to accomodate the start menu screen procedurally generated title logo.
 #define IF_NEEDED(x) do { if (tile.data != 255) { (x); } } while (0)
 
+			tileType->updateDefaultShape(); // otherwise pressure plates and buttons in the inventory would look all wonky
 			t.addOffset(-0.5f, -0.5f, -0.5f);
 			t.begin(24); // 4 to 24
 			t.color(color * getTileFaceColor(tile, Facing::UP));

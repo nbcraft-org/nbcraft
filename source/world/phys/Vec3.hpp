@@ -122,6 +122,33 @@ public:
 		return true;
 	}
 
+	void xRot(float rot)
+	{
+		float cos = Mth::cos(rot);
+		float sin = Mth::sin(rot);
+		float yo = y;
+		y = y * cos + z * sin;
+		z = z * cos - yo * sin;
+	}
+
+	void yRot(float rot)
+	{
+		float cos = Mth::cos(rot);
+		float sin = Mth::sin(rot);
+		float xo = x;
+		x = x * cos + z * sin;
+		z = z * cos - xo * sin;
+	}
+
+	void zRot(float rot)
+	{
+		float cos = Mth::cos(rot);
+		float sin = Mth::sin(rot);
+		float xo = x;
+		x = x * cos + y * sin;
+		y = y * cos - xo * sin;
+	}
+
 	Vec3 translate(float tx, float ty, float tz) const
 	{
 		return Vec3(x + tx, y + ty, z + tz);

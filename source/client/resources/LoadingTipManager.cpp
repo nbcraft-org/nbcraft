@@ -1,6 +1,7 @@
 #include "LoadingTipManager.hpp"
 #include "Resource.hpp"
 #include "common/Util.hpp"
+#include "common/Utils.hpp"
 #include "client/locale/Language.hpp"
 #include "thirdparty/rapidjson/document.h"
 

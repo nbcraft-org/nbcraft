@@ -1,6 +1,7 @@
 #include "CreativeMenu_Console.hpp"
 #include "Slot.hpp"
 #include "common/Utils.hpp"
+#include "compat/GameVersion.h"
 #include "world/tile/Tile.hpp"
 #include "world/item/Item.hpp"
 #include "world/item/DyeColor.hpp"
@@ -46,12 +47,16 @@ void CreativeMenu_Console::initCreativeItems()
     _addTile(STRUCTURES, Tile::glowstone);
 
     _addTile(DECORATION, Tile::sponge);
-    //_addTile(DECORATION, Tile::melon);
+#if MC_VERSION >= MC_VER_BETA(1, 8, 0)
+    _addTile(DECORATION, Tile::melon);
+#endif
     _addTile(DECORATION, Tile::pumpkin);
     _addTile(DECORATION, Tile::pumpkinLantern);
     _addAuxTile(DECORATION, Tile::sapling);
     _addAuxTile(DECORATION, Tile::leaves);
-    //_addTile(DECORATION, Tile::vines);
+#if MC_VERSION >= MC_VER_BETA(1, 8, 0)
+    _addTile(DECORATION, Tile::vines);
+#endif
     _addTile(DECORATION, Tile::torch);
     _addAuxTile(DECORATION, Tile::tallGrass);
     _addTile(DECORATION, Tile::flower);
@@ -61,7 +66,9 @@ void CreativeMenu_Console::initCreativeItems()
     _addTile(DECORATION, Tile::cactus);
     _addTile(DECORATION, Tile::topSnow);
     _addTile(DECORATION, Tile::web);
-    //_addTile(DECORATION, Tile::glassPane);
+#if MC_VERSION >= MC_VER_BETA(1, 8, 0)
+    _addTile(DECORATION, Tile::glassPane);
+#endif
     _addTile(DECORATION, Tile::glass);
     _addItem(DECORATION, Item::painting);
     _addItem(DECORATION, Item::sign);
@@ -83,21 +90,23 @@ void CreativeMenu_Console::initCreativeItems()
     _addTile(DECORATION, Tile::cloth, ClothTile::GREEN);
     _addTile(DECORATION, Tile::cloth, ClothTile::BROWN);
 
-    //_addTile(REDSTONE_AND_TRANSPORT, Tile::dispenser);
+    _addTile(REDSTONE_AND_TRANSPORT, Tile::dispenser);
     _addTile(REDSTONE_AND_TRANSPORT, Tile::musicBlock);
+#if MC_VERSION >= MC_VER_BETA(1, 7, 0)
     //_addTile(REDSTONE_AND_TRANSPORT, Tile::piston);
     //_addTile(REDSTONE_AND_TRANSPORT, Tile::stickyPiston);
+#endif
     _addTile(REDSTONE_AND_TRANSPORT, Tile::tnt);
-    //_addTile(REDSTONE_AND_TRANSPORT, Tile::lever);
-    //_addTile(REDSTONE_AND_TRANSPORT, Tile::button);
-    //_addTile(REDSTONE_AND_TRANSPORT, Tile::stonePressurePlate);
-    //_addTile(REDSTONE_AND_TRANSPORT, Tile::woodPressurePlate);
+    _addTile(REDSTONE_AND_TRANSPORT, Tile::lever);
+    _addTile(REDSTONE_AND_TRANSPORT, Tile::button);
+    _addTile(REDSTONE_AND_TRANSPORT, Tile::pressurePlate_stone);
+    _addTile(REDSTONE_AND_TRANSPORT, Tile::pressurePlate_wood);
     _addItem(REDSTONE_AND_TRANSPORT, Item::redStone);
-    //_addTile(REDSTONE_AND_TRANSPORT, Tile::repeater);
+    _addTile(REDSTONE_AND_TRANSPORT, Tile::notGate_on);
+    _addItem(REDSTONE_AND_TRANSPORT, Item::diode);
     //_addTile(REDSTONE_AND_TRANSPORT, Tile::rail);
     //_addTile(REDSTONE_AND_TRANSPORT, Tile::poweredRail);
     //_addTile(REDSTONE_AND_TRANSPORT, Tile::detectorRail);
-    //_addTile(REDSTONE_AND_TRANSPORT, Tile::repeater);
     _addItem(REDSTONE_AND_TRANSPORT, Item::minecart);
     _addItem(REDSTONE_AND_TRANSPORT, Item::minecart_chest);
     _addItem(REDSTONE_AND_TRANSPORT, Item::minecart_furnace);
@@ -105,11 +114,15 @@ void CreativeMenu_Console::initCreativeItems()
     _addItem(REDSTONE_AND_TRANSPORT, Item::boat);
     _addTile(REDSTONE_AND_TRANSPORT, Tile::stairs_wood);
     _addTile(REDSTONE_AND_TRANSPORT, Tile::stairs_stone);
-    //_addTile(REDSTONE_AND_TRANSPORT, Tile::brickStairs);
-    //_addTile(REDSTONE_AND_TRANSPORT, Tile::stoneBrickStairs);
+#if MC_VERSION >= MC_VER_BETA(1, 8, 0)
+    _addTile(REDSTONE_AND_TRANSPORT, Tile::brickStairs);
+    _addTile(REDSTONE_AND_TRANSPORT, Tile::stoneBrickStairs);
+#endif
     _addTile(REDSTONE_AND_TRANSPORT, Tile::ladder);
     _addTile(REDSTONE_AND_TRANSPORT, Tile::trapDoor);
+#if MC_VERSION >= MC_VER_BETA(1, 8, 0)
     _addTile(REDSTONE_AND_TRANSPORT, Tile::fenceGate);
+#endif
     _addItem(REDSTONE_AND_TRANSPORT, Item::door_wood);
     _addItem(REDSTONE_AND_TRANSPORT, Item::door_iron);
 
@@ -120,6 +133,7 @@ void CreativeMenu_Console::initCreativeItems()
     _addItem(MATERIALS, Item::goldIngot);
     _addItem(MATERIALS, Item::brick);
     _addItem(MATERIALS, Item::stick);
+    _addItem(MATERIALS, Item::bowl);
     _addItem(MATERIALS, Item::string);
     _addItem(MATERIALS, Item::feather);
     _addItem(MATERIALS, Item::flint);
@@ -128,6 +142,10 @@ void CreativeMenu_Console::initCreativeItems()
     _addItem(MATERIALS, Item::clay);
     _addItem(MATERIALS, Item::yellowDust);
     _addItem(MATERIALS, Item::seeds);
+#if MC_VERSION >= MC_VER_BETA(1, 8, 0)
+    _addItem(MATERIALS, Item::melonSeeds);
+    _addItem(MATERIALS, Item::pumpkinSeeds);
+#endif
     _addItem(MATERIALS, Item::wheat);
     _addItem(MATERIALS, Item::reeds);
     _addItem(MATERIALS, Item::egg);
@@ -151,7 +169,9 @@ void CreativeMenu_Console::initCreativeItems()
 
     _addItem(FOOD, Item::apple);
     _addItem(FOOD, Item::apple_gold);
-    //_addItem(FOOD, Item::melonSlice);
+#if MC_VERSION >= MC_VER_BETA(1, 8, 0)
+    _addItem(FOOD, Item::melonSlice);
+#endif
     _addItem(FOOD, Item::mushroomStew);
     _addItem(FOOD, Item::bread);
     _addItem(FOOD, Item::cake);
@@ -159,11 +179,13 @@ void CreativeMenu_Console::initCreativeItems()
     _addItem(FOOD, Item::fish_raw);
     _addItem(FOOD, Item::porkChop_cooked);
     _addItem(FOOD, Item::porkChop_raw);
-    //_addItem(FOOD, Item::cookedBeef);
-    //_addItem(FOOD, Item::beef);
-    //_addItem(FOOD, Item::cookedChicken);
-    //_addItem(FOOD, Item::chicken);
-    //_addItem(FOOD, Item::rottenFlesh);
+#if MC_VERSION >= MC_VER_BETA(1, 8, 0)
+    _addItem(FOOD, Item::cookedBeef);
+    _addItem(FOOD, Item::beef);
+    _addItem(FOOD, Item::cookedChicken);
+    _addItem(FOOD, Item::chicken);
+    _addItem(FOOD, Item::rottenFlesh);
+#endif
 
     _addItem(TOOLS, Item::helmet_cloth);
     _addItem(TOOLS, Item::chestplate_cloth);
@@ -202,7 +224,9 @@ void CreativeMenu_Console::initCreativeItems()
     _addItem(TOOLS, Item::hoe_iron);
 
     _addItem(TOOLS, Item::clock);
+#if MC_VERSION >= MC_VER_BETA(1, 7, 0)
     _addItem(TOOLS, Item::shears);
+#endif
 
     _addItem(TOOLS, Item::helmet_gold);
     _addItem(TOOLS, Item::chestplate_gold);
@@ -230,9 +254,11 @@ void CreativeMenu_Console::initCreativeItems()
     _addTile(MISC, Tile::chest);
     _addTile(MISC, Tile::craftingTable);
     _addTile(MISC, Tile::furnace);
-    //_addTile(MISC, Tile::jukeBox);
+    _addTile(MISC, Tile::recordPlayer);
     _addTile(MISC, Tile::fence);
-    //_addTile(MISC, Tile::ironBars);
+#if MC_VERSION >= MC_VER_BETA(1, 8, 0)
+    _addTile(MISC, Tile::ironBars);
+#endif
     _addItem(MISC, Item::bed);
     _addItem(MISC, Item::bucket_empty);
     _addItem(MISC, Item::bucket_lava);
@@ -243,7 +269,9 @@ void CreativeMenu_Console::initCreativeItems()
     _addItem(MISC, Item::book);
     _addItem(MISC, Item::slimeBall);
     _addItem(MISC, Item::bone);
-    //_addItem(MISC, Item::enderPearl);
+#if MC_VERSION >= MC_VER_BETA(1, 8, 0)
+    _addItem(MISC, Item::enderPearl);
+#endif
     _addItem(MISC, Item::record_01);
     _addItem(MISC, Item::record_02);
 }

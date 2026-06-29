@@ -360,8 +360,8 @@ enum eTileID
 	ITEM_COOKIE,
 	ITEM_MAP,
 	ITEM_SHEARS,
-	ITEM_RECORD_01,
-	ITEM_RECORD_02,
+	ITEM_RECORD_01 = 2256,
+	ITEM_RECORD_02 = 2257,
 	ITEM_CAMERA = 456,
 
 	// Custom items
@@ -505,6 +505,7 @@ enum // Textures
 	TEXTURE_ORE_LAPIS = 160,
 	TEXTURE_POWERED_RAIL = 163,
 	TEXTURE_REDSTONE_DUST,
+	TEXTURE_REDSTONE_DUST_LINE,
 	TEXTURE_DETECTOR_RAIL = 195,
 
 	TEXTURE_SANDSTONE_TOP = 176,
@@ -542,7 +543,7 @@ enum eRenderShape
 	SHAPE_LEVER,
 	SHAPE_CACTUS,
 	SHAPE_BED,
-	SHAPE_REPEATER,
+	SHAPE_DIODE,
 	SHAPE_PISTON,
 	SHAPE_PISTON_HEAD,
 	SHAPE_RANDOM_CROSS
@@ -567,6 +568,8 @@ double getTimeS();
 int getTimeMs();
 
 void sleepMs(int ms);
+
+int32_t getUniqueSeed();
 
 #ifdef _WIN32
 void toDosPath(char* path);

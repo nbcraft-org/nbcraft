@@ -260,6 +260,16 @@
     <ClInclude Include="$(MC_ROOT)\source\client\gui\ScreenChooser.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\resources\LoadingTipManager.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\resources\SplashManager.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\TrapScreen.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\model\models\GhastModel.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\model\models\SlimeModel.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\model\models\SquidModel.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\FireballRenderer.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\FishingHookRenderer.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\GhastRenderer.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\GiantMobRenderer.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\SlimeRenderer.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\SquidRenderer.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\FurnaceScreen.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\components\ImageButton.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\components\LargeImageButton.hpp" />
@@ -276,6 +286,7 @@
     <ClInclude Include="$(MC_ROOT)\source\client\gui\components\CraftButton_Console.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\ClientCraftContext.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\CraftingScreen_Console.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\TrapScreen_Console.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\client\app\App.cpp" />
@@ -453,6 +464,16 @@
     <ClCompile Include="$(MC_ROOT)\source\client\gui\ScreenChooser.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\resources\LoadingTipManager.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\resources\SplashManager.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\TrapScreen.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\model\models\GhastModel.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\model\models\SlimeModel.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\model\models\SquidModel.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\FireballRenderer.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\FishingHookRenderer.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\GhastRenderer.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\GiantMobRenderer.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\SlimeRenderer.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\SquidRenderer.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\FurnaceScreen.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\components\ImageButton.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\components\LargeImageButton.cpp" />
@@ -470,6 +491,7 @@
     <ClCompile Include="$(MC_ROOT)\source\client\gui\components\CraftButton_Console.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\ClientCraftContext.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\CraftingScreen_Console.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\TrapScreen_Console.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">

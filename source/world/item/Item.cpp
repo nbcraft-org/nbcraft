@@ -29,7 +29,13 @@
 #include "TileItem.hpp"
 #include "ToolItem.hpp"
 #include "TilePlanterItem.hpp"
+#include "RocketItem.hpp"
+#include "RedStoneItem.hpp"
+#include "SnowballItem.hpp"
+#include "EggItem.hpp"
 #include "WeaponItem.hpp"
+#include "FishingRodItem.hpp"
+#include "RecordingItem.hpp"
 #include "BucketItem.hpp"
 
 #define ITEM(x) ((x) - 256)
@@ -44,6 +50,7 @@
 static bool g_bInittedItems = false;
 
 Item* Item::items[C_MAX_ITEMS];
+Random Item::random;
 
 Item::Item(int itemID)
 {
@@ -461,7 +468,7 @@ void Item::initItems()
 		->setIcon(12, 2)
 		->setDescriptionId("doorIron");
 	
-	Item::redStone = NEW_ITEM(ITEM_REDSTONE)
+	Item::redStone = NEW_X_ITEMN(RedStoneItem, ITEM_REDSTONE)
 		->setIcon(8, 3)
 		->setDescriptionId("redstone");
 
@@ -477,7 +484,7 @@ void Item::initItems()
 		->setIcon(7, 6)
 		->setDescriptionId("leather");
 
-	Item::milk = NEW_ITEM(ITEM_BUCKET_MILK)
+	Item::milk = NEW_X_ITEM(BucketItem, ITEM_BUCKET_MILK, TILE_PISTON_MOVING)
 		->setIcon(13, 4)
 		->setDescriptionId("milk")
 		->setMaxStackSize(1)
@@ -511,7 +518,7 @@ void Item::initItems()
 		->setIcon(6, 3)
 		->setDescriptionId("compass");
 
-	Item::fishingRod = NEW_ITEM(ITEM_FISHING_ROD)
+	Item::fishingRod = NEW_X_ITEMN(FishingRodItem, ITEM_FISHING_ROD)
 		->setIcon(5, 4)
 		->setDescriptionId("fishingRod");
 
@@ -554,7 +561,7 @@ void Item::initItems()
 		->setIcon(13, 2)
 		->setDescriptionId("bed");
 
-	Item::diode = NEW_ITEM(ITEM_DIODE)
+	Item::diode = NEW_X_ITEM(TilePlanterItem, ITEM_DIODE, TILE_REPEATER_OFF)
 		->setIcon(6, 5)
 		->setDescriptionId("diode");
 
@@ -579,11 +586,11 @@ void Item::initItems()
 		->setIcon(13, 5)
 		->setDescriptionId("shears");
 	
-	Item::record_01 = NEW_ITEM(ITEM_RECORD_01)
+	Item::record_01 = NEW_X_ITEM(RecordingItem, ITEM_RECORD_01, "13")
 		->setIcon(0, 15)
 		->setDescriptionId("record");
 
-	Item::record_02 = NEW_ITEM(ITEM_RECORD_02)
+	Item::record_02 = NEW_X_ITEM(RecordingItem, ITEM_RECORD_02, "cat")
 		->setIcon(1, 15)
 		->setDescriptionId("record");
 

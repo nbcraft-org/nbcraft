@@ -85,10 +85,6 @@ void ItemRenderer::render(const Entity& entity, const Vec3& pos, float rot, floa
 
 	matrix->translate(Vec3(pos.x, pos.y + 0.1f + yOffset * 0.1f, pos.z));
 
-#if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
-	glEnable(GL_RESCALE_NORMAL);
-#endif
-
 	_setupShaderParameters(entity, Color::NIL, a);
 
 	Tile* pTile = itemStack.getTile();
@@ -159,10 +155,6 @@ void ItemRenderer::render(const Entity& entity, const Vec3& pos, float rot, floa
 			t.draw(m_itemMaterials.item_entity_item);
 		}
 	}
-
-#if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
-	glDisable(GL_RESCALE_NORMAL);
-#endif
 }
 
 void ItemRenderer::blitRect(Tesselator& t, int x, int y, int w, int h, int color)
@@ -286,9 +278,6 @@ void ItemRenderer::renderGuiItem(Minecraft& mc, const ItemStack& item, int x, in
 
 		textures.loadAndBindTexture(C_TERRAIN_NAME);
 
-#if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
-		glEnable(GL_RESCALE_NORMAL);
-#endif
 		MatrixStack::Ref matrix = MatrixStack::World.push();
 
 		// scale, rotate, and translate the tile onto the correct screen coordinate
@@ -315,10 +304,6 @@ void ItemRenderer::renderGuiItem(Minecraft& mc, const ItemStack& item, int x, in
 		m_pTileRenderer->renderTile(FullTile(pTile, item.getAuxValue()), m_itemMaterials.ui_item, color);
 
 		Lighting::turnOff();
-
-#if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
-		glDisable(GL_RESCALE_NORMAL);
-#endif
 		#undef PARM_HACK
 #endif
 	}

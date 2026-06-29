@@ -81,9 +81,6 @@ void InventoryScreen::_renderBg(float partialTick)
         blit(m_leftPos, m_topPos, 0, 0, m_imageWidth, m_imageHeight, 0, 0);
     }
 
-#if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
-    glEnable(GL_RESCALE_NORMAL);
-#endif
     MatrixStack::Ref matrix = MatrixStack::World.push();
 
     matrix->translate(Vec3(m_leftPos + playerX, m_topPos + playerY, 50));
@@ -122,9 +119,6 @@ void InventoryScreen::_renderBg(float partialTick)
     player->m_rot.pitch = prevXRot;
 
     Lighting::turnOff();
-#if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
-    glDisable(GL_RESCALE_NORMAL);
-#endif
 }
 
 SlotDisplay InventoryScreen::_createSlotDisplay(const Slot& slot)

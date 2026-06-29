@@ -1030,7 +1030,7 @@ void Minecraft::prepareLevel(const std::string& unused)
 {
 	field_DA0 = 1;
 
-	float startTime = float(getTimeS());
+	//float startTime = float(getTimeS());
 	Level* pLevel = m_pLevel;
 
 	if (!pLevel->field_B0C)
@@ -1045,31 +1045,31 @@ void Minecraft::prepareLevel(const std::string& unused)
 			// this looks like some kind of progress tracking
 			m_progressPercent = i2 / (C_MAX_CHUNKS_X * C_MAX_CHUNKS_Z);
 
-			float time1 = float(getTimeS());
+			//float time1 = float(getTimeS());
 
 			// generating all the chunks at once
 			(void)pLevel->getTile(TilePos(i, (C_MAX_Y + C_MIN_Y) / 2, j));
 
-			if (time1 != -1.0f)
-				getTimeS();
+			//if (time1 != -1.0f)
+			//	getTimeS();
 
-			float time2 = getTimeS();
+			//float time2 = getTimeS();
 			if (pLevel->field_B0C)
 			{
 				while (pLevel->updateLights());
 			}
 
-			if (time2 != -1.0f)
-				getTimeS();
+			//if (time2 != -1.0f)
+			//	getTimeS();
 		}
 	}
 
-	if (startTime != -1.0f)
-		getTimeS();
+	//if (startTime != -1.0f)
+	//	getTimeS();
 
 	pLevel->setUpdateLights(1);
 
-	startTime = float(getTimeS());
+	//startTime = float(getTimeS());
 
 	ChunkPos cp(0, 0);
 	for (cp.x = 0; cp.x < C_MAX_CHUNKS_X; cp.x++)
@@ -1088,8 +1088,8 @@ void Minecraft::prepareLevel(const std::string& unused)
 		}
 	}
 
-	if (startTime != -1.0f)
-		getTimeS();
+	//if (startTime != -1.0f)
+	//	getTimeS();
 
 	field_DA0 = 3;
 
@@ -1109,12 +1109,12 @@ void Minecraft::prepareLevel(const std::string& unused)
 	m_progressPercent = -1;
 	field_DA0 = 2;
 
-	startTime = float(getTimeS());
+	//startTime = float(getTimeS());
 
 	pLevel->prepare();
 
-	if (startTime != -1.0f)
-		getTimeS();
+	//if (startTime != -1.0f)
+	//	getTimeS();
 
 	// These strings are initialized and then removed quickly afterwards. Probably some debug leftover
 	// "Generate level:";
@@ -1245,12 +1245,12 @@ void Minecraft::onClientStartedLevel(Level* pLevel, LocalPlayer* pLocalPlayer)
 
 void Minecraft::generateLevel(const std::string& unused, Level* pLevel)
 {
-	float time = float(getTimeS()); //@UNUSED
+	//float time = float(getTimeS()); //@UNUSED
 
 	prepareLevel(unused);
 
-	if (time != -1.0f)
-		getTimeS(); //@QUIRK: unused return value
+	//if (time != -1.0f)
+	//	getTimeS(); //@QUIRK: unused return value
 
 	// std::string("Level generated: "); //@QUIRK: unused string instance
 

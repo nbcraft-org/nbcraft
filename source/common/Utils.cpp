@@ -373,6 +373,37 @@ void sleepMs(int ms)
 #endif
 }
 
+int32_t getUniqueSeed()
+{
+	// PowerPC-specific compiler-intrinsic, only using on 360 for now, but might work on Xcode or something
+#if MC_PLATFORM_XBOX360
+	return __mftb32();
+#else
+#ifdef _WIN32
+	{
+		LARGE_INTEGER liTime;
+		if (QueryPerformanceCounter(&liTime))
+		{
+#if MC_ENDIANNESS_BIG
+			return liTime.HighPart;
+#else // MC_ENDIANNESS_LITTLE
+			return liTime.LowPart;
+#endif
+		}
+	}
+#endif
+
+	// Variant implemented by Mojang. This does not work on MSVC.
+	{
+		timeval tv;
+
+		gettimeofday(&tv, NULL);
+
+		return tv.tv_usec;
+	}
+#endif
+}
+
 // zlib stuff
 uint8_t* ZlibInflateToMemory(uint8_t* pInput, size_t compressedSize, size_t decompressedSize)
 {

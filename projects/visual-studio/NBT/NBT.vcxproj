@@ -59,7 +59,7 @@
     <ClInclude Include="$(MC_ROOT)\source\nbt\Int16Tag.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\nbt\StringTag.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\nbt\Tag.hpp" />
-    <ClInclude Include="..\..\..\..\source\nbt\NbtIo.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\nbt\NbtIo.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\nbt\Int8ArrayTag.cpp" />

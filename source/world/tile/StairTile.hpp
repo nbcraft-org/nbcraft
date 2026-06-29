@@ -31,7 +31,7 @@ public:
 	int getTexture(const LevelSource*, const TilePos& pos, Facing::Name face) const override;
 	AABB getTileAABB(const Level*, const TilePos& pos) override;
 	bool mayPick() const override;
-	bool mayPick(TileData data, bool) const override;
+	bool mayPick(TileData data, bool includeLiquid) const override;
 	bool mayPlace(const Level*, const TilePos& pos) const override;
 	int getTickDelay() const override;
 	void tick(Level*, const TilePos& pos, Random*) override;

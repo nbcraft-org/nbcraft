@@ -101,6 +101,12 @@ public:
 		RENDER_CREEPER,
 		RENDER_ROCKET,
 		RENDER_ARROW,
+		RENDER_GIANT,
+		RENDER_SLIME,
+		RENDER_FISHING_HOOK,
+		RENDER_GHAST,
+		RENDER_FIREBALL,
+		RENDER_SQUID,
 
 		// custom
 		RENDER_FALLING_TILE = 50
@@ -192,6 +198,7 @@ public:
 	virtual bool hurt(Entity*, int);
 	virtual void animateHurt();
 	virtual float getPickRadius() const { return 0.1f; }
+	virtual Vec3 getLookAngle() const { return Vec3::ZERO; }
 	virtual ItemEntity* spawnAtLocation(const ItemStack&, float);
 	virtual ItemEntity* spawnAtLocation(int, int);
 	virtual ItemEntity* spawnAtLocation(int, int, float);

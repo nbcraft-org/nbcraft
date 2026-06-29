@@ -317,9 +317,6 @@ void Gui::renderAnimatedCharacter(int x, int y, float partialTick)
 
 	if (!m_animatedCharacterTimer) return;
 
-#if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
-	glEnable(GL_RESCALE_NORMAL);
-#endif
 	MatrixStack::Ref matrix = MatrixStack::World.push();
 
 	constexpr int scale = 12;
@@ -349,7 +346,8 @@ void Gui::renderAnimatedCharacter(int x, int y, float partialTick)
 	float oldShadowRadius = renderer->m_shadowRadius;
 	renderer->m_shadowRadius = 0.0f;
 	player->m_minBrightness = 1.0f;
-	EntityRenderDispatcher::instance->m_rot.pitch = 180.0f;
+	currentShaderColor = Color::WHITE;
+	EntityRenderDispatcher::instance->m_rot.y = 180.0f;
 	EntityRenderDispatcher::instance->render(*player, Vec3::ZERO, 0.0f, 1.0f);
 	player->m_minBrightness = 0.0f;
 	renderer->m_shadowRadius = oldShadowRadius;
@@ -358,9 +356,6 @@ void Gui::renderAnimatedCharacter(int x, int y, float partialTick)
 	player->m_rot.pitch = prevXRot;
 
 	Lighting::turnOff();
-#if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
-	glDisable(GL_RESCALE_NORMAL);
-#endif
 }
 
 int Gui::getSlotIdAt(int mouseX, int mouseY)
