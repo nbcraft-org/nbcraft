@@ -7,6 +7,7 @@
 #include "screens/inventory/CraftingScreen.hpp"
 #include "screens/inventory/ChestScreen.hpp"
 #include "screens/inventory/FurnaceScreen.hpp"
+#include "screens/inventory/TrapScreen.hpp"
 #include "screens/inventory/CreativeScreen.hpp"
 #include "screens/OptionsScreen.hpp"
 #include "screens/CreateWorldScreen.hpp"
@@ -74,6 +75,11 @@ void ScreenChooser::pushFurnaceScreen(Player* player, FurnaceTileEntity* furnace
 void ScreenChooser::pushChestScreen(Player* player, Container* container)
 {
 	m_pMinecraft->setScreen(new ChestScreen(player->m_pInventory, container));
+}
+
+void ScreenChooser::pushTrapScreen(Player* player, DispenserTileEntity* dispenser)
+{
+	m_pMinecraft->setScreen(new TrapScreen(player->m_pInventory, dispenser));
 }
 
 void ScreenChooser::pushCreditsScreen(Screen* parent)

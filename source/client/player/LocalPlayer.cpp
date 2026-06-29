@@ -174,7 +174,7 @@ void LocalPlayer::closeContainer()
 
 void LocalPlayer::openTrap(DispenserTileEntity* tileEntity)
 {
-	m_pMinecraft->setScreen(new TrapScreen(m_pInventory, tileEntity));
+	m_pMinecraft->getScreenChooser()->pushTrapScreen(this, tileEntity);
 
 	Player::openTrap(tileEntity);
 }

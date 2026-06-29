@@ -2,8 +2,8 @@
 #include "world/inventory/TrapMenu.hpp"
 #include "renderer/ShaderConstants.hpp"
 
-TrapScreen::TrapScreen(Inventory* inventory, DispenserTileEntity* trap) :
-    ContainerScreen(new TrapMenu(inventory, trap))
+TrapScreen::TrapScreen(Inventory* inventory, DispenserTileEntity* trap)
+    : ContainerScreen(new TrapMenu(inventory, trap))
 {
     m_uiTheme = UI_JAVA;
 }
