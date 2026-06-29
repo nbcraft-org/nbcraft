@@ -115,7 +115,7 @@ void TouchscreenInput_TestFps::setScreenSize(int width, int height)
 
 	float rx1, rx2, ry1, ry2;
 	float offX = 8.0f;
-	rx1 = 0.0f;
+	rx1 = offX;
 	ry1 = height - 8.0f - heightM * 3.0f;
 	rx2 = widthM * 3.0f + 8.0f;
 	ry2 = ry1 + heightM * 3.0f;
@@ -259,14 +259,13 @@ void TouchscreenInput_TestFps::tick(Player* pPlayer)
 		{
 			if (pPlayer->isInWater())
 				m_bJumping = true;
-			else if (Multitouch::isPressed(finger) || flying)
+			else if (Multitouch::isPressed(finger))
 				m_bJumping = true;
 			else if (m_bForwardBeingHeld)
 			{
 				pointerId = 100; // forward
 				field_6C[INPUT_FORWARD] = true;
-				if (!bThisFingerDynamic)
-					m_vertInput += 1.0f;
+				m_vertInput += 1.0f;
 			}
 			bJumpPressed = true;
 		}
@@ -279,8 +278,7 @@ void TouchscreenInput_TestFps::tick(Player* pPlayer)
 			else
 				bForwardPressed = true;
 
-			if (!bThisFingerDynamic)
-				m_vertInput += 1.0f;
+			m_vertInput += 1.0f;
 			break;
 
 		case 100 + INPUT_BACKWARD:
@@ -396,6 +394,13 @@ void TouchscreenInput_TestFps::tick(Player* pPlayer)
 				m_fRightSideX + m_fButtonSize, m_fMiddleY + m_fButtonSize);
 	}
 #endif
+
+	float len = Mth::sqrt(m_vertInput * m_vertInput + m_horzInput * m_horzInput);
+	if (len > 1.0f)
+	{
+		m_vertInput /= len;
+		m_horzInput /= len;
+	}
 
 	IMoveInput::tick(pPlayer);
 }

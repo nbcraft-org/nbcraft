@@ -110,7 +110,7 @@ add_library(nbcraft-core STATIC
     client/gui/screens/OptionsScreen_Console.cpp
     client/gui/screens/StartMenuScreen.cpp
     client/gui/screens/StartMenuScreen_Console.cpp
-	  client/gui/screens/StartMenuScreen_Pocket.cpp
+    client/gui/screens/StartMenuScreen_Pocket.cpp
     client/gui/screens/ConvertWorldScreen.cpp
     client/gui/screens/CreateWorldScreen.cpp
     client/gui/screens/CreateWorldScreen_Console.cpp
@@ -159,8 +159,8 @@ add_library(nbcraft-core STATIC
     client/gui/components/WorldSelectionList.cpp
     client/gui/components/OptionList.cpp
     client/gui/components/ScrollRenderer_Console.cpp
-	  client/gui/components/ImageButton.cpp
-	  client/gui/components/LargeImageButton.cpp
+	client/gui/components/ImageButton.cpp
+	client/gui/components/LargeImageButton.cpp
     client/gui/components/TabButton.cpp
     client/gui/components/CraftButton_Console.cpp
     client/locale/Language.cpp
@@ -187,9 +187,9 @@ add_library(nbcraft-core STATIC
     client/model/models/CreeperModel.cpp
     client/model/models/CowModel.cpp
     client/model/models/ChickenModel.cpp
-	  client/model/models/SquidModel.cpp
-	  client/model/models/SlimeModel.cpp
-	  client/model/models/GhastModel.cpp
+    client/model/models/SquidModel.cpp
+    client/model/models/SlimeModel.cpp
+    client/model/models/GhastModel.cpp
     client/multiplayer/MultiPlayerLevel.cpp
     client/multiplayer/MultiplayerLocalPlayer.cpp
     client/player/input/ControllerBuildInput.cpp
@@ -331,14 +331,14 @@ add_library(nbcraft-core STATIC
     world/entity/EntityType.cpp
     world/entity/EntityTypeDescriptor.cpp
     world/entity/MobCategory.cpp
-	  world/entity/Squid.cpp
-	  world/entity/Giant.cpp
-	  world/entity/Slime.cpp
-	  world/entity/PigZombie.cpp
-	  world/entity/Fireball.cpp
-	  world/entity/FlyingMob.cpp
-	  world/entity/Ghast.cpp
-	  world/entity/FishingHook.cpp
+    world/entity/Squid.cpp
+    world/entity/Giant.cpp
+    world/entity/Slime.cpp
+    world/entity/PigZombie.cpp
+    world/entity/Fireball.cpp
+    world/entity/FlyingMob.cpp
+    world/entity/Ghast.cpp
+    world/entity/FishingHook.cpp
     world/level/Dimension.cpp
     world/level/Material.cpp
     world/level/LevelListener.cpp

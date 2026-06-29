@@ -158,7 +158,6 @@ void SurvivalMode::stopDestroyBlock()
 
 void SurvivalMode::tick()
 {
-	m_lastDestroyProgress = m_destroyProgress;
 	//m_pMinecraft->m_pSoundEngine->playMusicTick(); // also on MultiPlayerGameMode
 	GameMode::tick();
 }
@@ -168,14 +167,20 @@ void SurvivalMode::render(float f)
 	if (m_destroyProgress <= 0.0f)
 	{
 		m_pMinecraft->m_pGui->m_progress = 0.0f;
+		m_pMinecraft->m_pGui->m_lastDestroyProgress = 0.0f;
+		m_pMinecraft->m_pGui->m_destroyProgress = 0.0f;
 		m_pMinecraft->m_pLevelRenderer->m_destroyProgress = 0.0f;
 	}
 	else
 	{
 		float dp = m_lastDestroyProgress + (m_destroyProgress - m_lastDestroyProgress) * f;
 		m_pMinecraft->m_pGui->m_progress = dp;
+		m_pMinecraft->m_pGui->m_lastDestroyProgress = m_lastDestroyProgress;
+		m_pMinecraft->m_pGui->m_destroyProgress = m_destroyProgress;
 		m_pMinecraft->m_pLevelRenderer->m_destroyProgress = dp;
 	}
+
+	m_lastDestroyProgress = m_destroyProgress;
 }
 
 bool SurvivalMode::useItemOn(Player* player, Level* level, ItemStack& item, const TilePos& pos, Facing::Name face)

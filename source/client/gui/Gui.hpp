@@ -90,7 +90,6 @@ private:
 	mce::Mesh m_feedbackOuter;
 	mce::Mesh m_feedbackInner;
 	float m_lastProgress;
-	float m_feedbackAccum;
 	int m_animatedCharacterTimer;
 
 protected:
@@ -98,6 +97,8 @@ protected:
 
 public:
 	float m_progress;
+	float m_lastDestroyProgress;
+	float m_destroyProgress;
 	std::string field_C;
 	std::vector<GuiMessage> m_guiMessages;
 	int field_24;

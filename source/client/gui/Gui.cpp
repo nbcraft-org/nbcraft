@@ -17,6 +17,7 @@
 #include "client/renderer/renderer/RenderMaterialGroup.hpp"
 #include "renderer/ShaderConstants.hpp"
 #include "client/renderer/Lighting.hpp"
+#include "world/phys/HitResult.hpp"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4244)
@@ -46,7 +47,8 @@ Gui::Gui(Minecraft* pMinecraft)
 {
 	m_progress = 0;
 	m_lastProgress = 0;
-	m_feedbackAccum = 0;
+	m_lastDestroyProgress = 0;
+	m_destroyProgress = 0;
 	field_C = "";
 	field_24 = 0;
 	field_28 = 0;
@@ -570,51 +572,6 @@ void Gui::renderMessages(bool bShowAll)
 	}
 }
 
-void Gui::_buildFeedbackMeshes()
-{
-	if (m_feedbackMeshesBuilt)
-		return;
-
-	m_feedbackMeshesBuilt = true;
-
-	constexpr int steps = 24;
-	constexpr float radius = 40.0f;
-	constexpr float radiusInner = radius * 0.95f;
-	constexpr float fstep = 6.283185f / steps;
-
-	Tesselator& t = Tesselator::instance;
-
-	t.begin(4 * steps);
-	for (int i = 0; i < steps; i++)
-	{
-		float a = i * fstep;
-		float b = a + fstep;
-
-		float aCos = Mth::cos(a);
-		float bCos = Mth::cos(b);
-		float aSin = Mth::sin(a);
-		float bSin = Mth::sin(b);
-
-		t.vertexUV(radiusInner * aCos, radiusInner * aSin, 0, 0, 1);
-		t.vertexUV(radiusInner * bCos, radiusInner * bSin, 0, 1, 1);
-		t.vertexUV(radius      * bCos, radius      * bSin, 0, 1, 0);
-		t.vertexUV(radius      * aCos, radius      * aSin, 0, 0, 0);
-	}
-	m_feedbackOuter = t.end("feedback_outer", false);
-
-	t.begin(mce::PRIMITIVE_MODE_TRIANGLE_LIST, steps * 3);
-	for (int i = 0; i < steps; i++)
-	{
-		float a = i * fstep;
-		float b = a + fstep;
-
-		t.vertex(0, 0, 0);
-		t.vertex(radiusInner * Mth::cos(b), radiusInner * Mth::sin(b), 0);
-		t.vertex(radiusInner * Mth::cos(a), radiusInner * Mth::sin(a), 0);
-	}
-	m_feedbackInner = t.end("feedback_inner", false);
-}
-
 void Gui::renderHearts(bool topLeft)
 {
 	m_random.setSeed(m_ticks * 312871);
@@ -755,6 +712,51 @@ void Gui::renderBubbles(bool topLeft)
 	}
 }
 
+void Gui::_buildFeedbackMeshes()
+{
+	if (m_feedbackMeshesBuilt)
+		return;
+
+	m_feedbackMeshesBuilt = true;
+
+	constexpr int steps = 24;
+	constexpr float radius = 40.0f;
+	constexpr float radiusInner = radius * 0.95f;
+	constexpr float fstep = 6.283185f / steps;
+
+	Tesselator& t = Tesselator::instance;
+
+	t.begin(4 * steps);
+	for (int i = 0; i < steps; i++)
+	{
+		float a = i * fstep;
+		float b = a + fstep;
+
+		float aCos = Mth::cos(a);
+		float bCos = Mth::cos(b);
+		float aSin = Mth::sin(a);
+		float bSin = Mth::sin(b);
+
+		t.vertexUV(radiusInner * aCos, radiusInner * aSin, 0, 0, 1);
+		t.vertexUV(radiusInner * bCos, radiusInner * bSin, 0, 1, 1);
+		t.vertexUV(radius      * bCos, radius      * bSin, 0, 1, 0);
+		t.vertexUV(radius      * aCos, radius      * aSin, 0, 0, 0);
+	}
+	m_feedbackOuter = t.end("feedback_outer", false);
+
+	t.begin(mce::PRIMITIVE_MODE_TRIANGLE_LIST, steps * 3);
+	for (int i = 0; i < steps; i++)
+	{
+		float a = i * fstep;
+		float b = a + fstep;
+
+		t.vertex(0, 0, 0);
+		t.vertex(radiusInner * Mth::cos(b), radiusInner * Mth::sin(b), 0);
+		t.vertex(radiusInner * Mth::cos(a), radiusInner * Mth::sin(a), 0);
+	}
+	m_feedbackInner = t.end("feedback_inner", false);
+}
+
 void Gui::renderProgressIndicator(int width, int height, float f)
 {
 	Minecraft& mc = *m_pMinecraft;
@@ -764,93 +766,97 @@ void Gui::renderProgressIndicator(int width, int height, float f)
 	currentShaderDarkColor = Color::WHITE;
 
 	float breakProgress = m_progress;
-	float smoothProgress = m_lastProgress + (breakProgress - m_lastProgress) * f;
-	m_lastProgress = breakProgress;
 
 	if (m_pMinecraft->useSplitControls())
 	{
-		// draw crosshair
 		textures.loadAndBindTexture("gui/icons.png");
 		MatrixStack::Ref matrix = MatrixStack::World.push();
 		matrix->translate(Vec3(width / 2, height / 2, 0));
 		if (mc.getOptions()->getUiTheme() == UI_CONSOLE)
 			matrix->scale(mc.getOptions()->m_hudSize.get());
 		blit(-8, -8, 0, 0, 16, 16, 0, 0, &m_guiMaterials.ui_crosshair);
+		return;
+	}
+
+	IInputHolder& input = *mc.m_pInputHolder;
+	float feedbackAlpha = input.m_feedbackAlpha;
+
+	if (feedbackAlpha > 1.0f)
+		feedbackAlpha = 1.0f;
+	else if (feedbackAlpha < 0.0f)
+		feedbackAlpha = 0.0f;
+
+	float smoothProgress = m_lastDestroyProgress + (m_destroyProgress - m_lastDestroyProgress) * f;
+
+#ifdef ENH_NEW_FEEDBACK_INDICATOR
+	if (breakProgress <= 0.0f && feedbackAlpha <= 0.0f && mc.m_hitResult.m_hitType == HitResult::NONE)
+		return;
+
+	_buildFeedbackMeshes();
+
+	float xPos = GuiScale * input.m_feedbackX;
+	float yPos = GuiScale * input.m_feedbackY;
+
+	if (breakProgress > 0.0f)
+	{
+		currentShaderColor = Color(1.0f, 1.0f, 1.0f, feedbackAlpha * 0.8f);
+
+		MatrixStack::Ref matrix = MatrixStack::World.push();
+		matrix->translate(Vec3(xPos, yPos, 0.0f));
+		m_feedbackOuter.render(m_materials.ui_fill_color);
+
+		currentShaderColor = Color::WHITE;
+		float scale = 0.5f + 0.5f * smoothProgress;
+		matrix->scale(Vec3(scale, scale, 1.0f));
+		m_feedbackInner.render(m_guiMaterials.ui_invert_overlay);
+
+		matrix.release();
 	}
 	else
 	{
-		IInputHolder& input = *mc.m_pInputHolder;
+		float displayAlpha = Mth::Min(feedbackAlpha * 0.4f, 0.4f);
 
-		// Accumulate absolute fade alpha from the frame delta
-		if (breakProgress > 0.0f)
-			m_feedbackAccum = 1.0f;
-		else if (input.m_feedbackAlpha >= -0.04f)
-			m_feedbackAccum = Mth::Min(m_feedbackAccum + 0.05f, 1.0f);
-		else
-			m_feedbackAccum = Mth::Max(m_feedbackAccum - 0.04f, 0.0f);
-
-#ifdef ENH_NEW_FEEDBACK_INDICATOR
-		if (m_feedbackAccum <= 0.0f && breakProgress <= 0.0f)
+		if (displayAlpha <= 0.0f)
 			return;
 
-		_buildFeedbackMeshes();
+		currentShaderColor = Color(1.0f, 1.0f, 1.0f, displayAlpha);
 
-		float xPos = GuiScale * input.m_feedbackX;
-		float yPos = GuiScale * input.m_feedbackY;
-
-		if (breakProgress > 0.0f)
-		{
-			currentShaderColor = Color(1.0f, 1.0f, 1.0f, 0.8f * m_feedbackAccum);
-
-			MatrixStack::Ref matrix = MatrixStack::World.push();
-			matrix->translate(Vec3(xPos, yPos, 0.0f));
-			m_feedbackOuter.render(m_materials.ui_fill_color);
-
-			currentShaderColor = Color::WHITE;
-			float scale = 0.5f + 0.5f * smoothProgress;
-			matrix->scale(Vec3(scale, scale, 1.0f));
-			m_feedbackInner.render(m_guiMaterials.ui_invert_overlay);
-
-			matrix.release();
-		}
-		else
-		{
-			float fadeAlpha = Mth::Min(m_feedbackAccum * 0.4f, 0.4f);
-
-			currentShaderColor = Color(1.0f, 1.0f, 1.0f, fadeAlpha);
-
-			MatrixStack::Ref matrix = MatrixStack::World.push();
-			matrix->translate(Vec3(xPos, yPos, 0.0f));
-			m_feedbackOuter.render(m_materials.ui_fill_color);
-			matrix.release();
-		}
-#else
-		if (breakProgress > 0.0f)
-		{
-			float xPos = input.m_feedbackX;
-			float yPos = input.m_feedbackY;
-
-			textures.loadAndBindTexture("gui/feedback_outer.png");
-			currentShaderColor = Color::WHITE;
-			blit(GuiScale * xPos - 44.0f, GuiScale * yPos - 44.0f, 0, 0, 88, 88, 256, 256, &m_guiMaterials.ui_overlay_textured);
-
-			textures.loadAndBindTexture("gui/feedback_fill.png");
-
-			float halfWidth = (40.0f * smoothProgress + 48.0f) / 2.0f;
-
-			blit(GuiScale * xPos - halfWidth, GuiScale * yPos - halfWidth, 0, 0, halfWidth * 2, halfWidth * 2, 256, 256, &m_guiMaterials.ui_invert_overlay_textured);
-		}
-		else if (m_feedbackAccum > 0.0f)
-		{
-			float xPos = input.m_feedbackX;
-			float yPos = input.m_feedbackY;
-
-			textures.loadAndBindTexture("gui/feedback_outer.png");
-			currentShaderColor = Color(1.0f, 1.0f, 1.0f, m_feedbackAccum);
-			blit(GuiScale * xPos - 44.0f, GuiScale * yPos - 44.0f, 0, 0, 88, 88, 256, 256, &m_guiMaterials.ui_overlay_textured);
-		}
-#endif
+		MatrixStack::Ref matrix = MatrixStack::World.push();
+		matrix->translate(Vec3(xPos, yPos, 0.0f));
+		m_feedbackOuter.render(m_materials.ui_fill_color);
+		matrix.release();
 	}
+#else
+	if (breakProgress > 0.0f)
+	{
+		float xPos = input.m_feedbackX;
+		float yPos = input.m_feedbackY;
+
+		textures.loadAndBindTexture("gui/feedback_outer.png");
+		currentShaderColor = Color::WHITE;
+		blit(GuiScale * xPos - 44.0f, GuiScale * yPos - 44.0f, 0, 0, 88, 88, 256, 256, &m_guiMaterials.ui_overlay_textured);
+
+		textures.loadAndBindTexture("gui/feedback_fill.png");
+
+		float halfWidth = (40.0f * smoothProgress + 48.0f) / 2.0f;
+
+		blit(GuiScale * xPos - halfWidth, GuiScale * yPos - halfWidth, 0, 0, halfWidth * 2, halfWidth * 2, 256, 256, &m_guiMaterials.ui_invert_overlay_textured);
+	}
+	else if (feedbackAlpha > 0.0f)
+	{
+		float xPos = input.m_feedbackX;
+		float yPos = input.m_feedbackY;
+
+		HitResult::HitResultType hitType = mc.m_hitResult.m_hitType;
+		float displayAlpha = (hitType == HitResult::ENTITY)
+			? Mth::Min(feedbackAlpha * 0.4f, 0.4f)
+			: feedbackAlpha * 0.8f;
+
+		textures.loadAndBindTexture("gui/feedback_outer.png");
+		currentShaderColor = Color(1.0f, 1.0f, 1.0f, displayAlpha);
+		blit(GuiScale * xPos - 44.0f, GuiScale * yPos - 44.0f, 0, 0, 88, 88, 256, 256, &m_guiMaterials.ui_overlay_textured);
+	}
+#endif
 }
 
 void Gui::renderExperience()

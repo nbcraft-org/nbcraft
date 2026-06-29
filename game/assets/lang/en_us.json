@@ -92,6 +92,8 @@
     "options.fov": "FOV",
     "options.fov.normal": "Normal",
     "options.fov.quakePro": "Quake Pro",
+    "options.fancySky": "Fancy Sky",
+    "options.animatedTextures": "Animated Textures",
     "options.uiTheme": "UI Theme",
     "options.uiTheme.pocket": "Pocket",
     "options.uiTheme.java": "Java",

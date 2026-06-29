@@ -73,6 +73,7 @@ Options::Options(Minecraft* mc, const std::string& folderPath) :
 	, m_anaglyphs("gfx_3danaglyphs", "options.anaglyph", false)
 	, m_fancyGraphics("gfx_fancygraphics", "options.fancyGraphics", true)
 	, m_ambientOcclusion("gfx_smoothlighting", "options.ao", Minecraft::useAmbientOcclusion)
+	, m_fancySky("gfx_fancysky", "options.fancySky", true)
 	, m_difficulty("misc_difficulty", "options.difficulty", 2, ValuesBuilder().add("options.difficulty.peaceful").add("options.difficulty.easy").add("options.difficulty.normal").add("options.difficulty.hard"), true)
 	, m_hideGui("gfx_hidegui", "options.hideGui", false)
 	, m_thirdPerson("gfx_thirdperson", "options.thirdPerson", 0)
@@ -97,9 +98,9 @@ Options::Options(Minecraft* mc, const std::string& folderPath) :
 	, m_logoType("gfx_logotype", "options.logoType", LOGO_AUTO, ValuesBuilder().add("options.logoType.auto").add("options.logoType.pocket").add("options.logoType.java").add("options.logoType.console").add("options.logoType.xbox360").add("options.logoType.logo3d"))
 	, m_hudSize("gfx_hudsize", "options.hudSize", HUD_SIZE_2)
 	, m_classicCrafting("gfx_classiccrafting", "options.classicCrafting", false)
-	, m_animatedCharacter("gfx_animatedcharacter", "options.animatedCharacter", true)
 	//, m_limitFramerate("gfx_fpslimit", "options.framerateLimit", 0, ValuesBuilder().add(performance.max").add("performance.balanced").add("performance.powersaver"))
 	//, m_bMipmaps("gfx_mipmaps", "options.mipmaps")
+	, m_animatedCharacter("gfx_animatedcharacter", "options.animatedCharacter", true)
 	, m_vSync("enableVsync", "options.enableVsync", true)
 {
 	add(OC_GAMEPLAY, m_difficulty);
@@ -126,6 +127,8 @@ Options::Options(Minecraft* mc, const std::string& folderPath) :
 	add(OC_VIDEO, m_gamma);
 	add(OC_VIDEO, m_ambientOcclusion);
 	add(OC_VIDEO, m_fancyGraphics);
+	add(OC_VIDEO, m_fancySky);
+	//add(OC_VIDEO, m_animatedTextures);
 	add(OC_VIDEO, m_viewBobbing);
 	add(OC_VIDEO, m_anaglyphs);
 	add(OC_VIDEO, m_blockOutlines);
