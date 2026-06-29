@@ -20,31 +20,32 @@ enum StorageVersion
 	STORAGEVERSION_LEVELDB_MULTI_TILESTORAGE
 };
 
-enum LevelStorageState
-{
-	LEVELSTORAGESTATUS_OPEN,
-	LEVELSTORAGESTATUS_CORRUPTED,
-	LEVELSTORAGESTATUS_NOT_FOUND,
-	LEVELSTORAGESTATUS_IO_ERROR,
-	LEVELSTORAGESTATUS_NOT_SUPPORTED,
-	LEVELSTORAGESTATUS_INVALID_ARGUMENTS,
-	LEVELSTORAGESTATUS_UNKNOWN
-};
-
-class LevelStorageResult
-{
-public:
-	LevelStorageState m_state;
-	std::string m_message;
-
-public:
-	LevelStorageResult() : m_state(LEVELSTORAGESTATUS_UNKNOWN) {}
-	LevelStorageResult(LevelStorageState state) : m_state(state) {}
-	LevelStorageResult(LevelStorageState state, const std::string& message) : m_state(state), m_message(message) {}
-};
-
 class LevelStorage
 {
+public:
+	enum Status
+	{
+		STATUS_OPEN,
+		STATUS_CORRUPTED,
+		STATUS_NOT_FOUND,
+		STATUS_IO_ERROR,
+		STATUS_NOT_SUPPORTED,
+		STATUS_INVALID_ARGUMENTS,
+		STATUS_UNKNOWN
+	};
+
+	class State
+	{
+	public:
+		Status m_status;
+		std::string m_message;
+
+	public:
+		State() : m_status(STATUS_UNKNOWN) {}
+		State(Status status) : m_status(status) {}
+		State(Status status, const std::string& message) : m_status(status), m_message(message) {}
+	};
+
 public:
 	virtual ~LevelStorage() {}
 	virtual std::unique_ptr<ChunkSource> createChunkStorage(std::unique_ptr<ChunkStorage>, StorageVersion) = 0;
@@ -54,7 +55,7 @@ public:
 	virtual void saveData(const std::string&, std::string&&) = 0;
 	virtual bool isCorrupted() = 0;
 	virtual std::string loadData(const std::string&) { return ""; }
-	virtual LevelStorageResult getState() = 0;
+	virtual State getState() = 0;
 	virtual std::unique_ptr<Tag> loadPlayerData(const std::string&) = 0;
 	virtual std::vector<std::string> loadAllPlayerIDs() = 0;
 	virtual void save(Player&) = 0;
