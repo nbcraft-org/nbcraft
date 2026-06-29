@@ -29,10 +29,11 @@ public:
 	void lerpMotion(const Vec3& vel);
 
 	void tick() override;
-	void addAdditionalSaveData(CompoundTag& tag) const override;
-	void readAdditionalSaveData(const CompoundTag& tag) override;
+	void remove() override;
 
 	float getShadowHeightOffs() const override { return 0.0f; }
+	AuxValue getAuxValue() const override;
+	void setAuxValue(AuxValue value) override;
 	int retrieve();
 
 private:

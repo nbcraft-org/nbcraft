@@ -1,7 +1,7 @@
 #include "FishingHook.hpp"
 #include "Mob.hpp"
-#include "world/level/Level.hpp"
 #include "nbt/CompoundTag.hpp"
+#include "world/level/Level.hpp"
 
 const unsigned int FishingHook::ARROW_BASE_DAMAGE = 0;
 
@@ -18,7 +18,6 @@ void FishingHook::_init()
     m_bIsPlayerOwned = false;
     m_life = 0;
     m_flightTime = 0;
-    m_shakeTime = 0;
     m_owner = nullptr;
     m_nibble = 0;
     m_hookedIn = nullptr;
@@ -167,9 +166,6 @@ void FishingHook::tick()
                 m_hookedIn = nullptr;
             }
         }
-
-        if (m_shakeTime > 0)
-            --m_shakeTime;
 
         if (m_bInGround)
         {
@@ -347,28 +343,27 @@ void FishingHook::tick()
     }
 }
 
-void FishingHook::addAdditionalSaveData(CompoundTag& tag) const
+void FishingHook::remove()
 {
-    tag.putInt16("xTile", m_tilePos.x);
-    tag.putInt16("yTile", m_tilePos.y);
-    tag.putInt16("zTile", m_tilePos.z);
-    tag.putInt8("inTile", m_lastTile);
-    tag.putInt8("inData", m_lastTileData);
-    tag.putInt8("shake", m_shakeTime);
-    tag.putBoolean("inGround", m_bInGround);
-    tag.putBoolean("player", m_bIsPlayerOwned);
+    if (m_owner)
+        m_owner->m_pFishing = nullptr;
+
+    Entity::remove();
 }
 
-void FishingHook::readAdditionalSaveData(const CompoundTag& tag)
+Entity::AuxValue FishingHook::getAuxValue() const
 {
-    m_tilePos.x = tag.getInt16("xTile");
-    m_tilePos.y = tag.getInt16("yTile");
-    m_tilePos.z = tag.getInt16("zTile");
-    m_lastTile = tag.getInt8("inTile") & 255;
-    m_lastTileData = tag.getInt8("inData") & 255;
-    m_shakeTime = tag.getInt8("shake") & 255;
-    m_bInGround = tag.getBoolean("inGround");
-    m_bIsPlayerOwned = tag.getBoolean("player");
+    return m_owner ? m_owner->m_EntityID : 0;
+}
+
+void FishingHook::setAuxValue(Entity::AuxValue value)
+{
+    Entity* pOwner = m_pLevel->getEntity(value);
+    if (pOwner && pOwner->isPlayer())
+    {
+        m_owner = (Player*)pOwner;
+        m_owner->m_pFishing = this;
+    }
 }
 
 int FishingHook::retrieve()
@@ -407,6 +402,5 @@ int FishingHook::retrieve()
     }
 
     remove();
-    m_owner->m_pFishing = nullptr;
     return dmg;
 }
