@@ -95,7 +95,7 @@ void Squid::aiStep()
 
 		var1 = Mth::sqrt(m_vel.x * m_vel.x + m_vel.z * m_vel.z);
 		m_yBodyRot += (-(Mth::atan2(m_vel.x, m_vel.z)) * 180.0f / float(M_PI) - m_yBodyRot) * 0.1f;
-		m_rot.x = m_yBodyRot; // m_rot.x is supposed to be m_rot.y but it's inverted?!
+		m_rot.yaw = m_yBodyRot;
 		m_zBodyRot += float(M_PI) * m_rotateSpeed * 1.5f;
 		m_xBodyRot += (-(Mth::atan2(var1, m_vel.y)) * 180.0f / float(M_PI) - m_xBodyRot) * 0.1f;
 	}

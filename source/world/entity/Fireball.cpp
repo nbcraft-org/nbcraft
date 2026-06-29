@@ -34,7 +34,7 @@ Fireball::Fireball(Level* pLevel, Mob* pMob, Vec3 pos) : Entity(pLevel)
 
     m_owner = pMob;
     m_bIsPlayerOwned = m_owner->isPlayer();
-    moveTo(Vec3(pMob->m_pos.x, pMob->m_pos.y, pMob->m_pos.z), Vec2(pMob->m_rot.y, pMob->m_rot.x));
+    moveTo(Vec3(pMob->m_pos.x, pMob->m_pos.y, pMob->m_pos.z), pMob->m_rot);
 
     setPos(m_pos);
 
@@ -142,28 +142,27 @@ void Fireball::tick()
     }
 
     m_pos += m_vel;
-    float var17 = m_vel.length();
-    m_rot.y = Mth::atan2(m_vel.x, m_vel.z) * 180.0f / M_PI;
+    float lengthVel2 = Vec2(m_vel.x, m_vel.z).length();
+    m_rot.yaw = Mth::atan2(m_vel.x, m_vel.z) * 180.0f / M_PI;
 
-    for (m_rot.x = Mth::atan2(m_vel.y, var17) * 180.0f / M_PI; m_rot.x - m_oRot.x < -180.0f; m_oRot.x -= 360.0f);
+    for (m_rot.pitch = Mth::atan2(m_vel.y, lengthVel2) * 180.0f / M_PI; m_rot.pitch - m_oRot.pitch < -180.0f; m_oRot.pitch -= 360.0f);
 
-    while (m_rot.x - m_oRot.x >= 180.0f)
+    while (m_rot.pitch - m_oRot.pitch >= 180.0f)
     {
-        m_oRot.x += 360.0f;
+        m_oRot.pitch += 360.0f;
     }
 
-    while (m_rot.y - m_oRot.y < -180.0f)
+    while (m_rot.yaw - m_oRot.yaw < -180.0f)
     {
-        m_oRot.y -= 360.0f;
+        m_oRot.yaw -= 360.0f;
     }
 
-    while (m_rot.y - m_oRot.y >= 180.0f)
+    while (m_rot.yaw - m_oRot.yaw >= 180.0f)
     {
-        m_oRot.y += 360.0f;
+        m_oRot.yaw += 360.0f;
     }
 
-    m_rot.x = m_oRot.x + (m_rot.x - m_oRot.x) * 0.2f;
-    m_rot.y = m_oRot.y + (m_rot.y - m_oRot.y) * 0.2f;
+    m_rot = m_oRot + (m_rot - m_oRot) * 0.2f;
     float dampening = 0.95f;
     if (isInWater())
     {

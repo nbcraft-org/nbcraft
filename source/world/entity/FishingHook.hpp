@@ -24,7 +24,7 @@ public:
 	void shoot(float x, float y, float z, float speed, float r) { shoot(Vec3(x, y, z), speed, r); };
 	void shoot(Vec3 pos, float speed, float r);
 
-	void lerpTo(const Vec3& pos, const Vec2& rot, int steps) override;
+	void lerpTo(const Vec3& pos, const Rot2& rot, int steps) override;
 	void lerpMotion(float x, float y, float z) { lerpMotion(Vec3(x, y, z)); };
 	void lerpMotion(const Vec3& vel);
 
@@ -47,7 +47,7 @@ private:
 	int m_nibble;
 	int m_lSteps;
 	Vec3 m_lPos;
-	Vec2 m_lRot;
+	Rot2 m_lRot;
 	Vec3 m_lVel;
 
 public:

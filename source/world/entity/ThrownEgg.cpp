@@ -73,9 +73,9 @@ void ThrownEgg::shoot(Vec3 vel, float speed, float r)
 
 void ThrownEgg::_lerpMotion(const Vec3& vel)
 {
-    float len = vel.length();
-    m_oRot.pitch = m_rot.pitch = Mth::atan2(vel.x, vel.z) * 180.0f / M_PI;
-    m_oRot.yaw = m_rot.yaw = Mth::atan2(vel.y, len) * 180.0f / M_PI;
+    float len = Vec2(vel.x, vel.z).length();
+    m_oRot.yaw = m_rot.yaw = Mth::atan2(vel.x, vel.z) * 180.0f / M_PI;
+    m_oRot.pitch = m_rot.pitch = Mth::atan2(vel.y, len) * 180.0f / M_PI;
 }
 
 void ThrownEgg::_lerpMotion2(const Vec3& vel)
@@ -197,28 +197,27 @@ void ThrownEgg::tick()
     }
 
     m_pos += m_vel;
-    float var17 = Vec2(m_vel.x, m_vel.z).length();
-    m_rot.pitch = Mth::atan2(m_vel.x, m_vel.z) * 180.0f / M_PI;
+    float lengthVel2 = Vec2(m_vel.x, m_vel.z).length();
+    m_rot.yaw = Mth::atan2(m_vel.x, m_vel.z) * 180.0f / M_PI;
 
-    for (m_rot.yaw = Mth::atan2(m_vel.y, var17) * 180.0f / M_PI; m_rot.yaw - m_oRot.yaw < -180.0f; m_oRot.yaw -= 360.0f);
-
-    while (m_rot.yaw - m_oRot.yaw >= 180.0f)
-    {
-        m_oRot.yaw += 360.0f;
-    }
-
-    while (m_rot.pitch - m_oRot.pitch < -180.0f)
-    {
-        m_oRot.pitch -= 360.0f;
-    }
+    for (m_rot.pitch = Mth::atan2(m_vel.y, lengthVel2) * 180.0f / M_PI; m_rot.pitch - m_oRot.pitch < -180.0f; m_oRot.pitch -= 360.0f);
 
     while (m_rot.pitch - m_oRot.pitch >= 180.0f)
     {
         m_oRot.pitch += 360.0f;
     }
 
-    m_rot.yaw = m_oRot.yaw + (m_rot.yaw - m_oRot.yaw) * 0.2f;
-    m_rot.pitch = m_oRot.pitch + (m_rot.pitch - m_oRot.pitch) * 0.2f;
+    while (m_rot.yaw - m_oRot.yaw < -180.0f)
+    {
+        m_oRot.yaw -= 360.0f;
+    }
+
+    while (m_rot.yaw - m_oRot.yaw >= 180.0f)
+    {
+        m_oRot.yaw += 360.0f;
+    }
+
+    m_rot = m_oRot + (m_rot - m_oRot) * 0.2f;
     float dampening = 0.99f;
     if (isInWater())
     {
