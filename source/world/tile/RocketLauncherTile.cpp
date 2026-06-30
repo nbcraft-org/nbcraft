@@ -26,7 +26,7 @@ bool RocketLauncherTile::_use(TileSource& source, const TilePos& pos)
 	if (data & STATE_RECHARGING)
 		return true;
 
-	source.setExtraData(pos, data | STATE_RECHARGING);
+	source.setTileAndData(pos, FullTile(this, data | STATE_RECHARGING));
 
 	// spawn a rocket
 	Level& level = source.getLevel();
@@ -98,7 +98,7 @@ void RocketLauncherTile::tick(TileSource* source, const TilePos& pos, Random* ra
 	if (~data & STATE_RECHARGING)
 		return;
 
-	source->setExtraData(pos, data & ~STATE_RECHARGING);
+	source->setTileAndData(pos, FullTile(this, data & ~STATE_RECHARGING));
 }
 
 int RocketLauncherTile::getTickDelay() const

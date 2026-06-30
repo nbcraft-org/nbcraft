@@ -193,7 +193,7 @@ void FireTile::tick(TileSource* source, const TilePos& pos, Random* random)
 	TileData data = source->getData(pos);
 	if (data <= 14)
 	{
-		source->setExtraData(pos, data + 1);
+		source->setTileAndData(pos, FullTile(this, data + 1));
 		source->getTickQueue(pos)->add(source, pos, m_ID, getTickDelay());
 	}
 

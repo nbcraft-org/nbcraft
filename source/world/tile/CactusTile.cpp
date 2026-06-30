@@ -73,11 +73,11 @@ void CactusTile::tick(TileSource* source, const TilePos& pos, Random* random)
 			TileData data = source->getData(pos);
 			if (data == 15) 
 			{
-				source->setTileAndData(above, FullTile(m_ID, 0));
+				source->setTileAndData(above, FullTile(this, 0));
 			}
 			else 
 			{
-				source->setExtraData(pos, data + 1);
+				source->setTileAndData(pos, FullTile(this, data + 1));
 			}
 		}
 	}

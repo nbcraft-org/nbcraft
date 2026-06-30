@@ -201,7 +201,7 @@ void StairTile::setPlacedBy(TileSource* source, const TilePos& pos, Mob* mob)
 		case 2: data = 3; break;
 	}
 
-	source->setExtraData(pos, data);
+	source->setTileAndData(pos, FullTile(this, data));
 }
 
 void StairTile::prepareRender(TileSource* source, const TilePos& pos)

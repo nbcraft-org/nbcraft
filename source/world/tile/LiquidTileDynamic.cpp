@@ -274,7 +274,7 @@ void LiquidTileDynamic::tick(TileSource* source, const TilePos& pos, Random* ran
 			}
 			else
 			{
-				source->setExtraData(pos, depth);
+				source->setTileAndData(pos, FullTile(this, depth));
 				source->getTickQueue(pos)->add(source, pos, m_ID, getTickDelay());
 			}
 		}

@@ -58,7 +58,7 @@ void TrapdoorTile::setOpen(TileSource& source, const TilePos& pos, bool bOpen)
 	TileData data = source.getExtraData(pos);
 	if (isOpen(data) != bOpen)
 	{
-		source.setExtraData(pos, data ^ C_OPEN_BIT);
+		source.setTileAndData(pos, FullTile(this, data ^ C_OPEN_BIT));
 		level->levelEvent(LevelEvent(LevelEvent::SOUND_DOOR, pos, 0));
 	}
 }
@@ -77,14 +77,14 @@ void TrapdoorTile::neighborChanged(TileSource* source, const TilePos& pos, TileI
 		default: break;
 	}
 
-	if (!level->isSolidTile(newPos)) {
-		level->setTile(pos, 0);
-		spawnResources(level, pos, level->getData(pos));
+	if (!source->isSolidTile(newPos)) {
+		source->setTile(pos, 0);
+		spawnResources(source, pos, source->getData(pos));
 	}
 
 	if (newTile > 0 && Tile::tiles[newTile]->isSignalSource()) {
-		int l = level->hasNeighborSignal(pos);
-		setOpen(level, pos, (bool)l);
+		int l = source->hasNeighborSignal(pos);
+		setOpen(*source, pos, (bool)l);
 	}
 }
 

@@ -16,7 +16,7 @@ bool RecordingItem::useOn(ItemStack* instance, Player* player, const TilePos& po
 
 	if (tileSource.getTile(pos) == Tile::recordPlayer->m_ID && tileSource.getData(pos) == 0)
 	{
-		tileSource.setExtraData(pos, m_itemID - Item::record_01->m_itemID + 1);
+		tileSource.setTileAndData(pos, FullTile(Tile::recordPlayer, m_itemID - Item::record_01->m_itemID + 1));
 		level.playStreamingMusic(m_recording, pos);
 		instance->m_count--;
 		return true;
