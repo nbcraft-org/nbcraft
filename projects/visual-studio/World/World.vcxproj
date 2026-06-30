@@ -101,9 +101,6 @@
     <ClCompile Include="$(MC_ROOT)\source\world\level\storage\ExternalFileLevelStorageSource.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\storage\LevelData.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\storage\LevelStorageSource.cpp" />
-    <ClCompile Include="$(MC_ROOT)\source\world\level\storage\MemoryChunkStorage.cpp" />
-    <ClCompile Include="$(MC_ROOT)\source\world\level\storage\MemoryLevelStorage.cpp" />
-    <ClCompile Include="$(MC_ROOT)\source\world\level\storage\MemoryLevelStorageSource.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\storage\RegionFile.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\particle\BubbleParticle.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\particle\ExplodeParticle.cpp" />
@@ -280,9 +277,6 @@
     <ClInclude Include="$(MC_ROOT)\source\world\level\storage\LevelData.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\level\storage\LevelStorage.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\level\storage\LevelStorageSource.hpp" />
-    <ClInclude Include="$(MC_ROOT)\source\world\level\storage\MemoryChunkStorage.hpp" />
-    <ClInclude Include="$(MC_ROOT)\source\world\level\storage\MemoryLevelStorage.hpp" />
-    <ClInclude Include="$(MC_ROOT)\source\world\level\storage\MemoryLevelStorageSource.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\level\storage\RegionFile.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\particle\Particle.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\particle\ParticleEngine.hpp" />

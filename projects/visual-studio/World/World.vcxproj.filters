@@ -272,15 +272,6 @@
     <ClCompile Include="$(MC_ROOT)\source\world\level\storage\LevelStorageSource.cpp">
       <Filter>Source Files\Level\Storage</Filter>
     </ClCompile>
-    <ClCompile Include="$(MC_ROOT)\source\world\level\storage\MemoryChunkStorage.cpp">
-      <Filter>Source Files\Level\Storage</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MC_ROOT)\source\world\level\storage\MemoryLevelStorage.cpp">
-      <Filter>Source Files\Level\Storage</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MC_ROOT)\source\world\level\storage\MemoryLevelStorageSource.cpp">
-      <Filter>Source Files\Level\Storage</Filter>
-    </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\world\level\storage\RegionFile.cpp">
       <Filter>Source Files\Level\Storage</Filter>
     </ClCompile>
@@ -803,15 +794,6 @@
       <Filter>Header Files\Level\Storage</Filter>
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\world\level\storage\LevelStorageSource.hpp">
-      <Filter>Header Files\Level\Storage</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MC_ROOT)\source\world\level\storage\MemoryChunkStorage.hpp">
-      <Filter>Header Files\Level\Storage</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MC_ROOT)\source\world\level\storage\MemoryLevelStorage.hpp">
-      <Filter>Header Files\Level\Storage</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MC_ROOT)\source\world\level\storage\MemoryLevelStorageSource.hpp">
       <Filter>Header Files\Level\Storage</Filter>
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\world\level\storage\RegionFile.hpp">
