@@ -800,9 +800,6 @@
     <ClCompile Include="$(MC_ROOT)\source\world\phys\Rot2.cpp">
       <Filter>Source Files\Phys</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\Facing.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\world\level\TileSource.cpp">
       <Filter>Source Files\Level</Filter>
     </ClCompile>

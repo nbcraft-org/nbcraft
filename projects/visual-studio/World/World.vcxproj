@@ -273,7 +273,6 @@
     <ClCompile Include="$(MC_ROOT)\source\world\particle\TakeAnimationParticle.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\item\BucketItem.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\phys\Rot2.cpp" />
-    <ClCompile Include="..\..\..\source\world\Facing.cpp" />
     <ClCompile Include="..\..\..\source\world\level\levelgen\chunk\Bounds.cpp" />
     <ClCompile Include="..\..\..\source\world\level\levelgen\chunk\ChunkRefCount.cpp" />
     <ClCompile Include="..\..\..\source\world\level\levelgen\chunk\ChunkViewSource.cpp" />
