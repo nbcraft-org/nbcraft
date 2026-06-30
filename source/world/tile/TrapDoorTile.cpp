@@ -1,6 +1,7 @@
 #include "TrapDoorTile.hpp"
-#include "world/level/Level.hpp"
 #include "world/item/Item.hpp"
+#include "world/level/Level.hpp"
+#include "world/level/TileSource.hpp"
 
 TrapdoorTile::TrapdoorTile(int ID, Material* pMtl) : Tile(ID, pMtl)
 {
@@ -13,21 +14,21 @@ TrapdoorTile::TrapdoorTile(int ID, Material* pMtl) : Tile(ID, pMtl)
 	Tile::setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 }
 
-AABB* TrapdoorTile::getAABB(const Level* level, const TilePos& pos)
+AABB* TrapdoorTile::getAABB(TileSource* source, const TilePos& pos)
 {
-	updateShape(level, pos);
-	return Tile::getAABB(level, pos);
+	updateShape(source, pos);
+	return Tile::getAABB(source, pos);
 }
 
-AABB TrapdoorTile::getTileAABB(const Level* level, const TilePos& pos)
+AABB TrapdoorTile::getTileAABB(TileSource* source, const TilePos& pos)
 {
-	updateShape(level, pos);
-	return Tile::getTileAABB(level, pos);
+	updateShape(source, pos);
+	return Tile::getTileAABB(source, pos);
 }
 
-void TrapdoorTile::updateShape(const LevelSource* level, const TilePos& pos)
+void TrapdoorTile::updateShape(TileSource* source, const TilePos& pos)
 {
-	TileData metadata = level->getData(pos);
+	TileData metadata = source.getExtraData(pos);
 	constexpr float f = 0.1875f;
 	setShape(0.0f, 0.0f, 0.0f, 1.0f, f, 1.0f);
 	if (isOpen(metadata)) {
@@ -47,24 +48,24 @@ void TrapdoorTile::updateDefaultShape()
 	Tile::setShape(0.0f, 0.5f - f / 2.0f, 0.0f, 1.0f, 0.5f + f / 2.0f, 1.0f);
 }
 
-void TrapdoorTile::attack(Level* level, const TilePos& pos, Player* player)
+void TrapdoorTile::attack(const TilePos& pos, Player* player)
 {
-	use(level, pos, player);
+	use(pos, player);
 }
 
-void TrapdoorTile::setOpen(Level* level, const TilePos& pos, bool bOpen)
+void TrapdoorTile::setOpen(TileSource& source, const TilePos& pos, bool bOpen)
 {
-	TileData data = level->getData(pos);
+	TileData data = source.getExtraData(pos);
 	if (isOpen(data) != bOpen)
 	{
-		level->setData(pos, data ^ C_OPEN_BIT);
+		source.setExtraData(pos, data ^ C_OPEN_BIT);
 		level->levelEvent(LevelEvent(LevelEvent::SOUND_DOOR, pos, 0));
 	}
 }
 
-void TrapdoorTile::neighborChanged(Level* level, const TilePos& pos, TileID newTile) // check this
+void TrapdoorTile::neighborChanged(TileSource* source, const TilePos& pos, TileID newTile) // check this
 {
-	int data = level->getData(pos);
+	int data = source->getExtraData(pos);
 	TilePos newPos = pos;
 
 	switch (data & C_DIR_MASK)

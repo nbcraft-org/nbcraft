@@ -1,7 +1,7 @@
 #include "Facing.hpp"
 #include "world/level/TilePos.hpp"
 
-Facing::Name Facing::DIRECTIONS[COUNT] = {
+const Facing::Name Facing::DIRECTIONS[COUNT] = {
 	Facing::DOWN,
 	Facing::UP,
 	Facing::NORTH,
@@ -20,7 +20,7 @@ const Facing::Name Facing::OPPOSITE[6] =
     Facing::WEST   // EAST -> WEST
 };
 
-TilePos Facing::DIRECTION[COUNT] = {
+const TilePos Facing::DIRECTION[COUNT] = {
 	TilePos(0, -1,  0), // DOWN
 	TilePos(0,  1,  0), // UP
 	TilePos(0,  0, -1), // NORTH

@@ -1,8 +1,9 @@
 #include "ThrownEgg.hpp"
 #include "Mob.hpp"
 #include "Chicken.hpp"
-#include "world/level/Level.hpp"
 #include "nbt/CompoundTag.hpp"
+#include "world/level/Level.hpp"
+#include "world/level/TileSource.hpp"
 
 void ThrownEgg::_init()
 {
@@ -21,20 +22,30 @@ void ThrownEgg::_init()
 	m_owner = nullptr; 
 }
 
-ThrownEgg::ThrownEgg(Level* pLevel)
-    : Entity(pLevel) 
+ThrownEgg::ThrownEgg(TileSource& source)
+    : Entity(source)
 {
 	_init();
 }
 
-ThrownEgg::ThrownEgg(Level* pLevel, Mob* pMob)
-    : Entity(pLevel) 
+ThrownEgg::ThrownEgg(TileSource& source, const Vec3& pos, bool isPlayerOwned)
+    : Entity(source)
+{
+    _init();
+
+    setPos(pos);
+    //eyeHeight = 0.0f;
+    m_bIsPlayerOwned = isPlayerOwned;
+}
+
+ThrownEgg::ThrownEgg(Mob& mob)
+    : Entity(*mob.m_tileSource) 
 {
 	_init();
 
-	m_owner = pMob;
+	m_owner = &mob;
 	m_bIsPlayerOwned = m_owner->isPlayer();
-	moveTo(Vec3(pMob->m_pos.x, pMob->m_pos.y + pMob->getHeadHeight(), pMob->m_pos.z), pMob->m_rot);
+	moveTo(Vec3(mob.m_pos.x, mob.m_pos.y + mob.getHeadHeight(), mob.m_pos.z), mob.m_rot);
 
 	m_pos.x -= Mth::cos(m_rot.yaw / 180.0f * M_PI) * 0.16f;
 	m_pos.y -= 0.1f;
@@ -42,20 +53,10 @@ ThrownEgg::ThrownEgg(Level* pLevel, Mob* pMob)
 	setPos(m_pos);
 
     constexpr float f = 0.4f;
-	m_vel.x = -Mth::sin(m_rot.yaw / 180.0f * M_PI) * Mth::cos(m_rot.pitch / 180.0f * M_PI) * f;
-	m_vel.z = Mth::cos(m_rot.yaw / 180.0f * M_PI) * Mth::cos(m_rot.pitch / 180.0f * M_PI) * f;
-	m_vel.y = -Mth::sin(m_rot.pitch / 180.0f * M_PI) * f;
+	m_vel.x = -Mth::sin(m_rot.yaw   / 180.0f * M_PI) * Mth::cos(m_rot.pitch / 180.0f * M_PI) * f;
+	m_vel.z =  Mth::cos(m_rot.yaw   / 180.0f * M_PI) * Mth::cos(m_rot.pitch / 180.0f * M_PI) * f;
+	m_vel.y = -Mth::sin(m_rot.pitch / 180.0f * M_PI)                                         * f;
 	shoot(m_vel, 1.5f, 1.0f);
-}
-
-ThrownEgg::ThrownEgg(Level* pLevel, const Vec3& pos, bool isPlayerOwned)
-    : Entity(pLevel)
-{
-    _init();
-
-	setPos(pos);
-	//eyeHeight = 0.0f;
-    m_bIsPlayerOwned = isPlayerOwned;
 }
 
 void ThrownEgg::shoot(Vec3 vel, float speed, float r)
@@ -110,7 +111,7 @@ void ThrownEgg::tick()
 
     if (m_bInGround)
     {
-        if (m_pLevel->getTile(m_tilePos) == m_lastTile)
+        if (m_tileSource->getTile(m_tilePos) == m_lastTile)
         {
             ++m_life;
             if (m_life == 1200)
@@ -132,7 +133,7 @@ void ThrownEgg::tick()
         ++m_flightTime;
     }
     Vec3 future_pos = m_pos + m_vel;
-    HitResult hit_result = m_pLevel->clip(m_pos, future_pos);
+    HitResult hit_result = m_tileSource->clip(m_pos, future_pos);
     if (hit_result.isHit())
     {
         future_pos = hit_result.m_hitPos;
@@ -141,11 +142,11 @@ void ThrownEgg::tick()
     Entity* hit_ent = nullptr;
     AABB hitbox = m_hitbox;
     hitbox.expand(m_vel.x, m_vel.y, m_vel.z).grow(1.0f);
-    EntityVector entities = m_pLevel->getEntities(this, hitbox);
+    Entity::Vector entities = m_tileSource->getEntities(this, hitbox);
 
     float max_dist = 0.0f;
     constexpr float var10 = 0.3f;
-    for (EntityVector::iterator it = entities.begin(); it != entities.end(); it++)
+    for (Entity::Vector::iterator it = entities.begin(); it != entities.end(); it++)
     {
         Entity* ent = *it;
         if (ent->m_bCollision && (ent != m_owner || m_flightTime >= 5))
@@ -184,7 +185,7 @@ void ThrownEgg::tick()
 
             for (int l = 0; l < j; l++)
             {
-                Chicken* chicken = new Chicken(m_pLevel);
+                Chicken* chicken = new Chicken(*m_tileSource);
                 chicken->moveTo(m_pos, 0.0f);
                 m_pLevel->addEntity(chicken);
             }

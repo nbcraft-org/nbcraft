@@ -38,7 +38,7 @@ void CropsTile::tick(TileSource* source, const TilePos& pos, Random* random)
     float growthRate = getGrowthRate(source, pos);
     if (random->nextInt((int)(100.0f / growthRate)) == 0)
     {
-		source->setTileAndData(pos, FullTile(m_ID, growthStage + 1));
+		source->setExtraData(pos, growthStage + 1);
     }
 }
 
@@ -94,7 +94,7 @@ float CropsTile::getGrowthRate(TileSource* source, const TilePos& pos)
 
 void CropsTile::growCropsToMax(TileSource* source, const TilePos& pos)
 {
-	source->setTileAndData(pos, FullTile(m_ID, 7));
+	source->setExtraData(pos, 7);
 }
 
 int CropsTile::getResource(TileData data, Random* random) const

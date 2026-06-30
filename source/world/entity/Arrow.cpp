@@ -1,8 +1,8 @@
 #include "Arrow.hpp"
 #include "Mob.hpp"
+#include "nbt/CompoundTag.hpp"
 #include "world/level/Level.hpp"
 #include "world/level/TileSource.hpp"
-#include "nbt/CompoundTag.hpp"
 
 const unsigned int Arrow::ARROW_BASE_DAMAGE = 4;
 

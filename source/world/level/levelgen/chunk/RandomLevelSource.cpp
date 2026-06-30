@@ -415,10 +415,9 @@ bool RandomLevelSource::postProcess(ChunkViewSource& chunkViewSource)
 	//LOG_I("Post-Processing %d, %d", pos.x, pos.z);
 	Biome* pBiome = threadData.getBiomeSource().getBiome(tp + 16);
 
-	random.setSeed(m_level->getSeed());
-	int32_t x1 = 1 + 2 * (random.nextInt() / 2);
-	int32_t x2 = 1 + 2 * (random.nextInt() / 2);
-	random.setSeed((int32_t(chunk->getPos().x) * x1 + int32_t(chunk->getPos().z) * x2) ^ m_level->getSeed());
+	int seed = m_level->getSeed();
+	const ChunkPos& pos = chunk->getPos();
+
 	m_random.setSeed(seed);
 	int32_t x1 = 1 + 2 * (m_random.nextInt() / 2);
 	int32_t x2 = 1 + 2 * (m_random.nextInt() / 2);

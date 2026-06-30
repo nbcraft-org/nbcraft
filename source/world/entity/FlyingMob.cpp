@@ -1,7 +1,7 @@
 #include "FlyingMob.hpp"
-#include "world/level/Level.hpp"
+#include "world/level/TileSource.hpp"
 
-FlyingMob::FlyingMob(Level* pLevel) : Mob(pLevel)
+FlyingMob::FlyingMob(TileSource& source) : Mob(source)
 {
 }
 
@@ -25,7 +25,7 @@ void FlyingMob::travel(const Vec2& pos)
 		if (m_bOnGround)
 		{
 			var3 = 546.0f * 0.1f * 0.1f * 0.1f;
-			int var4 = m_pLevel->getTile(TilePos(Mth::floor(m_pos.x), Mth::floor(m_hitbox.min.y) - 1, Mth::floor(m_pos.z)));
+			int var4 = m_tileSource->getTile(TilePos(Mth::floor(m_pos.x), Mth::floor(m_hitbox.min.y) - 1, Mth::floor(m_pos.z)));
 			if (var4 > 0)
 			{
 				var3 = Tile::tiles[var4]->m_friction * 0.91f;
@@ -38,7 +38,7 @@ void FlyingMob::travel(const Vec2& pos)
 		if (m_bOnGround)
 		{
 			var3 = 546.0f * 0.1f * 0.1f * 0.1f;
-			int var5 = m_pLevel->getTile(TilePos(Mth::floor(m_pos.x), Mth::floor(m_hitbox.min.y) - 1, Mth::floor(m_pos.z)));
+			int var5 = m_tileSource->getTile(TilePos(Mth::floor(m_pos.x), Mth::floor(m_hitbox.min.y) - 1, Mth::floor(m_pos.z)));
 			if (var5 > 0)
 			{
 				var3 = Tile::tiles[var5]->m_friction * 0.91f;

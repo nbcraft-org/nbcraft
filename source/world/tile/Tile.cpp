@@ -1301,7 +1301,7 @@ void Tile::prepareRender(TileSource* source, const TilePos& pos)
 
 }
 
-void Tile::attack(TileSource* source, const TilePos& pos, Player* player)
+void Tile::attack(const TilePos& pos, Player* player)
 {
 
 }

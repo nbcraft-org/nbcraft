@@ -1,6 +1,7 @@
 #pragma once
+
 #include <cmath>
-#include "world/phys/Vec3.hpp"
+#include <functional>
 
 #ifndef __TILEPOS_HPP
 struct TilePos;

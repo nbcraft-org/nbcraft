@@ -380,6 +380,19 @@ void LevelChunk::tickBlocks(Player* player)
 	}
 }
 
+// chunk-based randomness, used for Slimes
+Random LevelChunk::getRandom(int32_t l)
+{
+	Random random;
+
+	int levelSeed = m_level.getSeed();
+	int chunkSeed = m_pos.x * (4987142 * m_pos.x + 5947611) + m_pos.z * (4392871 * m_pos.z + 389711);
+
+	random.init_genrand((levelSeed + chunkSeed) ^ l);
+
+	return random;
+}
+
 void LevelChunk::_placeCallbacks(const ChunkTilePos& pos, TileID oldTileID, TileID newTileID, TileSource* issuingSource)
 {
 	TilePos absolutePos = pos + m_posMin;

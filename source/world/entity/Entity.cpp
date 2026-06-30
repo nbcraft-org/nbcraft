@@ -118,6 +118,7 @@ void Entity::setSharedFlag(SharedFlag flag, bool value)
 	}
 }
 
+// @PARITY
 #if MC_PLATFORM_MOBILE
 // 0.35f on 0.1.3, 0.25f on 0.2.1+
 #define C_STEP_SOUND_VOLUME_SCALE 0.25f
@@ -130,7 +131,7 @@ void Entity::playStepSound(const TilePos& pos, TileID tileId)
 {
 	Tile* pTile = Tile::tiles[tileId];
 	const Tile::SoundType* sound = nullptr;
-	if (m_pLevel->getTile(pos.above()) == Tile::topSnow->m_ID)
+	if (m_tileSource->getTile(pos.above()) == Tile::topSnow->m_ID)
 	{
 		sound = Tile::topSnow->m_pSound;
 	}
@@ -144,7 +145,7 @@ void Entity::playStepSound(const TilePos& pos, TileID tileId)
 		m_pLevel->playSound(this, "step." + sound->name, sound->volume * C_STEP_SOUND_VOLUME_SCALE, sound->pitch);
 	}
 
-	pTile->stepOn(m_pLevel, pos, this);
+	pTile->stepOn(m_tileSource, pos, this);
 }
 
 void Entity::setLevel(Level* pLvl)

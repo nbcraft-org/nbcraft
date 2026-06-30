@@ -104,7 +104,7 @@ public: // virtual functions
 	virtual void setPlacedOnFace(TileSource*, const TilePos& pos, Facing::Name face);
 	virtual void setPlacedBy(TileSource*, const TilePos& pos, Mob*);
 	virtual void prepareRender(TileSource*, const TilePos& pos);
-	virtual void attack(TileSource*, const TilePos& pos, Player*);
+	virtual void attack(const TilePos& pos, Player*);
 	virtual void handleEntityInside(TileSource*, const TilePos& pos, const Entity*, Vec3&);
 	virtual int getColor(TileSource*, const TilePos& pos) const;
 	virtual int getColor(Facing::Name face, TileData) const;

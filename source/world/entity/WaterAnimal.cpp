@@ -1,8 +1,7 @@
 #include "WaterAnimal.hpp"
-#include "world/level/Level.hpp"
-#include "nbt/CompoundTag.hpp"
+#include "world/level/TileSource.hpp"
 
-WaterAnimal::WaterAnimal(Level* pLevel) : PathfinderMob(pLevel)
+WaterAnimal::WaterAnimal(TileSource& source) : PathfinderMob(source)
 {
 }
 
@@ -13,7 +12,7 @@ bool WaterAnimal::isWaterMob() const
 
 bool WaterAnimal::canSpawn()
 {
-	return m_pLevel->isUnobstructed(&m_hitbox);
+	return m_tileSource->isUnobstructedByEntities(m_hitbox, this);
 }
 
 int WaterAnimal::getAmbientSoundInterval() const

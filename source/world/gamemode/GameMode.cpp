@@ -147,7 +147,7 @@ void GameMode::handleCloseInventory(int a, Player* player)
 bool GameMode::useItem(Player* player, ItemStack& item)
 {
 	Level& level = player->getLevel();
-	bool result = item.use(level, *player);
+	bool result = item.use(*player);
 
 	if (level.m_bIsClientSide)
 	{

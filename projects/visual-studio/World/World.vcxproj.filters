@@ -560,9 +560,6 @@
     <ClCompile Include="$(MC_ROOT)\source\world\ContainerListener.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="$(MC_ROOT)\source\world\ContainerListener.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\ContainerMenu.cpp">
       <Filter>Source Files\Inventory</Filter>
     </ClCompile>
@@ -1524,6 +1521,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\world\level\storage\DBStorage.hpp">
       <Filter>Header Files\Level\Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\item\BucketItem.hpp">
+      <Filter>Header Files\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\item\ToolItem.hpp">
+      <Filter>Header Files\Item</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

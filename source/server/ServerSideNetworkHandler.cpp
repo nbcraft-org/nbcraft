@@ -97,6 +97,8 @@ Player* ServerSideNetworkHandler::_getVerifiedPlayer(const RakNet::RakNetGUID& g
 // Java player movement handling from Beta 1.3, rubberbanding included
 void ServerSideNetworkHandler::_handleMovePlayer(Player& player, MovePlayerPacket* packet)
 {
+	TileSource& tileSource = player.getTileSource();
+
 	// Initial positioning
 	Vec3 oPos = player.m_pos;
 	Vec3 pos;
@@ -170,7 +172,7 @@ void ServerSideNetworkHandler::_handleMovePlayer(Player& player, MovePlayerPacke
 
 	AABB aabb(player.m_hitbox);
 	aabb.shrink(shrinkAmount, shrinkAmount, shrinkAmount);
-	bool hasNoCollisionBefore = m_pLevel->getCubes(&player, aabb)->size() == 0;
+	bool hasNoCollisionBefore = tileSource.fetchAABBs(aabb).size() == 0;
 
 	// Apply initial movement
 	player.move(delta);
@@ -199,7 +201,7 @@ void ServerSideNetworkHandler::_handleMovePlayer(Player& player, MovePlayerPacke
 
 	aabb = player.m_hitbox;
 	aabb.shrink(shrinkAmount, shrinkAmount, shrinkAmount);
-	bool hasNoCollisionAfter = m_pLevel->getCubes(&player, aabb)->size() == 0;
+	bool hasNoCollisionAfter = tileSource.fetchAABBs(aabb).size() == 0;
 
 	// Revert movement if illegal collisions or invalid movement occur
 	if (hasNoCollisionBefore && (movedWrongly || !hasNoCollisionAfter) /*&& !player.isSleeping()*/)

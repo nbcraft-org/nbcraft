@@ -83,11 +83,11 @@ void ReedTile::tick(TileSource* source, const TilePos& pos, Random* random)
 		if (data == 15)
 		{
 			source->setTileAndData(pos.above(), FullTile(m_ID, 0));
-			source->setTileAndData(pos, FullTile(m_ID, 0));
+			source->setExtraData(pos, 0);
 		}
 		else
 		{
-			source->setTileAndData(pos, FullTile(m_ID, data + 1));
+			source->setExtraData(pos, data + 1);
 		}
 	}
 }

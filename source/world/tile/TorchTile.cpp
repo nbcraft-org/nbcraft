@@ -145,15 +145,15 @@ void TorchTile::neighborChanged(TileSource* source, const TilePos& pos, TileID t
 void TorchTile::onPlace(TileSource* source, const TilePos& pos)
 {
 	if (source->isSolidBlockingTile(pos.west()))
-		source->setTileAndData(pos, FullTile(m_ID, 1));
+		source->setExtraData(pos, 1);
 	else if (source->isSolidBlockingTile(pos.east()))
-		source->setTileAndData(pos, FullTile(m_ID, 2));
+		source->setExtraData(pos, 2);
 	else if (source->isSolidBlockingTile(pos.north()))
-		source->setTileAndData(pos, FullTile(m_ID, 3));
+		source->setExtraData(pos, 3);
 	else if (source->isSolidBlockingTile(pos.south()))
-		source->setTileAndData(pos, FullTile(m_ID, 4));
+		source->setExtraData(pos, 4);
 	else if (source->isSolidBlockingTile(pos.below()))
-		source->setTileAndData(pos, FullTile(m_ID, 5));
+		source->setExtraData(pos, 5);
 
 	checkCanSurvive(source, pos);
 }
@@ -191,7 +191,7 @@ void TorchTile::setPlacedOnFace(TileSource* source, const TilePos& pos, Facing::
 			return;
 	}
 
-	source->setTileAndData(pos, FullTile(m_ID, data));
+	source->setExtraData(pos, data);
 }
 
 void TorchTile::tick(TileSource* source, const TilePos& pos, Random* random)

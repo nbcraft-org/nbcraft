@@ -1,14 +1,15 @@
 #include "RedStoneItem.hpp"
-#include "world/level/Level.hpp"
 #include "world/entity/Player.hpp"
+#include "world/level/TileSource.hpp"
 #include "world/tile/Tile.hpp"
 
 RedStoneItem::RedStoneItem(int id) : Item(id)
 {
 }
 
-bool RedStoneItem::useOn(ItemStack* instance, Player* player, Level* level, const TilePos& pos, Facing::Name face) const
+bool RedStoneItem::useOn(ItemStack* instance, Player* player, const TilePos& pos, Facing::Name face) const
 {
+	TileSource& tileSource = player->getTileSource();
 	TilePos tp(pos);
 
 	switch (face)
@@ -21,13 +22,13 @@ bool RedStoneItem::useOn(ItemStack* instance, Player* player, Level* level, cons
 		case Facing::EAST: tp.x++; break;
 	}
 
-	if (!level->isEmptyTile(tp))
+	if (!tileSource.isEmptyTile(tp))
 		return false;
 
-	if (Tile::redStoneDust->mayPlace(level, tp))
+	if (Tile::redStoneDust->mayPlace(&tileSource, tp))
 	{
 		instance->m_count--;
-		level->setTile(tp, Tile::redStoneDust->m_ID);
+		tileSource.setTile(tp, Tile::redStoneDust->m_ID);
 	}
 
 	return true;
