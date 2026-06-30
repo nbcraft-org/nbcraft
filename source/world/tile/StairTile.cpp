@@ -201,7 +201,7 @@ void StairTile::setPlacedBy(TileSource* source, const TilePos& pos, Mob* mob)
 		case 2: data = 3; break;
 	}
 
-	source->setTileAndData(pos, FullTile(m_ID, data));
+	source->setExtraData(pos, data);
 }
 
 void StairTile::prepareRender(TileSource* source, const TilePos& pos)
@@ -209,9 +209,9 @@ void StairTile::prepareRender(TileSource* source, const TilePos& pos)
 	return m_pParent->prepareRender(source, pos);
 }
 
-void StairTile::attack(TileSource* source, const TilePos& pos, Player* player)
+void StairTile::attack(const TilePos& pos, Player* player)
 {
-	m_pParent->attack(source, pos, player);
+	m_pParent->attack(pos, player);
 }
 
 void StairTile::handleEntityInside(TileSource* source, const TilePos& pos, const Entity* entity, Vec3& vec)

@@ -45,7 +45,7 @@ public:
 	void stepOn(TileSource*, const TilePos& pos, Entity*) override;
 	void setPlacedBy(TileSource*, const TilePos& pos, Mob*) override;
 	void prepareRender(TileSource*, const TilePos& pos) override;
-	void attack(TileSource*, const TilePos& pos, Player*) override;
+	void attack(const TilePos& pos, Player*) override;
 	void handleEntityInside(TileSource*, const TilePos& pos, const Entity*, Vec3&) override;
 
 public:

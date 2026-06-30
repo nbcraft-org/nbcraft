@@ -22,7 +22,7 @@ public:
 	int getTickDelay() const override;
 	void animateTick(TileSource*, const TilePos& pos, Random*) override;
 	void tick(TileSource*, const TilePos& pos, Random*) override;
-	void attack(TileSource*, const TilePos& pos, Player*) override;
+	void attack(const TilePos& pos, Player*) override;
 	bool use(const TilePos& pos, Player*) override;
 	void stepOn(TileSource*, const TilePos& pos, Entity*) override;
 

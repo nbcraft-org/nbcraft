@@ -40,5 +40,5 @@ void PumpkinTile::setPlacedBy(TileSource* source, const TilePos& pos, Mob* mob)
 		case 3: data = 1; break;
 	}
 
-	source->setTileAndData(pos, FullTile(m_ID, data));
+	source->setExtraData(pos, data);
 }

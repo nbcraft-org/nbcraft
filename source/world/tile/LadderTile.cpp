@@ -87,7 +87,7 @@ void LadderTile::setPlacedOnFace(TileSource* source, const TilePos& pos, Facing:
 	if ((data == 0 || face == Facing::WEST) && source->isSolidBlockingTile(pos.east())) data = 4;
 	if ((data == 0 || face == Facing::EAST) && source->isSolidBlockingTile(pos.west())) data = 5;
 
-	source->setTileAndData(pos, FullTile(m_ID, data));
+	source->setExtraData(pos, data);
 	assert(source->getData(pos) == data);
 }
 

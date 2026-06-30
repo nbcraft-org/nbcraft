@@ -30,12 +30,12 @@ bool DoorTile::use(const TilePos& pos, Player* player)
 
 	TileSource& source = player->getTileSource();
 
-	setOpen(&source, pos, !isOpen(source.getData(pos)), player);
+	setOpen(&source, pos, !isOpen(source.getData(pos)));
 
 	return true;
 }
 
-void DoorTile::attack(TileSource* source, const TilePos& pos, Player* player)
+void DoorTile::attack(const TilePos& pos, Player* player)
 {
 	use(pos, player);
 }
