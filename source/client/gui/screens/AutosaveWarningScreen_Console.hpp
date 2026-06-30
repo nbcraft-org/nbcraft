@@ -21,4 +21,7 @@ public:
 
 public:
 	Button m_btnLoad;
+private:
+	std::string m_autosaveText;
+	std::vector<std::string> m_autosaveLine;
 };

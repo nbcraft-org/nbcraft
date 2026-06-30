@@ -286,7 +286,7 @@ void ItemRenderer::renderGuiItem(Minecraft& mc, const ItemStack& item, int x, in
 			Lighting::turnOnConsoleUiItems();
 			matrix->translate(Vec3(x, y, 0));
 			matrix->scale(16);
-			matrix->translate(Vec3(0.5f, 0.5f, 0.0f));
+			matrix->translate(Vec3(0.53f, 0.53f, 0.0f));
 			matrix->scale(Vec3(0.55f, 0.55f, -1.0f));
 		}
 		else
