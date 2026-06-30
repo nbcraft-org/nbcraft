@@ -11,12 +11,12 @@ ImmediateBufferD3D11::ImmediateBufferD3D11()
 {
 }
 
-void ImmediateBufferD3D11::createDynamicBuffer(RenderContext& context, unsigned int stride, const void* data, unsigned int count, BufferType bufferType)
+void ImmediateBufferD3D11::createDynamicBuffer(RenderContext& context, unsigned int stride, ByteBuffer& data, unsigned int count, BufferType bufferType)
 {
     BufferD3D11::createDynamicBuffer(context, stride, data, count, bufferType);
 }
 
-void ImmediateBufferD3D11::updateBuffer(RenderContext& context, unsigned int stride, void*& data, unsigned int count)
+void ImmediateBufferD3D11::updateBuffer(RenderContext& context, unsigned int stride, ByteBuffer& data, unsigned int count)
 {
     MapType mapType = MAP_WRITE_NO_OVERWRITE;
 

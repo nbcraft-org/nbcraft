@@ -1,8 +1,8 @@
 #pragma once
 
 #include <vector>
-#include "world/Container.hpp"
 #include "world/item/ItemStack.hpp"
+#include "Container.hpp"
 #include "ContainerMenu.hpp"
 
 class ContainerMenu;
@@ -17,15 +17,15 @@ public:
     virtual ~CraftingContainer();
 
     uint16_t getContainerSize() const override;
-    ItemStack& getItem(int index) override;
+    ItemStack& getItem(StackID stackId) override;
     const ItemStack& getItem(int x, int y);
 
     std::string getName() const override;
 
-    ItemStack removeItem(int index, int amount) override;
-    void setItem(int index, const ItemStack& item) override;
+    ItemStack removeItem(StackID stackId, int amount) override;
+    void setItem(StackID stackId, const ItemStack& item) override;
 
-    void setChanged() override;
+    void setContainerChanged(StackID stackId) override;
     bool stillValid(Player* player) const override;
 
 private:

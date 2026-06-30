@@ -51,14 +51,14 @@ PS_MAIN_BEGIN
 #ifdef USE_EMISSIVE
         //make glowy stuff
         color *= lerp( float( 1.0 ).xxxx, PSInput.light, color.a );
-#elif defined(USE_VERTEX_COLORS)
+#elif defined(USE_VERTEX_COLORS) || defined (USE_CURRENT_COLOR)
         color *= PSInput.color;
 #else
-        color *= PSInput.light;
+        color.rgb *= PSInput.light.xyz;
 #endif
 
     //apply fog
-    color.rgb = lerp( color.rgb, PSInput.fogColor.rgb, PSInput.fogColor.a );
+    color.rgb = lerp( color.rgb, PSInput.fogColor.rgb, PSInput.fogIntensity );
 
 #ifdef USE_COLOR_MASK
 	#ifdef GLINT

@@ -66,7 +66,7 @@ public:
 	void set(int inCount);
 	bool canDestroySpecial(const Tile*);
 	std::string getDescriptionId();
-	std::string getHovertextName() const;
+	std::string getHovertextName();
 	float getDestroySpeed(const Tile*);
 	int getIcon() const;
 	int getMaxDamage() const;
@@ -85,7 +85,7 @@ public:
 	void setDescriptionId(const std::string&);
 	void snap(Player*);
 	std::string toString() const;
-	ItemStack* use(Mob*);
+	bool use(Mob&);
 	void releaseUsing(Level&, Mob&, int durationLeft);
 	bool useOn(Player*, const TilePos& pos, Facing::Name face);
 	void onCraftedBy(Player*, Level*);
@@ -102,6 +102,7 @@ public:
 	//formerly known as isNull
 	bool isEmpty() const;
 	void setEmpty();
+	bool sameIngredient(const ItemStack&) const;
 
 	// 0.12.1
 	int getBaseRepairCost() const;
@@ -126,6 +127,7 @@ public:
 public:
 	int16_t m_count;
 	int m_popTime;
+
 private:
     int16_t m_auxValue;
 	CompoundTag* m_userData;

@@ -20,6 +20,8 @@
 #include "world/level/Explosion.hpp"
 #include "world/level/TileSource.hpp"
 #include "world/inventory/SimpleContainer.hpp"
+#include "world/tile/entity/FurnaceTileEntity.hpp"
+#include "world/tile/entity/DispenserTileEntity.hpp"
 
 // This lets you make the client shut up and not log events in the debug console.
 //#define VERBOSE_CLIENT
@@ -51,8 +53,8 @@ void ClientSideNetworkHandler::levelGenerated(Level* level)
 
 	if (m_serverProtocolVersion >= 3)
 	{
-		ReadyPacket* pReadyPkt = new ReadyPacket(1);
-		m_pRakNetInstance->send(pReadyPkt);
+		ReadyPacket readyPkt(1);
+		m_pRakNetInstance->send(readyPkt);
 	}
 
 	arrangeRequestChunkOrder();
@@ -69,8 +71,8 @@ void ClientSideNetworkHandler::onConnect(const RakNet::RakNetGUID& rakGuid) // s
 	m_serverGUID = rakGuid;
 
 	clearChunksLoaded();
-	LoginPacket* pLoginPkt = new LoginPacket(m_pMinecraft->m_pUser->m_name, NETWORK_PROTOCOL_VERSION);
-	m_pRakNetInstance->send(pLoginPkt);
+	LoginPacket loginPkt(m_pMinecraft->m_pUser->m_name, NETWORK_PROTOCOL_VERSION);
+	m_pRakNetInstance->send(loginPkt);
 }
 
 void ClientSideNetworkHandler::onUnableToConnect()
@@ -179,7 +181,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, AddPlay
 	m_pLevel->addEntity(pPlayer);
 
 	// If we haven't received a rot, use default player rot
-	if (pAddPlayerPkt->m_rot == Vec2::ZERO)
+	if (pAddPlayerPkt->m_rot == Rot2::ZERO)
 		pAddPlayerPkt->m_rot = pPlayer->m_rot;
 
 	pPlayer->moveTo(
@@ -359,7 +361,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, MoveEnt
 	Entity* pEntity = m_pLevel->getEntity(packet->m_entityId);
 	if (!pEntity) return;
 
-	Vec2 rot;
+	Rot2 rot;
 	if (packet->m_bHasRot)
 	{
 		rot = packet->m_rot;
@@ -423,7 +425,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, PlaceBl
 	pTile->setPlacedBy(&tileSource, pos, pPlayer);
 
 	const Tile::SoundType* pSound = pTile->m_pSound;
-	m_pLevel->playSound(pos + 0.5f, "step." + pSound->m_name, 0.5f * (1.0f + pSound->volume), 0.8f * pSound->pitch);
+	m_pLevel->playSound(pos + 0.5f, "step." + pSound->name, 0.5f * (1.0f + pSound->volume), 0.8f * pSound->pitch);
 }
 
 void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, RemoveBlockPacket* pRemoveBlockPkt)
@@ -460,7 +462,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, RemoveB
 	if (pTile && setTileResult)
 	{
 		const Tile::SoundType* pSound = pTile->m_pSound;
-		m_pLevel->playSound(pos + 0.5f, "step." + pSound->m_name, 0.5f * (1.0f + pSound->volume), 0.8f * pSound->pitch);
+		m_pLevel->playSound(pos + 0.5f, "step." + pSound->name, 0.5f * (1.0f + pSound->volume), 0.8f * pSound->pitch);
 
 		pTile->destroy(&tileSource, pos, auxValue);
 	}
@@ -625,7 +627,12 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, PlayerE
 		return;
 	}
 
+#ifdef FEATURE_SERVER_INVENTORIES
+	// will need to be reworked for proper server-sided inventory support, pick the proper slot, not just any item
 	pPlayer->m_pInventory->pickItem(pPlayerEquipmentPkt->m_itemID, pPlayerEquipmentPkt->m_itemAuxValue, C_MAX_HOTBAR_ITEMS);
+#else
+	pPlayer->m_pInventory->setSelectedItem(ItemStack(pPlayerEquipmentPkt->m_itemID, 1, pPlayerEquipmentPkt->m_itemAuxValue));
+#endif
 }
 
 void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, InteractPacket* pkt)
@@ -646,11 +653,11 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, Interac
 	{
 	case InteractPacket::INTERACT:
 		pPlayer->swing();
-		m_pMinecraft->m_pGameMode->interact(pPlayer, pTarget);
+		m_pMinecraft->getPlayerGameMode(*pPlayer)->interact(pPlayer, pTarget);
 		break;
 	case InteractPacket::ATTACK:
 		pPlayer->swing();
-		m_pMinecraft->m_pGameMode->attack(pPlayer, pTarget);
+		m_pMinecraft->getPlayerGameMode(*pPlayer)->attack(pPlayer, pTarget);
 		break;
 	default:
 		LOG_W("Received unkown action in InteractPacket: %d", pkt->m_actionType);
@@ -754,10 +761,10 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ContainerO
 		pLocalPlayer->openContainer(new SimpleContainer(packet->m_size, packet->m_title.C_String()));
 		break;
 	case Container::FURNACE:
-		//pLocalPlayer->openFurnace(new FurnaceTileEntity());
+		pLocalPlayer->openFurnace(new FurnaceTileEntity);
 		break;
 	case Container::DISPENSER:
-		//pLocalPlayer->openTrap(new DispenserTileEntity());
+		pLocalPlayer->openTrap(new DispenserTileEntity());
 		break;
 	case Container::CRAFTING:
 		pLocalPlayer->startCrafting(pLocalPlayer->m_pos);
@@ -801,7 +808,9 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ContainerS
 	if (pContainerMenu->m_containerId != packet->m_containerId)
 		return;
 	
-	pContainerMenu->setItem(packet->m_slot, packet->m_item);
+	pContainerMenu->m_bBroadcastChanges = false;
+	pContainerMenu->setItem(packet->m_slotId, packet->m_item);
+	pContainerMenu->m_bBroadcastChanges = true;
 }
 
 void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ContainerSetDataPacket* packet)
@@ -822,7 +831,9 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ContainerS
 	if (pContainerMenu->m_containerId != packet->m_containerId)
 		return;
 
-	pContainerMenu->setData(packet->m_slot, packet->m_value);
+	pContainerMenu->m_bBroadcastChanges = false;
+	pContainerMenu->setData(packet->m_id, packet->m_value);
+	pContainerMenu->m_bBroadcastChanges = true;
 }
 
 void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ContainerSetContentPacket* packet)
@@ -843,7 +854,9 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ContainerS
 	if (pContainerMenu->m_containerId != packet->m_containerId)
 		return;
 
+	pContainerMenu->m_bBroadcastChanges = false;
 	pContainerMenu->setAll(packet->m_items);
+	pContainerMenu->m_bBroadcastChanges = true;
 }
 
 void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, LevelDataPacket* packet)

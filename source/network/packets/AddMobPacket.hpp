@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Packet.hpp"
-#include "world/phys/Vec2.hpp"
+#include "world/phys/Rot2.hpp"
 #include "world/entity/SynchedEntityData.hpp"
 
 class AddMobPacket : public Packet
@@ -24,7 +24,8 @@ public:
 	int32_t m_entityId;
 	int32_t m_entityTypeId;
 	Vec3 m_pos;
-	Vec2 m_rot;
+	Rot2 m_rot;
+
 private:
 	SynchedEntityData m_entityData;
 	SynchedEntityData::ItemsArray m_unpack;

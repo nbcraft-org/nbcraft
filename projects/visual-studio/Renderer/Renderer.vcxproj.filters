@@ -356,6 +356,18 @@
     <ClInclude Include="$(MC_ROOT)\source\renderer\hal\AlphaStateDescription.hpp">
       <Filter>Header Files\HAL</Filter>
     </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\base\VertexBufferStateBase.hpp">
+      <Filter>Header Files\HAL\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\VertexBufferStateDescription.hpp">
+      <Filter>Header Files\HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\null\VertexBufferStateNull.hpp">
+      <Filter>Header Files\HAL\Null</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\renderer\hal\interface\VertexBufferState.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\renderer\GL\GL.cpp">
@@ -615,6 +627,18 @@
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\renderer\hal\AlphaStateDescription.cpp">
       <Filter>Source Files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\base\VertexBufferStateBase.cpp">
+      <Filter>Source Files\HAL\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\VertexBufferStateDescription.cpp">
+      <Filter>Source Files\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\null\VertexBufferStateNull.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\renderer\hal\interface\VertexBufferState.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

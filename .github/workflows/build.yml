@@ -40,7 +40,6 @@ jobs:
                     cmake ninja-build \
                     ccache \
                     libopenal-dev \
-                    zlib1g-dev \
                     ${{ matrix.packages }}
           - name: Build
             run: |
@@ -98,7 +97,7 @@ jobs:
                     backend_name: 'SDL1'
                     packages: 'sdl12-compat'
         name: macOS (${{ matrix.name }})
-        runs-on: macos-15
+        runs-on: macos-26
         steps:
           - name: Checkout Repository
             uses: actions/checkout@v6
@@ -239,8 +238,8 @@ jobs:
           - uses: actions/cache@v5
             with:
               path: ~/ccache.tar.xz
-              key: switch-${{ steps.get-time.outputs.time }}
-              restore-keys: switch-
+              key: mingw-${{ steps.get-time.outputs.time }}
+              restore-keys: mingw-
           - name: Unpack cache
             run: cd ~ && [ -f ccache.tar.xz ] && tar xf ccache.tar.xz || true
           - name: Checkout Repository

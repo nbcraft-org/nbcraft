@@ -26,7 +26,7 @@ bool RenderContextD3D11::InputLayoutID::operator==(const RenderContextD3D11::Inp
 }
 
 RenderContextD3D11::RenderContextD3D11()
-    : RenderContextBase()
+    : RenderContextD3D()
 {
     m_viewport = {0};
     m_featureLevel = D3D_FEATURE_LEVEL_9_1;
@@ -114,6 +114,33 @@ void RenderContextD3D11::swapBuffers()
     if (hr != DXGI_ERROR_DEVICE_REMOVED && hr != DXGI_ERROR_DEVICE_RESET)
     {
         ErrorHandlerDXGI::checkForErrors(hr);
+    }
+}
+
+void RenderContextD3D11::getShaderLangVersion(ShaderType shaderType, int& major, int& minor)
+{
+    // https://learn.microsoft.com/en-us/windows/win32/direct3d11/overviews-direct3d-11-devices-downlevel-intro
+    switch (m_featureLevel)
+    {
+    case D3D_FEATURE_LEVEL_11_1: // 5.0
+    case D3D_FEATURE_LEVEL_11_0: // 5.0
+        major = 5; minor = 0;
+        break;
+
+    case D3D_FEATURE_LEVEL_10_1: // 4.x
+        major = 4; minor = 1;
+        break;
+
+    case D3D_FEATURE_LEVEL_10_0: // 4.0
+    case D3D_FEATURE_LEVEL_9_3:  // 4_0_level_9_3
+    case D3D_FEATURE_LEVEL_9_2:  // 4_0_level_9_1
+    case D3D_FEATURE_LEVEL_9_1:  // 4_0_level_9_1
+        major = 4; minor = 0;
+        break;
+
+    default:
+        LOG_E("Unsupported D3D feature level: %d", m_featureLevel);
+        throw std::bad_cast(); // everything will implode past this point anyways, so we might as well make our problematic area clear
     }
 }
 

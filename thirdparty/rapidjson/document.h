@@ -23,7 +23,7 @@
 #include "memorystream.h"
 #include "encodedstream.h"
 #include <new>      // placement new
-#include <limits>
+#include "compat/Limits.hpp"
 #ifdef __cpp_lib_three_way_comparison
 #include <compare>
 #endif
@@ -49,6 +49,10 @@ RAPIDJSON_DIAG_OFF(effc++)
 #pragma push_macro("GetObject")
 #define RAPIDJSON_WINDOWS_GETOBJECT_WORKAROUND_APPLIED
 #undef GetObject
+#endif
+
+#if defined(__GNUC__) && (((__GNUC__ == 3) && (__GNUC_MINOR__ == 0)) || (__GNUC__ < 3))
+#define RAPIDJSON_NOMEMBERITERATORCLASS
 #endif
 
 #ifndef RAPIDJSON_NOMEMBERITERATORCLASS
@@ -498,15 +502,16 @@ inline GenericStringRef<CharType> StringRef(const std::basic_string<CharType>& s
 // GenericValue type traits
 namespace internal {
 
-template <typename T, typename Encoding = void, typename Allocator = void>
-struct IsGenericValueImpl : FalseType {};
+template <typename T>
+struct IsGenericValue : FalseType {};
 
 // select candidates according to nested encoding and allocator types
-template <typename T> struct IsGenericValueImpl<T, typename Void<typename T::EncodingType>::Type, typename Void<typename T::AllocatorType>::Type>
-    : IsBaseOf<GenericValue<typename T::EncodingType, typename T::AllocatorType>, T>::Type {};
+template <typename Encoding, typename Allocator>
+struct IsGenericValue< GenericValue<Encoding, Allocator> > : TrueType {};
 
 // helper to match arbitrary GenericValue instantiations, including derived classes
-template <typename T> struct IsGenericValue : IsGenericValueImpl<T>::Type {};
+template <typename Encoding, typename Allocator, typename StackAllocator>
+struct IsGenericValue< GenericDocument<Encoding, Allocator, StackAllocator> > : TrueType {};
 
 } // namespace internal
 
@@ -2957,8 +2962,8 @@ public:
     typedef GenericObject<false, ValueT> Object;
     typedef ValueT PlainType;
     typedef typename internal::MaybeAddConst<Const,PlainType>::Type ValueType;
-    typedef GenericMemberIterator<Const, typename ValueT::EncodingType, typename ValueT::AllocatorType> MemberIterator;  // This may be const or non-const iterator
-    typedef GenericMemberIterator<true, typename ValueT::EncodingType, typename ValueT::AllocatorType> ConstMemberIterator;
+    typedef typename GenericMemberIterator<Const, typename ValueT::EncodingType, typename ValueT::AllocatorType>::Iterator MemberIterator;  // This may be const or non-const iterator
+    typedef typename GenericMemberIterator<true, typename ValueT::EncodingType, typename ValueT::AllocatorType>::Iterator ConstMemberIterator;
     typedef typename ValueType::AllocatorType AllocatorType;
     typedef typename ValueType::StringRefType StringRefType;
     typedef typename ValueType::EncodingType EncodingType;

@@ -117,6 +117,20 @@ std::string AppPlatform_android::getDateString(int time)
 	return std::string(buffer);
 }
 
+void AppPlatform_android::setVSyncEnabled(bool enabled)
+{
+	EGLDisplay display = eglGetCurrentDisplay();
+	if (display == EGL_NO_DISPLAY)
+		return;
+
+	eglSwapInterval(display, enabled ? 1 : 0);
+}
+
+bool AppPlatform_android::isVSyncSwitchable() const
+{
+	return eglGetCurrentDisplay() != EGL_NO_DISPLAY;
+}
+
 SoundSystem* AppPlatform_android::getSoundSystem() const
 {
 	return m_pSoundSystem;

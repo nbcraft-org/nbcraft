@@ -90,7 +90,7 @@
       <Filter>Source Files\HAL\D3D9</Filter>
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\renderer\hal\d3d9\AlphaStateD3D9.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\HAL\D3D9</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -158,7 +158,7 @@
       <Filter>Header Files\HAL\D3D9</Filter>
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\renderer\hal\d3d9\AlphaStateD3D9.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\HAL\D3D9</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -19,7 +19,7 @@ RedStoneOreTile::RedStoneOreTile(TileID id, int texture, bool bLit) : Tile(id, t
 
 int RedStoneOreTile::getResource(TileData data, Random* random) const
 {
-	return 0;
+	return Item::redStone->m_itemID;
 }
 
 int RedStoneOreTile::getResourceCount(Random* random) const

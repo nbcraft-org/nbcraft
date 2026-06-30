@@ -17,6 +17,8 @@ public:
 	};
 
 public:
-	static Name DIRECTIONS[COUNT];
-	static TilePos DIRECTION[COUNT];
+	static const Name DIRECTIONS[COUNT];
+	static const TilePos DIRECTION[COUNT];
+	static const Name OPPOSITE[6];
+	static const Name HORIZONTAL[4];
 };

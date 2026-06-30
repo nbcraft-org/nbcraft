@@ -12,6 +12,9 @@
 #include "client/renderer/TileRenderer.hpp"
 #include "client/renderer/renderer/RenderMaterialGroup.hpp"
 #include "world/entity/ItemEntity.hpp"
+#include "client/renderer/Lighting.hpp"
+#include "client/app/Minecraft.hpp"
+#include "renderer/ShaderConstants.hpp"
 
 #ifndef ENH_3D_INVENTORY_TILES
 const uint8_t g_ItemFrames[C_MAX_TILES] =
@@ -29,7 +32,8 @@ const uint8_t g_ItemFrames[C_MAX_TILES] =
 
 ItemRenderer::Materials::Materials()
 {
-	MATERIAL_PTR(switchable, item_entity);
+	MATERIAL_PTR(switchable, item_entity_item);
+	MATERIAL_PTR(switchable, item_entity_tile);
 	MATERIAL_PTR(common, ui_fill_color);
 	MATERIAL_PTR(common, ui_fill_gradient);
 	MATERIAL_PTR(common, ui_textured);
@@ -68,7 +72,7 @@ void ItemRenderer::render(const Entity& entity, const Vec3& pos, float rot, floa
 
 	float yOffset = Mth::sin((float(itemEntity.m_age) + a) / 10.0f + itemEntity.m_bobOffs);
 	const ItemStack& itemStack = itemEntity.m_itemStack;
-	if (itemStack.isEmpty())
+	if (!itemStack.isValid()) // was isEmpty, but we need to render taken items
 		return;
 
 	int itemsToRender = 1;
@@ -80,10 +84,6 @@ void ItemRenderer::render(const Entity& entity, const Vec3& pos, float rot, floa
 		itemsToRender = 4;
 
 	matrix->translate(Vec3(pos.x, pos.y + 0.1f + yOffset * 0.1f, pos.z));
-
-#if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
-	glEnable(GL_RESCALE_NORMAL);
-#endif
 
 	_setupShaderParameters(entity, Color::NIL, a);
 
@@ -114,7 +114,7 @@ void ItemRenderer::render(const Entity& entity, const Vec3& pos, float rot, floa
 					0.2f * (m_random.nextFloat() * 2.0f - 1.0f) / scale));
 			}
 
-			m_pTileRenderer->renderTile(FullTile(pTile, itemStack.getAuxValue()), m_itemMaterials.item_entity, itemEntity.getBrightness(1.0f));
+			m_pTileRenderer->renderTile(FullTile(pTile, itemStack.getAuxValue()), m_itemMaterials.item_entity_tile, itemEntity.getBrightness(1.0f));
 		}
 	}
 	else
@@ -135,28 +135,26 @@ void ItemRenderer::render(const Entity& entity, const Vec3& pos, float rot, floa
 					0.2f * (m_random.nextFloat() * 2.0f - 1.0f) * 0.3f));
 			}
 
-			matrix->rotate(180.0f - m_pDispatcher->m_rot.x, Vec3::UNIT_Y);
+			matrix->rotate(180.0f - m_pDispatcher->m_rot.yaw, Vec3::UNIT_Y);
 
 			Tesselator& t = Tesselator::instance;
 			t.begin(4);
 
+			Color color = Color(itemStack.getItem()->getColor(itemStack.getAuxValue()), 1.0f);
+
 #ifdef ENH_SHADE_HELD_TILES
-			float bright = itemEntity.getBrightness(1.0f);
-			t.color(bright, bright, bright);
+			color.mulRGB(itemEntity.getBrightness(1.0f));
 #endif
+			currentShaderColor = color;
 			t.normal(Vec3::UNIT_Y);
 			t.vertexUV(-0.5f, -0.25f, 0.0f, float(16 * (icon % 16))     / 256.0f, float(16 * (icon / 16 + 1)) / 256.0f);
 			t.vertexUV(+0.5f, -0.25f, 0.0f, float(16 * (icon % 16 + 1)) / 256.0f, float(16 * (icon / 16 + 1)) / 256.0f);
 			t.vertexUV(+0.5f, +0.75f, 0.0f, float(16 * (icon % 16 + 1)) / 256.0f, float(16 * (icon / 16))     / 256.0f);
 			t.vertexUV(-0.5f, +0.75f, 0.0f, float(16 * (icon % 16))     / 256.0f, float(16 * (icon / 16))     / 256.0f);
             
-			t.draw(m_itemMaterials.item_entity);
+			t.draw(m_itemMaterials.item_entity_item);
 		}
 	}
-
-#if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
-	glDisable(GL_RESCALE_NORMAL);
-#endif
 }
 
 void ItemRenderer::blitRect(Tesselator& t, int x, int y, int w, int h, int color)
@@ -170,7 +168,7 @@ void ItemRenderer::blitRect(Tesselator& t, int x, int y, int w, int h, int color
 	t.draw(m_itemMaterials.ui_fill_gradient);
 }
 
-void ItemRenderer::blit(int dx, int dy, int sx, int sy, int tw, int th)
+void ItemRenderer::blit(int dx, int dy, int sx, int sy, int tw, int th, const Color& color)
 {
 	Tesselator& t = Tesselator::instance;
 
@@ -179,27 +177,29 @@ void ItemRenderer::blit(int dx, int dy, int sx, int sy, int tw, int th)
 	float vx = float(sx), vy = float(sy);
 
 	t.begin(4);
+	if (color != Color::WHITE)
+		t.color(color);
 	t.vertexUV(ex,      ey + uh, 0.0f, float(vx)      / 256.0f, float(vy + uh) / 256.0f);
 	t.vertexUV(ex + uw, ey + uh, 0.0f, float(vx + uw) / 256.0f, float(vy + uh) / 256.0f);
 	t.vertexUV(ex + uw, ey,      0.0f, float(vx + uw) / 256.0f, float(vy)      / 256.0f);
 	t.vertexUV(ex,      ey,      0.0f, float(vx)      / 256.0f, float(vy)      / 256.0f);
-	t.draw(m_itemMaterials.ui_textured);
+	t.draw(color == Color::WHITE ? m_itemMaterials.ui_textured : m_itemMaterials.ui_texture_and_color);
 }
-
-void ItemRenderer::renderGuiItemOverlay(Font* font, Textures* textures, ItemStack& item, int x, int y)
+void ItemRenderer::renderGuiItemOverlay(Minecraft& mc, const ItemStack& item, int x, int y)
 {
 	if (item.isEmpty())
 		return;
 
 	// Draw damage amount
-	if (item.isDamaged()) {
+	if (item.isDamaged())
+	{
 		int duraWidth = ceilf(13.0f - static_cast<float>(item.getDamageValue()) * 13.0f / static_cast<float>(item.getMaxDamage()));
 		int duraPercent = ceilf(255.0f - static_cast<float>(item.getDamageValue()) * 255.0f / static_cast<float>(item.getMaxDamage()));
 
 
 		int duraBgColor = (((255 - duraPercent) / 4) << 16) | 0x3F00;
 		int duraColor = ((255 - duraPercent) << 16) | (duraPercent << 8);
-
+		
 		Tesselator& t = Tesselator::instance;
 		
 		blitRect(t, x + 2, y + 13, 13, 2, 0);
@@ -207,7 +207,8 @@ void ItemRenderer::renderGuiItemOverlay(Font* font, Textures* textures, ItemStac
 		blitRect(t, x + 2, y + 13, duraWidth, 1, duraColor);
 	}
 
-	if (item.m_count <= 1) {
+	if (item.m_count <= 1)
+	{
 		return;
 	}
 
@@ -216,20 +217,19 @@ void ItemRenderer::renderGuiItemOverlay(Font* font, Textures* textures, ItemStac
 	ss << item.m_count;
 	std::string amtstr = ss.str();
 
-	int width = font->width(amtstr);
+	int width = mc.m_pFont->width(amtstr);
 
-	font->drawShadow(amtstr, x + 17 - width, y + 6 + 3, 0xFFFFFF);
+	mc.m_pFont->drawShadow(amtstr, x + 17 - width, y + 6 + 3, 0xFFFFFF);
 }
 
-void ItemRenderer::renderGuiItem(Font* font, Textures* textures, ItemStack& item, int x, int y, bool b)
+void ItemRenderer::renderGuiItem(Minecraft& mc, const ItemStack& item, int x, int y, const Color& color)
 {
 	// @NOTE: Font unused but would presumably be used to draw the item amount.
 	// As if that actually works due to us blocking t.begin() and t.draw() calls...
 	if (item.isEmpty() || !item.isValid())
 		return;
 
-	if (!b)
-		return;
+	Textures& textures = *mc.m_pTextures;
 
 	//Item* pItem = item->getItem();
 	Tile* pTile = item.getTile();
@@ -275,23 +275,35 @@ void ItemRenderer::renderGuiItem(Font* font, Textures* textures, ItemStack& item
 		t.vertexUV(float(x +  0), float(y +  0), 0.0f,  texU          / 512.0f,  texV          / 512.0f);
 		t.draw();
 #else
-		textures->loadAndBindTexture(C_TERRAIN_NAME);
+
+		textures.loadAndBindTexture(C_TERRAIN_NAME);
 
 		MatrixStack::Ref matrix = MatrixStack::World.push();
 
 		// scale, rotate, and translate the tile onto the correct screen coordinate
-		matrix->translate(Vec3(x + 8, y + 8, -8));
-		matrix->scale(10);
+		if (mc.getUiTheme() == UI_CONSOLE)
+		{
+			Lighting::turnOnConsoleUiItems();
+			matrix->translate(Vec3(x, y, 0));
+			matrix->scale(16);
+			matrix->translate(Vec3(0.5f, 0.5f, 0.0f));
+			matrix->scale(Vec3(0.55f, 0.55f, -1.0f));
+		}
+		else
+		{
+			Lighting::turnOnItems();
+			matrix->translate(Vec3(x - 2, y + 3, 0));
+			matrix->scale(10);
+			matrix->translate(Vec3(1.0f, 0.5f, 1.0f));
+			matrix->scale(Vec3(1.0f, 1.0f, -1.0f));
+		}
 		matrix->rotate(210.0f, Vec3::UNIT_X);
 		matrix->rotate(45.0f, Vec3::UNIT_Y);
-
-		// TODO: Why can't we rotate stairs 90deg also? What's rotating them!?
-		if (pTile->getRenderShape() != SHAPE_STAIRS)
-		{
-			matrix->rotate(-90.0f, Vec3::UNIT_Y);
-		}
+		matrix->rotate(-90.0f, Vec3::UNIT_Y);
 		
-		m_pTileRenderer->renderTile(FullTile(pTile, item.getAuxValue()), m_itemMaterials.ui_item, 1.0f, true);
+		m_pTileRenderer->renderTile(FullTile(pTile, item.getAuxValue()), m_itemMaterials.ui_item, color);
+
+		Lighting::turnOff();
 		#undef PARM_HACK
 #endif
 	}
@@ -300,10 +312,10 @@ void ItemRenderer::renderGuiItem(Font* font, Textures* textures, ItemStack& item
 		// @BUG: The last bound texture will be the texture that ALL items will take. This is because begin and end calls
 		// have been void'ed by a  t.voidBeginAndEndCalls call in Gui::render.
 		if (item.getTile())
-			textures->loadAndBindTexture(C_TERRAIN_NAME);
+			textures.loadAndBindTexture(C_TERRAIN_NAME);
 		else
-			textures->loadAndBindTexture(C_ITEMS_NAME);
+			textures.loadAndBindTexture(C_ITEMS_NAME);
 
-		blit(x, y, 16 * (item.getIcon() % 16), 16 * (item.getIcon() / 16), 16, 16);
+		blit(x, y, 16 * (item.getIcon() % 16), 16 * (item.getIcon() / 16), 16, 16, color * Color(item.getItem()->getColor(item.getAuxValue()), 1.0f));
 	}
 }

@@ -33,19 +33,21 @@ export PATH="$PWD/toolchain-$arch/bin:$PATH"
 
 # Increase this if we ever make a change to the toolchain, for example
 # using a newer GCC version, and we need to invalidate the cache.
-toolchainver=1
+toolchainver=3
 if [ "$(cat "toolchain-$arch/toolchainver" 2>/dev/null)" != "$toolchainver" ]; then
     # adapted from https://github.com/DiscordMessenger/dm/blob/master/doc/pentium-toolchain/README.md
 
     case $arch in
         (i?86)
-            winnt=0x0500 # Windows 2000
+            winnt=0x0400 # Windows NT 4.0
         ;;
         (x86_64)
             winnt=0x0501 # Windows XP
         ;;
-        (arm64)
-            winnt=0x0A00 # Windows 10
+        (arm64|aarch64)
+            printf 'aarch64 builds are currently unsupported.\n'
+            exit 1
+            # winnt=0x0A00 # Windows 10
         ;;
         (*)
             printf 'Unknown architecture!\n'
@@ -60,31 +62,41 @@ if [ "$(cat "toolchain-$arch/toolchainver" 2>/dev/null)" != "$toolchainver" ]; t
     rm -rf binutils-*
     wget -O- "https://ftp.gnu.org/gnu/binutils/binutils-$binutils_version.tar.xz" | tar -xJ
 
+    # The '-Wno-discarded-qualifiers' flag is unsupported on clang but required on gcc 15 to build binutils.
+    # This will probably be fixed when binutils is updated.
+    if command -v gcc >/dev/null; then
+        cc=gcc
+    else
+        cc=cc
+    fi
+    printf 'int nothing;\n' | "$cc" -xc - -c -o /dev/null -Wno-discarded-qualifiers &&
+        warn='-Wno-discarded-qualifiers'
+
     cd "binutils-$binutils_version"
     ./configure \
         --prefix="$workdir/toolchain-$arch" \
         --target="$target" \
         --disable-multilib \
-        CFLAGS='-Wno-discarded-qualifiers'
+        CFLAGS="-O2 $warn"
     make -j"$ncpus"
     make -j"$ncpus" install-strip
     cd ..
     rm -rf "binutils-$binutils_version" &
 
-    mingw_version='13.0.0'
+    mingw_version='14.0.0'
     rm -rf mingw-w64-*
     wget -O- "https://sourceforge.net/projects/mingw-w64/files/mingw-w64/mingw-w64-release/mingw-w64-v$mingw_version.tar.bz2/download" | tar -xj
 
     cd "mingw-w64-v$mingw_version/mingw-w64-headers"
     ./configure \
         --host="$target" \
-        --prefix="$workdir/toolchain-$arch/$arch-w64-mingw32" \
+        --prefix="$workdir/toolchain-$arch/$target" \
         --with-default-win32-winnt="$winnt" \
         --with-default-msvcrt=msvcrt-os
     make -j"$ncpus" install
     cd ../..
 
-    gcc_version='15.2.0'
+    gcc_version='16.1.0'
     rm -rf gcc-*
     wget -O- "https://ftp.gnu.org/gnu/gcc/gcc-$gcc_version/gcc-$gcc_version.tar.xz" | tar -xJ
 
@@ -116,7 +128,7 @@ if [ "$(cat "toolchain-$arch/toolchainver" 2>/dev/null)" != "$toolchainver" ]; t
     cd "mingw-w64-v$mingw_version/mingw-w64-crt"
     ./configure \
         --host="$target" \
-        --prefix="$workdir/toolchain-$arch/$arch-w64-mingw32" \
+        --prefix="$workdir/toolchain-$arch/$target" \
         --with-default-win32-winnt="$winnt" \
         --with-default-msvcrt=msvcrt-os
     make -j1
@@ -137,8 +149,10 @@ fi
 
 if [ -n "$DEBUG" ]; then
     build=Debug
+    set --
 else
     build=Release
+    set -- -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON
 fi
 
 # Delete old build files if build settings change or if the SDK changes.
@@ -155,7 +169,7 @@ mkdir -p "build-$arch"
 cd "build-$arch"
 
 if command -v ccache >/dev/null; then
-    set -- \
+    set -- "$@" \
         -DCMAKE_C_COMPILER_LAUNCHER=ccache \
         -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 fi
@@ -165,6 +179,8 @@ cmake "$platformdir/../.." \
     -DCMAKE_SYSTEM_NAME=Windows \
     -DCMAKE_C_COMPILER="$target-gcc" \
     -DCMAKE_CXX_COMPILER="$target-g++" \
+    -DCMAKE_AR="$(command -v "$target-gcc-ar")" \
+    -DCMAKE_RANLIB="$(command -v "$target-gcc-ranlib")" \
     -DCMAKE_EXE_LINKER_FLAGS='-static' \
     -DNBC_PLATFORM="${NBC_PLATFORM:-windows}" \
     -DNBC_GFX_API="${NBC_GFX_API:-OGL}" \

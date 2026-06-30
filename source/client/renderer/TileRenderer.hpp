@@ -34,7 +34,8 @@ private:
 
 public:
 	float getWaterHeight(const TilePos& pos, const Material*);
-	void renderTile(const FullTile& tile, const mce::MaterialPtr& material = mce::MaterialPtr::NONE, float bright = 1.0f, bool preshade = false);
+	void renderTile(const FullTile& tile, const mce::MaterialPtr& material, float bright, bool preshade = false);
+	void renderTile(const FullTile& tile, const mce::MaterialPtr& material = mce::MaterialPtr::NONE, const Color& color = Color::WHITE, bool preshade = false);
 
 	bool tesselateInWorld(Tile*, const TilePos& pos);
 	bool tesselateInWorldNoCulling(Tile*, const TilePos& pos);
@@ -44,8 +45,8 @@ public:
 	void renderWest(Tile*, const Vec3& pos, int texture);
 	void renderSouth(Tile*, const Vec3& pos, int texture);
 	void renderNorth(Tile*, const Vec3& pos, int texture);
-	void renderFaceDown(Tile*, const Vec3& pos, int texture);
 	void renderFaceUp(Tile*, const Vec3& pos, int texture);
+	void renderFaceDown(Tile*, const Vec3& pos, int texture);
 	void tesselateCrossTexture(const FullTile& tile, const Vec3& pos, bool simple = false);
 	void tesselateRowTexture(Tile* tile, int data, const Vec3& pos);
 	void tesselateTorch(Tile*, const Vec3& pos, float a, float b);
@@ -58,12 +59,17 @@ public:
 	bool tesselateWaterInWorld(Tile*, const TilePos& pos);
 	bool tesselateStairsInWorld(Tile*, const TilePos& pos);
 	bool tesselateFenceInWorld(Tile*, const TilePos& pos);
+	bool tesselateFenceGateInWorld(Tile*, const TilePos& pos);
 	bool tesselateLadderInWorld(Tile*, const TilePos& pos);
 	bool tesselateTorchInWorld(Tile*, const TilePos& pos);
+	bool tesselateDiodeInWorld(Tile*, const TilePos& pos);
+	bool tesselateLeverInWorld(Tile*, const TilePos& pos);
 	bool tesselateDoorInWorld(Tile*, const TilePos& pos);
 #ifndef ORIGINAL_CODE
 	bool tesselateFireInWorld(Tile*, const TilePos& pos);
 #endif
+	bool tesselateDustInWorld(Tile*, const TilePos& pos);
+
 	bool useAmbientOcclusion() const;
 
 protected:

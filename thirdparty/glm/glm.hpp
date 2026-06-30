@@ -83,7 +83,7 @@
 #include <cmath>
 #include <climits>
 #include <cfloat>
-#include <limits>
+#include "compat/Limits.hpp"
 #include <cassert>
 #include "fwd.hpp"
 

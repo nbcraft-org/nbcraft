@@ -8,8 +8,8 @@ namespace mce
     class Buffer : public MCE_GFX_CLASS(Buffer)
     {
     public:
-        void createIndexBuffer(RenderContext& context, unsigned int sizeOfSingleIndice, const void *indices, unsigned int numberOfIndices);
-        void createVertexBuffer(RenderContext& context, unsigned int vertexStride, const void *vertices, unsigned int numberOfVertices);
+        void createIndexBuffer(RenderContext& context, unsigned int sizeOfSingleIndice, ByteBuffer& indices, unsigned int numberOfIndices);
+        void createVertexBuffer(RenderContext& context, unsigned int vertexStride, ByteBuffer& vertices, unsigned int numberOfVertices);
         void createDynamicIndexBuffer(RenderContext& context, unsigned int stride, unsigned int count);
         void createDynamicVertexBuffer(RenderContext& context, unsigned int stride, unsigned int count);
 

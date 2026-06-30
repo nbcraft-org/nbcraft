@@ -29,6 +29,7 @@ class Entity;
 class Mob;
 class Player;
 class LiquidTile;
+class TileEntity;
 class TileSource;
 
 class Tile
@@ -50,10 +51,10 @@ public: // types
 	};
 	struct SoundType
 	{
-		std::string m_name;
+		std::string name;
 		float volume, pitch;
 
-		SoundType(const std::string& name, float volume, float pitch) : m_name(name), volume(volume), pitch(pitch) {}
+		SoundType(const std::string& name, float volume, float pitch) : name(name), volume(volume), pitch(pitch) {}
 	};
 
 public: // virtual functions
@@ -80,6 +81,7 @@ public: // virtual functions
 	virtual bool mayPick(TileData, bool) const;
 	virtual bool mayPlace(TileSource*, const TilePos& pos) const;
 	virtual bool tryToPlace(TileSource*, const TilePos&, TileData);
+	virtual bool hasTileEntity() const;
 	virtual int getTickDelay() const;
 	virtual void tick(TileSource* source, const TilePos& pos, Random* random);
 	virtual void animateTick(TileSource*, const TilePos& pos, Random*);
@@ -105,6 +107,7 @@ public: // virtual functions
 	virtual void attack(TileSource*, const TilePos& pos, Player*);
 	virtual void handleEntityInside(TileSource*, const TilePos& pos, const Entity*, Vec3&);
 	virtual int getColor(TileSource*, const TilePos& pos) const;
+	virtual int getColor(Facing::Name face, TileData) const;
 	virtual bool isSignalSource() const;
 	virtual int getSignal(TileSource*, const TilePos& pos) const;
 	virtual int getSignal(TileSource*, const TilePos& pos, Facing::Name face) const;
@@ -270,8 +273,26 @@ public: // static variables
 		* glowstone,
 		* web,
 		* fence,
+		* fenceGate,
+		* redStoneDust,
+		* lever,
+		* pressurePlate_stone,
+		* pressurePlate_wood,
+		* notGate_off,
+		* notGate_on,
+		* button,
+		* diode_off,
+		* diode_on,
 		* craftingTable,
-		* crops;
+		* crops,
+		* furnace,
+		* furnaceLit,
+		* musicBlock,
+		* chest,
+		* dispenser,
+		* recordPlayer,
+		* cake,
+		* trapDoor;
 
 public:
 	int m_TextureFrame;

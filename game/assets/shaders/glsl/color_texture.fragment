@@ -1,4 +1,3 @@
-// __multiversion__
 #include "ShaderConstants.h"
 
 uniform sampler2D TEXTURE_0;

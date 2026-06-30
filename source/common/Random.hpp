@@ -33,17 +33,27 @@
 #define CMATH_TEMPERING_SHIFT_T(y) (y << 15)
 #define CMATH_TEMPERING_SHIFT_L(y) (y >> 18)
 
-int getTimeMs();
+int32_t getUniqueSeed();
 
 class Random
 {
-	unsigned int rseed;
+	uint32_t rseed;
 	uint32_t mt[CMATH_N];  // the array for the state vector
 	int mti;                    // mti==N+1 means mt[N] is not initialized
-	double nextNextGaussian;
+	bool hasNextNextGaussian;
+	float nextNextGaussian;
 
 public:
-	Random(int32_t seed = getTimeMs());
+	Random()
+	{
+		setSeed(getUniqueSeed());
+	}
+	Random(int32_t seed)
+	{
+		setSeed(seed);
+	}
+
+public:
 	void setSeed(int32_t seed);
 	void init_genrand(uint32_t);
 	int nextInt(int max);

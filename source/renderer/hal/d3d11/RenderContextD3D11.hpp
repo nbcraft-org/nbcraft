@@ -4,7 +4,7 @@
 #include <map>
 
 #include "API_D3D11.hpp"
-#include "renderer/hal/base/RenderContextBase.hpp"
+#include "renderer/hal/d3d/RenderContextD3D.hpp"
 #include "renderer/hal/enums/PrimitiveMode.hpp"
 #include "thirdparty/com/ComInterface.hpp"
 #include "world/phys/Vec2.hpp"
@@ -24,7 +24,7 @@ namespace mce
     typedef ComInterface<ID3D11DeviceContext2> D3DDeviceContext;
 
     class DepthStencilState;
-    class RenderContextD3D11 : public RenderContextBase
+    class RenderContextD3D11 : public RenderContextD3D
     {
     public:
         struct InputLayoutID
@@ -76,6 +76,8 @@ namespace mce
         void clearContextState();
         void setRenderTarget();
         void swapBuffers();
+
+        void getShaderLangVersion(ShaderType shaderType, int& major, int& minor);
 
         void createDeviceResources();
         void createWindowSizeDependentResources(HWND hWnd, const Vec2& logicalSize, const Vec2& compositionScale);

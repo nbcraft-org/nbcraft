@@ -34,6 +34,7 @@ namespace mce
 
         bool hasField(VertexField vertexField) const;
         const void* getFieldOffset(VertexField vertexField, const void *vertexData = nullptr) const;
+        const void* tryGetFieldOffset(VertexField vertexField, const void *vertexData = nullptr) const;
 
         unsigned int getID() const { return m_fieldMask; }
         unsigned int getVertexSize() const { return m_vertexSize; }

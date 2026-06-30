@@ -127,9 +127,9 @@ bool StairTile::mayPick() const
 	return m_pParent->mayPick();
 }
 
-bool StairTile::mayPick(TileData data, bool b) const
+bool StairTile::mayPick(TileData data, bool includeLiquid) const
 {
-	return m_pParent->mayPick(data, b);
+	return m_pParent->mayPick(data, includeLiquid);
 }
 
 bool StairTile::mayPlace(TileSource* source, const TilePos& pos) const
@@ -190,7 +190,7 @@ void StairTile::stepOn(TileSource* source, const TilePos& pos, Entity* entity)
 
 void StairTile::setPlacedBy(TileSource* source, const TilePos& pos, Mob* mob)
 {
-	int rot = Mth::floor(0.5f + (mob->m_rot.x * 4.0f / 360.0f)) & 3;
+	int rot = Mth::floor(0.5f + (mob->m_rot.yaw * 4.0f / 360.0f)) & 3;
 
 	TileData data = 0;
 

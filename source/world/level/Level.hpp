@@ -9,12 +9,13 @@
 #pragma once
 
 #include <set>
-#include <map>
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #endif
 #include <math.h>
+#include <map>
 
+#include "common/utility/HashMap.hpp"
 #include "client/renderer/LightUpdate.hpp"
 #include "world/tile/Tile.hpp"
 #include "world/entity/Entity.hpp"
@@ -35,6 +36,8 @@ class LevelListener;
 class RakNetInstance;
 class Packet;
 class MobSpawner;
+
+typedef std::vector<TileEntity*> TileEntityVector;
 
 class Level : public LevelListener, public TileSourceListener
 {
@@ -63,6 +66,7 @@ public:
 	void levelEvent(const LevelEvent& event);
 	bool checkAndHandleWater(const AABB&, const Material* pMtl, Entity* pEnt);
 	const TilePos& getSharedSpawnPos() const;
+	GameType getLoadedPlayerGameType() const;
 	void loadPlayer(Player&);
 	bool addEntity(std::unique_ptr<Entity> entity);
 	virtual bool addEntity(Entity* entity);
@@ -88,7 +92,9 @@ public:
 	void addParticle(const std::string& name, const Vec3& pos, const Vec3& dir = Vec3::ZERO);
 	void playSound(Entity*, const std::string& name, float volume = 1.0f, float pitch = 1.0f);
 	void playSound(const Vec3& pos, const std::string& name, float volume = 1.0f, float pitch = 1.0f);
+	void playStreamingMusic(const std::string& name, const TilePos& pos);
 	void animateTick(Entity* entity);
+	float getSeenPercent(Vec3, AABB) const;
 	void explode(Entity*, const Vec3& pos, float power);
 	void explode(Entity*, const Vec3& pos, float power, bool bIsFiery);
 	bool extinguishFire(TileSource& source, const TilePos& pos, Facing::Name face);
@@ -116,6 +122,7 @@ protected:
 
 private:
 	LevelData* m_pLevelData;
+	bool m_bUpdatingTileEntities;
 
 protected:
 	int m_randValue;
@@ -141,5 +148,9 @@ public:
 	PathFinder* m_pPathFinder;
 	MobSpawner* m_pMobSpawner;
 	int32_t m_lastGameTimeSync;
+
+	HashMap<uint32_t, int> m_entityCountsByCategory;
+	TileEntityVector m_tileEntities;
+	TileEntityVector m_pendingTileEntities;
 };
 

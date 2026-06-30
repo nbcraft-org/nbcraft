@@ -32,7 +32,7 @@
 #include "../fwd.hpp"
 #include "type_vec2.hpp"
 #include "type_mat.hpp"
-#include <limits>
+#include "compat/Limits.hpp"
 
 namespace glm{
 namespace detail

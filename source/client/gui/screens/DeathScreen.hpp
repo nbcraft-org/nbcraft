@@ -23,6 +23,7 @@ public:
 	void init() override;
 	void tick() override;
 	void render(float f) override;
+	bool isPauseScreen() override;
 
 private:
 	int m_tickCounter;

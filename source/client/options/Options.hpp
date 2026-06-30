@@ -15,73 +15,132 @@
 #include <vector>
 #include <map>
 
+#include "common/utility/HashMap.hpp"
 #include "common/threading/AsyncTask.hpp"
+#include "client/player/input/GameController.hpp"
 #include "client/resources/ResourcePackManager.hpp"
 
-enum eKeyMappingIndex
+// Named "UserActionID" instead of "PlayerActionID" since
+// these are not directly associated with a Player object.
+enum UserActionID
 {
-	KM_FORWARD,
-	KM_LEFT,
-	KM_BACKWARD,
-	KM_RIGHT,
-	KM_JUMP,
-	KM_INVENTORY,
-	KM_DROP,
-	KM_CHAT,
-	KM_FOG,
-	KM_SNEAK,
-	KM_DESTROY,
-	KM_PLACE,
-	KM_MENU_UP,
-	KM_MENU_DOWN,
-	KM_MENU_LEFT,
-	KM_MENU_RIGHT,
-	KM_MENU_TAB_LEFT,
-	KM_MENU_TAB_RIGHT,
-	KM_MENU_OK,
-	KM_MENU_CANCEL, KM_BACK = KM_MENU_CANCEL,
-	KM_MENU_PAUSE,
-	KM_SLOT_1,
-	KM_SLOT_2,
-	KM_SLOT_3,
-	KM_SLOT_4,
-	KM_SLOT_5,
-	KM_SLOT_6,
-	KM_SLOT_7,
-	KM_SLOT_8,
-	KM_SLOT_9,
-	KM_SLOT_L,
-	KM_SLOT_R,
-	KM_CONTAINER_QUICKMOVE,
-	KM_CONTAINER_SPLIT,
-	KM_TOGGLEGUI,
-	KM_SCREENSHOT,
-	KM_TOGGLEDEBUG,
-	KM_TOGGLEAO,
-	KM_TOGGLE3RD,
-	KM_FLY_UP,
-	KM_FLY_DOWN,
-	KM_CHAT_CMD, // called "Open Chat" in Release 1.8
-	KM_COUNT
+	AID_FORWARD,
+	AID_LEFT,
+	AID_BACKWARD,
+	AID_RIGHT,
+	AID_JUMP,
+	AID_CRAFTING,
+	AID_INVENTORY,
+	AID_DROP,
+	AID_CHAT,
+	AID_FOG,
+	AID_SNEAK,
+	AID_DESTROY,
+	AID_PLACE,
+	AID_MENU_UP,
+	AID_MENU_DOWN,
+	AID_MENU_LEFT,
+	AID_MENU_RIGHT,
+	AID_MENU_TAB_LEFT,
+	AID_MENU_TAB_RIGHT,
+	AID_MENU_OK,
+	AID_MENU_CANCEL, AID_BACK = AID_MENU_CANCEL,
+	AID_MENU_PAUSE,
+	AID_SLOT_1,
+	AID_SLOT_2,
+	AID_SLOT_3,
+	AID_SLOT_4,
+	AID_SLOT_5,
+	AID_SLOT_6,
+	AID_SLOT_7,
+	AID_SLOT_8,
+	AID_SLOT_9,
+	AID_SLOT_L,
+	AID_SLOT_R,
+	AID_CONTAINER_QUICKMOVE,
+	AID_CONTAINER_SPLIT,
+	AID_TOGGLEGUI,
+	AID_SCREENSHOT,
+	AID_TOGGLEDEBUG,
+	AID_TOGGLEAO,
+	AID_TOGGLE3RD,
+	AID_FLY_UP,
+	AID_FLY_DOWN,
+	AID_CHAT_CMD, // called "Open Chat" in Release 1.8
+	AID_COUNT
 };
 
-struct KeyMapping
+enum OptionsCategory
+{
+	OC_GAMEPLAY,
+	OC_CONTROLS,
+	OC_VIDEO,
+
+	OC_MIN = OC_GAMEPLAY,
+	OC_MAX = OC_VIDEO,
+	OC_COUNT
+};
+
+enum ThirdPersonMode
+{
+	TPM_FIRST = 0,
+	TPM_BEHIND = 1,
+	TPM_FRONT = 2,
+
+	TPM_COUNT
+};
+
+template<>
+struct HashFunction<OptionsCategory>
+{
+	size_t operator()(const OptionsCategory& key) const { return size_t(key); }
+};
+
+struct ActionInfo
+{
+	//@TODO: Replace this with a universal key
+	int keyId;
+	GameController::EngineButtonID controllerButtonId;
+
+	ActionInfo() : keyId(-1), controllerButtonId(GameController::BUTTON_NONE) {}
+	ActionInfo(int key, GameController::EngineButtonID button) : keyId(key), controllerButtonId(button) {}
+
+	bool isKey(int key) const { return keyId >= 0 && key == keyId; }
+	bool isControllerButton(GameController::EngineButtonID button) const { return controllerButtonId > GameController::BUTTON_NONE && button == controllerButtonId; }
+	bool operator==(const ActionInfo& other) const
+	{
+		return isKey(other.keyId) || isControllerButton(other.controllerButtonId);
+	}
+};
+
+struct InputMapping
 {
 	std::string key;
-	int value;
+	ActionInfo info;
+	int timesPressed;
 
-	KeyMapping() : value(-1) {} // key is automatically clear when constructed
-	KeyMapping(const char* keyName, int keyCode) : key(keyName), value(keyCode) {}
+	InputMapping() : timesPressed(0) {} // key is automatically clear when constructed
+	InputMapping(const char* keyName, int keyCode) : key(keyName), timesPressed(0)
+	{
+		info.keyId = keyCode;
+	}
+
+	void pressed() { ++timesPressed; }
+	void reset() { timesPressed = 0; }
+	bool consume()
+	{
+		if (timesPressed == 0) return false;
+		
+		--timesPressed;
+		return true;
+	}
 };
 
 enum UITheme
 {
 	UI_POCKET,
 	UI_JAVA,
-	UI_CONSOLE,
-
-	UI_GENERIC, // The Screen is a Java / Pocket mix
-	UI_UNIVERSAL // The Screen automatically handles all UI themes
+	UI_CONSOLE
 };
 
 enum LogoType
@@ -105,6 +164,7 @@ enum HUDSize
 class Minecraft;
 class GuiElement;
 class Minecraft;
+class GameRenderer;
 
 class OptionEntry
 {
@@ -202,6 +262,19 @@ public:
 	void save(std::stringstream& ss) const override { ss << get(); }
 };
 
+class ThirdPersonOption : public IntOption
+{
+public:
+	ThirdPersonOption(const std::string& key, const std::string& name, int initial = 0) : IntOption(key, name, initial) {}
+
+	void toggle() override { set((get() + 1) % TPM_COUNT); }
+	void addUnit(int mul) override { set(Mth::clamp(get() + mul, 0, TPM_COUNT - 1)); }
+	void fromFloat(float v) override { set(Mth::round(v * 2.0f)); }
+	float toFloat() const override { return get() / 2.0f; }
+	std::string getDisplayValue() const override;
+	void addGuiElement(std::vector<GuiElement*>&, UITheme uiTheme) override;
+};
+
 class StringOption : public OptionInstance<std::string>
 {
 public:
@@ -230,6 +303,7 @@ public:
 	MinMaxOption(const std::string& key, const std::string& name, int initial, int min, int max) : IntOption(key, name, initial)
 		, m_min(min)
 		, m_max(max)
+		, m_bIsSlider(false)
 	{
 	}
 
@@ -241,14 +315,16 @@ public:
 
 public:
 	int m_min, m_max;
+	bool m_bIsSlider;
 };
 
 class ValuesOption : public MinMaxOption
 {
 public:
-	ValuesOption(const std::string& key, const std::string& name, int initial, const ValuesBuilder& values) : MinMaxOption(key, name, initial, 0, values.m_values.size())
+	ValuesOption(const std::string& key, const std::string& name, int initial, const ValuesBuilder& values, bool isSlider = false) : MinMaxOption(key, name, initial, 0, values.m_values.size())
 		, m_values(values.m_values)
 	{
+		m_bIsSlider = isSlider;
 	}
 
 	const std::string& getValue() const { return m_values[Mth::clamp(get(), m_min, m_max - 1)]; }
@@ -290,6 +366,14 @@ public:
 	std::string getMessage() const override;
 };
 
+class VsyncOption : public BoolOption
+{
+public:
+	VsyncOption(const std::string& key, const std::string& name, bool initial = true) : BoolOption(key, name, initial) {}
+
+	void apply() override;
+};
+
 class GuiScaleOption : public ValuesOption
 {
 public:
@@ -304,6 +388,7 @@ public:
 	GammaOption(const std::string& key, const std::string& name, float initial) : FloatOption(key, name, initial, 0.01f) {}
 
 	void apply() override;
+	void apply(GameRenderer& gameRenderer);
 	std::string getDisplayValue() const override;
 };
 
@@ -326,15 +411,50 @@ public:
 class HUDSizeOption : public MinMaxOption
 {
 public:
-	HUDSizeOption(const std::string& key, const std::string& name, int initial) : MinMaxOption(key, name, initial, HUD_SIZE_1, HUD_SIZE_3 + 1) {}
+	HUDSizeOption(const std::string& key, const std::string& name, int initial) : MinMaxOption(key, name, initial, HUD_SIZE_1, HUD_SIZE_3 + 1)
+	{
+		m_bIsSlider = true;
+	}
 
+	std::string getDisplayValue() const override;
+};
+
+class SwapJumpSneakOption : public BoolOption
+{
+public:
+	SwapJumpSneakOption(const std::string& key, const std::string& name, bool initial = false) : BoolOption(key, name, initial) {}
+
+	void apply() override;
+};
+
+class DpadSizeOption : public FloatOption
+{
+public:
+	DpadSizeOption(const std::string& key, const std::string& name, float initial = 1.0f) : FloatOption(key, name, initial, 0.05f) {}
+
+	void apply() override;
+	void addUnit(int mul) override { set(Mth::clamp(get() + mul * m_unit, 0.5f, 1.5f)); }
+	void fromFloat(float v) override { set(0.5f + v); }
+	float toFloat() const override { return get() - 0.5f; }
+};
+
+class FovOption : public FloatOption
+{
+public:
+	FovOption(const std::string& key, const std::string& name, float initial = 70.0f) : FloatOption(key, name, initial, 1.0f) {}
+
+	void apply() override;
+	void addUnit(int mul) override { set(Mth::clamp(get() + mul * m_unit, 30.0f, 110.0f)); }
+	void fromFloat(float v) override { set(30.0f + v * 80.0f); }
+	float toFloat() const override { return (get() - 30.0f) / 80.0f; }
 	std::string getDisplayValue() const override;
 };
 
 class Options
 {
-public:
-	struct KeyBind;
+private:
+	typedef HashMap<OptionsCategory, std::vector<OptionEntry*> > CategoryMap;
+
 private:
 	static bool _hasResourcePack(const ResourcePack& pack, ResourcePackStack& packs);
 	static void _tryAddResourcePack(const std::string& name, ResourcePackStack& packs);
@@ -364,18 +484,25 @@ private:
 	void _initDefaultValues();
 	void _load();
 	AsyncTask _saveAsync();
+
 public:
 	Options(Minecraft*, const std::string& folderPath = "");
 
 	void add(OptionEntry&);
+	void add(OptionsCategory cat, OptionEntry&);
 	const AsyncTask& save();
 	std::vector<std::string> getOptionStrings();
 	
-	int getKey(eKeyMappingIndex idx) const { return m_keyMappings[idx].value; }
-	bool isKey(eKeyMappingIndex idx, int keyCode) const { return getKey(idx) == keyCode; }
+	int getKey(UserActionID idx) const { return m_inputMappings[idx].info.keyId; }
+	bool isKey(UserActionID idx, int keyCode) const { return getKey(idx) == keyCode; }
+
+	InputMapping& getInputMapping(UserActionID idx) { return m_inputMappings[idx]; }
+	const ActionInfo& getAction(UserActionID idx) const { return m_inputMappings[idx].info; }
+	bool isAction(UserActionID idx, const ActionInfo& info) const { return m_inputMappings[idx].info == info; }
 
 	void loadControls();
 	void reset();
+	void resetCategory(OptionsCategory cat);
 	void initResourceDependentOptions();
 
 	UITheme getUiTheme() const;
@@ -383,10 +510,11 @@ public:
 
 private:
 	Minecraft* m_pMinecraft;
-	std::map<std::string, OptionEntry*> m_options;
+	HashMap<std::string, OptionEntry*> m_options;
+	CategoryMap m_categoryOptions;
 	AsyncTask m_saveTask;
 	std::string m_filePath;
-	KeyMapping m_keyMappings[KM_COUNT];
+	InputMapping m_inputMappings[AID_COUNT];
 
 public:
 	friend class BoolOption;
@@ -394,6 +522,8 @@ public:
 	friend class SensitivityOption;
 	friend class IntOption;
 	friend class HUDSizeOption;
+	friend class DpadSizeOption;
+	friend class FovOption;
 
 	FloatOption m_musicVolume;
 	FloatOption m_masterVolume;
@@ -405,18 +535,22 @@ public:
 	bool m_bLimitFramerate;
 	FancyGraphicsOption m_fancyGraphics;
 	AOOption m_ambientOcclusion;
+	BoolOption m_fancySky;
 	bool m_bUseMouseForDigging;
 	std::string m_skin;
 	ValuesOption m_difficulty;
 	BoolOption m_hideGui;
-	BoolOption m_thirdPerson;
+	ThirdPersonOption m_thirdPerson;
 	BoolOption m_flightHax;
+	SwapJumpSneakOption m_swapJumpSneak;
+	DpadSizeOption m_dpadSize;
 	bool field_240; // seems like it's doing some sort of mouse smoothing
 	bool m_bFixedCamera;
 	float m_flySpeed;
 	float field_248;
 	GuiScaleOption m_guiScale;
 	GammaOption m_gamma;
+	FovOption m_fov;
 	StringOption m_playerName;
 	BoolOption m_serverVisibleDefault;
 	BoolOption m_autoJump;
@@ -425,7 +559,6 @@ public:
 	GraphicsOption m_fancyGrass;
 	GraphicsOption m_biomeColors;
 	BoolOption m_splitControls;
-	BoolOption m_bUseController;
 	BoolOption m_dynamicHand;
 	BoolOption m_menuPanorama;
 	StringOption m_lang;
@@ -433,6 +566,8 @@ public:
 	LogoTypeOption m_logoType;
 	HUDSizeOption m_hudSize;
 	BoolOption m_classicCrafting;
+	BoolOption m_animatedCharacter;
+	VsyncOption m_vSync;
 	ResourcePackStack m_resourcePacks;
 };
 
@@ -442,6 +577,7 @@ public:
 	OPTION(m_difficulty);                  \
 	OPTION(m_thirdPerson);                 \
 	OPTION(m_serverVisibleDefault);        \
+	OPTION(m_classicCrafting);			   \
 
 #define OPTIONS_LIST_GAMEPLAY_AUDIO        \
 	HEADER("Audio");                       \
@@ -453,10 +589,9 @@ public:
 	OPTION(m_sensitivity);                 \
 	OPTION(m_invertMouse);                 \
 	OPTION(m_splitControls); idxSplit = currentIndex; \
-	/*OPTION(m_swapJumpSneak);*/           \
-	/*OPTION(m_buttonSize);*/              \
+	OPTION(m_swapJumpSneak); idxSwapJumpSneak = currentIndex; \
+	OPTION(m_dpadSize); idxDpadSize = currentIndex; \
 	OPTION(m_autoJump);                    \
-	OPTION(m_bUseController); idxController = currentIndex; \
 
 #define OPTIONS_LIST_CONTROLS_FEEDBACK     \
 	/*HEADER("Feedback");*/                \
@@ -472,18 +607,25 @@ public:
 	OPTION(m_viewDistance);                \
 	/*OPTION(m_antiAliasing);*/            \
 	/*OPTION(m_guiScale);*/                \
-	/*OPTION(m_fov);*/                     \
+	OPTION(m_fov);                         \
 	OPTION(m_gamma);                       \
 	OPTION(m_ambientOcclusion);            \
 	OPTION(m_fancyGraphics);               \
+	OPTION(m_fancySky);                    \
+	/*OPTION(m_animatedTextures);*/        \
 	OPTION(m_viewBobbing);                 \
 	OPTION(m_anaglyphs);                   \
 	OPTION(m_blockOutlines);               \
+	/*OPTION(m_limitFramerate);*/          \
+	OPTION(m_vSync); idxVSync = currentIndex; \
 	OPTION(m_fancyGrass);                  \
 	OPTION(m_biomeColors);                 \
+	/*OPTION(m_bMipmaps);*/                \
 	OPTION(m_dynamicHand);                 \
 	OPTION(m_uiTheme);                     \
 	OPTION(m_logoType);                    \
+	OPTION(m_hudSize);					   \
+	OPTION(m_animatedCharacter);           \
 
 #define OPTIONS_LIST_VIDEO_EXPERIMENTAL    \
 	HEADER("Experimental");                \

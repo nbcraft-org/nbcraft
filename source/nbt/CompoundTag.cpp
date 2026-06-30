@@ -3,6 +3,7 @@
 
 #include "CompoundTag.hpp"
 #include "common/Util.hpp"
+#include "common/Logger.hpp"
 
 CompoundTag::CompoundTag()
 {
@@ -11,7 +12,7 @@ CompoundTag::CompoundTag()
 
 void CompoundTag::write(IDataOutput& dos) const
 {
-    for (std::map<std::string, Tag*>::const_iterator it = m_tags.begin(); it != m_tags.end(); it++)
+    for (NamedTagMap::const_iterator it = m_tags.begin(); it != m_tags.end(); it++)
 	{
 		writeNamedTag(it->first, *it->second, dos);
     }
@@ -144,14 +145,14 @@ bool CompoundTag::contains(const std::string& name, Tag::Type type) const
 
 const Tag* CompoundTag::get(const std::string& name) const
 {
-    std::map<std::string, Tag*>::const_iterator it = m_tags.find(name);
-    if (it != m_tags.end()) return it->second;
+	NamedTagMap::const_iterator it = m_tags.find(name);
+	if (it != m_tags.end()) return it->second;
     return nullptr;
 }
 
 Tag* CompoundTag::get(const std::string& name)
 {
-	std::map<std::string, Tag*>::iterator it = m_tags.find(name);
+	NamedTagMap::iterator it = m_tags.find(name);
 	if (it != m_tags.end()) return it->second;
 	return nullptr;
 }
@@ -308,12 +309,12 @@ CompoundTag* CompoundTag::uniqueClone() const
 
 bool CompoundTag::remove(const std::string& name)
 {
-	std::map<std::string, Tag*>::iterator it = m_tags.find(name);
+	NamedTagMap::iterator it = m_tags.find(name);
 	if (it == m_tags.end())
 		return false;
 
 	delete it->second;
-	m_tags.erase(it);
+	m_tags.erase(name);
 
 	return true;
 }
@@ -322,7 +323,7 @@ void CompoundTag::deleteChildren()
 {
     if (!m_bLeak)
     {
-        for (std::map<std::string, Tag*>::iterator it = m_tags.begin(); it != m_tags.end(); it++)
+        for (NamedTagMap::iterator it = m_tags.begin(); it != m_tags.end(); it++)
         {
             Tag* tag = it->second;
             tag->deleteChildren();
@@ -338,17 +339,13 @@ bool CompoundTag::operator==(const Tag& other) const
 	const CompoundTag& other2 = (const CompoundTag&)(other);
 	if (getId() == other2.getId() && m_tags.size() == other2.m_tags.size())
 	{
-		for (std::map<std::string, Tag*>::const_iterator it = m_tags.begin(); it != m_tags.end(); it++)
+		for (NamedTagMap::const_iterator it = m_tags.begin(); it != m_tags.end(); it++)
 		{
-			std::pair<std::string, Tag*> pair = *it, pair2;
-			std::map<std::string, Tag*>::const_iterator it2 = other2.m_tags.find(pair.first);
+			NamedTagMap::const_iterator it2 = other2.m_tags.find(it->first);
 			if (it2 == other2.m_tags.end())
 				return false; // Failed to find tag in other by name
 
-			pair2 = *it2;
-			Tag *tag = pair.second, *tag2 = pair2.second;
-
-			if (tag != tag2)
+			if (it->second != it2->second)
 				return false;
 		}
 

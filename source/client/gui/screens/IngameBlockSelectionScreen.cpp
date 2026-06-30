@@ -223,8 +223,8 @@ void IngameBlockSelectionScreen::renderSlot(int index, int x, int y, float f)
 	if (item.isEmpty())
 		return;
 
-	ItemRenderer::singleton().renderGuiItem(m_pMinecraft->m_pFont, m_pMinecraft->m_pTextures, item, x, y, true);
-	ItemRenderer::singleton().renderGuiItemOverlay(m_pMinecraft->m_pFont, m_pMinecraft->m_pTextures, item, x, y);
+	ItemRenderer::singleton().renderGuiItem(*m_pMinecraft, item, x, y);
+	ItemRenderer::singleton().renderGuiItemOverlay(*m_pMinecraft, item, x, y);
 }
 
 void IngameBlockSelectionScreen::renderSlots()
@@ -337,16 +337,21 @@ void IngameBlockSelectionScreen::removed()
 	m_pMinecraft->m_pGui->inventoryUpdated();
 }
 
-void IngameBlockSelectionScreen::keyPressed(int keyCode)
+void IngameBlockSelectionScreen::handleUserAction(const ActionInfo& info)
 {
-    if (!_useController() && m_pMinecraft->getOptions()->isKey(KM_INVENTORY, keyCode))
+    if (!_useController() && m_pMinecraft->getOptions()->isAction(AID_INVENTORY, info))
     {
         m_pMinecraft->handleBack(false);
     }
 	else
 	{
-        Screen::keyPressed(keyCode);
+        Screen::handleUserAction(info);
 	}
+}
+
+bool IngameBlockSelectionScreen::isPauseScreen()
+{
+	return false;
 }
 
 void IngameBlockSelectionScreen::selectSlotAndClose()

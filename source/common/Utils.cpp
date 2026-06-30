@@ -11,6 +11,7 @@
 #include "Utils.hpp"
 
 #include <cstring>
+#include <stack>
 
 #if MC_PLATFORM_WINPC
 
@@ -48,6 +49,41 @@
 int g_TimeSecondsOnInit = 0;
 
 #ifdef _WIN32
+
+#ifdef __CRTDLL__
+
+static CRITICAL_SECTION g_gmtime_s_lock;
+static LONG g_gmtime_s_lock_state = 0;
+
+errno_t gmtime_s(struct tm* out, const time_t* timer)
+{
+    struct tm* tmp;
+
+    if (!out || !timer)
+        return EINVAL;
+
+    LONG state = InterlockedCompareExchange(&g_gmtime_s_lock_state, 1, 0);
+
+    if (state == 0) {
+        InitializeCriticalSection(&g_gmtime_s_lock);
+        InterlockedExchange(&g_gmtime_s_lock_state, 2);
+    } else {
+        while (InterlockedCompareExchange(&g_gmtime_s_lock_state, 2, 2) != 2)
+            Sleep(0);
+    }
+
+    EnterCriticalSection(&g_gmtime_s_lock);
+
+    tmp = gmtime(timer);
+    if (tmp)
+        *out = *tmp;
+
+    LeaveCriticalSection(&g_gmtime_s_lock);
+
+    return tmp ? 0 : EINVAL;
+}
+
+#endif // __CRTDLL__
 
 void toDosPath(char* path)
 {
@@ -146,11 +182,12 @@ void closedir(DIR* dir)
 
 bool createFolderIfNotExists(const char* pDir)
 {
+	if (XPL_ACCESS(pDir, 0) == 0)
+		return true;
 	size_t pathlen = strlen(pDir);
-	char *path = new char[pathlen + 1];
+	std::stack<std::string> st;
 
-	path[0] = pDir[0];
-	for (size_t i = 1; i < pathlen; ++i)
+	for (size_t i = pathlen - 1; i > 0; --i)
 	{
 		if (pDir[i] == '/'
 #ifdef _WIN32
@@ -158,22 +195,21 @@ bool createFolderIfNotExists(const char* pDir)
 #endif
 		   )
 		{
-			path[i] = '\0';
-			if (XPL_ACCESS(path, 0))
-			{
-				if (XPL_MKDIR(path, 0755) != 0)
-				{
-					delete[] path;
-					return false;
-				}
-			}
+			std::string path(pDir, i);
+			if (XPL_ACCESS(path.c_str(), 0) == 0)
+				break;
+			st.push(path);
 		}
-		path[i] = pDir[i];
 	}
-	delete[] path;
-	if (XPL_ACCESS(pDir, 0))
-		if (XPL_MKDIR(pDir, 0755) != 0)
+	while (!st.empty())
+	{
+		if (XPL_MKDIR(st.top().c_str(), 0755) != 0)
 			return false;
+		st.pop();
+	}
+
+	if (XPL_MKDIR(pDir, 0755) != 0)
+		return false;
 	return true;
 }
 
@@ -334,6 +370,37 @@ void sleepMs(int ms)
 	udelay(1000 * ms);
 #else
 	usleep(1000 * ms);
+#endif
+}
+
+int32_t getUniqueSeed()
+{
+	// PowerPC-specific compiler-intrinsic, only using on 360 for now, but might work on Xcode or something
+#if MC_PLATFORM_XBOX360
+	return __mftb32();
+#else
+#ifdef _WIN32
+	{
+		LARGE_INTEGER liTime;
+		if (QueryPerformanceCounter(&liTime))
+		{
+#if MC_ENDIANNESS_BIG
+			return liTime.HighPart;
+#else // MC_ENDIANNESS_LITTLE
+			return liTime.LowPart;
+#endif
+		}
+	}
+#endif
+
+	// Variant implemented by Mojang. This does not work on MSVC.
+	{
+		timeval tv;
+
+		gettimeofday(&tv, NULL);
+
+		return tv.tv_usec;
+	}
 #endif
 }
 

@@ -15,6 +15,7 @@
 
 EntityRenderer::Materials::Materials()
 {
+	MATERIAL_PTR(switchable, entity_flat_color);
 	MATERIAL_PTR(switchable, entity_alphatest);
 	MATERIAL_PTR(switchable, entity_alphatest_cull);
 	MATERIAL_PTR(switchable, entity_alphatest_glint);
@@ -80,17 +81,17 @@ void EntityRenderer::renderFlame(const Entity& entity, const Vec3& pos, float a)
 
 	matrix->translate(ePos);
 	matrix->scale(s);
-	matrix->rotate(-m_pDispatcher->m_rot.x, Vec3::UNIT_Y);
+	matrix->rotate(-m_pDispatcher->m_rot.yaw, Vec3::UNIT_Y);
 	matrix->translate(Vec3(0.0f, 0.0f, -0.4f + (float)((int)h) * 0.02f));
 	
 	bindTexture(C_TERRAIN_NAME);
 	Tesselator& t = Tesselator::instance;
 	float r = 1.0f;
-	float xo = 0.5f;
+	constexpr float xo = 0.5f;
 	float yo = 0.0f;
 	currentShaderColor = Color::WHITE;
 	t.begin(12);
-	t.normal(Vec3::ZERO); // this is required for HLSL shaders since we're using the entity shader
+	t.normal(Vec3::UNIT_Y); // this is required for HLSL shaders since we're using the entity shader
 
 	while (h > 0.0f)
 	{
@@ -121,37 +122,37 @@ void EntityRenderer::render(const AABB& aabb, const Vec3& pos)
 	t.begin(24);
 	//t.vertex(pos); // Why were we doing this?
 	t.setOffset(pos);
-	t.normal(0.0f, 0.0f, -1.0f);
+	t.normal(Vec3::NEG_UNIT_Z);
 	t.vertex(aabb.min.x, aabb.max.y, aabb.min.z);
 	t.vertex(aabb.max.x, aabb.max.y, aabb.min.z);
 	t.vertex(aabb.max.x, aabb.min.y, aabb.min.z);
 	t.vertex(aabb.min.x, aabb.min.y, aabb.min.z);
 
-	t.normal(0.0f, 0.0f, 1.0f);
+	t.normal(Vec3::UNIT_Z);
 	t.vertex(aabb.min.x, aabb.min.y, aabb.max.z);
 	t.vertex(aabb.max.x, aabb.min.y, aabb.max.z);
 	t.vertex(aabb.max.x, aabb.max.y, aabb.max.z);
 	t.vertex(aabb.min.x, aabb.max.y, aabb.max.z);
 
-	t.normal(0.0f, -1.0f, 0.0f);
+	t.normal(Vec3::NEG_UNIT_Y);
 	t.vertex(aabb.min.x, aabb.min.y, aabb.min.z);
 	t.vertex(aabb.max.x, aabb.min.y, aabb.min.z);
 	t.vertex(aabb.max.x, aabb.min.y, aabb.max.z);
 	t.vertex(aabb.min.x, aabb.min.y, aabb.max.z);
 
-	t.normal(0.0f, 1.0f, 0.0f);
+	t.normal(Vec3::UNIT_Y);
 	t.vertex(aabb.min.x, aabb.max.y, aabb.max.z);
 	t.vertex(aabb.max.x, aabb.max.y, aabb.max.z);
 	t.vertex(aabb.max.x, aabb.max.y, aabb.min.z);
 	t.vertex(aabb.min.x, aabb.max.y, aabb.min.z);
 	
-	t.normal(-1.0f, 0.0f, 0.0f);
+	t.normal(Vec3::NEG_UNIT_X);
 	t.vertex(aabb.min.x, aabb.min.y, aabb.max.z);
 	t.vertex(aabb.min.x, aabb.max.y, aabb.max.z);
 	t.vertex(aabb.min.x, aabb.max.y, aabb.min.z);
 	t.vertex(aabb.min.x, aabb.min.y, aabb.min.z);
 	
-	t.normal(1.0f, 0.0f, 0.0f);
+	t.normal(Vec3::UNIT_X);
 	t.vertex(aabb.max.x, aabb.min.y, aabb.min.z);
 	t.vertex(aabb.max.x, aabb.max.y, aabb.min.z);
 	t.vertex(aabb.max.x, aabb.max.y, aabb.max.z);

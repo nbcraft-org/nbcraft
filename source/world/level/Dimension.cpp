@@ -184,7 +184,7 @@ Color Dimension::getSunriseColor(float a, float b) const
 	Color sunriseColor;
 
 	float radial = 0.4f;
-	float dot = Mth::cos(a * M_PI * 2.0f) - 0.125f; // * 2.0f + 0.5f;
+	float dot = Mth::cos(a * M_PI * 2.0f);
 	float center = -0.0f;
 
 	if (dot >= center - radial && dot <= center + radial)

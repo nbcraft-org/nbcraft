@@ -16,6 +16,7 @@ namespace mce
         RS_ENABLE_STENCIL_TEST,
         // Fixed pipeline stuff
         RS_ENABLE_ALPHA_TEST,
-        RS_ENABLE_TEXTURE
+        RS_ENABLE_TEXTURE,
+        RS_RESCALE_NORMALS
     };
 }

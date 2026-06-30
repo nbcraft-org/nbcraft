@@ -13,7 +13,7 @@
 #include <stdint.h>
 #include <stdarg.h>
 #include <assert.h>
-#include <limits>
+#include "compat/Limits.hpp"
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #endif
@@ -34,6 +34,13 @@
 #endif
 
 #ifdef _WIN32
+
+#ifdef __CRTDLL__
+
+#define gmtime_s __nbc_gmtime_s
+errno_t gmtime_s(struct tm* out, const time_t* timer);
+
+#endif // __CRTDLL__
 
 #if MC_PLATFORM_WINPC
 
@@ -232,7 +239,7 @@ enum eTileID
 	TILE_CLOTH_30,
 	TILE_CLOTH_40,
 	TILE_CLOTH_50,
-	TILE_CLOTH_60,
+	TILE_FENCE_GATE, //TILE_CLOTH_60,
 	TILE_CLOTH_70,
 	TILE_CLOTH_01,
 	TILE_CLOTH_11,
@@ -353,8 +360,8 @@ enum eTileID
 	ITEM_COOKIE,
 	ITEM_MAP,
 	ITEM_SHEARS,
-	ITEM_RECORD_01,
-	ITEM_RECORD_02,
+	ITEM_RECORD_01 = 2256,
+	ITEM_RECORD_02 = 2257,
 	ITEM_CAMERA = 456,
 
 	// Custom items
@@ -498,6 +505,7 @@ enum // Textures
 	TEXTURE_ORE_LAPIS = 160,
 	TEXTURE_POWERED_RAIL = 163,
 	TEXTURE_REDSTONE_DUST,
+	TEXTURE_REDSTONE_DUST_LINE,
 	TEXTURE_DETECTOR_RAIL = 195,
 
 	TEXTURE_SANDSTONE_TOP = 176,
@@ -531,10 +539,11 @@ enum eRenderShape
 	SHAPE_RAIL,
 	SHAPE_STAIRS,
 	SHAPE_FENCE,
+	SHAPE_FENCE_GATE,
 	SHAPE_LEVER,
 	SHAPE_CACTUS,
 	SHAPE_BED,
-	SHAPE_REPEATER,
+	SHAPE_DIODE,
 	SHAPE_PISTON,
 	SHAPE_PISTON_HEAD,
 	SHAPE_RANDOM_CROSS
@@ -545,8 +554,6 @@ typedef uint8_t TileID;
 // Rename "Tile" to "TileType"
 // Rename "FullTile" to "Tile"
 typedef uint8_t TileData;
-
-typedef uint16_t SlotID;
 
 #define SAFE_DELETE(ptr) do { if (ptr) delete ptr; } while (0)
 #define SAFE_DELETE_ARRAY(ptr) do { if (ptr) delete[] ptr; } while (0)
@@ -561,6 +568,8 @@ double getTimeS();
 int getTimeMs();
 
 void sleepMs(int ms);
+
+int32_t getUniqueSeed();
 
 #ifdef _WIN32
 void toDosPath(char* path);

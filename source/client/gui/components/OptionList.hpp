@@ -28,6 +28,7 @@ public:
 	void renderScrollBackground() override;
 
 	void clear();
+	void refreshOptionValues();
 	void initDefaultMenu();
 	void initVideoMenu();
 	void initControlsMenu();

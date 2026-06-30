@@ -332,8 +332,17 @@ namespace glm
 	///
 	/// @see <a href="http://www.opengl.org/sdk/docs/manglsl/xhtml/isnan.xml">GLSL isnan man page</a>
 	/// @see <a href="http://www.opengl.org/registry/doc/GLSLangSpec.4.20.8.pdf">GLSL 4.20.8 specification, section 8.3 Common Functions</a>
-	template <typename genType> 
-	GLM_FUNC_DECL typename genType::bool_type isnan(genType const & x);
+	template <typename genType>
+	GLM_FUNC_DECL bool isnan(genType const & x);
+
+	template <typename T, precision P>
+	GLM_FUNC_DECL typename detail::tvec2<T, P>::bool_type isnan(detail::tvec2<T, P> const & x);
+
+	template <typename T, precision P>
+	GLM_FUNC_DECL typename detail::tvec3<T, P>::bool_type isnan(detail::tvec3<T, P> const & x);
+
+	template <typename T, precision P>
+	GLM_FUNC_DECL typename detail::tvec4<T, P>::bool_type isnan(detail::tvec4<T, P> const & x);
 
 	/// Returns true if x holds a positive infinity or negative
 	/// infinity representation in the underlying implementation's
@@ -345,8 +354,17 @@ namespace glm
 	/// 
 	/// @see <a href="http://www.opengl.org/sdk/docs/manglsl/xhtml/isinf.xml">GLSL isinf man page</a>
 	/// @see <a href="http://www.opengl.org/registry/doc/GLSLangSpec.4.20.8.pdf">GLSL 4.20.8 specification, section 8.3 Common Functions</a>
-	template <typename genType> 
-	GLM_FUNC_DECL typename genType::bool_type isinf(genType const & x);
+	template <typename genType>
+	GLM_FUNC_DECL bool isinf(genType const & x);
+
+	template <typename T, precision P>
+	GLM_FUNC_DECL typename detail::tvec2<T, P>::bool_type isinf(detail::tvec2<T, P> const & x);
+
+	template <typename T, precision P>
+	GLM_FUNC_DECL typename detail::tvec3<T, P>::bool_type isinf(detail::tvec3<T, P> const & x);
+
+	template <typename T, precision P>
+	GLM_FUNC_DECL typename detail::tvec4<T, P>::bool_type isinf(detail::tvec4<T, P> const & x);
 
 	/// Returns a signed integer value representing
 	/// the encoding of a floating-point value. The floating-point

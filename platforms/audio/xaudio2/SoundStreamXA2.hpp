@@ -29,7 +29,7 @@ protected:
     bool _open(const std::string& fileName);
     void _close();
     void _update();
-    void _publishBuffer(unsigned int destBufferId, const SoundBuffer& sourceBuffer);
+    void _publishBuffer(BufferId destBufferId, const SoundBuffer& sourceBuffer);
 
 private:
     void _createVoice();

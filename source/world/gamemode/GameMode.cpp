@@ -49,7 +49,7 @@ bool GameMode::destroyBlock(Player* player, const TilePos& pos, Facing::Name fac
 		return false;
 
 
-	_level.playSound(pos + 0.5f, "step." + oldTile->m_pSound->m_name,
+	_level.playSound(pos + 0.5f, "step." + oldTile->m_pSound->name,
 		(oldTile->m_pSound->volume * 0.5f) + 0.5f, oldTile->m_pSound->pitch * 0.8f);
 
 	oldTile->destroy(&source, pos, tileData);
@@ -129,9 +129,9 @@ void GameMode::attack(Player* player, Entity* entity)
 	player->attack(entity);
 }
 
-ItemStack GameMode::handleInventoryMouseClick(int containerId, int slotNum, MouseButtonType button, bool quick, Player* player)
+ItemStack GameMode::handleInventoryMouseClick(int containerId, Container::SlotID slotId, MouseButtonType button, bool quick, Player* player)
 {
-	return player->m_pContainerMenu->clicked(slotNum, button, quick, player);
+	return player->m_pContainerMenu->clicked(slotId, button, quick, player);
 }
 
 void GameMode::handleCloseInventory(int a, Player* player)
@@ -147,18 +147,14 @@ void GameMode::handleCloseInventory(int a, Player* player)
 bool GameMode::useItem(Player* player, ItemStack& item)
 {
 	Level& level = player->getLevel();
-	int oldCount = item.m_count;
-	ItemStack* result = item.use(player);
+	bool result = item.use(level, *player);
 
 	if (level.m_bIsClientSide)
 	{
 		_level.m_pRakNetInstance->send(new UseItemPacket(TilePos::ZERO, 255, player->m_EntityID, item));
 	}
 
-	if (&item == result)
-		return item.m_count != oldCount;
-
-	return true;
+	return result;
 }
 
 bool GameMode::useItemOn(Player* player, ItemStack& item, const TilePos& pos, Facing::Name face)

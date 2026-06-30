@@ -8,9 +8,34 @@
 
 #include "OptionList.hpp"
 #include "client/gui/components/Button.hpp"
+#include "client/gui/components/SmallButton.hpp"
+#include "client/gui/components/SliderButton.hpp"
+#include "client/gui/components/SwitchButton.hpp"
+#include "client/gui/components/SwitchValuesButton.hpp"
+#include "client/gui/components/TickBox.hpp"
 #include "client/options/Options.hpp"
+#include "client/locale/Language.hpp"
 
 #define C_OPTION_ITEM_HEIGHT (22)
+
+class ResetCategoryButton : public Button
+{
+	OptionList& m_list;
+	OptionsCategory m_cat;
+public:
+	ResetCategoryButton(OptionList& list, OptionsCategory cat, const std::string& text)
+		: Button(0, 0, text)
+		, m_list(list)
+		, m_cat(cat)
+	{}
+	void pressed(Minecraft* mc, const MenuPointer& pointer) override
+	{
+		Button::pressed(mc, pointer);
+		mc->getOptions()->resetCategory(m_cat);
+
+		m_list.refreshOptionValues();
+	}
+};
 
 OptionList::OptionList(Minecraft* pMinecraft, int width, int height, int something, int something2) :
 	ScrolledSelectionList(pMinecraft, width, height, something, something2, C_OPTION_ITEM_HEIGHT)
@@ -98,11 +123,11 @@ void OptionList::renderScrollBackground()
 {
 	Tesselator& t = Tesselator::instance;
 	t.begin(4);
-	t.color(0x202020, 0x90);
-	t.vertexUV(m_x1, m_y1, 0.0f, m_x1 / 32.0f, (m_y1 + float(int(m_scrollAmount))) / 32.0f);
-	t.vertexUV(m_x0, m_y1, 0.0f, m_x0 / 32.0f, (m_y1 + float(int(m_scrollAmount))) / 32.0f);
-	t.vertexUV(m_x0, m_y0,  0.0f, m_x0 / 32.0f, (m_y0  + float(int(m_scrollAmount))) / 32.0f);
-	t.vertexUV(m_x1, m_y0,  0.0f, m_x1 / 32.0f, (m_y0  + float(int(m_scrollAmount))) / 32.0f);
+	t.color(0x202020, 144);
+	t.vertexUV(m_x1, m_y1,  0.0f, m_x1 / 32.0f, (m_y1 + float(int(m_scrollAmount))) / 32.0f);
+	t.vertexUV(m_x0, m_y1,  0.0f, m_x0 / 32.0f, (m_y1 + float(int(m_scrollAmount))) / 32.0f);
+	t.vertexUV(m_x0, m_y0,  0.0f, m_x0 / 32.0f, (m_y0 + float(int(m_scrollAmount))) / 32.0f);
+	t.vertexUV(m_x1, m_y0,  0.0f, m_x1 / 32.0f, (m_y0 + float(int(m_scrollAmount))) / 32.0f);
 	t.draw(m_materials.ui_fill_gradient);
 }
 
@@ -115,15 +140,12 @@ void OptionList::onClickItem(int index, const MenuPointer& pointer, int relMouse
 
 	if (index >= 0)
 	{
-		GuiElement* pItem = m_items[index];
-
-		if (pItem->getType() != GuiElement::TYPE_BUTTON) return;
-		
-		Button* button = ((Button*)pItem);
-
-		if (!button->isHovered(m_pMinecraft, pointer)) return;
-
-		button->pressed(m_pMinecraft, pointer);
+		GuiElement* element = m_items[index];
+		// Logic copied from Screen::pointerPressed()
+		if (element->isHovered(m_pMinecraft, pointer))
+		{
+			element->pressed(m_pMinecraft, pointer);
+		}
 	}
 }
 
@@ -139,13 +161,35 @@ void OptionList::clear()
 	m_items.clear();
 }
 
+void OptionList::refreshOptionValues()
+{
+	for (size_t i = 0; i < m_items.size(); i++)
+	{
+		GuiElement* pItem = m_items[i];
+
+		if (SliderButton* slider = dynamic_cast<SliderButton*>(pItem))
+			slider->updateValue();
+		else if (SmallButton* btn = dynamic_cast<SmallButton*>(pItem))
+			btn->setMessage(btn->getOption().getMessage());
+		else if (TickBox* tb = dynamic_cast<TickBox*>(pItem))
+			tb->m_bOn = tb->getOption().get();
+	}
+}
+
 void OptionList::initDefaultMenu()
 {
 	initVideoMenu();
 }
 
 #define HEADER(text) do { m_items.push_back(new OptionHeader(text)); currentIndex++; } while (0)
-#define OPTION(name) do { pOptions->name.addGuiElement(m_items, UI_POCKET); currentIndex++; } while (0)
+#define OPTION(name) do { pOptions->name.addGuiElement(m_items, m_uiTheme); currentIndex++; } while (0)
+#define RESET_BTN(category) do \
+{ \
+	HEADER(""); \
+	ResetCategoryButton* pBtn = new ResetCategoryButton(*this, category, Language::get("settingsMenu.resetToDefaults")); \
+	pBtn->m_uiTheme = m_uiTheme; \
+	m_items.push_back(pBtn); \
+} while (0)
 
 void OptionList::initGameplayMenu()
 {
@@ -158,6 +202,9 @@ void OptionList::initGameplayMenu()
 #ifndef FEATURE_NETWORKING
 	m_items[currentIndex]->setEnabled(false);
 #endif
+
+	RESET_BTN(OC_GAMEPLAY);
+
 	(void)currentIndex; // compiler will warn about an unused variable sometimes if this isn't here
 }
 
@@ -165,22 +212,27 @@ void OptionList::initControlsMenu()
 {
 	Options* pOptions = m_pMinecraft->getOptions();
 	int currentIndex = -1;
-	int idxSplit = -1, idxController = -1;
+	int idxSplit = -1, idxSwapJumpSneak = -1, idxDpadSize = -1;
 
 	OPTIONS_LIST_CONTROLS_CONTROLS;
 	OPTIONS_LIST_CONTROLS_FEEDBACK;
 	OPTIONS_LIST_CONTROLS_EXPERIMENTAL;
 
-	if (!m_pMinecraft->isTouchscreen())
+	if (!m_pMinecraft->useTouchscreen())
+	{
 		m_items[idxSplit]->setEnabled(false);
-	m_items[idxController]->setEnabled(false);
+		m_items[idxSwapJumpSneak]->setEnabled(false);
+		m_items[idxDpadSize]->setEnabled(false);
+	}
+
+	RESET_BTN(OC_CONTROLS);
 }
 
 void OptionList::initVideoMenu()
 {
 	Options* pOptions = m_pMinecraft->getOptions();
 	int currentIndex = -1;
-	int idxPano = -1;
+	int idxPano = -1, idxVSync = -1;
 
 	OPTIONS_LIST_VIDEO_GRAPHICS;
 	OPTIONS_LIST_VIDEO_EXPERIMENTAL;
@@ -189,6 +241,11 @@ void OptionList::initVideoMenu()
 	if (!Screen::isMenuPanoramaAvailable())
 		m_items[idxPano]->setEnabled(false);
 #endif
+
+	if (!m_pMinecraft->platform()->isVSyncSwitchable())
+		m_items[idxVSync]->setEnabled(false);
+
+	RESET_BTN(OC_VIDEO);
 }
 
 OptionHeader::OptionHeader(const std::string& text)

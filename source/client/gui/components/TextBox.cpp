@@ -149,7 +149,8 @@ bool TextBox::pointerPressed(Minecraft* pMinecraft, const MenuPointer& pointer)
 
 #ifndef HANDLE_CHARS_SEPARATELY
 
-char TextBox::guessCharFromKey(int key) {
+char TextBox::guessCharFromKey(int key)
+{
 	bool bShiftPressed = m_pParent->m_pMinecraft->platform()->shiftPressed();
 	char chr = '\0';
 	if (key >= AKEYCODE_A && key <= AKEYCODE_Z)
@@ -205,26 +206,28 @@ char TextBox::guessCharFromKey(int key) {
 
 #endif
 
-void TextBox::handleButtonPress(Minecraft* pMinecraft, int key)
+void TextBox::handleUserAction(Minecraft* pMinecraft, const ActionInfo& action)
 {
 	Options& options = *pMinecraft->getOptions();
 
 	if (!hasFocus())
 	{
-		if (options.isKey(KM_MENU_OK, key))
+		if (options.isAction(AID_MENU_OK, action))
 			setFocused(true);
 		return;
 	}
 
 #ifndef HANDLE_CHARS_SEPARATELY
-	char guess = guessCharFromKey(key);
-	if (guess != '\0') {
+	char guess = guessCharFromKey(action.keyId);
+	if (guess != '\0')
+	{
 		handleTextChar(guess);
 		return;
 	}
 #endif
 
-	switch (key) {
+	switch (action.keyId)
+	{
 		case AKEYCODE_DEL:
 		{
 			// handled elsewhere, do not dupe
@@ -298,7 +301,8 @@ void TextBox::handleTextChar(Minecraft* pMinecraft, int k)
 	if (!hasFocus())
 		return;
 
-	switch (k) {
+	switch (k)
+	{
 		case '\b': // BACKSPACE
 		case '\x7f': // DELETE
 		{
@@ -546,10 +550,13 @@ void TextBox::recalculateScroll()
 			}
 			else
 			{
-				if (m_scrollPos == int(m_text.length())) {
+				if (m_scrollPos == int(m_text.length()))
+				{
 					LOG_W("Text Box Is Too Small");
 					break;
-				} else {
+				}
+				else
+				{
 					m_scrollPos++;
 				}
 			}

@@ -7,6 +7,7 @@ ControllerMoveInput::ControllerMoveInput(Options *options)
 {
 	field_20 = false;
 	field_21 = false;
+    m_bFlying = false;
 }
 
 void ControllerMoveInput::tick(Player* player)
@@ -33,19 +34,28 @@ void ControllerMoveInput::tick(Player* player)
         m_keys[INPUT_BACKWARD] = field_21;
     //}
 //LABEL_3:
-    if (player->isInWater() && GameControllerManager::isTouched(1))
-        m_bJumping = 1;
+    // I don't really know why this was here, but it came from an old PE version
+    //if (player->isInWater() && GameControllerManager::isTouched(1))
+    //    m_bJumping = true;
     m_bFlyUp = m_bJumping;
     m_keys[INPUT_LEFT] = m_keys[INPUT_FORWARD] || m_keys[INPUT_BACKWARD];
     if (m_keys[INPUT_LEFT])
         m_vertInput = 0.0f;
 
     IMoveInput::tick(player);
+
+    m_bFlying = player->m_bFlying;
 }
 
-void ControllerMoveInput::setKey(int eventKey, bool eventKeyState)
+void ControllerMoveInput::setKey(UserActionID ctrl, bool eventKeyState)
 {
-	KeyboardInput::setKey(eventKey, eventKeyState);
+    if (ctrl == AID_SNEAK && !m_bFlying)
+    {
+        if (eventKeyState)
+            KeyboardInput::setKey(ctrl, !m_keys[INPUT_SNEAK]);
+    }
+	else 
+        KeyboardInput::setKey(ctrl, eventKeyState);
 	//this->m_culledEntities = m_pOptions[36] == eventKey && eventKeyState;
 	//this->field_21 = m_pOptions[34] == eventKey && eventKeyState;
 }

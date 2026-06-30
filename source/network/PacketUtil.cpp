@@ -1,4 +1,5 @@
 #include "PacketUtil.hpp"
+#include "Packet.hpp"
 #include "nbt/NbtIo.hpp"
 
 char PacketUtil::Rot_degreesToChar(float degrees)
@@ -13,19 +14,19 @@ float PacketUtil::Rot_charToDegrees(char charValue)
 
 void PacketUtil::Rot_entityToChar(const Entity* entity, char& yawChar, char& pitchChar)
 {
-	yawChar = Rot_degreesToChar(entity->m_rot.x);
-	pitchChar = Rot_degreesToChar(entity->m_rot.y);
+	yawChar = Rot_degreesToChar(entity->m_rot.yaw);
+	pitchChar = Rot_degreesToChar(entity->m_rot.pitch);
 }
 
 void PacketUtil::Rot_charToEntity(Entity* entity, char yawChar, char pitchChar)
 {
 	float pitch = PacketUtil::Rot_charToDegrees(pitchChar);
-	entity->m_oRot.y = pitch;
-	entity->m_rot.y = pitch;
+	entity->m_oRot.pitch = pitch;
+	entity->m_rot.pitch = pitch;
 
 	float yaw = PacketUtil::Rot_charToDegrees(yawChar);
-	entity->m_oRot.x = yaw;
-	entity->m_rot.x = yaw;
+	entity->m_oRot.yaw = yaw;
+	entity->m_rot.yaw = yaw;
 }
 
 void PacketUtil::PackMotion(const Vec3& in, int16_t* out)
@@ -146,12 +147,14 @@ void PacketUtil::WriteItemStack(const ItemStack& item, RakNet::BitStream& bs, bo
     int16_t itemId = item.getId();
     int8_t count = item.m_count;
     int16_t auxValue = item.getAuxValue();
+#if NETWORK_PROTOCOL_VERSION >= 29
     if (itemId <= 0)
     {
         itemId = -1;
         bs.Write(itemId);
         return;
     }
+#endif
 
     bs.Write(itemId);
     bs.Write(count);
@@ -166,8 +169,10 @@ ItemStack PacketUtil::ReadItemStack(RakNet::BitStream& bs, bool doUserData)
     if (!bs.Read(itemId))
         return ItemStack();
 
+#if NETWORK_PROTOCOL_VERSION >= 29
     if (itemId == ItemStack::EMPTY.getId())
         return ItemStack();
+#endif
 
     uint8_t count;
     int16_t auxValue;

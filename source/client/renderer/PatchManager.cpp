@@ -33,7 +33,7 @@ void PatchManager::LoadPatchData(const std::string& patchData)
 	while (std::getline(patchDataStream, currLine))
 	{
 		if (currLine.empty()) continue;
-        if (currLine.at(currLine.size() - 1) == '\r')
+        if (currLine[currLine.size() - 1] == '\r')
         {
             // Ignore Windows line-endings when processing file on Unix systems
             // How would we possibly standardize this if the game isn't the thing writing the file?

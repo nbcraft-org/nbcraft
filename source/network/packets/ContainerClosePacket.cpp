@@ -1,10 +1,6 @@
 #include "ContainerClosePacket.hpp"
 #include "network/NetEventCallback.hpp"
 
-ContainerClosePacket::ContainerClosePacket(int8_t containerId)
-	: m_containerId(containerId)
-{}
-
 void ContainerClosePacket::handle(const RakNet::RakNetGUID& guid, NetEventCallback& callback)
 {
 	callback.handle(guid, this);

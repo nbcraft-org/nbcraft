@@ -11,6 +11,7 @@
 #include <cstring>
 #include <vector>
 #include <algorithm>
+#include <map>
 #include <unordered_map>
 #include <atomic>
 #include <mutex>
@@ -27,6 +28,7 @@ class Level;
 class Dimension;
 class AABB;
 class Entity;
+class TileEntity;
 class ChunkSource;
 class Biome;
 
@@ -305,4 +307,5 @@ public:
 	int field_23C;
 	//TileID* m_pBlockData;
 	//std::vector<Entity*> m_entities_OLD[128 / 16];
+	std::map<ChunkTilePos, TileEntity*> m_tileEntities;
 };

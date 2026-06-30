@@ -5,20 +5,22 @@
 #include "world/level/Level.hpp"
 #include "world/level/TileSource.hpp"
 
-CraftingMenu::CraftingMenu(Inventory* inventory, const TilePos& tilePos, Level* level)
+CraftingMenu::CraftingMenu(Inventory* inventory, const TilePos& tilePos, Level* level, bool is2x2)
     : ContainerMenu(Container::CRAFTING)
     , m_pos(tilePos)
     , m_pLevel(level)
 {
-    m_pCraftSlots = new CraftingContainer(this, 3, 3);
+    int dim = is2x2 ? 2 : 3;
+
+    m_pCraftSlots = new CraftingContainer(this, dim, dim);
     m_pResultSlots = new ResultContainer();
 
     addSlot(new ResultSlot(inventory->m_pPlayer, m_pCraftSlots, m_pResultSlots, 0));
 
-    for (int y = 0; y < 3; ++y)
+    for (int y = 0; y < dim; ++y)
     {
-        for (int x = 0; x < 3; ++x)
-            addSlot(new Slot(m_pCraftSlots, x + y * 3, Slot::INPUT));
+        for (int x = 0; x < dim; ++x)
+            addSlot(new Slot(m_pCraftSlots, x + y * dim, Slot::INPUT));
     }
 
     for (int y = 0; y < 3; ++y)
@@ -37,6 +39,9 @@ CraftingMenu::CraftingMenu(Inventory* inventory, const TilePos& tilePos, Level* 
 
 CraftingMenu::~CraftingMenu()
 {
+    _clearSlots();
+
+    // clearSlots must be called before these are deleted
     delete m_pCraftSlots;
     delete m_pResultSlots;
 }
@@ -49,7 +54,7 @@ void CraftingMenu::slotsChanged(Container* container)
 void CraftingMenu::removed(Player* player) 
 {
     ContainerMenu::removed(player);
-    for (int i = 0; i < 9; ++i)
+    for (int i = 0; i < m_pCraftSlots->getContainerSize(); ++i)
     {
         ItemStack& item = m_pCraftSlots->getItem(i);
         if (!item.isEmpty())
@@ -62,28 +67,30 @@ void CraftingMenu::removed(Player* player)
 
 bool CraftingMenu::stillValid(Player* player) const 
 {
+    if (m_pCraftSlots->getContainerSize() <= 4) return true;
+
     if (player->getTileSource().getTile(m_pos) != Tile::craftingTable->m_ID)
         return false;
     else
         return !(player->distanceToSqr(Vec3(m_pos.x + 0.5f, m_pos.y + 0.5f, m_pos.z + 0.5f)) > 64.0f);
 }
 
-ItemStack CraftingMenu::quickMoveStack(int index)
+ItemStack CraftingMenu::quickMoveStack(Container::SlotID slotId)
 {
     ItemStack item = ItemStack::EMPTY;
-    Slot* slot = getSlot(index);
+    Slot* slot = getSlot(slotId);
     if (slot && slot->hasItem())
     {
         ItemStack& slotItem = slot->getItem();
         item = slotItem;
-        if (index == 0)
-            moveItemStackTo(slotItem, 10, 46, true);
-        else if (index >= 10 && index < 37)
-            moveItemStackTo(slotItem, 37, 46, false);
-        else if (index >= 37 && index < 46)
-            moveItemStackTo(slotItem, 10, 37, false);
+        if (slotId == 0)
+            moveItemStackTo(slotItem, m_pCraftSlots->getContainerSize() + 1, m_pCraftSlots->getContainerSize() + 1 + 26, true);
+        else if (slotId >= m_pCraftSlots->getContainerSize() + 1 && slotId < m_pCraftSlots->getContainerSize() + 1 + 27)
+            moveItemStackTo(slotItem, m_pCraftSlots->getContainerSize() + 1 + 27, m_pCraftSlots->getContainerSize() + 1 + 26, false);
+        else if (slotId >= m_pCraftSlots->getContainerSize() + 1 + 27 && slotId < m_pCraftSlots->getContainerSize() + 1 + 36)
+            moveItemStackTo(slotItem, m_pCraftSlots->getContainerSize() + 1, m_pCraftSlots->getContainerSize() + 1 + 27, false);
         else
-            moveItemStackTo(slotItem, 10, 46, false);
+            moveItemStackTo(slotItem, m_pCraftSlots->getContainerSize() + 1, m_pCraftSlots->getContainerSize() + 1 + 26, false);
 
         if (slotItem.m_count == 0)
             slot->set(ItemStack::EMPTY);

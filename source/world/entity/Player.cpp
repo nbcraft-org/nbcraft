@@ -22,6 +22,7 @@ void Player::_init()
 	m_bFlying = false;
 	m_jumpTriggerTime = 0;
 	m_destroyingBlock = false;
+	m_pFishing = nullptr;
 
 	m_abilities.bCanFly = false;
 	m_abilities.bInvulnerable = false;
@@ -42,8 +43,8 @@ Player::Player(Level& level, GameType playerGameType) : Mob(level)
 
 	m_pInventory = new Inventory(this);
 
-	m_pContainerMenu = nullptr;
 	m_pInventoryMenu = new InventoryMenu(m_pInventory);
+	m_pContainerMenu = m_pInventoryMenu;
 
 	setDefaultHeadHeight();
 
@@ -63,13 +64,17 @@ Player::Player(Level& level, GameType playerGameType) : Mob(level)
 
 Player::~Player()
 {
-	delete m_pInventory;
 	delete m_pInventoryMenu;
+	delete m_pInventory;
 }
 
 void Player::reallyDrop(ItemEntity* pEnt)
 {
 	m_pLevel->addEntity(pEnt);
+}
+
+void Player::_handleOpenedContainerMenu()
+{
 }
 
 void Player::reset()
@@ -169,14 +174,19 @@ void Player::die(Entity* pCulprit)
 		if (m_name == "Notch")
 			drop(ItemStack(Item::apple), true);
 	}
+
+#ifndef FEATURE_SERVER_INVENTORIES
+	// don't drop items on the server, leave it to SendInventoryPacket
+	if (m_pLevel->m_bIsClientSide)
+#endif
 #if NETWORK_PROTOCOL_VERSION <= 3
 	m_pInventory->dropAll(m_pLevel->m_bIsClientSide);
 #endif
 
 	if (pCulprit)
 	{
-		m_vel.x = -0.1f * Mth::cos(float((m_hurtDir + m_rot.x) * M_PI / 180.0));
-		m_vel.z = -0.1f * Mth::cos(float((m_hurtDir + m_rot.x) * M_PI / 180.0));
+		m_vel.x = -0.1f * Mth::cos(float((m_hurtDir + m_rot.yaw) * M_PI / 180.0));
+		m_vel.z = -0.1f * Mth::cos(float((m_hurtDir + m_rot.yaw) * M_PI / 180.0));
 	}
 	else
 	{
@@ -201,7 +211,9 @@ void Player::aiStep()
     m_pInventory->tick();
 #endif
 	m_oBob = m_bob;
-    //Mob::aiStep(); // called in Java, calling here results in 2x speed player movement
+
+	//Mob::aiStep(); // @PARITY: not called in PE, instead called in LocalPlayer, called regardless in Java
+
 	float velLen = Mth::sqrt(m_vel.x * m_vel.x + m_vel.z * m_vel.z);
 	float velYAtan = Mth::atan(m_vel.y * -0.2f), x1 = 0.0f;
 
@@ -263,7 +275,7 @@ void Player::tick()
 const ItemStack& Player::getCarriedItem() const
 {
 	// This only gets the first row slot
-	/*ItemStack* item = m_pInventory->getItem(m_pInventory->m_selectedSlot);
+	/*ItemStack* item = m_pInventory->getItem(m_pInventory->m_selectedStackId);
   
 	if (ItemStack::isNull(item))
 		return nullptr;
@@ -321,7 +333,8 @@ void Player::readAdditionalSaveData(const CompoundTag& tag)
 	m_dimension = (DimensionId)tag.getInt32("Dimension");
 	//m_sleepTimer = tag.getInt32("SleepTimer");
 
-	if (tag.contains("SpawnX") && tag.contains("SpawnY") && tag.contains("SpawnZ")) {
+	if (tag.contains("SpawnX") && tag.contains("SpawnY") && tag.contains("SpawnZ"))
+	{
 		setRespawnPos(TilePos(	static_cast<int>(tag.getInt32("SpawnX")),
 								static_cast<int>(tag.getInt32("SpawnY")),
 								static_cast<int>(tag.getInt32("SpawnZ"))));
@@ -386,7 +399,8 @@ void Player::attack(Entity* pEnt)
 	if (!item.isEmpty() && isMob)
 	{
 		item.hurtEnemy((Mob*)pEnt, this);
-		if (item.m_count <= 0) {
+		if (item.m_count <= 0)
+		{
 			item.snap(this);
 			removeSelectedItem();
 		}
@@ -493,7 +507,9 @@ void Player::respawn()
 
 void Player::rideTick()
 {
-
+	Mob::rideTick();
+	m_oBob = m_bob;
+	m_bob = 0.0f;
 }
 
 void Player::setDefaultHeadHeight()
@@ -513,16 +529,11 @@ void Player::setRespawnPos(const TilePos& pos)
 	m_respawnPos = pos;
 }
 
-/*void Player::drop()
+// @PARITY-PE: From b1.2_02, doesn't exist in PE
+void Player::drop()
 {
-	// From b1.2_02, doesn't exist in PE
-	// Isn't called anywhere, but is overriden in MultiplayerLocalPlayer with a PlayerActionPacket
-	ItemStack* item = getSelectedItem();
-	if (!item)
-		return;
-
-	drop(m_pInventory->removeItem(*item, 1));
-}*/
+	drop(m_pInventory->removeItem(m_pInventory->getSelectedSlotNo(), 1));
+}
 
 void Player::drop(const ItemStack& item, bool randomly)
 {
@@ -543,9 +554,9 @@ void Player::drop(const ItemStack& item, bool randomly)
 	}
 	else
 	{
-		pItemEntity->m_vel.x = -(Mth::sin(m_rot.x / 180.0f * float(M_PI)) * Mth::cos(m_rot.y / 180.0f * float(M_PI))) * 0.3f;
-		pItemEntity->m_vel.z = (Mth::cos(m_rot.x / 180.0f * float(M_PI)) * Mth::cos(m_rot.y / 180.0f * float(M_PI))) * 0.3f;
-		pItemEntity->m_vel.y = 0.1f - Mth::sin(m_rot.y / 180.0f * float(M_PI)) * 0.3f;
+		pItemEntity->m_vel.x = -(Mth::sin(m_rot.yaw / 180.0f * float(M_PI)) * Mth::cos(m_rot.pitch / 180.0f * float(M_PI))) * 0.3f;
+		pItemEntity->m_vel.z = (Mth::cos(m_rot.yaw / 180.0f * float(M_PI)) * Mth::cos(m_rot.pitch / 180.0f * float(M_PI))) * 0.3f;
+		pItemEntity->m_vel.y = 0.1f - Mth::sin(m_rot.pitch / 180.0f * float(M_PI)) * 0.3f;
 
 		float f1 = m_random.nextFloat();
 		float f2 = m_random.nextFloat();
@@ -560,12 +571,12 @@ void Player::drop(const ItemStack& item, bool randomly)
 
 void Player::startCrafting(const TilePos& pos)
 {
-
+	_handleOpenedContainerMenu();
 }
 
 void Player::startStonecutting(const TilePos& pos)
 {
-
+	_handleOpenedContainerMenu();
 }
 
 void Player::startDestroying()
@@ -576,6 +587,25 @@ void Player::startDestroying()
 void Player::stopDestroying()
 {
 	m_destroyingBlock = false;
+}
+
+void Player::openFurnace(FurnaceTileEntity* tileEntity)
+{
+	_handleOpenedContainerMenu();
+}
+
+void Player::openContainer(Container* container)
+{
+	_handleOpenedContainerMenu();
+}
+
+void Player::closeContainer()
+{
+}
+
+void Player::openTrap(DispenserTileEntity* tileEntity)
+{
+	_handleOpenedContainerMenu();
 }
 
 void Player::touch(Entity* pEnt)
@@ -593,9 +623,11 @@ void Player::interact(Entity* pEnt)
 		return;
 
 	ItemStack& item = getSelectedItem();
-	if (!item.isEmpty()) {
+	if (!item.isEmpty())
+	{
 		item.interactEnemy(static_cast<Mob*>(pEnt));
-		if (item.m_count <= 0) {
+		if (item.m_count <= 0)
+		{
 			item.snap(this);
 			removeSelectedItem();
 		} 

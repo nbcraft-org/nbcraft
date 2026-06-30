@@ -68,7 +68,7 @@ bool TileItem::useOn(ItemStack* instance, Player* player, const TilePos& pos, Fa
 
 	level.playSound(
 		Vec3(tp) + 0.5f,
-		"step." + pTile->m_pSound->m_name,
+		"step." + pTile->m_pSound->name,
 		(pTile->m_pSound->volume + 1.0f) * 0.5f,
 		pTile->m_pSound->pitch * 0.8f
 	);
@@ -78,4 +78,10 @@ bool TileItem::useOn(ItemStack* instance, Player* player, const TilePos& pos, Fa
 
 	player->useItem(*instance);
 	return true;
+}
+
+int TileItem::getColor(int data) const
+{
+	//@NOTE: Used by tiles rendered as 2d items
+	return Tile::tiles[m_tile]->getColor(Facing::UP, data);
 }

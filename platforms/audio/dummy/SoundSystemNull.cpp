@@ -13,7 +13,7 @@ void SoundSystemNull::setListenerPos(const Vec3& pos)
 {
 }
 
-void SoundSystemNull::setListenerAngle(const Vec2& rot)
+void SoundSystemNull::setListenerAngle(const Rot2& rot)
 {
 	/* STUB */
 }

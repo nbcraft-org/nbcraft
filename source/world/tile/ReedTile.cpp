@@ -39,8 +39,7 @@ bool ReedTile::mayPlace(TileSource* source, const TilePos& pos) const
 	if (tileBelow == m_ID)
 		return true;
 
-	//@NOTE: No sand
-	if (tileBelow != Tile::grass->m_ID && tileBelow != Tile::dirt->m_ID)
+	if (tileBelow != Tile::grass->m_ID && tileBelow != Tile::dirt->m_ID && tileBelow != Tile::sand->m_ID)
 		return false;
 
 	return
@@ -71,7 +70,7 @@ void ReedTile::neighborChanged(TileSource* source, const TilePos& pos, TileID ti
 
 void ReedTile::tick(TileSource* source, const TilePos& pos, Random* random)
 {
-	if (!source->isEmptyTile(pos))
+	if (!source->isEmptyTile(pos.above()))
 		return;
 
 	int height;

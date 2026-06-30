@@ -20,16 +20,16 @@ namespace mce
         ~BufferD3D9();
 
     protected:
-        void _createBuffer(RenderContext& context, unsigned int stride, const void* data, unsigned int count, BufferType bufferType, bool isDynamic);
+        void _createBuffer(RenderContext& context, unsigned int stride, ByteBuffer& data, unsigned int count, BufferType bufferType, bool isDynamic);
 
     public:
 		void _move(BufferD3D9& other);
         void releaseBuffer();
         void bindBuffer(RenderContext& context);
-		void createBuffer(RenderContext& context, unsigned int stride, const void *data, unsigned int count, BufferType bufferType);
-		void createDynamicBuffer(RenderContext& context, unsigned int stride, const void* data, unsigned int count, BufferType bufferType);
-        void resizeBuffer(RenderContext& context, const void* data, unsigned int size);
-        void updateBuffer(RenderContext& context, unsigned int stride, void*& data, unsigned int count, MapType mapType = MAP_WRITE_DISCARD);
+		void createBuffer(RenderContext& context, unsigned int stride, ByteBuffer& data, unsigned int count, BufferType bufferType);
+		void createDynamicBuffer(RenderContext& context, unsigned int stride, ByteBuffer& data, unsigned int count, BufferType bufferType);
+        void resizeBuffer(RenderContext& context, ByteBuffer& data, unsigned int size);
+        void updateBuffer(RenderContext& context, unsigned int stride, ByteBuffer& data, unsigned int count, MapType mapType = MAP_WRITE_DISCARD);
         bool isValid() const { return m_vertexBuffer || m_indexBuffer; }
 
         MC_FUNC_MOVE(BufferD3D9);

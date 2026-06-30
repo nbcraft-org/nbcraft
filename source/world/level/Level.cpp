@@ -12,12 +12,14 @@
 
 #include "GameMods.hpp"
 #include "common/Logger.hpp"
+#include "nbt/CompoundTag.hpp"
 #include "network/RakNetInstance.hpp"
 #include "network/packets/EntityEventPacket.hpp"
 #include "network/packets/SetEntityDataPacket.hpp"
 #include "network/packets/ExplodePacket.hpp"
 #include "network/packets/SetTimePacket.hpp"
 #include "world/entity/MobSpawner.hpp"
+#include "world/tile/entity/TileEntity.hpp"
 #include "world/level/TileSource.hpp"
 #include "common/threading/BackgroundQueuePool.hpp"
 
@@ -30,6 +32,8 @@ Level::Level(LevelStorage* pStor, const std::string& name, const LevelSettings& 
     m_difficulty = 2; // Java has no actual default, it just always pulls from Options. Putting 2 here just so there's no chance of mobs getting despawned accidentally.
 	m_pRakNetInstance = nullptr;
 	m_pLevelStorage = pStor;
+	m_tileEntities = TileEntityVector();
+	m_bUpdatingTileEntities = false;
 	m_randValue = 42184323;
 	m_addend = 1013904223;
 	m_processingLightUpdates = false;
@@ -80,6 +84,62 @@ Dimension* Level::getDimension(DimensionId type) const
 	return nullptr;
 }
 
+
+TileEntity* Level::getTileEntity(const TilePos& pos) const
+{
+	LevelChunk* pChunk = getChunk(pos);
+	return pChunk ? pChunk->getTileEntity(pos) : nullptr;
+}
+
+const TileEntityVector* Level::getAllTileEntities() const
+{
+	return &m_tileEntities;
+}
+
+void Level::setTileEntity(const TilePos& pos, TileEntity* tileEntity)
+{
+
+	if (tileEntity->isRemoved())
+		return;
+
+	if (m_bUpdatingTileEntities)
+	{
+		tileEntity->m_pos = pos;
+		m_pendingTileEntities.push_back(tileEntity);
+		return;
+	}
+
+	m_tileEntities.push_back(tileEntity);
+	LevelChunk* pChunk = getChunk(pos);
+	if (pChunk)
+		pChunk->setTileEntity(pos, tileEntity);
+}
+
+void Level::removeTileEntity(const TilePos& pos)
+{
+	TileEntity* tileEntity = getTileEntity(pos);
+
+	if (tileEntity == nullptr)
+	{
+		LOG_W("Tried to remove a tile entity at %d, %d, %d, but there was no tile entity there!", pos.x, pos.y, pos.z);
+		return;
+	}
+
+	// During a tile entity update, just mark it for potential removal
+	if (m_bUpdatingTileEntities)
+	{
+		tileEntity->setRemoved();
+		return;
+	}
+
+	Util::remove(m_tileEntities, tileEntity);
+
+	if (LevelChunk* pChunk = getChunk(pos))
+	{
+		pChunk->removeTileEntity(pos);
+	}
+}
+
 Entity* Level::getEntity(Entity::ID id) const
 {
 	for (DimensionVector::const_iterator iter = m_dimensions.begin(); iter != m_dimensions.end(); iter++)
@@ -89,6 +149,10 @@ Entity* Level::getEntity(Entity::ID id) const
 		if (entity)
 			return entity;
 	}
+
+	EntityMap::const_iterator it = m_entities.find(id);
+	if (it != m_entities.end())
+		return it->second;
 
 	return nullptr;
 }
@@ -295,11 +359,30 @@ const TilePos& Level::getSharedSpawnPos() const
 
 void Level::removeAllPendingEntityRemovals()
 {
-	/*Util::removeAll(m_entities, m_pendingEntityRemovals);
+	/*
 
 	for (EntityVector::iterator it = m_pendingEntityRemovals.begin(); it != m_pendingEntityRemovals.end(); it++)
 	{
 		Entity* ent = *it;
+		if (m_entities.find(ent->hashCode()) != m_entities.end())
+		{
+			m_entities.erase(ent->hashCode());
+		}
+	}
+
+	for (EntityVector::iterator it = m_pendingEntityRemovals.begin(); it != m_pendingEntityRemovals.end(); it++)
+	{
+		Entity* ent = *it;
+		if (Entity* riding = ent->getRiding())
+		{
+			if (riding->m_bRemoved || riding->getRider() != ent)
+			{
+				riding->setRider(nullptr);
+				ent->setRiding(nullptr);
+			}
+			else
+				continue;
+		}
 		ent->removed();
 
 		LevelChunk* chunk = getChunk(ent->m_chunkPos);
@@ -364,6 +447,19 @@ void Level::removeEntity(Entity*& entity)
 	entity = nullptr;
 }
 
+GameType Level::getLoadedPlayerGameType() const
+{
+	GameType gameType = m_pLevelData->getGameType();
+
+	const CompoundTag* tag = m_pLevelData->getLoadedPlayerTag();
+	if (tag && tag->contains("playerGameType"))
+	{
+		gameType = (GameType)tag->getInt32("playerGameType");
+	}
+
+	return gameType;
+}
+
 void Level::loadPlayer(Player& player)
 {
 	const CompoundTag* tag = m_pLevelData->getLoadedPlayerTag();
@@ -373,6 +469,9 @@ void Level::loadPlayer(Player& player)
 		m_pLevelData->setLoadedPlayerTag(nullptr);
 		//addEntity(&player);
 	}
+	else if (player.isCreative())
+		player.m_pInventory->prepareCreativeInventory();
+
 	m_pLevelData->setLoadedPlayerTo(player);
 
 	// 0.2.1 had us only adding the player if LevelData had a CompoundTag
@@ -438,6 +537,7 @@ void Level::broadcastToAllInRange(Packet* packet, const Vec3& pos, float range, 
 			}
 		}
 	}
+
 	delete packet;
 }
 
@@ -532,11 +632,20 @@ void Level::playSound(const Vec3& pos, const std::string& name, float a, float b
 	}
 }
 
+void Level::playStreamingMusic(const std::string& name, const TilePos& pos)
+{
+	for (std::vector<LevelListener*>::iterator it = m_levelListeners.begin(); it != m_levelListeners.end(); it++)
+	{
+		LevelListener* pListener = *it;
+		pListener->playStreamingMusic(name, pos);
+	}
+}
+
 void Level::animateTick(Entity* entity)
 {
 	TileSource* source = entity->m_tileSource;
 
-	// frequency is 1000 on JE, 100 on PE
+	// @PARITY-JAVA: frequency is 1000 on JE, 100 on PE
 	for (int i = 0; i < 100; i++)
 	{
 		TilePos aPos(entity->m_pos.x + m_random.nextInt(16) - m_random.nextInt(16),

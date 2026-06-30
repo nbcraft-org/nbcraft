@@ -1,14 +1,5 @@
 #include "PlayerActionPacket.hpp"
-
 #include "network/NetEventCallback.hpp"
-
-PlayerActionPacket::PlayerActionPacket(int32_t entityId, Type action, const TilePos& tilePos, Facing::Name tileFace)
-	: m_tilePos(tilePos)
-	, m_tileFace(tileFace)
-	, m_action(action)
-	, m_entityId(entityId)
-{
-}
 
 void PlayerActionPacket::handle(const RakNet::RakNetGUID& guid, NetEventCallback& callback)
 {

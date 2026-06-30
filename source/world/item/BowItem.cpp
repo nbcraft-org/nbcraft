@@ -8,17 +8,16 @@ BowItem::BowItem(int id) : Item(id)
 	m_maxStackSize = 1;
 }
 
-ItemStack* BowItem::use(ItemStack* inst, Mob* user) const
+bool BowItem::use(ItemStack& item, Mob& user) const
 {
     Level& level = user->getLevel();
 
-    if (!user->isPlayer() || static_cast<Player*>(user)->isCreative() || static_cast<Player*>(user)->m_pInventory->removeResource(Item::arrow->m_itemID))
+    if (!user.isPlayer() || static_cast<Player&>(user).isCreative() || static_cast<Player&>(user).m_pInventory->removeResource(Item::arrow->m_itemID))
     {
-        level.playSound(user, "random.bow", 1.0f, 1.0f / (level.m_random.nextFloat() * 0.4f + 0.8f));
-        if (!level.m_bIsClientSide) {
-            level.addEntity(new Arrow(*user));
-        }
+        level->playSound(&user, "random.bow", 1.0f, 1.0f / (level.m_random.nextFloat() * 0.4f + 0.8f));
+        if (!level.m_bIsClientSide)
+            level.addEntity(new Arrow(level, &user));
     }
 
-    return inst;
+    return false;
 }

@@ -11,5 +11,5 @@ public:
 protected:
     void _renderLabels() override;
     void _renderBg(float partialTick) override;
-    SlotDisplay _createSlotDisplay(const Slot&);
+    SlotDisplay _createSlotDisplay(const Slot&) override;
 };

@@ -1,11 +1,15 @@
 #include <cstring>
+#include <sstream>
 
 #include "ShaderProgramOGL.hpp"
 
 #ifdef FEATURE_GFX_SHADERS
 
+#include "common/Util.hpp"
 #include "RenderContextOGL.hpp"
+#include "renderer/RenderContextImmediate.hpp"
 #include "renderer/hal/ogl/helpers/ErrorHandlerOGL.hpp"
+#include "renderer/platform/ogl/ShaderPrecision.hpp"
 
 using namespace mce;
 
@@ -41,85 +45,23 @@ void ShaderProgramOGL::deleteShader()
     m_shaderName = GL_NONE;
 }
 
-std::string _getVersionMacro()
+std::string _getVersionMacro(RenderContext& context, ShaderType shaderType)
 {
-// for compatibility reason
+	// for compatibility reasons (I've heard GLES bitches about this or something)
 #if defined(__APPLE__) && TARGET_OS_IPHONE
     return "\n";
 #endif
 
-    std::string glslVersion = "140";
-    const gl::Version& glVersion = gl::Version::singleton();
+    int major, minor;
+    context.getShaderLangVersion(shaderType, major, minor);
 
-    if (glVersion.gles)
-    {
-        /*
-            GLES version  GLSL version
-            2.0           1.00 ES
-            3.0           3.00 ES
-            3.1           3.10 ES
-        */
-        switch (glVersion.major)
-        {
-        case 2:
-            glslVersion = "100";
-            break;
-        default:
-            glslVersion = "300 es";
-            break;
-        }
-    }
-    else
-    {
-        /*
-            GL version  GLSL version
-            2.0         1.10
-            2.1         1.20
-            3.0         1.30
-            3.1         1.40
-            3.2         1.50
-            3.3         3.30
-            4.0         4.00
-            4.1         4.10
-            4.2         4.20
-            4.3         4.30
-            4.4         4.40
-            4.5         4.50
-        */
-        switch (glVersion.major)
-        {
-        case 2:
-        {
-            switch (glVersion.minor)
-            {
-            case 0: glslVersion = "110"; break;
-            case 1: glslVersion = "120"; break;
-            }
-            break;
-        }
-        case 3:
-        {
-            switch (glVersion.minor)
-            {
-            case 0: glslVersion = "130"; break;
-            case 1: glslVersion = "140"; break;
-            case 2: glslVersion = "150"; break;
-            case 3: glslVersion = "330"; break;
-            }
-            break;
-        }
-        case 4:
-        {
-            switch (glVersion.minor)
-            {
-            case 0: glslVersion = "400"; break;
-            case 1: glslVersion = "410"; break;
-            // 4.2 and above support GLSL 4.20 and all versions back to 1.40
-            }
-            break;
-        }
-        }
-    }
+    std::string glslVersion = Util::toString(major) + Util::toString(minor);
+    // make sure single-digit minor versions still end up being two digits
+    if (glslVersion.size() < 3) // can be coverted to a while loop for future-proofing
+        glslVersion += "0";
+
+    if (gl::isOpenGLES3())
+        glslVersion += " es";
 
     return "#version " + glslVersion + "\n";
 }
@@ -127,13 +69,19 @@ std::string _getVersionMacro()
 bool ShaderProgramOGL::compileShaderProgram(std::string& shaderSource)
 {
     ErrorHandlerOGL::checkForErrors();
+
+    RenderContext& context = RenderContextImmediate::get();
     
     m_shaderName = xglCreateShader(shaderTypeMap[m_shaderType]);
 
-    if (strncmp(shaderSource.c_str(), MULTIVERSION_STRING, sizeof(MULTIVERSION_STRING) - 1) == 0)
+    // make everything multi-version. why not?
+    shaderSource.insert(0, _getVersionMacro(context, m_shaderType));
+
+    // never really worked since our #defines are appended before the multiversion comment
+    /*if (strncmp(shaderSource.c_str(), MULTIVERSION_STRING, sizeof(MULTIVERSION_STRING) - 1) == 0)
     {
-        shaderSource.replace(0, sizeof(MULTIVERSION_STRING), _getVersionMacro());
-    }
+        shaderSource.replace(0, sizeof(MULTIVERSION_STRING), _getVersionMacro(context, m_shaderType));
+    }*/
 
     const GLint sourceLength = shaderSource.size();
     const GLchar* sourceStr = (const GLchar*)shaderSource.data();
@@ -158,6 +106,22 @@ bool ShaderProgramOGL::compileShaderProgram(std::string& shaderSource)
     ErrorHandlerOGL::checkForErrors();
 
     return true;
+}
+
+void ShaderProgramOGL::SpliceShaderPath(std::string& shaderName)
+{
+    ShaderProgramBase::SpliceShaderPath(shaderName, "/glsl");
+}
+
+void ShaderProgramOGL::BuildHeader(RenderContext& context, std::ostringstream& stream)
+{
+    Platform::OGL::Precision::BuildHeader(stream);
+    
+    const std::string& glExtensions = gl::getOpenGLExtensions();
+    bool supportsSDs = (glExtensions.find("GL_OES_standard_derivatives") != std::string::npos);
+
+    if (supportsSDs)
+        stream << "#extension GL_OES_standard_derivatives : enable\n";
 }
 
 #endif // FEATURE_GFX_SHADERS

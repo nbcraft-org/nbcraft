@@ -8,6 +8,7 @@
 
 #include "common/Logger.hpp"
 #include "world/level/Level.hpp"
+#include "world/tile/entity/TileEntity.hpp"
 #include "world/phys/AABB.hpp"
 #include "world/level/TileSource.hpp"
 #include "world/level/levelgen/biome/Biome.hpp"
@@ -182,8 +183,8 @@ void LevelChunk::getEntities(const EntityType& type, const AABB& aabb, std::vect
 		if (entity->getDescriptor().isType(type))
 			continue;
 
-		if (entity->m_hitbox.intersect(aabb))
-			output.push_back(entity);
+			out.push_back(ent);
+		}
 	}
 }
 
@@ -223,6 +224,88 @@ bool LevelChunk::setData(const ChunkTilePos& pos, TileData data)
 		_resetDirtyCounter(m_terrainDirtyTicks, 0);
 		return true;
 	}
+
+	return false;
+}
+
+TileEntity* LevelChunk::getTileEntity(const ChunkTilePos& pos)
+{
+	std::map<ChunkTilePos, TileEntity*>::iterator it = m_tileEntities.find(pos);
+    if (it == m_tileEntities.end())
+    {
+		int tileId = getTile(pos);
+		if (tileId <= TILE_AIR || !Tile::isEntityTile[tileId])
+			return nullptr;
+
+		TilePos tilePos(m_chunkPos, pos.y);
+		tilePos += TilePos(pos.x, 0, pos.z);
+
+		Tile* pTile = Tile::tiles[tileId];
+		pTile->onPlace(m_pLevel, tilePos);
+		
+		// do a recheck to see if a tile entity was actually added.
+		it = m_tileEntities.find(pos);
+		return (it == m_tileEntities.end()) ? nullptr : it->second;
+	}
+
+	if (!it->second || it->second->isRemoved())
+	{
+		m_tileEntities.erase(it);
+		return nullptr;
+	}
+
+	return it->second;
+}
+
+void LevelChunk::addTileEntity(TileEntity* tileEntity)
+{
+	setTileEntity(tileEntity->m_pos, tileEntity);
+	if (m_bLoaded)
+		m_pLevel->m_tileEntities.push_back(tileEntity);
+}
+
+void LevelChunk::setTileEntity(const ChunkTilePos& pos, TileEntity* tileEntity)
+{
+	TilePos tilePos(m_chunkPos, pos.y);
+	
+	if (tileEntity)
+	{
+		tileEntity->m_pLevel = m_pLevel;
+		TileID tile = getTile(pos);
+		tilePos.x += pos.x;
+		tilePos.z += pos.z;
+		tileEntity->m_pos = tilePos;
+		if (tile > 0 && Tile::isEntityTile[tile])
+		{
+			tileEntity->clearRemoved();
+			m_tileEntities[pos] = tileEntity;
+			return;
+		}
+	}
+	
+	LOG_W("Attempted to place a tile entity at %d, %d, %d where there was no entity tile!", tilePos.x, tilePos.y, tilePos.z);
+}
+
+void LevelChunk::removeTileEntity(const ChunkTilePos& pos)
+{
+	if (!m_bLoaded)
+		return;
+
+	std::map<ChunkTilePos, TileEntity*>::iterator it = m_tileEntities.find(pos);
+	if (it != m_tileEntities.end())
+	{
+		if (it->second)
+			it->second->setRemoved();
+		m_tileEntities.erase(it);
+	}
+}
+
+TileData LevelChunk::getData(const ChunkTilePos& pos)
+{
+	CheckPosition(pos);
+
+	return m_tileData.get(pos);
+}
 
 	return false;
 }

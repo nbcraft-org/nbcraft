@@ -26,7 +26,7 @@ protected:
 public:
 	// overrides
 	void reset() override;
-	void lerpTo(const Vec3& pos, const Vec2& rot, int steps) override;
+	void lerpTo(const Vec3& pos, const Rot2& rot, int steps = 3) override;
 	void tick() override;
 	void baseTick() override;
 	float getHeadHeight() const override { return 0.85f * m_bbHeight; }
@@ -44,6 +44,7 @@ public:
 	void handleEntityEvent(EventType::ID eventId) override;
 	void addAdditionalSaveData(CompoundTag& tag) const override;
 	void readAdditionalSaveData(const CompoundTag& tag) override;
+	Vec3 getLookAngle() const override { return getViewVector(1.0f); }
 
 	// virtuals
 	virtual void knockback(Entity* pEnt, int a, float x, float z);
@@ -62,13 +63,12 @@ public:
 	virtual void updateWalkAnim();
 	virtual void aiStep();
 	virtual void lookAt(Entity* pEnt, float, float);
-	virtual bool isLookingAtAnEntity() { return m_pEntLookedAt != nullptr; }
+	virtual bool isLookingAtAnEntity() { return m_entLookedAtId > 0; }
 	virtual bool isSlowedByLiquids() const { return true; }
-	virtual Entity* getLookingAt() const { return m_pEntLookedAt; }
+	virtual Entity* getLookingAt() const;
 	virtual void beforeRemove() {}
 	virtual bool canSpawn();
 	virtual float getAttackAnim(float f) const;
-	virtual Vec3 getLookAngle(float f) const { return getViewVector(1.0f); }
 	virtual int getMaxSpawnClusterSize() const { return 4; }
 	virtual const ItemStack& getCarriedItem() const { return ItemStack::EMPTY; }
 	virtual bool isBaby() const { return false; }
@@ -95,7 +95,7 @@ public:
 private:
      int m_ambientSoundTime;
 	 Vec3 m_lastSentPos;
-	 Vec2 m_lastSentRot;
+	 Rot2 m_lastSentRot;
 	 Vec3 m_lastSentVel;
 
 public:
@@ -140,9 +140,9 @@ public:
 	bool m_bDead;
 	int m_lSteps;
 	Vec3 m_lPos;
-	Vec2 m_lRot;
+	Rot2 m_lRot;
 	int m_lastHurt;
-	Entity* m_pEntLookedAt;
+	Entity::ID m_entLookedAtId;
 
 	bool m_bSwinging;
 	int m_swingTime;

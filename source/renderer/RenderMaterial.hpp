@@ -57,8 +57,8 @@ namespace mce
         void _parseDefines(const rapidjson::Value& root);
         void _parseShaderPaths(const rapidjson::Value& root);
 #ifdef FEATURE_GFX_SHADERS
-        std::string _buildHeader();
-        void _loadShader(ShaderGroup& shaderGroup);
+        std::string _buildHeader(RenderContext& context);
+        void _loadShader(RenderContext& context, ShaderGroup& shaderGroup);
 #endif
         void _applyRenderStates();
 

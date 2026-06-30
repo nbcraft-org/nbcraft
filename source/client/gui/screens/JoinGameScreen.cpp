@@ -9,6 +9,8 @@
 #include "JoinGameScreen.hpp"
 #include "DirectConnectScreen.hpp"
 
+#define C_BUTTON_WIDTH 84
+
 JoinGameScreen::JoinGameScreen() :
 	m_btnJoin("Join Game"),
 	m_btnDirectConnect("Direct Connect"),
@@ -61,25 +63,24 @@ bool JoinGameScreen::handleBackEvent(bool b)
 
 void JoinGameScreen::init()
 {
-	const int BUTTON_WIDTH = 84;
-
 	m_btnBack.m_yPos = m_btnJoin.m_yPos = m_btnDirectConnect.m_yPos = m_height - 27;
-	m_btnBack.m_width = m_btnJoin.m_width = BUTTON_WIDTH;
+	m_btnBack.m_width = m_btnJoin.m_width = C_BUTTON_WIDTH;
 
-	m_btnJoin.m_xPos = m_width / 2 - (BUTTON_WIDTH + (BUTTON_WIDTH / 2)) - 4;
-	m_btnDirectConnect.m_xPos = (m_width / 2) - (BUTTON_WIDTH / 2);
-	m_btnBack.m_xPos = m_width / 2 + 4 + (BUTTON_WIDTH / 2);
+	m_btnJoin.m_xPos = m_width / 2 - (C_BUTTON_WIDTH + (C_BUTTON_WIDTH / 2)) - 4;
+	m_btnDirectConnect.m_xPos = (m_width / 2) - (C_BUTTON_WIDTH / 2);
+	m_btnBack.m_xPos = m_width / 2 + 4 + (C_BUTTON_WIDTH / 2);
 
-	m_btnDirectConnect.m_width = BUTTON_WIDTH;
+	m_btnDirectConnect.m_width = C_BUTTON_WIDTH;
 
-	_addElement(m_btnJoin);
-	_addElement(m_btnDirectConnect);
-	_addElement(m_btnBack);
-	
 	if (m_pMinecraft->m_pRakNetInstance)
 		m_pMinecraft->m_pRakNetInstance->clearServerList();
 
 	m_pAvailableGamesList = new AvailableGamesList(m_pMinecraft, m_width, m_height, 24, m_height - 30, 28);
+	_addElement(*m_pAvailableGamesList, false);
+
+	_addElement(m_btnJoin);
+	_addElement(m_btnDirectConnect);
+	_addElement(m_btnBack);
 }
 
 bool JoinGameScreen::isInGameScreen()
@@ -90,7 +91,6 @@ bool JoinGameScreen::isInGameScreen()
 void JoinGameScreen::render(float f)
 {
 	renderBackground();
-	m_pAvailableGamesList->render(m_menuPointer, f);
 	Screen::render(f);
 
 	drawCenteredString(*m_pMinecraft->m_pFont, "Scanning for Games...", m_width / 2, 8, 0xFFFFFFFF);

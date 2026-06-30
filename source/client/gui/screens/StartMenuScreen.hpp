@@ -22,10 +22,12 @@ public:
 
 protected:
 	void _updateLicense();
+	void _buttonClicked(Button*) override;
+	virtual void _setup();
+	void _setupPositions();
 
 public:
 	void init() override;
-	void _buttonClicked(Button*) override;
 	bool isInGameScreen() override;
 	void render(float f) override;
 	void tick() override;
@@ -33,11 +35,12 @@ public:
 	void drawSplash();
 
 	bool handleBackEvent(bool b) override;
+	bool validate(Minecraft*) override;
 
 protected:
-	Button m_startButton;
-	Button m_joinButton;
-	Button m_optionsButton;
+	Button* m_startButton;
+	Button* m_joinButton;
+	Button* m_optionsButton;
 	Button m_buyButton;
 	Button m_creditsButton;
 	std::string m_watermarkText;

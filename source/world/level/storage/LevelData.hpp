@@ -20,7 +20,7 @@ struct PlayerData
 {
 	Vec3 m_pos;
 	Vec3 m_vel;
-	Vec2 m_rot;
+	Rot2 m_rot;
 	float m_distanceFallen;
 	int16_t m_fireTicks;
 	int16_t m_airCapacity;

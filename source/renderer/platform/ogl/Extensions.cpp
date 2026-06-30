@@ -2,13 +2,27 @@
 #include "common/Logger.hpp"
 #include "GameMods.hpp"
 
+#if MC_DYNAMIC_GL && MC_PLATFORM_UNIX
+#include <dlfcn.h>
+#endif
+
 using namespace mce::Platform;
+
+#ifdef FEATURE_GFX_SHADERS
+#define MIN_GL_VERSION "2.0"
+#define ERROR_MSG_EXTRA " Try switching to a non-shader build, or update your graphics drivers!"
+#else
+#define MIN_GL_VERSION "1.1"
+#define ERROR_MSG_EXTRA " Update your graphics drivers!"
+#endif
+
+const char* OGL::ERROR_MSG = "Error initializing GL extensions. OpenGL " MIN_GL_VERSION " or later is required." ERROR_MSG_EXTRA;
 
 bool OGL::InitBindings()
 {
     bool result = true;
 
-#ifdef _WIN32
+#if MC_DYNAMIC_GL
     xglInit();
     result = xglInitted();
 #endif
@@ -24,20 +38,20 @@ void* OGL::GetProcAddress(const char* name)
     result = (void*)wglGetProcAddress(name);
     if (result == nullptr)
     {
-        HMODULE handle = GetModuleHandle("opengl32.dll");
+        static HMODULE handle = GetModuleHandle("opengl32.dll");
         if (handle != NULL)
         {
             result = (void*)GetProcAddress(handle, name);
         }
     }
+#elif MC_DYNAMIC_GL && defined(RTLD_NEXT)
+    result = (void*)dlsym(RTLD_NEXT, name);
 #endif
 
     return result;
 }
 
-#if defined(_WIN32) || defined(__DREAMCAST__)
-
-#include <unordered_map>
+#if MC_DYNAMIC_GL
 
 #ifdef __DREAMCAST__
 
@@ -59,22 +73,22 @@ typedef BOOL(WINAPI* PFNWGLSWAPINTERVALEXTPROC) (int interval);
 #endif
 
 #ifdef USE_HARDWARE_GL_BUFFERS
-#if GL_VERSION_1_3
+#if GL_VERSION_1_3 || GL_VERSION_ES_CM_1_0 || GL_ES_VERSION_2_0
 PFNGLACTIVETEXTUREPROC p_glActiveTexture;
 #endif
-#if GL_VERSION_1_5
+#if GL_VERSION_1_5 || GL_VERSION_ES_CM_1_0 || GL_ES_VERSION_2_0
 PFNGLBINDBUFFERPROC p_glBindBuffer;
 PFNGLBUFFERDATAPROC p_glBufferData;
 PFNGLGENBUFFERSPROC p_glGenBuffers;
 PFNGLDELETEBUFFERSPROC p_glDeleteBuffers;
 PFNGLBUFFERSUBDATAPROC p_glBufferSubData;
 #endif
-#if GL_VERSION_2_0
+#if GL_VERSION_2_0 || GL_ES_VERSION_2_0
 PFNGLSTENCILFUNCSEPARATEPROC p_glStencilFuncSeparate;
 PFNGLSTENCILOPSEPARATEPROC p_glStencilOpSeparate;
 #endif // GL_VERSION_2_0
 #ifdef FEATURE_GFX_SHADERS
-#if GL_VERSION_2_0
+#if GL_VERSION_2_0 || GL_ES_VERSION_2_0
 PFNGLUNIFORM1IPROC p_glUniform1i;
 PFNGLUNIFORM1FVPROC p_glUniform1fv;
 PFNGLUNIFORM2FVPROC p_glUniform2fv;
@@ -107,7 +121,7 @@ PFNGLGETUNIFORMLOCATIONPROC p_glGetUniformLocation;
 PFNGLGETATTRIBLOCATIONPROC p_glGetAttribLocation;
 PFNGLENABLEVERTEXATTRIBARRAYPROC p_glEnableVertexAttribArray;
 #endif // GL_VERSION_2_0
-#if GL_VERSION_4_1
+#if GL_VERSION_4_1 || GL_ES_VERSION_2_0
 PFNGLRELEASESHADERCOMPILERPROC p_glReleaseShaderCompiler;
 PFNGLGETSHADERPRECISIONFORMATPROC p_glGetShaderPrecisionFormat;
 #endif // GL_VERSION_4_1
@@ -125,15 +139,12 @@ PFNWGLSWAPINTERVALEXTPROC p_wglSwapIntervalEXT;
 bool xglInitted()
 {
 #ifdef USE_HARDWARE_GL_BUFFERS
-	return p_glActiveTexture
-		&& p_glBindBuffer
-		&& p_glBufferData
-		&& p_glGenBuffers
-		&& p_glDeleteBuffers
-		&& p_glBufferSubData
+	return true
+		//&& p_glActiveTexture
+		/* && xglVBOsBound()*/
 #if GL_VERSION_2_0
-		&& p_glStencilFuncSeparate
-		&& p_glStencilOpSeparate
+		/*&& p_glStencilFuncSeparate
+		&& p_glStencilOpSeparate*/
 #ifdef FEATURE_GFX_SHADERS
 		&& p_glUniform1i
 		&& p_glUniform1fv
@@ -176,11 +187,10 @@ bool xglInitted()
 #endif
 }
 
-// Only called on Win32 and SDL+Win32
 void xglInit()
 {
 #ifdef USE_HARDWARE_GL_BUFFERS
-#ifdef _WIN32
+#if MC_DYNAMIC_GL
 #if GL_VERSION_1_3
 	p_glActiveTexture = (PFNGLACTIVETEXTUREPROC)OGL::GetProcAddress("glActiveTexture");
 #endif
@@ -237,10 +247,9 @@ void xglInit()
 #ifdef MC_GL_DEBUG_OUTPUT
 	p_glDebugMessageCallback = (PFNGLDEBUGMESSAGECALLBACKARBPROC)OGL::GetProcAddress("glDebugMessageCallback");
 #endif
-#else // !defined(_WIN32) // wtf would this even be?
+#else // !MC_DYNAMIC_GL
 #if GL_VERSION_1_3
 	p_glActiveTexture = (PFNGLACTIVETEXTUREPROC)glActiveTexture;
-	p_glLoadTransposeMatrixf = (PFNGLLOADTRANSPOSEMATRIXFPROC)glLoadTransposeMatrixf;
 #endif
 #if GL_VERSION_1_5
 	p_glBindBuffer = (PFNGLBINDBUFFERPROC)glBindBuffer;
@@ -295,20 +304,73 @@ void xglInit()
 #ifdef MC_GL_DEBUG_OUTPUT
 	p_glDebugMessageCallback = (PFNGLDEBUGMESSAGECALLBACKARBPROC)glDebugMessageCallbackARB;
 #endif
-#endif
-#endif
+#endif // MC_DYNAMIC_GL
+#endif // USE_HARDWARE_GL_BUFFERS
 
 #ifndef USE_OPENGL_2_FEATURES
 	p_wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC)OGL::GetProcAddress("wglSwapIntervalEXT");
 #endif
 }
 
+bool xglVBOsBound()
+{
+	return p_glBindBuffer
+		&& p_glBufferData
+		&& p_glGenBuffers
+		&& p_glDeleteBuffers
+		&& p_glBufferSubData;
+}
+
 #ifdef USE_HARDWARE_GL_BUFFERS
+
+#if GL_VERSION_1_1
+
+void xglEnableClientState(GLenum _array)
+{
+	glEnableClientState(_array);
+}
+
+void xglDisableClientState(GLenum _array)
+{
+	glDisableClientState(_array);
+}
+
+void xglTexCoordPointer(GLint size, GLenum type, GLsizei stride, const GLvoid* pointer)
+{
+	glTexCoordPointer(size, type, stride, pointer);
+}
+
+void xglColorPointer(GLint size, GLenum type, GLsizei stride, const GLvoid* pointer)
+{
+	glColorPointer(size, type, stride, pointer);
+}
+
+void xglNormalPointer(GLenum type, GLsizei stride, const GLvoid* pointer)
+{
+#ifdef USE_GL_NORMAL_LIGHTING
+	glNormalPointer(type, stride, pointer);
+#endif
+}
+
+void xglVertexPointer(GLint size, GLenum type, GLsizei stride, const GLvoid* pointer)
+{
+	glVertexPointer(size, type, stride, pointer);
+}
+
+void xglDrawArrays(GLenum mode, GLint first, GLsizei count)
+{
+	glDrawArrays(mode, first, count);
+}
+
+#endif // GL_VERSION_1_1
 
 #if GL_VERSION_1_3
 
 void xglActiveTexture(GLenum texture)
 {
+	if (!p_glActiveTexture)
+		return;
+
 	p_glActiveTexture(texture);
 }
 
@@ -318,26 +380,41 @@ void xglActiveTexture(GLenum texture)
 
 void xglBindBuffer(GLenum target, GLuint buffer)
 {
+	if (!p_glBindBuffer)
+		return;
+
 	p_glBindBuffer(target, buffer);
 }
 
 void xglBufferData(GLenum target, GLsizeiptr size, const GLvoid* data, GLenum usage)
 {
+	if (!p_glBufferData)
+		return;
+
 	p_glBufferData(target, size, data, usage);
 }
 
 void xglGenBuffers(GLsizei num, GLuint* buffers)
 {
+	if (!p_glGenBuffers)
+		return;
+
 	p_glGenBuffers(num, buffers);
 }
 
 void xglDeleteBuffers(GLsizei num, GLuint* buffers)
 {
+	if (!p_glDeleteBuffers)
+		return;
+
 	p_glDeleteBuffers(num, buffers);
 }
 
 void xglBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid* data)
 {
+	if (!p_glBufferSubData)
+		return;
+
 	p_glBufferSubData(target, offset, size, data);
 }
 
@@ -347,11 +424,17 @@ void xglBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const GLv
 
 void xglStencilFuncSeparate(GLenum face, GLenum func, GLint ref, GLuint mask)
 {
+	if (!p_glStencilFuncSeparate)
+		return;
+
 	p_glStencilFuncSeparate(face, func, ref, mask);
 }
 
 void xglStencilOpSeparate(GLenum face, GLenum sfail, GLenum dpfail, GLenum dppass)
 {
+	if (!p_glStencilOpSeparate)
+		return;
+
 	p_glStencilOpSeparate(face, sfail, dpfail, dppass);
 }
 
@@ -547,43 +630,7 @@ void xglDebugMessageCallback(DEBUGPROC callback, GLvoid* userParam)
 }
 #endif
 
-void xglEnableClientState(GLenum _array)
-{
-	glEnableClientState(_array);
-}
-
-void xglDisableClientState(GLenum _array)
-{
-	glDisableClientState(_array);
-}
-
-void xglTexCoordPointer(GLint size, GLenum type, GLsizei stride, const GLvoid* pointer)
-{
-	glTexCoordPointer(size, type, stride, pointer);
-}
-
-void xglColorPointer(GLint size, GLenum type, GLsizei stride, const GLvoid* pointer)
-{
-	glColorPointer(size, type, stride, pointer);
-}
-
-void xglNormalPointer(GLenum type, GLsizei stride, const GLvoid* pointer)
-{
-#ifdef USE_GL_NORMAL_LIGHTING
-	glNormalPointer(type, stride, pointer);
-#endif
-}
-
-void xglVertexPointer(GLint size, GLenum type, GLsizei stride, const GLvoid* pointer)
-{
-	glVertexPointer(size, type, stride, pointer);
-}
-
-void xglDrawArrays(GLenum mode, GLint first, GLsizei count)
-{
-	glDrawArrays(mode, first, count);
-}
-#endif
+#endif // USE_HARDWARE_GL_BUFFERS
 
 #ifndef xglOrthof
 

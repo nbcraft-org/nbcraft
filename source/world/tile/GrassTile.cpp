@@ -10,6 +10,7 @@
 #include "world/level/Level.hpp"
 #include "world/level/TileSource.hpp"
 #include "client/renderer/PatchManager.hpp"
+#include "client/renderer/GrassColor.hpp"
 
 const Color GrassTile::DEFAULT_COLOR = Color(0.25f, 0.60f, 0.25f);
 
@@ -25,6 +26,16 @@ int GrassTile::getColor(TileSource* source, const TilePos& pos) const
 	if (GetPatchManager()->IsGrassTinted())
 	{
 		return 0x339933;
+	}
+
+	return 0xffffff;
+}
+
+int GrassTile::getColor(Facing::Name face, TileData) const
+{
+	if (GetPatchManager()->IsGrassTinted() && face == Facing::UP)
+	{
+		return GrassColor::get(1.0f, 0.5f);
 	}
 
 	return 0xffffff;

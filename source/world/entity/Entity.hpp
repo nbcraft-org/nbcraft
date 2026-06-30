@@ -11,6 +11,7 @@
 #include "common/math/Color.hpp"
 #include "world/phys/Vec3.hpp"
 #include "world/phys/Vec2.hpp"
+#include "world/phys/Rot2.hpp"
 #include "world/phys/AABB.hpp"
 #include "world/level/Material.hpp"
 #include "world/level/levelgen/chunk/ChunkPos.hpp"
@@ -30,28 +31,28 @@ enum DimensionId;
 struct EntityPos
 {
 	Vec3 m_pos;
-	Vec2 m_rot;
+	Rot2 m_rot;
 	bool m_bHasRot, m_bHasPos;
 
 	EntityPos()
-		: m_pos(Vec3::ZERO), m_rot(Vec2::ZERO)
+		: m_pos(Vec3::ZERO), m_rot(Rot2::ZERO)
 	{
         m_bHasRot = false; m_bHasPos = false;
 	};
 
 	EntityPos(const Vec3& pos)
-		: m_pos(pos), m_rot(Vec2::ZERO)
+		: m_pos(pos), m_rot(Rot2::ZERO)
 	{
 		m_bHasPos = true; m_bHasRot = false;
 	}
 
-	EntityPos(const Vec2& rot)
+	EntityPos(const Rot2& rot)
 		: m_pos(Vec3::ZERO), m_rot(rot)
 	{
 		m_bHasPos = false; m_bHasRot = true;
 	}
 
-	EntityPos(const Vec3& pos, const Vec2& rot)
+	EntityPos(const Vec3& pos, const Rot2& rot)
 		: m_pos(pos), m_rot(rot)
 	{
 		m_bHasPos = true; m_bHasRot = true;
@@ -89,6 +90,8 @@ public:
 		RENDER_TNT,
 		RENDER_HUMANOID,
 		RENDER_ITEM,
+		RENDER_THROWN_EGG,
+		RENDER_SNOWBALL,
 		RENDER_CAMERA,
 		RENDER_CHICKEN,
 		RENDER_COW,
@@ -101,6 +104,12 @@ public:
 		RENDER_CREEPER,
 		RENDER_ROCKET,
 		RENDER_ARROW,
+		RENDER_GIANT,
+		RENDER_SLIME,
+		RENDER_FISHING_HOOK,
+		RENDER_GHAST,
+		RENDER_FIREBALL,
+		RENDER_SQUID,
 
 		// custom
 		RENDER_FALLING_TILE = 50
@@ -123,9 +132,10 @@ public:
 	Entity(TileSource& tileSource);
 	virtual ~Entity();
 
-protected:
+public:
 	virtual bool getSharedFlag(SharedFlag flag) const;
 	virtual void setSharedFlag(SharedFlag flag, bool value);
+	virtual void playStepSound(const TilePos& pos, TileID tileId);
 
 public:
 	virtual void reset();
@@ -136,15 +146,15 @@ public:
 	virtual void remove();
 	virtual void move(const Vec3& posIn);
 	virtual void moveTo(const Vec3& pos);
-	virtual void moveTo(const Vec3& pos, const Vec2& rot);
+	virtual void moveTo(const Vec3& pos, const Rot2& rot);
 	virtual void absMoveTo(const Vec3& pos);
-	virtual void absMoveTo(const Vec3& pos, const Vec2& rot);
+	virtual void absMoveTo(const Vec3& pos, const Rot2& rot);
 	virtual void moveRelative(const Vec3& pos);
 	virtual void lerpTo(const Vec3& pos);
-	virtual void lerpTo(const Vec3& pos, const Vec2& rot, int p = 3);
+	virtual void lerpTo(const Vec3& pos, const Rot2& rot, int steps = 3);
 	virtual void lerpMotion(const Vec3& pos);
-	virtual void turn(const Vec2& rot);
-	virtual void interpolateTurn(const Vec2& rot);
+	virtual void turn(const Rot2& rot);
+	virtual void interpolateTurn(const Rot2& rot);
 	virtual void tick();
 	virtual void baseTick();
 	virtual bool intersects(const Vec3& min, const Vec3& max) const;
@@ -152,6 +162,7 @@ public:
 	virtual bool isFree(const Vec3& off, float expand) const;
 	virtual bool isInWall() const;
 	virtual bool isInWater();
+	bool wasInWater() const { return m_bWasInWater; }
 	virtual bool isInLava() const;
 	virtual bool isUnderLiquid(Material*) const;
 	virtual float getHeadHeight() const { return 0.0f; }
@@ -159,7 +170,7 @@ public:
 	virtual float getBrightness(float f) const;
 	virtual DimensionId getDimensionId() const { return m_dimensionId; }
 	virtual Vec3 getInterpolatedPosition(float f) const;
-	virtual Vec2 getInterpolatedRotation(float f) const;
+	virtual Rot2 getInterpolatedRotation(float f) const;
 	virtual Vec3 getViewVector(float f) const;
 	virtual AuxValue getAuxValue() const;
 	virtual void setAuxValue(AuxValue value);
@@ -179,7 +190,7 @@ public:
 	virtual bool isPushable() const { return false; }
 	virtual bool isShootable() const { return false; }
 	virtual bool isOnFire() const { return m_fireTicks > 0 || getSharedFlag(FLAG_ON_FIRE); }
-	virtual bool isRiding() const { return /*m_pRiding != nullptr ||*/ getSharedFlag(FLAG_RIDING); }
+	virtual bool isRiding() const { return getRiding() || getSharedFlag(FLAG_RIDING); }
 	virtual bool isSneaking() const { return getSharedFlag(FLAG_SNEAKING); }
 	virtual void setSneaking(bool value) { setSharedFlag(FLAG_SNEAKING, value); }
 	virtual bool isAlive() const { return m_bRemoved; }
@@ -192,27 +203,37 @@ public:
 	virtual bool hurt(Entity*, int);
 	virtual void animateHurt();
 	virtual float getPickRadius() const { return 0.1f; }
+	virtual Vec3 getLookAngle() const { return Vec3::ZERO; }
 	virtual ItemEntity* spawnAtLocation(const ItemStack&, float);
 	virtual ItemEntity* spawnAtLocation(int, int);
 	virtual ItemEntity* spawnAtLocation(int, int, float);
 	virtual void awardKillScore(Entity* pKilled, int score);
 	virtual void setEquippedSlot(int, int, int);
-	virtual void setRot(const Vec2& rot, bool rebound = false);
+	virtual void setRot(const Rot2& rot, bool rebound = false);
 	virtual void setSize(float rad, float height);
 	virtual void setPos(EntityPos*);
 	virtual void resetPos(bool respawn = false);
 	virtual void outOfWorld();
-	virtual void checkFallDamage(float f, bool b);
-	virtual void causeFallDamage(float f);
+	virtual void checkFallDamage(float ya, bool onGround);
+	virtual void causeFallDamage(float ya);
 	virtual void markHurt();
 	virtual void burn(int);
 	virtual void lavaHurt();
 	virtual RenderType queryEntityRenderer() const;
 	virtual const AABB* getCollideBox() const;
 	virtual AABB* getCollideAgainstBox(Entity* ent) const;
+	virtual void rideTick();
 	virtual void handleInsidePortal();
 	virtual void handleEntityEvent(EventType::ID eventId);
 	//virtual void thunderHit(LightningBolt*);
+	virtual void positionRider();
+	virtual void ride(Entity*);
+	virtual float getRideHeight() const { return m_bbHeight * 0.75f; }
+	virtual float getRidingHeight() const { return m_heightOffset; }
+	Entity* getRiding() const;
+	Entity* getRider() const;
+	void setRiding(Entity* ent);
+	void setRider(Entity* ent);
 	void load(const CompoundTag& tag);
 	bool save(CompoundTag& tag) const;
 	void saveWithoutId(CompoundTag& tag) const;
@@ -240,6 +261,10 @@ public:
 			(m_pos.z - pos.z) * (m_pos.z - pos.z);
 	}
 
+private:
+	Entity::ID m_ridingId;
+	Entity::ID m_riderId;
+
 protected:
 	SynchedEntityData m_entityData;
 	bool m_bMakeStepSound;
@@ -254,13 +279,15 @@ public:
 	float m_viewScale;
 	//TileSource* m_pTileSource;
 	DimensionId m_dimensionId;
+	bool m_bRiding;
 	bool m_bBlocksBuilding;
 	Level* m_pLevel;
 	TileSource* m_tileSource;
 	Vec3 m_oPos; // "o" in Java or "xo" "yo" "zo"
 	Vec3 m_vel;
-	Vec2 m_rot;
-	Vec2 m_oRot; // "RotO" in Java or "xRotO" "yRotO"
+	Rot2 m_rot;
+	Rot2 m_oRot; // "RotO" in Java or "xRotO" "yRotO"
+	Rot2 m_rideRot;
 	Color m_tintColor;
 	AABB m_hitbox;
 	bool m_bOnGround;
@@ -296,6 +323,7 @@ public:
 	bool m_bFirstTick;
 	int m_nextStep;
 	float m_minBrightness;
+	bool m_bCanBeDeleted;
 
 public:
 	static Entity::ID entityCounter;

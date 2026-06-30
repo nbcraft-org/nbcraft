@@ -129,14 +129,14 @@ void SoundSystemOSL::setListenerPos(const Vec3& pos)
 	));
 }
 
-void SoundSystemOSL::setListenerAngle(const Vec2& rot)
+void SoundSystemOSL::setListenerAngle(const Rot2& rot)
 {
 	if (!m_3dLocationItf)
 		return;
 
 	checkErr((*m_3dLocationItf)->SetOrientationAngles(
 		m_3dLocationItf,
-		int(180000.0f * rot.x),
+		int(180000.0f * rot.yaw),
 		0,
 		0
 	));

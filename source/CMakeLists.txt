@@ -17,6 +17,7 @@ add_library(nbcraft-core STATIC
     common/utility/AlignmentHelper.cpp
     common/utility/JsonParser.cpp
     common/utility/Singleton.cpp
+    common/utility/ByteBuffer.cpp
     common/Utils.cpp
     client/app/App.cpp
     client/app/AppPlatform.cpp
@@ -54,6 +55,12 @@ add_library(nbcraft-core STATIC
     client/renderer/entity/PigRenderer.cpp
     client/renderer/entity/ChickenRenderer.cpp
     client/renderer/entity/RocketRenderer.cpp
+  	client/renderer/entity/SquidRenderer.cpp
+  	client/renderer/entity/GiantMobRenderer.cpp
+  	client/renderer/entity/SlimeRenderer.cpp
+  	client/renderer/entity/FireballRenderer.cpp
+  	client/renderer/entity/GhastRenderer.cpp
+  	client/renderer/entity/FishingHookRenderer.cpp
     client/renderer/renderer/EntityShaderManager.cpp
     client/renderer/renderer/RenderMaterialGroup.cpp
     client/renderer/renderer/ShaderGroup.cpp
@@ -83,6 +90,9 @@ add_library(nbcraft-core STATIC
     client/renderer/LavaTexture.cpp
     client/renderer/LavaSideTexture.cpp
     client/renderer/FireTexture.cpp
+    client/renderer/CompassTexture.cpp
+    client/renderer/ClockTexture.cpp
+    client/renderer/PortalTexture.cpp
     client/renderer/FoliageColor.cpp
     client/renderer/GrassColor.cpp
     client/renderer/VisibilityExtimator.cpp
@@ -96,11 +106,13 @@ add_library(nbcraft-core STATIC
     client/gui/Screen.cpp
     client/gui/ScreenChooser.cpp
     client/gui/ScreenChooser_Console.cpp
+  	client/gui/ScreenChooser_Pocket.cpp
     client/gui/screens/CreditsScreen.cpp
     client/gui/screens/OptionsScreen.cpp
     client/gui/screens/OptionsScreen_Console.cpp
     client/gui/screens/StartMenuScreen.cpp
     client/gui/screens/StartMenuScreen_Console.cpp
+    client/gui/screens/StartMenuScreen_Pocket.cpp
     client/gui/screens/ConvertWorldScreen.cpp
     client/gui/screens/CreateWorldScreen.cpp
     client/gui/screens/CreateWorldScreen_Console.cpp
@@ -113,6 +125,7 @@ add_library(nbcraft-core STATIC
     client/gui/screens/ConfirmScreen.cpp
     client/gui/screens/DeleteWorldScreen.cpp
     client/gui/screens/DeathScreen.cpp
+    client/gui/screens/DeathScreen_Console.cpp
     client/gui/screens/ChatScreen.cpp
     client/gui/screens/RenameMPLevelScreen.cpp
     client/gui/screens/ProgressScreen.cpp
@@ -124,10 +137,17 @@ add_library(nbcraft-core STATIC
     client/gui/screens/DeathScreen.cpp
     client/gui/screens/PanelScreen_Console.cpp
     client/gui/screens/inventory/ContainerScreen.cpp
+    client/gui/screens/inventory/CreativeScreen.cpp
+    client/gui/screens/inventory/CreativeScreen_Console.cpp
     client/gui/screens/inventory/InventoryScreen.cpp
     client/gui/screens/inventory/CraftingScreen.cpp
+    client/gui/screens/inventory/CraftingScreen_Console.cpp
     client/gui/screens/inventory/ClassicCraftingScreen_Console.cpp
+    client/gui/screens/inventory/FurnaceScreen.cpp
     client/gui/screens/inventory/ChestScreen.cpp
+	  client/gui/screens/inventory/TrapScreen.cpp
+    client/gui/screens/inventory/TrapScreen_Console.cpp
+    client/gui/screens/inventory/ClientCraftContext.cpp
     client/gui/components/ScrolledSelectionList.cpp
     client/gui/components/AvailableGamesList.cpp
     client/gui/components/RolledSelectionList.cpp
@@ -141,12 +161,17 @@ add_library(nbcraft-core STATIC
     client/gui/components/WorldSelectionList.cpp
     client/gui/components/OptionList.cpp
     client/gui/components/ScrollRenderer_Console.cpp
+	client/gui/components/ImageButton.cpp
+	client/gui/components/LargeImageButton.cpp
+    client/gui/components/TabButton.cpp
+    client/gui/components/CraftButton_Console.cpp
     client/locale/Language.cpp
     client/gui/Gui.cpp
     client/gui/GuiComponent.cpp
     client/gui/GuiElement.cpp
     client/gui/MenuPointer.cpp
     client/gui/VerticalLayout.cpp
+    client/gui/TabLayout.cpp
     client/gui/AreaNavigation.cpp
     client/model/geom/PolygonQuad.cpp
     client/model/geom/Cube.cpp
@@ -164,6 +189,9 @@ add_library(nbcraft-core STATIC
     client/model/models/CreeperModel.cpp
     client/model/models/CowModel.cpp
     client/model/models/ChickenModel.cpp
+    client/model/models/SquidModel.cpp
+    client/model/models/SlimeModel.cpp
+    client/model/models/GhastModel.cpp
     client/multiplayer/MultiPlayerLevel.cpp
     client/multiplayer/MultiplayerLocalPlayer.cpp
     client/player/input/ControllerBuildInput.cpp
@@ -270,6 +298,7 @@ add_library(nbcraft-core STATIC
     world/phys/Vec2.cpp
     world/phys/Vec3.cpp
     world/phys/AABB.cpp
+    world/phys/Rot2.cpp
     world/gamemode/SurvivalMode.cpp
     world/gamemode/GameMode.cpp
     world/gamemode/CreativeMode.cpp
@@ -286,6 +315,8 @@ add_library(nbcraft-core STATIC
     world/entity/Spider.cpp
     world/entity/Zombie.cpp
     world/entity/Arrow.cpp
+  	world/entity/ThrownEgg.cpp
+  	world/entity/Snowball.cpp
     world/entity/WaterAnimal.cpp
     world/entity/Monster.cpp
     world/entity/Rocket.cpp
@@ -302,6 +333,14 @@ add_library(nbcraft-core STATIC
     world/entity/EntityType.cpp
     world/entity/EntityTypeDescriptor.cpp
     world/entity/MobCategory.cpp
+    world/entity/Squid.cpp
+    world/entity/Giant.cpp
+    world/entity/Slime.cpp
+    world/entity/PigZombie.cpp
+    world/entity/Fireball.cpp
+    world/entity/FlyingMob.cpp
+    world/entity/Ghast.cpp
+    world/entity/FishingHook.cpp
     world/level/Dimension.cpp
     world/level/Material.cpp
     world/level/LevelListener.cpp
@@ -355,28 +394,39 @@ add_library(nbcraft-core STATIC
     world/item/TilePlanterItem.cpp
     world/item/CameraItem.cpp
     world/item/TileItem.cpp
+    world/item/CoalItem.cpp
     world/item/Inventory.cpp
     world/item/crafting/Recipes.cpp
     world/item/crafting/FurnaceRecipes.cpp
     world/item/crafting/SingleInputRecipe.cpp
     world/item/crafting/ShapedRecipe.cpp
     world/item/crafting/ShapelessRecipe.cpp
-    world/ContainerListener.cpp
+    world/inventory/Container.cpp
+    world/inventory/ContainerListener.cpp
+    world/inventory/CompoundContainer.cpp
+    world/inventory/ContainerContentChangeListener.cpp
+    world/inventory/ContainerSizeChangeListener.cpp
     world/inventory/ContainerMenu.cpp
     world/inventory/InventoryMenu.cpp
     world/inventory/CraftingMenu.cpp
+    world/inventory/FurnaceMenu.cpp
     world/inventory/ChestMenu.cpp
+  	world/inventory/TrapMenu.cpp
+    world/inventory/CreativeMenu.cpp
+    world/inventory/CreativeMenu_Console.cpp
     world/inventory/Slot.cpp
     world/inventory/ResultSlot.cpp
     world/inventory/ArmorSlot.cpp
+    world/inventory/FurnaceResultSlot.cpp
     world/inventory/CraftingContainer.cpp
     world/inventory/ResultContainer.cpp
     world/inventory/SimpleContainer.cpp
-    world/CompoundContainer.cpp
+    world/inventory/CraftContext.cpp
     world/item/DoorItem.cpp
     world/item/ItemStack.cpp
     world/item/RocketItem.cpp
     world/item/Item.cpp
+   	world/item/FlintAndSteelItem.cpp
     world/item/FoodItem.cpp
     world/item/SeedItem.cpp
     world/item/ArmorItem.cpp
@@ -389,17 +439,26 @@ add_library(nbcraft-core STATIC
     world/item/AuxTileItem.cpp
     world/item/ClothItem.cpp
     world/item/DyeColor.cpp
+  	world/item/EggItem.cpp
     world/item/SlabItem.cpp
+  	world/item/RedStoneItem.cpp
+  	world/item/SnowballItem.cpp
+  	world/item/FishingRodItem.cpp
+  	world/item/RecordingItem.cpp
+    world/item/BucketItem.cpp
     world/particle/RedDustParticle.cpp
     world/particle/TerrainParticle.cpp
+    world/particle/NoteParticle.cpp
     world/particle/BubbleParticle.cpp
     world/particle/ExplodeParticle.cpp
+  	world/particle/ItemParticle.cpp
     world/particle/ParticleEngine.cpp
     world/particle/FlameParticle.cpp
     world/particle/SmokeParticle.cpp
     world/particle/Particle.cpp
     world/particle/LavaParticle.cpp
     world/particle/FireworkParticle.cpp
+    world/particle/TakeAnimationParticle.cpp
     world/tile/InvisibleTile.cpp
     world/tile/Sapling.cpp
     world/tile/TreeTile.cpp
@@ -427,6 +486,10 @@ add_library(nbcraft-core STATIC
     world/tile/OreTile.cpp
     world/tile/StairTile.cpp
     world/tile/SandStoneTile.cpp
+    world/tile/EntityTile.cpp
+    world/tile/ChestTile.cpp
+    world/tile/FurnaceTile.cpp
+    world/tile/MusicTile.cpp
     world/tile/FireTile.cpp
     world/tile/StoneSlabTile.cpp
     world/tile/LiquidTile.cpp
@@ -447,7 +510,25 @@ add_library(nbcraft-core STATIC
     world/tile/GlowstoneTile.cpp
     world/tile/Web.cpp
     world/tile/FenceTile.cpp
+  	world/tile/RedStoneDustTile.cpp
+  	world/tile/LeverTile.cpp
+  	world/tile/PressurePlateTile.cpp
+  	world/tile/NotGateTile.cpp
+    world/tile/ButtonTile.cpp
+  	world/tile/DiodeTile.cpp
+  	world/tile/SnowTile.cpp
     world/tile/CraftingTableTile.cpp
+  	world/tile/DispenserTile.cpp
+  	world/tile/RecordPlayerTile.cpp
+    world/tile/FenceGateTile.cpp
+  	world/tile/TrapDoorTile.cpp
+  	world/tile/CakeTile.cpp
+    world/tile/entity/TileEntity.cpp
+    world/tile/entity/TileEntityType.cpp
+    world/tile/entity/ChestTileEntity.cpp
+    world/tile/entity/FurnaceTileEntity.cpp
+    world/tile/entity/MusicTileEntity.cpp
+  	world/tile/entity/DispenserTileEntity.cpp
     world/Facing.cpp
     renderer/GL/GL.cpp
     renderer/Attribute.cpp
@@ -505,6 +586,7 @@ add_library(nbcraft-core STATIC
     renderer/hal/base/ShaderConstantWithDataBase.cpp
     renderer/hal/base/ShaderContextBase.cpp
     renderer/hal/base/ShaderProgramBase.cpp
+    renderer/hal/base/VertexBufferStateBase.cpp
     renderer/hal/base/TextureBase.cpp
     renderer/hal/enums/BlendTarget_JsonParser.cpp
     renderer/hal/enums/ComparisonFunc_JsonParser.cpp
@@ -520,6 +602,7 @@ add_library(nbcraft-core STATIC
     renderer/hal/null/AlphaStateNull.cpp
     renderer/hal/null/RenderStateNull.cpp
     renderer/hal/null/FogStateNull.cpp
+    renderer/hal/null/VertexBufferStateNull.cpp
     renderer/hal/interface/AlphaState.cpp
     renderer/hal/interface/BlendState.cpp
     renderer/hal/interface/Buffer.cpp
@@ -537,7 +620,7 @@ add_library(nbcraft-core STATIC
     renderer/hal/interface/ShaderProgram.cpp
     renderer/hal/interface/Texture.cpp
 )
-target_include_directories(nbcraft-core PUBLIC . ..)
+target_include_directories(nbcraft-core PUBLIC .)
 
 # OGL Shader variant build hack
 if(NBC_GFX_API STREQUAL "OGL_SHADERS")
@@ -548,75 +631,16 @@ endif()
 
 if(NBC_GFX_API STREQUAL "OGL")
     target_compile_definitions(nbcraft-core PUBLIC MCE_GFX_API_OGL=1)
-    target_sources(nbcraft-core PRIVATE
-        renderer/hal/ogl/API_OGL.cpp
-        renderer/hal/ogl/AlphaStateOGL.cpp
-        renderer/hal/ogl/BlendStateOGL.cpp
-        renderer/hal/ogl/BufferOGL.cpp
-        renderer/hal/ogl/ConstantBufferContainerOGL.cpp
-        renderer/hal/ogl/DepthStencilStateOGL.cpp
-        renderer/hal/ogl/RenderStateOGL.cpp
-        renderer/hal/ogl/FogStateOGL.cpp
-        renderer/hal/ogl/GPUEventsOGL.cpp
-        renderer/hal/ogl/ImmediateBufferOGL.cpp
-        renderer/hal/ogl/ProfileSectionOGL.cpp
-        renderer/hal/ogl/RasterizerStateOGL.cpp
-        renderer/hal/ogl/RenderContextOGL.cpp
-        renderer/hal/ogl/RenderDeviceOGL.cpp
-        renderer/hal/ogl/ResourceOGL.cpp
-        renderer/hal/ogl/ShaderConstantOGL.cpp
-        renderer/hal/ogl/ShaderConstantWithDataOGL.cpp
-        renderer/hal/ogl/ShaderOGL.cpp
-        renderer/hal/ogl/ShaderProgramOGL.cpp
-        renderer/hal/ogl/ShaderResourceOGL.cpp
-        renderer/hal/ogl/ShaderUniformOGL.cpp
-        renderer/hal/ogl/TextureOGL.cpp
-        renderer/hal/ogl/helpers/ErrorHandlerOGL.cpp
-        renderer/platform/ogl/Extensions.cpp
-        renderer/platform/ogl/ShaderPrecision.cpp
-    )
+	add_subdirectory(renderer/hal/ogl nbcraft-renderer-ogl)
+    target_link_libraries(nbcraft-core PUBLIC nbcraft-renderer-ogl)
 elseif(NBC_GFX_API STREQUAL "D3D11")
     target_compile_definitions(nbcraft-core PUBLIC MCE_GFX_API_D3D11=1 FEATURE_GFX_SHADERS)
-    target_sources(nbcraft-core PRIVATE
-        renderer/hal/d3d11/API_D3D11.cpp
-        renderer/hal/d3d11/BlendStateD3D11.cpp
-        renderer/hal/d3d11/BufferD3D11.cpp
-        renderer/hal/d3d11/ConstantBufferContainerD3D11.cpp
-        renderer/hal/d3d11/DepthStencilStateD3D11.cpp
-        renderer/hal/d3d11/GPUEventsD3D11.cpp
-        renderer/hal/d3d11/ImmediateBufferD3D11.cpp
-        renderer/hal/d3d11/ProfileSectionD3D11.cpp
-        renderer/hal/d3d11/RasterizerStateD3D11.cpp
-        renderer/hal/d3d11/RenderContextD3D11.cpp
-        renderer/hal/d3d11/RenderDeviceD3D11.cpp
-        renderer/hal/d3d11/ShaderConstantD3D11.cpp
-        renderer/hal/d3d11/ShaderConstantWithDataD3D11.cpp
-        renderer/hal/d3d11/ShaderD3D11.cpp
-        renderer/hal/d3d11/ShaderProgramD3D11.cpp
-        renderer/hal/d3d11/ShaderResourceD3D11.cpp
-        renderer/hal/d3d11/TextureD3D11.cpp
-        renderer/hal/d3d11/helpers/TextureHelperD3D11.cpp
-        renderer/hal/dxgi/API_DXGI.cpp
-        renderer/hal/dxgi/helpers/ErrorHandlerDXGI.cpp
-        renderer/hal/dxgi/helpers/TextureHelperDXGI.cpp
-    )
+	add_subdirectory(renderer/hal/d3d11 nbcraft-renderer-d3d11)
+    target_link_libraries(nbcraft-core PUBLIC nbcraft-renderer-d3d11)
 elseif((NOT DEFINED NBC_GFX_API) OR (NBC_GFX_API STREQUAL "Null"))
     target_compile_definitions(nbcraft-core PUBLIC MCE_GFX_API_NULL=1)
-    target_sources(nbcraft-core PRIVATE
-        renderer/hal/null/BlendStateNull.cpp
-        renderer/hal/null/BufferNull.cpp
-        renderer/hal/null/ConstantBufferContainerNull.cpp
-        renderer/hal/null/DepthStencilStateNull.cpp
-        renderer/hal/null/ImmediateBufferNull.cpp
-        renderer/hal/null/RasterizerStateNull.cpp
-        renderer/hal/null/RenderContextNull.cpp
-        renderer/hal/null/RenderDeviceNull.cpp
-        renderer/hal/null/ShaderConstantNull.cpp
-        renderer/hal/null/ShaderConstantWithDataNull.cpp
-        renderer/hal/null/ShaderNull.cpp
-        renderer/hal/null/ShaderProgramNull.cpp
-        renderer/hal/null/TextureNull.cpp
-    )
+	add_subdirectory(renderer/hal/null nbcraft-renderer-null)
+    target_link_libraries(nbcraft-core PUBLIC nbcraft-renderer-null)
 else()
     message(FATAL_ERROR "An unknown or unsupported GFX API was specified: ${NBC_GFX_API}")
 endif()
@@ -627,19 +651,19 @@ target_link_libraries(nbcraft-core PUBLIC raknet)
 
 # zlib
 add_library(zlib-interface INTERFACE)
-if(NBC_WIN32 OR XENON) # @TODO: libXenon has zlib included, how do we get to it?
-    # Compile Vendored ZLib
-    add_subdirectory(../thirdparty/zlib zlib)
-    target_link_libraries(zlib-interface INTERFACE zlib)
+if (NBC_SYSTEM_ZLIB)
+    # Use System ZLib, might be useful for some weird platform that needs to patch zlib
+    find_package(ZLIB REQUIRED)
+    target_link_libraries(zlib-interface INTERFACE ZLIB::ZLIB)
 elseif(EMSCRIPTEN)
     # Use Emscripten's ZLib
     set(ZLIB_FLAG -sUSE_ZLIB=1)
     target_compile_options(zlib-interface INTERFACE "${ZLIB_FLAG}")
     target_link_options(zlib-interface INTERFACE "${ZLIB_FLAG}")
 else()
-    # Use System ZLib
-    find_package(ZLIB REQUIRED)
-    target_link_libraries(zlib-interface INTERFACE ZLIB::ZLIB)
+    # Compile Vendored ZLib
+    add_subdirectory(../thirdparty/zlib zlib)
+    target_link_libraries(zlib-interface INTERFACE zlib)
 endif()
 target_link_libraries(nbcraft-core PUBLIC zlib-interface)
 

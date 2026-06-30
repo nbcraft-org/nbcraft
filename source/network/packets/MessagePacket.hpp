@@ -5,10 +5,18 @@
 
 class MessagePacket : public Packet
 {
+private:
+	void _init()
+	{
+		m_reliability = RELIABLE_ORDERED;
+		m_channel = CHANNEL_CHAT;
+	}
+
 public:
-	MessagePacket() {}
+	MessagePacket() { _init(); }
 	MessagePacket(const std::string& msg)
 	{
+		_init();
 		m_str = msg.c_str();
 	}
 

@@ -5,7 +5,7 @@
 	The following code is licensed under the BSD 1 clause license.
 	SPDX-License-Identifier: BSD-1-Clause
  ********************************************************************/
-#include <limits>
+#include "compat/Limits.hpp"
 #include "BinaryHeap.hpp"
 #include "common/Mth.hpp"
 #include "common/Utils.hpp"

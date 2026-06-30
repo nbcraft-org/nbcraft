@@ -43,6 +43,17 @@ QuadrupedModel::~QuadrupedModel()
 {
 }
 
+void QuadrupedModel::onGraphicsReset()
+{
+	m_head.m_bCompiled = false;
+	m_hair.m_bCompiled = false;
+	m_body.m_bCompiled = false;
+	m_leg1.m_bCompiled = false;
+	m_leg2.m_bCompiled = false;
+	m_leg3.m_bCompiled = false;
+	m_leg4.m_bCompiled = false;
+}
+
 // NOTE: Model::render now takes an Entity pointer... It's unused, though...
 void QuadrupedModel::render(float a, float b, float c, float d, float e, float f)
 {

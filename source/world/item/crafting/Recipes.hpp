@@ -133,6 +133,21 @@ private:
 class Recipes
 {
 public:
+    typedef std::vector<Recipe*> RecipeList;
+
+    enum Group_Console
+    {
+        GC_STRUCTURES,
+        GC_TOOLS,
+        GC_FOOD,
+        GC_ARMOUR,
+        GC_MECHANISM,
+        GC_TRANSPORT,
+        GC_DECORATION,
+        GC_COUNT
+    };
+
+public:
     Recipes();
     ~Recipes();
 
@@ -145,19 +160,40 @@ public:
         return *instance;
     }
 
-    void add(Recipe* recipe)
+    //@NOTE: -1 as the group index just adds to the end of the recipe list
+    void add(Recipe* recipe, Group_Console group = GC_DECORATION, int slotIndex = -1)
     {
         m_recipes.push_back(recipe);
+
+        if (group >= GC_COUNT) return;
+
+        std::vector<RecipeList>& recipeLists = m_recipesByConsoleGroup[group];
+
+        if (slotIndex >= 0)
+        {
+            while (recipeLists.size() <= size_t(slotIndex))
+            {
+                recipeLists.push_back(RecipeList());
+            }
+            RecipeList& recipeList = recipeLists[slotIndex];
+            recipeList.push_back(recipe);
+        }
+        else
+        {
+            RecipeList recipeList;
+            recipeList.push_back(recipe);
+            recipeLists.push_back(recipeList);
+        }
     }
 
-    void add(RecipeBuilder& recipe)
+    void add(RecipeBuilder& recipe, Group_Console group = GC_DECORATION, int slotIndex = -1)
     {
-        m_recipes.push_back(recipe.build());
+        add(recipe.build(), group, slotIndex);
     }
 
     void addTools(const ItemStack& material, Item* sword, Item* pickaxe, Item* axe, Item* shovel, Item* hoe);
-    void addArmor(const ItemStack& material, Item* helmet, Item* chestplate, Item* leggings, Item* boots);
-    void addOre(const ItemStack& material, Tile* block);
+    void addArmor(const ItemStack& material, Item* helmet, Item* chestplate, Item* leggings, Item* boots, Group_Console = GC_ARMOUR);
+    void addOre(const ItemStack& material, Tile* block, int unprocessGroup = 3);
 
     const ItemStack& getItemFor(CraftingContainer* container)
     {
@@ -176,5 +212,6 @@ private:
     static Recipes* instance;
 
 public:
-    std::vector<Recipe*> m_recipes;
+    RecipeList m_recipes;
+    std::vector<RecipeList> m_recipesByConsoleGroup[GC_COUNT];
 };
