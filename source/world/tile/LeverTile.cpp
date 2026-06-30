@@ -28,11 +28,11 @@ eRenderShape LeverTile::getRenderShape() const
 
 bool LeverTile::mayPlace(const Level* level, const TilePos& pos) const
 {
-	if (level->isSolidTile(pos.west())) return true;
-	if (level->isSolidTile(pos.east())) return true;
-	if (level->isSolidTile(pos.north())) return true;
-	if (level->isSolidTile(pos.south())) return true;
-	if (level->isSolidTile(pos.below())) return true;
+	if (level->isSolidBlockingTile(pos.west())) return true;
+	if (level->isSolidBlockingTile(pos.east())) return true;
+	if (level->isSolidBlockingTile(pos.north())) return true;
+	if (level->isSolidBlockingTile(pos.south())) return true;
+	if (level->isSolidBlockingTile(pos.below())) return true;
 
 	return false;
 }
@@ -48,23 +48,23 @@ void LeverTile::setPlacedOnFace(Level* level, const TilePos& pos, Facing::Name f
 	case Facing::DOWN:
 		break;
 	case Facing::UP:
-		if (level->isSolidTile(pos.below()))
+		if (level->isSolidBlockingTile(pos.below()))
 			data = 5 + level->m_random.nextInt(2);
 		break;
 	case Facing::NORTH:
-		if (level->isSolidTile(pos.south()))
+		if (level->isSolidBlockingTile(pos.south()))
 			data = 4;
 		break;
 	case Facing::SOUTH:
-		if (level->isSolidTile(pos.north()))
+		if (level->isSolidBlockingTile(pos.north()))
 			data = 3;
 		break;
 	case Facing::WEST:
-		if (level->isSolidTile(pos.east()))
+		if (level->isSolidBlockingTile(pos.east()))
 			data = 2;
 		break;
 	case Facing::EAST:
-		if (level->isSolidTile(pos.west()))
+		if (level->isSolidBlockingTile(pos.west()))
 			data = 1;
 		break;
 	}
@@ -80,11 +80,11 @@ void LeverTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
 	TileData data = level->getData(pos) & 7;
 
 	bool flag = false;
-	if (data == 1 && !level->isSolidTile(pos.west())) flag = true;
-	else if (data == 2 && !level->isSolidTile(pos.east())) flag = true;
-	else if (data == 3 && !level->isSolidTile(pos.north())) flag = true;
-	else if (data == 4 && !level->isSolidTile(pos.south())) flag = true;
-	else if (data == 5 && !level->isSolidTile(pos.below())) flag = true;
+	if (data == 1 && !level->isSolidBlockingTile(pos.west())) flag = true;
+	else if (data == 2 && !level->isSolidBlockingTile(pos.east())) flag = true;
+	else if (data == 3 && !level->isSolidBlockingTile(pos.north())) flag = true;
+	else if (data == 4 && !level->isSolidBlockingTile(pos.south())) flag = true;
+	else if (data == 5 && !level->isSolidBlockingTile(pos.below())) flag = true;
 
 	if (!flag)
 		return; // all good

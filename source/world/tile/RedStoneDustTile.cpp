@@ -36,7 +36,7 @@ eRenderShape RedStoneDustTile::getRenderShape() const
 
 bool RedStoneDustTile::mayPlace(const Level* level, const TilePos& pos) const
 {
-	return level->isSolidTile(pos.below());
+	return level->isSolidBlockingTile(pos.below());
 }
 
 void RedStoneDustTile::updatePowerStrength(Level* level, const TilePos& pos)
@@ -98,14 +98,14 @@ void RedStoneDustTile::updatePowerStrength(Level* level, const TilePos& pos1, co
 				var9 = checkTarget(level, TilePos(var12, pos1.y, var13), var9);
 			}
 
-			if (level->isSolidTile(TilePos(var12, pos1.y, var13)) && !level->isSolidTile(pos1.above()))
+			if (level->isSolidBlockingTile(TilePos(var12, pos1.y, var13)) && !level->isSolidBlockingTile(pos1.above()))
 			{
 				if (var12 != pos2.x || pos1.y + 1 != pos2.y || var13 != pos2.z)
 				{
 					var9 = checkTarget(level, TilePos(var12, pos1.y + 1, var13), var9);
 				}
 			}
-			else if (!level->isSolidTile(TilePos(var12, pos1.y, var13)) && (var12 != pos2.x || pos1.y - 1 != pos2.y || var13 != pos2.z))
+			else if (!level->isSolidBlockingTile(TilePos(var12, pos1.y, var13)) && (var12 != pos2.x || pos1.y - 1 != pos2.y || var13 != pos2.z))
 			{
 				var9 = checkTarget(level, TilePos(var12, pos1.y - 1, var13), var9);
 			}
@@ -153,7 +153,7 @@ void RedStoneDustTile::updatePowerStrength(Level* level, const TilePos& pos1, co
 				var13++;
 			}
 
-			if (level->isSolidTile(TilePos(var12, pos1.y, var13)))
+			if (level->isSolidBlockingTile(TilePos(var12, pos1.y, var13)))
 			{
 				var14 += 2;
 			}
@@ -223,7 +223,7 @@ void RedStoneDustTile::onPlace(Level* level, const TilePos& pos)
 		checkCornerChangeAt(level, pos.east());
 		checkCornerChangeAt(level, pos.north());
 		checkCornerChangeAt(level, pos.south());
-		if (level->isSolidTile(pos.west()))
+		if (level->isSolidBlockingTile(pos.west()))
 		{
 			checkCornerChangeAt(level, pos.west().above());
 		}
@@ -232,7 +232,7 @@ void RedStoneDustTile::onPlace(Level* level, const TilePos& pos)
 			checkCornerChangeAt(level, pos.west().below());
 		}
 
-		if (level->isSolidTile(pos.east()))
+		if (level->isSolidBlockingTile(pos.east()))
 		{
 			checkCornerChangeAt(level, pos.east().above());
 		}
@@ -241,7 +241,7 @@ void RedStoneDustTile::onPlace(Level* level, const TilePos& pos)
 			checkCornerChangeAt(level, pos.east().below());
 		}
 
-		if (level->isSolidTile(pos.north()))
+		if (level->isSolidBlockingTile(pos.north()))
 		{
 			checkCornerChangeAt(level, pos.above().north());
 		}
@@ -250,7 +250,7 @@ void RedStoneDustTile::onPlace(Level* level, const TilePos& pos)
 			checkCornerChangeAt(level, pos.below().north());
 		}
 
-		if (level->isSolidTile(pos.south()))
+		if (level->isSolidBlockingTile(pos.south()))
 		{
 			checkCornerChangeAt(level, pos.above().south());
 		}
@@ -273,7 +273,7 @@ void RedStoneDustTile::onRemove(Level* level, const TilePos& pos)
 		checkCornerChangeAt(level, pos.east());
 		checkCornerChangeAt(level, pos.north());
 		checkCornerChangeAt(level, pos.south());
-		if (level->isSolidTile(pos.west()))
+		if (level->isSolidBlockingTile(pos.west()))
 		{
 			checkCornerChangeAt(level, pos.west().above());
 		}
@@ -282,7 +282,7 @@ void RedStoneDustTile::onRemove(Level* level, const TilePos& pos)
 			checkCornerChangeAt(level, pos.west().below());
 		}
 
-		if (level->isSolidTile(pos.east()))
+		if (level->isSolidBlockingTile(pos.east()))
 		{
 			checkCornerChangeAt(level, pos.east().above());
 		}
@@ -291,7 +291,7 @@ void RedStoneDustTile::onRemove(Level* level, const TilePos& pos)
 			checkCornerChangeAt(level, pos.east().below());
 		}
 
-		if (level->isSolidTile(pos.north()))
+		if (level->isSolidBlockingTile(pos.north()))
 		{
 			checkCornerChangeAt(level, pos.above().north());
 		}
@@ -300,7 +300,7 @@ void RedStoneDustTile::onRemove(Level* level, const TilePos& pos)
 			checkCornerChangeAt(level, pos.below().north());
 		}
 
-		if (level->isSolidTile(pos.south()))
+		if (level->isSolidBlockingTile(pos.south()))
 		{
 			checkCornerChangeAt(level, pos.above().south());
 		}
@@ -370,28 +370,28 @@ int RedStoneDustTile::getSignal(const LevelSource* level, const TilePos& pos, Fa
 	}
 	else
 	{
-		bool var6 = shouldConnectTo(level, pos.west()) || (!level->isSolidTile(pos.west()) && shouldConnectTo(level, pos.west().below()));
-		bool var7 = shouldConnectTo(level, pos.east()) || (!level->isSolidTile(pos.east()) && shouldConnectTo(level, pos.east().below()));
-		bool var8 = shouldConnectTo(level, pos.north()) || (!level->isSolidTile(pos.north()) && shouldConnectTo(level, pos.below().north()));
-		bool var9 = shouldConnectTo(level, pos.south()) || (!level->isSolidTile(pos.south()) && shouldConnectTo(level, pos.below().south()));
-		if (!level->isSolidTile(pos.above()))
+		bool var6 = shouldConnectTo(level, pos.west()) || (!level->isSolidBlockingTile(pos.west()) && shouldConnectTo(level, pos.west().below()));
+		bool var7 = shouldConnectTo(level, pos.east()) || (!level->isSolidBlockingTile(pos.east()) && shouldConnectTo(level, pos.east().below()));
+		bool var8 = shouldConnectTo(level, pos.north()) || (!level->isSolidBlockingTile(pos.north()) && shouldConnectTo(level, pos.below().north()));
+		bool var9 = shouldConnectTo(level, pos.south()) || (!level->isSolidBlockingTile(pos.south()) && shouldConnectTo(level, pos.below().south()));
+		if (!level->isSolidBlockingTile(pos.above()))
 		{
-			if (level->isSolidTile(pos.west()) && shouldConnectTo(level, pos.west().above()))
+			if (level->isSolidBlockingTile(pos.west()) && shouldConnectTo(level, pos.west().above()))
 			{
 				var6 = true;
 			}
 
-			if (level->isSolidTile(pos.east()) && shouldConnectTo(level, pos.east().above()))
+			if (level->isSolidBlockingTile(pos.east()) && shouldConnectTo(level, pos.east().above()))
 			{
 				var7 = true;
 			}
 
-			if (level->isSolidTile(pos.north()) && shouldConnectTo(level, pos.above().north()))
+			if (level->isSolidBlockingTile(pos.north()) && shouldConnectTo(level, pos.above().north()))
 			{
 				var8 = true;
 			}
 
-			if (level->isSolidTile(pos.south()) && shouldConnectTo(level, pos.above().south()))
+			if (level->isSolidBlockingTile(pos.south()) && shouldConnectTo(level, pos.above().south()))
 			{
 				var9 = true;
 			}

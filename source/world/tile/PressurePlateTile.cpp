@@ -31,7 +31,7 @@ bool PressurePlateTile::isCubeShaped() const
 
 bool PressurePlateTile::mayPlace(const Level* level, const TilePos& pos) const
 {
-	return level->isSolidTile(pos.below());
+	return level->isSolidBlockingTile(pos.below());
 }
 
 void PressurePlateTile::onPlace(Level*, const TilePos& pos)
@@ -40,7 +40,7 @@ void PressurePlateTile::onPlace(Level*, const TilePos& pos)
 
 void PressurePlateTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
 {
-	if (level->isSolidTile(pos.below()))
+	if (level->isSolidBlockingTile(pos.below()))
 		return; // all good
 
 	spawnResources(level, pos, level->getData(pos));

@@ -28,10 +28,10 @@ bool ButtonTile::isCubeShaped() const
 
 bool ButtonTile::mayPlace(const Level* level, const TilePos& pos) const
 {
-	if (level->isSolidTile(pos.west())) return true;
-	if (level->isSolidTile(pos.east())) return true;
-	if (level->isSolidTile(pos.north())) return true;
-	if (level->isSolidTile(pos.south())) return true;
+	if (level->isSolidBlockingTile(pos.west())) return true;
+	if (level->isSolidBlockingTile(pos.east())) return true;
+	if (level->isSolidBlockingTile(pos.north())) return true;
+	if (level->isSolidBlockingTile(pos.south())) return true;
 
 	return false;
 }
@@ -46,32 +46,32 @@ void ButtonTile::setPlacedOnFace(Level* level, const TilePos& pos, Facing::Name 
 	switch (face)
 	{
 	case Facing::NORTH:
-		if (level->isSolidTile(pos.south()))
+		if (level->isSolidBlockingTile(pos.south()))
 			data = 4;
 		break;
 	case Facing::SOUTH:
-		if (level->isSolidTile(pos.north()))
+		if (level->isSolidBlockingTile(pos.north()))
 			data = 3;
 		break;
 	case Facing::WEST:
-		if (level->isSolidTile(pos.east()))
+		if (level->isSolidBlockingTile(pos.east()))
 			data = 2;
 		break;
 	case Facing::EAST:
-		if (level->isSolidTile(pos.west()))
+		if (level->isSolidBlockingTile(pos.west()))
 			data = 1;
 		break;
 	default:
 		break;
 	}
 
-	/*if (face == Facing::NORTH && level->isSolidTile(pos.south()))
+	/*if (face == Facing::NORTH && level->isSolidBlockingTile(pos.south()))
 		data = 4;
-	else if (face == Facing::SOUTH && level->isSolidTile(pos.north()))
+	else if (face == Facing::SOUTH && level->isSolidBlockingTile(pos.north()))
 		data = 3;
-	else if (face == Facing::WEST && level->isSolidTile(pos.east()))
+	else if (face == Facing::WEST && level->isSolidBlockingTile(pos.east()))
 		data = 2;
-	else if (face == Facing::EAST && level->isSolidTile(pos.west()))
+	else if (face == Facing::EAST && level->isSolidBlockingTile(pos.west()))
 		data = 1;
 	else
 		data = unk_h(level, pos);*/
@@ -81,7 +81,7 @@ void ButtonTile::setPlacedOnFace(Level* level, const TilePos& pos, Facing::Name 
 
 int ButtonTile::unk_h(Level* level, const TilePos& pos)
 {
-	return level->isSolidTile(pos.west()) ? 1 : (level->isSolidTile(pos.east()) ? 2 : (level->isSolidTile(pos.north()) ? 3 : (level->isSolidTile(pos.south()) ? 4 : 1)));
+	return level->isSolidBlockingTile(pos.west()) ? 1 : (level->isSolidBlockingTile(pos.east()) ? 2 : (level->isSolidBlockingTile(pos.north()) ? 3 : (level->isSolidBlockingTile(pos.south()) ? 4 : 1)));
 }
 
 void ButtonTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
@@ -92,10 +92,10 @@ void ButtonTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
 	TileData data = level->getData(pos) & 7;
 
 	bool flag = false;
-	if (data == 1 && !level->isSolidTile(pos.west())) flag = true;
-	else if (data == 2 && !level->isSolidTile(pos.east())) flag = true;
-	else if (data == 3 && !level->isSolidTile(pos.north())) flag = true;
-	else if (data == 4 && !level->isSolidTile(pos.south())) flag = true;
+	if (data == 1 && !level->isSolidBlockingTile(pos.west())) flag = true;
+	else if (data == 2 && !level->isSolidBlockingTile(pos.east())) flag = true;
+	else if (data == 3 && !level->isSolidBlockingTile(pos.north())) flag = true;
+	else if (data == 4 && !level->isSolidBlockingTile(pos.south())) flag = true;
 
 	if (!flag)
 		return; // all good

@@ -77,7 +77,7 @@ void TrapdoorTile::neighborChanged(TileSource* source, const TilePos& pos, TileI
 		default: break;
 	}
 
-	if (!source->isSolidTile(newPos)) {
+	if (!source->isSolidBlockingTile(newPos)) {
 		source->setTile(pos, 0);
 		spawnResources(source, pos, source->getData(pos));
 	}
@@ -110,10 +110,10 @@ void TrapdoorTile::setPlacedOnFace(Level* level, const TilePos& pos, Facing::Nam
 
 bool TrapdoorTile::mayPlace(const Level* level, const TilePos& pos) const // check this
 {
-	if (level->isSolidTile(pos.west())) return true;
-	if (level->isSolidTile(pos.east())) return true;
-	if (level->isSolidTile(pos.north())) return true;
-	if (level->isSolidTile(pos.south())) return true;
+	if (level->isSolidBlockingTile(pos.west())) return true;
+	if (level->isSolidBlockingTile(pos.east())) return true;
+	if (level->isSolidBlockingTile(pos.north())) return true;
+	if (level->isSolidBlockingTile(pos.south())) return true;
 
 	return false;
 }

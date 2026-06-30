@@ -18,12 +18,12 @@ bool DiodeTile::isCubeShaped() const
 
 bool DiodeTile::mayPlace(const Level* level, const TilePos& pos) const
 {
-	return !level->isSolidTile(pos.below()) ? false : Tile::mayPlace(level, pos);
+	return !level->isSolidBlockingTile(pos.below()) ? false : Tile::mayPlace(level, pos);
 }
 
 bool DiodeTile::canSurvive(const Level* level, const TilePos& pos) const
 {
-	return !level->isSolidTile(pos.below()) ? false : Tile::canSurvive(level, pos);
+	return !level->isSolidBlockingTile(pos.below()) ? false : Tile::canSurvive(level, pos);
 }
 
 void DiodeTile::tick(Level* level, const TilePos& pos, Random* random)
