@@ -1051,7 +1051,7 @@ const Color& LevelRenderer::setupClearColor(float f)
 
 void LevelRenderer::setLevel(Level* level)
 {
-	// @TODO: matt, update this
+	// @TODO: @Matt, update this
 	if (m_pLevel == level)
 		return;
 
@@ -1088,7 +1088,7 @@ void LevelRenderer::setDimension(Dimension* dimension)
 
 void LevelRenderer::setDirty(const TilePos& min, const TilePos& max)
 {
-	// @TODO: matt, update this to use RenderChunks, obviously check 0.12.1
+	// @TODO: @Matt, update this to use RenderChunks, obviously check 0.12.1
 	int minX = Mth::intFloorDiv(min.x, 16);
 	int minY = Mth::intFloorDiv(min.y, 16);
 	int minZ = Mth::intFloorDiv(min.z, 16);

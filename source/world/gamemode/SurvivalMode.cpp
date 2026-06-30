@@ -55,7 +55,7 @@ bool SurvivalMode::startDestroyBlock(Player* player, const TilePos& pos, Facing:
 
 	if (m_destroyProgress == 0.0f)
 	{
-		Tile::tiles[tile]->attack(&source, pos, player);
+		Tile::tiles[tile]->attack(pos, player);
 	}
 
 	if (Tile::tiles[tile]->getDestroyProgress(player) >= 1.0f)

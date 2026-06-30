@@ -87,35 +87,12 @@ public:
 	EntityIdMap_t& getEntityIdMap();
 	const EntityIdMap_t& getEntityIdMapConst() const;
 
-	DimensionId getId() const
-	{
-		return m_dimensionId;
-	}
-
-	bool isWarm() const
-	{
-		return m_bUltraWarm;
-	}
-
-	bool hasCeiling() const
-	{
-		return m_hasCeiling;
-	}
-
-	float getBrightnessRamp(Brightness_t brightness) const
-	{
-		return m_brightnessRamp[brightness];
-	}
-
-	ChunkSource* getChunkSource()
-	{
-		return m_chunkSource;
-	}
-
-	TileSource* getTileSource()
-	{
-		return m_tileSource;
-	}
+	DimensionId getId() const { return m_dimensionId; }
+	bool isUltraWarm() const { return m_bUltraWarm; }
+	bool hasCeiling() const { return m_hasCeiling; }
+	float getBrightnessRamp(Brightness_t brightness) const { return m_brightnessRamp[brightness]; }
+	ChunkSource* getChunkSource() { return m_chunkSource; }
+	TileSource* getTileSource() { return m_tileSource; }
 
 protected:
 	ChunkSource* _getGenerator(GeneratorType type);

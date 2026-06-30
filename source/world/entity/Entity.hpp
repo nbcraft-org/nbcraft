@@ -243,13 +243,13 @@ public:
 	//virtual void defineSynchedData();
 	EntityType::ID getEncodeId() const;
 	Entity::ID hashCode() const { return m_EntityID; }
-	Dimension* getDimension() const;
 
 	const EntityTypeDescriptor& getDescriptor() const { return *m_pDescriptor; }
 	SynchedEntityData& getEntityData() { return m_entityData; }
 	const SynchedEntityData& getEntityData() const { return m_entityData; }
 	Level& getLevel() const { return *m_pLevel; }
 	TileSource& getTileSource() const { return *m_tileSource; }
+	Dimension& getDimension() const;
 
 	bool operator==(const Entity& other) const;
 

@@ -11,12 +11,13 @@ RecordingItem::RecordingItem(int id, const std::string& recording) : Item(id), m
 
 bool RecordingItem::useOn(ItemStack* instance, Player* player, const TilePos& pos, Facing::Name face) const
 {
+	Level& level = player->getLevel();
 	TileSource& tileSource = player->getTileSource();
 
 	if (tileSource.getTile(pos) == Tile::recordPlayer->m_ID && tileSource.getData(pos) == 0)
 	{
-		tileSource.setTileAndData(pos, m_itemID - Item::record_01->m_itemID + 1);
-		level->playStreamingMusic(m_recording, pos);
+		tileSource.setExtraData(pos, m_itemID - Item::record_01->m_itemID + 1);
+		level.playStreamingMusic(m_recording, pos);
 		instance->m_count--;
 		return true;
 	}

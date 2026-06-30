@@ -1220,9 +1220,9 @@ EntityType::ID Entity::getEncodeId() const
 	return getDescriptor().getEntityType().getId();
 }
 
-Dimension* Entity::getDimension() const
+Dimension& Entity::getDimension() const
 {
-	return getLevel().getDimension(getDimensionId());
+	return m_tileSource->getDimension();
 }
 
 bool Entity::operator==(const Entity& other) const
