@@ -179,6 +179,9 @@ void ItemInHandRenderer::renderItem(const Entity& entity, const ItemStack& item,
 
         MatrixStack::Ref matrix = MatrixStack::World.push();
 
+        if (m_pMinecraft->getUiTheme() == UI_CONSOLE)
+            Lighting::turnOff();
+
         std::string toBind;
         if (pTile)
             toBind = C_TERRAIN_NAME;
@@ -266,6 +269,8 @@ void ItemInHandRenderer::renderItem(const Entity& entity, const ItemStack& item,
 #else
         t.draw(m_materials.item_in_hand_color);
 #endif
+        if (m_pMinecraft->getUiTheme() == UI_CONSOLE)
+            Lighting::turnOn(matrix);
     }
 }
 
