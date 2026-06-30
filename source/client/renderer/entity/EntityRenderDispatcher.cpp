@@ -56,7 +56,7 @@ EntityRenderDispatcher::EntityRenderDispatcher()
 	m_pLevel = nullptr;
 	m_pMinecraft = nullptr;
 	m_pCamera = nullptr;
-	m_rot = Vec2::ZERO;
+	m_rot = Rot2::ZERO;
 	m_pOptions = nullptr;
 	m_pFont = nullptr;
 
@@ -157,7 +157,7 @@ void EntityRenderDispatcher::prepare(Level* level, Textures* textures, Font* fon
 void EntityRenderDispatcher::render(const Entity& entity, float a)
 {
 	Vec3 pos = Vec3(entity.m_posPrev + (entity.m_pos - entity.m_posPrev) * a);
-	float yaw = entity.m_oRot.x + a * (entity.m_rot.x - entity.m_oRot.x);
+	float yaw = entity.m_oRot.yaw + a * (entity.m_rot.yaw - entity.m_oRot.yaw);
 
 	float bright = entity.getBrightness(1.0f);
 	currentShaderColor = Color::WHITE;

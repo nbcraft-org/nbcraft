@@ -27,7 +27,7 @@ bool DoorItem::useOn(ItemStack* inst, Player* player, Level* level, const TilePo
 	if (!pTile->mayPlace(level, pos.above()))
 		return false;
 
-	int faceDir = Mth::floor((((player->m_rot.x + 180.0f) * 4.0f) / 360.0f) - 0.5f) & 3;
+	int faceDir = Mth::floor((((player->m_rot.yaw + 180.0f) * 4.0f) / 360.0f) - 0.5f) & 3;
 	int offsetX, offsetZ;
 	switch (faceDir)
 	{

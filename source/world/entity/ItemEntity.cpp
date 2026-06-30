@@ -32,7 +32,7 @@ void ItemEntity::_init(const ItemStack& itemStack, const Vec3& pos)
 	_init(itemStack);
 	setPos(pos);
 
-	m_rot.x = 360.0f * Mth::random();
+	m_rot.yaw = 360.0f * Mth::random();
 
 	m_vel.y = 0.2f;
 	m_vel.x = Mth::random() * 0.2f - 0.1f;

@@ -46,14 +46,14 @@ Arrow::Arrow(Level* pLevel, Mob* pMob)
     m_bIsPlayerOwned = m_owner->isPlayer();
     moveTo(Vec3(pMob->m_pos.x, pMob->m_pos.y + pMob->getHeadHeight(), pMob->m_pos.z), pMob->m_rot);
     
-    m_pos.x -= Mth::cos(m_rot.x / 180.0f * M_PI) * 0.16f;
+    m_pos.x -= Mth::cos(m_rot.yaw / 180.0f * M_PI) * 0.16f;
     m_pos.y -= 0.1f;
-    m_pos.z -= Mth::sin(m_rot.x / 180.0f * M_PI) * 0.16f;
+    m_pos.z -= Mth::sin(m_rot.yaw / 180.0f * M_PI) * 0.16f;
     setPos(m_pos);
 
-    m_vel.x = -Mth::sin(m_rot.x / 180.0f * M_PI) * Mth::cos(m_rot.y / 180.0f * M_PI);
-    m_vel.z =  Mth::cos(m_rot.x / 180.0f * M_PI) * Mth::cos(m_rot.y / 180.0f * M_PI);
-    m_vel.y = -Mth::sin(m_rot.y / 180.0f * M_PI);
+    m_vel.x = -Mth::sin(m_rot.yaw / 180.0f * M_PI) * Mth::cos(m_rot.pitch / 180.0f * M_PI);
+    m_vel.z =  Mth::cos(m_rot.yaw / 180.0f * M_PI) * Mth::cos(m_rot.pitch / 180.0f * M_PI);
+    m_vel.y = -Mth::sin(m_rot.pitch / 180.0f * M_PI);
     shoot(m_vel, 1.5f, 1.0f);
 }
 
@@ -74,14 +74,14 @@ void Arrow::shoot(Vec3 vel, float speed, float r)
 
 void Arrow::_lerpMotion(const Vec3& vel)
 {
-    float len = vel.length();
-    m_oRot.y = m_rot.y = Mth::atan2(vel.x, vel.z) * 180.0f / M_PI;
-    m_oRot.x = m_rot.x = Mth::atan2(vel.y, len)   * 180.0f / M_PI;
+    float len = Vec2(vel.x, vel.z).length();
+    m_oRot.yaw = m_rot.yaw = Mth::atan2(vel.x, vel.z) * 180.0f / M_PI;
+    m_oRot.pitch = m_rot.pitch = Mth::atan2(vel.y, len) * 180.0f / M_PI;
 }
 
 void Arrow::_lerpMotion2(const Vec3& vel)
 {
-    if (m_oRot == Vec2::ZERO)
+    if (m_oRot == Rot2::ZERO)
     {
         return _lerpMotion(vel);
     }
@@ -180,8 +180,8 @@ void Arrow::tick()
             else 
             {
                 m_vel *= -0.1f;
-                m_rot.y += 180.0f;
-                m_oRot.y += 180.0f;
+                m_rot.yaw += 180.0f;
+                m_oRot.yaw += 180.0f;
                 m_flightTime = 0;
             }
         }
@@ -198,28 +198,27 @@ void Arrow::tick()
     }
 
     m_pos += m_vel;
-    float var17 = Vec2(m_vel.x, m_vel.z).length();
-    m_rot.y = Mth::atan2(m_vel.x, m_vel.z) * 180.0f / M_PI;
+    float lengthVel2 = Vec2(m_vel.x, m_vel.z).length();
+    m_rot.yaw = Mth::atan2(m_vel.x, m_vel.z) * 180.0f / M_PI;
 
-    for (m_rot.x = Mth::atan2(m_vel.y, var17) * 180.0f / M_PI; m_rot.x - m_oRot.x < -180.0f; m_oRot.x -= 360.0f);
+    for (m_rot.pitch = Mth::atan2(m_vel.y, lengthVel2) * 180.0f / M_PI; m_rot.pitch - m_oRot.pitch < -180.0f; m_oRot.pitch -= 360.0f);
 
-    while (m_rot.x - m_oRot.x >= 180.0f)
+    while (m_rot.pitch - m_oRot.pitch >= 180.0f)
     {
-        m_oRot.x += 360.0f;
+        m_oRot.pitch += 360.0f;
     }
 
-    while (m_rot.y - m_oRot.y < -180.0f)
+    while (m_rot.yaw - m_oRot.yaw < -180.0f)
     {
-        m_oRot.y -= 360.0f;
+        m_oRot.yaw -= 360.0f;
     }
 
-    while (m_rot.y - m_oRot.y >= 180.0f)
+    while (m_rot.yaw - m_oRot.yaw >= 180.0f)
     {
-        m_oRot.y += 360.0f;
+        m_oRot.yaw += 360.0f;
     }
 
-    m_rot.x = m_oRot.x + (m_rot.x - m_oRot.x) * 0.2f;
-    m_rot.y = m_oRot.y + (m_rot.y - m_oRot.y) * 0.2f;
+    m_rot = m_oRot + (m_rot - m_oRot) * 0.2f;
     float dampening = 0.99f;
     if (isInWater())
     {

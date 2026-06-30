@@ -185,8 +185,8 @@ void Player::die(Entity* pCulprit)
 
 	if (pCulprit)
 	{
-		m_vel.x = -0.1f * Mth::cos(float((m_hurtDir + m_rot.x) * M_PI / 180.0));
-		m_vel.z = -0.1f * Mth::cos(float((m_hurtDir + m_rot.x) * M_PI / 180.0));
+		m_vel.x = -0.1f * Mth::cos(float((m_hurtDir + m_rot.yaw) * M_PI / 180.0));
+		m_vel.z = -0.1f * Mth::cos(float((m_hurtDir + m_rot.yaw) * M_PI / 180.0));
 	}
 	else
 	{
@@ -553,9 +553,9 @@ void Player::drop(const ItemStack& item, bool randomly)
 	}
 	else
 	{
-		pItemEntity->m_vel.x = -(Mth::sin(m_rot.x / 180.0f * float(M_PI)) * Mth::cos(m_rot.y / 180.0f * float(M_PI))) * 0.3f;
-		pItemEntity->m_vel.z = (Mth::cos(m_rot.x / 180.0f * float(M_PI)) * Mth::cos(m_rot.y / 180.0f * float(M_PI))) * 0.3f;
-		pItemEntity->m_vel.y = 0.1f - Mth::sin(m_rot.y / 180.0f * float(M_PI)) * 0.3f;
+		pItemEntity->m_vel.x = -(Mth::sin(m_rot.yaw / 180.0f * float(M_PI)) * Mth::cos(m_rot.pitch / 180.0f * float(M_PI))) * 0.3f;
+		pItemEntity->m_vel.z = (Mth::cos(m_rot.yaw / 180.0f * float(M_PI)) * Mth::cos(m_rot.pitch / 180.0f * float(M_PI))) * 0.3f;
+		pItemEntity->m_vel.y = 0.1f - Mth::sin(m_rot.pitch / 180.0f * float(M_PI)) * 0.3f;
 
 		float f1 = m_random.nextFloat();
 		float f2 = m_random.nextFloat();

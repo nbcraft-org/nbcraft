@@ -43,7 +43,7 @@ public:
 	void removeStoppedSounds();
 	bool isAvailable() override;
 	void setListenerPos(const Vec3& pos) override;
-	void setListenerAngle(const Vec2& rot) override;
+	void setListenerAngle(const Rot2& rot) override;
 	void playAt(const SoundDesc& sound, const Vec3& pos, float volume, float pitch) override;
 	static void removePlayer(SLAndroidSimpleBufferQueueItf caller, void* context);
 private:

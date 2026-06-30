@@ -62,7 +62,7 @@ bool MultiplayerLocalPlayer::hurt(Entity* pAttacker, int damage)
             }
 
             float ang = atan2f(zd, xd);
-            m_hurtDir = ang * (180.0f / float(M_PI)) - m_rot.x;
+            m_hurtDir = ang * (180.0f / float(M_PI)) - m_rot.yaw;
 
             knockback(pAttacker, damage, xd, zd);
         }

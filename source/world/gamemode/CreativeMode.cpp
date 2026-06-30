@@ -80,5 +80,5 @@ void CreativeMode::render(float f)
 
 void CreativeMode::initPlayer(Player* p)
 {
-	p->m_rot.x = -180.0f;
+	p->m_rot.yaw = -180.0f;
 }

@@ -140,7 +140,7 @@ void PathfinderMob::updateAi()
 	}
 
 
-	m_rot.y = 0.0f;
+	m_rot.pitch = 0.0f;
 
 	if (m_path.empty() || m_random.nextInt(100) == 0)
 	{
@@ -181,21 +181,21 @@ void PathfinderMob::updateAi()
 
 		m_moveVelocity.y = m_runSpeed;
 
-		float angDiff = ang - m_rot.x;
+		float angDiff = ang - m_rot.yaw;
 		while (angDiff < -180.0f) angDiff += 360.0f;
 		while (angDiff >= 180.0f) angDiff -= 360.0f;
 
 		if (angDiff > +MAX_TURN) angDiff = +MAX_TURN;
 		if (angDiff < -MAX_TURN) angDiff = -MAX_TURN;
 
-		float oldYaw = m_rot.x;
+		float oldYaw = m_rot.yaw;
 
-		m_rot.x += angDiff;
+		m_rot.yaw += angDiff;
 
 		if (m_bHoldGround && m_pAttackTarget)
 		{
 			float ang2 = Mth::atan2(m_pAttackTarget->m_pos.z - m_pos.z, m_pAttackTarget->m_pos.x - m_pos.x) * 180.0f / float(M_PI) - 90.0f;
-			m_rot.x = ang2;
+			m_rot.yaw = ang2;
 
 			float thing = ((((angDiff + oldYaw) - ang2) + 90.0f) * float(M_PI)) / 180.0f;
 

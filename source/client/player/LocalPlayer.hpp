@@ -56,7 +56,7 @@ private:
 	// Made these private since they're only accessed by LocalPlayer
 	// multiplayer related
 	Vec3 m_lastSentPos;
-	Vec2 m_lastSentRot;
+	Rot2 m_lastSentRot;
 	Container::StackID m_lastSelectedStackId;
 	// multiplayer related -- end
 
@@ -75,6 +75,6 @@ public:
 	int m_nAutoJumpFrames;
 	Minecraft* m_pMinecraft;
 	IMoveInput* m_pMoveInput;
-	Vec2 m_renderArmRot;
-	Vec2 m_lastRenderArmRot;
+	Rot2 m_renderArmRot;
+	Rot2 m_lastRenderArmRot;
 };

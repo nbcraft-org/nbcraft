@@ -70,7 +70,7 @@ void Ghast::updateAi()
 		float var11 = m_target->m_pos.x - m_pos.x;
 		float var13 = m_target->m_hitbox.min.y + float(m_target->m_bbHeight / 2.0f) - (m_pos.y + float(m_bbHeight / 2.0f));
 		float var15 = m_target->m_pos.z - m_pos.z;
-		m_yBodyRot = m_rot.x = -(float(Mth::atan2(var11, var15))) * 180.0f / float(M_PI); // m_rot.x is supposed to be m_rot.y but it's inverted?!
+		m_yBodyRot = m_rot.yaw = -(float(Mth::atan2(var11, var15))) * 180.0f / float(M_PI);
 		if (canSee(m_target))
 		{
 			if (m_charge == 10)
@@ -99,7 +99,7 @@ void Ghast::updateAi()
 	}
 	else
 	{
-		m_yBodyRot = m_rot.x = -(float(Mth::atan2(m_vel.x, m_vel.y))) * 180.0f / float(M_PI); // m_rot.x is supposed to be m_rot.y but it's inverted?!
+		m_yBodyRot = m_rot.yaw = -(float(Mth::atan2(m_vel.x, m_vel.y))) * 180.0f / float(M_PI);
 		if (m_charge > 0)
 		{
 			--m_charge;

@@ -90,8 +90,8 @@ void InventoryScreen::_renderBg(float partialTick)
     LocalPlayer* player = m_pMinecraft->m_pLocalPlayer;
 
     float prevYBodyRot = player->m_yBodyRot;
-    float prevXRot = player->m_rot.x;
-    float prevYRot = player->m_rot.y;
+    float prevYRot = player->m_rot.yaw;
+    float prevXRot = player->m_rot.pitch;
 
     float dx = m_leftPos + playerX - m_menuPointer.x;
     float dy = m_topPos + playerY - 50 - m_menuPointer.y;
@@ -102,21 +102,21 @@ void InventoryScreen::_renderBg(float partialTick)
 
     matrix->rotate(-Mth::atan(dy / 40.0f) * 20.0f, Vec3(1.0f, 0.0f, 0.0f));
     player->m_yBodyRot = Mth::atan(dx / 40.0f) * 20.0f;
-    player->m_rot.y = -Mth::atan(dy / 40.0f) * 20.0f;
-    player->m_rot.x = Mth::atan(dx / 40.0f) * 40.0f;
+    player->m_rot.pitch = -Mth::atan(dy / 40.0f) * 20.0f;
+    player->m_rot.yaw = Mth::atan(dx / 40.0f) * 40.0f;
 
     matrix->translate(Vec3(0.0f, player->m_heightOffset, 0.0f));
     EntityRenderer* renderer = EntityRenderDispatcher::instance->getRenderer(player->m_renderType);
     float oldShadowRadius = renderer->m_shadowRadius;
     renderer->m_shadowRadius = 0.0f;
     player->m_minBrightness = 1.0f;
-    EntityRenderDispatcher::instance->m_rot.y = 180;
+    EntityRenderDispatcher::instance->m_rot.pitch = 180.0f;
     EntityRenderDispatcher::instance->render(*player, Vec3::ZERO, 0.0f, 1.0f);
     player->m_minBrightness = 0.0f;
     renderer->m_shadowRadius = oldShadowRadius;
     player->m_yBodyRot = prevYBodyRot;
-    player->m_rot.x = prevXRot;
-    player->m_rot.y = prevYRot;
+    player->m_rot.yaw = prevYRot;
+    player->m_rot.pitch = prevXRot;
 
     Lighting::turnOff();
 }

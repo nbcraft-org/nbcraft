@@ -41,7 +41,7 @@ void Skeleton::checkHurtTarget(Entity* ent, float f)
 			m_attackTime = 30;
 		}
 
-		m_rot.y = (Mth::atan2(delta_z, delta_x) * 180.0f / M_PI) - 90.0f;
+		m_rot.yaw = (Mth::atan2(delta_z, delta_x) * 180.0f / M_PI) - 90.0f;
 		m_bHoldGround = true;
 	}
 

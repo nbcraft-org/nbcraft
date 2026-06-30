@@ -72,8 +72,8 @@ void ArrowRenderer::render(const Entity& entity, const Vec3& pos, float rot, flo
 
     MatrixStack::Ref matrix = MatrixStack::World.push();
     matrix->translate(pos);
-    matrix->rotate(arrow.m_oRot.y + (arrow.m_rot.y - arrow.m_oRot.y) * a - 90.0f, Vec3::UNIT_Y);
-    matrix->rotate(arrow.m_oRot.x + (arrow.m_rot.x - arrow.m_oRot.x) * a,         Vec3::UNIT_Z);
+    matrix->rotate(arrow.m_oRot.yaw + (arrow.m_rot.yaw - arrow.m_oRot.yaw) * a - 90.0f, Vec3::UNIT_Y);
+    matrix->rotate(arrow.m_oRot.pitch + (arrow.m_rot.pitch - arrow.m_oRot.pitch) * a,   Vec3::UNIT_Z);
 
     float shake = arrow.m_shakeTime - a;
     if (shake > 0.0f)

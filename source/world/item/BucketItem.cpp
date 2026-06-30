@@ -16,10 +16,10 @@ bool BucketItem::use(ItemStack& item, Level* level, Mob& user) const
     Player* player = static_cast<Player*>(&user);
     Vec3 headPos(user.m_pos.x, user.m_pos.y + 1.62f - user.m_heightOffset, user.m_pos.z);
     constexpr float r = M_PI / 180;
-    float var14 = Mth::cos(-player->m_rot.x * r - M_PI);
-    float var15 = Mth::sin(-player->m_rot.x * r - M_PI);
-    float var16 = -Mth::cos(-player->m_rot.y * r);
-    float var17 = Mth::sin(-player->m_rot.y * r);
+    float var14 = Mth::cos(-player->m_rot.yaw * r - M_PI);
+    float var15 = Mth::sin(-player->m_rot.yaw * r - M_PI);
+    float var16 = -Mth::cos(-player->m_rot.pitch * r);
+    float var17 = Mth::sin(-player->m_rot.pitch * r);
     float var18 = var15 * var16;
     float var20 = var14 * var16;
     HitResult hitResult = level->clip(headPos, headPos.add(var18 * 5, var17 * 5, var20 * 5), m_content == TILE_AIR);

@@ -21,7 +21,7 @@ public:
 	RakNet::RakString m_name;
 	int m_id;
 	Vec3 m_pos;
-	Vec2 m_rot;
+	Rot2 m_rot;
 	int16_t m_itemId;
 	int16_t m_itemAuxValue;
 };

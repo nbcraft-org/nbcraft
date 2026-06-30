@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Packet.hpp"
-#include "world/phys/Vec2.hpp"
+#include "world/phys/Rot2.hpp"
 #include "world/phys/Vec3.hpp"
 
 class MovePlayerPacket : public Packet
@@ -21,7 +21,7 @@ public:
 	{
 		_init();
 	}
-	MovePlayerPacket(int id, const Vec3& pos, const Vec2& rot)
+	MovePlayerPacket(int id, const Vec3& pos, const Rot2& rot)
 		: m_id(id)
 		, m_pos(pos)
 		, m_rot(rot)
@@ -37,5 +37,5 @@ public:
 public:
 	int m_id;
 	Vec3 m_pos;
-	Vec2 m_rot;
+	Rot2 m_rot;
 };

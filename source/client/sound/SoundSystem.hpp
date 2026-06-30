@@ -9,7 +9,7 @@
 #pragma once
 
 #include <string>
-#include "world/phys/Vec2.hpp"
+#include "world/phys/Rot2.hpp"
 #include "world/phys/Vec3.hpp"
 #include "SoundData.hpp"
 
@@ -37,7 +37,7 @@ public:
 public:
 	virtual bool isAvailable();
 	virtual void setListenerPos(const Vec3& pos);
-	virtual void setListenerAngle(const Vec2& rot);
+	virtual void setListenerAngle(const Rot2& rot);
 	virtual void setListenerVelocity(const Vec3& vel);
 
 	virtual void setMusicVolume(float vol);

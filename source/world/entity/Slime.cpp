@@ -106,7 +106,7 @@ void Slime::remove()
 			float zd = (float(i / 2) - 0.5f) * float(m_size) / 4.0f;
 			Slime* slime = new Slime(m_pLevel);
 			slime->setSize(m_size / 2);
-			slime->moveTo(Vec3(m_pos.x + xd, m_pos.y + 0.5f, m_pos.z + zd), Vec2(m_random.nextFloat() * 360.0f, 0.0f));
+			slime->moveTo(Vec3(m_pos.x + xd, m_pos.y + 0.5f, m_pos.z + zd), Rot2(m_random.nextFloat() * 360.0f, 0.0f));
 			m_pLevel->addEntity(slime);
 		}
 	}

@@ -179,7 +179,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, AddPlay
 	m_pLevel->addEntity(pPlayer);
 
 	// If we haven't received a rot, use default player rot
-	if (pAddPlayerPkt->m_rot == Vec2::ZERO)
+	if (pAddPlayerPkt->m_rot == Rot2::ZERO)
 		pAddPlayerPkt->m_rot = pPlayer->m_rot;
 
 	pPlayer->moveTo(
@@ -351,7 +351,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, MoveEnt
 	Entity* pEntity = m_pLevel->getEntity(packet->m_entityId);
 	if (!pEntity) return;
 
-	Vec2 rot;
+	Rot2 rot;
 	if (packet->m_bHasRot)
 	{
 		rot = packet->m_rot;

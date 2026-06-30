@@ -42,17 +42,18 @@ FishingHook::FishingHook(Level* pLevel, Player* pMob) : Entity(pLevel)
     m_owner = pMob;
     m_owner->m_pFishing = this;
     m_bIsPlayerOwned = m_owner->isPlayer();
-    moveTo(Vec3(pMob->m_pos.x, pMob->m_pos.y + 1.62f - pMob->m_heightOffset, pMob->m_pos.z), Vec2(pMob->m_rot.y, pMob->m_rot.x));
+    moveTo(Vec3(pMob->m_pos.x, pMob->m_pos.y + 1.62f - pMob->m_heightOffset, pMob->m_pos.z), pMob->m_rot);
 
-    m_pos.x -= Mth::cos(m_rot.y / 180.0f * M_PI) * 0.16f;
+    m_pos.x -= Mth::cos(m_rot.yaw / 180.0f * M_PI) * 0.16f;
     m_pos.y -= 0.1f;
-    m_pos.z -= Mth::sin(m_rot.y / 180.0f * M_PI) * 0.16f;
+    m_pos.z -= Mth::sin(m_rot.yaw / 180.0f * M_PI) * 0.16f;
     setPos(m_pos);
     m_heightOffset = 0.0f;
-    float var3 = 0.4f;
-    m_vel.x = -Mth::sin(m_rot.y / 180.0f * M_PI) * Mth::cos(m_rot.x / 180.0f * M_PI) * var3;
-    m_vel.z = Mth::cos(m_rot.y / 180.0f * M_PI) * Mth::cos(m_rot.x / 180.0f * M_PI) * var3;
-    m_vel.y = -Mth::sin(m_rot.x / 180.0f * M_PI) * var3;
+
+    constexpr float f = 0.4f;
+    m_vel.x = -Mth::sin(m_rot.yaw / 180.0f * M_PI) * Mth::cos(m_rot.pitch / 180.0f * M_PI) * f;
+    m_vel.z = Mth::cos(m_rot.yaw / 180.0f * M_PI) * Mth::cos(m_rot.pitch / 180.0f * M_PI) * f;
+    m_vel.y = -Mth::sin(m_rot.pitch / 180.0f * M_PI) * f;
     shoot(m_vel, 1.5f, 1.0f);
 }
 
@@ -78,7 +79,7 @@ void FishingHook::shoot(Vec3 vel, float speed, float r)
     m_life = 0;
 }
 
-void FishingHook::lerpTo(const Vec3& pos, const Vec2& rot, int steps) {
+void FishingHook::lerpTo(const Vec3& pos, const Rot2& rot, int steps) {
     m_lPos = pos;
     m_lRot = rot;
     m_lSteps = steps;
@@ -87,14 +88,14 @@ void FishingHook::lerpTo(const Vec3& pos, const Vec2& rot, int steps) {
 
 void FishingHook::_lerpMotion(const Vec3& vel)
 {
-    float len = vel.length();
-    m_oRot.y = m_rot.y = Mth::atan2(vel.x, vel.z) * 180.0f / M_PI;
-    m_oRot.x = m_rot.x = Mth::atan2(vel.y, len) * 180.0f / M_PI;
+    float len = Vec2(vel.x, vel.z).length();
+    m_oRot.yaw = m_rot.yaw = Mth::atan2(vel.x, vel.z) * 180.0f / M_PI;
+    m_oRot.pitch = m_rot.pitch = Mth::atan2(vel.y, len) * 180.0f / M_PI;
 }
 
 void FishingHook::_lerpMotion2(const Vec3& vel)
 {
-    if (m_oRot.x == 0.0f && m_oRot.y == 0.0f)
+    if (m_oRot == Rot2::ZERO)
     {
         return _lerpMotion(vel);
     }
@@ -115,12 +116,10 @@ void FishingHook::tick()
 
     if (m_lSteps > 0)
     {
-        float var21 = m_pos.x + (m_lPos.x - m_pos.x) / float(m_lSteps);
-        float var22 = m_pos.y + (m_lPos.y - m_pos.y) / float(m_lSteps);
-        float var23 = m_pos.z + (m_lPos.z - m_pos.z) / float(m_lSteps);
+        Vec3 diff = m_pos + (m_lPos - m_pos) / m_lSteps;
 
         float var7;
-        for (var7 = m_lRot.y - m_rot.y; var7 < -180.0f; var7 += 360.0f)
+        for (var7 = m_lRot.yaw - m_rot.yaw; var7 < -180.0f; var7 += 360.0f)
         {
         }
 
@@ -129,10 +128,10 @@ void FishingHook::tick()
             var7 -= 360.0f;
         }
 
-        m_rot.y = float(m_rot.y + var7 / float(m_lSteps));
-        m_rot.x = float(m_rot.x + (m_lRot.x - m_rot.x) / float(m_lSteps));
+        m_rot.yaw = float(m_rot.yaw + var7 / float(m_lSteps));
+        m_rot.pitch = float(m_rot.pitch + (m_lRot.pitch - m_rot.pitch) / float(m_lSteps));
         --m_lSteps;
-        setPos(Vec3(var21, var22, var23));
+        setPos(diff);
         setRot(m_rot);
     }
     else
@@ -249,28 +248,27 @@ void FishingHook::tick()
         if (!m_bInGround)
         {
             m_pos += m_vel;
-            float var17 = m_vel.length();
-            m_rot.y = Mth::atan2(m_vel.x, m_vel.z) * 180.0f / M_PI;
+            float lengthVel2 = Vec2(m_vel.x, m_vel.z).length();
+            m_rot.yaw = Mth::atan2(m_vel.x, m_vel.z) * 180.0f / M_PI;
 
-            for (m_rot.x = Mth::atan2(m_vel.y, var17) * 180.0f / M_PI; m_rot.x - m_oRot.x < -180.0f; m_oRot.x -= 360.0f);
+            for (m_rot.pitch = Mth::atan2(m_vel.y, lengthVel2) * 180.0f / M_PI; m_rot.pitch - m_oRot.pitch < -180.0f; m_oRot.pitch -= 360.0f);
 
-            while (m_rot.x - m_oRot.x >= 180.0f)
+            while (m_rot.pitch - m_oRot.pitch >= 180.0f)
             {
-                m_oRot.x += 360.0f;
+                m_oRot.pitch += 360.0f;
             }
 
-            while (m_rot.y - m_oRot.y < -180.0f)
+            while (m_rot.yaw - m_oRot.yaw < -180.0f)
             {
-                m_oRot.y -= 360.0f;
+                m_oRot.yaw -= 360.0f;
             }
 
-            while (m_rot.y - m_oRot.y >= 180.0f)
+            while (m_rot.yaw - m_oRot.yaw >= 180.0f)
             {
-                m_oRot.y += 360.0f;
+                m_oRot.yaw += 360.0f;
             }
 
-            m_rot.x = m_oRot.x + (m_rot.x - m_oRot.x) * 0.2f;
-            m_rot.y = m_oRot.y + (m_rot.y - m_oRot.y) * 0.2f;
+            m_rot = m_oRot + (m_rot - m_oRot) * 0.2f;
             float dampening = 0.92f; // var25
             if (m_bOnGround || m_bHorizontalCollision)
             {

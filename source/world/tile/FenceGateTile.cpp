@@ -40,7 +40,7 @@ eRenderShape FenceGateTile::getRenderShape() const
 
 void FenceGateTile::setPlacedBy(Level* pLevel, const TilePos& pos, Mob* mob) 
 {
-	int i = (Mth::floor(mob->m_rot.x * 4.0f / 360.0f + 0.5) & 3) % 4;
+	int i = (Mth::floor(mob->m_rot.yaw * 4.0f / 360.0f + 0.5) & 3) % 4;
 	pLevel->setData(pos, i);
 }
 
@@ -66,7 +66,7 @@ void FenceGateTile::setOpen(Level* pLevel, const TilePos& pos, bool bOpen, Playe
         int j = 1;
 
         if (player)
-            j = (Mth::floor(player->m_rot.x * 4.0f / 360.0f + 0.5) & 3) % 4;
+            j = (Mth::floor(player->m_rot.yaw * 4.0f / 360.0f + 0.5) & 3) % 4;
 
         int k = getDir(data);
         if (k == (j + 2) % 4)

@@ -21,7 +21,7 @@ void SoundSystem::setListenerPos(const Vec3& pos)
 {
 }
 
-void SoundSystem::setListenerAngle(const Vec2& rot)
+void SoundSystem::setListenerAngle(const Rot2& rot)
 {
 }
 

@@ -34,8 +34,8 @@ void FishingHookRenderer::render(const Entity& entity, const Vec3& pos, float ro
 		constexpr float r = 1.0f;
 		constexpr float xo = 0.5f;
 		constexpr float yo = 0.5f;
-		matrix->rotate(180.0f - m_pDispatcher->m_rot.x, Vec3::UNIT_Y);
-		matrix->rotate(-m_pDispatcher->m_rot.y, Vec3::UNIT_X);
+		matrix->rotate(180.0f - m_pDispatcher->m_rot.yaw, Vec3::UNIT_Y);
+		matrix->rotate(-m_pDispatcher->m_rot.pitch, Vec3::UNIT_X);
 
 		t.begin(4);
 		t.normal(Vec3::UNIT_Y);
@@ -48,11 +48,11 @@ void FishingHookRenderer::render(const Entity& entity, const Vec3& pos, float ro
 
 	if (hook.m_owner)
 	{
-		Vec2 rr = (hook.m_owner->m_oRot + (hook.m_owner->m_rot - hook.m_owner->m_oRot) * a) * M_PI / 180.0f;
-		float ss = Mth::sin(rr.x);
-		float cc = Mth::cos(rr.x);
-		float ss2 = Mth::sin(rr.y);
-		float cc2 = Mth::cos(rr.y);
+		Rot2 rr = (hook.m_owner->m_oRot + (hook.m_owner->m_rot - hook.m_owner->m_oRot) * a) * M_PI / 180.0f;
+		float ss = Mth::sin(rr.yaw);
+		float cc = Mth::cos(rr.yaw);
+		float ss2 = Mth::sin(rr.pitch);
+		float cc2 = Mth::cos(rr.pitch);
 
 		
 		// player pos
@@ -65,9 +65,9 @@ void FishingHookRenderer::render(const Entity& entity, const Vec3& pos, float ro
 
 		if (m_pDispatcher->m_pOptions->m_thirdPerson.get())
 		{
-			rr.x = (hook.m_owner->m_yBodyRotO + (hook.m_owner->m_yBodyRot - hook.m_owner->m_yBodyRotO) * a) * M_PI / 180.0f;
-			ss = Mth::sin(rr.x);
-			cc = Mth::cos(rr.x);
+			rr.yaw = (hook.m_owner->m_yBodyRotO + (hook.m_owner->m_yBodyRot - hook.m_owner->m_yBodyRotO) * a) * M_PI / 180.0f;
+			ss = Mth::sin(rr.yaw);
+			cc = Mth::cos(rr.yaw);
 			r.x = p.x - cc * 0.35f - ss * 0.85f;
 			r.y = p.y - 0.45f;
 			r.z = p.z - ss * 0.35f + cc * 0.85f;
