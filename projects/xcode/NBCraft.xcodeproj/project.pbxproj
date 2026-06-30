@@ -852,6 +852,8 @@
 		84DAF5982F34650500D67310 /* SetEntityMotionPacket.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84DAF5862F34650500D67310 /* SetEntityMotionPacket.hpp */; };
 		84DAF5992F34650500D67310 /* TileEventPacket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84DAF5872F34650500D67310 /* TileEventPacket.cpp */; };
 		84DAF59A2F34650500D67310 /* TileEventPacket.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84DAF5882F34650500D67310 /* TileEventPacket.hpp */; };
+		84DD28C52FF369C8002FA75C /* Rot2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84DD28C32FF369C8002FA75C /* Rot2.cpp */; };
+		84DD28C62FF369C8002FA75C /* Rot2.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84DD28C42FF369C8002FA75C /* Rot2.hpp */; };
 		84DEAB542F8CBB0D00BD9701 /* ByteBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84DEAB522F8CBB0D00BD9701 /* ByteBuffer.cpp */; };
 		84DEAB552F8CBB0D00BD9701 /* ByteBuffer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84DEAB532F8CBB0D00BD9701 /* ByteBuffer.hpp */; };
 		84DED1982F3095B8004001C5 /* CraftingScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84DED1962F3095B8004001C5 /* CraftingScreen.cpp */; };
@@ -2785,6 +2787,8 @@
 		84DAF5862F34650500D67310 /* SetEntityMotionPacket.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SetEntityMotionPacket.hpp; sourceTree = "<group>"; };
 		84DAF5872F34650500D67310 /* TileEventPacket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TileEventPacket.cpp; sourceTree = "<group>"; };
 		84DAF5882F34650500D67310 /* TileEventPacket.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TileEventPacket.hpp; sourceTree = "<group>"; };
+		84DD28C32FF369C8002FA75C /* Rot2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Rot2.cpp; sourceTree = "<group>"; };
+		84DD28C42FF369C8002FA75C /* Rot2.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Rot2.hpp; sourceTree = "<group>"; };
 		84DEAB522F8CBB0D00BD9701 /* ByteBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ByteBuffer.cpp; path = utility/ByteBuffer.cpp; sourceTree = "<group>"; };
 		84DEAB532F8CBB0D00BD9701 /* ByteBuffer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ByteBuffer.hpp; path = utility/ByteBuffer.hpp; sourceTree = "<group>"; };
 		84DED1962F3095B8004001C5 /* CraftingScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CraftingScreen.cpp; sourceTree = "<group>"; };
@@ -4487,6 +4491,8 @@
 				840DD6DC2AC810620006A435 /* AABB.hpp */,
 				840DD6DD2AC810620006A435 /* HitResult.cpp */,
 				840DD6DE2AC810620006A435 /* HitResult.hpp */,
+				84DD28C32FF369C8002FA75C /* Rot2.cpp */,
+				84DD28C42FF369C8002FA75C /* Rot2.hpp */,
 				8477B3B82C4DC42E004E1AC5 /* Vec2.cpp */,
 				8477B3B92C4DC42E004E1AC5 /* Vec2.hpp */,
 				840DD6DF2AC810620006A435 /* Vec3.cpp */,
@@ -6427,6 +6433,7 @@
 				84B1E03C2E04FD7900ED000A /* Skeleton.hpp in Headers */,
 				84BF637A2AF186C8008A9995 /* FallingTile.hpp in Headers */,
 				84DAF5742F3464B400D67310 /* ContainerType.hpp in Headers */,
+				84DD28C62FF369C8002FA75C /* Rot2.hpp in Headers */,
 				84E8FA192FEF616400D0669F /* DispenserTileEntity.hpp in Headers */,
 				84E1C9D42E7FDC26007D2F5D /* FenceTile.hpp in Headers */,
 				84BF637B2AF186C8008A9995 /* ItemEntity.hpp in Headers */,
@@ -7855,6 +7862,7 @@
 				84AA8B8A2B32F3B5003F5B82 /* Monster.cpp in Sources */,
 				840823DA2F4FF4B80097F6A5 /* CoalItem.cpp in Sources */,
 				84E7BF242F286A08002D3936 /* ResultSlot.cpp in Sources */,
+				84DD28C52FF369C8002FA75C /* Rot2.cpp in Sources */,
 				84E7BF202F286A08002D3936 /* InventoryMenu.cpp in Sources */,
 				84E2A3FC2FBAAD7D0026780B /* Facing.cpp in Sources */,
 				84AA8B8C2B32F3B5003F5B82 /* PathfinderMob.cpp in Sources */,
