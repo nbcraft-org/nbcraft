@@ -85,10 +85,10 @@ static void CopyCallback(const std::string& sourcePath, const std::string& desti
 	}
 }
 
-File::Error File::copy(const std::string& sourcePath, const std::string& destinationPath)
+File::Result File::copy(const std::string& sourcePath, const std::string& destinationPath)
 {
 	if (sourcePath.empty() || destinationPath.empty())
-		return FILEERROR_BAD_PATH;
+		return RESULT_BAD_PATH;
 	
 	// make sure paths are ok
 	std::string cleanSourcePath = cleanPath(sourcePath);
@@ -100,7 +100,7 @@ File::Error File::copy(const std::string& sourcePath, const std::string& destina
 
 	forEachIn(sourcePath, true, std::bind(CopyCallback, sourcePath, destinationPath, std::placeholders::_1, std::placeholders::_2));
 
-	return FILEERROR_OK;
+	return RESULT_OK;
 }
 
 bool File::isDirectory(const struct stat& fileStat)
@@ -163,10 +163,10 @@ long File::getRemainingSize(FILE* stream)
 	return fileSize - currentPos;
 }
 
-File::Error File::forEachIn(const std::string& directory, bool recurseDirectories, const std::function<void(const std::string& path, const struct stat& fileStat)>& callback)
+File::Result File::forEachIn(const std::string& directory, bool recurseDirectories, const std::function<void(const std::string& path, const struct stat& fileStat)>& callback)
 {
 	if (directory.empty())
-		return FILEERROR_BAD_PATH;
+		return RESULT_BAD_PATH;
 
 	std::string cleanDirectory = cleanPath(directory);
 	if (cleanDirectory[cleanDirectory.length() - 1] != '/')
@@ -174,7 +174,7 @@ File::Error File::forEachIn(const std::string& directory, bool recurseDirectorie
 
 	DIR* dir = opendir(cleanDirectory.c_str());
 	if (!dir)
-		return FILEERROR_NOT_FOUND;
+		return RESULT_NOT_FOUND;
 
 	while (dirent* file = readdir(dir))
 	{
@@ -198,5 +198,5 @@ File::Error File::forEachIn(const std::string& directory, bool recurseDirectorie
 	}
 
 	closedir(dir);
-	return FILEERROR_OK;
+	return RESULT_OK;
 }

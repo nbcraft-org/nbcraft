@@ -8,11 +8,11 @@ struct stat;
 class File
 {
 public:
-	enum Error
+	enum Result
 	{
-		FILEERROR_OK,
-		FILEERROR_NOT_FOUND,
-		FILEERROR_BAD_PATH
+		RESULT_OK,
+		RESULT_NOT_FOUND,
+		RESULT_BAD_PATH
 	};
 
 public:
@@ -25,10 +25,10 @@ public:
 	static bool createFolder(const std::string& path);
 	static bool deleteEmptyDirectory(const std::string& path);
 
-	static Error copy(const std::string& sourcePath, const std::string& destinationPath);
+	static Result copy(const std::string& sourcePath, const std::string& destinationPath);
 
 	static uint64_t getSize(const std::string& path);
 	static long getRemainingSize(FILE* stream);
 
-	static Error forEachIn(const std::string& directory, bool recurseDirectories, const std::function<void(const std::string& path, const struct stat& fileStat)>& callback);
+	static Result forEachIn(const std::string& directory, bool recurseDirectories, const std::function<void(const std::string& path, const struct stat& fileStat)>& callback);
 };
