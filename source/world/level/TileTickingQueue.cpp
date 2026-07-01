@@ -10,17 +10,17 @@ void TileTickingQueue::_tick(TileSource& region, const TilePos& pos, TileID tile
 
 	TileID expectedTileID = region.getTile(pos);
 	if (tileID == expectedTileID)
-		Tile::tiles[tileID]->tick(&region, pos, &m_random);
+		Tile::tiles[tileID]->tick(region, pos, &m_random);
 }
 
-void TileTickingQueue::add(TileSource* region, const TilePos& pos, TileID tileID, int tickDelay)
+void TileTickingQueue::add(TileSource& region, const TilePos& pos, TileID tileID, int tickDelay)
 {
-	if (!region->hasChunksAt(pos - 8, pos + 8))
+	if (!region.hasChunksAt(pos - 8, pos + 8))
 		return;
 
 	if (tickDelay < 0)
 	{
-		_tick(*region, pos, tileID);
+		_tick(region, pos, tileID);
 	}
 	else
 	{

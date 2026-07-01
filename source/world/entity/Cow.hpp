@@ -25,5 +25,5 @@ public:
 	void readAdditionalSaveData(const CompoundTag& tag) override;
 	bool interact(Player* player) override;
 
-	Entity* getBreedOffspring(Animal* pOther) { return new Cow(*m_tileSource); }
+	Entity* getBreedOffspring(Animal* pOther) { return new Cow(*m_pTileSource); }
 };

@@ -75,21 +75,21 @@ int StoneSlabTile::getTexture(Facing::Name face, TileData data) const
 	}
 }
 
-void StoneSlabTile::onPlace(TileSource* source, const TilePos& pos)
+void StoneSlabTile::onPlace(TileSource& source, const TilePos& pos)
 {
-	TileID tileBelow = source->getTile(pos.below());
-	int tileHereData = source->getData(pos);
+	TileID tileBelow = source.getTile(pos.below());
+	int tileHereData = source.getData(pos);
 
 	// If there's a stone slab below us, set us to air and combine us into the lower slab block
 
-	if (tileHereData == source->getData(pos.below()) && tileBelow == Tile::stoneSlabHalf->m_ID)
+	if (tileHereData == source.getData(pos.below()) && tileBelow == Tile::stoneSlabHalf->m_ID)
 	{
-		source->setTile(pos, TILE_AIR);
-		source->setTileAndData(pos.below(), FullTile(Tile::stoneSlab->m_ID, tileHereData));
+		source.setTile(pos, TILE_AIR);
+		source.setTileAndData(pos.below(), FullTile(Tile::stoneSlab->m_ID, tileHereData));
 	}
 }
 
-bool StoneSlabTile::shouldRenderFace(TileSource* source, const TilePos& pos, Facing::Name face) const
+bool StoneSlabTile::shouldRenderFace(TileSource& source, const TilePos& pos, Facing::Name face) const
 {
 	if (this != Tile::stoneSlabHalf)
 		// @BUG: Missing return? In JE this is true too
@@ -104,5 +104,5 @@ bool StoneSlabTile::shouldRenderFace(TileSource* source, const TilePos& pos, Fac
 	if (face == Facing::DOWN)
 		return true;
 
-	return source->getTile(pos) != m_ID;
+	return source.getTile(pos) != m_ID;
 }

@@ -73,12 +73,12 @@ void FallingTile::tick()
 
 	// if we're inside one of our own tiles, clear it.
 	// Assumes we started there
-	if (m_tileSource->getTile(tilePos) == getTile())
-		m_tileSource->setTile(tilePos, TILE_AIR);
+	if (m_pTileSource->getTile(tilePos) == getTile())
+		m_pTileSource->setTile(tilePos, TILE_AIR);
 
 	if (!m_bOnGround)
 	{
-		if (m_time > 100 && !m_tileSource->getLevelConst().m_bIsClientSide)
+		if (m_time > 100 && !m_pTileSource->getLevelConst().m_bIsClientSide)
 		{
 			spawnAtLocation(getTile(), 1);
 			remove();
@@ -91,7 +91,7 @@ void FallingTile::tick()
 	m_vel.z *= 0.7f;
 	m_vel.y *= -0.5f;
 	remove();
-	if (!Tile::tiles[getTile()]->tryToPlace(m_tileSource, tilePos, 0))
+	if (!Tile::tiles[getTile()]->tryToPlace(getTileSource(), tilePos, 0))
 		spawnAtLocation(getTile(), 1);
 }
 

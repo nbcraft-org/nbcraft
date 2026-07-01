@@ -38,9 +38,9 @@ LeafTile::~LeafTile()
 		delete[] m_checkBuffer;
 }
 
-void LeafTile::_tickDecayOld(TileSource* source, const TilePos& pos)
+void LeafTile::_tickDecayOld(TileSource& source, const TilePos& pos)
 {
-	TileData data = source->getData(pos);
+	TileData data = source.getData(pos);
 	if ((data & C_UPDATE_LEAF_BIT) == 0)
 		return;
 	
@@ -49,7 +49,7 @@ void LeafTile::_tickDecayOld(TileSource* source, const TilePos& pos)
 	if (!m_checkBuffer)
 		m_checkBuffer = new int[C_RANGE * C_RANGE * C_RANGE];
 
-	if (source->hasChunksAt(pos - (C_REQUIRED_WOOD_RANGE + 1), pos + (C_REQUIRED_WOOD_RANGE + 1)))
+	if (source.hasChunksAt(pos - (C_REQUIRED_WOOD_RANGE + 1), pos + (C_REQUIRED_WOOD_RANGE + 1)))
 	{
 		TilePos curr(pos);
 		// @TODO: get rid of magic values
@@ -63,7 +63,7 @@ void LeafTile::_tickDecayOld(TileSource* source, const TilePos& pos)
 				{
 					curr.z = pos.z - C_REQUIRED_WOOD_RANGE;
 
-					TileID tile = source->getTile(curr);
+					TileID tile = source.getTile(curr);
 					if (tile == Tile::treeTrunk->m_ID)
 						m_checkBuffer[0x18C + i + j + k] = 0;
 					else if (tile == Tile::leaves->m_ID)
@@ -113,13 +113,13 @@ void LeafTile::_tickDecayOld(TileSource* source, const TilePos& pos)
 		if (m_checkBuffer[0x4210] < 0)
 			die(source, pos);
 		else
-			source->setTileAndDataNoUpdate(pos, FullTile(m_ID, data & ~C_UPDATE_LEAF_BIT)); // equates to -5
+			source.setTileAndDataNoUpdate(pos, FullTile(m_ID, data & ~C_UPDATE_LEAF_BIT)); // equates to -5
 	}
 }
 
-void LeafTile::_tickDecay(TileSource* source, const TilePos& pos)
+void LeafTile::_tickDecay(TileSource& source, const TilePos& pos)
 {
-	TileData data = source->getData(pos);
+	TileData data = source.getData(pos);
 	if ((data & C_UPDATE_LEAF_BIT) == 0)
 		return;
 
@@ -130,7 +130,7 @@ void LeafTile::_tickDecay(TileSource* source, const TilePos& pos)
 	if (!m_checkBuffer)
 		m_checkBuffer = new int[C_RANGE * C_RANGE * C_RANGE];
 
-	if (source->hasChunksAt(pos - (C_REQUIRED_WOOD_RANGE + 1), pos + (C_REQUIRED_WOOD_RANGE + 1)))
+	if (source.hasChunksAt(pos - (C_REQUIRED_WOOD_RANGE + 1), pos + (C_REQUIRED_WOOD_RANGE + 1)))
 	{
 		TilePos curr(pos);
 		for (int i2 = -C_REQUIRED_WOOD_RANGE; i2 <= C_REQUIRED_WOOD_RANGE; i2++)
@@ -142,7 +142,7 @@ void LeafTile::_tickDecay(TileSource* source, const TilePos& pos)
 				for (int k = -C_REQUIRED_WOOD_RANGE; k <= C_REQUIRED_WOOD_RANGE; k++)
 				{
 					curr.z = pos.z + k;
-					TileID tile = source->getTile(curr);
+					TileID tile = source.getTile(curr);
 					m_checkBuffer[(i2 + k1) * j1 + (j + k1) * C_RANGE + k + k1] = tile == Tile::treeTrunk->m_ID ? 0 : tile == Tile::leaves->m_ID ? -2 : -1;
 				}
 			}
@@ -185,16 +185,10 @@ void LeafTile::_tickDecay(TileSource* source, const TilePos& pos)
 	if (m_checkBuffer[k1 * j1 + k1 * C_RANGE + k1] < 0)
 		die(source, pos);
 	else
-		source->setTileAndDataNoUpdate(pos, FullTile(m_ID, data & ~C_UPDATE_LEAF_BIT));
+		source.setTileAndDataNoUpdate(pos, FullTile(m_ID, data & ~C_UPDATE_LEAF_BIT));
 }
 
-void LeafTile::die(TileSource* source, const TilePos& pos)
-{
-	spawnResources(source, pos, source->getData(pos));
-	source->setTile(pos, TILE_AIR);
-}
-
-int LeafTile::getColor(TileSource* source, const TilePos& pos) const
+int LeafTile::getColor(TileSource& source, const TilePos& pos) const
 {
 	if (GetPatchManager()->IsGrassTinted())
 	{
@@ -230,13 +224,13 @@ bool LeafTile::isSolidRender() const
 	return !m_bTransparent;
 }
 
-void LeafTile::stepOn(TileSource* source, const TilePos& pos, Entity* entity)
+void LeafTile::stepOn(TileSource& source, const TilePos& pos, Entity* entity)
 {
 }
 
-void LeafTile::onRemove(TileSource* source, const TilePos& pos)
+void LeafTile::onRemove(TileSource& source, const TilePos& pos)
 {
-	if (!source->hasChunksAt(pos - 2, pos + 2))
+	if (!source.hasChunksAt(pos - 2, pos + 2))
 		return;
 
 	TilePos o(-1, -1, -1);
@@ -246,18 +240,18 @@ void LeafTile::onRemove(TileSource* source, const TilePos& pos)
 		{
 			for (o.z = -1; o.z < 2; o.z++)
 			{
-				TileID tile = source->getTile(pos + o);
+				TileID tile = source.getTile(pos + o);
 				if (tile != Tile::leaves->m_ID) continue;
 
-				source->setTileAndDataNoUpdate(pos + o, FullTile(m_ID, source->getData(pos + o) | C_UPDATE_LEAF_BIT));
+				source.setTileAndDataNoUpdate(pos + o, FullTile(m_ID, source.getData(pos + o) | C_UPDATE_LEAF_BIT));
 			}
 		}
 	}
 }
 
-void LeafTile::tick(TileSource* source, const TilePos& pos, Random* random)
+void LeafTile::tick(TileSource& source, const TilePos& pos, Random* random)
 {
-	if (source->getLevelConst().m_bIsClientSide)
+	if (source.getLevelConst().m_bIsClientSide)
 		return;
 
 	_tickDecay(source, pos);
@@ -271,4 +265,10 @@ int LeafTile::getResource(TileData data, Random* random) const
 int LeafTile::getSpawnResourcesAuxValue(int x) const
 {
 	return x & 3;
+}
+
+void LeafTile::die(TileSource& source, const TilePos& pos)
+{
+	spawnResources(source, pos, source.getData(pos));
+	source.setTile(pos, TILE_AIR);
 }

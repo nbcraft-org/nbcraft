@@ -20,20 +20,21 @@ public:
 	~LeafTile();
 
 private:
-	void _tickDecayOld(TileSource* level, const TilePos& pos); // circa 0.1.0
-	void _tickDecay(TileSource* level, const TilePos& pos); /// circa b1.7.3
+	void _tickDecayOld(TileSource& source, const TilePos& pos); // circa 0.1.0
+	void _tickDecay(TileSource& source, const TilePos& pos); /// circa b1.7.3
 
 public:
-	int getColor(TileSource*, const TilePos& pos) const override;
+	int getColor(TileSource&, const TilePos& pos) const override;
+	int getColor(Facing::Name face, TileData data) const override;
 	int getTexture(Facing::Name face, TileData data) const override;
 	bool isSolidRender() const override;
-	void onRemove(TileSource*, const TilePos& pos) override;
-	void stepOn(TileSource*, const TilePos& pos, Entity*) override;
-	void tick(TileSource*, const TilePos& pos, Random*) override;
+	void onRemove(TileSource&, const TilePos& pos) override;
+	void stepOn(TileSource&, const TilePos& pos, Entity*) override;
+	void tick(TileSource&, const TilePos& pos, Random*) override;
 	int getResource(TileData data, Random* random) const override;
 	int getSpawnResourcesAuxValue(int x) const override;
 
-	void die(TileSource*, const TilePos& pos);
+	void die(TileSource&, const TilePos& pos);
 	
 	static bool isDeepLeafTile(TileSource&, const TilePos&);
 

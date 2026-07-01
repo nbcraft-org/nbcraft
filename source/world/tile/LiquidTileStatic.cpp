@@ -17,26 +17,26 @@ LiquidTileStatic::LiquidTileStatic(int id, Material* pMtl) : LiquidTile(id, pMtl
 		setTicking(true);
 }
 
-bool LiquidTileStatic::isFlammable(TileSource* source, const TilePos& pos)
+bool LiquidTileStatic::isFlammable(TileSource& source, const TilePos& pos)
 {
-	return source->getMaterial(pos)->isFlammable();
+	return source.getMaterial(pos)->isFlammable();
 }
 
-void LiquidTileStatic::neighborChanged(TileSource* source, const TilePos& pos, TileID tile)
+void LiquidTileStatic::neighborChanged(TileSource& source, const TilePos& pos, TileID tile)
 {
 	updateLiquid(source, pos);
-	if (source->getTile(pos) == m_ID)
+	if (source.getTile(pos) == m_ID)
 		setDynamic(source, pos);
 }
 
-void LiquidTileStatic::setDynamic(TileSource* source, const TilePos& pos)
+void LiquidTileStatic::setDynamic(TileSource& source, const TilePos& pos)
 {
-	source->setTileAndDataNoUpdate(pos, FullTile(m_ID - 1, source->getData(pos)));
+	source.setTileAndDataNoUpdate(pos, FullTile(m_ID - 1, source.getData(pos)));
 	//level->setTilesDirty(pos, pos);
-	source->getTickQueue(pos)->add(source, pos, m_ID - 1, getTickDelay());
+	source.getTickQueue(pos)->add(source, pos, m_ID - 1, getTickDelay());
 }
 
-void LiquidTileStatic::tick(TileSource* source, const TilePos& pos, Random* random)
+void LiquidTileStatic::tick(TileSource& source, const TilePos& pos, Random* random)
 {
 	if (m_pMaterial != Material::lava)
 		return;
@@ -48,7 +48,7 @@ void LiquidTileStatic::tick(TileSource* source, const TilePos& pos, Random* rand
 		tp.x += random->genrand_int32() % 3 - 1;
 		tp.z += random->genrand_int32() % 3 - 1;
 
-		TileID tile = source->getTile(tp.above());
+		TileID tile = source.getTile(tp.above());
 		if (tile)
 		{
 			if (tiles[tile]->m_pMaterial->blocksMotion())
@@ -62,7 +62,7 @@ void LiquidTileStatic::tick(TileSource* source, const TilePos& pos, Random* rand
 			isFlammable(source, tp) ||
 			isFlammable(source, TilePos(tp.x, tp.y + 2, tp.z)))
 		{
-			source->setTile(tp.above(), Tile::fire->m_ID);
+			source.setTile(tp.above(), Tile::fire->m_ID);
 			return;
 		}
 

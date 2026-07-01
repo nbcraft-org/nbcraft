@@ -26,7 +26,7 @@ void PigZombie::tick()
 
 bool PigZombie::canSpawn()
 {
-	return m_pLevel->m_difficulty > 0 && m_tileSource->isUnobstructedByEntities(m_hitbox, this) && m_tileSource->fetchAABBs(m_hitbox).empty() && !m_tileSource->containsAnyLiquid(m_hitbox);
+	return m_pLevel->m_difficulty > 0 && m_pTileSource->isUnobstructedByEntities(m_hitbox, this) && m_pTileSource->fetchAABBs(m_hitbox).empty() && !m_pTileSource->containsAnyLiquid(m_hitbox);
 }
 
 void PigZombie::addAdditionalSaveData(CompoundTag& tag) const
@@ -58,7 +58,7 @@ bool PigZombie::hurt(Entity* pCulprit, int damage)
 		AABB bb = m_hitbox;
 		// @PARITY-PE: 16x16x16 on PE
 		bb.grow(32.0f, 32.0f, 32.0f);
-		Entity::Vector entities = m_tileSource->getEntities(this, bb);
+		Entity::Vector entities = m_pTileSource->getEntities(this, bb);
 
 		for (size_t i = 0; i < entities.size(); i++)
 		{

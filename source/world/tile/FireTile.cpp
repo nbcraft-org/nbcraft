@@ -55,7 +55,7 @@ bool FireTile::isCubeShaped() const
 	return false;
 }
 
-AABB* FireTile::getAABB(TileSource* source, const TilePos& pos)
+AABB* FireTile::getAABB(TileSource& source, const TilePos& pos)
 {
 	return nullptr;
 }
@@ -70,13 +70,13 @@ int FireTile::getTickDelay() const
 	return 10;
 }
 
-void FireTile::animateTick(TileSource* source, const TilePos& pos, Random* random)
+void FireTile::animateTick(TileSource& source, const TilePos& pos, Random* random)
 {
-	Level& level = source->getLevel();
+	Level& level = source.getLevel();
 
 	// @TODO: Mark Tile::fire as FireTile* instead of Tile*
 	FireTile* pFireTile = (FireTile*)Tile::fire;
-	if (source->isSolidBlockingTile(pos.below()) || pFireTile->canBurn(source, pos.below()))
+	if (source.isSolidBlockingTile(pos.below()) || pFireTile->canBurn(source, pos.below()))
 	{
 		for (int i = 0; i < 3; i++)
 		{
@@ -98,46 +98,46 @@ void FireTile::animateTick(TileSource* source, const TilePos& pos, Random* rando
 		level.addParticle("largesmoke", Vec3(float(pos.x) + random->nextFloat(), float(pos.y + 1) - random->nextFloat() * 0.1f, float(pos.z) + random->nextFloat()));
 }
 
-void FireTile::checkBurn(TileSource* source, const TilePos& pos, int thing, Random* random)
+void FireTile::checkBurn(TileSource& source, const TilePos& pos, int thing, Random* random)
 {
-	if (m_burnOdds[source->getTile(pos)] > int(random->nextInt(thing)))
+	if (m_burnOdds[source.getTile(pos)] > int(random->nextInt(thing)))
 	{
-		TileID tid = source->getTile(pos);
+		TileID tid = source.getTile(pos);
 
 		TileID newTile = m_ID;
 		if (random->nextInt(2))
 			newTile = TILE_AIR;
 
-		source->setTile(pos, newTile);
+		source.setTile(pos, newTile);
 		if (tid == Tile::tnt->m_ID)
 			Tile::tnt->destroy(source, pos, 0);
 	}
 }
 
-int FireTile::getFireOdds(TileSource* source, const TilePos& pos)
+int FireTile::getFireOdds(TileSource& source, const TilePos& pos)
 {
-	if (!source->isEmptyTile(pos))
+	if (!source.isEmptyTile(pos))
 		return 0;
 
-	int odds = m_igniteOdds[source->getTile(pos.east())], o;
+	int odds = m_igniteOdds[source.getTile(pos.east())], o;
 	if (odds < 0)
 		odds = 0;
 
-	o = m_igniteOdds[source->getTile(pos.west())];
+	o = m_igniteOdds[source.getTile(pos.west())];
 	if (odds < o) odds = o;
-	o = m_igniteOdds[source->getTile(pos.below())];
+	o = m_igniteOdds[source.getTile(pos.below())];
 	if (odds < o) odds = o;
-	o = m_igniteOdds[source->getTile(pos.above())];
+	o = m_igniteOdds[source.getTile(pos.above())];
 	if (odds < o) odds = o;
-	o = m_igniteOdds[source->getTile(pos.north())];
+	o = m_igniteOdds[source.getTile(pos.north())];
 	if (odds < o) odds = o;
-	o = m_igniteOdds[source->getTile(pos.south())];
+	o = m_igniteOdds[source.getTile(pos.south())];
 	if (odds < o) odds = o;
 
 	return odds;
 }
 
-bool FireTile::isValidFireLocation(TileSource* source, const TilePos& pos) const
+bool FireTile::isValidFireLocation(TileSource& source, const TilePos& pos) const
 {
 	if (canBurn(source, pos.east())) return true;
 	if (canBurn(source, pos.west())) return true;
@@ -153,56 +153,56 @@ bool FireTile::mayPick() const
 	return false;
 }
 
-bool FireTile::mayPlace(TileSource* source, const TilePos& pos) const
+bool FireTile::mayPlace(TileSource& source, const TilePos& pos) const
 {
 	// @NOTE: This is useless as you usually don't 'place' fire.
-	if (source->isSolidBlockingTile(pos.below()))
+	if (source.isSolidBlockingTile(pos.below()))
 		return true;
 
 	return isValidFireLocation(source, pos);
 }
 
-void FireTile::neighborChanged(TileSource* source, const TilePos& pos, TileID tile)
+void FireTile::neighborChanged(TileSource& source, const TilePos& pos, TileID tile)
 {
-	if (!source->isSolidBlockingTile(pos.below()) && !isValidFireLocation(source, pos))
-		source->setTile(pos, TILE_AIR);
+	if (!source.isSolidBlockingTile(pos.below()) && !isValidFireLocation(source, pos))
+		source.setTile(pos, TILE_AIR);
 }
 
-void FireTile::onPlace(TileSource* source, const TilePos& pos)
+void FireTile::onPlace(TileSource& source, const TilePos& pos)
 {
 	// @NOTE: Unused return result
-	source->getTile(pos.below());
+	source.getTile(pos.below());
 
-	if (!source->isSolidBlockingTile(pos.below()) && !isValidFireLocation(source, pos))
+	if (!source.isSolidBlockingTile(pos.below()) && !isValidFireLocation(source, pos))
 	{
-		source->setTile(pos, TILE_AIR);
+		source.setTile(pos, TILE_AIR);
 		return;
 	}
 
-	source->getTickQueue(pos)->add(source, pos, m_ID, getTickDelay());
+	source.getTickQueue(pos)->add(source, pos, m_ID, getTickDelay());
 }
 
-void FireTile::tick(TileSource* source, const TilePos& pos, Random* random)
+void FireTile::tick(TileSource& source, const TilePos& pos, Random* random)
 {
-	if (source->getTile(pos.below()) == Tile::netherrack->m_ID)
+	if (source.getTile(pos.below()) == Tile::netherrack->m_ID)
 	{
-		source->getTickQueue(pos)->add(source, pos, m_ID, getTickDelay());
+		source.getTickQueue(pos)->add(source, pos, m_ID, getTickDelay());
 		return;
 	}
 	
-	TileData data = source->getData(pos);
+	TileData data = source.getData(pos);
 	if (data <= 14)
 	{
-		source->setTileAndData(pos, FullTile(this, data + 1));
-		source->getTickQueue(pos)->add(source, pos, m_ID, getTickDelay());
+		source.setTileAndData(pos, FullTile(this, data + 1));
+		source.getTickQueue(pos)->add(source, pos, m_ID, getTickDelay());
 	}
 
 	if (isValidFireLocation(source, pos))
 	{
-		if (m_igniteOdds[source->getTile(pos.below())] <= 0 && data == 15 && !random->nextInt(4))
+		if (m_igniteOdds[source.getTile(pos.below())] <= 0 && data == 15 && !random->nextInt(4))
 		{
 			// just go out
-			source->setTile(pos, TILE_AIR);
+			source.setTile(pos, TILE_AIR);
 			return;
 		}
 
@@ -229,7 +229,7 @@ void FireTile::tick(TileSource* source, const TilePos& pos, Random* random)
 						int thing2 = pos.y + 1 >= tp.y ? 100 : thing;
 						int odds = getFireOdds(source, tp);
 						if (odds > 0 && odds >= int(random->nextInt(thing2)))
-							source->setTile(tp, m_ID);
+							source.setTile(tp, m_ID);
 					}
 				}
 			}
@@ -244,13 +244,13 @@ void FireTile::tick(TileSource* source, const TilePos& pos, Random* random)
 			checkBurn(source, pos.south(), 1, random);
 		}
 	}
-	else if (!source->isSolidBlockingTile(pos.below()) || data > 3)
+	else if (!source.isSolidBlockingTile(pos.below()) || data > 3)
 	{
-		source->setTile(pos, TILE_AIR);
+		source.setTile(pos, TILE_AIR);
 	}
 }
 
-bool FireTile::canBurn(TileSource* source, const TilePos& pos) const
+bool FireTile::canBurn(TileSource& source, const TilePos& pos) const
 {
-	return m_igniteOdds[source->getTile(pos)] > 0;
+	return m_igniteOdds[source.getTile(pos)] > 0;
 }

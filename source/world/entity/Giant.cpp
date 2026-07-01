@@ -15,5 +15,5 @@ Giant::Giant(TileSource& source) : Monster(source)
 
 float Giant::getWalkTargetValue(const TilePos& pos) const
 {
-	return m_tileSource->getBrightness(pos) - 0.5f;
+	return m_pTileSource->getBrightness(pos) - 0.5f;
 }

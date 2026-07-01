@@ -52,7 +52,7 @@ protected:
 	float m_brightnessRamp[Brightness::MAX + 1];
 	DimensionId m_dimensionId;
 	ChunkSource* m_chunkSource;
-	TileSource* m_tileSource;
+	TileSource* m_pTileSource;
 	EntityIdMap_t m_entityIdMap;
 
 public:
@@ -92,7 +92,7 @@ public:
 	bool hasCeiling() const { return m_hasCeiling; }
 	float getBrightnessRamp(Brightness_t brightness) const { return m_brightnessRamp[brightness]; }
 	ChunkSource* getChunkSource() { return m_chunkSource; }
-	TileSource* getTileSource() { return m_tileSource; }
+	TileSource* getTileSource() { return m_pTileSource; }
 
 protected:
 	ChunkSource* _getGenerator(GeneratorType type);

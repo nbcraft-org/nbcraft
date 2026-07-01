@@ -34,9 +34,9 @@ bool LadderTile::isSolidRender() const
 	return false;
 }
 
-AABB* LadderTile::getAABB(TileSource* source, const TilePos& pos)
+AABB* LadderTile::getAABB(TileSource& source, const TilePos& pos)
 {
-	TileData data = source->getData(pos);
+	TileData data = source.getData(pos);
 	switch (data)
 	{
 		case 2:
@@ -56,9 +56,9 @@ AABB* LadderTile::getAABB(TileSource* source, const TilePos& pos)
 	return Tile::getAABB(source, pos);
 }
 
-AABB LadderTile::getTileAABB(TileSource* source, const TilePos& pos)
+AABB LadderTile::getTileAABB(TileSource& source, const TilePos& pos)
 {
-	TileData data = source->getData(pos);
+	TileData data = source.getData(pos);
 	switch (data)
 	{
 		case 2:
@@ -78,35 +78,35 @@ AABB LadderTile::getTileAABB(TileSource* source, const TilePos& pos)
 	return Tile::getTileAABB(source, pos);
 }
 
-void LadderTile::setPlacedOnFace(TileSource* source, const TilePos& pos, Facing::Name face)
+void LadderTile::setPlacedOnFace(TileSource& source, const TilePos& pos, Facing::Name face)
 {
-	TileData data = source->getData(pos);
+	TileData data = source.getData(pos);
 
-	if ((data == 0 || face == Facing::NORTH) && source->isSolidBlockingTile(pos.south())) data = 2;
-	if ((data == 0 || face == Facing::SOUTH) && source->isSolidBlockingTile(pos.north())) data = 3;
-	if ((data == 0 || face == Facing::WEST) && source->isSolidBlockingTile(pos.east())) data = 4;
-	if ((data == 0 || face == Facing::EAST) && source->isSolidBlockingTile(pos.west())) data = 5;
+	if ((data == 0 || face == Facing::NORTH) && source.isSolidBlockingTile(pos.south())) data = 2;
+	if ((data == 0 || face == Facing::SOUTH) && source.isSolidBlockingTile(pos.north())) data = 3;
+	if ((data == 0 || face == Facing::WEST) && source.isSolidBlockingTile(pos.east())) data = 4;
+	if ((data == 0 || face == Facing::EAST) && source.isSolidBlockingTile(pos.west())) data = 5;
 
-	source->setTileAndData(pos, FullTile(this, data));
-	assert(source->getData(pos) == data);
+	source.setTileAndData(pos, FullTile(this, data));
+	assert(source.getData(pos) == data);
 }
 
-void LadderTile::neighborChanged(TileSource* source, const TilePos& pos, TileID tile)
+void LadderTile::neighborChanged(TileSource& source, const TilePos& pos, TileID tile)
 {
-	TileData data = source->getData(pos);
+	TileData data = source.getData(pos);
 	switch (data)
 	{
 		case 2:
-			if (source->isSolidBlockingTile(pos.south())) return;
+			if (source.isSolidBlockingTile(pos.south())) return;
 			break;
 		case 3:
-			if (source->isSolidBlockingTile(pos.north())) return;
+			if (source.isSolidBlockingTile(pos.north())) return;
 			break;
 		case 4:
-			if (source->isSolidBlockingTile(pos.east())) return;
+			if (source.isSolidBlockingTile(pos.east())) return;
 			break;
 		case 5:
-			if (source->isSolidBlockingTile(pos.west())) return;
+			if (source.isSolidBlockingTile(pos.west())) return;
 			break;
 		case 0:
 			// hasn't decided on anything right now?
@@ -118,14 +118,14 @@ void LadderTile::neighborChanged(TileSource* source, const TilePos& pos, TileID 
 	}
 
 	spawnResources(source, pos, data);
-	source->setTile(pos, TILE_AIR);
+	source.setTile(pos, TILE_AIR);
 }
 
-bool LadderTile::mayPlace(TileSource* source, const TilePos& pos) const
+bool LadderTile::mayPlace(TileSource& source, const TilePos& pos) const
 {
 	return
-		source->isSolidBlockingTile(pos.west()) ||
-		source->isSolidBlockingTile(pos.east()) ||
-		source->isSolidBlockingTile(pos.north()) ||
-		source->isSolidBlockingTile(pos.south());
+		source.isSolidBlockingTile(pos.west()) ||
+		source.isSolidBlockingTile(pos.east()) ||
+		source.isSolidBlockingTile(pos.north()) ||
+		source.isSolidBlockingTile(pos.south());
 }

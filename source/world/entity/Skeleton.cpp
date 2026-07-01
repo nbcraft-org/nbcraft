@@ -10,11 +10,11 @@ Skeleton::Skeleton(TileSource& source) : Monster(source)
 
 void Skeleton::aiStep()
 {
-	if (m_tileSource->getDimensionConst().isDay())
+	if (m_pTileSource->getDimensionConst().isDay())
 	{
 		float brightness = getBrightness(1.0f);
 		if (brightness > 0.5f
-			&& m_tileSource->canSeeSky(this->m_pos)
+			&& m_pTileSource->canSeeSky(this->m_pos)
 			&& m_random.nextFloat() * 30.0f < (brightness - 0.4f) * 2.0f)
 		{
 			this->m_fireTicks = 300;

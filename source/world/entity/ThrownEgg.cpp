@@ -39,7 +39,7 @@ ThrownEgg::ThrownEgg(TileSource& source, const Vec3& pos, bool isPlayerOwned)
 }
 
 ThrownEgg::ThrownEgg(Mob& mob)
-    : Entity(*mob.m_tileSource) 
+    : Entity(mob.getTileSource()) 
 {
 	_init();
 
@@ -111,7 +111,7 @@ void ThrownEgg::tick()
 
     if (m_bInGround)
     {
-        if (m_tileSource->getTile(m_tilePos) == m_lastTile)
+        if (m_pTileSource->getTile(m_tilePos) == m_lastTile)
         {
             ++m_life;
             if (m_life == 1200)
@@ -133,7 +133,7 @@ void ThrownEgg::tick()
         ++m_flightTime;
     }
     Vec3 future_pos = m_pos + m_vel;
-    HitResult hit_result = m_tileSource->clip(m_pos, future_pos);
+    HitResult hit_result = m_pTileSource->clip(m_pos, future_pos);
     if (hit_result.isHit())
     {
         future_pos = hit_result.m_hitPos;
@@ -142,7 +142,7 @@ void ThrownEgg::tick()
     Entity* hit_ent = nullptr;
     AABB hitbox = m_hitbox;
     hitbox.expand(m_vel.x, m_vel.y, m_vel.z).grow(1.0f);
-    Entity::Vector entities = m_tileSource->getEntities(this, hitbox);
+    Entity::Vector entities = m_pTileSource->getEntities(this, hitbox);
 
     float max_dist = 0.0f;
     constexpr float var10 = 0.3f;
@@ -185,7 +185,7 @@ void ThrownEgg::tick()
 
             for (int l = 0; l < j; l++)
             {
-                Chicken* chicken = new Chicken(*m_tileSource);
+                Chicken* chicken = new Chicken(*m_pTileSource);
                 chicken->moveTo(m_pos, 0.0f);
                 m_pLevel->addEntity(chicken);
             }

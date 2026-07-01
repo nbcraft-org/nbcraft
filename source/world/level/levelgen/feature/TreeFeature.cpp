@@ -9,7 +9,7 @@
 #include "Feature.hpp"
 #include "world/level/TileSource.hpp"
 
-bool TreeFeature::place(TileSource* source, Random* random, const TilePos& pos)
+bool TreeFeature::place(TileSource& source, Random* random, const TilePos& pos)
 {
 	if (pos.y <= C_MIN_Y)
 		return false;
@@ -40,7 +40,7 @@ bool TreeFeature::place(TileSource* source, Random* random, const TilePos& pos)
 					break;
 				}
 
-				TileID tile = source->getTile(tp);
+				TileID tile = source.getTile(tp);
 
 				// other trees can overlap with this one, apparently
 				if (tile != TILE_AIR && tile != Tile::leaves->m_ID)
@@ -56,7 +56,7 @@ bool TreeFeature::place(TileSource* source, Random* random, const TilePos& pos)
 	if (!bCanPlace)
 		return false;
 
-	TileID tileBelow = source->getTile(pos.below());
+	TileID tileBelow = source.getTile(pos.below());
 
 	// If grass or dirt aren't below us, we can't possibly grow!
 	if (tileBelow != Tile::grass->m_ID && tileBelow != Tile::dirt->m_ID)
@@ -66,7 +66,7 @@ bool TreeFeature::place(TileSource* source, Random* random, const TilePos& pos)
 	if (pos.y >= C_MAX_Y - treeHeight)
 		return false;
 
-	source->setTileNoUpdate(pos.below(), Tile::dirt->m_ID);
+	source.setTileNoUpdate(pos.below(), Tile::dirt->m_ID);
 
 	int upperY = pos.y + treeHeight;
 	int lowerY = pos.y + treeHeight - 3;
@@ -86,9 +86,9 @@ bool TreeFeature::place(TileSource* source, Random* random, const TilePos& pos)
 
 			for (tp.z = pos.z - c1; tp.z <= pos.z + c1; tp.z++)
 			{
-                if ((abs(tp.x - pos.x) != c1 || abs(tp.z - pos.z) != c1 || (random->nextInt(2) != 0 && diff != 0)) && !Tile::solid[source->getTile(tp)])
+                if ((abs(tp.x - pos.x) != c1 || abs(tp.z - pos.z) != c1 || (random->nextInt(2) != 0 && diff != 0)) && !Tile::solid[source.getTile(tp)])
 				{
-					source->setTileNoUpdate(tp, Tile::leaves->m_ID);
+					source.setTileNoUpdate(tp, Tile::leaves->m_ID);
 				}
 			}
 		}
@@ -98,11 +98,11 @@ bool TreeFeature::place(TileSource* source, Random* random, const TilePos& pos)
 	{
 		TilePos t(pos);
 		t.y += y;
-		TileID tile = source->getTile(t);
+		TileID tile = source.getTile(t);
 		if (tile && tile != Tile::leaves->m_ID)
 			continue;
 
-		source->setTileNoUpdate(t, Tile::treeTrunk->m_ID);
+		source.setTileNoUpdate(t, Tile::treeTrunk->m_ID);
 	}
 
 	return true;

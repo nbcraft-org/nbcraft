@@ -13,13 +13,13 @@ FenceTile::FenceTile(int a, int b) : Tile(a, b, Material::wood)
 {
 }
 
-bool FenceTile::mayPlace(TileSource* source, const TilePos& pos) const
+bool FenceTile::mayPlace(TileSource& source, const TilePos& pos) const
 {
 	TilePos below = pos.below();
-	return source->getTile(below) == m_ID || (Tile::mayPlace(source, pos) && source->getMaterial(below)->isSolid());
+	return source.getTile(below) == m_ID || (Tile::mayPlace(source, pos) && source.getMaterial(below)->isSolid());
 }
 
-AABB* FenceTile::getAABB(TileSource* source, const TilePos& pos)
+AABB* FenceTile::getAABB(TileSource& source, const TilePos& pos)
 {
 	AABB* rAABB = Tile::getAABB(source, pos);
 	rAABB->max.y += 0.5f;
@@ -41,8 +41,8 @@ eRenderShape FenceTile::getRenderShape() const
 	return SHAPE_FENCE;
 }
 
-bool FenceTile::shouldConnectTo(const LevelSource* level, const TilePos& pos) const 
+bool FenceTile::shouldConnectTo(TileSource& source, const TilePos& pos) const
 {
-	int i = level->getTile(pos);
+	TileID i = source.getTile(pos);
 	return i == m_ID || i == Tile::fenceGate->m_ID;
 }

@@ -27,7 +27,7 @@ int SandTile::getTickDelay() const
 	return 3;
 }
 
-void SandTile::checkSlide(TileSource* source, const TilePos& pos)
+void SandTile::checkSlide(TileSource& source, const TilePos& pos)
 {
 	//TileID tile = level->getTile(pos.below());
 
@@ -38,9 +38,9 @@ void SandTile::checkSlide(TileSource* source, const TilePos& pos)
 	if (pos.y <= 0)
 		return;
 
-	if (SandTile::instaFall || !source->hasChunksAt(TilePos(pos.x - 32, pos.y - 32, pos.z - 32), TilePos(pos.x + 32, pos.y + 32, pos.z + 32)))
+	if (SandTile::instaFall || !source.hasChunksAt(TilePos(pos.x - 32, pos.y - 32, pos.z - 32), TilePos(pos.x + 32, pos.y + 32, pos.z + 32)))
 	{
-		source->setTile(pos, TILE_AIR);
+		source.setTile(pos, TILE_AIR);
 
 		int y2;
 		for (y2 = pos.y - 1; y2 >= 0; y2--)
@@ -50,22 +50,22 @@ void SandTile::checkSlide(TileSource* source, const TilePos& pos)
 		}
 
 		if (y2 > -1)
-			source->setTile(TilePos(pos.x, y2 + 1, pos.z), m_ID);
+			source.setTile(TilePos(pos.x, y2 + 1, pos.z), m_ID);
 	}
 	else
 	{
 		// The original code attempts to spawn a falling tile entity, but it fails since it's not a player.
 		// The falling sand tile
 #if defined(ORIGINAL_CODE) || defined(ENH_ALLOW_SAND_GRAVITY)
-		Level& level = source->getLevel();
-		level.addEntity(new FallingTile(*source, Vec3(float(pos.x) + 0.5f, float(pos.y) + 0.5f, float(pos.z) + 0.5f), m_ID));
+		Level& level = source.getLevel();
+		level.addEntity(new FallingTile(source, Vec3(float(pos.x) + 0.5f, float(pos.y) + 0.5f, float(pos.z) + 0.5f), m_ID));
 #endif
 	}
 }
 
-bool SandTile::isFree(TileSource* source, const TilePos& pos)
+bool SandTile::isFree(TileSource& source, const TilePos& pos)
 {
-	TileID tile = source->getTile(pos);
+	TileID tile = source.getTile(pos);
 	if (tile == TILE_AIR)
 		return true;
 
@@ -81,25 +81,25 @@ bool SandTile::isFree(TileSource* source, const TilePos& pos)
 	return false;
 }
 
-void SandTile::tick(TileSource* source, const TilePos& pos, Random* random)
+void SandTile::tick(TileSource& source, const TilePos& pos, Random* random)
 {
-	if (source->getLevelConst().m_bIsClientSide)
+	if (source.getLevelConst().m_bIsClientSide)
 		return;
 
 	checkSlide(source, pos);
 }
 
-void SandTile::neighborChanged(TileSource* source, const TilePos& pos, TileID tile)
+void SandTile::neighborChanged(TileSource& source, const TilePos& pos, TileID tile)
 {
 #ifdef ENH_ALLOW_SAND_GRAVITY
-	source->getTickQueue(pos)->add(source, pos, m_ID, getTickDelay());
+	source.getTickQueue(pos)->add(source, pos, m_ID, getTickDelay());
 #endif
 }
 
-void SandTile::onPlace(TileSource* source, const TilePos& pos)
+void SandTile::onPlace(TileSource& source, const TilePos& pos)
 {
 #ifdef ENH_ALLOW_SAND_GRAVITY
-	source->getTickQueue(pos)->add(source, pos, m_ID, getTickDelay());
+	source.getTickQueue(pos)->add(source, pos, m_ID, getTickDelay());
 #endif
 }
 

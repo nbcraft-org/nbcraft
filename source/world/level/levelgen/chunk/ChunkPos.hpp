@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <functional>
+#include "world/phys/Vec3.hpp"
 
 #ifndef __TILEPOS_HPP
 struct TilePos;

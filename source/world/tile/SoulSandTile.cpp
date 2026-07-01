@@ -5,13 +5,13 @@ SoulSandTile::SoulSandTile(int id, int texture) : Tile(id, texture, Material::sa
 {
 }
 
-void SoulSandTile::entityInside(TileSource* source, const TilePos& pos, Entity* entity) const
+void SoulSandTile::entityInside(TileSource& source, const TilePos& pos, Entity* entity) const
 {
 	entity->m_vel.x *= 0.4;
 	entity->m_vel.z *= 0.4;
 }
 
-AABB* SoulSandTile::getAABB(TileSource* source, const TilePos& pos)
+AABB* SoulSandTile::getAABB(TileSource& source, const TilePos& pos)
 {
 	AABB* rAABB = Tile::getAABB(source, pos);
 	rAABB->max.y -= 2 / 16.0;

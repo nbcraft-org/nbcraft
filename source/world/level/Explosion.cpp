@@ -162,9 +162,9 @@ void Explosion::addParticles()
 
 		if (tile > 0)
 		{
-			Tile::tiles[tile]->spawnResources(&m_tileSource, tp, m_tileSource.getData(tp), 0.3f);
+			Tile::tiles[tile]->spawnResources(m_tileSource, tp, m_tileSource.getData(tp), 0.3f);
 			m_tileSource.setTile(tp, TILE_AIR);
-			Tile::tiles[tile]->wasExploded(&m_tileSource, tp);
+			Tile::tiles[tile]->wasExploded(m_tileSource, tp);
 		}
 	}
 

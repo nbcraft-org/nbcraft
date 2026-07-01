@@ -21,21 +21,21 @@ int IceTile::getResourceCount(Random* pRandom) const
 	return 0;
 }
 
-void IceTile::onRemove(TileSource* source, const TilePos& pos)
+void IceTile::onRemove(TileSource& source, const TilePos& pos)
 {
-	Material* pMtlBelow = source->getMaterial(pos.below());
+	Material* pMtlBelow = source.getMaterial(pos.below());
 	if (pMtlBelow->blocksMotion() || pMtlBelow->isLiquid())
 	{
-		source->setTile(pos, Tile::water->m_ID);
+		source.setTile(pos, Tile::water->m_ID);
 	}
 }
 
-void IceTile::tick(TileSource* source, const TilePos& pos, Random* random)
+void IceTile::tick(TileSource& source, const TilePos& pos, Random* random)
 {
-	if (source->getBrightness(LightLayer::Block, pos) <= 11 - Tile::lightBlock[m_ID])
+	if (source.getBrightness(LightLayer::Block, pos) <= 11 - Tile::lightBlock[m_ID])
 		return;
 
-	spawnResources(source, pos, source->getData(pos));
+	spawnResources(source, pos, source.getData(pos));
 
-	source->setTile(pos, Tile::calmWater->m_ID);
+	source.setTile(pos, Tile::calmWater->m_ID);
 }

@@ -50,7 +50,7 @@ bool Animal::canSpawn()
 {
 	TilePos pos(m_pos.x, m_hitbox.min.y, m_pos.z);
 
-	if (m_tileSource->getTile(pos.below()) != Tile::grass->m_ID || m_tileSource->getRawBrightness(pos) < 8)
+	if (m_pTileSource->getTile(pos.below()) != Tile::grass->m_ID || m_pTileSource->getRawBrightness(pos) < 8)
 		return false;
 
 	return PathfinderMob::canSpawn();
@@ -70,11 +70,11 @@ int Animal::getAmbientSoundInterval() const
 float Animal::getWalkTargetValue(const TilePos& pos) const
 {
 	// Animals would rather walk on grass.
-	if (m_tileSource->getTile(pos.below()) == Tile::grass->m_ID)
+	if (m_pTileSource->getTile(pos.below()) == Tile::grass->m_ID)
 		return 10.0f;
 
 	// Animals will avoid dark areas.
-	return m_tileSource->getBrightness(pos) - 0.5f;
+	return m_pTileSource->getBrightness(pos) - 0.5f;
 }
 
 /*bool Animal::hurt(Entity* pCulprit, int damage)

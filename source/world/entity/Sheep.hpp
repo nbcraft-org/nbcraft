@@ -23,7 +23,7 @@ public:
 	void addAdditionalSaveData(CompoundTag& tag) const override;
 	void readAdditionalSaveData(const CompoundTag& tag) override;
 
-	Entity* getBreedOffspring(Animal* pOther) { return new Sheep(*m_tileSource); }
+	Entity* getBreedOffspring(Animal* pOther) { return new Sheep(*m_pTileSource); }
 
     int getColor() const;
     void setColor(int);

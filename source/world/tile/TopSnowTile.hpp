@@ -16,18 +16,18 @@ public:
 	TopSnowTile(TileID id, int texture, Material* pMtl);
 
 public:
-	AABB* getAABB(TileSource*, const TilePos& pos) override;
+	AABB* getAABB(TileSource&, const TilePos& pos) override;
 	bool isCubeShaped() const override;
 	bool isSolidRender() const override;
 	int getResource(TileData data, Random*) const override;
 	int getResourceCount(Random*) const override;
-	bool mayPlace(TileSource*, const TilePos& pos) const override;
-	void neighborChanged(TileSource*, const TilePos& pos, TileID tile) override;
-	bool shouldRenderFace(TileSource*, const TilePos& pos, Facing::Name face) const override;
-	void tick(TileSource*, const TilePos& pos, Random*) override;
-	void playerDestroy(Player*, const TilePos& pos, TileData data) override;
+	bool mayPlace(TileSource&, const TilePos& pos) const override;
+	void neighborChanged(TileSource&, const TilePos& pos, TileID tile) override;
+	bool shouldRenderFace(TileSource&, const TilePos& pos, Facing::Name face) const override;
+	void tick(TileSource&, const TilePos& pos, Random*) override;
+	void playerDestroy(Player&, const TilePos& pos, TileData data) override;
 
-	bool checkCanSurvive(TileSource*, const TilePos& pos);
+	bool checkCanSurvive(TileSource&, const TilePos& pos);
 
-	static FullTile dataIDToRecoverableFullTile(TileSource* source, const TilePos& pos, TileData tileDataID);
+	static FullTile dataIDToRecoverableFullTile(TileSource& source, const TilePos& pos, TileData tileDataID);
 };

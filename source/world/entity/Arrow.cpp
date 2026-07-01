@@ -39,7 +39,7 @@ Arrow::Arrow(TileSource& source, const Vec3& pos, bool isPlayerOwned)
 }
 
 Arrow::Arrow(Mob& mob)
-    : Entity(*mob.m_tileSource)
+    : Entity(mob.getTileSource())
 {
     _init();
 
@@ -106,7 +106,7 @@ void Arrow::tick()
 
     if (m_bInGround)
     {
-        if (m_tileSource->getTile(m_tilePos) == m_lastTile)
+        if (m_pTileSource->getTile(m_tilePos) == m_lastTile)
         {
             ++m_life;
             if (m_life == 1200)
@@ -130,7 +130,7 @@ void Arrow::tick()
     }
 
     Vec3 futurePos = m_pos + m_vel;
-    HitResult hitResult = m_tileSource->clip(m_pos, futurePos, false, true);
+    HitResult hitResult = m_pTileSource->clip(m_pos, futurePos, false, true);
     if (hitResult.isHit())
     {
         futurePos = hitResult.m_hitPos;
@@ -139,7 +139,7 @@ void Arrow::tick()
     Entity* hitEnt = nullptr;
     AABB hitbox = m_hitbox;
     hitbox.expand(m_vel.x, m_vel.y, m_vel.z).grow(1.0f);
-    const std::vector<Entity*>& entities = m_tileSource->getEntities(this, hitbox);
+    const std::vector<Entity*>& entities = m_pTileSource->getEntities(this, hitbox);
     
     float max_dist = 0.0f;
     constexpr float var10 = 0.3f;
@@ -189,7 +189,7 @@ void Arrow::tick()
         else 
         {
             m_tilePos = hitResult.m_tilePos;
-            m_lastTile = m_tileSource->getTile(m_tilePos);
+            m_lastTile = m_pTileSource->getTile(m_tilePos);
             m_vel = hitResult.m_hitPos - m_pos;
             m_pos -= (m_vel / m_pos.length() * 0.05f);
             m_pLevel->playSound(this, "random.drr", 1.0f, 1.2f / (sharedRandom.nextFloat() * 0.2f + 0.9f));

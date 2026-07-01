@@ -540,7 +540,7 @@ void Player::drop(const ItemStack& item, bool randomly)
 	if (item.isEmpty())
 		return;
 
-	ItemEntity* pItemEntity = new ItemEntity(*m_tileSource, Vec3(m_pos.x, m_pos.y - 0.3f + getHeadHeight(), m_pos.z), item);
+	ItemEntity* pItemEntity = new ItemEntity(*m_pTileSource, Vec3(m_pos.x, m_pos.y - 0.3f + getHeadHeight(), m_pos.z), item);
 	pItemEntity->m_throwTime = 40;
 
 	if (randomly)

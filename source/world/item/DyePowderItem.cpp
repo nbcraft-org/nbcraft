@@ -44,14 +44,14 @@ bool DyePowderItem::useOn(ItemStack* item, Player* player, const TilePos& pos, F
 		
 		if (tile == Tile::sapling->m_ID)
 		{
-			(static_cast<Sapling*>(Tile::sapling))->growTree(&source, pos, &level.m_random);
+			(static_cast<Sapling*>(Tile::sapling))->growTree(source, pos, &level.m_random);
 			item->m_count--;
 			return true;
 		}
 		
 		if (tile == Tile::crops->m_ID)
 		{
-			static_cast<CropsTile*>(Tile::crops)->growCropsToMax(&source, pos);
+			static_cast<CropsTile*>(Tile::crops)->growCropsToMax(source, pos);
 			item->m_count--;
 			return true;
 		}

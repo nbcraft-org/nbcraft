@@ -1,7 +1,7 @@
 #include "Particle.hpp"
 
-NoteParticle::NoteParticle(Level* level, const Vec3& pos, const Vec3& dir, float scale) :
-	Particle(level, pos, Vec3::ZERO)
+NoteParticle::NoteParticle(TileSource& tileSource, const Vec3& pos, const Vec3& dir, float scale)
+	: Particle(tileSource, pos, Vec3::ZERO)
 {
 	m_vel.x *= 0.01f;
 	m_vel.y *= 0.01f;

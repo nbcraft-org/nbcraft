@@ -328,18 +328,18 @@ void LocalPlayer::move(const Vec3& pos)
 			int x1 = Mth::floor(pos.x / dist + m_pos.x);
 			int z1 = Mth::floor(pos.z / dist + m_pos.z);
 
-			TileID tileOnTop = m_tileSource->getTile(TilePos(x1, int(m_pos.y - 1.0f), z1));
+			TileID tileOnTop = m_pTileSource->getTile(TilePos(x1, int(m_pos.y - 1.0f), z1));
 
 			// not standing on top of a tile?
-			if (!m_tileSource->isSolidBlockingTile(TilePos(x1, int(m_pos.y - 1.0f), z1)))
+			if (!m_pTileSource->isSolidBlockingTile(TilePos(x1, int(m_pos.y - 1.0f), z1)))
 				return;
 
 			// aren't inside of a tile right now
-			if (m_tileSource->isSolidBlockingTile(TilePos(x1, int(m_pos.y), z1)))
+			if (m_pTileSource->isSolidBlockingTile(TilePos(x1, int(m_pos.y), z1)))
 				return;
 
 			// don't have anything on top of us
-			if (m_tileSource->isSolidBlockingTile(TilePos(x1, int(m_pos.y + 1.0f), z1)))
+			if (m_pTileSource->isSolidBlockingTile(TilePos(x1, int(m_pos.y + 1.0f), z1)))
 				return;
 
 			// are we trying to walk into stairs or a slab?

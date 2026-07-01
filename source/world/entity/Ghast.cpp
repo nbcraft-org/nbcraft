@@ -125,7 +125,7 @@ bool Ghast::_canReach(const Vec3& travel, float var7)
 	for (int var16 = 1; (float)var16 < var7; ++var16)
 	{
 		aabb.move(var9);
-		if (m_tileSource->fetchAABBs(aabb).size() > 0)
+		if (m_pTileSource->fetchAABBs(aabb).size() > 0)
 		{
 			return false;
 		}

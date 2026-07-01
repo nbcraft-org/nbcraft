@@ -33,7 +33,7 @@ void BubbleParticle::tick()
 
 	m_vel *= 0.85f;
 
-	if (m_tileSource->getMaterial(m_pos) != Material::water)
+	if (m_pTileSource->getMaterial(m_pos) != Material::water)
 		remove();
 
 	m_lifetime--;

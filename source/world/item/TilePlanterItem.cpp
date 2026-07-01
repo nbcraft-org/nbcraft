@@ -48,8 +48,8 @@ bool TilePlanterItem::useOn(ItemStack* instance, Player* player, const TilePos& 
 		return true;
 
 	Tile* pTile = Tile::tiles[m_tile];
-	pTile->setPlacedOnFace(&source, tp, face);
-	pTile->setPlacedBy(&source, tp, player);
+	pTile->setPlacedOnFace(source, tp, face);
+	pTile->setPlacedBy(source, tp, player);
 	level.playSound(tp + 0.5f, "step." + pTile->m_pSound->name, (pTile->m_pSound->volume + 1) / 2, (pTile->m_pSound->pitch * 0.8f));
 
 	instance->m_count--;

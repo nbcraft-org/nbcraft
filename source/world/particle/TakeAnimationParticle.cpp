@@ -3,8 +3,8 @@
 #include "client/renderer/entity/EntityRenderDispatcher.hpp"
 #include "renderer/ShaderConstants.hpp"
 
-TakeAnimationParticle::TakeAnimationParticle(Level* level, Entity* throwed, Entity* thrower, float vel) 
-	: Particle(level, throwed->m_pos, throwed->m_vel)
+TakeAnimationParticle::TakeAnimationParticle(TileSource& tileSource, Entity* throwed, Entity* thrower, float vel)
+	: Particle(tileSource, throwed->m_pos, throwed->m_vel)
 	, m_pThrowed(throwed)
 	, m_pThrower(thrower)
 	, m_speed(vel)

@@ -211,7 +211,7 @@ void ChunkSource::waitDiscardFinished()
 
 LevelChunk* _chunkViewGenerate(ChunkSource::LoadMode loadMode, ChunkSource* source, const Vec3Int32& pos)
 {
-	ChunkPos chunkPos(pos.x, pos.y, pos.z);
+	ChunkPos chunkPos(pos.x, pos.z);
 	return source->getOrLoadChunk(chunkPos, loadMode);
 }
 

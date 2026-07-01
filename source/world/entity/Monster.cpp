@@ -67,7 +67,7 @@ void Monster::checkHurtTarget(Entity* pEnt, float f)
 
 float Monster::getWalkTargetValue(const TilePos& pos) const
 {
-	float brightness = m_tileSource->getBrightness(pos);
+	float brightness = m_pTileSource->getBrightness(pos);
 
 	return 0.5f - brightness;
 }
@@ -76,11 +76,11 @@ bool Monster::canSpawn()
 {
 	TilePos pos(m_pos.x, m_hitbox.min.y, m_pos.z);
 
-	if (m_tileSource->getBrightness(LightLayer::Sky, pos) > m_random.nextInt(30))
+	if (m_pTileSource->getBrightness(LightLayer::Sky, pos) > m_random.nextInt(30))
 	{
 		return false;
 	}
-	else if (m_tileSource->getBrightness(pos) <= m_random.nextInt(8))
+	else if (m_pTileSource->getBrightness(pos) <= m_random.nextInt(8))
 	{
 		return PathfinderMob::canSpawn();
 	}

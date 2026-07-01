@@ -183,8 +183,7 @@ void LevelChunk::getEntities(const EntityType& type, const AABB& aabb, std::vect
 		if (entity->getDescriptor().isType(type))
 			continue;
 
-			out.push_back(ent);
-		}
+		output.push_back(entity);
 	}
 }
 
@@ -228,7 +227,7 @@ bool LevelChunk::setData(const ChunkTilePos& pos, TileData data)
 	return false;
 }
 
-TileEntity* LevelChunk::getTileEntity(const ChunkTilePos& pos)
+/*TileEntity* LevelChunk::getTileEntity(const ChunkTilePos& pos)
 {
 	std::map<ChunkTilePos, TileEntity*>::iterator it = m_tileEntities.find(pos);
     if (it == m_tileEntities.end())
@@ -298,17 +297,7 @@ void LevelChunk::removeTileEntity(const ChunkTilePos& pos)
 			it->second->setRemoved();
 		m_tileEntities.erase(it);
 	}
-}
-
-TileData LevelChunk::getData(const ChunkTilePos& pos)
-{
-	CheckPosition(pos);
-
-	return m_tileData.get(pos);
-}
-
-	return false;
-}
+}*/
 
 Biome* LevelChunk::getBiome(const ChunkTilePos& pos)
 {
@@ -375,7 +364,7 @@ void LevelChunk::tickBlocks(Player* player)
 		if (Tile::shouldTick[tile])
 		{
 			TilePos absolutePos = pos + m_posMin;
-			Tile::tiles[tile]->tick(&source, absolutePos, &level.m_random);
+			Tile::tiles[tile]->tick(source, absolutePos, &level.m_random);
 		}
 	}
 }

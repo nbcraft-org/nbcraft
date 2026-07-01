@@ -85,7 +85,7 @@ Dimension* Level::getDimension(DimensionId type) const
 }
 
 // @Matt, where is this in TileSource? Surely it's implemented, right?
-TileEntity* Level::getTileEntity(const TilePos& pos) const
+/*TileEntity* Level::getTileEntity(const TilePos& pos) const
 {
 	LevelChunk* pChunk = getChunk(pos);
 	return pChunk ? pChunk->getTileEntity(pos) : nullptr;
@@ -138,7 +138,7 @@ void Level::removeTileEntity(const TilePos& pos)
 	{
 		pChunk->removeTileEntity(pos);
 	}
-}
+}*/
 
 Entity* Level::getEntity(Entity::ID id) const
 {
@@ -149,10 +149,6 @@ Entity* Level::getEntity(Entity::ID id) const
 		if (entity)
 			return entity;
 	}
-
-	EntityMap::const_iterator it = m_entities.find(id);
-	if (it != m_entities.end())
-		return it->second;
 
 	return nullptr;
 }
@@ -311,12 +307,12 @@ Player* Level::getNearestAttackablePlayer(const Vec3& source, float maxDist, con
 
 bool Level::checkAndHandleWater(const AABB& aabb, const Material* pMtl, Entity* pEnt)
 {
-	TileSource* source = pEnt->m_tileSource;
+	TileSource& source = pEnt->getTileSource();
 
 	TilePos min(aabb.min),
 		    max(aabb.max + 1);
 
-	if (!source->hasChunksAt(min, max))
+	if (!source.hasChunksAt(min, max))
 		return false;
 
 	Vec3 v;
@@ -329,11 +325,11 @@ bool Level::checkAndHandleWater(const AABB& aabb, const Material* pMtl, Entity* 
 		{
 			for (pos.z = min.z; pos.z < max.z; pos.z++)
 			{
-				Tile* pTile = Tile::tiles[source->getTile(pos)];
+				Tile* pTile = Tile::tiles[source.getTile(pos)];
 				if (!pTile || pTile->m_pMaterial != pMtl)
 					continue;
 
-				TileData data = source->getData(pos);
+				TileData data = source.getData(pos);
 				int level = data <= 7 ? data + 1 : 1;
 				if (float(max.y) >= float(pos.y + 1) - float(level) / 9.0f)
 				{
@@ -398,12 +394,13 @@ void Level::removeAllPendingEntityRemovals()
 
 bool Level::addEntity(std::unique_ptr<Entity> entity)
 {
-	Dimension& dimension = entity->m_tileSource->getDimension();
+	TileSource& source = entity->getTileSource();
+	Dimension& dimension = source.getDimension();
 
 	if (dimension.hasEntity(*entity))
 		return false;
 
-	LevelChunk* chunk = entity->m_tileSource->getChunk(entity->m_pos);
+	LevelChunk* chunk = source.getChunk(entity->m_pos);
 	if (!chunk)
 		return false;
 
@@ -429,7 +426,7 @@ void Level::removeEntity(Entity& entity)
 	if (entity.isPlayer())
 		Util::remove(m_players, (Player*)&entity);
 
-	Dimension& dimension = entity.m_tileSource->getDimension();
+	Dimension& dimension = entity.getDimension();
 
 	dimension.removeEntity(entity);
 	entityRemoved(&entity);
@@ -634,7 +631,7 @@ void Level::playSound(const Vec3& pos, const std::string& name, float a, float b
 
 void Level::playStreamingMusic(const std::string& name, const TilePos& pos)
 {
-	for (std::vector<LevelListener*>::iterator it = m_levelListeners.begin(); it != m_levelListeners.end(); it++)
+	for (std::vector<LevelListener*>::iterator it = m_listeners.begin(); it != m_listeners.end(); it++)
 	{
 		LevelListener* pListener = *it;
 		pListener->playStreamingMusic(name, pos);
@@ -643,7 +640,7 @@ void Level::playStreamingMusic(const std::string& name, const TilePos& pos)
 
 void Level::animateTick(Entity* entity)
 {
-	TileSource* source = entity->m_tileSource;
+	TileSource& source = entity->getTileSource();
 
 	// @PARITY-JAVA: frequency is 1000 on JE, 100 on PE
 	for (int i = 0; i < 100; i++)
@@ -651,7 +648,7 @@ void Level::animateTick(Entity* entity)
 		TilePos aPos(entity->m_pos.x + m_random.nextInt(16) - m_random.nextInt(16),
 			entity->m_pos.y + m_random.nextInt(16) - m_random.nextInt(16),
 			entity->m_pos.z + m_random.nextInt(16) - m_random.nextInt(16));
-		TileID tile = source->getTile(aPos);
+		TileID tile = source.getTile(aPos);
 		if (tile > 0)
 			Tile::tiles[tile]->animateTick(source, aPos, &m_random2);
 	}

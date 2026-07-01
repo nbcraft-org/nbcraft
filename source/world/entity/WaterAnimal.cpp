@@ -12,7 +12,7 @@ bool WaterAnimal::isWaterMob() const
 
 bool WaterAnimal::canSpawn()
 {
-	return m_tileSource->isUnobstructedByEntities(m_hitbox, this);
+	return m_pTileSource->isUnobstructedByEntities(m_hitbox, this);
 }
 
 int WaterAnimal::getAmbientSoundInterval() const

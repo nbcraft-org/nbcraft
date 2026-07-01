@@ -15,14 +15,14 @@ class Bush : public Tile
 public:
 	Bush(TileID id, int texture);
 
-	bool canSurvive(TileSource*, const TilePos& pos) const override;
-	AABB* getAABB(TileSource*, const TilePos& pos) override;
+	bool canSurvive(TileSource&, const TilePos& pos) const override;
+	AABB* getAABB(TileSource&, const TilePos& pos) override;
 	eRenderShape getRenderShape() const override;
 	bool isCubeShaped() const override;
 	bool isSolidRender() const override;
-	bool mayPlace(TileSource*, const TilePos& pos) const override;
-	void tick(TileSource*, const TilePos& pos, Random*) override;
-	void neighborChanged(TileSource*, const TilePos& pos, TileID tile) override;
+	bool mayPlace(TileSource&, const TilePos& pos) const override;
+	void tick(TileSource&, const TilePos& pos, Random*) override;
+	void neighborChanged(TileSource&, const TilePos& pos, TileID tile) override;
 
-	void checkAlive(TileSource*, const TilePos& pos);
+	void checkAlive(TileSource&, const TilePos& pos);
 };

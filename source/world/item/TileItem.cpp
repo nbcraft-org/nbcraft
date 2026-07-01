@@ -41,15 +41,9 @@ bool TileItem::useOn(ItemStack* instance, Player* player, const TilePos& pos, Fa
 	{
 		face = Facing::DOWN;
 	}
-	else switch (face)
+	else
 	{
-		case Facing::DOWN: tp.y--; break;
-		case Facing::UP: tp.y++; break;
-		case Facing::NORTH: tp.z--; break;
-		case Facing::SOUTH: tp.z++; break;
-		case Facing::WEST: tp.x--; break;
-		case Facing::EAST: tp.x++; break;
-		default: assert(false); return false; break;
+		tp = tp.relative(face);
 	}
 
 	if (instance->m_count == 0)
@@ -63,8 +57,8 @@ bool TileItem::useOn(ItemStack* instance, Player* player, const TilePos& pos, Fa
 	if (!source.setTileAndData(tp, FullTile(m_tile, getLevelDataForAuxValue(instance->getAuxValue()))))
 		return true;
 
-	Tile::tiles[m_tile]->setPlacedOnFace(&source, tp, face);
-	Tile::tiles[m_tile]->setPlacedBy(&source, tp, player);
+	pTile->setPlacedOnFace(source, tp, face);
+	pTile->setPlacedBy(source, tp, player);
 
 	level.playSound(
 		Vec3(tp) + 0.5f,

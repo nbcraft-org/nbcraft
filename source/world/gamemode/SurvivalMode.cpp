@@ -96,7 +96,7 @@ bool SurvivalMode::destroyBlock(Player* player, const TilePos& pos, Facing::Name
 			Tile::tiles[tile]->playerDestroy(&source, player, pos, data);
 		}
 #else
-		Tile::tiles[tile]->playerDestroy(&source, player, pos, data);
+		Tile::tiles[tile]->playerDestroy(*player, pos, data);
 #endif
 	}
 

@@ -20,25 +20,25 @@ int Sapling::getTexture(Facing::Name face, TileData data) const
 	return data == 1 ? 63 : (data == 2 ? 79 : Bush::getTexture(face, data));
 }
 
-void Sapling::tick(TileSource* source, const TilePos& pos, Random* random)
+void Sapling::tick(TileSource& source, const TilePos& pos, Random* random)
 {
 	Bush::tick(source, pos, random);
 
-	if (source->getRawBrightness(pos, true) > 8 && random->nextInt(7) == 0)
+	if (source.getRawBrightness(pos, true) > 8 && random->nextInt(7) == 0)
 	{
-		TileData data = source->getData(pos);
+		TileData data = source.getData(pos);
 
 		if (data & 8)
 			growTree(source, pos, random);
 		else
-			source->setTileAndDataNoUpdate(pos, FullTile(m_ID, data | 8));
+			source.setTileAndDataNoUpdate(pos, FullTile(m_ID, data | 8));
 	}
 }
 
-void Sapling::growTree(TileSource* source, const TilePos& pos, Random* random)
+void Sapling::growTree(TileSource& source, const TilePos& pos, Random* random)
 {
-	TileData data = source->getData(pos) & 3;
-	source->setTileNoUpdate(pos, TILE_AIR);
+	TileData data = source.getData(pos) & 3;
+	source.setTileNoUpdate(pos, TILE_AIR);
 
 	TreeFeature treeFeature;
 
@@ -55,7 +55,7 @@ void Sapling::growTree(TileSource* source, const TilePos& pos, Random* random)
 	}
 
 	if (!pFeature->place(source, random, pos))
-		source->setTileNoUpdate(pos, m_ID);
+		source.setTileNoUpdate(pos, m_ID);
 }
 
 int Sapling::getSpawnResourcesAuxValue(int x) const

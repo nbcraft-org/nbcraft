@@ -49,7 +49,7 @@ public:
 	TileTickingQueue();
 
 public:
-	void add(TileSource* region, const TilePos& pos, TileID tileID, int tickDelay);
+	void add(TileSource& region, const TilePos& pos, TileID tileID, int tickDelay);
 
 	bool tickPendingTicks(TileSource& region, Tick_t until, int max, bool instaTick);
 	void tickAllPendingTicks(TileSource& region);

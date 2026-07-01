@@ -43,7 +43,7 @@ bool GameMode::destroyBlock(Player* player, const TilePos& pos, Facing::Name fac
 	m_pMinecraft->m_pParticleEngine->destroyEffect(player, pos);
 
 	TileData tileData = source.getData(pos);
-	oldTile->playerWillDestroy(player, pos, face);
+	oldTile->playerWillDestroy(*player, pos, face);
 	bool changed = source.setTile(pos, TILE_AIR);
 	if (!changed)
 		return false;
@@ -52,7 +52,7 @@ bool GameMode::destroyBlock(Player* player, const TilePos& pos, Facing::Name fac
 	_level.playSound(pos + 0.5f, "step." + oldTile->m_pSound->name,
 		(oldTile->m_pSound->volume * 0.5f) + 0.5f, oldTile->m_pSound->pitch * 0.8f);
 
-	oldTile->destroy(&source, pos, tileData);
+	oldTile->destroy(source, pos, tileData);
 
 	if (m_pMinecraft->isOnline())
 	{

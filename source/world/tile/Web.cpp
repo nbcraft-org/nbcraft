@@ -21,7 +21,7 @@ bool Web::isSolidRender() const
 	return false;
 }
 
-void Web::entityInside(TileSource*, const TilePos& pos, Entity* entity) const
+void Web::entityInside(TileSource&, const TilePos& pos, Entity* entity) const
 {
 	entity->m_bIsInWeb = true;
 }
@@ -31,7 +31,7 @@ int Web::getResource(TileData data, Random* random) const
 	return Item::string->m_itemID;
 }
 
-AABB* Web::getAABB(TileSource* level, const TilePos& pos)
+AABB* Web::getAABB(TileSource& level, const TilePos& pos)
 {
 	return nullptr;
 }

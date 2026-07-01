@@ -248,7 +248,7 @@ public:
 	SynchedEntityData& getEntityData() { return m_entityData; }
 	const SynchedEntityData& getEntityData() const { return m_entityData; }
 	Level& getLevel() const { return *m_pLevel; }
-	TileSource& getTileSource() const { return *m_tileSource; }
+	TileSource& getTileSource() const { return *m_pTileSource; }
 	Dimension& getDimension() const;
 
 	bool operator==(const Entity& other) const;
@@ -269,6 +269,7 @@ protected:
 	SynchedEntityData m_entityData;
 	bool m_bMakeStepSound;
 	const EntityTypeDescriptor* m_pDescriptor;
+	TileSource* m_pTileSource;
 
 public:
 	Vec3 m_pos;
@@ -277,12 +278,10 @@ public:
 	int m_chunkPosY;
 	Entity::ID m_EntityID;
 	float m_viewScale;
-	//TileSource* m_pTileSource;
 	DimensionId m_dimensionId;
 	bool m_bRiding;
 	bool m_bBlocksBuilding;
 	Level* m_pLevel;
-	TileSource* m_tileSource;
 	Vec3 m_oPos; // "o" in Java or "xo" "yo" "zo"
 	Vec3 m_vel;
 	Rot2 m_rot;

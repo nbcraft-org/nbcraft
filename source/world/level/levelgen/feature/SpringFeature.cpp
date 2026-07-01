@@ -14,34 +14,34 @@ SpringFeature::SpringFeature(TileID id)
 	m_ID = id;
 }
 
-bool SpringFeature::place(TileSource* source, Random* random, const TilePos& pos)
+bool SpringFeature::place(TileSource& source, Random* random, const TilePos& pos)
 {
-    if (source->getTile(pos.above()) != Tile::rock->m_ID)
+    if (source.getTile(pos.above()) != Tile::rock->m_ID)
         return false;
 
-    if (source->getTile(pos.below()) != Tile::rock->m_ID)
+    if (source.getTile(pos.below()) != Tile::rock->m_ID)
         return false;
 
-    if (source->getTile(pos) && source->getTile(pos) != Tile::rock->m_ID)
+    if (source.getTile(pos) && source.getTile(pos) != Tile::rock->m_ID)
         return false;
 
     int nRockTiles = 0;
     int nEmptyTiles = 0;
 
-    if (source->getTile(pos.west()) == Tile::rock->m_ID) nRockTiles++;
-    if (source->getTile(pos.east()) == Tile::rock->m_ID) nRockTiles++;
-    if (source->getTile(pos.north()) == Tile::rock->m_ID) nRockTiles++;
-    if (source->getTile(pos.south()) == Tile::rock->m_ID) nRockTiles++;
+    if (source.getTile(pos.west()) == Tile::rock->m_ID) nRockTiles++;
+    if (source.getTile(pos.east()) == Tile::rock->m_ID) nRockTiles++;
+    if (source.getTile(pos.north()) == Tile::rock->m_ID) nRockTiles++;
+    if (source.getTile(pos.south()) == Tile::rock->m_ID) nRockTiles++;
 
-    if (source->isEmptyTile(pos.west())) nEmptyTiles++;
-    if (source->isEmptyTile(pos.east())) nEmptyTiles++;
-    if (source->isEmptyTile(pos.north())) nEmptyTiles++;
-    if (source->isEmptyTile(pos.south())) nEmptyTiles++;
+    if (source.isEmptyTile(pos.west())) nEmptyTiles++;
+    if (source.isEmptyTile(pos.east())) nEmptyTiles++;
+    if (source.isEmptyTile(pos.north())) nEmptyTiles++;
+    if (source.isEmptyTile(pos.south())) nEmptyTiles++;
 
     if (nEmptyTiles != 1) return true;
     if (nRockTiles  != 3) return true;
 
-    source->setTile(pos, m_ID);
+    source.setTile(pos, m_ID);
 
     Tile::tiles[m_ID]->tick(source, pos, random);
     return true;

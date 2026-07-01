@@ -19,7 +19,7 @@ FarmTile::FarmTile(TileID id, Material* c) : Tile(id, c)
 	setLightBlock(255);
 }
 
-AABB* FarmTile::getAABB(TileSource*, const TilePos& pos)
+AABB* FarmTile::getAABB(TileSource&, const TilePos& pos)
 {
 	// a full block
 	m_aabbReturned = AABB(
@@ -62,7 +62,7 @@ bool FarmTile::isSolidRender() const
 	return false;
 }
 
-bool FarmTile::isNearWater(TileSource* source, const TilePos& pos)
+bool FarmTile::isNearWater(TileSource& source, const TilePos& pos)
 {
 	TilePos waterPos = TilePos();
 
@@ -72,7 +72,7 @@ bool FarmTile::isNearWater(TileSource* source, const TilePos& pos)
 		{
 			for (waterPos.z = pos.z - 4; waterPos.z <= pos.z + 4; waterPos.z++)
 			{
-				if (source->getMaterial(waterPos) == Material::water)
+				if (source.getMaterial(waterPos) == Material::water)
 					return true;
 			}
 		}
@@ -81,26 +81,26 @@ bool FarmTile::isNearWater(TileSource* source, const TilePos& pos)
 	return false;
 }
 
-bool FarmTile::isUnderCrops(TileSource* source, const TilePos& pos)
+bool FarmTile::isUnderCrops(TileSource& source, const TilePos& pos)
 {
-	return source->getTile(pos.above()) == Tile::crops->m_ID;
+	return source.getTile(pos.above()) == Tile::crops->m_ID;
 }
 
-void FarmTile::neighborChanged(TileSource* source, const TilePos& pos, TileID tile)
+void FarmTile::neighborChanged(TileSource& source, const TilePos& pos, TileID tile)
 {
-	if (source->getMaterial(pos.above())->isSolid())
-		source->setTile(pos, Tile::dirt->m_ID);
+	if (source.getMaterial(pos.above())->isSolid())
+		source.setTile(pos, Tile::dirt->m_ID);
 }
 
-void FarmTile::stepOn(TileSource* source, const TilePos& pos, Entity* pEnt)
+void FarmTile::stepOn(TileSource& source, const TilePos& pos, Entity* pEnt)
 {
-	if (source->getLevel().m_random.genrand_int32() % 4 == 0)
-		source->setTile(pos, Tile::dirt->m_ID);
+	if (source.getLevel().m_random.genrand_int32() % 4 == 0)
+		source.setTile(pos, Tile::dirt->m_ID);
 }
 
-void FarmTile::tick(TileSource* source, const TilePos& pos, Random* random)
+void FarmTile::tick(TileSource& source, const TilePos& pos, Random* random)
 {
-	if (source->getLevelConst().m_bIsClientSide)
+	if (source.getLevelConst().m_bIsClientSide)
 		return;
 
 	if (random->nextInt(5) != 0)
@@ -108,14 +108,14 @@ void FarmTile::tick(TileSource* source, const TilePos& pos, Random* random)
 
 	if (isNearWater(source, pos)/* && !level->isRainingAt(pos.above())*/)
 	{
-		source->setTileAndData(pos, FullTile(this, 7));
+		source.setTileAndData(pos, FullTile(this, 7));
 		return;
 	}
 
-	TileData data = source->getData(pos);
+	TileData data = source.getData(pos);
 
 	if (data > 0)
-		source->setTileAndData(pos, FullTile(this, data - 1));
+		source.setTileAndData(pos, FullTile(this, data - 1));
 	else if (!isUnderCrops(source, pos))
-		source->setTile(pos, Tile::dirt->m_ID);
+		source.setTile(pos, Tile::dirt->m_ID);
 }

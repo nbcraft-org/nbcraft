@@ -12,7 +12,7 @@ struct FoliageCoord
 static uint8_t AxisConversionArray[] = {2, 0, 0, 1, 2, 1};
 
 FancyTreeFeature::FancyTreeFeature() :
-    m_tileSource(NULL),
+    m_pTileSource(nullptr),
     m_origin(),
     m_height(0),
     m_trunkHeight(0),
@@ -151,11 +151,11 @@ void FancyTreeFeature::crossection(int x, int y, int z, float radius, uint8_t ma
             if (distance <= radius)
             {
                 GetAxisCoord(currentPos, axis3) = GetAxisCoord(center, axis3) + dz;
-                TileID currentTileId = m_tileSource->getTile(currentPos);
+                TileID currentTileId = m_pTileSource->getTile(currentPos);
                 
                 if (currentTileId == TILE_AIR || currentTileId == TILE_LEAVES)
                 {
-                    m_tileSource->setTileNoUpdate(currentPos, tileId);
+                    m_pTileSource->setTileNoUpdate(currentPos, tileId);
                 }
             }
         }
@@ -233,7 +233,7 @@ void FancyTreeFeature::limb(const TilePos& start, const TilePos& end, TileID til
             GetAxisCoord(currentPos, axis2) = static_cast<int>(Mth::floor(static_cast<float>(GetAxisCoord(start, axis2)) + static_cast<float>(counter) * ratio1 + 0.5f));
             GetAxisCoord(currentPos, axis3) = static_cast<int>(Mth::floor(static_cast<float>(GetAxisCoord(start, axis3)) + static_cast<float>(counter) * ratio2 + 0.5f));
             
-            m_tileSource->setTileNoUpdate(currentPos, tileId);
+            m_pTileSource->setTileNoUpdate(currentPos, tileId);
         }
     }
 }
@@ -291,7 +291,7 @@ int FancyTreeFeature::checkLine(const TilePos& startPos, const TilePos& endPos)
         GetAxisCoord(currentPos, axis2) = static_cast<int>(Mth::floor(static_cast<float>(GetAxisCoord(startPos, axis2)) + static_cast<float>(counter) * ratio1));
         GetAxisCoord(currentPos, axis3) = static_cast<int>(Mth::floor(static_cast<float>(GetAxisCoord(startPos, axis3)) + static_cast<float>(counter) * ratio2));
         
-        TileID tileId = m_tileSource->getTile(currentPos);
+        TileID tileId = m_pTileSource->getTile(currentPos);
         if (tileId != TILE_AIR && tileId != TILE_LEAVES)
         {
             return Mth::abs(counter);
@@ -301,11 +301,11 @@ int FancyTreeFeature::checkLine(const TilePos& startPos, const TilePos& endPos)
     return -1;
 }
 
-bool FancyTreeFeature::checkLocation(TileSource* source)
+bool FancyTreeFeature::checkLocation(TileSource& source)
 {
     TilePos basePos(m_origin);
     TilePos topPos = m_origin.above(m_height - 1);
-    TileID groundTileId = source->getTile(m_origin.below());
+    TileID groundTileId = source.getTile(m_origin.below());
     
     if (groundTileId != 2 && groundTileId != 3)
     {
@@ -339,9 +339,9 @@ void FancyTreeFeature::init(float density, float widthScale, float foliageDensit
     m_foliageDensity = foliageDensity;
 }
 
-bool FancyTreeFeature::place(TileSource* source, Random* random, const TilePos& pos)
+bool FancyTreeFeature::place(TileSource& source, Random* random, const TilePos& pos)
 {
-    m_tileSource = source;
+    m_pTileSource = &source;
     m_rnd.setSeed(random->nextLong());
     m_origin = pos;
     

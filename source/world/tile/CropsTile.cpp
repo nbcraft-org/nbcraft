@@ -22,15 +22,15 @@ eRenderShape CropsTile::getRenderShape() const
 	return SHAPE_CROPS;
 }
 
-void CropsTile::tick(TileSource* source, const TilePos& pos, Random* random)
+void CropsTile::tick(TileSource& source, const TilePos& pos, Random* random)
 {
 	Bush::tick(source, pos, random);
 
     // Too dark
-	if (source->getRawBrightness(pos.above()) < 9)
+	if (source.getRawBrightness(pos.above()) < 9)
         return;
 
-    TileData growthStage = source->getData(pos);
+    TileData growthStage = source.getData(pos);
     // Fully grown
     if (growthStage >= 7)
         return;
@@ -38,22 +38,22 @@ void CropsTile::tick(TileSource* source, const TilePos& pos, Random* random)
     float growthRate = getGrowthRate(source, pos);
     if (random->nextInt((int)(100.0f / growthRate)) == 0)
     {
-		source->setTileAndData(pos, FullTile(this, growthStage + 1));
+		source.setTileAndData(pos, FullTile(this, growthStage + 1));
     }
 }
 
-float CropsTile::getGrowthRate(TileSource* source, const TilePos& pos)
+float CropsTile::getGrowthRate(TileSource& source, const TilePos& pos)
 {
 	float rate = 1.0f;
 
-	TileID north = source->getTile(pos.north());
-	TileID south = source->getTile(pos.south());
-	TileID west = source->getTile(pos.west());
-	TileID east = source->getTile(pos.east());
-	TileID nw = source->getTile(pos + TilePos(-1, 0, -1));
-	TileID ne = source->getTile(pos + TilePos(1, 0, -1));
-	TileID se = source->getTile(pos + TilePos(1, 0, 1));
-	TileID sw = source->getTile(pos + TilePos(-1, 0, 1));
+	TileID north = source.getTile(pos.north());
+	TileID south = source.getTile(pos.south());
+	TileID west = source.getTile(pos.west());
+	TileID east = source.getTile(pos.east());
+	TileID nw = source.getTile(pos + TilePos(-1, 0, -1));
+	TileID ne = source.getTile(pos + TilePos(1, 0, -1));
+	TileID se = source.getTile(pos + TilePos(1, 0, 1));
+	TileID sw = source.getTile(pos + TilePos(-1, 0, 1));
 	
 	bool hor = west == m_ID || east == m_ID;
 	bool vert = north == m_ID || south == m_ID;
@@ -64,12 +64,12 @@ float CropsTile::getGrowthRate(TileSource* source, const TilePos& pos)
 	{
 		for (tp.z = pos.z; tp.z <= pos.z + 1; ++tp.z)
 		{
-			TileID closeTile = source->getTile(tp);
+			TileID closeTile = source.getTile(tp);
 			float rateInfluence = 0.0f;
 			if (closeTile == Tile::farmland->m_ID)
 			{
 				rateInfluence = 1.0f;
-				if (source->getData(tp) > 0)
+				if (source.getData(tp) > 0)
 				{
 					rateInfluence = 3.0f;
 				}
@@ -92,9 +92,9 @@ float CropsTile::getGrowthRate(TileSource* source, const TilePos& pos)
 	return rate;
 }
 
-void CropsTile::growCropsToMax(TileSource* source, const TilePos& pos)
+void CropsTile::growCropsToMax(TileSource& source, const TilePos& pos)
 {
-	source->setTileAndData(pos, FullTile(this, 7));
+	source.setTileAndData(pos, FullTile(this, 7));
 }
 
 int CropsTile::getResource(TileData data, Random* random) const
@@ -102,11 +102,11 @@ int CropsTile::getResource(TileData data, Random* random) const
 	return (data == 7) ? Item::wheat->m_itemID : -1;
 }
 
-void CropsTile::spawnResources(TileSource* source, const TilePos& pos, TileData data)
+void CropsTile::spawnResources(TileSource& source, const TilePos& pos, TileData data)
 {
 	Bush::spawnResources(source, pos, data);
 
-	Level& level = source->getLevel();
+	Level& level = source.getLevel();
 	if (level.m_bIsClientSide)
 		return;
 
@@ -120,20 +120,20 @@ void CropsTile::spawnResources(TileSource* source, const TilePos& pos, TileData 
 			(level.m_random.nextFloat() * 0.7f) + (1.0f - 0.7f) * 0.5f);
 
 		ItemStack item(Item::seeds, 1, getSpawnResourcesAuxValue(data));
-		ItemEntity* pEntity = new ItemEntity(*source, pos + deviation, item);
+		ItemEntity* pEntity = new ItemEntity(source, pos + deviation, item);
 		pEntity->m_throwTime = 10;
 
 		level.addEntity(pEntity);
 	}
 }
 
-void CropsTile::neighborChanged(TileSource* source, const TilePos& pos, TileID tile)
+void CropsTile::neighborChanged(TileSource& source, const TilePos& pos, TileID tile)
 {
-	if (source->getTile(pos.below()) != Tile::farmland->m_ID)
+	if (source.getTile(pos.below()) != Tile::farmland->m_ID)
 	{
-		source->setTile(pos, TILE_AIR);
+		source.setTile(pos, TILE_AIR);
 
-		Level& level = source->getLevel();
+		Level& level = source.getLevel();
 
 		float spread = 0.7f;
 		TilePos spreadPos(
@@ -142,7 +142,7 @@ void CropsTile::neighborChanged(TileSource* source, const TilePos& pos, TileID t
 			level.m_random.nextFloat() * spread + (1.0f - spread) * 0.5f
         );
 
-        ItemEntity* itemEntity = new ItemEntity(*source, pos.above() + spreadPos, ItemStack(Item::seeds));
+        ItemEntity* itemEntity = new ItemEntity(source, pos.above() + spreadPos, ItemStack(Item::seeds));
         itemEntity->m_throwTime = 10;
 
 		level.addEntity(itemEntity);
@@ -150,7 +150,7 @@ void CropsTile::neighborChanged(TileSource* source, const TilePos& pos, TileID t
 }
 
 
-void CropsTile::updateShape(TileSource* source, const TilePos& pos)
+void CropsTile::updateShape(TileSource& source, const TilePos& pos)
 {
 	setShape(0, 0, 0, 1, 0.25f, 1);
 }

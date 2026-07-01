@@ -34,30 +34,30 @@ int TntTile::getTexture(Facing::Name face) const
 	}
 }
 
-void TntTile::destroy(TileSource* source, const TilePos& pos, TileData data)
+void TntTile::destroy(TileSource& source, const TilePos& pos, TileData data)
 {
 	// prevent players from using this in multiplayer, to prevent a desync of player IDs
-	Level& level = source->getLevel();
+	Level& level = source.getLevel();
 	if (level.m_bIsClientSide) return;
 
 	level.addEntity(std::make_unique<PrimedTnt>(*source, Vec3(pos) + 0.5f));
 }
 
-void TntTile::wasExploded(TileSource* source, const TilePos& pos)
+void TntTile::wasExploded(TileSource& source, const TilePos& pos)
 {
-	Level& level = source->getLevel();
+	Level& level = source.getLevel();
 
 	PrimedTnt* tnt = new PrimedTnt(*source, Vec3(pos) + 0.5f);
 	tnt->m_fuseTimer = level.m_random.nextInt(tnt->m_fuseTimer / 4) + tnt->m_fuseTimer / 8;
 	level.addEntity(tnt);
 }
 
-void TntTile::neighborChanged(TileSource* source, const TilePos& pos, TileID tile)
+void TntTile::neighborChanged(TileSource& source, const TilePos& pos, TileID tile)
 {
 	// @NOTE: Unused redstone
-	if (tile > 0 && Tile::tiles[tile]->isSignalSource() && source->hasNeighborSignal(pos))
+	if (tile > 0 && Tile::tiles[tile]->isSignalSource() && source.hasNeighborSignal(pos))
 	{
 		destroy(source, pos, 0);
-		source->setTile(pos, TILE_AIR);
+		source.setTile(pos, TILE_AIR);
 	}
 }

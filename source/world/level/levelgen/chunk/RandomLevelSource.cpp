@@ -430,7 +430,7 @@ bool RandomLevelSource::postProcess(ChunkViewSource& chunkViewSource)
 		int xo = random.nextInt(16);
 		int yo = random.nextInt(128);
 		int zo = random.nextInt(16);
-		ClayFeature(Tile::clay->m_ID, 32).place(&source, &random, TilePos(tp.x + xo, yo, tp.z + zo));
+		ClayFeature(Tile::clay->m_ID, 32).place(source, &random, TilePos(tp.x + xo, yo, tp.z + zo));
 	}
 
 	// Start of ore generation
@@ -440,56 +440,56 @@ bool RandomLevelSource::postProcess(ChunkViewSource& chunkViewSource)
 		int xo = random.nextInt(16);
 		int yo = random.nextInt(128);
 		int zo = random.nextInt(16);
-		OreFeature(Tile::dirt->m_ID, 32).place(&source, &random, TilePos(tp.x + xo, yo, tp.z + zo));
+		OreFeature(Tile::dirt->m_ID, 32).place(source, &random, TilePos(tp.x + xo, yo, tp.z + zo));
 	}
 	for (int i = 0; i < 10; i++)
 	{
 		int xo = random.nextInt(16);
 		int yo = random.nextInt(128);
 		int zo = random.nextInt(16);
-		OreFeature(Tile::gravel->m_ID, 32).place(&source, &random, TilePos(tp.x + xo, yo, tp.z + zo));
+		OreFeature(Tile::gravel->m_ID, 32).place(source, &random, TilePos(tp.x + xo, yo, tp.z + zo));
 	}
 	for (int i = 0; i < 20; i++)
 	{
 		int xo = random.nextInt(16);
 		int yo = random.nextInt(128);
 		int zo = random.nextInt(16);
-		OreFeature(Tile::coalOre->m_ID, 16).place(&source, &random, TilePos(tp.x + xo, yo, tp.z + zo));
+		OreFeature(Tile::coalOre->m_ID, 16).place(source, &random, TilePos(tp.x + xo, yo, tp.z + zo));
 	}
 	for (int i = 0; i < 20; i++)
 	{
 		int xo = random.nextInt(16);
 		int yo = random.nextInt(64);
 		int zo = random.nextInt(16);
-		OreFeature(Tile::ironOre->m_ID, 8).place(&source, &random, TilePos(tp.x + xo, yo, tp.z + zo));
+		OreFeature(Tile::ironOre->m_ID, 8).place(source, &random, TilePos(tp.x + xo, yo, tp.z + zo));
 	}
 	for (int i = 0; i < 2; i++)
 	{
 		int xo = random.nextInt(16);
 		int yo = random.nextInt(32);
 		int zo = random.nextInt(16);
-		OreFeature(Tile::goldOre->m_ID, 8).place(&source, &random, TilePos(tp.x + xo, yo, tp.z + zo));
+		OreFeature(Tile::goldOre->m_ID, 8).place(source, &random, TilePos(tp.x + xo, yo, tp.z + zo));
 	}
 	for (int i = 0; i < 8; i++)
 	{
 		int xo = random.nextInt(16);
 		int yo = random.nextInt(16);
 		int zo = random.nextInt(16);
-		OreFeature(Tile::redStoneOre->m_ID, 7).place(&source, &random, TilePos(tp.x + xo, yo, tp.z + zo));
+		OreFeature(Tile::redStoneOre->m_ID, 7).place(source, &random, TilePos(tp.x + xo, yo, tp.z + zo));
 	}
 	for (int i = 0; i < 1; i++)
 	{
 		int xo = random.nextInt(16);
 		int yo = random.nextInt(16);
 		int zo = random.nextInt(16);
-		OreFeature(Tile::emeraldOre->m_ID, 7).place(&source, &random, TilePos(tp.x + xo, yo, tp.z + zo));
+		OreFeature(Tile::emeraldOre->m_ID, 7).place(source, &random, TilePos(tp.x + xo, yo, tp.z + zo));
 	}
 	for (int i = 0; i < 1; i++)
 	{
 		int xo = random.nextInt(16);
 		int yo = random.nextInt(16) + random.nextInt(16);
 		int zo = random.nextInt(16);
-		OreFeature(Tile::lapisOre->m_ID, 6).place(&source, &random, TilePos(tp.x + xo, yo, tp.z + zo));
+		OreFeature(Tile::lapisOre->m_ID, 6).place(source, &random, TilePos(tp.x + xo, yo, tp.z + zo));
 	}
 
 	// End of ore generation
@@ -535,7 +535,7 @@ bool RandomLevelSource::postProcess(ChunkViewSource& chunkViewSource)
 		if (pTreeFeature)
 		{
 			pTreeFeature->init(1.0f, 1.0f, 1.0f);
-			pTreeFeature->place(&source, &random, rng);
+			pTreeFeature->place(source, &random, rng);
 			delete pTreeFeature;
 		}
 	}
@@ -545,7 +545,7 @@ bool RandomLevelSource::postProcess(ChunkViewSource& chunkViewSource)
 		int xo = random.nextInt(16);
 		int yo = random.nextInt(128);
 		int zo = random.nextInt(16);
-		FlowerFeature(Tile::flower->m_ID).place(&source, &random, TilePos(tp.x + 8 + xo, yo, tp.z + 8 + zo));
+		FlowerFeature(Tile::flower->m_ID).place(source, &random, TilePos(tp.x + 8 + xo, yo, tp.z + 8 + zo));
 	}
 
 	if (random.nextInt(2) == 0)
@@ -553,7 +553,7 @@ bool RandomLevelSource::postProcess(ChunkViewSource& chunkViewSource)
 		int xo = random.nextInt(16);
 		int yo = random.nextInt(128);
 		int zo = random.nextInt(16);
-		FlowerFeature(Tile::rose->m_ID).place(&source, &random, TilePos(tp.x + 8 + xo, yo, tp.z + 8 + zo));
+		FlowerFeature(Tile::rose->m_ID).place(source, &random, TilePos(tp.x + 8 + xo, yo, tp.z + 8 + zo));
 	}
 
 	if (random.nextInt(4) == 0)
@@ -561,7 +561,7 @@ bool RandomLevelSource::postProcess(ChunkViewSource& chunkViewSource)
 		int xo = random.nextInt(16);
 		int yo = random.nextInt(128);
 		int zo = random.nextInt(16);
-		FlowerFeature(Tile::mushroom1->m_ID).place(&source, &random, TilePos(tp.x + 8 + xo, yo, tp.z + 8 + zo));
+		FlowerFeature(Tile::mushroom1->m_ID).place(source, &random, TilePos(tp.x + 8 + xo, yo, tp.z + 8 + zo));
 	}
 
 	if (random.nextInt(8) == 0)
@@ -569,7 +569,7 @@ bool RandomLevelSource::postProcess(ChunkViewSource& chunkViewSource)
 		int xo = random.nextInt(16);
 		int yo = random.nextInt(128);
 		int zo = random.nextInt(16);
-		FlowerFeature(Tile::mushroom2->m_ID).place(&source, &random, TilePos(tp.x + 8 + xo, yo, tp.z + 8 + zo));
+		FlowerFeature(Tile::mushroom2->m_ID).place(source, &random, TilePos(tp.x + 8 + xo, yo, tp.z + 8 + zo));
 	}
 
 	for (int i = 0; i < 10; i++)
@@ -577,7 +577,7 @@ bool RandomLevelSource::postProcess(ChunkViewSource& chunkViewSource)
 		int xo = random.nextInt(16);
 		int yo = random.nextInt(128);
 		int zo = random.nextInt(16);
-		ReedsFeature().place(&source, &random, TilePos(tp.x + 8 + xo, yo, tp.z + 8 + zo));
+		ReedsFeature().place(source, &random, TilePos(tp.x + 8 + xo, yo, tp.z + 8 + zo));
 	}
 
 	for (int i = 0; i < 50; i++)
@@ -585,7 +585,7 @@ bool RandomLevelSource::postProcess(ChunkViewSource& chunkViewSource)
 		int xo = random.nextInt(16);
 		int yo = random.nextInt(random.nextInt(120) + 8);
 		int zo = random.nextInt(16);
-		SpringFeature(Tile::water->m_ID).place(&source, &random, TilePos(tp.x + 8 + xo, yo, tp.z + 8 + zo));
+		SpringFeature(Tile::water->m_ID).place(source, &random, TilePos(tp.x + 8 + xo, yo, tp.z + 8 + zo));
 	}
 
 	for (int i = 0; i < 20; i++)
@@ -593,7 +593,7 @@ bool RandomLevelSource::postProcess(ChunkViewSource& chunkViewSource)
 		int xo = random.nextInt(16);
 		int yo = random.nextInt(random.nextInt(random.nextInt(112) + 8) + 8);
 		int zo = random.nextInt(16);
-		SpringFeature(Tile::lava->m_ID).place(&source, &random, TilePos(tp.x + 8 + xo, yo, tp.z + 8 + zo));
+		SpringFeature(Tile::lava->m_ID).place(source, &random, TilePos(tp.x + 8 + xo, yo, tp.z + 8 + zo));
 	}
 
 	int vegetationCount = 0;
@@ -606,7 +606,7 @@ bool RandomLevelSource::postProcess(ChunkViewSource& chunkViewSource)
 		int xo = random.nextInt(16);
 		int yo = random.nextInt(128);
 		int zo = random.nextInt(16);
-		CactusFeature().place(&source, &random, TilePos(tp.x + 8 + xo, yo, tp.z + 8 + zo));
+		CactusFeature().place(source, &random, TilePos(tp.x + 8 + xo, yo, tp.z + 8 + zo));
 	}
 
 	if (random.nextInt(32) == 0)
@@ -614,7 +614,7 @@ bool RandomLevelSource::postProcess(ChunkViewSource& chunkViewSource)
 		int xo = random.nextInt(16);
 		int yo = random.nextInt(128);
 		int zo = random.nextInt(16);
-		PumpkinFeature().place(&source, &random, TilePos(tp.x + 8 + xo, yo, tp.z + 8 + zo));
+		PumpkinFeature().place(source, &random, TilePos(tp.x + 8 + xo, yo, tp.z + 8 + zo));
 	}
 #ifdef FEATURE_PLANT_VEGGIES
 	vegetationCount = 0;
@@ -645,7 +645,7 @@ bool RandomLevelSource::postProcess(ChunkViewSource& chunkViewSource)
 		TilePos o(random.nextInt(16),
 			random.nextInt(128),
 			random.nextInt(16));
-		VegetationFeature(Tile::tallGrass->m_ID, data).place(&source, &random, TilePos(tp.x + 8 + o.x, o.y, tp.z + 8 + o.z));
+		VegetationFeature(Tile::tallGrass->m_ID, data).place(source, &random, TilePos(tp.x + 8 + o.x, o.y, tp.z + 8 + o.z));
 	}
 
 	vegetationCount = 0;
@@ -658,7 +658,7 @@ bool RandomLevelSource::postProcess(ChunkViewSource& chunkViewSource)
 		int xo = random.nextInt(16);
 		int yo = random.nextInt(128);
 		int zo = random.nextInt(16);
-		VegetationFeature(Tile::deadBush->m_ID, 0, 4).place(&source, &random, TilePos(tp.x + 8 + xo, yo, tp.z + 8 + zo));
+		VegetationFeature(Tile::deadBush->m_ID, 0, 4).place(source, &random, TilePos(tp.x + 8 + xo, yo, tp.z + 8 + zo));
 	}
 #endif
 	float* tempBlock = threadData.getBiomeSource().getTemperatureBlock(tp.x + 8, tp.z + 8, 16, 16);

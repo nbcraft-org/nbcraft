@@ -27,7 +27,7 @@ bool DoorItem::useOn(ItemStack* inst, Player* player, const TilePos& pos, Facing
 	TileSource& source = player->getTileSource();
 
 	Tile* pTile = m_pMaterial == Material::wood ? Tile::door_wood : Tile::door_iron;
-	if (!pTile->mayPlace(&source, pos.above()))
+	if (!pTile->mayPlace(source, pos.above()))
 		return false;
 
 	int faceDir = Mth::floor((((player->m_rot.yaw + 180.0f) * 4.0f) / 360.0f) - 0.5f) & 3;

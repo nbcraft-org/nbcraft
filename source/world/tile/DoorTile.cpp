@@ -30,7 +30,7 @@ bool DoorTile::use(const TilePos& pos, Player* player)
 
 	TileSource& source = player->getTileSource();
 
-	setOpen(&source, pos, !isOpen(source.getData(pos)));
+	setOpen(source, pos, !isOpen(source.getData(pos)));
 
 	return true;
 }
@@ -48,14 +48,14 @@ bool DoorTile::blocksLight() const
 	return false;
 }
 
-HitResult DoorTile::clip(TileSource* source, const TilePos& pos, Vec3 v1, Vec3 v2)
+HitResult DoorTile::clip(TileSource& source, const TilePos& pos, Vec3 v1, Vec3 v2)
 {
 	// @NOTE: Tile::clip calls updateShape too. So this is redundant
 	updateShape(source, pos);
 	return Tile::clip(source, pos, v1, v2);
 }
 
-AABB* DoorTile::getAABB(TileSource* source, const TilePos& pos)
+AABB* DoorTile::getAABB(TileSource& source, const TilePos& pos)
 {
 	updateShape(source, pos);
 	return Tile::getAABB(source, pos);
@@ -107,7 +107,7 @@ int DoorTile::getTexture(Facing::Name face, TileData data) const
 	return idx;
 }
 
-AABB DoorTile::getTileAABB(TileSource* source, const TilePos& pos)
+AABB DoorTile::getTileAABB(TileSource& source, const TilePos& pos)
 {
 	updateShape(source, pos);
 	return Tile::getTileAABB(source, pos);
@@ -123,9 +123,9 @@ bool DoorTile::isSolidRender() const
 	return false;
 }
 
-bool DoorTile::mayPlace(TileSource* source, const TilePos& pos) const
+bool DoorTile::mayPlace(TileSource& source, const TilePos& pos) const
 {
-	return pos.y <= 126 && source->isSolidBlockingTile(pos.below()) && Tile::mayPlace(source, pos) && Tile::mayPlace(source, pos.above());
+	return pos.y <= 126 && source.isSolidBlockingTile(pos.below()) && Tile::mayPlace(source, pos) && Tile::mayPlace(source, pos.above());
 }
 
 void DoorTile::setShape(int dir)
@@ -149,43 +149,43 @@ void DoorTile::setShape(int dir)
 	}
 }
 
-void DoorTile::updateShape(TileSource* source, const TilePos& pos)
+void DoorTile::updateShape(TileSource& source, const TilePos& pos)
 {
-	setShape(getDir(source->getData(pos)));
+	setShape(getDir(source.getData(pos)));
 }
 
-void DoorTile::setOpen(TileSource* source, const TilePos& pos, bool bOpen)
+void DoorTile::setOpen(TileSource& source, const TilePos& pos, bool bOpen)
 {
-	TileData data = source->getData(pos);
+	TileData data = source.getData(pos);
 	if (isTop(data))
 	{
-		if (source->getTile(pos.below()) == m_ID)
+		if (source.getTile(pos.below()) == m_ID)
 			setOpen(source, pos.below(), bOpen);
 		return;
 	}
 
-	if (isOpen(source->getData(pos)) != bOpen)
+	if (isOpen(source.getData(pos)) != bOpen)
 	{
 		data ^= 4;
 
-		if (source->getTile(pos.above()) == m_ID)
-			source->setTileAndData(pos.above(), FullTile(m_ID, data + 8), TileChange::UPDATE_ALL | TileChange::UPDATE_UNK3);
+		if (source.getTile(pos.above()) == m_ID)
+			source.setTileAndData(pos.above(), FullTile(m_ID, data + 8), TileChange::UPDATE_ALL | TileChange::UPDATE_UNK3);
 
-		source->setTileAndData(pos, FullTile(m_ID, data), TileChange::UPDATE_ALL | TileChange::UPDATE_UNK3);
+		source.setTileAndData(pos, FullTile(m_ID, data), TileChange::UPDATE_ALL | TileChange::UPDATE_UNK3);
 
 		level->levelEvent(LevelEvent(LevelEvent::SOUND_DOOR, pos, 0, player));
 	}
 }
 
-void DoorTile::neighborChanged(TileSource* source, const TilePos& pos, TileID newTile)
+void DoorTile::neighborChanged(TileSource& source, const TilePos& pos, TileID newTile)
 {
-	int isTop = source->getData(pos) & 8;
+	int isTop = source.getData(pos) & 8;
 	if (isTop)
 	{
-		if (source->getTile(pos.below()) != m_ID)
+		if (source.getTile(pos.below()) != m_ID)
 		{
-			source->setTile(pos, TILE_AIR);
-			spawnResources(source, pos, source->getData(pos));
+			source.setTile(pos, TILE_AIR);
+			spawnResources(source, pos, source.getData(pos));
 		}
 
 		if (newTile > 0)
@@ -197,26 +197,26 @@ void DoorTile::neighborChanged(TileSource* source, const TilePos& pos, TileID ne
 		return;
 	}
 
-	if (source->getTile(pos.above()) != m_ID)
+	if (source.getTile(pos.above()) != m_ID)
 	{
-		source->setTile(pos, TILE_AIR);
+		source.setTile(pos, TILE_AIR);
 		isTop = 1;
 	}
 
-	if (!source->isSolidBlockingTile(pos.below()))
+	if (!source.isSolidBlockingTile(pos.below()))
 	{
-		source->setTile(pos, TILE_AIR);
-		if (source->getTile(pos.above()) == m_ID)
+		source.setTile(pos, TILE_AIR);
+		if (source.getTile(pos.above()) == m_ID)
 		{
-			source->setTile(pos.above(), TILE_AIR);
-			spawnResources(source, pos, source->getData(pos));
+			source.setTile(pos.above(), TILE_AIR);
+			spawnResources(source, pos, source.getData(pos));
 		}
 	}
 
 	if (!isTop && newTile > 0 && Tile::tiles[newTile]->isSignalSource())
 	{
 		bool bOpen = false;
-		if (source->hasNeighborSignal(pos) || source->hasNeighborSignal(pos.above()))
+		if (source.hasNeighborSignal(pos) || source.hasNeighborSignal(pos.above()))
 			bOpen = true;
 
 		setOpen(source, pos, bOpen);

@@ -15,7 +15,7 @@ OreFeature::OreFeature(TileID id, int count)
 	m_count = count;
 }
 
-bool OreFeature::place(TileSource* source, Random* random, const TilePos& pos)
+bool OreFeature::place(TileSource& source, Random* random, const TilePos& pos)
 {
 	float fAng = random->nextFloat() * float(M_PI);
 
@@ -66,8 +66,8 @@ bool OreFeature::place(TileSource* source, Random* random, const TilePos& pos)
 					if (distX * distX + distY * distY + distZ * distZ >= 1.0f)
 						continue;
 
-					if (source->getTile(tp) == Tile::rock->m_ID)
-						source->setTileNoUpdate(tp, m_ID);
+					if (source.getTile(tp) == Tile::rock->m_ID)
+						source.setTileNoUpdate(tp, m_ID);
 				}
 			}
 		}

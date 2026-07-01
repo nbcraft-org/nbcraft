@@ -32,41 +32,41 @@ bool Bush::isSolidRender() const
 	return false;
 }
 
-bool Bush::mayPlace(TileSource* source, const TilePos& pos) const
+bool Bush::mayPlace(TileSource& source, const TilePos& pos) const
 {
-	TileID tile = source->getTile(pos.below());
+	TileID tile = source.getTile(pos.below());
 
 	return tile == Tile::grass->m_ID || tile == Tile::dirt->m_ID || tile == Tile::farmland->m_ID;
 }
 
-bool Bush::canSurvive(TileSource* source, const TilePos& pos) const
+bool Bush::canSurvive(TileSource& source, const TilePos& pos) const
 {
-	if (source->getRawBrightness(pos) <= 7 && !source->canSeeSky(pos))
+	if (source.getRawBrightness(pos) <= 7 && !source.canSeeSky(pos))
 		return false;
 
 	return mayPlace(source, pos);
 }
 
-void Bush::checkAlive(TileSource* source, const TilePos& pos)
+void Bush::checkAlive(TileSource& source, const TilePos& pos)
 {
 	if (!canSurvive(source, pos))
 	{
-		spawnResources(source, pos, source->getData(pos));
-		source->setTile(pos, TILE_AIR);
+		spawnResources(source, pos, source.getData(pos));
+		source.setTile(pos, TILE_AIR);
 	}
 }
 
-void Bush::neighborChanged(TileSource* source, const TilePos& pos, TileID tile)
+void Bush::neighborChanged(TileSource& source, const TilePos& pos, TileID tile)
 {
 	return checkAlive(source, pos);
 }
 
-void Bush::tick(TileSource* source, const TilePos& pos, Random* random)
+void Bush::tick(TileSource& source, const TilePos& pos, Random* random)
 {
 	checkAlive(source, pos);
 }
 
-AABB* Bush::getAABB(TileSource* source, const TilePos& pos)
+AABB* Bush::getAABB(TileSource& source, const TilePos& pos)
 {
 	return nullptr;
 }

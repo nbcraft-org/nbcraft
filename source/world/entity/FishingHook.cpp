@@ -172,7 +172,7 @@ void FishingHook::tick()
 
         if (m_bInGround)
         {
-            if (m_tileSource->getTile(m_tilePos) == m_lastTile)
+            if (m_pTileSource->getTile(m_tilePos) == m_lastTile)
             {
                 ++m_life;
                 if (m_life == 1200)
@@ -196,7 +196,7 @@ void FishingHook::tick()
         }
 
         Vec3 future_pos = m_pos + m_vel;
-        HitResult hit_result = m_tileSource->clip(m_pos, future_pos);
+        HitResult hit_result = m_pTileSource->clip(m_pos, future_pos);
         if (hit_result.isHit())
         {
             future_pos = hit_result.m_hitPos;
@@ -206,7 +206,7 @@ void FishingHook::tick()
         Entity* hit_ent = nullptr;
         AABB hitbox = m_hitbox;
         hitbox.expand(m_vel).grow(1.0f);
-        Entity::Vector entities = m_tileSource->getEntities(this, hitbox);
+        Entity::Vector entities = m_pTileSource->getEntities(this, hitbox);
 
         float max_dist = 0.0f;
         float distance; // var13
@@ -287,7 +287,7 @@ void FishingHook::tick()
                 float var14 = m_hitbox.min.y + (m_hitbox.max.y - m_hitbox.min.y) * float(var28 + 0) / float(var26) - 0.125f + 0.125f;
                 float var16 = m_hitbox.min.y + (m_hitbox.max.y - m_hitbox.min.y) * float(var28 + 1) / float(var26) - 0.125f + 0.125f;
                 AABB var18 = AABB(m_hitbox.min.x, var14, m_hitbox.min.z, m_hitbox.max.x, var16, m_hitbox.max.z);
-                if (m_tileSource->containsLiquid(var18, Material::water))
+                if (m_pTileSource->containsLiquid(var18, Material::water))
                 {
                     var27 += 1.0f / float(var26);
                 }
@@ -385,7 +385,7 @@ int FishingHook::retrieve()
     }
     else if (m_nibble > 0)
     {
-        ItemEntity* var13 = new ItemEntity(*m_tileSource, m_pos, ItemStack(Item::fish_raw));
+        ItemEntity* var13 = new ItemEntity(*m_pTileSource, m_pos, ItemStack(Item::fish_raw));
         float var3 = m_owner->m_pos.x - m_pos.x;
         float var5 = m_owner->m_pos.y - m_pos.y;
         float var7 = m_owner->m_pos.z - m_pos.z;

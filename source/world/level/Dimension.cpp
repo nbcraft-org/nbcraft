@@ -31,7 +31,7 @@ Dimension::Dimension(Level& level, DimensionId dimensionId)
 	, m_hasCeiling(false)
 	, m_dimensionId(dimensionId)
 	, m_chunkSource(nullptr)
-	, m_tileSource(nullptr)
+	, m_pTileSource(nullptr)
 {
 	m_level.addListener(this);
 }
@@ -76,8 +76,8 @@ void Dimension::init()
 		m_chunkSource = new WorldLimitChunkSource(std::unique_ptr<ChunkSource>(m_chunkSource), m_level.getLevelData()->getLimitedWorldOrigin());
 	}
 
-	delete m_tileSource;
-	m_tileSource = new TileSource(m_level, *this, *m_chunkSource, true, false);
+	delete m_pTileSource;
+	m_pTileSource = new TileSource(m_level, *this, *m_chunkSource, true, false);
 	updateLightRamp();
 }
 
@@ -256,7 +256,7 @@ bool Dimension::mayRespawn() const
 
 bool Dimension::isValidSpawn(const TilePos& pos) const
 {
-	TileID tile = m_tileSource->getTopSolidBlock(pos, true);
+	TileID tile = m_pTileSource->getTopSolidBlock(pos, true);
 	if (tile == Tile::invisible_bedrock->m_ID)
 		return false;
 

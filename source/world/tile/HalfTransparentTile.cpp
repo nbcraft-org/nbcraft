@@ -20,9 +20,9 @@ bool HalfTransparentTile::isSolidRender() const
 	return false;
 }
 
-bool HalfTransparentTile::shouldRenderFace(TileSource* source, const TilePos& pos, Facing::Name face) const
+bool HalfTransparentTile::shouldRenderFace(TileSource& source, const TilePos& pos, Facing::Name face) const
 {
-	if (m_bAllowSame || source->getTile(pos) != m_ID)
+	if (m_bAllowSame || source.getTile(pos) != m_ID)
 		return Tile::shouldRenderFace(source, pos, face);
 	
 	return m_bAllowSame;

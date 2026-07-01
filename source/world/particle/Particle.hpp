@@ -140,7 +140,7 @@ public:
 class NoteParticle : public Particle
 {
 public:
-	NoteParticle(Level*, const Vec3& pos, const Vec3& dir, float scale = 2.0f);
+	NoteParticle(TileSource&, const Vec3& pos, const Vec3& dir, float scale = 2.0f);
 	void tick() override;
 	void render(Tesselator&, float, float, float, float, float, float) override;
 
@@ -151,7 +151,7 @@ public:
 class ItemParticle : public Particle
 {
 public:
-	ItemParticle(Level*, const Vec3& pos, const Item* item);
+	ItemParticle(TileSource&, const Vec3& pos, const Item* item);
 	int getParticleTexture() override;
 	void render(Tesselator&, float, float, float, float, float, float) override;
 };
@@ -159,7 +159,7 @@ public:
 class TakeAnimationParticle : public Particle
 {
 public:
-	TakeAnimationParticle(Level*, Entity* throwed, Entity* thrower, float vel);
+	TakeAnimationParticle(TileSource&, Entity* throwed, Entity* thrower, float vel);
 	~TakeAnimationParticle();
 
 public:

@@ -24,5 +24,5 @@ public:
 
 	bool hasSaddle() const { return false; }
 	void setSaddle(bool b);
-	Entity* getBreedOffspring(Animal* pOther) { return new Pig(*m_tileSource); }
+	Entity* getBreedOffspring(Animal* pOther) { return new Pig(*m_pTileSource); }
 };

@@ -16,9 +16,9 @@ ClayFeature::ClayFeature(TileID id, int count)
     m_count = count;
 }
 
-bool ClayFeature::place(TileSource* source, Random* random, const TilePos& pos)
+bool ClayFeature::place(TileSource& source, Random* random, const TilePos& pos)
 {
-    if (source->getMaterial(pos) != Material::water)
+    if (source.getMaterial(pos) != Material::water)
     {
         return false;
     }
@@ -67,8 +67,8 @@ bool ClayFeature::place(TileSource* source, Random* random, const TilePos& pos)
                     if (d12 * d12 + d13 * d13 + d14 * d14 >= 1.0f)
                         continue;
 
-                    if (source->getTile(tp) == Tile::sand->m_ID)
-                        source->setTileAndData(tp, FullTile(m_ID, 0), TileChange::UPDATE_LISTENERS);
+                    if (source.getTile(tp) == Tile::sand->m_ID)
+                        source.setTileAndData(tp, FullTile(m_ID, 0), TileChange::UPDATE_LISTENERS);
                 }
             }
         }

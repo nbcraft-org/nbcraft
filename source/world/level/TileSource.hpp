@@ -84,8 +84,8 @@ public:
 	uint8_t getHeightmap(const TilePos&);
 	void getHeightmapPos(const TilePos&); // unk type
 	uint8_t getHeightmap(int, int);
-	void getTileEntity(const TilePos&); // unk type
-	void getTileEntity(int, int, int); // unk type
+	TileEntity* getTileEntity(const TilePos&); // unk type
+	TileEntity* getTileEntity(int, int, int); // unk type
 	void getGrassColor(const TilePos&); // unk type
 	void getTopRainTilePos(const TilePos&); // unk type
 	void checkIsTopRainTilePos(const TilePos&); // unk type
@@ -147,7 +147,7 @@ public:
 	void setBrightness(const LightLayer&, int, int, int, Brightness_t); // unk type
 	void setGrassColor(int, const TilePos&, int); // unk type
 	void fetchCollisionShapes(Entity*, const AABB&, float*, bool); // unk type
-	std::vector<AABB>& fetchAABBs(const AABB&, bool); // unk type
+	std::vector<AABB>& fetchAABBs(const AABB&, bool b = true); // unk type
 	void getEntities(EntityType, const AABB&, Entity*); // unk type
 	void getNearestEntityOfType(Entity*, const AABB&, EntityType); // unk type
 	void getNearestEntityOfType(Entity*, const Vec3&, float, EntityType); // unk type

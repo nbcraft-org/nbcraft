@@ -14,19 +14,19 @@ TrapdoorTile::TrapdoorTile(int ID, Material* pMtl) : Tile(ID, pMtl)
 	Tile::setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 }
 
-AABB* TrapdoorTile::getAABB(TileSource* source, const TilePos& pos)
+AABB* TrapdoorTile::getAABB(TileSource& source, const TilePos& pos)
 {
 	updateShape(source, pos);
 	return Tile::getAABB(source, pos);
 }
 
-AABB TrapdoorTile::getTileAABB(TileSource* source, const TilePos& pos)
+AABB TrapdoorTile::getTileAABB(TileSource& source, const TilePos& pos)
 {
 	updateShape(source, pos);
 	return Tile::getTileAABB(source, pos);
 }
 
-void TrapdoorTile::updateShape(TileSource* source, const TilePos& pos)
+void TrapdoorTile::updateShape(TileSource& source, const TilePos& pos)
 {
 	TileData metadata = source.getExtraData(pos);
 	constexpr float f = 0.1875f;
@@ -63,9 +63,9 @@ void TrapdoorTile::setOpen(TileSource& source, const TilePos& pos, bool bOpen)
 	}
 }
 
-void TrapdoorTile::neighborChanged(TileSource* source, const TilePos& pos, TileID newTile) // check this
+void TrapdoorTile::neighborChanged(TileSource& source, const TilePos& pos, TileID newTile) // check this
 {
-	int data = source->getExtraData(pos);
+	int data = source.getExtraData(pos);
 	TilePos newPos = pos;
 
 	switch (data & C_DIR_MASK)
@@ -77,13 +77,13 @@ void TrapdoorTile::neighborChanged(TileSource* source, const TilePos& pos, TileI
 		default: break;
 	}
 
-	if (!source->isSolidBlockingTile(newPos)) {
-		source->setTile(pos, 0);
-		spawnResources(source, pos, source->getData(pos));
+	if (!source.isSolidBlockingTile(newPos)) {
+		source.setTile(pos, 0);
+		spawnResources(source, pos, source.getData(pos));
 	}
 
 	if (newTile > 0 && Tile::tiles[newTile]->isSignalSource()) {
-		int l = source->hasNeighborSignal(pos);
+		int l = source.hasNeighborSignal(pos);
 		setOpen(*source, pos, (bool)l);
 	}
 }

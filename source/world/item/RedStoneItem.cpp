@@ -25,7 +25,7 @@ bool RedStoneItem::useOn(ItemStack* instance, Player* player, const TilePos& pos
 	if (!tileSource.isEmptyTile(tp))
 		return false;
 
-	if (Tile::redStoneDust->mayPlace(&tileSource, tp))
+	if (Tile::redStoneDust->mayPlace(tileSource, tp))
 	{
 		instance->m_count--;
 		tileSource.setTile(tp, Tile::redStoneDust->m_ID);
