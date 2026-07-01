@@ -21,7 +21,7 @@
 #include "world/tile/entity/TileEntity.hpp"
 #include "thirdparty/raknet/GetTime.h"
 
-#ifndef DEMO
+#if false
 
 #define C_CHUNKS_TO_SAVE_PER_TICK (2)
 

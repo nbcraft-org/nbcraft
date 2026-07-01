@@ -9,7 +9,7 @@ public:
 
 public:
 	int getTexture(Facing::Name face) const override;
-	bool use(Level*, const TilePos& pos, Player*) override;
-	void dropRecording(Level*, const TilePos& pos, TileData data);
-	void spawnResources(Level*, const TilePos& pos, TileData data, float) override;
+	bool use(const TilePos& pos, Player&) override;
+	void dropRecording(TileSource&, const TilePos& pos, TileData data);
+	void spawnResources(TileSource&, const TilePos& pos, TileData data, float) override;
 };

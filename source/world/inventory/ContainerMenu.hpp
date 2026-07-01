@@ -30,7 +30,7 @@ public:
     void sendData(int id, int value);
     virtual void broadcastChanges(Container::SlotID slotId);
     virtual void broadcastChanges();
-    virtual void removed(Player* player);
+    virtual void removed(Player& player);
     virtual void slotsChanged(Container* container);
 
     // Called getItems in PE and Java
@@ -54,7 +54,7 @@ public:
 
 public:
     virtual bool isResultSlot() const { return false; } // PE
-    virtual bool stillValid(Player* player) const = 0;
+    virtual bool stillValid(Player& player) const = 0;
     //Unused
     virtual bool isPauseScreen() const { return false; }
 

@@ -1,25 +1,27 @@
 #include "CraftingTableTile.hpp"
 #include "world/entity/Player.hpp"
 #include "world/level/Level.hpp"
-#include "world/level/TileSource.hpp"
 
 CraftingTableTile::CraftingTableTile(TileID id) : Tile(id, TEXTURE_WORKBENCH_SIDE_1, Material::wood)
 {
 }
 
-bool CraftingTableTile::use(const TilePos& pos, Player* player)
+bool CraftingTableTile::use(const TilePos& pos, Player& player)
 {
-	if (player->isSneaking() && !player->getSelectedItem().isEmpty())
+	if (player.isSneaking() && !player.getSelectedItem().isEmpty())
 	{
 		return false;
 	}
-	if (player->getLevel().m_bIsClientSide)
+
+	Level& level = player.getLevel();
+
+	if (level.m_bIsClientSide)
 	{
 		return true;
 	}
 	else 
 	{
-		player->startCrafting(pos);
+		player.startCrafting(pos);
 		return true;
 	}
 }

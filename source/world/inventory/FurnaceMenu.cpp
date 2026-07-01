@@ -22,7 +22,7 @@ FurnaceMenu::FurnaceMenu(Inventory* inventory, FurnaceTileEntity* furnace)
     }
 }
 
-bool FurnaceMenu::stillValid(Player* player) const
+bool FurnaceMenu::stillValid(Player& player) const
 {
     return m_furnace->stillValid(player);
 }

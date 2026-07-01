@@ -87,9 +87,9 @@ void Player::remove()
 {
 	m_bIsInvisible = true;
 	Mob::remove();
-	m_pInventoryMenu->removed(this);
+	m_pInventoryMenu->removed(*this);
 	if (m_pContainerMenu)
-		m_pContainerMenu->removed(this);
+		m_pContainerMenu->removed(*this);
 }
 
 bool Player::hurt(Entity* pEnt, int damage)
@@ -254,7 +254,7 @@ void Player::aiStep()
 		if (pEnt->m_bRemoved)
 			continue;
 
-		touch(pEnt);
+		touch(*pEnt);
 	}
 
 	// only needed for non-local players for some reason
@@ -267,7 +267,7 @@ void Player::tick()
 
 	if (!m_pLevel->m_bIsClientSide)
 	{
-		if (m_pContainerMenu && !m_pContainerMenu->stillValid(this))
+		if (m_pContainerMenu && !m_pContainerMenu->stillValid(*this))
 			closeContainer();
 	}
 }
@@ -383,34 +383,34 @@ void Player::animateRespawn(Player*, Level*)
 
 }
 
-void Player::attack(Entity* pEnt)
+void Player::attack(Entity& entity)
 {
-	int atkDmg = m_pInventory->getAttackDamage(pEnt);
+	int atkDmg = m_pInventory->getAttackDamage(entity);
 	if (atkDmg <= 0)
 		return;
 
 	if (m_vel.y < 0.0f)
 		atkDmg++;
 
-	pEnt->hurt(this, atkDmg);
+	entity.hurt(this, atkDmg);
 	
 	ItemStack& item = getSelectedItem();
-	bool isMob = pEnt->getDescriptor().hasCategory(EntityCategories::MOB);
+	bool isMob = entity.getDescriptor().hasCategory(EntityCategories::MOB);
 	if (!item.isEmpty() && isMob)
 	{
-		item.hurtEnemy((Mob*)pEnt, this);
+		item.hurtEnemy((Mob&)entity, *this);
 		if (item.m_count <= 0)
 		{
-			item.snap(this);
+			item.snap(*this);
 			removeSelectedItem();
 		}
 	}
 
 	// Needs to be uncommented if/when wolves are implemented
 	/*
-	if (isMob && pEnt->isAlive())
+	if (isMob && entity.isAlive())
 	{
-		alertWolves(static_cast<Mob*>(pEnt), true);
+		alertWolves(static_cast<Mob&>(entity), true);
 	}
 	*/
 }
@@ -608,27 +608,27 @@ void Player::openTrap(DispenserTileEntity* tileEntity)
 	_handleOpenedContainerMenu();
 }
 
-void Player::touch(Entity* pEnt)
+void Player::touch(Entity& entity)
 {
-	pEnt->playerTouch(this);
+	entity.playerTouch(this);
 }
 
-void Player::interact(Entity* pEnt)
+void Player::interact(Entity& entity)
 {
-	if (pEnt->interact(this))
+	if (entity.interact(this))
 		return;
 
-	bool isMob = pEnt->getDescriptor().hasCategory(EntityCategories::MOB);
+	bool isMob = entity.getDescriptor().hasCategory(EntityCategories::MOB);
 	if (!isMob)
 		return;
 
 	ItemStack& item = getSelectedItem();
 	if (!item.isEmpty())
 	{
-		item.interactEnemy(static_cast<Mob*>(pEnt));
+		item.interactEnemy(static_cast<Mob&>(entity));
 		if (item.m_count <= 0)
 		{
-			item.snap(this);
+			item.snap(*this);
 			removeSelectedItem();
 		} 
 	} 

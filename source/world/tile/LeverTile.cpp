@@ -133,9 +133,9 @@ void LeverTile::updateShape(TileSource& source, const TilePos& pos)
 	}
 }
 
-void LeverTile::attack(const TilePos& pos, Player* player)
+void LeverTile::attack(const TilePos& pos, Player& player)
 {
-	use(pos, *player);
+	use(pos, player);
 }
 
 bool LeverTile::use(const TilePos& pos, Player& player)

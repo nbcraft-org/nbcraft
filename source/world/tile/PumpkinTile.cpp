@@ -26,9 +26,10 @@ int PumpkinTile::getTexture(Facing::Name face) const
 	}
 }
 
-void PumpkinTile::setPlacedBy(TileSource& source, const TilePos& pos, Mob* mob)
+void PumpkinTile::setPlacedBy(const TilePos& pos, Mob& mob)
 {
-	int rot = Mth::floor(0.5f + (mob->m_rot.yaw * 4.0f / 360.0f)) & 3;
+	TileSource& source = mob.getTileSource();
+	int rot = Mth::floor(0.5f + (mob.m_rot.yaw * 4.0f / 360.0f)) & 3;
 
 	TileData data = 0;
 

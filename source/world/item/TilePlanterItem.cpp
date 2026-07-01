@@ -16,10 +16,10 @@ TilePlanterItem::TilePlanterItem(int id, int place) : Item(id)
 	m_tile = Tile::tiles[place]->m_ID;
 }
 
-bool TilePlanterItem::useOn(ItemStack* instance, Player* player, const TilePos& pos, Facing::Name face) const
+bool TilePlanterItem::useOn(ItemStack& itemStack, Player& player, const TilePos& pos, Facing::Name face) const
 {
-	Level& level = player->getLevel();
-	TileSource& source = player->getTileSource();
+	Level& level = player.getLevel();
+	TileSource& source = player.getTileSource();
 
 	TilePos tp(pos);
 
@@ -27,18 +27,12 @@ bool TilePlanterItem::useOn(ItemStack* instance, Player* player, const TilePos& 
 	{
 		face = Facing::DOWN;
 	}
-	else switch (face)
+	else
 	{
-		case Facing::DOWN: tp.y--; break;
-		case Facing::UP: tp.y++; break;
-		case Facing::NORTH: tp.z--; break;
-		case Facing::SOUTH: tp.z++; break;
-		case Facing::WEST: tp.x--; break;
-		case Facing::EAST: tp.x++; break;
-		default: assert(false); return false; break;
+		tp = tp.relative(face);
 	}
 
-	if (!instance->m_count)
+	if (!itemStack.m_count)
 		return false;
 
 	if (!source.mayPlace(m_tile, tp, face, player))
@@ -49,9 +43,9 @@ bool TilePlanterItem::useOn(ItemStack* instance, Player* player, const TilePos& 
 
 	Tile* pTile = Tile::tiles[m_tile];
 	pTile->setPlacedOnFace(source, tp, face);
-	pTile->setPlacedBy(source, tp, player);
+	pTile->setPlacedBy(tp, player);
 	level.playSound(tp + 0.5f, "step." + pTile->m_pSound->name, (pTile->m_pSound->volume + 1) / 2, (pTile->m_pSound->pitch * 0.8f));
 
-	instance->m_count--;
+	itemStack.shrink();
 	return true;
 }

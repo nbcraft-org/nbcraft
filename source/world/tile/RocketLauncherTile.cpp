@@ -63,11 +63,11 @@ bool RocketLauncherTile::isSolidRender() const
 	return false;
 }
 
-bool RocketLauncherTile::use(const TilePos& pos, Player* player)
+bool RocketLauncherTile::use(const TilePos& pos, Player& player)
 {
-	TileSource& source = player->getTileSource();
+	TileSource& source = player.getTileSource();
 
-	_use(source, pos);
+	return _use(source, pos);
 }
 
 void RocketLauncherTile::neighborChanged(TileSource& source, const TilePos& pos, TileID newTile)

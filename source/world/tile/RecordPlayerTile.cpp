@@ -10,7 +10,7 @@ int RecordPlayerTile::getTexture(Facing::Name face) const
 	return m_TextureFrame + (face == Facing::UP ? Facing::UP : Facing::DOWN);
 }
 
-bool RecordPlayerTile::use(Level* level, const TilePos& pos, Player* player)
+bool RecordPlayerTile::use(TileSource& source, const TilePos& pos, Player* player)
 {
 	int var6 = level->getData(pos);
 	if (var6 == 0)

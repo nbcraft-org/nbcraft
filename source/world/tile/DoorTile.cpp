@@ -22,20 +22,20 @@ DoorTile::DoorTile(int ID, Material* pMtl) : Tile(ID, pMtl)
 	Tile::setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 }
 
-bool DoorTile::use(const TilePos& pos, Player* player)
+bool DoorTile::use(const TilePos& pos, Player& player)
 {
 	// well, you know, iron doors can't be opened by right clicking
 	if (m_pMaterial == Material::metal)
 		return true;
 
-	TileSource& source = player->getTileSource();
+	TileSource& source = player.getTileSource();
 
 	setOpen(source, pos, !isOpen(source.getData(pos)));
 
 	return true;
 }
 
-void DoorTile::attack(const TilePos& pos, Player* player)
+void DoorTile::attack(const TilePos& pos, Player& player)
 {
 	use(pos, player);
 }
@@ -173,7 +173,8 @@ void DoorTile::setOpen(TileSource& source, const TilePos& pos, bool bOpen)
 
 		source.setTileAndData(pos, FullTile(m_ID, data), TileChange::UPDATE_ALL | TileChange::UPDATE_UNK3);
 
-		level->levelEvent(LevelEvent(LevelEvent::SOUND_DOOR, pos, 0, player));
+		// @Matt
+		//level->levelEvent(LevelEvent(LevelEvent::SOUND_DOOR, pos, 0, player));
 	}
 }
 

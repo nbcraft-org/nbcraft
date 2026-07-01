@@ -8,7 +8,7 @@ public:
 	RecordingItem(int id, const std::string& recording);
 
 public:
-	bool useOn(ItemStack*, Player*, const TilePos& pos, Facing::Name face) const override;
+	bool useOn(ItemStack&, Player&, const TilePos& pos, Facing::Name face) const override;
 
 private:
 	std::string m_recording;

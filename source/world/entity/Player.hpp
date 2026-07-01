@@ -87,7 +87,7 @@ public:
 
 	int addResource(int);
 	void animateRespawn(Player*, Level*);
-	void attack(Entity* pEnt);
+	void attack(Entity& entity);
 	void useItem(ItemStack& item) const;
 	void releaseUsingItem();
 	void stopUsingItem();
@@ -106,7 +106,7 @@ public:
 	void setRespawnPos(const TilePos& pos);
 	inline const Abilities& getAbilities() const { return m_abilities; }
 
-	void touch(Entity* pEnt);
+	void touch(Entity& entity);
 	GameType getPlayerGameType() const { return _playerGameType; }
 	virtual void setPlayerGameType(GameType playerGameType);
 	bool isSurvival() const { return getPlayerGameType() == GAME_TYPE_SURVIVAL; }
@@ -119,7 +119,7 @@ public:
 	// QUIRK: Yes, I did mean it like that, as did Mojang.
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
-	void interact(Entity* pEnt);
+	void interact(Entity& entity);
 #pragma GCC diagnostic pop
 
 protected:

@@ -100,14 +100,14 @@ void RedStoneOreTile::interact(TileSource& source, const TilePos& pos)
 		source.setTile(pos, Tile::redStoneOre_lit->m_ID);
 }
 
-void RedStoneOreTile::attack(const TilePos& pos, Player* player)
+void RedStoneOreTile::attack(const TilePos& pos, Player& player)
 {
-	interact(player->getTileSource(), pos);
+	interact(player.getTileSource(), pos);
 }
 
-bool RedStoneOreTile::use(const TilePos& pos, Player* player)
+bool RedStoneOreTile::use(const TilePos& pos, Player& player)
 {
-	interact(player->getTileSource(), pos);
+	interact(player.getTileSource(), pos);
 	return Tile::use(pos, player);
 }
 

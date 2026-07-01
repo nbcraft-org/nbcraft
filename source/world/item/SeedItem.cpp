@@ -9,16 +9,16 @@ SeedItem::SeedItem(int id, int place)
 {
 }
 
-bool SeedItem::useOn(ItemStack* inst, Player* player, const TilePos& pos, Facing::Name face) const
+bool SeedItem::useOn(ItemStack& inst, Player& player, const TilePos& pos, Facing::Name face) const
 {
-    TileSource& source = player->getTileSource();
+    TileSource& source = player.getTileSource();
 
     int tile = source.getTile(pos);
 
     if (tile == Tile::farmland->m_ID && source.isEmptyTile(pos.above()))
     {
         source.setTile(pos.above(), m_tile);
-        --inst->m_count;
+        inst.shrink();
         return true;
     }
 

@@ -13,7 +13,7 @@ public:
 	int getTexture(Facing::Name face) const override;
 	void onPlace(TileSource& source, const TilePos& pos) override;
 	bool use(const TilePos& pos, Player& player) override;
-	void setPlacedBy(TileSource& source, const TilePos& pos, Mob*) override;
+	void setPlacedBy(const TilePos& pos, Mob&) override;
 	void onRemove(TileSource& source, const TilePos& pos) override;
 	bool hasTileEntity() const override;
 	TileEntity* newTileEntity() override;

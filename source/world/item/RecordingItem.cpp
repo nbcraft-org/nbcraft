@@ -9,16 +9,16 @@ RecordingItem::RecordingItem(int id, const std::string& recording) : Item(id), m
 	m_maxStackSize = 1;
 }
 
-bool RecordingItem::useOn(ItemStack* instance, Player* player, const TilePos& pos, Facing::Name face) const
+bool RecordingItem::useOn(ItemStack& itemStack, Player& player, const TilePos& pos, Facing::Name face) const
 {
-	Level& level = player->getLevel();
-	TileSource& tileSource = player->getTileSource();
+	Level& level = player.getLevel();
+	TileSource& tileSource = player.getTileSource();
 
 	if (tileSource.getTile(pos) == Tile::recordPlayer->m_ID && tileSource.getData(pos) == 0)
 	{
 		tileSource.setTileAndData(pos, FullTile(Tile::recordPlayer, m_itemID - Item::record_01->m_itemID + 1));
 		level.playStreamingMusic(m_recording, pos);
-		instance->m_count--;
+		itemStack.shrink();
 		return true;
 	}
 	else

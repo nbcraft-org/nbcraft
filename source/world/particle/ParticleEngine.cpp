@@ -61,9 +61,9 @@ std::string ParticleEngine::countParticles()
 	return ss.str();
 }
 
-void ParticleEngine::crack(Entity* entity, const TilePos& tilePos, Facing::Name face)
+void ParticleEngine::crack(Entity& entity, const TilePos& tilePos, Facing::Name face)
 {
-	TileSource& source = entity->getTileSource();
+	TileSource& source = entity.getTileSource();
 
 	TileID tileID = source.getTile(tilePos);
 	if (!tileID) return;
@@ -112,9 +112,9 @@ void ParticleEngine::crack(Entity* entity, const TilePos& tilePos, Facing::Name 
 	add((new TerrainParticle(source, pos, pTile))->init(tilePos, face)->setPower(0.2f)->scale(0.6f));
 }
 
-void ParticleEngine::destroyEffect(Entity* entity, const TilePos& pos)
+void ParticleEngine::destroyEffect(Entity& entity, const TilePos& pos)
 {
-	TileSource& source = entity->getTileSource();
+	TileSource& source = entity.getTileSource();
 
 	TileID tileID = source.getTile(pos);
 	if (!tileID) return;

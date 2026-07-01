@@ -25,15 +25,15 @@ std::string TileItem::getDescriptionId() const
 	return Tile::tiles[m_tile]->getDescriptionId();
 }
 
-std::string TileItem::getDescriptionId(ItemStack* instance) const
+std::string TileItem::getDescriptionId(ItemStack& itemStack) const
 {
 	return Tile::tiles[m_tile]->getDescriptionId();
 }
 
-bool TileItem::useOn(ItemStack* instance, Player* player, const TilePos& pos, Facing::Name face) const
+bool TileItem::useOn(ItemStack& itemStack, Player& player, const TilePos& pos, Facing::Name face) const
 {
-	TileSource& source = player->getTileSource();
-	Level& level = player->getLevel();
+	TileSource& source = player.getTileSource();
+	Level& level = player.getLevel();
 
 	TilePos tp(pos);
 
@@ -46,7 +46,7 @@ bool TileItem::useOn(ItemStack* instance, Player* player, const TilePos& pos, Fa
 		tp = tp.relative(face);
 	}
 
-	if (instance->m_count == 0)
+	if (itemStack.m_count == 0)
 		return false;
 
 	if (!source.mayPlace(m_tile, tp, face, player, false, nullptr))
@@ -54,11 +54,11 @@ bool TileItem::useOn(ItemStack* instance, Player* player, const TilePos& pos, Fa
 
 	Tile* pTile = Tile::tiles[m_tile];
 
-	if (!source.setTileAndData(tp, FullTile(m_tile, getLevelDataForAuxValue(instance->getAuxValue()))))
+	if (!source.setTileAndData(tp, FullTile(m_tile, getLevelDataForAuxValue(itemStack.getAuxValue()))))
 		return true;
 
 	pTile->setPlacedOnFace(source, tp, face);
-	pTile->setPlacedBy(source, tp, player);
+	pTile->setPlacedBy(tp, player);
 
 	level.playSound(
 		Vec3(tp) + 0.5f,
@@ -68,9 +68,9 @@ bool TileItem::useOn(ItemStack* instance, Player* player, const TilePos& pos, Fa
 	);
 
 	if (level.m_pRakNetInstance)
-		level.m_pRakNetInstance->send(new PlaceBlockPacket(player->m_EntityID, tp, (TileID)m_tile, face, instance->getAuxValue()));
+		level.m_pRakNetInstance->send(new PlaceBlockPacket(player.m_EntityID, tp, (TileID)m_tile, face, itemStack.getAuxValue()));
 
-	player->useItem(*instance);
+	player.useItem(itemStack);
 	return true;
 }
 

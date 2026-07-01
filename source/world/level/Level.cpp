@@ -41,7 +41,7 @@ Level::Level(LevelStorage* pStor, const std::string& name, const LevelSettings& 
 
 	m_random.setSeed(1); // initialize with a seed of 1
 
-	LevelData* pData = m_pLevelStorage->prepareLevel(this);
+	LevelData* pData = nullptr; // m_pLevelStorage->prepareLevel(this)
 
 	field_B0C = pData == nullptr;
 
@@ -479,19 +479,21 @@ void Level::loadPlayer(Player& player)
 
 void Level::saveLevelData()
 {
-	m_pLevelStorage->saveLevelData(m_pLevelData, &m_players);
+	m_pLevelStorage->saveLevelData(m_pLevelData); // @Matt, we should technically be serializing the LocalPlayer's data into level.dat
 }
 
 void Level::savePlayerData()
 {
-	m_pLevelStorage->savePlayerData(*m_pLevelData, m_players);
+	// @Matt
+	//m_pLevelStorage->savePlayerData(*m_pLevelData, m_players);
 }
 
 void Level::saveGame()
 {
 	if (m_pLevelStorage)
 	{
-		m_pLevelStorage->saveGame(this);
+		// @Matt
+		//m_pLevelStorage->saveGame(this);
 		saveLevelData();
 	}
 }
@@ -500,7 +502,8 @@ void Level::loadEntities()
 {
 	if (m_pLevelStorage)
 	{
-		m_pLevelStorage->loadEntities(this);
+		// @Matt
+		//m_pLevelStorage->loadEntities(this);
 	}
 }
 

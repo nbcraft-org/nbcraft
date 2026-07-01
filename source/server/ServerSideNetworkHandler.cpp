@@ -58,7 +58,7 @@ ServerSideNetworkHandler::~ServerSideNetworkHandler()
 	m_onlinePlayers.clear();
 }
 
-Packet* _getPacketForEntity(Entity& entity)
+Packet* _getPacketForEntity(const Entity& entity)
 {
 	if (entity.getDescriptor().isType(EntityType::ITEM))
 	{
@@ -325,7 +325,8 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, LoginPacke
 
 #ifdef ENH_SAVE_REMOTE_PLAYERS
 	LevelStorage* pLevelStorage = m_pLevel->getLevelStorage();
-	pLevelStorage->load(*pPlayer);
+	// @MATT
+	//pLevelStorage->load(*pPlayer);
 #endif
 
 	m_pendingPlayers[guid] = pPlayer;
@@ -529,16 +530,16 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, PlaceBlock
 	Facing::Name face = (Facing::Name)packet->m_face;
 	TileData data = packet->m_data;
 
-	TileSource& tileSource = pMob->getTileSource();
+	TileSource& tileSource = player.getTileSource();
 
-	if (!tileSource.mayPlace(tileId, pos, face, pMob, true))
+	if (!tileSource.mayPlace(tileId, pos, face, player, true))
 		return;
 
 	if (tileSource.setTile(pos, tileId, data))
 	{
 		Tile* pTile = Tile::tiles[tileId];
-		pTile->setPlacedOnFace(&tileSource, pos, face);
-		pTile->setPlacedBy(&tileSource, pos, pMob);
+		pTile->setPlacedOnFace(tileSource, pos, face);
+		pTile->setPlacedBy(pos, player);
 
 		const Tile::SoundType* pSound = pTile->m_pSound;
 		m_pLevel->playSound(pos + 0.5f, "step." + pSound->name, 0.5f * (pSound->volume + 1.0f), pSound->pitch * 0.8f);
@@ -555,13 +556,13 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, RemoveBloc
 
 	player.swing();
 
-	TileSource& source = pPlayer->getTileSource();
+	TileSource& source = player.getTileSource();
 
 	TilePos pos = packet->m_pos;
 	Tile* pTile = Tile::tiles[source.getTile(pos)];
 	TileData auxValue = source.getData(pos);
 
-	m_pMinecraft->m_pParticleEngine->destroyEffect(pPlayer, pos);
+	m_pMinecraft->m_pParticleEngine->destroyEffect(player, pos);
 
 	bool setTileResult = source.setTile(pos, TILE_AIR);
 	if (pTile && setTileResult)
@@ -579,11 +580,11 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, RemoveBloc
 				pTile->spawnResources(&source, pos, auxValue);
 			}
 #else
-			pTile->spawnResources(&source, pos, auxValue);
+			pTile->spawnResources(source, pos, auxValue);
 #endif
 		}
 
-		pTile->destroy(&source, pos, auxValue);
+		pTile->destroy(source, pos, auxValue);
 
 		// redistribute the packet only if needed
 		redistributePacket(packet, guid);
@@ -653,7 +654,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, UseItemPac
 				return;
 
 			// Interface with tile instead of using item
-			if (pTile->use(packet->m_tilePos, &player))
+			if (pTile->use(packet->m_tilePos, player))
 			{
 				player.swing();
 				return;
@@ -672,29 +673,30 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, UseItemPac
 
 	if (onTile)
 	{
-		item.useOn(&player, m_pLevel, packet->m_tilePos, (Facing::Name)packet->m_tileFace);
+		item.useOn(player, packet->m_tilePos, (Facing::Name)packet->m_tileFace);
 	}
 	else
 	{
-		item.use(m_pLevel, player);
+		item.use(player);
 	}
 
 	player.swing();
 }
 
 // added specifically to allow Noteblocks to work, but ideally should just be a part of ServerPlayerGameMode
-bool _startDestroyBlock(Level& level, Player& player, const TilePos& pos, Facing::Name face)
+static bool _startDestroyBlock(Player& player, const TilePos& pos, Facing::Name face)
 {
 	ItemStack& item = player.getSelectedItem();
 	if (!item.isEmpty() && item.getItem() == Item::bow)
 		return true;
 
-	TileID tile = level.getTile(pos);
+	TileSource& tileSource = player.getTileSource();
+	TileID tile = tileSource.getTile(pos);
 
 	if (tile <= 0)
 		return false;
 	
-	Tile::tiles[tile]->attack(&level, pos, &player);
+	Tile::tiles[tile]->attack(pos, player);
 
 	return true;
 }
@@ -708,7 +710,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, PlayerActi
 	switch (packet->m_action)
 	{
 	case PlayerActionPacket::START_DESTROY_BLOCK:
-		_startDestroyBlock(*m_pLevel, player, packet->m_tilePos, packet->m_tileFace);
+		_startDestroyBlock(player, packet->m_tilePos, packet->m_tileFace);
 		//m_pMinecraft->getPlayerGameMode(player)->startDestroyBlock(&player, packet->m_tilePos, packet->m_tileFace);
 		break;
 	case PlayerActionPacket::STOP_DESTROY_BLOCK:

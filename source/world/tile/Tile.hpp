@@ -91,7 +91,7 @@ public: // virtual functions
 	virtual void onRemove(TileSource&, const TilePos& pos);
 	virtual int getResource(TileData, Random*) const;
 	virtual int getResourceCount(Random*) const;
-	virtual float getDestroyProgress(Player*) const;
+	virtual float getDestroyProgress(Player&) const;
 	virtual void spawnResources(TileSource&, const TilePos& pos, TileData data);
 	virtual void spawnResources(TileSource&, const TilePos& pos, TileData data, float);
 	virtual int spawnBurnResources(TileSource&, float, float, float);
@@ -102,7 +102,7 @@ public: // virtual functions
 	virtual bool use(const TilePos& pos, Player&);
 	virtual void stepOn(TileSource&, const TilePos& pos, Entity*);
 	virtual void setPlacedOnFace(TileSource&, const TilePos& pos, Facing::Name face);
-	virtual void setPlacedBy(TileSource&, const TilePos& pos, Mob*);
+	virtual void setPlacedBy(const TilePos& pos, Mob&);
 	virtual void prepareRender(TileSource&, const TilePos& pos);
 	virtual void attack(const TilePos& pos, Player&);
 	virtual void handleEntityInside(TileSource&, const TilePos& pos, const Entity*, Vec3&);

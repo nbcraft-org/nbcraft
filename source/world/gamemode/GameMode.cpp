@@ -26,15 +26,15 @@ void GameMode::initLevel(Level* pLevel)
 {
 }
 
-bool GameMode::startDestroyBlock(Player* player, const TilePos& pos, Facing::Name face)
+bool GameMode::startDestroyBlock(Player& player, const TilePos& pos, Facing::Name face)
 {
 	//if (!player->getCarriedItem()) // && not a bow
 	return destroyBlock(player, pos, face);
 }
 
-bool GameMode::destroyBlock(Player* player, const TilePos& pos, Facing::Name face)
+bool GameMode::destroyBlock(Player& player, const TilePos& pos, Facing::Name face)
 {
-	TileSource& source = player->getTileSource();
+	TileSource& source = player.getTileSource();
 
 	Tile* oldTile = Tile::tiles[source.getTile(pos)];
 	if (!oldTile)
@@ -43,7 +43,7 @@ bool GameMode::destroyBlock(Player* player, const TilePos& pos, Facing::Name fac
 	m_pMinecraft->m_pParticleEngine->destroyEffect(player, pos);
 
 	TileData tileData = source.getData(pos);
-	oldTile->playerWillDestroy(*player, pos, face);
+	oldTile->playerWillDestroy(player, pos, face);
 	bool changed = source.setTile(pos, TILE_AIR);
 	if (!changed)
 		return false;
@@ -56,13 +56,13 @@ bool GameMode::destroyBlock(Player* player, const TilePos& pos, Facing::Name fac
 
 	if (m_pMinecraft->isOnline())
 	{
-		m_pMinecraft->m_pRakNetInstance->send(new RemoveBlockPacket(player->m_EntityID, pos));
+		m_pMinecraft->m_pRakNetInstance->send(new RemoveBlockPacket(player.m_EntityID, pos));
 	}
 
 	return true;
 }
 
-bool GameMode::continueDestroyBlock(Player* player, const TilePos& pos, Facing::Name face)
+bool GameMode::continueDestroyBlock(Player& player, const TilePos& pos, Facing::Name face)
 {
 	return false;
 }
@@ -106,7 +106,7 @@ LocalPlayer* GameMode::createPlayer(Level& level)
 	return new LocalPlayer(m_pMinecraft, level, m_pMinecraft->m_pUser, level.getDefaultGameType(), level.getDimension(DIMENSION_OVERWORLD)->getId());
 }
 
-void GameMode::initPlayer(Player* pPlayer)
+void GameMode::initPlayer(Player& pPlayer)
 {
 }
 
@@ -119,14 +119,14 @@ bool GameMode::canHurtPlayer()
 	return false;
 }
 
-void GameMode::interact(Player* player, Entity* entity)
+void GameMode::interact(Player& player, Entity& entity)
 {
-	player->interact(entity);
+	player.interact(entity);
 }
 
-void GameMode::attack(Player* player, Entity* entity)
+void GameMode::attack(Player& player, Entity& entity)
 {
-	player->attack(entity);
+	player.attack(entity);
 }
 
 ItemStack GameMode::handleInventoryMouseClick(int containerId, Container::SlotID slotId, MouseButtonType button, bool quick, Player* player)
@@ -134,39 +134,39 @@ ItemStack GameMode::handleInventoryMouseClick(int containerId, Container::SlotID
 	return player->m_pContainerMenu->clicked(slotId, button, quick, player);
 }
 
-void GameMode::handleCloseInventory(int a, Player* player)
+void GameMode::handleCloseInventory(int a, Player& player)
 {
-	player->m_pContainerMenu->removed(player);
-	if (player->m_pContainerMenu != player->m_pInventoryMenu)
+	player.m_pContainerMenu->removed(player);
+	if (player.m_pContainerMenu != player.m_pInventoryMenu)
 	{
-		delete player->m_pContainerMenu;
-		player->m_pContainerMenu = player->m_pInventoryMenu;
+		delete player.m_pContainerMenu;
+		player.m_pContainerMenu = player.m_pInventoryMenu;
 	}
 }
 
-bool GameMode::useItem(Player* player, ItemStack& item)
+bool GameMode::useItem(Player& player, ItemStack& item)
 {
-	Level& level = player->getLevel();
-	bool result = item.use(*player);
+	Level& level = player.getLevel();
+	bool result = item.use(player);
 
 	if (level.m_bIsClientSide)
 	{
-		_level.m_pRakNetInstance->send(new UseItemPacket(TilePos::ZERO, 255, player->m_EntityID, item));
+		_level.m_pRakNetInstance->send(new UseItemPacket(TilePos::ZERO, 255, player.m_EntityID, item));
 	}
 
 	return result;
 }
 
-bool GameMode::useItemOn(Player* player, ItemStack& item, const TilePos& pos, Facing::Name face)
+bool GameMode::useItemOn(Player& player, ItemStack& item, const TilePos& pos, Facing::Name face)
 {
-	Level& level = player->getLevel();
+	Level& level = player.getLevel();
 	// Sending this packet regardless is intentional. PE does this, Java does this.
 	if (level.m_bIsClientSide)
 	{
-		_level.m_pRakNetInstance->send(new UseItemPacket(pos, face, player->m_EntityID, item));
+		_level.m_pRakNetInstance->send(new UseItemPacket(pos, face, player.m_EntityID, item));
 	}
 
-	TileSource& source = player->getTileSource();
+	TileSource& source = player.getTileSource();
 
 	TileID tile = source.getTile(pos);
 	if (tile == Tile::invisible_bedrock->m_ID)

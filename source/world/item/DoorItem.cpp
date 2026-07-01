@@ -19,18 +19,18 @@ DoorItem::DoorItem(int id, Material* pMtl) : Item(id)
 	m_pMaterial = pMtl;
 }
 
-bool DoorItem::useOn(ItemStack* inst, Player* player, const TilePos& pos, Facing::Name face) const
+bool DoorItem::useOn(ItemStack& itemStack, Player& player, const TilePos& pos, Facing::Name face) const
 {
 	if (face != Facing::UP)
 		return false;
 
-	TileSource& source = player->getTileSource();
+	TileSource& source = player.getTileSource();
 
 	Tile* pTile = m_pMaterial == Material::wood ? Tile::door_wood : Tile::door_iron;
 	if (!pTile->mayPlace(source, pos.above()))
 		return false;
 
-	int faceDir = Mth::floor((((player->m_rot.yaw + 180.0f) * 4.0f) / 360.0f) - 0.5f) & 3;
+	int faceDir = Mth::floor((((player.m_rot.yaw + 180.0f) * 4.0f) / 360.0f) - 0.5f) & 3;
 	int offsetX, offsetZ;
 	switch (faceDir)
 	{
@@ -69,6 +69,6 @@ bool DoorItem::useOn(ItemStack* inst, Player* player, const TilePos& pos, Facing
 	// congratulations! You can now have a door.
 	source.setTileAndData(pos.above(), FullTile(pTile->m_ID, faceDir));
 	source.setTileAndData(TilePos(pos.x, pos.y + 2, pos.z), FullTile(pTile->m_ID, faceDir + 8));
-	inst->m_count--;
+	itemStack.shrink();
 	return true;
 }

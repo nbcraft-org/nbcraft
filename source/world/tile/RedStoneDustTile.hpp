@@ -23,10 +23,10 @@ public:
 	bool isSignalSource() const override;
 	void animateTick(TileSource& source, const TilePos& pos, Random*) override;
 
-	void updatePowerStrength(Level*, const TilePos& pos);
-	void updatePowerStrength(Level*, const TilePos& pos1, const TilePos& pos2);
-	void checkCornerChangeAt(Level*, const TilePos& pos);
-	int checkTarget(Level*, const TilePos& pos, int);
+	void updatePowerStrength(TileSource& source, const TilePos& pos);
+	void updatePowerStrength(TileSource& source, const TilePos& pos1, const TilePos& pos2);
+	void checkCornerChangeAt(TileSource& source, const TilePos& pos);
+	int checkTarget(TileSource& source, const TilePos& pos, int);
 	static bool shouldConnectTo(TileSource& source, const TilePos& pos);
 
 public:

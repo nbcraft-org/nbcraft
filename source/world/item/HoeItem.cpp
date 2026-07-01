@@ -9,10 +9,10 @@ HoeItem::HoeItem(int id, ToolItem::Tier& tier) : Item(id)
 	m_maxDamage = tier.m_uses;
 }
 
-bool HoeItem::useOn(ItemStack* inst, Player* player, const TilePos& pos, Facing::Name face) const
+bool HoeItem::useOn(ItemStack& itemStack, Player& player, const TilePos& pos, Facing::Name face) const
 {
-    TileSource& source = player->getTileSource();
-    Level& level = player->getLevel();
+    TileSource& source = player.getTileSource();
+    Level& level = player.getLevel();
 
     TileID tile = source.getTile(pos);
     TileID below = source.getTile(pos.above());
@@ -42,7 +42,7 @@ bool HoeItem::useOn(ItemStack* inst, Player* player, const TilePos& pos, Facing:
 #endif
 
     source.setTile(pos, newTile->m_ID);
-    inst->hurtAndBreak(1, player);
+    itemStack.hurtAndBreak(1, player);
     return true;
 }
 

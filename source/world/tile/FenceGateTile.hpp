@@ -10,18 +10,20 @@ class FenceGateTile : public Tile
 {
 public:
 	FenceGateTile(int id, int texture);
+
 public:
-	void setPlacedBy(Level* pLevel, const TilePos& pos, Mob* mob) override;
-	AABB* getAABB(const Level* pLevel, const TilePos& pos) override;
+	void setPlacedBy(const TilePos& pos, Mob& mob) override;
+	AABB* getAABB(TileSource& source, const TilePos& pos) override;
 	eRenderShape getRenderShape() const override;
+
 public:
-	bool mayPlace(const Level*, const TilePos& pos) const override;
+	bool mayPlace(TileSource&, const TilePos& pos) const override;
 	bool isSolidRender() const override;
 	bool isCubeShaped() const override;
-	bool use(Level* pLevel, const TilePos& pos, Player* player) override;
-	void neighborChanged(Level*, const TilePos& pos, TileID newTile) override;
+	bool use(const TilePos& pos, Player& player) override;
+	void neighborChanged(TileSource&, const TilePos& pos, TileID newTile) override;
 
-	void setOpen(Level*, const TilePos& pos, bool bOpen, Player* pPlayer = nullptr);
+	void setOpen(TileSource& source, const TilePos& pos, bool bOpen, Player* pPlayer = nullptr);
 
 	static bool isOpen(TileData data)
 	{

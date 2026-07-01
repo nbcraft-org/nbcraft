@@ -40,14 +40,14 @@ void TntTile::destroy(TileSource& source, const TilePos& pos, TileData data)
 	Level& level = source.getLevel();
 	if (level.m_bIsClientSide) return;
 
-	level.addEntity(std::make_unique<PrimedTnt>(*source, Vec3(pos) + 0.5f));
+	level.addEntity(new PrimedTnt(source, Vec3(pos) + 0.5f));
 }
 
 void TntTile::wasExploded(TileSource& source, const TilePos& pos)
 {
 	Level& level = source.getLevel();
 
-	PrimedTnt* tnt = new PrimedTnt(*source, Vec3(pos) + 0.5f);
+	PrimedTnt* tnt = new PrimedTnt(source, Vec3(pos) + 0.5f);
 	tnt->m_fuseTimer = level.m_random.nextInt(tnt->m_fuseTimer / 4) + tnt->m_fuseTimer / 8;
 	level.addEntity(tnt);
 }

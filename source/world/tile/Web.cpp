@@ -31,7 +31,7 @@ int Web::getResource(TileData data, Random* random) const
 	return Item::string->m_itemID;
 }
 
-AABB* Web::getAABB(TileSource& level, const TilePos& pos)
+AABB* Web::getAABB(TileSource& source, const TilePos& pos)
 {
 	return nullptr;
 }

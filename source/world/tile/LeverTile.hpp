@@ -19,7 +19,7 @@ public:
 	void setPlacedOnFace(TileSource& source, const TilePos& pos, Facing::Name face) override;
 	void neighborChanged(TileSource& source, const TilePos& pos, TileID tile) override;
 	void updateShape(TileSource& source, const TilePos& pos) override;
-	void attack(const TilePos& pos, Player*) override;
+	void attack(const TilePos& pos, Player&) override;
 	bool use(const TilePos& pos, Player&) override;
 	void onRemove(TileSource& source, const TilePos& pos) override;
 	int getSignal(TileSource& source, const TilePos& pos, Facing::Name face) const override;

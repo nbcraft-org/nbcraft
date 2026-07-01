@@ -108,7 +108,7 @@ void TrapdoorTile::setPlacedOnFace(Level* level, const TilePos& pos, Facing::Nam
 	level->setData(pos, updateFlag);
 }
 
-bool TrapdoorTile::mayPlace(const Level* level, const TilePos& pos) const // check this
+bool TrapdoorTile::mayPlace(TileSource& source, const TilePos& pos) const // check this
 {
 	if (level->isSolidBlockingTile(pos.west())) return true;
 	if (level->isSolidBlockingTile(pos.east())) return true;
@@ -118,7 +118,7 @@ bool TrapdoorTile::mayPlace(const Level* level, const TilePos& pos) const // che
 	return false;
 }
 
-bool TrapdoorTile::use(Level* level, const TilePos& pos, Player* player)
+bool TrapdoorTile::use(TileSource& source, const TilePos& pos, Player* player)
 {
 	// Door Tile Leftover
 	if (m_pMaterial == Material::metal)

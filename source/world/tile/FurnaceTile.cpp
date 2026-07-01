@@ -91,9 +91,10 @@ bool FurnaceTile::use(const TilePos& pos, Player& player)
     return true;
 }
 
-void FurnaceTile::setPlacedBy(TileSource& source, const TilePos& pos, Mob* mob)
+void FurnaceTile::setPlacedBy(const TilePos& pos, Mob& mob)
 {
-	int rot = Mth::floor(0.5f + (mob->m_rot.yaw * 4.0f / 360.0f)) & 3;
+    TileSource& source = mob.getTileSource();
+	int rot = Mth::floor(0.5f + (mob.m_rot.yaw * 4.0f / 360.0f)) & 3;
 	int data = 4;
 
 	switch (rot)

@@ -1,27 +1,27 @@
 #include "DispenserTile.hpp"
-#include "world/level/Level.hpp"
-#include "world/tile/entity/DispenserTileEntity.hpp"
 #include "world/entity/Arrow.hpp"
 #include "world/entity/Snowball.hpp"
 #include "world/entity/ThrownEgg.hpp"
+#include "world/tile/entity/DispenserTileEntity.hpp"
+#include "world/level/TileSource.hpp"
 
 DispenserTile::DispenserTile(int id) : EntityTile(id, TEXTURE_FURNACE_SIDE, Material::stone)
 {
     setTicking(true);
 }
 
-void DispenserTile::onPlace(Level* level, const TilePos& pos)
+void DispenserTile::onPlace(TileSource& source, const TilePos& pos)
 {
-    EntityTile::onPlace(level, pos);
-    recalcLockDir(level, pos);
+    EntityTile::onPlace(source, pos);
+    recalcLockDir(source, pos);
 }
 
-void DispenserTile::recalcLockDir(Level* level, const TilePos& pos)
+void DispenserTile::recalcLockDir(TileSource& source, const TilePos& pos)
 {
-    int north = level->getTile(pos.north());
-    int south = level->getTile(pos.south());
-    int west = level->getTile(pos.west());
-    int east = level->getTile(pos.east());
+    int north = source.getTile(pos.north());
+    int south = source.getTile(pos.south());
+    int west = source.getTile(pos.west());
+    int east = source.getTile(pos.east());
     int data = 3;
     if (Tile::solid[north] && !Tile::solid[south])
     {
@@ -43,10 +43,10 @@ void DispenserTile::recalcLockDir(Level* level, const TilePos& pos)
 		data = 4;
     }
 
-    level->setData(pos, data);
+	source.setTileAndData(pos, FullTile(this, data));
 }
 
-int DispenserTile::getTexture(const LevelSource* level, const TilePos& pos, Facing::Name face) const
+int DispenserTile::getTexture(TileSource& source, const TilePos& pos, Facing::Name face) const
 {
     switch (face)
     {
@@ -55,8 +55,8 @@ int DispenserTile::getTexture(const LevelSource* level, const TilePos& pos, Faci
     case Facing::DOWN:
         return m_TextureFrame + 17;
     default:
-        int var6 = level->getData(pos);
-        return face != var6 ? m_TextureFrame : m_TextureFrame + 1;
+        TileData data = source.getData(pos);
+        return face != data ? m_TextureFrame : m_TextureFrame + 1;
     }
 }
 
@@ -73,22 +73,27 @@ int DispenserTile::getTexture(Facing::Name face) const
     }
 }
 
-bool DispenserTile::use(Level* level, const TilePos& pos, Player* player)
+bool DispenserTile::use(const TilePos& pos, Player& player)
 {
-	if (player->isSneaking() && !player->getSelectedItem().isEmpty())
+	if (player.isSneaking() && !player.getSelectedItem().isEmpty())
 		return false;
 
-    if (level->m_bIsClientSide)
+	Level& level = player.getLevel();
+	TileSource& source = player.getTileSource();
+
+    if (level.m_bIsClientSide)
         return true;
 
-    DispenserTileEntity* var6 = static_cast<DispenserTileEntity*>(level->getTileEntity(pos));
-    player->openTrap(var6);
+    DispenserTileEntity* var6 = static_cast<DispenserTileEntity*>(source.getTileEntity(pos));
+    player.openTrap(var6);
     return true;
 }
 
-void DispenserTile::fireArrow(Level* level, const TilePos& pos, Random* random)
+void DispenserTile::fireArrow(TileSource& source, const TilePos& pos, Random* random)
 {
-	int var6 = level->getData(pos);
+	Level& level = source.getLevel();
+
+	TileData var6 = source.getData(pos);
 	float var9 = 0.0f;
 	float var10 = 0.0f;
 	switch (var6)
@@ -106,7 +111,7 @@ void DispenserTile::fireArrow(Level* level, const TilePos& pos, Random* random)
 		var9 = -1.0f;
 	}
 
-	DispenserTileEntity* var11 = static_cast<DispenserTileEntity*>(level->getTileEntity(pos));
+	DispenserTileEntity* var11 = static_cast<DispenserTileEntity*>(source.getTileEntity(pos));
 	ItemStack var12 = var11->removeRandomItem();
 	Vec3 exitPos(
 		pos.x + var9 * 0.5f + 0.5f,
@@ -116,44 +121,44 @@ void DispenserTile::fireArrow(Level* level, const TilePos& pos, Random* random)
 
 	if (var12.isEmpty())
 	{
-		level->playSound(pos, "random.click", 1.0f, 1.2f);
+		level.playSound(pos, "random.click", 1.0f, 1.2f);
 		return;
 	}
 
 	float var20;
 	if (var12.getId() == Item::arrow->m_itemID)
 	{
-		Arrow* var19 = new Arrow(level, exitPos, true);
-		var19->shoot(var9, 0.1f, var10, 1.1f, 6.0f);
-		level->addEntity(var19);
-		level->playSound(pos, "random.bow", 1.0f, 1.2f);
+		Arrow* arrow = new Arrow(source, exitPos, true);
+		arrow->shoot(var9, 0.1f, var10, 1.1f, 6.0f);
+		level.addEntity(arrow);
+		level.playSound(pos, "random.bow", 1.0f, 1.2f);
 	}
 	else if (var12.getId() == Item::egg->m_itemID)
 	{
-		ThrownEgg* var34 = new ThrownEgg(level, exitPos, true);
-		var34->shoot(var9, 0.1f, var10, 1.1f, 6.0f);
-		level->addEntity(var34);
-		level->playSound(pos, "random.bow", 1.0f, 1.2f);
+		ThrownEgg* egg = new ThrownEgg(source, exitPos, true);
+		egg->shoot(var9, 0.1f, var10, 1.1f, 6.0f);
+		level.addEntity(egg);
+		level.playSound(pos, "random.bow", 1.0f, 1.2f);
 	}
 	else if (var12.getId() == Item::snowBall->m_itemID)
 	{
-		Snowball* var35 = new Snowball(level, exitPos, true);
-		var35->shoot(var9, 0.1f, var10, 1.1f, 6.0f);
-		level->addEntity(var35);
-		level->playSound(pos, "random.bow", 1.0f, 1.2f);
+		Snowball* snowball = new Snowball(source, exitPos, true);
+		snowball->shoot(var9, 0.1f, var10, 1.1f, 6.0f);
+		level.addEntity(snowball);
+		level.playSound(pos, "random.bow", 1.0f, 1.2f);
 	}
 	else
 	{
-		ItemEntity* var36 = new ItemEntity(level, Vec3(exitPos.x, exitPos.y - 0.3f, exitPos.z), var12);
+		ItemEntity* item = new ItemEntity(source, Vec3(exitPos.x, exitPos.y - 0.3f, exitPos.z), var12);
 		var20 = random->nextFloat() * 0.1f + 0.2f;
-		var36->m_vel.x = var9 * var20;
-		var36->m_vel.y = 0.2f;
-		var36->m_vel.z = var10 * var20;
-		var36->m_vel.x += random->nextGaussian() * 0.0075f * 6.0f;
-		var36->m_vel.y += random->nextGaussian() * 0.0075f * 6.0f;
-		var36->m_vel.z += random->nextGaussian() * 0.0075f * 6.0f;
-		level->addEntity(var36);
-		level->playSound(pos, "random.click");
+		item->m_vel.x = var9 * var20;
+		item->m_vel.y = 0.2f;
+		item->m_vel.z = var10 * var20;
+		item->m_vel.x += random->nextGaussian() * 0.0075f * 6.0f;
+		item->m_vel.y += random->nextGaussian() * 0.0075f * 6.0f;
+		item->m_vel.z += random->nextGaussian() * 0.0075f * 6.0f;
+		level.addEntity(item);
+		level.playSound(pos, "random.click");
 	}
 
 	for (int i = 0; i < 10; i++)
@@ -171,27 +176,27 @@ void DispenserTile::fireArrow(Level* level, const TilePos& pos, Random* random)
 			var10 * var20 + random->nextGaussian() * 0.01f
 		);
 
-		level->addParticle("smoke", smokePos, smokeDir);
+		level.addParticle("smoke", smokePos, smokeDir);
 	}
 }
 
-void DispenserTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
+void DispenserTile::neighborChanged(TileSource& source, const TilePos& pos, TileID tile)
 {
 	if (tile > 0 && Tile::tiles[tile]->isSignalSource())
 	{
-		bool var6 = level->hasNeighborSignal(pos) || level->hasNeighborSignal(pos.above());
+		bool var6 = source.hasNeighborSignal(pos) || source.hasNeighborSignal(pos.above());
 		if (var6)
 		{
-			level->addToTickNextTick(pos, m_ID, getTickDelay());
+			source.addToTickNextTick(pos, m_ID, getTickDelay());
 		}
 	}
 }
 
-void DispenserTile::tick(Level* level, const TilePos& pos, Random* random)
+void DispenserTile::tick(TileSource& source, const TilePos& pos, Random* random)
 {
-	if (level->hasNeighborSignal(pos) || level->hasNeighborSignal(pos.above()))
+	if (source.hasNeighborSignal(pos) || source.hasNeighborSignal(pos.above()))
 	{
-		fireArrow(level, pos, random);
+		fireArrow(source, pos, random);
 	}
 }
 
@@ -200,9 +205,10 @@ TileEntity* DispenserTile::newTileEntity()
 	return new DispenserTileEntity();
 }
 
-void DispenserTile::setPlacedBy(Level* level, const TilePos& pos, Mob* mob)
+void DispenserTile::setPlacedBy(const TilePos& pos, Mob& mob)
 {
-	int rot = Mth::floor(0.5f + (mob->m_rot.yaw * 4.0f / 360.0f)) & 3;
+	TileSource& source = mob.getTileSource();
+	int rot = Mth::floor(0.5f + (mob.m_rot.yaw * 4.0f / 360.0f)) & 3;
 
 	TileData data = 0;
 
@@ -214,7 +220,7 @@ void DispenserTile::setPlacedBy(Level* level, const TilePos& pos, Mob* mob)
 	case 3: data = 4; break;
 	}
 
-	level->setData(pos, data);
+	source.setTileAndData(pos, FullTile(this, data));
 }
 
 bool DispenserTile::hasTileEntity() const

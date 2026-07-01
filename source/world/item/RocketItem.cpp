@@ -16,29 +16,23 @@ RocketItem::RocketItem(int id) : Item(id)
 {
 }
 
-bool RocketItem::useOn(ItemStack* inst, Player* player, const TilePos& pos, Facing::Name face) const
+bool RocketItem::useOn(ItemStack& itemStack, Player& player, const TilePos& pos, Facing::Name face) const
 {
 	TilePos tp(pos);
-	TileSource& tileSource = player->getTileSource();
-	Level& level = player->getLevel();
+	TileSource& tileSource = player.getTileSource();
+	Level& level = player.getLevel();
 
 	if (tileSource.getTile(pos) == Tile::topSnow->m_ID)
 	{
 		face = Facing::DOWN;
 	}
-	else switch (face)
+	else
 	{
-		case Facing::DOWN: tp.y--; break;
-		case Facing::UP: tp.y++; break;
-		case Facing::NORTH: tp.z--; break;
-		case Facing::SOUTH: tp.z++; break;
-		case Facing::WEST: tp.x--; break;
-		case Facing::EAST: tp.x++; break;
-		default: assert(false); return false; break;
+		tp = tp.relative(face);
 	}
 
 	level.addEntity(new Rocket(tileSource, tp + 0.5f));
 
-	inst->m_count--;
+	itemStack.shrink();
 	return true;
 }

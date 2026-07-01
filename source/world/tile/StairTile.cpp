@@ -178,7 +178,7 @@ Tile::RenderLayer StairTile::getRenderLayer(TileSource& source, const TilePos& p
 	return m_pParent->getRenderLayer(source, pos);
 }
 
-bool StairTile::use(const TilePos& pos, Player* player)
+bool StairTile::use(const TilePos& pos, Player& player)
 {
 	return m_pParent->use(pos, player);
 }
@@ -188,9 +188,10 @@ void StairTile::stepOn(TileSource& source, const TilePos& pos, Entity* entity)
 	m_pParent->stepOn(source, pos, entity);
 }
 
-void StairTile::setPlacedBy(TileSource& source, const TilePos& pos, Mob* mob)
+void StairTile::setPlacedBy(const TilePos& pos, Mob& mob)
 {
-	int rot = Mth::floor(0.5f + (mob->m_rot.yaw * 4.0f / 360.0f)) & 3;
+	TileSource& source = mob.getTileSource();
+	int rot = Mth::floor(0.5f + (mob.m_rot.yaw * 4.0f / 360.0f)) & 3;
 
 	TileData data = 0;
 
@@ -209,7 +210,7 @@ void StairTile::prepareRender(TileSource& source, const TilePos& pos)
 	return m_pParent->prepareRender(source, pos);
 }
 
-void StairTile::attack(const TilePos& pos, Player* player)
+void StairTile::attack(const TilePos& pos, Player& player)
 {
 	m_pParent->attack(pos, player);
 }

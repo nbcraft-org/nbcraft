@@ -1208,18 +1208,18 @@ void Tile::handleEntityInside(TileSource& source, const TilePos& pos, const Enti
 
 }
 
-float Tile::getDestroyProgress(Player* player) const
+float Tile::getDestroyProgress(Player& player) const
 {
-	if (player->isCreative())
+	if (player.isCreative())
 		return 1.0f;
 
 	if (m_hardness < 0.0f)
 		return 0.0f;
 
-	if (!player->canDestroy(this))
+	if (!player.canDestroy(this))
 		return 1.0f / m_hardness / 100.0f;
 
-	return player->getDestroySpeed(this) / m_hardness / 30.0f;
+	return player.getDestroySpeed(this) / m_hardness / 30.0f;
 }
 
 void Tile::spawnResources(TileSource& source, const TilePos& pos, TileData data)
@@ -1286,7 +1286,7 @@ void Tile::setPlacedOnFace(TileSource& source, const TilePos& pos, Facing::Name 
 
 }
 
-void Tile::setPlacedBy(TileSource& source, const TilePos& pos, Mob* mob)
+void Tile::setPlacedBy(const TilePos& pos, Mob& mob)
 {
 
 }
@@ -1296,7 +1296,7 @@ void Tile::prepareRender(TileSource& source, const TilePos& pos)
 
 }
 
-void Tile::attack(const TilePos& pos, Player* player)
+void Tile::attack(const TilePos& pos, Player& player)
 {
 
 }

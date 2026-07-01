@@ -1,4 +1,5 @@
 #include "NotGateTile.hpp"
+#include "world/level/TileSource.hpp"
 #include "world/level/Level.hpp"
 
 std::vector<NotGateTile::Toggle> NotGateTile::recentToggles;
@@ -14,11 +15,11 @@ int NotGateTile::getTexture(Facing::Name face, TileData data) const
 	return face == Facing::UP ? Tile::redStoneDust->getTexture(face, data) : TorchTile::getTexture(face, data);
 }
 
-bool NotGateTile::isToggledTooFrequently(Level* level, const TilePos& pos, bool add)
+bool NotGateTile::isToggledTooFrequently(TileSource& source, const TilePos& pos, bool add)
 {
 	if (add)
 	{
-		recentToggles.push_back(Toggle(pos, level->getTime()));
+		recentToggles.push_back(Toggle(pos, source.getLevel().getTime()));
 	}
 
 	int count = 0;
@@ -44,43 +45,43 @@ int NotGateTile::getTickDelay() const
 	return 2;
 }
 
-void NotGateTile::onPlace(Level* level, const TilePos& pos)
+void NotGateTile::onPlace(TileSource& source, const TilePos& pos)
 {
-	if (level->getData(pos) == 0)
+	if (source.getData(pos) == 0)
 	{
-		TorchTile::onPlace(level, pos);
+		TorchTile::onPlace(source, pos);
 	}
 
 	if (m_bOn)
 	{
-		level->updateNeighborsAt(pos.below(), m_ID);
-		level->updateNeighborsAt(pos.above(), m_ID);
-		level->updateNeighborsAt(pos.west(), m_ID);
-		level->updateNeighborsAt(pos.east(), m_ID);
-		level->updateNeighborsAt(pos.north(), m_ID);
-		level->updateNeighborsAt(pos.south(), m_ID);
+		source.updateNeighborsAt(pos.below(), m_ID);
+		source.updateNeighborsAt(pos.above(), m_ID);
+		source.updateNeighborsAt(pos.west(), m_ID);
+		source.updateNeighborsAt(pos.east(), m_ID);
+		source.updateNeighborsAt(pos.north(), m_ID);
+		source.updateNeighborsAt(pos.south(), m_ID);
 	}
 }
 
-void NotGateTile::onRemove(Level* level, const TilePos& pos)
+void NotGateTile::onRemove(TileSource& source, const TilePos& pos)
 {
 	if (m_bOn)
 	{
-		level->updateNeighborsAt(pos.below(), m_ID);
-		level->updateNeighborsAt(pos.above(), m_ID);
-		level->updateNeighborsAt(pos.west(), m_ID);
-		level->updateNeighborsAt(pos.east(), m_ID);
-		level->updateNeighborsAt(pos.north(), m_ID);
-		level->updateNeighborsAt(pos.south(), m_ID);
+		source.updateNeighborsAt(pos.below(), m_ID);
+		source.updateNeighborsAt(pos.above(), m_ID);
+		source.updateNeighborsAt(pos.west(), m_ID);
+		source.updateNeighborsAt(pos.east(), m_ID);
+		source.updateNeighborsAt(pos.north(), m_ID);
+		source.updateNeighborsAt(pos.south(), m_ID);
 	}
 }
 
-int NotGateTile::getSignal(const LevelSource* level, const TilePos& pos, Facing::Name face) const
+int NotGateTile::getSignal(TileSource& source, const TilePos& pos, Facing::Name face) const
 {
 	if (!m_bOn)
 		return false;
 
-	TileData data = level->getData(pos);
+	TileData data = source.getData(pos);
 	if (data == 5 && face == Facing::UP)
 	{
 		return false;
@@ -103,36 +104,37 @@ int NotGateTile::getSignal(const LevelSource* level, const TilePos& pos, Facing:
 	}
 }
 
-bool NotGateTile::hasNeighborSignal(const Level* level, const TilePos& pos)
+bool NotGateTile::hasNeighborSignal(TileSource& source, const TilePos& pos)
 {
-	TileData data = level->getData(pos);
-	if (data == 5 && level->getSignal(pos.below(), Facing::DOWN))
+	TileData data = source.getData(pos);
+	if (data == 5 && source.getSignal(pos.below(), Facing::DOWN))
 	{
 		return true;
 	}
-	else if (data == 3 && level->getSignal(pos.north(), Facing::NORTH))
+	else if (data == 3 && source.getSignal(pos.north(), Facing::NORTH))
 	{
 		return true;
 	}
-	else if (data == 4 && level->getSignal(pos.south(), Facing::SOUTH))
+	else if (data == 4 && source.getSignal(pos.south(), Facing::SOUTH))
 	{
 		return true;
 	}
-	else if (data == 1 && level->getSignal(pos.west(), Facing::WEST))
+	else if (data == 1 && source.getSignal(pos.west(), Facing::WEST))
 	{
 		return true;
 	}
 	else
 	{
-		return data == 2 && level->getSignal(pos.east(), Facing::EAST);
+		return data == 2 && source.getSignal(pos.east(), Facing::EAST);
 	}
 }
 
-void NotGateTile::tick(Level* level, const TilePos& pos, Random* random)
+void NotGateTile::tick(TileSource& source, const TilePos& pos, Random* random)
 {
-	bool neighborSignal = hasNeighborSignal(level, pos);
+	Level& level = source.getLevel();
+	bool neighborSignal = hasNeighborSignal(source, pos);
 
-	while (recentToggles.size() > 0 && level->getTime() - recentToggles.at(0).when > 100)
+	while (recentToggles.size() > 0 && source.getTime() - recentToggles.at(0).when > 100)
 	{
 		recentToggles.erase(recentToggles.begin());
 	}
@@ -141,36 +143,36 @@ void NotGateTile::tick(Level* level, const TilePos& pos, Random* random)
 	{
 		if (neighborSignal)
 		{
-			level->setTileAndData(pos, Tile::notGate_off->m_ID, level->getData(pos));
-			if (isToggledTooFrequently(level, pos, true))
+			source.setTileAndData(pos, FullTile(Tile::notGate_off, source.getData(pos)));
+			if (isToggledTooFrequently(source, pos, true))
 			{
-				level->playSound(pos + 0.5f, "random.fizz", 0.5f, 2.6f + (level->m_random.nextFloat() - level->m_random.nextFloat()) * 0.8f);
+				level.playSound(pos + 0.5f, "random.fizz", 0.5f, 2.6f + (level.m_random.nextFloat() - level.m_random.nextFloat()) * 0.8f);
 
 				for (int var7 = 0; var7 < 5; var7++)
 				{
 					float var8 = float(pos.x) + random->nextFloat() * 0.6f + 0.2f;
 					float var10 = float(pos.y) + random->nextFloat() * 0.6f + 0.2f;
 					float var12 = float(pos.z) + random->nextFloat() * 0.6f + 0.2f;
-					level->addParticle("smoke", Vec3(var8, var10, var12));
+					level.addParticle("smoke", Vec3(var8, var10, var12));
 				}
 			}
 		}
 	}
-	else if (!neighborSignal && !isToggledTooFrequently(level, pos, false))
+	else if (!neighborSignal && !isToggledTooFrequently(source, pos, false))
 	{
-		level->setTileAndData(pos, Tile::notGate_on->m_ID, level->getData(pos));
+		source.setTileAndData(pos, FullTile(Tile::notGate_on, source.getData(pos)));
 	}
 }
 
-void NotGateTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
+void NotGateTile::neighborChanged(TileSource& source, const TilePos& pos, TileID tile)
 {
-	TorchTile::neighborChanged(level, pos, tile);
-	level->addToTickNextTick(pos, m_ID, getTickDelay());
+	TorchTile::neighborChanged(source, pos, tile);
+	source.addToTickNextTick(pos, m_ID, getTickDelay());
 }
 
-int NotGateTile::getDirectSignal(const Level* level, const TilePos& pos, Facing::Name face) const
+int NotGateTile::getDirectSignal(TileSource& source, const TilePos& pos, Facing::Name face) const
 {
-	return face == Facing::DOWN ? getSignal(level, pos, face) : false;
+	return face == Facing::DOWN ? getSignal(source, pos, face) : false;
 }
 
 int NotGateTile::getResource(TileData data, Random* random) const
@@ -183,12 +185,14 @@ bool NotGateTile::isSignalSource() const
 	return true;
 }
 
-void NotGateTile::animateTick(Level* level, const TilePos& pos, Random* random)
+void NotGateTile::animateTick(TileSource& source, const TilePos& pos, Random* random)
 {
 	if (!m_bOn)
 		return;
 
-	TileData data = level->getData(pos);
+	Level& level = source.getLevel();
+
+	TileData data = source.getData(pos);
 	float x = (float(pos.x) + 0.5f) + (random->nextFloat() - 0.5f) * 0.2f; // var7
 	float y = (float(pos.y) + 0.7f) + (random->nextFloat() - 0.5f) * 0.2f; // var9
 	float z = (float(pos.z) + 0.5f) + (random->nextFloat() - 0.5f) * 0.2f; // var11
@@ -198,19 +202,19 @@ void NotGateTile::animateTick(Level* level, const TilePos& pos, Random* random)
 	switch (data)
 	{
 	case 1:
-		level->addParticle("reddust", Vec3(x - var15, y + var13, z));
+		level.addParticle("reddust", Vec3(x - var15, y + var13, z));
 		break;
 	case 2:
-		level->addParticle("reddust", Vec3(x + var15, y + var13, z));
+		level.addParticle("reddust", Vec3(x + var15, y + var13, z));
 		break;
 	case 3:
-		level->addParticle("reddust", Vec3(x, y + var13, z - var15));
+		level.addParticle("reddust", Vec3(x, y + var13, z - var15));
 		break;
 	case 4:
-		level->addParticle("reddust", Vec3(x, y + var13, z + var15));
+		level.addParticle("reddust", Vec3(x, y + var13, z + var15));
 		break;
 	default:
-		level->addParticle("reddust", Vec3(x, y, z));
+		level.addParticle("reddust", Vec3(x, y, z));
 		break;
 	}
 }

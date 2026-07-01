@@ -13,7 +13,7 @@ public:
     bool mayPlace(TileSource& source, const TilePos& pos) const override;
     bool hasNeighbors(TileSource& source, const TilePos& pos, int count) const;
     void onRemove(TileSource& source, const TilePos& pos) override;
-    bool use(const TilePos& pos, Player* player) override;
+    bool use(const TilePos& pos, Player& player) override;
     bool hasTileEntity() const override;
     TileEntity* newTileEntity() override;
 

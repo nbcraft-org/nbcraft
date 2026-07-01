@@ -17,7 +17,7 @@ void ChestTileEntity::save(CompoundTag& tag) const
     SimpleContainer::save(tag);
 }
 
-bool ChestTileEntity::stillValid(Player* player) const
+bool ChestTileEntity::stillValid(Player& player) const
 {
     if (m_pLevel->getTileEntity(m_pos) != this)
         return false;

@@ -29,22 +29,22 @@ bool ToolItem::_canDestroyMaterial(const Material* material) const
 	return (material->m_toolMask & m_toolType) != 0;
 }
 
-float ToolItem::getDestroySpeed(ItemStack* instance, const Tile* tile) const
+float ToolItem::getDestroySpeed(ItemStack& itemStack, const Tile* tile) const
 {
 	return (_canDestroyTile(tile) || _canDestroyMaterial(tile->m_pMaterial)) ? m_speed : 1.0f;
 }
 
-void ToolItem::hurtEnemy(ItemStack* instance, Mob* mob) const
+void ToolItem::hurtEnemy(ItemStack& itemStack, Mob& mob) const
 {
-	instance->hurtAndBreak(2, mob);
+	itemStack.hurtAndBreak(2, mob);
 }
 
-void ToolItem::mineBlock(ItemStack* instance, const TilePos& pos, Facing::Name face, Mob* mob) const
+void ToolItem::mineBlock(ItemStack& itemStack, const TilePos& pos, Facing::Name face, Mob& mob) const
 {
-	instance->hurtAndBreak(1, mob);
+	itemStack.hurtAndBreak(1, mob);
 }
 
-int ToolItem::getAttackDamage(Entity* entity) const
+int ToolItem::getAttackDamage(Entity& entity) const
 {
 	return m_tier.m_damage + 1;
 }

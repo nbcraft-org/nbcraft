@@ -351,7 +351,7 @@ void CreativeMenu_Console::updateGrid(float scroll, int tab)
     }
 }
 
-bool CreativeMenu_Console::stillValid(Player* player) const
+bool CreativeMenu_Console::stillValid(Player& player) const
 {
     return true;
 }

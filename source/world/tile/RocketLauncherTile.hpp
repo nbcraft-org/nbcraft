@@ -25,7 +25,7 @@ public:
 	bool isCubeShaped() const override;
 	bool isSolidRender() const override;
 	bool isSignalSource() const override;
-	bool use(const TilePos& pos, Player* player) override;
+	bool use(const TilePos& pos, Player& player) override;
 	void neighborChanged(TileSource& source, const TilePos& pos, TileID newTile) override;
 	void tick(TileSource&, const TilePos& pos, Random*) override;
 	int getTickDelay() const override;

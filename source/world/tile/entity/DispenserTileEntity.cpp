@@ -41,7 +41,7 @@ void DispenserTileEntity::save(CompoundTag& tag) const
     SimpleContainer::save(tag);
 }
 
-bool DispenserTileEntity::stillValid(Player* player) const
+bool DispenserTileEntity::stillValid(Player& player) const
 {
     if (m_pLevel->getTileEntity(m_pos) != this)
         return false;

@@ -168,13 +168,13 @@ void ChestTile::onRemove(TileSource& source, const TilePos& pos)
     EntityTile::onRemove(source, pos);
 }
 
-bool ChestTile::use(const TilePos& pos, Player* player)
+bool ChestTile::use(const TilePos& pos, Player& player)
 {
-	if (player->isSneaking() && !player->getSelectedItem().isEmpty())
+	if (player.isSneaking() && !player.getSelectedItem().isEmpty())
 		return false;
 
-    Level& level = player->getLevel();
-    TileSource& source = player->getTileSource();
+    Level& level = player.getLevel();
+    TileSource& source = player.getTileSource();
 
     if (level.m_bIsClientSide)
         return true;
@@ -218,7 +218,7 @@ bool ChestTile::use(const TilePos& pos, Player* player)
         }
     }
 
-    player->openContainer(container);
+    player.openContainer(container);
     return true;
 }
 

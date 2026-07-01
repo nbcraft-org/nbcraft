@@ -7,27 +7,19 @@ RedStoneItem::RedStoneItem(int id) : Item(id)
 {
 }
 
-bool RedStoneItem::useOn(ItemStack* instance, Player* player, const TilePos& pos, Facing::Name face) const
+bool RedStoneItem::useOn(ItemStack& itemStack, Player& player, const TilePos& pos, Facing::Name face) const
 {
-	TileSource& tileSource = player->getTileSource();
+	TileSource& tileSource = player.getTileSource();
 	TilePos tp(pos);
 
-	switch (face)
-	{
-		case Facing::DOWN: tp.y--; break;
-		case Facing::UP: tp.y++; break;
-		case Facing::NORTH: tp.z--; break;
-		case Facing::SOUTH: tp.z++; break;
-		case Facing::WEST: tp.x--; break;
-		case Facing::EAST: tp.x++; break;
-	}
+	tp = tp.relative(face);
 
 	if (!tileSource.isEmptyTile(tp))
 		return false;
 
 	if (Tile::redStoneDust->mayPlace(tileSource, tp))
 	{
-		instance->m_count--;
+		itemStack.shrink();
 		tileSource.setTile(tp, Tile::redStoneDust->m_ID);
 	}
 

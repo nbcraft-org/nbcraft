@@ -154,7 +154,7 @@ public:
 	const std::vector<Entity*>& getEntities(Entity* except, const AABB& bb);
 	bool isUnobstructedByEntities(const AABB&, Entity*);
 	bool mayInteract(Entity* entity, const TilePos& pos) const { return true; }
-	bool mayPlace(TileID tileId, const TilePos& pos, Facing::Name face, Entity* placer, bool ignoreEntities = false, Entity* ignoreEntity = nullptr) { throw std::bad_cast(); } // @TODO: implement this
+	bool mayPlace(TileID tileId, const TilePos& pos, Facing::Name face, Entity& placer, bool ignoreEntities = false, Entity* ignoreEntity = nullptr) { throw std::bad_cast(); } // @TODO: implement this
 	void addListener(TileSourceListener& listener);
 	void removeListener(TileSourceListener& listener);
 

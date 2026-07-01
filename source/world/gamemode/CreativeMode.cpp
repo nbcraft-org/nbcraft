@@ -18,15 +18,15 @@ CreativeMode::CreativeMode(Minecraft* pMC, Level& level) : GameMode(pMC, level),
 {
 }
 
-bool CreativeMode::destroyBlock(Player* player, const TilePos& pos, Facing::Name face)
+bool CreativeMode::destroyBlock(Player& player, const TilePos& pos, Facing::Name face)
 {
-	_level.extinguishFire(player->getTileSource(), pos, face);
+	_level.extinguishFire(player.getTileSource(), pos, face);
 	return GameMode::destroyBlock(player, pos, face);
 }
 
-bool CreativeMode::startDestroyBlock(Player* player, const TilePos& pos, Facing::Name face)
+bool CreativeMode::startDestroyBlock(Player& player, const TilePos& pos, Facing::Name face)
 {
-	ItemStack& item = player->getSelectedItem();
+	ItemStack& item = player.getSelectedItem();
 	if (item && item.getItem() == Item::bow)
 		return true;
 
@@ -34,7 +34,7 @@ bool CreativeMode::startDestroyBlock(Player* player, const TilePos& pos, Facing:
 	return destroyBlock(player, pos, face);
 }
 
-bool CreativeMode::continueDestroyBlock(Player* player, const TilePos& pos, Facing::Name face)
+bool CreativeMode::continueDestroyBlock(Player& player, const TilePos& pos, Facing::Name face)
 {
 	if (m_destroyCooldown - 1 > 0)
 	{
@@ -78,7 +78,7 @@ void CreativeMode::render(float f)
 	m_lastDestroyProgress = m_destroyProgress;
 }
 
-void CreativeMode::initPlayer(Player* p)
+void CreativeMode::initPlayer(Player& p)
 {
-	p->m_rot.yaw = -180.0f;
+	p.m_rot.yaw = -180.0f;
 }

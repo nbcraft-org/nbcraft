@@ -10,7 +10,7 @@ public:
     TrapMenu(Inventory* inventory, DispenserTileEntity* container);
 
 public:
-    bool stillValid(Player* player) const override;
+    bool stillValid(Player& player) const override;
 
 private:
     DispenserTileEntity* m_pTrap;
