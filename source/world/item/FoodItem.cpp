@@ -1,7 +1,10 @@
 #include "FoodItem.hpp"
 #include "world/entity/Mob.hpp"
 
-FoodItem::FoodItem(int id, int nutrition) : Item(id), m_nutrition(nutrition)
+FoodItem::FoodItem(int id, int nutrition, bool wolfFood)
+    : Item(id)
+    , m_nutrition(nutrition)
+    , m_bIsWolfFood(wolfFood)
 {
 	m_maxStackSize = 1;
 }

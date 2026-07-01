@@ -12,7 +12,7 @@ private:
 
 public:
 	void updateAi() override;
-	std::string getAmbientSound() const override { return "mob.ghast.moan"; }
+	std::string getAmbientSound() override { return "mob.ghast.moan"; }
 	std::string getHurtSound() const override { return "mob.ghast.scream"; }
 	std::string getDeathSound() const override { return "mob.ghast.death"; }
 	int getDeathLoot() const override { return Item::sulphur->m_itemID; }

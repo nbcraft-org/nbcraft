@@ -20,6 +20,7 @@ public:
 	TileData getData(const TilePos& pos) const override;
 	Material* getMaterial(const TilePos& pos) const override;
 	bool isSolidTile(const TilePos& pos) const override;
+	bool isSolidBlockingTile(const TilePos& pos) const override;
 	BiomeSource* getBiomeSource() const override;
 	TileEntity* getTileEntity(const TilePos& pos) const override;
 

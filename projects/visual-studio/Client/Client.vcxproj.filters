@@ -761,6 +761,30 @@
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\TrapScreen_Console.hpp">
       <Filter>Header Files\GUI\Screens\Inventory</Filter>
     </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\BoatRenderer.hpp">
+      <Filter>Header Files\Renderer\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\MinecartRenderer.hpp">
+      <Filter>Header Files\Renderer\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\model\models\MinecartModel.hpp">
+      <Filter>Header Files\Model\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\model\models\BoatModel.hpp">
+      <Filter>Header Files\Model\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\PaintingRenderer.hpp">
+      <Filter>Header Files\Renderer\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\model\models\WolfModel.hpp">
+      <Filter>Header Files\Model\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\WolfRenderer.hpp">
+      <Filter>Header Files\Renderer\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\LightningBoltRenderer.hpp">
+      <Filter>Header Files\Renderer\Entity</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\client\gui\components\AvailableGamesList.cpp">
@@ -1374,6 +1398,30 @@
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\TrapScreen_Console.cpp">
       <Filter>Source Files\GUI\Screens\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\MinecartRenderer.cpp">
+      <Filter>Source Files\Renderer\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\BoatRenderer.cpp">
+      <Filter>Source Files\Renderer\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\model\models\BoatModel.cpp">
+      <Filter>Source Files\Model\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\model\models\MinecartModel.cpp">
+      <Filter>Source Files\Model\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\PaintingRenderer.cpp">
+      <Filter>Source Files\Renderer\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\model\models\WolfModel.cpp">
+      <Filter>Source Files\Model\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\WolfRenderer.cpp">
+      <Filter>Source Files\Renderer\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\LightningBoltRenderer.cpp">
+      <Filter>Source Files\Renderer\Entity</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

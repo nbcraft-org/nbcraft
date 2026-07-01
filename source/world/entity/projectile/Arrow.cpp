@@ -61,9 +61,9 @@ void Arrow::shoot(Vec3 vel, float speed, float r)
 {
     float len = vel.length();
     vel /= len;
-    vel.x += sharedRandom.nextGaussian() * 0.0075f * r;
-    vel.y += sharedRandom.nextGaussian() * 0.0075f * r;
-    vel.z += sharedRandom.nextGaussian() * 0.0075f * r;
+    vel.x += m_random.nextGaussian() * 0.0075f * r;
+    vel.y += m_random.nextGaussian() * 0.0075f * r;
+    vel.z += m_random.nextGaussian() * 0.0075f * r;
     vel *= speed;
 
     m_vel = vel;
@@ -117,9 +117,9 @@ void Arrow::tick()
         }
 
         m_bInGround = false;
-        m_vel.x *= sharedRandom.nextFloat() * 0.2f;
-        m_vel.y *= sharedRandom.nextFloat() * 0.2f;
-        m_vel.z *= sharedRandom.nextFloat() * 0.2f;
+        m_vel.x *= m_random.nextFloat() * 0.2f;
+        m_vel.y *= m_random.nextFloat() * 0.2f;
+        m_vel.z *= m_random.nextFloat() * 0.2f;
         m_life = 0;
         m_flightTime = 0;
     }
@@ -174,7 +174,7 @@ void Arrow::tick()
         {
             if (hit_result.m_pEnt->hurt(m_owner, ARROW_BASE_DAMAGE))
             {
-                m_pLevel->playSound(this, "random.drr", 1.0f, 1.2f / (sharedRandom.nextFloat() * 0.2f + 0.9f));
+                m_pLevel->playSound(this, "random.drr", 1.0f, 1.2f / (m_random.nextFloat() * 0.2f + 0.9f));
                 remove();
             }
             else 
@@ -191,7 +191,7 @@ void Arrow::tick()
             m_lastTile = m_pLevel->getTile(m_tilePos);
             m_vel = hit_result.m_hitPos - m_pos;
             m_pos -= (m_vel / m_pos.length() * 0.05f);
-            m_pLevel->playSound(this, "random.drr", 1.0f, 1.2f / (sharedRandom.nextFloat() * 0.2f + 0.9f));
+            m_pLevel->playSound(this, "random.drr", 1.0f, 1.2f / (m_random.nextFloat() * 0.2f + 0.9f));
             m_bInGround = true;
             m_shakeTime = 7;
         }
@@ -246,7 +246,7 @@ void Arrow::playerTouch(Player* pPlayer)
             ItemStack arrow(Item::arrow, 1);
             if (pPlayer->m_pInventory->add(arrow))
             {
-                m_pLevel->playSound(this, "random.pop", 0.2f, ((sharedRandom.nextFloat() - sharedRandom.nextFloat()) * 0.7f + 1.0f) * 2.0f);
+                m_pLevel->playSound(this, "random.pop", 0.2f, ((m_random.nextFloat() - m_random.nextFloat()) * 0.7f + 1.0f) * 2.0f);
                 pPlayer->take(this, 1);
                 remove();
             }

@@ -87,7 +87,7 @@ public:
 class SmokeParticle : public Particle
 {
 public:
-	SmokeParticle(Level*, const Vec3& pos, const Vec3& dir, float a9);
+	SmokeParticle(Level*, const Vec3& pos, const Vec3& dir, float a9 = 1.0f);
 	void tick() override;
 	void render(Tesselator&, float, float, float, float, float, float) override;
 
@@ -171,4 +171,30 @@ public:
 	Entity* m_pThrowed;
 	Entity* m_pThrower;
 	float m_speed;
+};
+
+class WaterDropParticle : public Particle
+{
+public:
+	WaterDropParticle(Level*, const Vec3& pos);
+	void tick() override;
+};
+
+class SplashParticle : public WaterDropParticle
+{
+public:
+	SplashParticle(Level*, const Vec3& pos, const Vec3& dir);
+};
+
+class PortalParticle : public Particle
+{
+public:
+	PortalParticle(Level*, const Vec3& pos, const Vec3& dir);
+	void tick() override;
+	void render(Tesselator&, float, float, float, float, float, float) override;
+	float getBrightness(float f) const override;
+
+public:
+	float m_oSize;
+	Vec3 m_startPos;
 };

@@ -123,6 +123,7 @@ public: // virtual functions
 	virtual Tile* setExplodeable(float);
 	virtual Tile* setDestroyTime(float);
 	virtual Tile* setTicking(bool);
+	virtual Tile* setBlockUpdate();
 	virtual int getSpawnResourcesAuxValue(int) const;
 	Tile* setToolTypes(unsigned int toolMask);
 	Tile* setToolLevel(int toolLevel);
@@ -168,6 +169,7 @@ public: // static variables
 	static bool  solid        [C_MAX_TILES];
 	static bool  translucent  [C_MAX_TILES];
 	static bool  isEntityTile [C_MAX_TILES];
+	static bool  blockUpdate  [C_MAX_TILES];
 
 	// TODO
 	static Tile
@@ -262,7 +264,10 @@ public: // static variables
 		* dispenser,
 		* recordPlayer,
 		* cake,
-		* trapDoor;
+		* trapDoor,
+		* rail,
+		* poweredRail,
+		* detectorRail;
 
 public:
 	int m_TextureFrame;

@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "common/utility/HashMap.hpp"
 
 class EntityType
 {
@@ -173,4 +174,10 @@ public:
 private:
 	ID m_id;
 	std::string m_name;
+};
+
+template<>
+struct HashFunction<EntityType::ID>
+{
+	size_t operator()(const EntityType::ID& key) const { return key; }
 };

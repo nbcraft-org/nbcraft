@@ -63,8 +63,8 @@ public: // Methods
 	virtual bool isStackedByData() const;
 	virtual int getMaxDamage() const;
 	virtual Item* setMaxDamage(int);
-	virtual void hurtEnemy(ItemStack*, Mob*) const;
-	virtual void mineBlock(ItemStack*, const TilePos& pos, Facing::Name face, Mob* mob) const;
+	virtual bool hurtEnemy(ItemStack*, Mob*, Mob*) const;
+	virtual bool mineBlock(ItemStack*, const TilePos& pos, Facing::Name face, Mob* mob) const;
 	virtual int getAttackDamage(Entity*) const;
 	virtual bool canDestroySpecial(const Tile*) const;
 	virtual void interactEnemy(ItemStack*, Mob*) const;
@@ -93,6 +93,10 @@ public: // Methods
 	virtual EquipmentSlot getEquipmentSlot() const;
 	virtual const std::string& getArmorTexture() const;
 	virtual int getDefense() const;
+	virtual const std::string& getStreamingMusic() const;
+	virtual bool isFood() const;
+	virtual bool isWolfFood() const;
+	virtual bool isComplex() const;
 
 	static void initItems();
 	

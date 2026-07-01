@@ -50,7 +50,8 @@ public:
 	void renderLevel(float);
 	void renderFramedItems(const Vec3& camPos, LevelRenderer& levelRenderer, const Entity& camera, float f, ParticleEngine& particleEngine, float i);
 	void render(const Timer&);
-	void renderWeather(float f);
+	void renderSnowAndRain(float f);
+	void tickRain();
 	void renderPointer(const MenuPointer& pointer);
 	void setLevel(Level* pLevel, Dimension* pDimension);
 	// Range: 0.0 - 1.0
@@ -96,7 +97,8 @@ public:
 	Level* m_pLevel;
 
 	float m_renderDistance;
-	int field_C;
+	int m_ticks;
+	int m_rainSoundTime;
 	Entity* m_pHovered;
 	// protected fields
 

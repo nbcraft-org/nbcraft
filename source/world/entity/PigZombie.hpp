@@ -11,7 +11,7 @@ private:
 	void _alert(Entity*);
 
 public:
-	std::string getAmbientSound() const override { return "mob.zombiepig.zpig"; }
+	std::string getAmbientSound() override { return "mob.zombiepig.zpig"; }
 	std::string getHurtSound() const override { return "mob.zombiepig.zpighurt"; }
 	std::string getDeathSound() const override { return "mob.zombiepig.zpigdeath"; }
 	int getDeathLoot() const override { return ITEM_PORKCHOP_COOKED; }

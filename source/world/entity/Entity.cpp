@@ -18,7 +18,6 @@
 #define DATA_SHARED_FLAGS_ID (0)
 
 int Entity::entityCounter;
-Random Entity::sharedRandom;
 
 void Entity::_init()
 {
@@ -50,7 +49,7 @@ void Entity::_init()
 	m_ySlideOffset = 0.0f;
 	m_footSize = 0.0f;
 	m_bNoPhysics = false;
-	m_pushthrough = 0.0f;
+	m_pushThrough = 0.0f;
     m_tickCount = 0;
 	m_invulnerableTime = 0;
 	m_airCapacity = TOTAL_AIR_SUPPLY;
@@ -357,7 +356,7 @@ void Entity::move(const Vec3& pos)
 
 		if (bIsInWater && m_fireTicks > 0)
 		{
-			m_pLevel->playSound(this, "random.fizz", 0.7f, 1.6f + (sharedRandom.nextFloat() - sharedRandom.nextFloat()) * 0.4f);
+			m_pLevel->playSound(this, "random.fizz", 0.7f, 1.6f + (m_random.nextFloat() - m_random.nextFloat()) * 0.4f);
 			m_fireTicks = -m_flameTime;
 		}
 
@@ -498,7 +497,7 @@ void Entity::baseTick()
 	m_oPos = m_pos;
     m_tickCount++;
 	m_oRot = m_rot;
-	if (isInWater())
+	if (checkInWater())
 	{
 		if (!m_bWasInWater && !m_bFirstTick)
 		{
@@ -506,7 +505,7 @@ void Entity::baseTick()
 			if (dist > 1.0f)
 				dist = 1.0f;
 
-			m_pLevel->playSound(this, "random.splash", dist, 1.0f + 0.4f * (sharedRandom.nextFloat() - sharedRandom.nextFloat()));
+			m_pLevel->playSound(this, "random.splash", dist, 1.0f + 0.4f * (m_random.nextFloat() - m_random.nextFloat()));
 
 			float f1 = floorf(m_hitbox.min.y);
 
@@ -515,13 +514,13 @@ void Entity::baseTick()
 				m_pLevel->addParticle(
 					"bubble",
 					Vec3(
-						m_pos.x + m_bbWidth * (sharedRandom.nextFloat() * 2.0f - 1.0f),
+						m_pos.x + m_bbWidth * (m_random.nextFloat() * 2.0f - 1.0f),
 						f1 + 1.0f,
-						m_pos.z + m_bbWidth * (sharedRandom.nextFloat() * 2.0f - 1.0f)
+						m_pos.z + m_bbWidth * (m_random.nextFloat() * 2.0f - 1.0f)
 					),
 					Vec3(
 						m_vel.x,
-						m_vel.y - 0.2f * sharedRandom.nextFloat(),
+						m_vel.y - 0.2f * m_random.nextFloat(),
 						m_vel.z
 					)
 				);
@@ -532,13 +531,13 @@ void Entity::baseTick()
 				m_pLevel->addParticle(
 					"splash",
 					Vec3(
-						m_pos.x + m_bbWidth * (sharedRandom.nextFloat() * 2.0f - 1.0f),
+						m_pos.x + m_bbWidth * (m_random.nextFloat() * 2.0f - 1.0f),
 						f1 + 1.0f,
-						m_pos.z + m_bbWidth * (sharedRandom.nextFloat() * 2.0f - 1.0f)
+						m_pos.z + m_bbWidth * (m_random.nextFloat() * 2.0f - 1.0f)
 					),
 					Vec3(
 						m_vel.x,
-						m_vel.y - 0.2f * sharedRandom.nextFloat(),
+						m_vel.y - 0.2f * m_random.nextFloat(),
 						m_vel.z
 					)
 				);
@@ -637,6 +636,16 @@ bool Entity::isInWall() const
 }
 
 bool Entity::isInWater()
+{
+	return m_bWasInWater;
+}
+
+bool Entity::isInWaterOrRain()
+{
+	return m_bWasInWater/* || m_pLevel->isRainingAt(m_pos)*/;
+}
+
+bool Entity::checkInWater()
 {
 	AABB aabb = m_hitbox;
 	aabb.grow(0, -0.4f, 0);
@@ -780,7 +789,7 @@ void Entity::push(Entity* bud)
 	float x2 = 1.0f / x1;
 	if (x2 > 1.0f)
 		x2 = 1.0f;
-	float x3 = 1.0f - m_pushthrough;
+	float x3 = 1.0f - m_pushThrough;
 	float x4 = x3 * diffX / x1 * x2 * 0.05f;
 	float x5 = x3 * diffZ / x1 * x2 * 0.05f;
 
@@ -1107,6 +1116,9 @@ void Entity::setRider(Entity* rider)
 {
 	m_riderId = (rider) ? rider->m_EntityID : 0;
 }
+
+void Entity::thunderHit(LightningBolt*)
+{}
 
 void Entity::setRiding(Entity* riding)
 {

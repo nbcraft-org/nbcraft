@@ -59,7 +59,12 @@ add_library(nbcraft-core STATIC
   	client/renderer/entity/SlimeRenderer.cpp
   	client/renderer/entity/FireballRenderer.cpp
   	client/renderer/entity/GhastRenderer.cpp
+    client/renderer/entity/WolfRenderer.cpp
   	client/renderer/entity/FishingHookRenderer.cpp
+    client/renderer/entity/BoatRenderer.cpp
+    client/renderer/entity/MinecartRenderer.cpp
+    client/renderer/entity/PaintingRenderer.cpp
+    client/renderer/entity/LightningBoltRenderer.cpp
     client/renderer/renderer/EntityShaderManager.cpp
     client/renderer/renderer/RenderMaterialGroup.cpp
     client/renderer/renderer/ShaderGroup.cpp
@@ -159,8 +164,8 @@ add_library(nbcraft-core STATIC
     client/gui/components/WorldSelectionList.cpp
     client/gui/components/OptionList.cpp
     client/gui/components/ScrollRenderer_Console.cpp
-	client/gui/components/ImageButton.cpp
-	client/gui/components/LargeImageButton.cpp
+	  client/gui/components/ImageButton.cpp
+	  client/gui/components/LargeImageButton.cpp
     client/gui/components/TabButton.cpp
     client/gui/components/CraftButton_Console.cpp
     client/locale/Language.cpp
@@ -190,6 +195,9 @@ add_library(nbcraft-core STATIC
     client/model/models/SquidModel.cpp
     client/model/models/SlimeModel.cpp
     client/model/models/GhastModel.cpp
+    client/model/models/WolfModel.cpp
+    client/model/models/BoatModel.cpp
+    client/model/models/MinecartModel.cpp
     client/multiplayer/MultiPlayerLevel.cpp
     client/multiplayer/MultiplayerLocalPlayer.cpp
     client/player/input/ControllerBuildInput.cpp
@@ -339,6 +347,12 @@ add_library(nbcraft-core STATIC
     world/entity/PigZombie.cpp
     world/entity/FlyingMob.cpp
     world/entity/Ghast.cpp
+    world/entity/Boat.cpp
+    world/entity/Painting.cpp
+    world/entity/PaintingType.cpp
+    world/entity/LightningBolt.cpp
+    world/entity/vehicle/Boat.cpp
+    world/entity/vehicle/Minecart.cpp
     world/level/Dimension.cpp
     world/level/Material.cpp
     world/level/LevelListener.cpp
@@ -444,6 +458,10 @@ add_library(nbcraft-core STATIC
   	world/item/FishingRodItem.cpp
   	world/item/RecordingItem.cpp
     world/item/BucketItem.cpp
+    world/item/SaddleItem.cpp
+    world/item/BoatItem.cpp
+    world/item/MinecartItem.cpp
+    world/item/PaintingItem.cpp
     world/particle/RedDustParticle.cpp
     world/particle/TerrainParticle.cpp
     world/particle/NoteParticle.cpp
@@ -457,6 +475,9 @@ add_library(nbcraft-core STATIC
     world/particle/LavaParticle.cpp
     world/particle/FireworkParticle.cpp
     world/particle/TakeAnimationParticle.cpp
+    world/particle/SplashParticle.cpp
+    world/particle/PortalParticle.cpp
+    world/particle/WaterDropParticle.cpp
     world/tile/InvisibleTile.cpp
     world/tile/Sapling.cpp
     world/tile/TreeTile.cpp
@@ -521,6 +542,9 @@ add_library(nbcraft-core STATIC
     world/tile/FenceGateTile.cpp
   	world/tile/TrapDoorTile.cpp
   	world/tile/CakeTile.cpp
+    world/tile/RailTile.cpp
+    world/tile/Rail.cpp
+    world/tile/DetectorRailTile.cpp
     world/tile/entity/TileEntity.cpp
     world/tile/entity/TileEntityType.cpp
     world/tile/entity/ChestTileEntity.cpp

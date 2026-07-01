@@ -284,6 +284,22 @@
     <ClCompile Include="$(MC_ROOT)\source\world\entity\projectile\FishingHook.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\entity\projectile\Snowball.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\entity\projectile\ThrownEgg.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\entity\LightningBolt.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\entity\Painting.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\entity\PaintingType.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\entity\vehicle\Boat.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\entity\vehicle\Minecart.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\entity\Wolf.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\item\BoatItem.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\item\MinecartItem.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\item\PaintingItem.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\item\SaddleItem.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\particle\PortalParticle.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\particle\SplashParticle.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\particle\WaterDropParticle.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\DetectorRailTile.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\Rail.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\RailTile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Entity.hpp" />
@@ -502,6 +518,18 @@
     <ClInclude Include="$(MC_ROOT)\source\world\entity\projectile\FishingHook.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\entity\projectile\Snowball.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\entity\projectile\ThrownEgg.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\entity\Painting.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\entity\PaintingType.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\entity\vehicle\Boat.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\entity\vehicle\Minecart.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\entity\Wolf.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\item\BoatItem.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\item\MinecartItem.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\item\PaintingItem.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\item\SaddleItem.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\DetectorRailTile.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\Rail.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\RailTile.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NBT\NBT.vcxproj">

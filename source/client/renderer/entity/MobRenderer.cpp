@@ -31,9 +31,9 @@ void MobRenderer::setArmor(Model* model)
 	m_pArmorModel = model;
 }
 
-int MobRenderer::prepareArmor(const Mob& mob, int a, float b)
+bool MobRenderer::prepareArmor(const Mob& mob, int a, float b)
 {
-	return 0;
+	return false;
 }
 
 void MobRenderer::additionalRendering(const Mob& mob, float f)

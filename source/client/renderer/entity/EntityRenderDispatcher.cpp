@@ -33,6 +33,11 @@
 #include "FireballRenderer.hpp"
 #include "GhastRenderer.hpp"
 #include "FishingHookRenderer.hpp"
+#include "MinecartRenderer.hpp"
+#include "BoatRenderer.hpp"
+#include "PaintingRenderer.hpp"
+#include "WolfRenderer.hpp"
+#include "LightningBoltRenderer.hpp"
 
 #include "client/model/models/PigModel.hpp"
 #include "client/model/models/SheepModel.hpp"
@@ -44,6 +49,7 @@
 #include "client/model/models/ZombieModel.hpp"
 #include "client/model/models/SquidModel.hpp"
 #include "client/model/models/SlimeModel.hpp"
+#include "client/model/models/WolfModel.hpp"
 
 EntityRenderDispatcher* EntityRenderDispatcher::instance;
 Vec3 EntityRenderDispatcher::off;
@@ -61,7 +67,7 @@ EntityRenderDispatcher::EntityRenderDispatcher()
 	m_pFont = nullptr;
 
 	_addRenderer(Entity::RENDER_HUMANOID,     new HumanoidMobRenderer(new HumanoidModel, 0.5f));
-	_addRenderer(Entity::RENDER_PIG,          new PigRenderer(        new PigModel(0.0f), /*new PigModel(0.5f),*/ 0.7f));
+	_addRenderer(Entity::RENDER_PIG,          new PigRenderer(        new PigModel(0.0f), new PigModel(0.5f), 0.7f));
 	_addRenderer(Entity::RENDER_SHEEP,        new SheepRenderer(      new SheepModel(false), new SheepModel(true), 0.7f));
 	_addRenderer(Entity::RENDER_COW,          new CowRenderer(        new CowModel,      0.7f));
 	_addRenderer(Entity::RENDER_CHICKEN,      new ChickenRenderer(    new ChickenModel,  0.3f));
@@ -73,6 +79,7 @@ EntityRenderDispatcher::EntityRenderDispatcher()
 	_addRenderer(Entity::RENDER_GIANT,        new GiantMobRenderer(   new ZombieModel,   0.5f, 6.0f));
 	_addRenderer(Entity::RENDER_SLIME,        new SlimeRenderer(      new SlimeModel(16), new SlimeModel(0), 0.25f));
 	_addRenderer(Entity::RENDER_GHAST,        new GhastRenderer());
+	_addRenderer(Entity::RENDER_WOLF,		  new WolfRenderer(new WolfModel, 0.5f));
 	_addRenderer(Entity::RENDER_ARROW,        new ArrowRenderer());
 #ifdef ENH_ALLOW_SAND_GRAVITY
 	_addRenderer(Entity::RENDER_FALLING_TILE, new FallingTileRenderer());
@@ -85,6 +92,10 @@ EntityRenderDispatcher::EntityRenderDispatcher()
 	_addRenderer(Entity::RENDER_ROCKET,       new RocketRenderer());
 	_addRenderer(Entity::RENDER_FIREBALL,     new FireballRenderer());
 	_addRenderer(Entity::RENDER_FISHING_HOOK, new FishingHookRenderer());
+	_addRenderer(Entity::RENDER_MINECART,	  new MinecartRenderer());
+	_addRenderer(Entity::RENDER_BOAT,		  new BoatRenderer());
+	_addRenderer(Entity::RENDER_PAINTING,	  new PaintingRenderer());
+	_addRenderer(Entity::RENDER_LIGHTNING_BOLT, new LightningBoltRenderer());
 }
 
 EntityRenderDispatcher::~EntityRenderDispatcher()

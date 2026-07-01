@@ -1,7 +1,7 @@
 #include "ArrowRenderer.hpp"
 #include "client/renderer/renderer/Tesselator.hpp"
 #include "renderer/MatrixStack.hpp"
-#include "world/entity/Arrow.hpp"
+#include "world/entity/projectile/Arrow.hpp"
 
 #define ARROW_SCALE 0.05625f
 

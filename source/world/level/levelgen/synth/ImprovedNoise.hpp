@@ -8,8 +8,9 @@
 
 #pragma once
 
-#include "compat/LegacyCPP.hpp"
+#include <vector>
 #include "common/Random.hpp"
+#include "common/Mth.hpp"
 #include "Synth.hpp"
 
 // note: appears to maybe inherit from a class called Synth?
@@ -21,7 +22,6 @@ public:
 	float getValue(float, float) override;
 
 	ImprovedNoise();
-	virtual ~ImprovedNoise() {}
 	ImprovedNoise(Random* pRandom);
 
 	void init(Random* pRandom);
@@ -31,12 +31,20 @@ public:
 	float grad2(int, float, float) const;
 	float lerp(float prog, float a, float b) const;
 	float fade(float x) const; // inlined in the code
-	void add(float* a2, float a3, float a4, float a5, int a6, int a7, int a8, float a9, float a10, float a11, float a12);
+	void add(std::vector<float>& a2, float a3, float a4, float a5, int a6, int a7, int a8, float a9, float a10, float a11, float a12);
+
+	void addBiome(std::vector<float>& var1, float var2, float var4, int var6, int var7, float var8, float var10, float var12);
 
 public:
 	float m_offsetX;
 	float m_offsetY;
 	float m_offsetZ;
 	int m_permutation[512];
+	static float field_4294_f;
+	static float field_4293_g;
+	static const int field_4296_d[12][3];
+	static float func_4156_a(const int* var0, float var1, float var3) {
+		return (float)var0[0] * var1 + (float)var0[1] * var3;
+	}
 };
 

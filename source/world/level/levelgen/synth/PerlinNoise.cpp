@@ -7,33 +7,33 @@
  ********************************************************************/
 
 #include "PerlinNoise.hpp"
+#include "common/Utils.hpp"
 #include "common/Logger.hpp"
 
 PerlinNoise::PerlinNoise(int nOctaves)
 {
-	m_pRandom = &m_random;
-	init(nOctaves);
+	init(new Random(), nOctaves);
 }
 
 PerlinNoise::PerlinNoise(Random* pRandom, int nOctaves)
 {
-	m_pRandom = pRandom;
-
 	if (nOctaves == 10)
 	{
 		LOG_I("PerlinNoise octaves are 10");
 	}
 
-	init(nOctaves);
+	init(pRandom, nOctaves);
 }
 
-void PerlinNoise::init(int nOctaves)
+void PerlinNoise::init(Random* pRandom, int nOctaves)
 {
 	m_nOctaves = nOctaves;
 	m_pImprovedNoise = new ImprovedNoise * [nOctaves];
 
 	for (int i = 0; i < nOctaves; i++)
-		m_pImprovedNoise[i] = new ImprovedNoise(m_pRandom);
+	{
+		m_pImprovedNoise[i] = new ImprovedNoise(pRandom);
+	}
 }
 
 PerlinNoise::~PerlinNoise()
@@ -53,7 +53,7 @@ float PerlinNoise::getValue(float x, float y)
 	for (int i = 0; i < m_nOctaves; i++)
 	{
 		result += m_pImprovedNoise[i]->getValue(x * x1, y * x1) / x1;
-		x1 /= 2.f;
+		x1 /= 2;
 	}
 
 	return result;
@@ -68,31 +68,39 @@ float PerlinNoise::getValue(float x, float y, float z)
 	for (int i = 0; i < m_nOctaves; i++)
 	{
 		result += m_pImprovedNoise[i]->getValue(x * x1, y * x1, z * x1) / x1;
-		x1 /= 2.f;
+		x1 /= 2;
 	}
 
 	return result;
 }
 
-float* PerlinNoise::getRegion(float* a2, int a3, int a4, int a5, int a6, float a7, float a8, float a9)
+const std::vector<float>& PerlinNoise::getRegion(std::vector<float>& pMem, float a3, float a4, float a5, int a6, int a7, int a8, float a9, float a10, float a11)
 {
-	return getRegion(a2, float(a3), 10.0f, float(a4),  a5, 1, a6,  a7, 1.0f, a8);
-}
-
-float* PerlinNoise::getRegion(float* pMem, float a3, float a4, float a5, int a6, int a7, int a8, float a9, float a10, float a11)
-{
-	int amt = a6 * a7 * a8;
-	if (!pMem)
-		pMem = new float[amt];
-
-	for (int i = 0; i < amt; i++)
-		pMem[i] = 0;
-
+	pMem.assign(a6 * a7 * a8, 0.0f);
+	
 	float x = 1.0f;
 	for (int i = 0; i < m_nOctaves; i++)
 	{
 		m_pImprovedNoise[i]->add(pMem, a3, a4, a5, a6, a7, a8, a9 * x, a10 * x, a11 * x, x);
 		x /= 2;
+	}
+
+	return pMem;
+}
+
+
+const std::vector<float>& PerlinNoise::getBiomeRegion(std::vector<float>& pMem, float a3, float a4, int a5, int a6, float a7, float a8, float a9, float a10)
+{
+	a7 /= 1.5f;
+	a8 /= 1.5f;
+	pMem.assign(a5 * a6, 0.0f);
+
+	float x = 1.0f, y = 1.0f;
+	for (int i = 0; i < m_nOctaves; i++)
+	{
+		m_pImprovedNoise[i]->addBiome(pMem, a3, a4, a5, a6, a7 * y, a8 * y, 0.55 / x);
+		x *= a10;
+		y *= a9;
 	}
 
 	return pMem;

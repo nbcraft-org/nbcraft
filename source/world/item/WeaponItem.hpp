@@ -9,8 +9,8 @@ public:
 
 public:
 	float getDestroySpeed(ItemStack* instance, const Tile* tile) const override;
-	void hurtEnemy(ItemStack* instance, Mob* mob) const override;
-	void mineBlock(ItemStack* instance, const TilePos& pos, Facing::Name face, Mob* mob) const override;
+	bool hurtEnemy(ItemStack* instance, Mob* mob, Mob* attacker) const override;
+	bool mineBlock(ItemStack* instance, const TilePos& pos, Facing::Name face, Mob* mob) const override;
 	int getAttackDamage(Entity*) const override;
 
 private:

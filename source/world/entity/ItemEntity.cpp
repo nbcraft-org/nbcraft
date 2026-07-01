@@ -84,7 +84,7 @@ void ItemEntity::playerTouch(Player* player)
 		return;
 
 	m_pLevel->playSound(this, "random.pop", C_ITEM_POP_VOLUME,
-		((sharedRandom.nextFloat() - sharedRandom.nextFloat()) * 0.7f + 1.0f) * 2.0f);
+		((m_random.nextFloat() - m_random.nextFloat()) * 0.7f + 1.0f) * 2.0f);
 
 	player->take(this, m_itemStack.m_count);
 
@@ -107,8 +107,8 @@ void ItemEntity::tick()
 	{
 		// give it a small bounce upwards
 		m_vel.y = 0.2f;
-		m_vel.x = 0.2f * (sharedRandom.nextFloat() - sharedRandom.nextFloat());
-		m_vel.z = 0.2f * (sharedRandom.nextFloat() - sharedRandom.nextFloat());
+		m_vel.x = 0.2f * (m_random.nextFloat() - m_random.nextFloat());
+		m_vel.z = 0.2f * (m_random.nextFloat() - m_random.nextFloat());
 	}
 
 	checkInTile(m_pos);
@@ -189,7 +189,7 @@ void ItemEntity::checkInTile(const Vec3& pos)
 	if (!solidZP && 1.0f - diff.z < mindist) mindist = 1.0f - diff.z, mindir = 5;
 
 	// the -1 case will be handled accordingly
-	float force = 0.1f + 0.2f * sharedRandom.nextFloat();
+	float force = 0.1f + 0.2f * m_random.nextFloat();
 	switch (mindir)
 	{
 		case 0: m_vel.x = -force; break;

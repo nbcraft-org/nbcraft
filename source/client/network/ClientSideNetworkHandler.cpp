@@ -331,7 +331,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, TakeIte
 			if (m_pMinecraft->m_pLocalPlayer->m_pInventory->add(pItemEntity->m_itemStack))
 			{
 				m_pLevel->playSound(pItemEntity, "random.pop", 0.3f,
-					((Entity::sharedRandom.nextFloat() - Entity::sharedRandom.nextFloat()) * 0.7f + 1.0f) * 2.0f);
+					((m_random.nextFloat() - m_random.nextFloat()) * 0.7f + 1.0f) * 2.0f);
 			}
 			else
 			{

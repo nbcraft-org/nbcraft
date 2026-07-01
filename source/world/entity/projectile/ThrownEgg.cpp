@@ -29,10 +29,10 @@ ThrownEgg::ThrownEgg(Level* pLevel, const Vec3& pos, bool isPlayerOwned)
 
 void ThrownEgg::onHit()
 {
-    if (!m_pLevel->m_bIsClientSide && sharedRandom.nextInt(8) == 0)
+    if (!m_pLevel->m_bIsClientSide && m_random.nextInt(8) == 0)
     {
         int j = 1;
-        if (sharedRandom.nextInt(32) == 0)
+        if (m_random.nextInt(32) == 0)
             j = 4;
 
         for (int l = 0; l < j; l++)

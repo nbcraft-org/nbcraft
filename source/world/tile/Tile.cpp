@@ -74,8 +74,8 @@
 //#include "SignTile.hpp"
 #include "LeverTile.hpp"
 #include "PressurePlateTile.hpp"
-//#include "RailTile.hpp"
-//#include "DetectorRailTile.hpp"
+#include "RailTile.hpp"
+#include "DetectorRailTile.hpp"
 #include "ButtonTile.hpp"
 //#include "MobSpawnerTile.hpp"
 #include "NotGateTile.hpp"
@@ -97,6 +97,7 @@ bool  Tile::shouldTick   [C_MAX_TILES];
 bool  Tile::solid        [C_MAX_TILES];
 bool  Tile::translucent  [C_MAX_TILES];
 bool  Tile::isEntityTile [C_MAX_TILES];
+bool  Tile::blockUpdate  [C_MAX_TILES];
 
 
 void Tile::_init()
@@ -188,6 +189,12 @@ Tile* Tile::setLightEmission(float x)
 Tile* Tile::setTicking(bool bTick)
 {
 	shouldTick[m_ID] = bTick;
+	return this;
+}
+
+Tile* Tile::setBlockUpdate()
+{
+	blockUpdate[m_ID] = true;
 	return this;
 }
 
@@ -897,6 +904,27 @@ void Tile::initTiles()
 		->setSoundType(Tile::SOUND_STONE)
 		->setDescriptionId("jukebox");
 
+	Tile::rail = (new RailTile(TILE_RAIL, TEXTURE_RAIL, false))
+		->init()
+		->setDestroyTime(0.7f)
+		->setSoundType(Tile::SOUND_METAL)
+		->setDescriptionId("rail")
+		->setBlockUpdate();
+
+	Tile::poweredRail = (new RailTile(TILE_RAIL_POWERED, TEXTURE_POWERED_RAIL, true))
+		->init()
+		->setDestroyTime(0.7f)
+		->setSoundType(Tile::SOUND_METAL)
+		->setDescriptionId("goldenRail")
+		->setBlockUpdate();
+
+	Tile::detectorRail = (new DetectorRailTile(TILE_RAIL_ACTIVATOR, TEXTURE_DETECTOR_RAIL))
+		->init()
+		->setDestroyTime(0.7f)
+		->setSoundType(Tile::SOUND_METAL)
+		->setDescriptionId("detectorRail")
+		->setBlockUpdate();
+
 	// Great
 	Item::items[Tile::cloth->m_ID] = (new ClothItem(Tile::cloth->m_ID - C_MAX_TILES))
 		->setDescriptionId("cloth");
@@ -1414,4 +1442,7 @@ Tile
 	*Tile::dispenser,
 	*Tile::recordPlayer,
 	*Tile::cake,
-	*Tile::trapDoor;
+	*Tile::trapDoor,
+	*Tile::rail,
+	*Tile::poweredRail,
+	*Tile::detectorRail;

@@ -12,6 +12,19 @@
 		"fragmentShader" : "shaders/texture_ccolor.fragment"
 	},
 
+	"snow_rain": {
+		"states":[
+			"DisableCulling",
+			"Blending",
+			"Textured"],
+
+		"blendSrc": "SourceAlpha",
+		"blendDst": "OneMinusSrcAlpha",
+
+		"vertexShader" : "shaders/uv.vertex",
+		"fragmentShader" : "shaders/texture_ccolor.fragment"
+	},
+
 	"stars": {
 		"states":[
 			"DisableDepthWrite", 

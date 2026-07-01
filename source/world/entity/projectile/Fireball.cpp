@@ -27,9 +27,9 @@ Fireball::Fireball(Level* pLevel, Mob* pMob, Vec3 pos) : Snowball(pLevel)
     setPos(m_pos);
 
     m_vel = Vec3::ZERO;
-    pos.x += sharedRandom.nextGaussian() * 0.4f;
-    pos.y += sharedRandom.nextGaussian() * 0.4f;
-    pos.z += sharedRandom.nextGaussian() * 0.4f;
+    pos.x += m_random.nextGaussian() * 0.4f;
+    pos.y += m_random.nextGaussian() * 0.4f;
+    pos.z += m_random.nextGaussian() * 0.4f;
 
     float len = pos.length();
     m_powerVel.x = pos.x / len * 0.1f;

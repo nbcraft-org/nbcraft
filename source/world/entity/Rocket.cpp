@@ -64,8 +64,8 @@ void Rocket::tick()
 	{
 		for (int i = 0; i < 100; i++)
 		{
-			float yaw = sharedRandom.nextFloat() * float(M_PI) * 2;
-			float pitch = sharedRandom.nextFloat() * float(M_PI) * 2;
+			float yaw = m_random.nextFloat() * float(M_PI) * 2;
+			float pitch = m_random.nextFloat() * float(M_PI) * 2;
 
 			Vec3 o(cosf(yaw), sinf(yaw), sinf(pitch));
 

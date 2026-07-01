@@ -25,6 +25,7 @@ class Level;
 class Player;
 class ItemStack;
 class ItemEntity;
+class LightningBolt;
 
 struct EntityPos
 {
@@ -76,7 +77,10 @@ public:
 			HURT,
 			DEATH,
 			START_ATTACKING,
-			STOP_ATTACKING
+			STOP_ATTACKING,
+			TAMING_FAILED,
+			TAMING_SUCCEEDED,
+			SHAKE_WETNESS
 		};
 	};
 	// Was called EntityRendererId in PE
@@ -107,7 +111,11 @@ public:
 		RENDER_GHAST,
 		RENDER_FIREBALL,
 		RENDER_SQUID,
-
+		RENDER_WOLF,
+		RENDER_MINECART,
+		RENDER_BOAT,
+		RENDER_PAINTING,
+		RENDER_LIGHTNING_BOLT,
 		// custom
 		RENDER_FALLING_TILE = 50
 	};
@@ -157,7 +165,8 @@ public:
 	virtual bool isFree(const Vec3& off, float expand) const;
 	virtual bool isInWall() const;
 	virtual bool isInWater();
-	bool wasInWater() const { return m_bWasInWater; }
+	virtual bool isInWaterOrRain();
+	virtual bool checkInWater();
 	virtual bool isInLava() const;
 	virtual bool isUnderLiquid(Material*) const;
 	virtual float getHeadHeight() const { return 0.0f; }
@@ -220,7 +229,7 @@ public:
 	virtual void rideTick();
 	virtual void handleInsidePortal();
 	virtual void handleEntityEvent(EventType::ID eventId);
-	//virtual void thunderHit(LightningBolt*);
+	virtual void thunderHit(LightningBolt*);
 	virtual void positionRider();
 	virtual void ride(Entity*);
 	virtual float getRideHeight() const { return m_bbHeight * 0.75f; }
@@ -281,6 +290,7 @@ public:
 	Rot2 m_rideRot;
 	Color m_tintColor;
 	AABB m_hitbox;
+	Random m_random;
 	bool m_bOnGround;
 	bool m_bHorizontalCollision;
 	bool m_bCollision;
@@ -300,7 +310,7 @@ public:
 	float m_ySlideOffset;
 	float m_footSize;
 	bool m_bNoPhysics;
-	float m_pushthrough;
+	float m_pushThrough;
 	int m_tickCount;
 	int m_invulnerableTime;
 	int m_airCapacity;
@@ -318,5 +328,4 @@ public:
 
 public:
 	static Entity::ID entityCounter;
-	static Random sharedRandom;
 };

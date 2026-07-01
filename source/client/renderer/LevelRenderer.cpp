@@ -45,6 +45,7 @@ LevelRenderer::Materials::Materials()
 	MATERIAL_PTR(common, stars);
 	MATERIAL_PTR(common, skyplane);
 	MATERIAL_PTR(common, sun_moon);
+	MATERIAL_PTR(common, snow_rain);
 	MATERIAL_PTR(common, sunrise);
 	MATERIAL_PTR(common, selection_overlay);
 	MATERIAL_PTR(common, selection_overlay_opaque);
@@ -1438,6 +1439,11 @@ void LevelRenderer::addParticle(const std::string& name, const Vec3& pos, const 
 		pe->add(new NoteParticle(m_pLevel, pos, dir));
 		return;
 	}
+	if (name == "portal")
+	{
+		pe->add(new PortalParticle(m_pLevel, pos, dir));
+		return;
+	}
 	if (name == "explode")
 	{
 		pe->add(new ExplodeParticle(m_pLevel, pos, dir));
@@ -1464,6 +1470,11 @@ void LevelRenderer::addParticle(const std::string& name, const Vec3& pos, const 
 		FlameParticle* pFlamePart = new FlameParticle(m_pLevel, pos, dir);
 		pFlamePart->scale(4.0f);
 		pe->add(pFlamePart);
+		return;
+	}
+	if (name == "splash")
+	{
+		pe->add(new SplashParticle(m_pLevel, pos, dir));
 		return;
 	}
 	if (name == "lava")
@@ -1537,6 +1548,7 @@ void LevelRenderer::renderLevel(const Entity& camera, FrustumCuller& culler, flo
 	ParticleEngine& particleEngine = *m_pMinecraft->m_pParticleEngine;
 	Textures& textures = *m_pMinecraft->m_pTextures;
 	mce::RenderContext& renderContext = mce::RenderContextImmediate::get();
+	GameRenderer& gameRenderer = *m_pMinecraft->m_pGameRenderer;
 
 	_updateViewArea(camera);
 	_startFrame(culler, renderDistance, f);
@@ -1573,7 +1585,7 @@ void LevelRenderer::renderLevel(const Entity& camera, FrustumCuller& culler, flo
 
 	if (camera.isUnderLiquid(Material::water))
 	{
-		//renderWeather(f);
+		gameRenderer.renderSnowAndRain(f);
 		RenderChunk::SetUnderwater(true);
 	}
 	else
@@ -1590,7 +1602,7 @@ void LevelRenderer::renderLevel(const Entity& camera, FrustumCuller& culler, flo
 
 	if (!camera.isUnderLiquid(Material::water))
 	{
-		//renderWeather(f);
+		gameRenderer.renderSnowAndRain(f);
 	}
 
 	// Was after renderCracks in GameRenderer

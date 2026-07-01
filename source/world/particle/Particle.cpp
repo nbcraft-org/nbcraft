@@ -43,10 +43,10 @@ Particle::Particle(Level* level, const Vec3& pos, const Vec3& dir) : Entity(leve
 	m_vel.y = m_vel.y * mult + 0.1f;
 	m_vel.z *= mult;
 
-	m_uo = 3.0f * sharedRandom.nextFloat();
-	m_vo = 3.0f * sharedRandom.nextFloat();
-	m_size = 2.0f * (0.5f + 0.5f * sharedRandom.nextFloat());
-	m_lifetime = int(4.0f / (0.1f + 0.9f * sharedRandom.nextFloat()));
+	m_uo = 3.0f * m_random.nextFloat();
+	m_vo = 3.0f * m_random.nextFloat();
+	m_size = 2.0f * (0.5f + 0.5f * m_random.nextFloat());
+	m_lifetime = int(4.0f / (0.1f + 0.9f * m_random.nextFloat()));
 }
 
 int Particle::getParticleTexture()

@@ -16,7 +16,7 @@ private:
 	void _defineEntityData();
 
 public:
-	std::string getAmbientSound() const override { return "mob.sheep"; };
+	std::string getAmbientSound() override { return "mob.sheep"; };
 	std::string getDeathSound() const override { return "mob.sheep"; }
 	std::string getHurtSound() const override { return "mob.sheep"; }
 	virtual bool hurt(Entity*, int) override;

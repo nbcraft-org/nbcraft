@@ -20,7 +20,7 @@ public:
 
 	void render(const Entity& entity, const Vec3& pos, float rot, float a) override;
 	void onGraphicsReset() override;
-	virtual int prepareArmor(const Mob& mob, int, float);
+	virtual bool prepareArmor(const Mob& mob, int, float);
 	virtual void setupPosition(const Entity& entity, const Vec3& pos, Matrix& matrix);
 	virtual void setupRotations(const Entity& entity, float bob, float bodyRot, Matrix& matrix, float a);
 	virtual void scale(const Mob& mob, Matrix& matrix, float a);

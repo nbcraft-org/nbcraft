@@ -39,7 +39,7 @@ class Packet;
 class MobSpawner;
 
 typedef std::vector<Entity*> EntityVector;
-typedef std::map<Entity::ID, Entity*> EntityMap;
+typedef HashMap<Entity::ID, Entity*> EntityMap;
 typedef std::vector<TileEntity*> TileEntityVector;
 typedef std::vector<AABB> AABBVector;
 
@@ -56,6 +56,7 @@ public:
 
 private:
 	Player* _getNearestPlayer(const Vec3&, float, bool) const;
+	void _resetWeatherCycle();
 
 protected:
 	// @NOTE: LevelListeners do NOT get updated here
@@ -68,7 +69,16 @@ public:
 	TileData getData(const TilePos& pos) const override;
 	Material* getMaterial(const TilePos& pos) const override;
 	bool isSolidTile(const TilePos& pos) const override;
+	bool isSolidBlockingTile(const TilePos& pos) const override;
 
+	void toggleRain();
+	float getThunderLevel(float) const;
+	void setThunderLevel(float);
+	float getRainLevel(float) const;
+	void setRainLevel(float);
+	bool isThundering() const;
+	bool isRaining() const;
+	bool isRainingAt(const TilePos&) const;
 	ChunkSource* getChunkSource() const;
 	virtual ChunkSource* createChunkSource();
 	LevelChunk* getChunk(const ChunkPos& pos) const;
@@ -86,7 +96,7 @@ public:
 	int32_t getTime() const { return m_pLevelData->getTime(); }
 	void setTime(int32_t time);
 	GameType getDefaultGameType() const { return m_pLevelData->getGameType(); }
-	int getHeightmap(const TilePos& pos);
+	int getHeightmap(const TilePos& pos) const;
 	bool isDay() const;
 	bool isSkyLit(const TilePos& pos) const;
 	bool isEmptyTile(const TilePos& pos) const;
@@ -163,6 +173,7 @@ public:
 	void tickPendingTicks(bool b);
 	void tickTiles();
 	void tickEntities();
+	virtual void tickWeather();
 	void addToTickNextTick(const TilePos& tilePos, int, int);
 	void takePicture(TripodCamera* pCamera, Entity* pOwner);
 	void addParticle(const std::string& name, const Vec3& pos, const Vec3& dir = Vec3::ZERO);
@@ -188,6 +199,9 @@ public:
 	unsigned int getEntityCount(const EntityCategories&) const;
 	const EntityMap* getAllEntities() const;
 	EntityVector getEntities(Entity* pAvoid, const AABB&) const;
+	EntityVector getEntitiesOfCategory(EntityCategories::CategoriesMask category, const AABB&) const;
+	EntityVector getEntitiesOfType(EntityType type, const AABB&) const;
+	Player* getPlayer(const std::string&) const;
 	BiomeSource* getBiomeSource() const override;
 	LevelStorage* getLevelStorage() const { return m_pLevelStorage; }
 	Dimension* getDimension(DimensionId type) const;
@@ -216,6 +230,12 @@ private:
 protected:
 	int m_randValue;
 	int m_addend;
+	int m_saveInterval;
+	int m_delayUntilNextMoodSound;
+	float m_oRainLevel;
+	float m_rainLevel;
+	float m_oThunderLevel;
+	float m_thunderLevel;
 
 public:
 	AABBVector m_aabbs;
@@ -225,6 +245,7 @@ public:
 	EntityMap m_entities;
 	std::vector<Player*> m_players;
 	int m_skyDarken;
+	int m_skyFlashTime;
 	uint8_t field_30;
 	Dimension* m_pDimension;
     int m_difficulty; // @TODO: Difficulty enum

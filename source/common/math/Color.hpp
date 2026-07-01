@@ -69,7 +69,7 @@ public:
         _init(GET_RED(c), GET_GREEN(c), GET_BLUE(c), alpha);
     }
 
-    void fromHSB(float h, float s, float b);
+    Color getHSBColor(float h, float s, float b);
 
     Color& mulRGB(float mul)
     {

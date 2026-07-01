@@ -61,9 +61,9 @@ void Snowball::shoot(Vec3 vel, float speed, float r)
 {
     float f = Mth::sqrt(vel.x * vel.x + vel.y * vel.y + vel.z * vel.z);
     vel /= f;
-    vel.x += sharedRandom.nextGaussian() * 0.0075f * r;
-    vel.y += sharedRandom.nextGaussian() * 0.0075f * r;
-    vel.z += sharedRandom.nextGaussian() * 0.0075f * r;
+    vel.x += m_random.nextGaussian() * 0.0075f * r;
+    vel.y += m_random.nextGaussian() * 0.0075f * r;
+    vel.z += m_random.nextGaussian() * 0.0075f * r;
     vel *= speed;
     m_vel = vel;
     _lerpMotion(vel);
@@ -121,9 +121,9 @@ void Snowball::tick()
         }
 
         m_bInGround = false;
-        m_vel.x *= sharedRandom.nextFloat() * 0.2f;
-        m_vel.y *= sharedRandom.nextFloat() * 0.2f;
-        m_vel.z *= sharedRandom.nextFloat() * 0.2f;
+        m_vel.x *= m_random.nextFloat() * 0.2f;
+        m_vel.y *= m_random.nextFloat() * 0.2f;
+        m_vel.z *= m_random.nextFloat() * 0.2f;
         m_life = 0;
         m_flightTime = 0;
     }

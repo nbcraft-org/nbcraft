@@ -43,6 +43,7 @@ public:
 	static float random(void);
 	static float sin(float);
 	static unsigned fastRandom();
+	static int HSBtoRGB(float hue, float saturation, float brightness);
 
 	static inline float sqrt(float f)
 	{

@@ -18,6 +18,8 @@
 #include "world/level/levelgen/chunk/ChunkPos.hpp"
 #include "world/level/levelgen/chunk/ChunkTilePos.hpp"
 #include "world/level/levelgen/chunk/DataLayer.hpp"
+#include "world/entity/EntityCategories.hpp"
+#include "world/entity/EntityType.hpp"
 
 class Level;
 class AABB;
@@ -63,6 +65,8 @@ public:
 	virtual void markUnsaved();
 	virtual int  countEntities();
 	virtual void getEntities(Entity* pEntExclude, const AABB&, std::vector<Entity*>& out);
+	virtual void getEntitiesOfCategory(EntityCategories::CategoriesMask category, const AABB&, std::vector<Entity*>& out);
+	virtual void getEntitiesOfType(EntityType type, const AABB&, std::vector<Entity*>& out);
 	virtual TileID getTile(const ChunkTilePos& pos);
 	virtual bool setTile(const ChunkTilePos& pos, TileID tile);
 	virtual bool setTileAndData(const ChunkTilePos& pos, TileID tile, TileData data);

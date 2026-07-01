@@ -15,9 +15,9 @@ ExplodeParticle::ExplodeParticle(Level* level, const Vec3& pos, const Vec3& dir)
 	m_vel.y = dir.y + 0.05f * (2.0f * Mth::random() - 1.0f);
 	m_vel.z = dir.z + 0.05f * (2.0f * Mth::random() - 1.0f);
 
-	m_rCol = m_gCol = m_bCol = 0.7f + 0.3f * sharedRandom.nextFloat();
-	m_size = 1.0f + 6.0f * sharedRandom.nextFloat() * sharedRandom.nextFloat();
-	m_lifetime = int(16.0f / (0.2f + 0.8f * sharedRandom.nextFloat())) + 2;
+	m_rCol = m_gCol = m_bCol = 0.7f + 0.3f * m_random.nextFloat();
+	m_size = 1.0f + 6.0f * m_random.nextFloat() * m_random.nextFloat();
+	m_lifetime = int(16.0f / (0.2f + 0.8f * m_random.nextFloat())) + 2;
 }
 
 void ExplodeParticle::tick()

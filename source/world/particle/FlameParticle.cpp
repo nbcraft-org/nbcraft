@@ -16,12 +16,12 @@ FlameParticle::FlameParticle(Level* level, const Vec3& pos, const Vec3& dir) :
 	m_vel = m_vel * 0.01f + dir;
 
 	// @NOTE: Useless genrand_int32 calls. Will keep them in to keep consistent
-	sharedRandom.genrand_int32();
-	sharedRandom.genrand_int32();
-	sharedRandom.genrand_int32();
-	sharedRandom.genrand_int32();
-	sharedRandom.genrand_int32();
-	sharedRandom.genrand_int32();
+	m_random.genrand_int32();
+	m_random.genrand_int32();
+	m_random.genrand_int32();
+	m_random.genrand_int32();
+	m_random.genrand_int32();
+	m_random.genrand_int32();
 
 	m_oSize = m_size;
 	m_rCol = m_gCol = m_bCol = 1.0f;

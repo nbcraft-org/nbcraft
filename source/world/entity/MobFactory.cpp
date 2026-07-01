@@ -1,6 +1,5 @@
 #include "MobFactory.hpp"
 #include "common/Logger.hpp"
-#include "nbt/CompoundTag.hpp"
 
 #include "Chicken.hpp"
 #include "Cow.hpp"
@@ -15,6 +14,7 @@
 #include "PigZombie.hpp"
 #include "Squid.hpp"
 #include "Ghast.hpp"
+#include "Wolf.hpp"
 
 #define ENTS ENT(CHICKEN, Chicken) \
              ENT(COW, Cow) \
@@ -28,16 +28,14 @@
              ENT(SLIME, Slime) \
              ENT(GHAST, Ghast) \
              ENT(PIG_ZOMBIE, PigZombie) \
-             ENT(SQUID, Squid)
+             ENT(SQUID, Squid) \
+             ENT(WOLF, Wolf)
 
 #define ENT(enumType, classType) case EntityType::enumType: return new classType(level);
 
 // format: ID, spawnrate
-std::map<EntityType::ID, int> monsterList;
-std::map<EntityType::ID, int> creatureList;
-std::map<EntityType::ID, int> waterCreatureList;
-std::map<EntityType::ID, int> nullCreatureList;
-std::map<EntityCategories::CategoriesMask, std::map<EntityType::ID, int>*> mobListsByCategory;
+MobFactory::SpawnDataMap nullCreatureList;
+std::map<EntityCategories::CategoriesMask, MobFactory::SpawnDataMap> mobListsByCategory;
 
 Mob* MobFactory::CreateMob(EntityType::ID entityType, Level *level)
 {
@@ -50,34 +48,63 @@ Mob* MobFactory::CreateMob(EntityType::ID entityType, Level *level)
     }
 }
 
+void MobFactory::addSpawnData(EntityCategories::CategoriesMask category, EntityType::ID id, int weight)
+{
+    addSpawnData(category, id, new SpawnData(weight));
+}
+
 void MobFactory::initMobLists() 
 {
     // format: ID, spawnrate
-    mobListsByCategory.insert(std::make_pair(EntityCategories::MONSTER, &monsterList));
-    monsterList.insert(std::make_pair(EntityType::SPIDER,   10));
-    monsterList.insert(std::make_pair(EntityType::ZOMBIE,   10));
-    monsterList.insert(std::make_pair(EntityType::SKELETON, 10));
-    monsterList.insert(std::make_pair(EntityType::CREEPER,  10));
-    monsterList.insert(std::make_pair(EntityType::SLIME,    10));
+    addSpawnData(EntityCategories::MONSTER, EntityType::SPIDER, 10);
+    addSpawnData(EntityCategories::MONSTER, EntityType::ZOMBIE, 10);
+    addSpawnData(EntityCategories::MONSTER, EntityType::SKELETON, 10);
+    addSpawnData(EntityCategories::MONSTER, EntityType::CREEPER, 10);
+    addSpawnData(EntityCategories::MONSTER, EntityType::SLIME, 10);
+    //addSpawnData(EntityCategories::MONSTER, EntityType::GHAST, new SingleBiomeSpawnData(Biome::hell, 10));
+    //addSpawnData(EntityCategories::MONSTER, EntityType::PIG_ZOMBIE, new SingleBiomeSpawnData(Biome::hell, 10));
 
-    mobListsByCategory.insert(std::make_pair(EntityCategories::ANIMAL, &creatureList));
-    creatureList.insert(std::make_pair(EntityType::SHEEP,   12));
-    creatureList.insert(std::make_pair(EntityType::PIG,     10));
-    creatureList.insert(std::make_pair(EntityType::CHICKEN, 10));
-    creatureList.insert(std::make_pair(EntityType::COW,      8));
-	
-    mobListsByCategory.insert(std::make_pair(EntityCategories::WATER_ANIMAL, &waterCreatureList));
-    waterCreatureList.insert(std::make_pair(EntityType::SQUID, 10));
+    addSpawnData(EntityCategories::ANIMAL, EntityType::SHEEP, 12);
+    addSpawnData(EntityCategories::ANIMAL, EntityType::PIG, 10);
+    addSpawnData(EntityCategories::ANIMAL, EntityType::CHICKEN, 10);
+    addSpawnData(EntityCategories::ANIMAL, EntityType::COW, 10);
+    addSpawnData(EntityCategories::ANIMAL, EntityType::WOLF, new SingleBiomeSpawnData(Biome::taiga, 2));
+
+    addSpawnData(EntityCategories::WATER_ANIMAL, EntityType::SQUID, 10);
 }
 
-const std::map<EntityType::ID, int>& MobFactory::GetMobListOfCategory(const EntityCategories& category) 
+void MobFactory::addSpawnData(EntityCategories::CategoriesMask category, EntityType::ID id, SpawnData* data)
+{
+    std::map<EntityCategories::CategoriesMask, SpawnDataMap>::iterator it = mobListsByCategory.find(category);
+    if (it == mobListsByCategory.end())
+    {
+        SpawnDataMap map;
+        map.insert(id, data);
+        mobListsByCategory[category] = map;
+    }
+    else
+    {
+        SpawnDataMap& map = (*it).second;
+        map.insert(id, data);
+    }
+}
+
+const MobFactory::SpawnDataMap& MobFactory::GetMobListOfCategory(const EntityCategories& category)
 {
     // not for composite categories. only for the base categories (MONSTER, ANIMAL, ...)
-    std::map<EntityCategories::CategoriesMask, std::map<EntityType::ID, int>*>::const_iterator it = mobListsByCategory.find(category.getCategoryMask());
-    if (it != mobListsByCategory.end() && it->second)
-        return *it->second;
+    std::map<EntityCategories::CategoriesMask, SpawnDataMap>::const_iterator it = mobListsByCategory.find(category.getCategoryMask());
+    if (it != mobListsByCategory.end())
+        return it->second;
 
     return nullCreatureList;
 }
 
 #undef ENT
+
+bool MobFactory::SingleBiomeSpawnData::canSpawn(Level& level, EntityType::ID id, const TilePos& tp) const
+{
+    if (biome == level.getBiomeSource()->getBiomeAt(tp))
+        return true;
+
+    return false;
+}

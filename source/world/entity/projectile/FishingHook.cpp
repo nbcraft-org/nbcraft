@@ -68,9 +68,9 @@ void FishingHook::shoot(Vec3 vel, float speed, float r)
 {
     float len = vel.length();
     vel /= len;
-    vel.x += sharedRandom.nextGaussian() * 0.0075f * r;
-    vel.y += sharedRandom.nextGaussian() * 0.0075f * r;
-    vel.z += sharedRandom.nextGaussian() * 0.0075f * r;
+    vel.x += m_random.nextGaussian() * 0.0075f * r;
+    vel.y += m_random.nextGaussian() * 0.0075f * r;
+    vel.z += m_random.nextGaussian() * 0.0075f * r;
     vel *= speed;
 
     m_vel = vel;
@@ -180,9 +180,9 @@ void FishingHook::tick()
             }
 
             m_bInGround = false;
-            m_vel.x *= sharedRandom.nextFloat() * 0.2f;
-            m_vel.y *= sharedRandom.nextFloat() * 0.2f;
-            m_vel.z *= sharedRandom.nextFloat() * 0.2f;
+            m_vel.x *= m_random.nextFloat() * 0.2f;
+            m_vel.y *= m_random.nextFloat() * 0.2f;
+            m_vel.z *= m_random.nextFloat() * 0.2f;
             m_life = 0;
             m_flightTime = 0;
         }
@@ -295,11 +295,11 @@ void FishingHook::tick()
                 {
                     --m_nibble;
                 }
-                else if (sharedRandom.nextInt(500) == 0)
+                else if (m_random.nextInt(500) == 0)
                 {
-                    m_nibble = sharedRandom.nextInt(30) + 10;
+                    m_nibble = m_random.nextInt(30) + 10;
                     m_vel.y -= 0.2f;
-                    m_pLevel->playSound(this, "random.splash", 0.25f, 1.0f + (sharedRandom.nextFloat() - sharedRandom.nextFloat()) * 0.4f);
+                    m_pLevel->playSound(this, "random.splash", 0.25f, 1.0f + (m_random.nextFloat() - m_random.nextFloat()) * 0.4f);
                     float var29 = float(Mth::floor(m_hitbox.min.y));
 
                     float var15;
@@ -307,15 +307,15 @@ void FishingHook::tick()
                     float var31;
                     for (var30 = 0; float(var30) < 1.0f + m_bbWidth * 20.0f; ++var30)
                     {
-                        var15 = (sharedRandom.nextFloat() * 2.0f - 1.0f) * m_bbWidth;
-                        var31 = (sharedRandom.nextFloat() * 2.0f - 1.0f) * m_bbWidth;
-                        m_pLevel->addParticle("bubble", Vec3(m_pos.x + var15, var29 + 1.0f, m_pos.z + var31), Vec3(m_vel.x, m_vel.y - (sharedRandom.nextFloat() * 0.2f), m_vel.z));
+                        var15 = (m_random.nextFloat() * 2.0f - 1.0f) * m_bbWidth;
+                        var31 = (m_random.nextFloat() * 2.0f - 1.0f) * m_bbWidth;
+                        m_pLevel->addParticle("bubble", Vec3(m_pos.x + var15, var29 + 1.0f, m_pos.z + var31), Vec3(m_vel.x, m_vel.y - (m_random.nextFloat() * 0.2f), m_vel.z));
                     }
 
                     for (var30 = 0; float(var30) < 1.0f + m_bbWidth * 20.0f; ++var30)
                     {
-                        var15 = (sharedRandom.nextFloat() * 2.0f - 1.0f) * m_bbWidth;
-                        var31 = (sharedRandom.nextFloat() * 2.0f - 1.0f) * m_bbWidth;
+                        var15 = (m_random.nextFloat() * 2.0f - 1.0f) * m_bbWidth;
+                        var31 = (m_random.nextFloat() * 2.0f - 1.0f) * m_bbWidth;
                         m_pLevel->addParticle("splash", Vec3(m_pos.x + var15, var29 + 1.0f, m_pos.z + var31), m_vel);
                     }
                 }
@@ -323,7 +323,7 @@ void FishingHook::tick()
 
             if (m_nibble > 0)
             {
-                m_vel.y -= (sharedRandom.nextFloat() * sharedRandom.nextFloat() * sharedRandom.nextFloat()) * 0.2f;
+                m_vel.y -= (m_random.nextFloat() * m_random.nextFloat() * m_random.nextFloat()) * 0.2f;
             }
 
             distance = var27 * 2.0f - 1.0f;
