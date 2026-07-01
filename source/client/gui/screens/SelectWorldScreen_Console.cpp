@@ -1,5 +1,6 @@
 #include "SelectWorldScreen_Console.hpp"
 #include "LoadSaveScreen_Console.hpp"
+#include "JoinGameScreen_Console.hpp"
 #include "client/locale/Language.hpp"
 #include "renderer/ShaderConstants.hpp"
 
@@ -205,6 +206,5 @@ void JoinButton::renderMessage(Font& font, const Color& textColor)
 
 void JoinButton::pressed(Minecraft* mc)
 {
-	mc->joinMultiplayer(m_server);
-	mc->getScreenChooser()->pushProgressScreen();
+	mc->setScreen(new JoinGameScreen_Console(mc->m_pScreen, m_server));
 }
