@@ -872,7 +872,7 @@ void Minecraft::freeResources(bool bCopyMap)
 
 #ifdef ENH_IMPROVED_SAVING
 	m_bIsGamePaused = true;
-	setScreen(new SavingWorldScreen(bCopyMap/*, m_pLocalPlayer*/));
+	getScreenChooser()->pushSavingScreen(bCopyMap/*, m_pLocalPlayer*/);
 #else
 	if (m_pLevel)
 	{
