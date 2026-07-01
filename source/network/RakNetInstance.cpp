@@ -22,7 +22,7 @@
 	2. Add the following code to RNS2_Berkley::SetSocketOptions():
 	```
 #if defined(_XBOX) || defined(_XBOX_720_WITH_XBOX_LIVE) || defined(X360)
-	// MCPE: Required to allow for "insecure" sockets on Xbox 360, which allows for cross-platform multiplayer
+	// MC-WORKAROUND: Required to allow for "insecure" sockets on Xbox 360, which allows for cross-platform multiplayer
 	// https://discord.com/channels/436450658531672064/761636912485105684/1425512825237012532
 	#define SO_MARKINSECURE        0x5801
 	BOOL opt_true = TRUE;
@@ -238,7 +238,7 @@ void RakNetInstance::runEvents(NetEventCallback& callback)
 				// update the info of a pinged compatible server, if possible.
 				for (size_t i = 0; i < m_servers.size(); i++)
 				{
-					PingedCompatibleServer& server = m_servers.at(i);
+					PingedCompatibleServer& server = m_servers[i];
 					if (server.m_address == pPacket->systemAddress)
 					{
 						server.m_lastPinged = RakNet::GetTimeMS();
@@ -303,44 +303,60 @@ void RakNetInstance::send(const RakNet::RakNetGUID& guid, Packet* packet)
 	delete packet;
 }
 
-// this broadcasts a packet to all other connected peers
+void RakNetInstance::send(const RakNet::RakNetGUID& guid, RakNet::BitStream& bs, Packet* packet)
+{
+	send(guid, bs, *packet);
+	delete packet;
+}
+
 void RakNetInstance::send(Packet& packet)
 {
 	RakNet::BitStream bs;
+	send(bs, packet);
+}
+
+void RakNetInstance::send(const RakNet::RakNetGUID& guid, Packet& packet)
+{
+	RakNet::BitStream bs;
+	send(guid, bs, packet);
+}
+
+// this broadcasts a packet to all other connected peers
+void RakNetInstance::send(RakNet::BitStream& bs, Packet& packet)
+{
 	packet.write(bs);
 
-    uint32_t result;
+	uint32_t result;
 	if (m_bIsHost)
 	{
-		result = m_pRakPeerInterface->Send(&bs, HIGH_PRIORITY, RELIABLE, 0, RakNet::UNASSIGNED_RAKNET_GUID, true);
+		result = m_pRakPeerInterface->Send(&bs, packet.m_priority, packet.m_reliability, packet.m_channel, RakNet::UNASSIGNED_RAKNET_GUID, true);
 	}
 	else
 	{
 		// send it to the host instead
-		result = m_pRakPeerInterface->Send(&bs, HIGH_PRIORITY, RELIABLE, 0, m_guid, false);
+		result = m_pRakPeerInterface->Send(&bs, packet.m_priority, packet.m_reliability, packet.m_channel, m_guid, false);
 	}
-    
-    if (result != 0)
-    {
+
+	if (result != 0)
+	{
 #ifdef LOG_PACKETS
-    uint8_t packetId;
-    bs.Read(packetId);
-    LOG_I("Sent packet (id: %d guid: %s)", packetId, m_bIsHost ? "UNASSIGNED_SYSTEM_ADDRESS" : m_guid.ToString());
+		uint8_t packetId;
+		bs.Read(packetId);
+		LOG_I("Sent packet (id: %d guid: %s)", packetId, m_bIsHost ? "UNASSIGNED_SYSTEM_ADDRESS" : m_guid.ToString());
 #endif
-    }
-    else
-    {
-        LOG_E("Failed to send packet!");
-    }
+	}
+	else
+	{
+		LOG_E("Failed to send packet!");
+	}
 }
 
 // this sends a specific peer a message
-void RakNetInstance::send(const RakNet::RakNetGUID& guid, Packet& packet)
+void RakNetInstance::send(const RakNet::RakNetGUID& guid, RakNet::BitStream& bs, Packet& packet)
 {
-	RakNet::BitStream bs;
 	packet.write(bs);
 
-	m_pRakPeerInterface->Send(&bs, HIGH_PRIORITY, RELIABLE, 0, guid, false);
+	m_pRakPeerInterface->Send(&bs, packet.m_priority, packet.m_reliability, packet.m_channel, guid, false);
 }
 
 void RakNetInstance::stopPingForHosts()
@@ -351,5 +367,3 @@ void RakNetInstance::stopPingForHosts()
 	m_pRakPeerInterface->Shutdown(0);
 	m_bPingingForHosts = false;
 }
-
-

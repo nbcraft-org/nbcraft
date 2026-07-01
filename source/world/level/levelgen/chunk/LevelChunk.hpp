@@ -11,6 +11,7 @@
 #include <cstring>
 #include <vector>
 #include <algorithm>
+#include <map>
 #include <unordered_map>
 #include <atomic>
 #include <mutex>
@@ -27,14 +28,9 @@ class Level;
 class Dimension;
 class AABB;
 class Entity;
+class TileEntity;
 class ChunkSource;
 class Biome;
-
-// someone else is doing it
-class TileEntity
-{
-
-};
 
 struct BiomeChunkData
 {
@@ -133,36 +129,6 @@ public:
 
 		size_t getSize() const { return ChunkConstants::TILE_COUNT / 2; }
 	};
-
-protected:
-	Level& m_level;
-	Dimension& m_dimension;
-	TilePos m_posMin;
-	TilePos m_posMax;
-	ChunkPos m_pos;
-	bool m_readOnly;
-	ChunkSource* m_generator;
-	std::mutex m_deferredLightMutex;
-	std::vector<TilePos> m_deferredLightEmitterPositions;
-	std::string m_pendingEntitiesSerialized;
-	std::atomic<ChunkState> m_state;
-	Tick_t m_currentTick;
-	TileTickingQueue m_tileTickingQueue;
-	TileID m_tiles[ChunkConstants::TILE_COUNT];
-	NibbleTileArray m_tileData;
-	NibbleTileArray m_lightSky;
-	NibbleTileArray m_lightBlock;
-	BiomeChunkData m_biomes[ChunkConstants::TILE_COUNT_PER_ROW];
-	uint8_t m_heightMap[ChunkConstants::TILE_COUNT_PER_ROW];
-	//std::unordered_map<uint8_t, BiomeChunkState> m_biomeStates;
-	Finalization m_finalization;
-	int m_biomeDirtyTicks;
-	int m_terrainDirtyTicks;
-	int m_tileEntityDirtyTicks;
-	int m_entityDirtyTicks;
-	int16_t m_unk85876[ChunkConstants::TILE_COUNT_PER_ROW];
-	std::vector<std::unique_ptr<Entity>> m_entities;
-	std::unordered_map<ChunkTilePos, std::unique_ptr<TileEntity>> m_tileEntities;
 
 public:
 	LevelChunk(Level& level, Dimension& dimension, const ChunkPos& pos, bool readOnly = false);
@@ -271,6 +237,8 @@ public:
 
 	void setSaved();
 
+	Random getRandom(int32_t l);
+
 protected:
 	void _resetDirtyCounter(int& dirtyCounter, int to);
 
@@ -286,23 +254,33 @@ protected:
 		assert(pos.x >= 0 && pos.y >= 0 && pos.z >= 0 && pos.x < ChunkConstants::XZ_SIZE && pos.z < ChunkConstants::XZ_SIZE && pos.y < ChunkConstants::Y_SIZE);
 	}
 
-public:
-	int field_4;
-	bool m_bLoaded;
-	Level* m_pLevel;
-	//DataLayer m_tileData_OLD;
-	//DataLayer m_lightSky_OLD;
-	//DataLayer m_lightBlk;
-	//uint8_t m_heightMap_OLD[256];
-	uint8_t m_updateMap[256];
-	int field_228;
-	ChunkPos m_chunkPos_OLD;
-	uint8_t field_234;
-	bool m_bUnsaved;
-	uint8_t field_236;
-	uint8_t field_237;
-	int field_238;
-	int field_23C;
-	//TileID* m_pBlockData;
-	//std::vector<Entity*> m_entities_OLD[128 / 16];
+protected:
+	Level& m_level;
+	Dimension& m_dimension;
+	TilePos m_posMin;
+	TilePos m_posMax;
+	ChunkPos m_pos;
+	bool m_readOnly;
+	ChunkSource* m_generator;
+	std::mutex m_deferredLightMutex;
+	std::vector<TilePos> m_deferredLightEmitterPositions;
+	std::string m_pendingEntitiesSerialized;
+	std::atomic<ChunkState> m_state;
+	Tick_t m_currentTick;
+	TileTickingQueue m_tileTickingQueue;
+	TileID m_tiles[ChunkConstants::TILE_COUNT];
+	NibbleTileArray m_tileData;
+	NibbleTileArray m_lightSky;
+	NibbleTileArray m_lightBlock;
+	BiomeChunkData m_biomes[ChunkConstants::TILE_COUNT_PER_ROW];
+	uint8_t m_heightMap[ChunkConstants::TILE_COUNT_PER_ROW];
+	//std::unordered_map<uint8_t, BiomeChunkState> m_biomeStates;
+	Finalization m_finalization;
+	int m_biomeDirtyTicks;
+	int m_terrainDirtyTicks;
+	int m_tileEntityDirtyTicks;
+	int m_entityDirtyTicks;
+	int16_t m_unk85876[ChunkConstants::TILE_COUNT_PER_ROW];
+	std::vector<std::unique_ptr<Entity>> m_entities;
+	std::unordered_map<ChunkTilePos, std::unique_ptr<TileEntity>> m_tileEntities;
 };

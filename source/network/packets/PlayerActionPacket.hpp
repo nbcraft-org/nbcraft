@@ -5,6 +5,13 @@
 
 class PlayerActionPacket : public Packet
 {
+private:
+	void _init()
+	{
+		m_reliability = RELIABLE_ORDERED;
+		m_channel = CHANNEL_PLAYER_EVENTS;
+	}
+
 public:
 	enum Type
 	{
@@ -37,15 +44,24 @@ public:
 		START_BUILDING_BLOCK
 	};
 
+public:
 	PlayerActionPacket()
+		: m_tileFace(Facing::DOWN)
+		, m_action(START_DESTROY_BLOCK)
+		, m_entityId(0)
 	{
-		m_tileFace = Facing::DOWN;
-		m_action = START_DESTROY_BLOCK;
-		m_entityId = 0;
+		_init();
+	}
+	PlayerActionPacket(int32_t entityId, Type action, const TilePos& tilePos = TilePos::ZERO, Facing::Name tileFace = Facing::DOWN)
+		: m_tilePos(tilePos)
+		, m_tileFace(tileFace)
+		, m_action(action)
+		, m_entityId(entityId)
+	{
+		_init();
 	}
 
-	PlayerActionPacket(int32_t entityId, Type action, const TilePos& tilePos = TilePos::ZERO, Facing::Name tileFace = Facing::DOWN);
-
+public:
 	void handle(const RakNet::RakNetGUID&, NetEventCallback& callback) override;
 	void write(RakNet::BitStream&) override;
 	void read(RakNet::BitStream&) override;

@@ -33,7 +33,7 @@ private:
 public:
 	bool isAvailable() override;
 	void setListenerPos(const Vec3& pos) override;
-	void setListenerAngle(const Vec2& rot) override;
+	void setListenerAngle(const Rot2& rot) override;
 
 	void setMusicVolume(float vol) override;
 

@@ -12,7 +12,7 @@
 /// \brief SocketLayer class implementation
 ///
 
-
+#include "../../compat/PlatformDefinitions.h"
 #include "SocketLayer.h"
 #include "RakAssert.h"
 #include "RakNetTypes.h"
@@ -65,7 +65,7 @@ using namespace pp;
 #include <sys/types.h>
 #include <lwip/sockets.h>
 #else
-#if (!defined(ANDROID) && !defined(__DREAMCAST__) && !defined(__SWITCH__))
+#if MC_SDK_LIBXENON
 #include <ifaddrs.h>
 #endif
 #include <netinet/in.h>
@@ -203,15 +203,11 @@ void SocketLayer::SetSocketOptions( __UDPSOCKET__ listenSocket, bool blockingSoc
 
 RakNet::RakString SocketLayer::GetSubNetForSocketAndIp(__UDPSOCKET__ inSock, RakNet::RakString inIpString)
 {
-	#if (!defined(__DREAMCAST__) && !defined(MC_NO_NETWORKING))
+#if (!defined(__DREAMCAST__) && !defined(MC_NO_NETWORKING) && !defined(__sun__))
 	RakNet::RakString netMaskString;
 	RakNet::RakString ipString;
 
-
-
-
-
-#if   defined(WINDOWS_STORE_RT) || defined(_XBOX) || defined(XENON)
+#if defined(WINDOWS_STORE_RT) || MC_PLATFORM_XBOX
 	RakAssert("Not yet supported" && 0);
 	return "";
 #elif defined(_WIN32)

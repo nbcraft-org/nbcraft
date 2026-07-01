@@ -35,9 +35,11 @@ public:
 
 	static std::string toString(int value);
 	static std::string toString(float value);
+#ifndef MC_NO_WSTRING
 	static std::string toString(const wchar_t* str);
 	static std::string toString(const std::wstring& str);
 	static std::wstring toWideString(const std::string& str);
+#endif
 
 	template<typename T>
 	static bool remove(std::vector<T>& vec, const T& t)
@@ -79,14 +81,22 @@ public:
 		}
 	}
 
+	static void stringReplace(std::string& in, char what, char with)
+	{
+		for (size_t i = 0; (i = in.find(what, i)) != std::string::npos; i++)
+		{
+			in[i] = with;
+		}
+	}
+
 	static int32_t hashCode(const std::string& str)
 	{
 		int32_t result = 0;
 
 		const size_t size = str.size();
-		for (size_t i = 0; i < size; i++)
+		for (size_t i = 0; i < size; ++i)
 		{
-			result = result * 31 + str.at(i);
+			result = result * 31 + str[i];
 		}
 
 

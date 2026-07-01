@@ -9,7 +9,7 @@ struct SlotDisplay
 {
     int x, y, size, noItemIcon;
     std::string noItemSprite;
-    bool bVisible, bIconHolder;
+    bool isVisible, isInteractable, isWarning, hasIconHolder;
 
     SlotDisplay() :
         x(0),
@@ -17,8 +17,10 @@ struct SlotDisplay
         size(0),
         noItemIcon(-1),
         noItemSprite(""),
-        bVisible(false),
-        bIconHolder(false)
+        isVisible(false),
+        isInteractable(false),
+        isWarning(false),
+        hasIconHolder(false)
     {
     }
 
@@ -28,8 +30,10 @@ struct SlotDisplay
         size(size),
         noItemIcon(noItemIcon),
         noItemSprite(noItemSprite),
-        bVisible(true),
-        bIconHolder(iconHolder)
+        isVisible(true),
+        isInteractable(true),
+        isWarning(false),
+        hasIconHolder(iconHolder)
     {
     }
 };
@@ -47,8 +51,10 @@ private:
     bool _isHovering(const Slot& slot, int mouseX, int mouseY) const;
 
 protected:
+    virtual void _renderContent(float partialTicks);
+    virtual void _renderFg(float partialTicks);
     virtual void _renderLabels() = 0;
-    virtual void _renderBg(float partialTick) = 0;
+    virtual void _renderBg(float partialTicks) = 0;
     virtual SlotDisplay _createSlotDisplay(const Slot&) = 0;
     virtual void _playInteractSound();
     virtual void _tryPlayInteractSound();
@@ -58,22 +64,23 @@ protected:
 
 public:
     void init() override;
-    void render(float partialTick) override;
+    void render(float partialTicks) override;
     void onClose() override;
     void tick() override;
     bool isPauseScreen() override;
     void pointerPressed(const MenuPointer& pointer, MouseButtonType button) override;
     void pointerReleased(const MenuPointer& pointer, MouseButtonType button) override;
     void handlePointerPressed(bool isPressed) override;
-    void keyPressed(int key) override;
+    void handleUserAction(const ActionInfo&) override;
 
     const SlotDisplay& getSlotDisplay(const Slot&) const;
+    SlotDisplay& getSlotDisplay(int id);
 
 public:
     virtual void initMenuPointer() override;
     virtual void slotsChanged(Container* container);
     virtual void slotClicked(const MenuPointer& pointer, MouseButtonType button, bool quick);
-    virtual void slotClicked(Slot* slot, int index, MouseButtonType button, bool quick);
+    virtual void slotClicked(Slot* slot, Container::SlotID slotId, MouseButtonType button, bool quick);
     void slotClicked(const MenuPointer& pointer, MouseButtonType button);
 
 public:
@@ -100,5 +107,6 @@ protected:
     std::vector<SlotDisplay> m_slotDisplays;
 
 private:
-    int m_timeSlotDragged;
+    bool m_bSplitStackThisTick;
+    float m_slotDragStartTime;
 };

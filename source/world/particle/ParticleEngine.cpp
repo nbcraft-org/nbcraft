@@ -119,7 +119,7 @@ void ParticleEngine::destroyEffect(Entity* entity, const TilePos& pos)
 	TileID tileID = source.getTile(pos);
 	if (!tileID) return;
 
-	float timeS = getTimeS();
+	//float timeS = getTimeS();
 
 	Tile* pTile = Tile::tiles[tileID];
 
@@ -141,8 +141,8 @@ void ParticleEngine::destroyEffect(Entity* entity, const TilePos& pos)
 		}
 	}
 
-	if (timeS != -1.0)
-		getTimeS();
+	//if (timeS != -1.0)
+	//	getTimeS();
 
 	// @NOTE: Useless string creation
 #ifdef ORIGINAL_CODE
@@ -161,11 +161,11 @@ void ParticleEngine::render(const Entity& camera, float f)
 		return;
 #endif
 
-	float x1 = Mth::cos(float(M_PI) * camera.m_rot.x / 180.0f);
-	float x3 = Mth::sin(float(M_PI) * camera.m_rot.x / 180.0f);
-	float x4 = -(x3 * Mth::sin(float(M_PI) * camera.m_rot.y / 180.0f));
-	float x5 = x1 * Mth::sin(float(M_PI) * camera.m_rot.y / 180.0f);
-	float x2 = Mth::cos(float(M_PI) * camera.m_rot.y / 180.0f);
+	float x1 = Mth::cos(float(M_PI) * camera.m_rot.yaw / 180.0f);
+	float x3 = Mth::sin(float(M_PI) * camera.m_rot.yaw / 180.0f);
+	float x4 = -(x3 * Mth::sin(float(M_PI) * camera.m_rot.pitch / 180.0f));
+	float x5 = x1 * Mth::sin(float(M_PI) * camera.m_rot.pitch / 180.0f);
+	float x2 = Mth::cos(float(M_PI) * camera.m_rot.pitch / 180.0f);
 
 	Particle::xOff = Mth::Lerp(camera.m_posPrev.x, camera.m_pos.x, f);
 	Particle::yOff = Mth::Lerp(camera.m_posPrev.y, camera.m_pos.y, f);
@@ -177,8 +177,10 @@ void ParticleEngine::render(const Entity& camera, float f)
 	{
 		if (i == PT_TERRAIN)
 			m_pTextures->loadAndBindTexture(C_TERRAIN_NAME);
+		else if (i == PT_ITEM)
+			m_pTextures->loadAndBindTexture(C_ITEMS_NAME);
 		else
-			m_pTextures->loadAndBindTexture("particles.png");
+			m_pTextures->loadAndBindTexture(C_PARTICLES_NAME);
 
 		t.begin(4 * m_particles[i].size());
 
@@ -201,7 +203,7 @@ void ParticleEngine::renderLit(const Entity& camera, float a)
 
 		for (size_t i = 0; i < m_particles[tt].size(); ++i)
 		{
-			Particle* p = m_particles[tt].at(i);
+			Particle* p = m_particles[tt][i];
 			p->render(t, a, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 		}
 

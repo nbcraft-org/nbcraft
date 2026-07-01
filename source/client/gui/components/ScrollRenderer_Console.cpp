@@ -1,6 +1,7 @@
 #include <cstring>
 
 #include "ScrollRenderer_Console.hpp"
+#include "common/Utils.hpp"
 #include "renderer/ShaderConstants.hpp"
 
 std::string ScrollRenderer_Console::SCROLLS[] = { "gui/console/scrollUp.png", "gui/console/scrollDown.png", "gui/console/scrollLeft.png", "gui/console/scrollRight.png" };
@@ -28,11 +29,17 @@ void ScrollRenderer_Console::renderScroll(AreaNavigation::Direction dir, Texture
     }
 }
 
+float _getAlpha(int last)
+{
+    float f = (getTimeMs() - last) / 320.0f;
+    return Mth::Min(1.0f, f < 0.5f ? 1 - f * 2.0f : (f - 0.5f) * 2.0f);
+}
+
 void ScrollRenderer_Console::renderScroll(AreaNavigation::Direction dir, Textures& texs, int x, int y, const std::string& sprite, int width, int height)
 {
     int l = m_lastScrolled[dir];
     if (l > 0)
-        currentShaderColor = Color(1.0f, 1.0f, 1.0f, getAlpha(l));
+        currentShaderColor = Color(1.0f, 1.0f, 1.0f, _getAlpha(l));
     blitSprite(texs, sprite, x, y, width, height, &m_materials.ui_textured_and_glcolor);
     if (l > 0)
         currentShaderColor = Color::WHITE;

@@ -13,29 +13,34 @@
 #include "client/app/AppPlatform.hpp"
 #include "DynamicTexture.hpp"
 #include "texture/TextureAtlas.hpp"
+#include "common/utility/HashMap.hpp"
 
-#define C_TERRAIN_NAME "terrain.png"
-#define C_ITEMS_NAME   "gui/items.png"
-#define C_BLOCKS_NAME  "gui/gui_blocks.png"
+#define C_TERRAIN_NAME    "terrain.png"
+#define C_ITEMS_NAME      "gui/items.png"
+#define C_BLOCKS_NAME     "gui/gui_blocks.png"
+#define C_PARTICLES_NAME  "particles.png"
 
 class DynamicTexture; // in case we are being included from DynamicTexture. We don't store complete references to that
 
 class Textures
 {
 protected:
-	typedef std::map<std::string, TextureData*> TextureMap;
+	typedef HashMap<std::string, TextureData*> TextureMap;
+	typedef HashMap<std::string, TextureAtlas*> TextureAtlasMap;
 
 public:
 	TextureData* loadTexture(const std::string& name, bool bRequired);
 	TextureData* loadAndBindTexture(const std::string& name, bool isRequired = true, unsigned int textureUnit = 0);
 	TextureData* getTextureData(const std::string& name, bool isRequired);
 	TextureData* uploadTexture(const std::string& name, TextureData& t);
+	TextureAtlas* getTextureAtlas(const std::string& name);
 	void unloadAll();
 	void clear();
 	void tick();
 	void addDynamicTexture(DynamicTexture* pTexture);
 	void addSprite(const std::string& name, TextureAtlas& atlas);
 	void setupAtlas(TextureAtlas&);
+	void setupAtlases(bool forceReset = false);
 
 	const TextureAtlasSprite* getGuiSprite(const std::string&);
 
@@ -59,14 +64,12 @@ private:
 
 protected:
 	TextureMap m_textures;
+	TextureAtlasMap m_atlases;
 	int m_currBoundTex;
 	bool m_bClamp;
 	bool m_bBlur;
 	std::vector<DynamicTexture*> m_dynamicTextures;
 	TextureAtlas m_guiAtlas;
 	TextureAtlas m_filteredGuiAtlas;
-
-	// Why?
-	friend class StartMenuScreen;
 };
 

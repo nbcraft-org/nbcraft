@@ -122,7 +122,7 @@ void MobSpawner::tick(TileSource& source, bool allowHostile, bool allowFriendly)
                     if (!entity) 
                         break;
 
-                    entity->moveTo(pPos, Vec2(level.m_random.nextFloat() * 360.0f, 0.0f));
+                    entity->moveTo(pPos, Rot2(level.m_random.nextFloat() * 360.0f, 0.0f));
                     
                     if (entity->canSpawn()) 
                     {
@@ -149,7 +149,7 @@ TilePos MobSpawner::getRandomPosWithin(TileSource& source, int chunkX, int chunk
     return TilePos(px, py, pz);
 }
 
-bool MobSpawner::AddMob(TileSource& source, Mob *mob, const Vec3& pos, const Vec2& rot)
+bool MobSpawner::AddMob(TileSource& source, Mob *mob, const Vec3& pos, const Rot2& rot)
 {
     if (!mob)
         return false;

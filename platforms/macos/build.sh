@@ -157,7 +157,7 @@ if [ -n "$outdated_toolchain" ]; then
         strip "$(realpath toolchain/lib/libtapi.so)"
     fi
 
-    cctools_commit=12e2486bc81c3b2be975d3e117a9d3ab6ec3970c
+    cctools_commit=fee8115127bb849d7481ea0015f181d3ebbd33cf
     rm -rf cctools-port-*
     wget -O- "https://github.com/Un1q32/cctools-port/archive/$cctools_commit.tar.gz" | tar -xz
 
@@ -211,7 +211,7 @@ fi
 
 # Increase this if we ever make a change to the toolchain, for example
 # using a newer GCC version, and we need to invalidate the cache.
-ppctoolchainver=2
+ppctoolchainver=3
 ppc_triple='powerpc-apple-darwin8'
 targets="$targets $ppc_triple"
 if [ "$(cat toolchain-ppc/toolchainver 2>/dev/null)" != "$ppctoolchainver" ]; then
@@ -249,7 +249,7 @@ if [ "$(cat toolchain-ppc/toolchainver 2>/dev/null)" != "$ppctoolchainver" ]; th
     cd ../..
     rm -rf "cctools-port-$cctools_commit" &
 
-    gcc_version='15.2.0'
+    gcc_version='16.1.0'
     rm -rf gcc-*
     wget -O- "https://ftp.gnu.org/gnu/gcc/gcc-$gcc_version/gcc-$gcc_version.tar.xz" | tar -xJ
 
@@ -368,6 +368,7 @@ for target in $targets; do
                     --prefix="${PWD%/*}/sdl" \
                     --disable-shared \
                     --disable-video-x11 \
+                    --disable-altivec \
                     CC="$cc" \
                     CXX="$cxx" \
                     CFLAGS="$opt $target_cflags" \
@@ -425,8 +426,9 @@ for target in $targets; do
     cd ..
 done
 
-rm -rf ../NBCraft
-mkdir -p ../NBCraft/libexec
+rm -rf ../NBCraft.app
+mkdir -p ../NBCraft.app/Contents/MacOS/libexec ../NBCraft.app/Contents/Resources
+cp "$platformdir/Info.plist" ../NBCraft.app/Contents
 
 NBC_TARGET='arm64-apple-macos11.0' \
     NBC_SDK="$arm64_sdk" \
@@ -439,25 +441,27 @@ NBC_TARGET='unknown-apple-macos10.4' \
     -arch x86_64 -arch i386 \
     "$platformdir/arch.c" -Os -o arch-x86
 
-lipo -create arch-* -output ../NBCraft/libexec/arch
+lipo -create arch-* -output ../NBCraft.app/Contents/MacOS/libexec/arch
 [ -z "$DEBUG" ] && [ -z "$NOSTRIP" ] &&
-    cctools-strip -no_code_signature_warning ../NBCraft/libexec/arch
+    cctools-strip -no_code_signature_warning ../NBCraft.app/Contents/MacOS/libexec/arch
 
-cp -a "$platformdir/../../game/assets" ../NBCraft
-cp "$platformdir/launchscript.sh" "../NBCraft/$bin"
+cp -a "$platformdir/../../game/assets" ../NBCraft.app/Contents/MacOS
+cp "$platformdir/launchscript.sh" "../NBCraft.app/Contents/MacOS/$bin"
+mv ../NBCraft.app/Contents/MacOS/assets/app/icons/icon.icns ../NBCraft.app/Contents/Resources
+rm -rf ../NBCraft.app/Contents/MacOS/assets/app
 
 for target in $targets; do
     arch="${target%%-*}"
-    cp "build-$target/$bin" "../NBCraft/libexec/$bin-$arch"
+    cp "build-$target/$bin" "../NBCraft.app/Contents/MacOS/libexec/$bin-$arch"
     case $arch in
         (powerpc*|ppc*) strip='ppc-strip' ;;
         (*) strip='cctools-strip -no_code_signature_warning' ;;
     esac
     [ -z "$DEBUG" ] && [ -z "$NOSTRIP" ] &&
-        $strip "../NBCraft/libexec/$bin-${target%%-*}"
+        $strip "../NBCraft.app/Contents/MacOS/libexec/$bin-${target%%-*}"
 done
 if command -v ldid >/dev/null; then
-    ldid -S ../NBCraft/libexec/arch "../NBCraft/libexec/$bin-arm64"*
+    ldid -S ../NBCraft.app/Contents/MacOS/libexec/arch "../NBCraft.app/Contents/MacOS/libexec/$bin-arm64"*
 else
-    codesign -f -s - ../NBCraft/libexec/arch "../NBCraft/libexec/$bin-arm64"*
+    codesign -f -s - ../NBCraft.app/Contents/MacOS/libexec/arch "../NBCraft.app/Contents/MacOS/libexec/$bin-arm64"*
 fi

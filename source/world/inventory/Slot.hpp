@@ -1,6 +1,8 @@
 #pragma once
 
-#include "world/Container.hpp"
+#include <stdint.h>
+
+#include "Container.hpp"
 
 class ItemStack;
 
@@ -17,7 +19,7 @@ public:
         ARMOR
     };
 
-    Slot(Container* container, int slot, Group group = CONTAINER);
+    Slot(Container* container, Container::StackID stackId, Group group = CONTAINER);
     virtual ~Slot();
 
     virtual bool canSync() const;
@@ -26,23 +28,23 @@ public:
 
     virtual bool mayPlace(const ItemStack& item) const { return true; }
 
-    virtual ItemStack& getItem() { return m_pContainer->getItem(m_slot); }
+    virtual ItemStack& getItem() { return m_pContainer->getItem(m_stackId); }
 
     virtual bool hasItem() { return !getItem().isEmpty(); }
 
     virtual void set(const ItemStack& item);
 
-    virtual void setChanged() { m_pContainer->setChanged(); }
+    virtual void setChanged() { m_pContainer->setContainerChanged(m_stackId); }
 
     virtual int getMaxStackSize() const { return m_pContainer->getMaxStackSize(); }
 
-    virtual ItemStack remove(int count) { return m_pContainer->removeItem(m_slot, count); }
+    virtual ItemStack remove(int count) { return m_pContainer->removeItem(m_stackId, count); }
 
-    virtual bool isAt(Container* cont, int s) { return cont == m_pContainer && s == m_slot; }
+    virtual bool isAt(Container* cont, Container::StackID stackId) { return cont == m_pContainer && stackId == m_stackId; }
 
 public:
     Container* m_pContainer;
-    int m_slot;
-    int m_index;
+    Container::SlotID m_id; // the position in the ContainerMenu::m_slots vector
+    Container::StackID m_stackId; // the position in the Container::m_items vector
     Group m_group;
 };

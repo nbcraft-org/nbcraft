@@ -36,9 +36,5 @@ namespace mce
         void reflectShader(const ShaderProgramD3D11& shaderProgram, ShaderType shaderType);
         void reflectBindableResources(ComInterface<ID3D11ShaderReflection> shaderReflection, const D3D11_SHADER_DESC& shaderDesc);
         ComInterface<ID3D11InputLayout> createInputLayout(const VertexFormat& vertexFormat);
-
-        static void SpliceShaderPath(std::string& shaderName);
-        static void SpliceShaderExtension(std::string& shaderName);
-        static void BuildHeader(std::ostringstream& stream);
     };
 }

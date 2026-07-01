@@ -26,6 +26,13 @@ public:
 		return TilePos(x + other.x, y + other.y, z + other.z);
 	}
 
+	bool operator<(const ChunkTilePos& other) const
+	{
+		if (x != other.x) return x < other.x;
+		if (y != other.y) return y < other.y;
+		return z < other.z;
+	}
+
 	int index() const
 	{
 		return (x << 11) | (z << 7) | y;

@@ -6,7 +6,5 @@ namespace mce
 {
     class FogStateNull : public FogStateBase
     {
-    public:
-        FogStateNull();
     };
 }

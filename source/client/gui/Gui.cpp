@@ -8,6 +8,7 @@
 
 //#include "Gui.hpp" // apparently this breaks building on clang or something
 #include "client/app/Minecraft.hpp"
+#include "client/gui/screens/inventory/CreativeScreen.hpp"
 #include "client/gui/screens/IngameBlockSelectionScreen.hpp"
 #include "client/gui/screens/ChatScreen.hpp"
 #include "client/gui/screens/PauseScreen.hpp"
@@ -15,6 +16,8 @@
 #include "client/renderer/entity/ItemRenderer.hpp"
 #include "client/renderer/renderer/RenderMaterialGroup.hpp"
 #include "renderer/ShaderConstants.hpp"
+#include "client/renderer/Lighting.hpp"
+#include "world/phys/HitResult.hpp"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4244)
@@ -43,6 +46,9 @@ bool Gui::_isVignetteAvailable = false; // false because PE never seemed to have
 Gui::Gui(Minecraft* pMinecraft)
 {
 	m_progress = 0;
+	m_lastProgress = 0;
+	m_lastDestroyProgress = 0;
+	m_destroyProgress = 0;
 	field_C = "";
 	field_24 = 0;
 	field_28 = 0;
@@ -55,6 +61,8 @@ Gui::Gui(Minecraft* pMinecraft)
 	field_A3C = true;
 	m_bRenderMessages = true;
     m_bRenderHunger = false;
+	m_feedbackMeshesBuilt = false;
+	m_animatedCharacterTimer = 0;
 
 	m_pMinecraft = pMinecraft;
 }
@@ -73,8 +81,11 @@ void Gui::addMessage(const std::string& s)
 	}
 
 	std::string str = s;
+	int maxChatWidth = 320;
+	if (m_pMinecraft->getOptions()->getUiTheme() == UI_CONSOLE)
+		maxChatWidth = GuiWidth - 50;
 
-	while (m_pMinecraft->m_pFont->width(str) > 320)
+	while (m_pMinecraft->m_pFont->width(str) > maxChatWidth)
 	{
 		size_t i = 2;
 		for (; i < str.size(); i++)
@@ -82,7 +93,7 @@ void Gui::addMessage(const std::string& s)
 			std::string sstr = str.substr(0, i);
 
 			// this sucks
-			if (m_pMinecraft->m_pFont->width(sstr) > 320)
+			if (m_pMinecraft->m_pFont->width(sstr) > maxChatWidth)
 				break;
 		}
 
@@ -163,10 +174,16 @@ void Gui::render(float f, bool bHaveScreen, int mouseX, int mouseY)
 	renderer.setupGuiScreen();
 
 	if (bHaveScreen && isConsole)
+	{
+		m_animatedCharacterTimer = 0;
 		return;
+	}
 
 	if (!mc.m_pLevel || !mc.m_pLocalPlayer)
+	{
+		m_animatedCharacterTimer = 0;
 		return;
+	}
 
 	if (mc.getOptions()->m_fancyGraphics.get() && isVignetteAvailable() && !isConsole)
 	{
@@ -175,10 +192,10 @@ void Gui::render(float f, bool bHaveScreen, int mouseX, int mouseY)
 
 	ItemStack& headGear = mc.m_pLocalPlayer->m_pInventory->getArmor(Item::SLOT_HEAD);
 
-	if (!mc.getOptions()->m_thirdPerson.get() && !headGear.isEmpty() && headGear.getId() == Tile::pumpkin->m_ID)
+	if (mc.getOptions()->m_thirdPerson.get() == TPM_FIRST && !headGear.isEmpty() && headGear.getId() == Tile::pumpkin->m_ID)
 		renderPumpkin(GuiWidth, GuiHeight);
 
-	renderProgressIndicator(GuiWidth, GuiHeight);
+	renderProgressIndicator(GuiWidth, GuiHeight, f);
 
 	currentShaderColor = Color::WHITE;
 	currentShaderDarkColor = Color::WHITE;
@@ -190,12 +207,12 @@ void Gui::render(float f, bool bHaveScreen, int mouseX, int mouseY)
 		matrix->translate(Vec3(0, -35, 0));
 		matrix->scale(mc.getOptions()->m_hudSize.get());
 	}
-	if (mc.m_pGameMode->canHurtPlayer())
+	if (mc.getLocalPlayerGameMode()->canHurtPlayer())
 	{
 		textures.loadAndBindTexture("gui/icons.png");
 
 		Tesselator& t = Tesselator::instance;
-		t.begin(0);
+		t.begin(160);
 		t.voidBeginAndEndCalls(true);
 
 		renderHearts(isPocket);
@@ -221,6 +238,18 @@ void Gui::render(float f, bool bHaveScreen, int mouseX, int mouseY)
 	{
 		renderMessages(false);
 	}
+
+	// Disabled on non-Console UI Themes for now
+	if (mc.getOptions()->m_animatedCharacter.get() && isConsole)
+	{
+		MatrixStack::Ref matrix = MatrixStack::World.push();
+		matrix->translate(Vec3(GuiWidth / 20, GuiHeight / 20, 0));
+		if (isConsole)
+		{
+			matrix->scale(mc.getOptions()->m_hudSize.get());
+		}
+		renderAnimatedCharacter(8, 4, f);
+	}
 }
 
 void Gui::tick()
@@ -229,6 +258,9 @@ void Gui::tick()
 		field_A18--;
 
 	m_ticks++;
+
+	if (m_animatedCharacterTimer > 0)
+		m_animatedCharacterTimer--;
 
 	for (size_t i = 0; i < m_guiMessages.size(); i++)
 	{
@@ -253,15 +285,13 @@ void Gui::renderSlot(int slot, int x, int y, float f)
 		{
 			float var7 = 1.0f + var6 / 5.0f;
 			matrix = MatrixStack::World.push();
-			matrix->translate(Vec3(x + 8, y + 12, 0.0f));
+			matrix->translate(Vec3(x + 8, y + 12, 0));
 			matrix->scale(Vec3(1.0f / var7, (var7 + 1.0f) / 2.0f, 1.0f));
-			matrix->translate(Vec3(-(x + 8), -(y + 12), 0.0f));
+			matrix->translate(Vec3(-(x + 8), -(y + 12), 0));
 		}
 
-		ItemRenderer::singleton().renderGuiItem(m_pMinecraft->m_pFont, m_pMinecraft->m_pTextures, item, x, y, true);
+		ItemRenderer::singleton().renderGuiItem(*m_pMinecraft, item, x, y);
 	}
-
-    //ItemRenderer::renderGuiItemDecorations(m_pMinecraft->m_pFont, m_pMinecraft->m_pTextures, item, x, y);
 }
 
 void Gui::renderSlotOverlay(int slot, int x, int y, float f)
@@ -272,7 +302,62 @@ void Gui::renderSlotOverlay(int slot, int x, int y, float f)
 	if (item.isEmpty())
 		return;
 
-	ItemRenderer::singleton().renderGuiItemOverlay(m_pMinecraft->m_pFont, m_pMinecraft->m_pTextures, item, x, y);
+	ItemRenderer::singleton().renderGuiItemOverlay(*m_pMinecraft, item, x, y);
+}
+
+void Gui::renderAnimatedCharacter(int x, int y, float partialTick)
+{
+	if (!m_pMinecraft->m_pLocalPlayer) return;
+	
+	LocalPlayer* player = m_pMinecraft->m_pLocalPlayer;
+	if (player->isSneaking())
+		m_animatedCharacterTimer = 10;
+	else if (player->isSneaking())
+		m_animatedCharacterTimer = 10;
+	else if (player->m_bFlying)
+		m_animatedCharacterTimer = 2;
+
+	if (!m_animatedCharacterTimer) return;
+
+	MatrixStack::Ref matrix = MatrixStack::World.push();
+
+	constexpr int scale = 12;
+
+	matrix->translate(Vec3(x, y, 50));
+	matrix->scale(Vec3(-scale, scale, scale));
+	matrix->rotate(180.0f, Vec3(0.0f, 0.0f, 1.0f));
+
+	float prevYRot = player->m_rot.yaw;
+	float prevXRot = player->m_rot.pitch;
+	float prevYORot = player->m_oRot.yaw;
+
+	constexpr float dx = -40;
+	constexpr float dy = 10;
+
+	matrix->rotate(135.0f, Vec3(0.0f, 1.0f, 0.0f));
+	Lighting::turnOn(matrix);
+	matrix->rotate(-135.0f, Vec3(0.0f, 1.0f, 0.0f));
+
+	matrix->rotate(-Mth::atan(dy / 40.0f) * 20.0f, Vec3(1.0f, 0.0f, 0.0f));
+	matrix->rotate(player->m_yBodyRot - (Mth::atan(dx / 40.0f) * 20), Vec3(0.0f, 1.0, 0.0f));
+	player->m_rot.yaw = player->m_yBodyRot - 15.0f;
+	player->m_oRot.yaw = player->m_rot.yaw;
+	player->m_rot.pitch = -Mth::atan(dy / 40.0f) * 20.0f;
+
+	EntityRenderer* renderer = EntityRenderDispatcher::instance->getRenderer(player->m_renderType);
+	float oldShadowRadius = renderer->m_shadowRadius;
+	renderer->m_shadowRadius = 0.0f;
+	player->m_minBrightness = 1.0f;
+	currentShaderColor = Color::WHITE;
+	EntityRenderDispatcher::instance->m_rot.yaw = 180.0f;
+	EntityRenderDispatcher::instance->render(*player, Vec3::ZERO, 0.0f, 1.0f);
+	player->m_minBrightness = 0.0f;
+	renderer->m_shadowRadius = oldShadowRadius;
+	player->m_rot.yaw = prevYRot;
+	player->m_oRot.yaw = prevYORot;
+	player->m_rot.pitch = prevXRot;
+
+	Lighting::turnOff();
 }
 
 int Gui::getSlotIdAt(int mouseX, int mouseY)
@@ -309,7 +394,7 @@ void Gui::handleClick(int clickID, int mouseX, int mouseY)
 		return;
 
 	// @TODO: add InGamePlayScreen at some point
-	if (m_pMinecraft->isTouchscreen())
+	if (m_pMinecraft->useTouchscreen())
     {
 		int cenX = GuiWidth / 2;
         int scaledMouseX = int(mouseX * GuiScale);
@@ -335,12 +420,13 @@ void Gui::handleClick(int clickID, int mouseX, int mouseY)
 	if (slot == -1)
 		return;
 
-	if (m_pMinecraft->isTouchscreen() && slot == getNumSlots() - 1)
+	// Final slot on touch opens inventory
+	if (m_pMinecraft->useTouchscreen() && slot == getNumSlots() - 1)
 	{
-		if (m_pMinecraft->m_pGameMode->isSurvivalType())
+		if (m_pMinecraft->getLocalPlayerGameMode()->isSurvivalType())
 			m_pMinecraft->setScreen(new InventoryScreen(m_pMinecraft->m_pLocalPlayer));
 		else
-			m_pMinecraft->setScreen(new IngameBlockSelectionScreen());
+			m_pMinecraft->getScreenChooser()->pushCreativeScreen(m_pMinecraft->m_pLocalPlayer);
 	}
 	else
 		m_pMinecraft->m_pLocalPlayer->m_pInventory->selectSlot(slot);
@@ -348,75 +434,96 @@ void Gui::handleClick(int clickID, int mouseX, int mouseY)
 
 void Gui::handleScrollWheel(bool down)
 {
-	SlotID slot = m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedSlot;
+	Container::StackID stackId = m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedStackId;
 
 	int maxItems = getNumUsableSlots() - 1;
 
 	if (down)
 	{
-		if (slot++ == maxItems)
-			slot = 0;
+		if (stackId++ == maxItems)
+			stackId = 0;
 	}
 	else
 	{
-		if (slot-- == 0)
-			slot = maxItems;
+		if (stackId-- == 0)
+			stackId = maxItems;
 	}
 
-	m_pMinecraft->m_pLocalPlayer->m_pInventory->selectSlot(slot);
+	m_pMinecraft->m_pLocalPlayer->m_pInventory->selectSlot(stackId);
 }
 
-void Gui::handleKeyPressed(int keyCode)
+void Gui::handleUserAction(const ActionInfo& info)
 {
 	Options* options = m_pMinecraft->getOptions();
 
-	if (options->isKey(KM_INVENTORY, keyCode))
+	if (options->isAction(AID_CRAFTING, info))
 	{
-		if (m_pMinecraft->m_pGameMode->isSurvivalType())
-			m_pMinecraft->setScreen(new InventoryScreen(m_pMinecraft->m_pLocalPlayer));
+		if (m_pMinecraft->getLocalPlayerGameMode()->isSurvivalType())
+			m_pMinecraft->getScreenChooser()->pushPlayerCraftingScreen(m_pMinecraft->m_pLocalPlayer);
 		else
-			m_pMinecraft->setScreen(new IngameBlockSelectionScreen);
+			m_pMinecraft->getScreenChooser()->pushCreativeScreen(m_pMinecraft->m_pLocalPlayer);
 		return;
 	}
 
-	bool slotL = options->isKey(KM_SLOT_L, keyCode);
-	bool slotR = options->isKey(KM_SLOT_R, keyCode);
+	if (options->isAction(AID_INVENTORY, info))
+	{
+		m_pMinecraft->setScreen(new InventoryScreen(m_pMinecraft->m_pLocalPlayer));
+		return;
+	}
+
+	if (options->isAction(AID_FOG, info))
+	{
+		Options& o = *m_pMinecraft->getOptions();
+		o.m_viewDistance.set((o.m_viewDistance.get() + 1) % 4);
+		return;
+	}
+
+	bool slotL = options->isAction(AID_SLOT_L, info);
+	bool slotR = options->isAction(AID_SLOT_R, info);
 	if (slotL || slotR)
 	{
 		int maxItems = getNumSlots() - 1;
-		if (m_pMinecraft->isTouchscreen())
+		if (m_pMinecraft->useTouchscreen())
 			maxItems--;
-		SlotID* slot = &m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedSlot;
+		Container::StackID* stackId = &m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedStackId;
 
 		if (slotR)
 		{
-			if (*slot < maxItems)
-				(*slot)++;
+			if (*stackId < maxItems)
+				(*stackId)++;
 			else
-				*slot = 0;
+				*stackId = 0;
 		}
 		else if (slotL)
 		{
-			if (*slot > 0)
-				(*slot)--;
+			if (*stackId > 0)
+				(*stackId)--;
 			else
-				*slot = maxItems;
+				*stackId = maxItems;
 		}
 		return;
 	}
 
-	if (options->isKey(KM_CHAT, keyCode) || options->isKey(KM_CHAT_CMD, keyCode))
+	if (options->isAction(AID_CHAT, info) || options->isAction(AID_CHAT_CMD, info))
 	{
 		if (!m_pMinecraft->m_pScreen)
-			m_pMinecraft->setScreen(new ChatScreen(m_pMinecraft->getOptions()->isKey(KM_CHAT_CMD, keyCode)));
+			m_pMinecraft->setScreen(new ChatScreen(m_pMinecraft->getOptions()->isAction(AID_CHAT_CMD, info)));
 	}
 }
 
 void Gui::renderMessages(bool bShowAll)
 {
+	int scale = 1;  // scale is used to fix sizing issues when chatscreen is opened so it doesn't become enlarged in there, there's probably a better way to do this.
 	int topEdge = GuiHeight - 49;
-	if (m_pMinecraft->isTouchscreen())
+
+	if (!m_pMinecraft->m_pScreen)
+		scale = 2;
+
+	if (m_pMinecraft->useTouchscreen())
 		topEdge = 49;
+
+	if (m_pMinecraft->getOptions()->getUiTheme() == UI_CONSOLE)
+		topEdge = GuiHeight - 130 * scale;
 
 	for (size_t i = 0; i < m_guiMessages.size(); i++)
 	{
@@ -425,6 +532,9 @@ void Gui::renderMessages(bool bShowAll)
 			continue;
 
 		int bkgdColor = 0x7F000000, textColor = 0xFFFFFFFF;
+
+		if (m_pMinecraft->getOptions()->getUiTheme() == UI_CONSOLE)
+			bkgdColor = 0x59000000;
 
 		float fade = 1.0f;
 
@@ -445,10 +555,20 @@ void Gui::renderMessages(bool bShowAll)
 			}
 		}
 
-		fill(2, topEdge, 322, topEdge + 9, bkgdColor);
-		m_pMinecraft->m_pFont->drawShadow(msg.msg, 2, topEdge + 1, textColor);
+		if (m_pMinecraft->getOptions()->getUiTheme() == UI_CONSOLE)
+		{
+			fill(0, topEdge, GuiWidth, topEdge + 16 * scale, bkgdColor);
+			m_pMinecraft->m_pFont->drawScalableShadow(msg.msg, 30 * scale, topEdge + 5 * scale, textColor, scale);
 
-		topEdge -= 9;
+			topEdge -= 16 * scale;
+		}
+		else
+		{
+			fill(2, topEdge, 322, topEdge + 9, bkgdColor);
+			m_pMinecraft->m_pFont->drawShadow(msg.msg, 2, topEdge + 1, textColor);
+
+			topEdge -= 9;
+		}
 	}
 }
 
@@ -474,8 +594,9 @@ void Gui::renderHearts(bool topLeft)
 		// Renders to the left of the hotbar, why?
 		/*heartX = cenX - 191; // why?
 		heartYStart = height - 10;*/
-
-		heartX = -91;
+		
+		int hotbarWidth = 2 + getNumSlots() * 20; // get hotbar width if number of slots change
+		heartX = -hotbarWidth / 2;
 		heartYStart = -32;
 	}
 
@@ -515,7 +636,7 @@ void Gui::renderArmor(bool topLeft)
 		return;
 	
 	int hotbarWidth = (topLeft) ? 0 : (2 + getNumSlots() * 20);
-	int armorX = (topLeft) ? (GuiWidth / 2 - 11) : - 91 + (hotbarWidth - 9);
+	int armorX = (topLeft) ? (GuiWidth / 2 - 11) : (hotbarWidth / 2 - 9); // get hotbar width if number of slots change
 	int armorY = (topLeft) ? 2 - GuiHeight : -32;
 
 	if (armor > 0)
@@ -571,7 +692,9 @@ void Gui::renderBubbles(bool topLeft)
             // Renders to the left of the hotbar, why?
             /*bubbleX = cenX - 191;
             bubbleY = height - 19;*/
-            bubbleX = -91;
+			
+            int hotbarWidth = 2 + getNumSlots() * 20; // get hotbar width if number of slots change
+            bubbleX = -hotbarWidth / 2;
             bubbleY = -41;
         }
         
@@ -589,68 +712,151 @@ void Gui::renderBubbles(bool topLeft)
 	}
 }
 
-void Gui::renderProgressIndicator(int width, int height)
+void Gui::_buildFeedbackMeshes()
+{
+	if (m_feedbackMeshesBuilt)
+		return;
+
+	m_feedbackMeshesBuilt = true;
+
+	constexpr int steps = 24;
+	constexpr float radius = 40.0f;
+	constexpr float radiusInner = radius * 0.95f;
+	constexpr float fstep = 6.283185f / steps;
+
+	Tesselator& t = Tesselator::instance;
+
+	t.begin(4 * steps);
+	for (int i = 0; i < steps; i++)
+	{
+		float a = i * fstep;
+		float b = a + fstep;
+
+		float aCos = Mth::cos(a);
+		float bCos = Mth::cos(b);
+		float aSin = Mth::sin(a);
+		float bSin = Mth::sin(b);
+
+		t.vertexUV(radiusInner * aCos, radiusInner * aSin, 0, 0, 1);
+		t.vertexUV(radiusInner * bCos, radiusInner * bSin, 0, 1, 1);
+		t.vertexUV(radius      * bCos, radius      * bSin, 0, 1, 0);
+		t.vertexUV(radius      * aCos, radius      * aSin, 0, 0, 0);
+	}
+	m_feedbackOuter = t.end("feedback_outer", false);
+
+	t.begin(mce::PRIMITIVE_MODE_TRIANGLE_LIST, steps * 3);
+	for (int i = 0; i < steps; i++)
+	{
+		float a = i * fstep;
+		float b = a + fstep;
+
+		t.vertex(0, 0, 0);
+		t.vertex(radiusInner * Mth::cos(b), radiusInner * Mth::sin(b), 0);
+		t.vertex(radiusInner * Mth::cos(a), radiusInner * Mth::sin(a), 0);
+	}
+	m_feedbackInner = t.end("feedback_inner", false);
+}
+
+void Gui::renderProgressIndicator(int width, int height, float f)
 {
 	Minecraft& mc = *m_pMinecraft;
 	Textures& textures = *mc.m_pTextures;
-    
-    currentShaderColor = Color::WHITE;
-    currentShaderDarkColor = Color::WHITE;
+
+	currentShaderColor = Color::WHITE;
+	currentShaderDarkColor = Color::WHITE;
+
+	float breakProgress = m_progress;
 
 	if (m_pMinecraft->useSplitControls())
 	{
-		// draw crosshair
 		textures.loadAndBindTexture("gui/icons.png");
 		MatrixStack::Ref matrix = MatrixStack::World.push();
 		matrix->translate(Vec3(width / 2, height / 2, 0));
 		if (mc.getOptions()->getUiTheme() == UI_CONSOLE)
 			matrix->scale(mc.getOptions()->m_hudSize.get());
 		blit(-8, -8, 0, 0, 16, 16, 0, 0, &m_guiMaterials.ui_crosshair);
+		return;
+	}
+
+	IInputHolder& input = *mc.m_pInputHolder;
+	float feedbackAlpha = input.m_feedbackAlpha;
+
+	if (feedbackAlpha > 1.0f)
+		feedbackAlpha = 1.0f;
+	else if (feedbackAlpha < 0.0f)
+		feedbackAlpha = 0.0f;
+
+	float smoothProgress = m_lastDestroyProgress + (m_destroyProgress - m_lastDestroyProgress) * f;
+
+#ifdef ENH_NEW_FEEDBACK_INDICATOR
+	if (breakProgress <= 0.0f && feedbackAlpha <= 0.0f && mc.m_hitResult.m_hitType == HitResult::NONE)
+		return;
+
+	_buildFeedbackMeshes();
+
+	float xPos = GuiScale * input.m_feedbackX;
+	float yPos = GuiScale * input.m_feedbackY;
+
+	if (breakProgress > 0.0f)
+	{
+		currentShaderColor = Color(1.0f, 1.0f, 1.0f, feedbackAlpha * 0.8f);
+
+		MatrixStack::Ref matrix = MatrixStack::World.push();
+		matrix->translate(Vec3(xPos, yPos, 0.0f));
+		m_feedbackOuter.render(m_materials.ui_fill_color);
+
+		currentShaderColor = Color::WHITE;
+		float scale = 0.5f + 0.5f * smoothProgress;
+		matrix->scale(Vec3(scale, scale, 1.0f));
+		m_feedbackInner.render(m_guiMaterials.ui_invert_overlay);
+
+		matrix.release();
 	}
 	else
 	{
-		IInputHolder& input = *mc.m_pInputHolder;
-		// if needed, draw feedback
+		float displayAlpha = Mth::Min(feedbackAlpha * 0.4f, 0.4f);
 
-		// NOTE: real Minecraft PE takes it directly from the gamemode as "current progress" and
-		// "last progress". Well guess what? The game mode in question updates our m_sensitivity with
-		// the pre-interpolated break progress! Isn't that awesome?!
-		float breakProgress = m_progress;
+		if (displayAlpha <= 0.0f)
+			return;
 
-		// don't know about this if-structure, it feels like it'd be like
-		// if (m_bFoggy >= 0.0f && breakProgress <= 0.0f)
-		//     that;
-		// else
-		//     this;
-		if (breakProgress > 0.0f || input.m_feedbackAlpha < 0.0f)
-		{
-			if (breakProgress > 0.0f)
-			{
-				float xPos = input.m_feedbackX;
-				float yPos = input.m_feedbackY;
+		currentShaderColor = Color(1.0f, 1.0f, 1.0f, displayAlpha);
 
-				textures.loadAndBindTexture("gui/feedback_outer.png");
-				currentShaderColor = Color::WHITE;
-				blit(GuiScale * xPos - 44.0f, GuiScale * yPos - 44.0f, 0, 0, 88, 88, 256, 256, &m_guiMaterials.ui_overlay_textured);
-
-				textures.loadAndBindTexture("gui/feedback_fill.png");
-
-				// note: scale starts from 4.0f
-				float halfWidth = (40.0f * breakProgress + 48.0f) / 2.0f;
-
-				blit(GuiScale * xPos - halfWidth, GuiScale * yPos - halfWidth, 0, 0, halfWidth * 2, halfWidth * 2, 256, 256, &m_guiMaterials.ui_invert_overlay_textured);
-			}
-		}
-		else
-		{
-			float xPos = input.m_feedbackX;
-			float yPos = input.m_feedbackY;
-
-			textures.loadAndBindTexture("gui/feedback_outer.png");
-			currentShaderColor = Color(1.0f, 1.0f, 1.0f, Mth::Min(1.0f, input.m_feedbackAlpha));
-			blit(GuiScale * xPos - 44.0f, GuiScale * yPos - 44.0f, 0, 0, 88, 88, 256, 256, &m_guiMaterials.ui_overlay_textured);
-		}
+		MatrixStack::Ref matrix = MatrixStack::World.push();
+		matrix->translate(Vec3(xPos, yPos, 0.0f));
+		m_feedbackOuter.render(m_materials.ui_fill_color);
+		matrix.release();
 	}
+#else
+	if (breakProgress > 0.0f)
+	{
+		float xPos = input.m_feedbackX;
+		float yPos = input.m_feedbackY;
+
+		textures.loadAndBindTexture("gui/feedback_outer.png");
+		currentShaderColor = Color::WHITE;
+		blit(GuiScale * xPos - 44.0f, GuiScale * yPos - 44.0f, 0, 0, 88, 88, 256, 256, &m_guiMaterials.ui_overlay_textured);
+
+		textures.loadAndBindTexture("gui/feedback_fill.png");
+
+		float halfWidth = (40.0f * smoothProgress + 48.0f) / 2.0f;
+
+		blit(GuiScale * xPos - halfWidth, GuiScale * yPos - halfWidth, 0, 0, halfWidth * 2, halfWidth * 2, 256, 256, &m_guiMaterials.ui_invert_overlay_textured);
+	}
+	else if (feedbackAlpha > 0.0f)
+	{
+		float xPos = input.m_feedbackX;
+		float yPos = input.m_feedbackY;
+
+		HitResult::HitResultType hitType = mc.m_hitResult.m_hitType;
+		float displayAlpha = (hitType == HitResult::ENTITY)
+			? Mth::Min(feedbackAlpha * 0.4f, 0.4f)
+			: feedbackAlpha * 0.8f;
+
+		textures.loadAndBindTexture("gui/feedback_outer.png");
+		currentShaderColor = Color(1.0f, 1.0f, 1.0f, displayAlpha);
+		blit(GuiScale * xPos - 44.0f, GuiScale * yPos - 44.0f, 0, 0, 88, 88, 256, 256, &m_guiMaterials.ui_overlay_textured);
+	}
+#endif
 }
 
 void Gui::renderExperience()
@@ -689,10 +895,10 @@ void Gui::renderToolBar(float f, float alpha)
 	Inventory* inventory = player->m_pInventory;
 
 	// selection mark
-	blit(-1 - hotbarWidth / 2 + 20 * inventory->m_selectedSlot, -23, 0, 22, 24, 22, 0, 0);
+	blit(-1 - hotbarWidth / 2 + 20 * inventory->m_selectedStackId, -23, 0, 22, 24, 22, 0, 0);
 
 	// chat and pause button for mobile devices
-	if (mc->isTouchscreen())
+	if (mc->useTouchscreen())
 	{
 		textures->loadAndBindTexture("gui/gui2.png");
 		
@@ -706,7 +912,7 @@ void Gui::renderToolBar(float f, float alpha)
 
 	textures->loadAndBindTexture(C_BLOCKS_NAME);
 
-	int diff = mc->isTouchscreen();
+	int diff = mc->useTouchscreen();
 
 	int slotX = -hotbarWidth / 2 + 3;
 	for (int i = 0; i < nSlots - diff; i++)
@@ -728,8 +934,8 @@ void Gui::renderToolBar(float f, float alpha)
 
 	field_A3C = false;
 
-	// blit the "more items" button
-	if (mc->isTouchscreen())
+	// blit the "more items" button if using touch
+	if (mc->useTouchscreen())
 	{
 		textures->loadAndBindTexture(C_TERRAIN_NAME);
 		blit(hotbarWidth / 2 - 19, -19, 208, 208, 16, 16, 0, 0);
@@ -742,12 +948,12 @@ int Gui::getNumSlots()
     if (mc.getOptions()->getUiTheme() == UI_POCKET)
 		return 6;
 
-	return 9;
+	return 9 + (m_pMinecraft->useTouchscreen() ? 1 : 0);
 }
 
 int Gui::getNumUsableSlots()
 {
-	return getNumSlots() - m_pMinecraft->isTouchscreen();
+	return getNumSlots() - m_pMinecraft->useTouchscreen();
 }
 
 RectangleArea Gui::getRectangleArea(bool b)

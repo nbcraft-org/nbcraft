@@ -12,6 +12,7 @@ namespace mce
 	{
     public:
         bool m_bTexture;
+        bool m_bRescaleNormals;
 
     public:
         RenderStateOGL();

@@ -29,7 +29,7 @@ public:
 	virtual void addParticle(const std::string&, const Vec3& pos, const Vec3& dir) {}
 	virtual void playSound(const std::string&, const Vec3& pos, float, float) {}
 	virtual void playMusic(const std::string&, float, float, float, float) {}
-	virtual void playStreamingMusic(const std::string&, int, int, int) {}
+	virtual void playStreamingMusic(const std::string&, const TilePos& pos) {}
 	virtual void entityAdded(Entity*) {}
 	virtual void entityRemoved(Entity*) {}
 	virtual void levelEvent(const LevelEvent& event) {}

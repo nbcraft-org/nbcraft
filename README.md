@@ -24,9 +24,9 @@ The decompilation was performed primarily using [IDA](https://hex-rays.com/ida-p
   certain versions of the game, such as the 0.1.0 touch prototype/debug build)
 * To add support for as many platforms as possible, such as the PlayStation 3, Wii, and more.
   Currently, the following platforms are supported:
-	* Windows (2000 and above; thanks to [iProgramInCpp](https://github.com/iProgramMC))
+	* Windows (95 and above; thanks to [iProgramInCpp](https://github.com/iProgramMC))
 	* Android (thanks to [Stom](https://github.com/Stommm) for the help)
-	* Linux
+	* Linux (basically anything with POSIX.1-2001, C++98, SDL, and OpenGL support should also work without too much trouble)
 	* WebGL
 	* macOS (10.4 and above; thanks to [BrentDaMage](https://github.com/BrentDaMage))
 	* iOS (3.1 and above; thanks to [BrentDaMage](https://github.com/BrentDaMage))
@@ -71,7 +71,12 @@ Once your code is tested and ready, [submit a pull request](https://github.com/n
 Prepare a copy of minecraft.jar from Beta 1.7.3.
 Then, copy the assets (including sounds and textures) into the "minecraft" resource pack within the project.<br>
    Do this by performing the following:
-   - Open minecraft.jar as if it were a ZIP file, either by renaming it to "minecraft.jar.zip", or by opening it with an unarchiver.
+   - If you have [Python](https://www.python.org/) installed:
+     - Run the script in `tools/extract_jar.py`.
+     - Click and drag the "minecraft.jar" file onto the window.
+     - Hit enter, and the script should extract the JAR's assets into the "minecraft" resource pack.<br>
+   - If you do not have [Python](https://www.python.org/) installed, or do not wish to use the script, you can extract the assets manually by doing the following:
+     - Open minecraft.jar as if it were a ZIP file, either by renaming it to "minecraft.jar.zip", or by opening it with an unarchiver.
      - Locate the the following files/folders in minecraft.jar, and copy them into the `game/assets/resource_packs/minecraft` directory of the project:
 	   ```
 	   armor
@@ -88,7 +93,8 @@ Then, copy the assets (including sounds and textures) into the "minecraft" resou
 	   particles.png
 	   terrain.png
 	   ```
-     - Any Pocket Edition assets will need to be manually extracted from _Pocket Edition_.
+	   <br>
+   - Any Pocket Edition assets will need to be manually extracted from _Pocket Edition_.
    - **To retrieve the sounds**, locate the `resources` directory in the `.minecraft` folder
      - Copy the contents (e.g. `music`, `sound`, etc.) into the `game/assets/resource_packs/minecraft` directory of the project.
 <br>
@@ -109,10 +115,58 @@ This fetches the project's necessary dependencies.
 
 ### Windows
 
-Click the thumbnail below to watch a video guide showcasing how to build NBCraft.
-<a href="https://youtu.be/Tx1u7C2DCPI" target="_blank">
-  <img alt="How to Compile NBCraft for Windows" src="http://i.ytimg.com/vi/Tx1u7C2DCPI/maxresdefault.jpg" />
-</a>
+There are 2 ways to build on Windows, the universal build script or Visual Studio.
+
+#### MinGW cross build script
+
+There is a script to easily build a version of NBCraft that works on all versions of Windows since 95.
+
+You will need to install the following dependencies
+
+##### Dependencies (Ubuntu/Debian)
+
+- `build-essential` (C/C++ Toolchain)
+- `cmake` (CMake)
+- `make` (GNU Make)
+- `wget` (Wget)
+- `zlib1g-dev` (ZLib)
+- `libgmp-dev libmpfr-dev libmpc-dev` (GCC dependencies)
+
+##### Dependencies (macOS)
+
+- Xcode command line tools
+- `cmake` (CMake)
+- `wget` (Wget)
+- `gmp mpfr mpc` (GCC dependencies)
+
+Then run
+
+```sh
+# to build for 64 bit machines
+export ARCH=x86_64
+# to build for pentium pro or newer
+export ARCH=i686
+# CPUs older than the pentium pro will likely have unplayable performance but will build.
+# to build for pentium or newer
+export ARCH=i586
+# to build for i486 or newer
+export ARCH=i486
+
+# (macOS only) if gmp, mpfr, and mpc were installed from homebrew
+export GMP="$(brew --prefix)"
+export MPFR="$(brew --prefix)"
+export MPC="$(brew --prefix)"
+# (macOS only) if gmp, mpfr, and mpc were installed from macports
+export GMP='/opt/local'
+export MPFR='/opt/local'
+export MPC='/opt/local'
+
+./platforms/windows/build.sh
+```
+
+An executable and assets folder will be placed at platforms/windows/build/NBCraft
+
+#### Visual Studio
 
 The project is configured to target Windows XP by default by using "v141_xp" build tools. If you would like
 to build with Windows XP support, please follow the guide [here](https://learn.microsoft.com/en-us/cpp/build/configuring-programs-for-windows-xp?view=msvc-170#install-the-windows-xp-platform-toolset)
@@ -140,54 +194,85 @@ Once you have the proper build tools installed (v140_xp or newer), you can now b
 After building, place the `assets` folder you have prepared in the working directory of the output executable.
 (if running from VS, it's in `game/`, otherwise, where your executable is)
 
-### WebAssembly
+### Unix-like systems (Linux, *BSD, Haiku)
 
-**Make sure you have CMake and Ninja installed. On Windows, the ninja executable must be in your PATH.**
-On Linux, the package names are `cmake` and `ninja-build` respectively if you are using apt.
-
-The game will use the assets from within the `game/` directory. So put your assets there if you want to build
-for wasm. Then run the `build-wasm` script corresponding to your platform (`-.sh` on linux/WSL, `-.bat` on
-windows).
-
-The output files will be in `./wasm/dist`, but you need to upload them to a web host (localhost works too) to
-use. (problem with Emscripten)
-
-**NOTE:** If you are using nginx, make sure the `*.wasm` file is served as `application/wasm`, and not
-`application/octet-stream`. This can be done by opening `/etc/nginx/mime.types` as root and adding
-`application/wasm wasm;` to the types block.
-
-### Linux
-
-This project uses CMake on Linux. Just like WebAssembly, the game assets must be placed in the `game/` directory.
+This project uses CMake on Unix-like systems.
 
 #### Dependencies (Ubuntu/Debian)
 
 - `build-essential` (C/C++ Toolchain)
 - `cmake` (CMake)
-- `ninja-build` (Ninja)
 - `libsdl2-dev` (SDL2)
 - `libopenal-dev` (OpenAL)
-- `zlib1g-dev` (ZLib)
+
+#### Dependencies (Haiku)
+
+- `libsdl2_devel` (SDL2)
+- `glu_devel mesa_devel` (Mesa)
+- `cmake` (CMake)
 
 #### How To Build
 
 ```sh
 mkdir build && cd build
-cmake -GNinja ..
+cmake ..
 cmake --build .
 # Run
 ./nbcraft
 ```
 
-### HaikuOS
+#### Makefile
 
-Dependencies:
-- `libsdl2_devel` (SDL2)
-- `glu_devel mesa_devel` (Mesa)
-- `cmake` (CMake)
-- `ninja` (Ninja)
+For systems where cmake is not available, there is a GNU Makefile available. The dependencies are the same except without CMake.
+You should ***ALWAYS*** try to use CMake if you can, the Makefile is very limited and only intended for old or obscure systems that cannot run CMake.
 
-To build, perform the same steps as on Linux.
+```sh
+make
+# Run
+cd build
+./nbcraft
+```
+
+### macOS
+
+There are 3 ways to build on macOS, Xcode, CMake, or the universal build script.
+
+#### Xcode
+
+Open the Xcode project at projects/xcode/NBCraft.xcodeproj and build either the NBCraftClient.SDL1 or NBCraftClient.SDL2 targets. You must have SDL 1.2 or SDL 2 installed from homebrew or macports.
+
+#### CMake
+
+You can build with CMake as detailed in the Unix-like systems section above.  You do not need to have SDL 2 installed.
+
+#### Universal build script
+
+There is a script to easily build a version of NBCraft that works on all versions of macOS since 10.4 tiger, and on PowerPC.
+
+You will need to install the following dependencies, in addition to the Xcode command line tools:
+
+- `cmake` (CMake) (The homebrew version of CMake currently has a bug that causes the build to fail, MacPorts is recommended)
+- `wget` (Wget)
+- `gmp mpfr mpc` (GCC dependencies)
+
+Then run
+
+```sh
+# if gmp, mpfr, and mpc were installed from homebrew
+export GMP="$(brew --prefix)"
+export MPFR="$(brew --prefix)"
+export MPC="$(brew --prefix)"
+# if gmp, mpfr, and mpc were installed from macports
+export GMP='/opt/local'
+export MPFR='/opt/local'
+export MPC='/opt/local'
+
+./platforms/macos/build.sh
+
+# run
+cd platforms/macos/build/NBCraft
+./nbcraft
+```
 
 ### iOS
 

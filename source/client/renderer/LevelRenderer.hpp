@@ -90,6 +90,7 @@ public:
 	void setTilesDirty(const TilePos& min, const TilePos& max) override;
 	void takePicture(TripodCamera*, Entity*) override;
 	void addParticle(const std::string&, const Vec3& pos, const Vec3& dir) override;
+	void playStreamingMusic(const std::string& name, const TilePos& pos) override;
 	void playSound(const std::string& name, const Vec3& pos, float volume, float pitch) override;
 	void skyColorChanged() override;
 	void levelEvent(const LevelEvent& event) override;
@@ -172,4 +173,5 @@ public:
 	mce::Mesh m_darkMesh;
 	//...
 	Textures* m_pTextures;
+	TileEntityVector m_renderableTileEntities;
 };

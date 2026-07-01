@@ -6,12 +6,15 @@
 	SPDX-License-Identifier: BSD-1-Clause
  ********************************************************************/
 
+#include <stdlib.h>
+
 #define STB_VORBIS_HEADER_ONLY
 #include "thirdparty/stb_image/include/stb_vorbis.c"
 
 #include "SoundData.hpp"
 
 #include "common/Logger.hpp"
+#include "common/Util.hpp"
 #include "client/resources/Resource.hpp"
 #include "client/resources/ResourcePackManager.hpp"
 #include "client/resources/ResourcePackRepository.hpp"
@@ -43,6 +46,8 @@ bool SoundDesc::_load(const char* category, const char *name)
     std::string packdir;
 	bool ret = false;
     ResourceLocation location;
+    std::string soundDir = category;
+    Util::stringReplace(soundDir, '.', '/');
 
     // @HACK: We look for multiple different audio files in multiple different directories.
     // We should always do our proper checks before falling back to a different resource pack.
@@ -58,7 +63,7 @@ bool SoundDesc::_load(const char* category, const char *name)
             packdir = ResourcePackRepository::RESOURCE_PACKS_PATH + "/" + pack.m_name + "/";
             for (size_t i = 0; i < SOUND_DIRS_SIZE; ++i)
             {
-                location.path = packdir + DIRS[i] + "/" + category + "/" + name + ".ogg";
+                location.path = packdir + DIRS[i] + "/" + soundDir + "/" + name + ".ogg";
                 ret = _loadOgg(location);
                 if (ret)
                     return ret;
@@ -74,18 +79,20 @@ bool SoundDesc::_load(const char* category, const char *name)
     location.fileSystem = ResourceLocation::APP_PACKAGE;
     for (size_t i = 0; i < SOUND_DIRS_SIZE; ++i)
     {
-        location.path = DIRS[i] + "/" + category + "/" + name + ".ogg";
+        location.path = DIRS[i] + "/" + soundDir + "/" + name + ".ogg";
         ret = _loadOgg(location);
         if (ret)
             return ret;
     }
     location.path = "sound/" + std::string(name) + ".pcm";
     ret = _loadPcm(location);
-    if (!ret) {
+    if (!ret)
+    {
         m_codecType = AudioCodec::NONE;
         LOG_W("Failed to load sound \"%s\"!", name);
         return false;
-    } else
+    }
+    else
         return true;
 }
 

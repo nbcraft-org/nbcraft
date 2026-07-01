@@ -54,6 +54,7 @@ HumanoidModel::HumanoidModel(float modelSize, float yOffset) :
 void HumanoidModel::onGraphicsReset()
 {
 	m_head.m_bCompiled = false;
+	m_hat.m_bCompiled = false;
 	m_body.m_bCompiled = false;
 	m_armRight.m_bCompiled = false;
 	m_armLeft.m_bCompiled = false;

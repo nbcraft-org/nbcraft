@@ -19,7 +19,7 @@ ItemStack::TAG_REPAIR_COST = "RepairCost",
 ItemStack::TAG_ENCHANTS = "ench";
 const ItemStack ItemStack::EMPTY;
 
-#define C_INVALID_ID -1
+#define C_INVALID_ID 0
 
 void ItemStack::_init(int id, int count, int auxValue)
 {
@@ -157,8 +157,8 @@ int ItemStack::getIdAux() const
 CompoundTag* ItemStack::getNetworkUserData() const
 {
 	CompoundTag* userData = new CompoundTag();
-	CompoundTag::NamedTagMap& tags = m_userData->rawView();
-	for (CompoundTag::NamedTagMap::iterator it = tags.begin(); it != tags.end(); it++)
+	const CompoundTag::NamedTagMap& tags = m_userData->rawView();
+	for (CompoundTag::NamedTagMap::const_iterator it = tags.begin(); it != tags.end(); it++)
 	{
 		const std::string& name = it->first;
 		const Tag* tag = it->second;
@@ -232,12 +232,12 @@ std::string ItemStack::getDescriptionId()
 	return getItem()->getDescriptionId(this);
 }
 
-std::string ItemStack::getHovertextName() const
+std::string ItemStack::getHovertextName()
 {
 	if (hasCustomHoverName())
 		return getHoverName();
 	else
-		return getItem()->getHovertextName();
+		return getItem()->getHovertextName(*this);
 }
 
 float ItemStack::getDestroySpeed(const Tile* tile)
@@ -368,9 +368,9 @@ std::string ItemStack::toString() const
 	return ss.str();
 }
 
-ItemStack* ItemStack::use(Mob* user)
+bool ItemStack::use(Mob& mob)
 {
-	return getItem()->use(this, user);
+	return getItem()->use(*this, mob);
 }
 
 void ItemStack::releaseUsing(Level& level, Mob& user, int durationLeft)
@@ -423,6 +423,23 @@ void ItemStack::setEmpty()
 	if (m_userData)
 		delete m_userData;
 	m_userData = nullptr;
+}
+
+bool ItemStack::sameIngredient(const ItemStack& other) const
+{
+	if (!other.isEmpty() || !isEmpty())
+	{
+		if ((other.isEmpty() && !isEmpty()) || (!other.isEmpty() && isEmpty()))
+			return false;
+
+		if (getId() != other.getId())
+			return false;
+
+		if (getAuxValue() != -1 && getAuxValue() != other.getAuxValue())
+			return false;
+	}
+
+	return true;
 }
 
 int ItemStack::getBaseRepairCost() const

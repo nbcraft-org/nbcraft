@@ -23,7 +23,7 @@ SurvivalMode::SurvivalMode(Minecraft* pMC, Level& level) : GameMode(pMC, level),
 
 void SurvivalMode::initPlayer(Player* p)
 {
-	p->m_rot.x = -180.0f;
+	p->m_rot.yaw = -180.0f;
 	p->m_pInventory->prepareSurvivalInventory();
 }
 
@@ -45,9 +45,17 @@ bool SurvivalMode::startDestroyBlock(Player* player, const TilePos& pos, Facing:
 	if (tile <= 0)
 		return false;
 
+	// @PARITY: This is in MultiPlayerGameMode on Java, but we aren't equipped to move to that at the moment. Also, is not sent on PE.
+#if NETWORK_PROTOCOL_VERSION >= 6
+	if (m_pMinecraft->isOnlineClient())
+	{
+		m_pMinecraft->m_pRakNetInstance->send(new PlayerActionPacket(player->m_EntityID, PlayerActionPacket::START_DESTROY_BLOCK, pos, face));
+	}
+#endif
+
 	if (m_destroyProgress == 0.0f)
 	{
-		Tile::tiles[tile]->attack(&source, pos, player);
+		Tile::tiles[tile]->attack(pos, player);
 	}
 
 	if (Tile::tiles[tile]->getDestroyProgress(player) >= 1.0f)
@@ -125,7 +133,7 @@ bool SurvivalMode::continueDestroyBlock(Player* player, const TilePos& pos, Faci
 
 	if ((m_destroyTicks & 3) == 1)
 	{
-		_level.playSound(pos + 0.5f, "step." + pTile->m_pSound->m_name,
+		_level.playSound(pos + 0.5f, "step." + pTile->m_pSound->name,
 			0.125f * (1.0f + pTile->m_pSound->volume), 0.5f * pTile->m_pSound->pitch);
 	}
 
@@ -135,6 +143,14 @@ bool SurvivalMode::continueDestroyBlock(Player* player, const TilePos& pos, Faci
 		m_destroyCooldown = 5;
 		m_destroyProgress     = 0.0f;
 		m_lastDestroyProgress = 0.0f;
+
+		// @PARITY: This is in MultiPlayerGameMode on Java, but we aren't equipped to move to that at the moment. Also, is not sent on PE.
+#if NETWORK_PROTOCOL_VERSION >= 6
+		if (m_pMinecraft->isOnlineClient())
+		{
+			m_pMinecraft->m_pRakNetInstance->send(new PlayerActionPacket(player->m_EntityID, PlayerActionPacket::STOP_DESTROY_BLOCK, pos, face));
+		}
+#endif
 		return destroyBlock(player, m_destroyingPos, face);
 	}
 
@@ -149,7 +165,6 @@ void SurvivalMode::stopDestroyBlock()
 
 void SurvivalMode::tick()
 {
-	m_lastDestroyProgress = m_destroyProgress;
 	//m_pMinecraft->m_pSoundEngine->playMusicTick(); // also on MultiPlayerGameMode
 	GameMode::tick();
 }
@@ -159,14 +174,20 @@ void SurvivalMode::render(float f)
 	if (m_destroyProgress <= 0.0f)
 	{
 		m_pMinecraft->m_pGui->m_progress = 0.0f;
+		m_pMinecraft->m_pGui->m_lastDestroyProgress = 0.0f;
+		m_pMinecraft->m_pGui->m_destroyProgress = 0.0f;
 		m_pMinecraft->m_pLevelRenderer->m_destroyProgress = 0.0f;
 	}
 	else
 	{
 		float dp = m_lastDestroyProgress + (m_destroyProgress - m_lastDestroyProgress) * f;
 		m_pMinecraft->m_pGui->m_progress = dp;
+		m_pMinecraft->m_pGui->m_lastDestroyProgress = m_lastDestroyProgress;
+		m_pMinecraft->m_pGui->m_destroyProgress = m_destroyProgress;
 		m_pMinecraft->m_pLevelRenderer->m_destroyProgress = dp;
 	}
+
+	m_lastDestroyProgress = m_destroyProgress;
 }
 
 bool SurvivalMode::useItemOn(Player* player, ItemStack& item, const TilePos& pos, Facing::Name face)

@@ -252,7 +252,7 @@ void SoundStreamDS::_update()
     }
 }
 
-void SoundStreamDS::_publishBuffer(unsigned int destBufferId, const SoundBuffer& sourceBuffer)
+void SoundStreamDS::_publishBuffer(BufferId destBufferId, const SoundBuffer& sourceBuffer)
 {
     if (destBufferId >= m_buffers.size() || !m_source) return;
 

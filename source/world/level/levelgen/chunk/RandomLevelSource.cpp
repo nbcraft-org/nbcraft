@@ -104,7 +104,7 @@ void RandomLevelSource::loadChunk(LevelChunk& chunk)
 	prepareHeights(&chunk, threadData.getBiomeSource().field_4);
 	buildSurfaces(&chunk);
 
-	// @NOTE: Java Edition Beta 1.6 uses the m_largeCaveFeature.
+	// @PARITY-JAVA: Java Edition Beta 1.6 uses the m_largeCaveFeature.
 #ifdef FEATURE_CAVES
 	m_largeCaveFeature.apply(this, m_pLevel, tilePos.x, tilePos.z, pLevelData, 0);
 #endif
@@ -350,11 +350,13 @@ void RandomLevelSource::buildSurfaces(LevelChunk* chunk)
 					{
 						byte1 = pBiome->field_20;
 						byte2 = pBiome->field_21;
-						if (flag1) {
+						if (flag1)
+						{
 							byte1 = 0;
 							byte2 = Tile::gravel->m_ID;
 						}
-						if (flag) {
+						if (flag)
+						{
 							byte1 = Tile::sand->m_ID;
 							byte2 = Tile::sand->m_ID;
 						}
@@ -413,10 +415,13 @@ bool RandomLevelSource::postProcess(ChunkViewSource& chunkViewSource)
 	//LOG_I("Post-Processing %d, %d", pos.x, pos.z);
 	Biome* pBiome = threadData.getBiomeSource().getBiome(tp + 16);
 
-	random.setSeed(m_level->getSeed());
-	int32_t x1 = 1 + 2 * (random.nextInt() / 2);
-	int32_t x2 = 1 + 2 * (random.nextInt() / 2);
-	random.setSeed((int32_t(chunk->getPos().x) * x1 + int32_t(chunk->getPos().z) * x2) ^ m_level->getSeed());
+	int seed = m_level->getSeed();
+	const ChunkPos& pos = chunk->getPos();
+
+	m_random.setSeed(seed);
+	int32_t x1 = 1 + 2 * (m_random.nextInt() / 2);
+	int32_t x2 = 1 + 2 * (m_random.nextInt() / 2);
+	m_random.setSeed((uint32_t(pos.x) * x1 + uint32_t(pos.z) * x2) ^ seed);
 
 	// @NOTE: I can't put the random calls _in_ the argument list - args are evaluated right to left I believe
 

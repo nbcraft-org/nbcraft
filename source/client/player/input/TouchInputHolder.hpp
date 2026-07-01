@@ -20,6 +20,7 @@ class TouchInputHolder : public IInputHolder
 public:
 	TouchInputHolder(Minecraft*, Options*);
 	bool allowPicking() override;
+	bool allowsInputMethod(InputMethod::Type) const override;
 	IMoveInput* getMoveInput() override;
 	ITurnInput* getTurnInput() override;
 	IBuildInput* getBuildInput() override;

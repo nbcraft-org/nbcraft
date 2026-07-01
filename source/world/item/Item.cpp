@@ -17,14 +17,26 @@
 #include "CoalItem.hpp"
 #include "DoorItem.hpp"
 #include "DyePowderItem.hpp"
+
+#include "EggItem.hpp"
 #include "FoodItem.hpp"
+
+#include "FlintAndSteelItem.hpp"
 #include "HoeItem.hpp"
 #include "RocketItem.hpp"
 #include "SeedItem.hpp"
+#include "SnowballItem.hpp"
 #include "TileItem.hpp"
 #include "ToolItem.hpp"
 #include "TilePlanterItem.hpp"
+#include "RocketItem.hpp"
+#include "RedStoneItem.hpp"
+#include "SnowballItem.hpp"
+#include "EggItem.hpp"
 #include "WeaponItem.hpp"
+#include "FishingRodItem.hpp"
+#include "RecordingItem.hpp"
+#include "BucketItem.hpp"
 
 #define ITEM(x) ((x) - 256)
 
@@ -38,6 +50,7 @@
 static bool g_bInittedItems = false;
 
 Item* Item::items[C_MAX_ITEMS];
+Random Item::random;
 
 Item::Item(int itemID)
 {
@@ -332,7 +345,7 @@ void Item::initItems()
 		->setIcon(3, 3)
 		->setDescriptionId("bootsDiamond");
 
-	Item::flintAndSteel = NEW_ITEM(ITEM_FLINT_AND_STEEL)
+	Item::flintAndSteel = NEW_X_ITEMN(FlintAndSteelItem, ITEM_FLINT_AND_STEEL)
 		->setIcon(5, 0)
 		->setDescriptionId("flintAndSteel");
 
@@ -411,7 +424,7 @@ void Item::initItems()
 
 	Item::apple = NEW_X_ITEM(FoodItem, ITEM_APPLE, 4)
 		->setIcon(10, 0)
-		->setDescriptionId("appleGold");
+		->setDescriptionId("apple");
 
 	Item::apple_gold = NEW_X_ITEM(FoodItem, ITEM_APPLE_GOLD, 42)
 		->setIcon(11, 0)
@@ -421,19 +434,19 @@ void Item::initItems()
 		->setIcon(11, 2)
 		->setDescriptionId("doorWood");
 
-	Item::bucket_empty = NEW_ITEM(ITEM_BUCKET)
+	Item::bucket_empty = NEW_X_ITEM(BucketItem, ITEM_BUCKET, TILE_AIR)
 		->setIcon(10, 4)
 		->setDescriptionId("bucket");
 
-	Item::bucket_water = NEW_ITEM(ITEM_BUCKET_WATER)
+	Item::bucket_water = NEW_X_ITEM(BucketItem, ITEM_BUCKET_WATER, TILE_WATER)
 		->setIcon(11, 4)
-		->setDescriptionId("bucketWater");
-		//->setCraftingRemainingItem(emptyBucket);
+		->setDescriptionId("bucketWater")
+		->setCraftingRemainingItem(bucket_empty);
 
-	Item::bucket_lava = NEW_ITEM(ITEM_BUCKET_LAVA)
+	Item::bucket_lava = NEW_X_ITEM(BucketItem, ITEM_BUCKET_LAVA, TILE_LAVA)
 		->setIcon(12, 4)
-		->setDescriptionId("bucketLava");
-		//>setCraftingRemainingItem(emptyBucket);
+		->setDescriptionId("bucketLava")
+		->setCraftingRemainingItem(bucket_empty);
 
 	Item::minecart = NEW_ITEM(ITEM_MINECART)
 		->setIcon(7, 8)
@@ -455,11 +468,11 @@ void Item::initItems()
 		->setIcon(12, 2)
 		->setDescriptionId("doorIron");
 	
-	Item::redStone = NEW_ITEM(ITEM_REDSTONE)
+	Item::redStone = NEW_X_ITEMN(RedStoneItem, ITEM_REDSTONE)
 		->setIcon(8, 3)
 		->setDescriptionId("redstone");
 
-	Item::snowBall = NEW_ITEM(ITEM_SNOWBALL)
+	Item::snowBall = NEW_X_ITEMN(SnowballItem, ITEM_SNOWBALL)
 		->setIcon(14, 0)
 		->setDescriptionId("snowball");
 
@@ -471,10 +484,11 @@ void Item::initItems()
 		->setIcon(7, 6)
 		->setDescriptionId("leather");
 
-	Item::milk = NEW_ITEM(ITEM_BUCKET_MILK)
+	Item::milk = NEW_X_ITEM(BucketItem, ITEM_BUCKET_MILK, TILE_PISTON_MOVING)
 		->setIcon(13, 4)
-		->setDescriptionId("milk");
-		//->setCraftingRemainingItem(emptyBucket);
+		->setDescriptionId("milk")
+		->setMaxStackSize(1)
+		->setCraftingRemainingItem(bucket_empty);
 
 	Item::brick = NEW_ITEM(ITEM_BRICK)
 		->setIcon(6, 1)
@@ -496,7 +510,7 @@ void Item::initItems()
 		->setIcon(14, 1)
 		->setDescriptionId("slimeball");
 
-	Item::egg = NEW_ITEM(ITEM_EGG)
+	Item::egg = NEW_X_ITEMN(EggItem, ITEM_EGG)
 		->setIcon(12, 0)
 		->setDescriptionId("egg");
 
@@ -504,7 +518,7 @@ void Item::initItems()
 		->setIcon(6, 3)
 		->setDescriptionId("compass");
 
-	Item::fishingRod = NEW_ITEM(ITEM_FISHING_ROD)
+	Item::fishingRod = NEW_X_ITEMN(FishingRodItem, ITEM_FISHING_ROD)
 		->setIcon(5, 4)
 		->setDescriptionId("fishingRod");
 
@@ -538,7 +552,7 @@ void Item::initItems()
 		->setDescriptionId("sugar")
 		->handEquipped(); // weirdly also in JE
 
-	Item::cake = NEW_ITEM(ITEM_CAKE)
+	Item::cake = NEW_X_ITEM(TilePlanterItem, ITEM_CAKE, TILE_CAKE)
 		->setIcon(13, 1)
 		->setMaxStackSize(1)
 		->setDescriptionId("cake");
@@ -547,7 +561,7 @@ void Item::initItems()
 		->setIcon(13, 2)
 		->setDescriptionId("bed");
 
-	Item::diode = NEW_ITEM(ITEM_DIODE)
+	Item::diode = NEW_X_ITEM(TilePlanterItem, ITEM_DIODE, TILE_REPEATER_OFF)
 		->setIcon(6, 5)
 		->setDescriptionId("diode");
 
@@ -572,11 +586,11 @@ void Item::initItems()
 		->setIcon(13, 5)
 		->setDescriptionId("shears");
 	
-	Item::record_01 = NEW_ITEM(ITEM_RECORD_01)
+	Item::record_01 = NEW_X_ITEM(RecordingItem, ITEM_RECORD_01, "13")
 		->setIcon(0, 15)
 		->setDescriptionId("record");
 
-	Item::record_02 = NEW_ITEM(ITEM_RECORD_02)
+	Item::record_02 = NEW_X_ITEM(RecordingItem, ITEM_RECORD_02, "cat")
 		->setIcon(1, 15)
 		->setDescriptionId("record");
 
@@ -608,9 +622,9 @@ float Item::getDestroySpeed(ItemStack* instance, const Tile* tile) const
 	return 1.0f;
 }
 
-ItemStack* Item::use(ItemStack* instance, Mob* user) const
+bool Item::use(ItemStack& item, Mob& user) const
 {
-	return instance;
+	return false;
 }
 
 void Item::releaseUsing(ItemStack& item, Level& level, Mob& user, int durationLeft) const
@@ -719,6 +733,16 @@ std::string Item::getHovertextName() const
 	return getName();
 }
 
+std::string Item::getName(ItemStack& stack) const
+{
+	return getDescriptionId(&stack) + ".name";
+}
+
+std::string Item::getHovertextName(ItemStack& stack) const
+{
+	return getName(stack);
+}
+
 void Item::onCraftedBy(ItemStack*, Player*, Level*)
 {
 }
@@ -730,6 +754,11 @@ void Item::inventoryTick(ItemStack*, Level*, Entity*, int, bool)
 bool Item::isDamageable() const
 {
 	return m_maxDamage > 0 && !m_bStackedByData;
+}
+
+int Item::getColor(int data) const
+{
+	return 0xFFFFFF;
 }
 
 int Item::buildIdAux(int16_t auxValue, const CompoundTag* userData) const

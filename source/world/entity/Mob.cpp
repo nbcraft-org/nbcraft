@@ -53,9 +53,9 @@ void Mob::_init()
 	m_bDead = false;
 	m_lSteps = 0;
 	m_lPos = Vec3::ZERO;
-	m_lRot = Vec2::ZERO;
+	m_lRot = Rot2::ZERO;
 	m_lastHurt = 0;
-	m_pEntLookedAt = nullptr;
+	m_entLookedAtId = 0;
 	m_bSwinging = false;
 	m_swingTime = 0;
 	m_ambientSoundTime = 0;
@@ -68,7 +68,7 @@ void Mob::_init()
 	m_rotA = (Mth::random() + 1.0f) * 0.01f;
 	setPos(m_pos);
 	m_timeOffs = Mth::random() * 12398.0f;
-	m_rot.x = float(Mth::random() * M_PI);
+	m_rot.yaw = float(Mth::random() * M_PI);
 	m_footSize = 0.5f;
 }
 
@@ -97,7 +97,7 @@ void Mob::reset()
 	_init();
 }
 
-void Mob::lerpTo(const Vec3& pos, const Vec2& rot, int steps)
+void Mob::lerpTo(const Vec3& pos, const Rot2& rot, int steps)
 {
 	m_lPos = pos;
 	m_lPos.y += m_heightOffset;
@@ -117,12 +117,12 @@ void Mob::tick()
 
 		// Similar to rotlerp
 		// I'm pretty sure this is super inefficient and its trying to do what I have it doing in setRot already.
-		float ang = m_lRot.x - m_rot.x;
+		float ang = m_lRot.yaw - m_rot.yaw;
 		while (ang < -180.0f) ang += 360.0f;
 		while (ang >= 180.0f) ang -= 360.0f;
 
-		setRot(Vec2(m_rot.x + ((m_lRot.x - m_rot.x) / float(m_lSteps)),
-			        m_rot.y + ((m_lRot.y - m_rot.y) / float(m_lSteps))));
+		setRot(Rot2(m_rot.yaw + ((m_lRot.yaw - m_rot.yaw) / float(m_lSteps)),
+			        m_rot.pitch + ((m_lRot.pitch - m_rot.pitch) / float(m_lSteps))));
 
 		m_lSteps--;
 	}
@@ -157,9 +157,9 @@ void Mob::tick()
 
 	x4 = m_attackAnim;
 	if (x4 <= 0.0f)
-		x4 = m_rot.x;
+		x4 = m_rot.yaw;
 	else
-		x4 = x1 = m_rot.x;
+		x4 = x1 = m_rot.yaw;
 
 	if (!m_bOnGround)
 		x3 = 0.0f;
@@ -219,11 +219,11 @@ LABEL_31:
 
 	// Similar to rotlerp
 	// I'm pretty sure this is super inefficient and its trying to do what I have it doing in setRot already.
-	while (x4 - m_oRot.x < -180.0f)
-		m_oRot.x -= 360.0f;
+	while (x4 - m_oRot.yaw < -180.0f)
+		m_oRot.yaw -= 360.0f;
 
-	while (x4 - m_oRot.x >= 180.0f)
-		m_oRot.x += 360.0f;
+	while (x4 - m_oRot.yaw >= 180.0f)
+		m_oRot.yaw += 360.0f;
 
 	while (m_yBodyRot - m_yBodyRotO < -180.0f)
 		m_yBodyRotO -= 360.0f;
@@ -231,11 +231,11 @@ LABEL_31:
 	while (m_yBodyRot - m_yBodyRotO >= 180.0f)
 		m_yBodyRotO += 360.0f;
 	
-	while (m_rot.y - m_oRot.y < -180.0f)
-		m_oRot.y -= 360.0f;
+	while (m_rot.pitch - m_oRot.pitch < -180.0f)
+		m_oRot.pitch -= 360.0f;
 
-	while (m_rot.y - m_oRot.y >= 180.0f)
-		m_oRot.y += 360.0f;
+	while (m_rot.pitch - m_oRot.pitch >= 180.0f)
+		m_oRot.pitch += 360.0f;
 
 	m_animStep += x2;
 }
@@ -253,11 +253,8 @@ void Mob::baseTick()
     if (isAlive() && isInWall())
         hurt(nullptr, 1);
 
-    // Java
-    /*if (m_bFireImmune || m_pLevel->m_bIsClientSide)
-    {
-        m_fireTicks = 0;
-    }*/
+	// @PARITY-JAVA: From Java
+    //m_fireTicks = 0;
 
 
     if (isAlive() && isUnderLiquid(Material::water) && !isWaterMob())
@@ -328,8 +325,8 @@ void Mob::baseTick()
 		if (fabsf(m_pos.x - m_lastSentPos.x) > 0.1f ||
 			fabsf(m_pos.y - m_lastSentPos.y) > 0.01f ||
 			fabsf(m_pos.z - m_lastSentPos.z) > 0.1f ||
-			fabsf(m_lastSentRot.y - m_rot.y) > 1.0f ||
-			fabsf(m_lastSentRot.x - m_rot.x) > 1.0f)
+			fabsf(m_lastSentRot.pitch - m_rot.pitch) > 1.0f ||
+			fabsf(m_lastSentRot.yaw - m_rot.yaw) > 1.0f)
 		{
 			m_pLevel->m_pRakNetInstance->send(new MoveEntityPacket_PosRot(m_EntityID, Vec3(m_pos.x, m_pos.y - m_heightOffset, m_pos.z), m_rot));
 			m_lastSentPos = m_pos;
@@ -408,14 +405,13 @@ bool Mob::hurt(Entity *pAttacker, int damage)
             }
 
             float ang = Mth::atan2(zd, xd);
-            m_hurtDir = ang * (180.0f / float(M_PI)) - m_rot.x;
+            m_hurtDir = ang * (180.0f / float(M_PI)) - m_rot.yaw;
 
             knockback(pAttacker, damage, xd, zd);
         }
 		else
 		{
-			// b1.2, might not be present in PE
-			m_hurtDir = (Mth::random() * 2.0f) * 180.0f;
+			m_hurtDir = float(int(Mth::random() * 2.0f)) * 180.0f;
 		}
     }
 
@@ -474,7 +470,7 @@ void Mob::causeFallDamage(float level)
 		{
 			const Tile::SoundType* pSound = Tile::tiles[tileId]->m_pSound;
 
-			m_pLevel->playSound(this, "step." + pSound->m_name, pSound->volume * 0.5f, pSound->pitch * 0.75f);
+			m_pLevel->playSound(this, "step." + pSound->name, pSound->volume * 0.5f, pSound->pitch * 0.75f);
 		}
 	}
 }
@@ -594,22 +590,18 @@ HitResult Mob::pick(float f1, float f2)
 
 	Vec3 limit = pos + view * f1;
 
-	HitResult result = m_tileSource->clip(pos, limit);
-	return result;
+	return m_tileSource->clip(pos, limit);
 }
 
 void Mob::travel(const Vec2& pos)
 {
-	if (isImmobile())
-		return;
-
 	float x2, dragFactor;
 	float oldYPos = m_pos.y;
-	if (isSlowedByLiquids() && (isInWater() || isInLava()))
+	if (isSlowedByLiquids() && (wasInWater() || isInLava()))
 	{
 		moveRelative(Vec3(pos.x, 0.02f, pos.y));
 		move(m_vel);
-		const float x1 = (isInWater() ? 0.8f : 0.5f);
+		const float x1 = (wasInWater() ? 0.8f : 0.5f);
 		m_vel.y = m_vel.y * x1 - 0.02f;
 		m_vel.x *= x1;
 		m_vel.z *= x1;
@@ -746,7 +738,7 @@ void Mob::aiStep()
 		updateAi();
 	}
 
-	bool bIsInWater = isInWater(), bIsInLava = isInLava();
+	bool bIsInWater = wasInWater(), bIsInLava = isInLava();
 	if (m_bJumping)
 	{
 		if (bIsInWater || bIsInLava)
@@ -769,7 +761,7 @@ void Mob::aiStep()
 	{
 		Entity* pEnt = *it;
 		if (pEnt->isPushable())
- 			pEnt->push(this);
+			pEnt->push(this);
 	}
 }
 
@@ -793,8 +785,15 @@ void Mob::lookAt(Entity* pEnt, float a3, float a4)
 	float x1 = atan2f(diffZ, diffX);
 	float x2 = atan2f(q1, p1);
 
-	setRot(Vec2(rotlerp(m_rot.x, x1 * 180.0f / float(M_PI) - 90.0f, a4),
-	              -rotlerp(m_rot.y, x2 * 180.0f / float(M_PI), a3)));
+	setRot(Rot2(rotlerp(m_rot.yaw, x1 * 180.0f / float(M_PI) - 90.0f, a4),
+	              -rotlerp(m_rot.pitch, x2 * 180.0f / float(M_PI), a3)));
+}
+
+Entity* Mob::getLookingAt() const
+{
+	if (m_entLookedAtId == 0)
+		return nullptr;
+    return m_pLevel->getEntity(m_entLookedAtId);
 }
 
 bool Mob::canSpawn()
@@ -843,7 +842,7 @@ void Mob::updateAi()
 		Entity* nearestPlayer = m_pLevel->getNearestPlayer(*this, 8.0f);
 		if (nearestPlayer)
 		{
-			m_pEntLookedAt = nearestPlayer;
+			m_entLookedAtId = nearestPlayer->m_EntityID;
 
 			m_lookTime = m_random.nextInt(20) + 10;
 		}
@@ -854,17 +853,18 @@ void Mob::updateAi()
 	}
 
 	// @TODO: we get a crash here when a Player leaves
-	if (m_pEntLookedAt)
+	if (m_entLookedAtId > 0)
 	{
-		lookAt(m_pEntLookedAt, 10.0f, getMaxHeadXRot());
+		Entity* pEnt = m_pLevel->getEntity(m_entLookedAtId);
+		lookAt(pEnt, 10.0f, getMaxHeadXRot());
 
 		// gaze timer
 		m_lookTime--;
 
 		// if the entity was removed, or we're too far away, or our gaze timer is up
-		if (m_lookTime < 0 || m_pEntLookedAt->m_bRemoved || m_pEntLookedAt->distanceToSqr(this) > 64.0f)
+		if (m_lookTime < 0 || pEnt->m_bRemoved || pEnt->distanceToSqr(this) > 64.0f)
 			// stop staring
-			m_pEntLookedAt = nullptr;
+			m_entLookedAtId = 0;
 	}
 	else
 	{
@@ -872,11 +872,11 @@ void Mob::updateAi()
 			m_yRotA = (m_random.nextFloat() - 0.5f) * 20.0f;
 
 		// oh my god, our X and Y rot are mixed around
-		m_rot.x += m_yRotA;
-		m_rot.y = m_defaultLookAngle;
+		m_rot.yaw += m_yRotA;
+		m_rot.pitch = m_defaultLookAngle;
 	}
 
-	if (isInWater() || isInLava())
+	if (wasInWater() || isInLava())
 	{
 		m_bJumping = m_random.nextFloat() < 0.8f;
 	}

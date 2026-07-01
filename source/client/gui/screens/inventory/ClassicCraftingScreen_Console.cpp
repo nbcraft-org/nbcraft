@@ -37,11 +37,11 @@ SlotDisplay ClassicCraftingScreen_Console::_createSlotDisplay(const Slot& slot)
     case Slot::OUTPUT:
         return SlotDisplay(308, 97, 64, true);
     case Slot::INPUT:
-        return SlotDisplay(62 + (slot.m_slot % 3) * slotSize, 64 + (slot.m_slot / 3) * slotSize, slotSize, true);
+        return SlotDisplay(62 + (slot.m_stackId % 3) * slotSize, 64 + (slot.m_stackId / 3) * slotSize, slotSize, true);
     case Slot::INVENTORY:
-        return SlotDisplay(28 + (slot.m_slot % 9) * slotSize, 240 + ((slot.m_slot / 9) - 1) * slotSize, slotSize, true);
+        return SlotDisplay(28 + (slot.m_stackId % 9) * slotSize, 240 + ((slot.m_stackId / 9) - 1) * slotSize, slotSize, true);
     case Slot::HOTBAR:
-        return SlotDisplay(28 + (slot.m_slot % 9) * slotSize, 379, slotSize, true);
+        return SlotDisplay(28 + (slot.m_stackId % 9) * slotSize, 379, slotSize, true);
     default:
         return SlotDisplay();
     }

@@ -6,6 +6,7 @@
 	SPDX-License-Identifier: BSD-1-Clause
  ********************************************************************/
 #include "Cow.hpp"
+#include "Player.hpp"
 
 Cow::Cow(TileSource& source) : Animal(source)
 {
@@ -23,4 +24,16 @@ void Cow::addAdditionalSaveData(CompoundTag& tag) const
 void Cow::readAdditionalSaveData(const CompoundTag& tag)
 {
 	Animal::readAdditionalSaveData(tag);
+}
+
+bool Cow::interact(Player* player)
+{
+	ItemStack& selected = player->m_pInventory->getSelected();
+	if (selected.getId() == Item::bucket_empty->m_itemID)
+	{
+		player->m_pInventory->setSelectedItem(Item::milk);
+		return true;
+	}
+		
+	return false;
 }

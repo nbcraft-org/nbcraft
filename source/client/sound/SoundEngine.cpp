@@ -12,24 +12,28 @@
 #include "world/entity/Mob.hpp"
 #include "client/app/AppPlatform.hpp"
 
-SoundEngine::SoundEngine(SoundSystem* soundSystem, float distance)
+SoundEngine::SoundEngine(SoundSystem* soundSystem, float maxDistance)
 {
     m_pSoundSystem = soundSystem;
     m_pOptions = nullptr;
     field_40 = 0;
     m_listenerPosition = Vec3::ZERO;
-    m_listenerOrientation = Vec2::ZERO;
-    m_soundDistance = 1.0f / distance;
+    m_listenerOrientation = Rot2::ZERO;
+    m_soundDistance = maxDistance; // PE: 1.0f / maxDistance
     m_noMusicDelay = m_random.nextInt(12000);
     field_A20 = 0;
     m_muted = false;
 }
 
-float SoundEngine::_getVolumeMult(const Vec3& pos)
+float SoundEngine::_getVolumeMult(float maxDistance, float distance, const Vec3& pos)
 {
-    // Taken from 0.7.0. Very similar to paulscode.sound.libraries.SourceLWJGLOpenAL.calculateGain()
-    float distance = 1.1f - (pos.distanceTo(m_listenerPosition) * m_soundDistance);
-    return Mth::clamp(distance, -1.0f, 1.0f);
+    // Taken from 0.7.0
+    //float gain = 1.1f - (distance * maxDistance);
+    
+    // Taken from paulscode.sound.libraries.SourceLWJGLOpenAL.calculateGain()
+    float gain = 1.0f - (distance / maxDistance);
+
+    return Mth::clamp(gain, -1.0f, 1.0f);
 }
 
 void SoundEngine::_playMusic(bool resetDelay)
@@ -98,6 +102,9 @@ void SoundEngine::playMusic(bool resetDelay)
 
 void SoundEngine::playMusicTick()
 {
+    if (!m_pSoundSystem->isAvailable())
+        return;
+
     if (m_pOptions->m_musicVolume.get() <= 0.0f)
         return;
 
@@ -129,7 +136,8 @@ void SoundEngine::forcePlayMusic()
 
 void SoundEngine::updateListener(const Mob* player, float elapsedTime)
 {
-	  assert(m_pSoundSystem->isAvailable());
+    if (!m_pSoundSystem->isAvailable())
+        return;
 
     if (m_pOptions->m_masterVolume.get() > 0.0f)
     {
@@ -140,7 +148,7 @@ void SoundEngine::updateListener(const Mob* player, float elapsedTime)
             m_listenerPosition = pos;
             m_pSoundSystem->setListenerPos(pos);
 
-            Vec2 rot = player->getInterpolatedRotation(elapsedTime);
+            Rot2 rot = player->getInterpolatedRotation(elapsedTime);
             m_listenerOrientation = rot;
             m_pSoundSystem->setListenerAngle(rot);
         }
@@ -149,25 +157,44 @@ void SoundEngine::updateListener(const Mob* player, float elapsedTime)
 
 void SoundEngine::update()
 {
-    assert(m_pSoundSystem->isAvailable());
+    if (!m_pSoundSystem->isAvailable())
+        return;
+
     m_pSoundSystem->update();
 }
 
 void SoundEngine::play(const std::string& name, const Vec3& pos, float volume, float pitch)
 {
+    if (!m_pSoundSystem->isAvailable())
+        return;
+
     float vol = m_pOptions->m_masterVolume.get() * volume;
     if (vol <= 0.0f)
         return;
-    Vec3 nPos;
-    float distance = pos.distanceTo(m_listenerPosition);
-    if (distance > SOUND_MAX_DISTANCE)
-        return;
-    if (distance < SOUND_ATTENUATION_MIN_DISTANCE)
-        nPos = Vec3::ZERO;
-    else
-        nPos = pos;
 
-    float cVolume = Mth::clamp(_getVolumeMult(pos) * vol, 0.0f, 1.0f);
+    float distance = pos.distanceTo(m_listenerPosition);
+    float maxDistance = m_soundDistance;
+    // The louder the volume of the sound, the greater its max distance
+    if (volume > 1.0f)
+        maxDistance *= volume;
+
+    if (distance > maxDistance)
+        return;
+
+    Vec3 nPos;
+    float gain;
+    if (distance < SOUND_ATTENUATION_MIN_DISTANCE)
+    {
+        nPos = Vec3::ZERO;
+        gain = 1.0f;
+    }
+    else
+    {
+        nPos = pos;
+        gain = _getVolumeMult(maxDistance, distance, pos);
+    }
+
+    float cVolume = Mth::clamp(vol * gain, 0.0f, 1.0f);
     float cPitch = Mth::clamp(pitch, 0.5f, 2.0f); // Clamp to values specified by Paulscode
     SoundDesc sd;
 
@@ -179,6 +206,9 @@ void SoundEngine::play(const std::string& name, const Vec3& pos, float volume, f
 
 void SoundEngine::playUI(const std::string& name, float volume, float pitch)
 {
+    if (!m_pSoundSystem->isAvailable())
+        return;
+
     volume *= 0.25f; // present on Java b1.2_02, but not Pocket for some reason
     float vol = m_pOptions->m_masterVolume.get() * volume;
     if (vol <= 0.0f)
@@ -195,6 +225,9 @@ void SoundEngine::playUI(const std::string& name, float volume, float pitch)
 
 void SoundEngine::playMusic(const std::string& name)
 {
+    if (!m_pSoundSystem->isAvailable())
+        return;
+
     float vol = m_pOptions->m_musicVolume.get();
     if (vol <= 0.0f)
         return;

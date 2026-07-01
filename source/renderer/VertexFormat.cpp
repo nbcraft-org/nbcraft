@@ -44,6 +44,11 @@ bool VertexFormat::hasField(VertexField vertexField) const
 const void* VertexFormat::getFieldOffset(VertexField vertexField, const void *vertexData) const
 {
     assert(m_fieldOffset[vertexField] != UINT8_MAX);
+    return tryGetFieldOffset(vertexField, vertexData);
+}
+
+const void* VertexFormat::tryGetFieldOffset(VertexField vertexField, const void* vertexData) const
+{
     return (void*)((uintptr_t)vertexData + m_fieldOffset[vertexField]);
 }
 

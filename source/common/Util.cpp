@@ -73,7 +73,7 @@ bool Util::isValidPath(const std::string& path)
 {
 	for (size_t i = 0; i < path.size(); i++)
 	{
-		switch (path.at(i))
+		switch (path[i])
 		{
 		case '\n':
 		case '\r':
@@ -153,6 +153,8 @@ std::string Util::toString(float value)
 	return ss.str();
 }
 
+#ifndef MC_NO_WSTRING
+
 std::string Util::toString(const wchar_t* str)
 {
 	std::string result(wcslen(str), 0);
@@ -173,3 +175,5 @@ std::wstring Util::toWideString(const std::string& str)
 	mbstowcs((wchar_t*)result.data(), str.c_str(), str.size());
 	return result;
 }
+
+#endif

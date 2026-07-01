@@ -41,7 +41,7 @@ BufferD3D11::~BufferD3D11()
     releaseBuffer();
 }
 
-void BufferD3D11::_createBuffer(RenderContext& context, unsigned int stride, const void* data, unsigned int count, BufferType bufferType, bool isDynamic)
+void BufferD3D11::_createBuffer(RenderContext& context, unsigned int stride, ByteBuffer& data, unsigned int count, BufferType bufferType, bool isDynamic)
 {
     if (m_buffer)
     {
@@ -78,7 +78,7 @@ void BufferD3D11::_createBuffer(RenderContext& context, unsigned int stride, con
     {
         subResourceData.SysMemPitch = 0;
         subResourceData.SysMemSlicePitch = 0;
-        subResourceData.pSysMem = data;
+        subResourceData.pSysMem = data.getData();
     }
 
     D3DDevice d3dDevice = context.getD3DDevice();
@@ -133,25 +133,25 @@ void BufferD3D11::bindBuffer(RenderContext& context)
     }
 }
 
-void BufferD3D11::createBuffer(RenderContext& context, unsigned int stride, const void *data, unsigned int count, BufferType bufferType)
+void BufferD3D11::createBuffer(RenderContext& context, unsigned int stride, ByteBuffer& data, unsigned int count, BufferType bufferType)
 {
     _createBuffer(context, stride, data, count, bufferType, false);
     BufferBase::createBuffer(context, stride, data, count, bufferType);
 }
 
-void BufferD3D11::createDynamicBuffer(RenderContext& context, unsigned int stride, const void* data, unsigned int count, BufferType bufferType)
+void BufferD3D11::createDynamicBuffer(RenderContext& context, unsigned int stride, ByteBuffer& data, unsigned int count, BufferType bufferType)
 {
     _createBuffer(context, stride, data, count, bufferType, true);
     BufferBase::createDynamicBuffer(context, stride, data, count, bufferType);
 }
 
-void BufferD3D11::resizeBuffer(RenderContext& context, const void* data, unsigned int size)
+void BufferD3D11::resizeBuffer(RenderContext& context, ByteBuffer& data, unsigned int size)
 {
     LOG_E("BufferD3D11::resizeBuffer() not implemented");
     throw std::bad_cast();
 }
 
-void BufferD3D11::updateBuffer(RenderContext& context, unsigned int stride, void*& data, unsigned int count, MapType mapType)
+void BufferD3D11::updateBuffer(RenderContext& context, unsigned int stride, ByteBuffer& data, unsigned int count, MapType mapType)
 {
     D3D11_MAPPED_SUBRESOURCE subResource;
     D3DDeviceContext d3dDeviceContext = context.getD3DDeviceContext();
@@ -176,7 +176,7 @@ void BufferD3D11::updateBuffer(RenderContext& context, unsigned int stride, void
     }
     else
     {
-        memcpy((int8_t*)subResource.pData + m_bufferOffset, data, stride * count);
+        memcpy((int8_t*)subResource.pData + m_bufferOffset, data.getData(), stride * count);
         d3dDeviceContext->Unmap(**m_buffer, 0);
     }
         

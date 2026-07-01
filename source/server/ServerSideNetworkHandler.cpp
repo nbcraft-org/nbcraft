@@ -26,6 +26,13 @@ static inline void _do_nothing(...) {}
 #define printf_ignorable _do_nothing
 #endif
 
+#define VALIDATE_PLAYER_ACTION(entityId)                   \
+	Player* _pPlayer = _getVerifiedPlayer(guid, entityId); \
+	if (!_pPlayer)                                         \
+		return;                                            \
+	Player& player = *_pPlayer;                            \
+	(void)player                                           \
+
 ServerSideNetworkHandler::ServerSideNetworkHandler(Minecraft* minecraft, RakNetInstance* rakNetInstance)
 {
 	m_pMinecraft = minecraft;
@@ -34,6 +41,8 @@ ServerSideNetworkHandler::ServerSideNetworkHandler(Minecraft* minecraft, RakNetI
 	allowIncomingConnections(false);
 	m_pRakNetPeer = m_pRakNetInstance->getPeer();
 	m_bAllowIncoming = false;
+
+	m_bStrictPlayerMovement = false;
 
 	setupCommands();
 }
@@ -47,6 +56,166 @@ ServerSideNetworkHandler::~ServerSideNetworkHandler()
 		delete it->second;
 
 	m_onlinePlayers.clear();
+}
+
+Packet* _getPacketForEntity(Entity& entity)
+{
+	if (entity.getDescriptor().isType(EntityType::ITEM))
+	{
+#if NETWORK_PROTOCOL_VERSION >= 2
+		return new AddItemEntityPacket((ItemEntity&)entity);
+#endif
+	}
+	else if (entity.isMob())
+	{
+		//LOG_I("add mob packet!");
+		return new AddMobPacket((Mob&)entity);
+	}
+	else
+	{
+#if NETWORK_PROTOCOL_VERSION >= 6
+		return new AddEntityPacket(entity);
+#endif
+	}
+
+	return nullptr;
+}
+
+Player* ServerSideNetworkHandler::_getVerifiedPlayer(const RakNet::RakNetGUID& guid, Entity::ID entityId) const
+{
+	Entity* pEntity = m_pLevel->getEntity(entityId);
+	if (!pEntity || !pEntity->isPlayer())
+		return nullptr;
+
+	Player* pPlayer = (Player*)pEntity;
+	if (pPlayer->m_guid != guid)
+		return nullptr;
+
+	return pPlayer;
+}
+
+// Java player movement handling from Beta 1.3, rubberbanding included
+void ServerSideNetworkHandler::_handleMovePlayer(Player& player, MovePlayerPacket* packet)
+{
+	TileSource& tileSource = player.getTileSource();
+
+	// Initial positioning
+	Vec3 oPos = player.m_pos;
+	Vec3 pos;
+	Rot2 rot;
+
+	// Handle the player riding state
+	if (player.isRiding())
+	{
+		Entity* pRiding = player.getRiding();
+
+		if (pRiding)
+		{
+			pRiding->positionRider();
+		}
+
+		//if (packet->hasRot) {
+		rot = packet->m_rot;
+		//}
+
+		//if (packet->hasPos && packet->m_pos.y == -999.0f && packet->yView == -999.0f) {
+		pos.x = packet->m_pos.x;
+		pos.z = packet->m_pos.z;
+		//}
+
+		//player.m_bOnGround = packet->onGround;
+		//player.doChunkSendingTick(true);
+		player.move(pos);
+		player.absMoveTo(oPos, rot);
+		player.m_vel.x = pos.x;
+		player.m_vel.z = pos.z;
+		/*if (pRiding)
+		{
+			m_pLevel->forceTick(player.getRiding(), true);
+		}*/
+
+		if (pRiding)
+		{
+			pRiding->positionRider();
+		}
+
+		//this.server.playerList.move(player); // playerChunkMap.move(player)
+		//m_pLevel->tick(player);
+		return;
+	}
+
+	/*if (packet->hasPos && packet->m_pos.y == -999.0f && packet->yView == -999.0f) {
+		packet->hasPos = false;
+	}*/
+
+	//if (packet->hasPos) {
+	pos = packet->m_pos;
+	// Stance validation
+	/*float stanceHeight = packet->yView - packet->m_pos.y;
+	if (stanceHeight > 1.65f || stanceHeight < 0.1f)
+	{
+		LOG_W("%s had an illegal stance: %f", player.m_name, stanceHeight);
+	}*/
+	//}
+
+	//if (packet->hasRot) {
+	rot = packet->m_rot;
+	//}
+
+	//player.doChunkSendingTick(true);
+	player.m_ySlideOffset = 0.0f;
+	player.absMoveTo(oPos, rot);
+
+	// Calculate spatial differences
+	Vec3 delta = pos - player.m_pos;
+	constexpr float shrinkAmount = 1.0f / 16.0f;
+
+	AABB aabb(player.m_hitbox);
+	aabb.shrink(shrinkAmount, shrinkAmount, shrinkAmount);
+	bool hasNoCollisionBefore = tileSource.fetchAABBs(aabb).size() == 0;
+
+	// Apply initial movement
+	player.move(delta);
+
+	// Recalculate differences post-movement
+	Vec3 postDelta = pos - player.m_pos;
+
+	// b1.3, this logic is accurate but always evaluates to true
+	/*if (postDelta.y > -0.5f || postDelta.y < 0.5f)
+	{*/
+		postDelta.y = 0.0f;
+	//}
+
+	float sqDistanceDiff = postDelta.lengthSqr();
+
+	bool movedWrongly = false;
+	if (sqDistanceDiff > shrinkAmount /*&& !player.isSleeping()*/)
+	{
+		movedWrongly = true;
+		LOG_W("%s moved wrongly!", player.m_name.c_str());
+		LOG_I("Got position %f, %f, %f", pos.x, pos.y, pos.z);
+		LOG_I("Expected %f, %f, %f", player.m_pos.x, player.m_pos.y, player.m_pos.z);
+	}
+
+	player.absMoveTo(pos, rot);
+
+	aabb = player.m_hitbox;
+	aabb.shrink(shrinkAmount, shrinkAmount, shrinkAmount);
+	bool hasNoCollisionAfter = tileSource.fetchAABBs(aabb).size() == 0;
+
+	// Revert movement if illegal collisions or invalid movement occur
+	if (hasNoCollisionBefore && (movedWrongly || !hasNoCollisionAfter) /*&& !player.isSleeping()*/)
+	{
+		player.absMoveTo(oPos, rot);
+		return;
+	}
+
+	//player.m_bOnGround = packet->onGround;
+	//this.server.playerList.move(player); // playerChunkMap.move(player)
+	ServerPlayer& serverPlayer = (ServerPlayer&)player;
+	serverPlayer.doCheckFallDamage(player.m_pos.y - oPos.y, player.m_bOnGround/*packet->onGround*/);
+
+	redistributePacket(packet, player.m_guid);
 }
 
 void ServerSideNetworkHandler::levelGenerated(Level* level)
@@ -94,6 +263,12 @@ void ServerSideNetworkHandler::onDisconnect(const RakNet::RakNetGUID& guid)
 		m_pRakNetInstance->send(new RemoveEntityPacket(pPlayer->m_EntityID));
 
 		pPlayer->m_bForceRemove = true;
+
+#ifdef ENH_SAVE_REMOTE_PLAYERS
+		LevelStorage* pLevelStorage = m_pLevel->getLevelStorage();
+		pLevelStorage->save(*pPlayer);
+#endif
+
 		// remove it from our world
 		m_pLevel->removeEntity((Entity*&)pPlayer);
 	}
@@ -136,11 +311,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, LoginPacke
 
 	if (loginStatus != LoginStatusPacket::STATUS_SUCCESS)
 	{
-		LoginStatusPacket lsp = LoginStatusPacket(loginStatus);
-
-		lsp.write(bs);
-		m_pRakNetPeer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, guid, false);
-
+		m_pRakNetInstance->send(guid, bs, new LoginStatusPacket(loginStatus));
 		return;
 	}
 #endif
@@ -149,19 +320,46 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, LoginPacke
 	pPlayer->m_guid = guid;
 	pPlayer->m_name = std::string(packet->m_userName.C_String());
 
+	GameMode* pGameMode = m_pMinecraft->getPlayerGameMode(*pPlayer);
+	pGameMode->initPlayer(pPlayer);
+
+#ifdef ENH_SAVE_REMOTE_PLAYERS
+	LevelStorage* pLevelStorage = m_pLevel->getLevelStorage();
+	pLevelStorage->load(*pPlayer);
+#endif
+
 	m_pendingPlayers[guid] = pPlayer;
 
-	StartGamePacket sgp;
-	sgp.m_seed = m_pLevel->getSeed();
-	sgp.m_levelVersion = m_pLevel->getLevelData()->getStorageVersion();
-	sgp.m_gameType = pPlayer->getPlayerGameType();
-	sgp.m_entityId = pPlayer->m_EntityID;
-	sgp.m_time = m_pLevel->getTime();
-	sgp.m_pos = pPlayer->m_pos;
-	sgp.m_pos.y -= pPlayer->m_heightOffset;
-	
-	sgp.write(bs);
-	m_pRakNetPeer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, guid, false);
+	// Ensure Player is spawned above-ground
+	{
+		Vec3& pos = pPlayer->m_pos;
+		while (pos.y > 0)
+		{
+			pPlayer->setPos(pos);
+			if (pPlayer->canSpawn())
+				break;
+			pos.y++;
+		}
+
+		Vec3 pos2 = pos;
+		pos2.y -= pPlayer->m_heightOffset;
+		pPlayer->moveTo(pos2, pPlayer->m_rot);
+	}
+
+	// Send StartGamePacket
+	{
+		StartGamePacket sgp;
+		sgp.m_seed = m_pLevel->getSeed();
+		sgp.m_levelVersion = m_pLevel->getLevelData()->getStorageVersion();
+		sgp.m_gameType = pPlayer->getPlayerGameType();
+		sgp.m_entityId = pPlayer->m_EntityID;
+		sgp.m_time = m_pLevel->getTime();
+		sgp.m_pos = pPlayer->m_pos;
+		sgp.m_pos.y -= pPlayer->m_heightOffset;
+
+		sgp.m_reliability = RELIABLE_ORDERED;
+		m_pRakNetInstance->send(guid, bs, sgp);
+	}
 
 #if NETWORK_PROTOCOL_VERSION <= 2
 	// emulate a ReadyPacket being received
@@ -182,15 +380,17 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ReadyPacke
 
 	Player* pPlayer = popPendingPlayer(guid);
 	if (!pPlayer)
+	{
+		LOG_E("We don't have a user associated with this player!");
 		return;
+	}
 
 	RakNet::BitStream bs;
 
 #if NETWORK_PROTOCOL_VERSION >= 3
 	{
 		SetTimePacket packet(m_pLevel->getTime());
-		packet.write(bs);
-		m_pRakNetPeer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, guid, false);
+		m_pRakNetInstance->send(guid, bs, packet);
 	}
 #endif
 
@@ -200,16 +400,10 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ReadyPacke
 		Player* player = m_pLevel->m_players[i];
 		AddPlayerPacket app(player);
 		bs.Reset();
-		app.write(bs);
-		m_pRakNetPeer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, guid, false);
+		m_pRakNetInstance->send(guid, bs, app);
 	}
 
 	m_pLevel->addEntity(pPlayer);
-
-	if (m_pMinecraft->m_pGameMode->isCreativeType())
-		pPlayer->m_pInventory->prepareCreativeInventory();
-	else
-		pPlayer->m_pInventory->prepareSurvivalInventory();
 
 	m_pMinecraft->m_pGui->addMessage(pPlayer->m_name + " joined the game");
 
@@ -224,19 +418,33 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ReadyPacke
 			const Entity* entity = it->second;
 			if (canReplicateEntity(entity))
 			{
-				AddMobPacket packet(*((Mob*)entity));
+				Packet* packet = _getPacketForEntity(*entity);
+				if (!packet)
+					continue;
 				bs.Reset();
-				packet.write(bs);
-				m_pRakNetPeer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, guid, false);
+				m_pRakNetInstance->send(guid, bs, packet);
 			}
 		}
+	}
+#endif
+
+	// was actually added in 11 (0.7.0), but I don't think anything's stopping us from doing this for older clients
+#if NETWORK_PROTOCOL_VERSION >= 6 && defined(ENH_SAVE_REMOTE_PLAYERS)
+	// send the connecting player's inventory
+	if (!pPlayer->isCreative())
+	{
+		std::vector<ItemStack> items = pPlayer->m_pInventoryMenu->cloneItems(true);
+		ContainerSetContentPacket cscp(0, items);
+		bs.Reset();
+		m_pRakNetInstance->send(guid, bs, cscp);
 	}
 #endif
 
 	AddPlayerPacket app(pPlayer);
 	bs.Reset();
 	app.write(bs);
-	m_pRakNetPeer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, guid, true);
+	// specifying GUID to avoid sending it to the connecting player
+	m_pRakNetPeer->Send(&bs, HIGH_PRIORITY, RELIABLE, 0, guid, true);
 }
 
 void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, MessagePacket* packet)
@@ -291,32 +499,31 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, MessagePac
 
 void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, MovePlayerPacket* packet)
 {
-	//not in the original
+	if (!m_pLevel) return;
 	//puts_ignorable("MovePlayerPacket");
+	VALIDATE_PLAYER_ACTION(packet->m_id);
 
-	Entity* pEntity = m_pLevel->getEntity(packet->m_id);
-	if (!pEntity)
-		return;
-
-	pEntity->lerpTo(packet->m_pos, packet->m_rot);
-
-	redistributePacket(packet, guid);
+	if (m_bStrictPlayerMovement)
+	{
+		_handleMovePlayer(player, packet);
+	}
+	else
+	{
+		player.lerpTo(packet->m_pos, packet->m_rot);
+		redistributePacket(packet, guid);
+	}
 }
 
 void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, PlaceBlockPacket* packet)
 {
-	if (!m_pLevel)
-		return;
+	if (!m_pLevel) return;
+	VALIDATE_PLAYER_ACTION(packet->m_entityId);
 
 	TilePos pos = packet->m_pos;
 
 	printf_ignorable("PlaceBlockPacket @ %d, %d, %d", pos.x, pos.y, pos.z);
 
-	Mob* pMob = (Mob*)m_pLevel->getEntity(packet->m_entityId);
-	if (!pMob || !pMob->isPlayer())
-		return;
-
-	pMob->swing();
+	player.swing();
 
 	TileID tileId = Tile::TransformToValidBlockId(packet->m_tileTypeId);
 	Facing::Name face = (Facing::Name)packet->m_face;
@@ -334,7 +541,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, PlaceBlock
 		pTile->setPlacedBy(&tileSource, pos, pMob);
 
 		const Tile::SoundType* pSound = pTile->m_pSound;
-		m_pLevel->playSound(pos + 0.5f, "step." + pSound->m_name, 0.5f * (pSound->volume + 1.0f), pSound->pitch * 0.8f);
+		m_pLevel->playSound(pos + 0.5f, "step." + pSound->name, 0.5f * (pSound->volume + 1.0f), pSound->pitch * 0.8f);
 	}
 
 	redistributePacket(packet, guid);
@@ -342,15 +549,11 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, PlaceBlock
 
 void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, RemoveBlockPacket* packet)
 {
+	if (!m_pLevel) return;
 	puts_ignorable("RemoveBlockPacket");
+	VALIDATE_PLAYER_ACTION(packet->m_entityId);
 
-	Entity* pEntity = m_pLevel->getEntity(packet->m_entityId);
-	if (!pEntity || !pEntity->isPlayer())
-		return;
-
-	Player* pPlayer = (Player*)pEntity;
-
-	pPlayer->swing();
+	player.swing();
 
 	TileSource& source = pPlayer->getTileSource();
 
@@ -364,14 +567,14 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, RemoveBloc
 	if (pTile && setTileResult)
 	{
 		const Tile::SoundType* pSound = pTile->m_pSound;
-		m_pLevel->playSound(pos + 0.5f, "step." + pSound->m_name, 0.5f * (pSound->volume + 1.0f), pSound->pitch * 0.8f);
+		m_pLevel->playSound(pos + 0.5f, "step." + pSound->name, 0.5f * (pSound->volume + 1.0f), pSound->pitch * 0.8f);
 
-		if (pPlayer->isSurvival())
+		if (player.isSurvival())
 		{
 #ifdef MOD_POCKET_SURVIVAL
 			// 0.2.1
 			ItemStack tileItem(pTile, 1, auxValue);
-			if (pTile == Tile::grass || !pPlayer->m_pInventory->hasUnlimitedResource(tileItem))
+			if (pTile == Tile::grass || !player.m_pInventory->hasUnlimitedResource(tileItem))
 			{
 				pTile->spawnResources(&source, pos, auxValue);
 			}
@@ -389,47 +592,39 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, RemoveBloc
 
 void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, PlayerEquipmentPacket* packet)
 {
-	Player* pPlayer = (Player*)m_pLevel->getEntity(packet->m_playerID);
-	if (!pPlayer)
-	{
-		LOG_W("PlayerEquipmentPacket: No player with id %d", packet->m_playerID);
-		return;
-	}
+	if (!m_pLevel) return;
+	//puts_ignorable("PlayerEquipmentPacket");
+	VALIDATE_PLAYER_ACTION(packet->m_playerID);
 
-	if (pPlayer->m_guid == m_pRakNetPeer->GetMyGUID())
-	{
-		LOG_W("Attempted to modify local player's inventory");
-		return;
-	}
-
-	pPlayer->m_pInventory->pickItem(packet->m_itemID, packet->m_itemAuxValue, C_MAX_HOTBAR_ITEMS);
+#ifdef FEATURE_SERVER_INVENTORIES
+	// will need to be reworked for proper server-sided inventory support, pick the proper slot, not just any item
+	player.m_pInventory->pickItem(packet->m_itemID, packet->m_itemAuxValue, C_MAX_HOTBAR_ITEMS);
+#else
+	player.m_pInventory->setSelectedItem(ItemStack(packet->m_itemID, 1, packet->m_itemAuxValue));
+#endif
 
 	redistributePacket(packet, guid);
 }
 
 void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, InteractPacket* packet)
 {
-	//puts_ignorable("InteractPacket");
 	if (!m_pLevel) return;
+	//puts_ignorable("InteractPacket");
+	VALIDATE_PLAYER_ACTION(packet->m_sourceId);
 
-	Entity* pSource = m_pLevel->getEntity(packet->m_sourceId);
 	Entity* pTarget = m_pLevel->getEntity(packet->m_targetId);
-	if (!pSource || !pTarget)
+	if (!pTarget)
 		return;
 
-	if (!pSource->isPlayer())
-		return;
-
-	Player* pPlayer = (Player*)pSource;
 	switch (packet->m_actionType)
 	{
 	case InteractPacket::INTERACT:
-		pPlayer->swing();
-		m_pMinecraft->m_pGameMode->interact(pPlayer, pTarget);
+		player.swing();
+		m_pMinecraft->getPlayerGameMode(player)->interact(&player, pTarget);
 		break;
 	case InteractPacket::ATTACK:
-		pPlayer->swing();
-		m_pMinecraft->m_pGameMode->attack(pPlayer, pTarget);
+		player.swing();
+		m_pMinecraft->getPlayerGameMode(player)->attack(&player, pTarget);
 		break;
 	default:
 		LOG_W("Received unkown action in InteractPacket: %d", packet->m_actionType);
@@ -442,17 +637,10 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, InteractPa
 void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, UseItemPacket* packet)
 {
 	if (!m_pLevel) return;
-
 	//puts_ignorable("UseItemPacket");
+	VALIDATE_PLAYER_ACTION(packet->m_entityId);
 
-	Entity* pEntity = m_pLevel->getEntity(packet->m_entityId);
-	if (!pEntity) return;
-	Player* pPlayer = (Player*)pEntity;
-
-	if (!pEntity->isPlayer())
-		return;
-
-	TileSource& tileSource = pPlayer->getTileSource();
+	TileSource& tileSource = player.getTileSource();
 
 	bool onTile = packet->m_tileFace != 255;
 
@@ -465,45 +653,69 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, UseItemPac
 				return;
 
 			// Interface with tile instead of using item
-			if (pTile->use(packet->m_tilePos, pPlayer))
+			if (pTile->use(packet->m_tilePos, &player))
 			{
-				pPlayer->swing();
+				player.swing();
 				return;
 			}
 		}
 	}
 
-	if (packet->m_item.isEmpty())
+	ItemStack& item = packet->m_item;
+
+	// if we're getting a bad state from the client, odds are we finished off a consumable, so just do what Java does
+	if (item.isEmpty())
+		item = player.m_pInventory->getSelected();
+
+	if (item.isEmpty())
 		return;
 
 	if (onTile)
 	{
-		packet->m_item.useOn(pPlayer, packet->m_tilePos, (Facing::Name)packet->m_tileFace);
+		item.useOn(&player, m_pLevel, packet->m_tilePos, (Facing::Name)packet->m_tileFace);
 	}
 	else
 	{
-		packet->m_item.use(pPlayer);
+		item.use(m_pLevel, player);
 	}
 
-	pPlayer->swing();
+	player.swing();
+}
+
+// added specifically to allow Noteblocks to work, but ideally should just be a part of ServerPlayerGameMode
+bool _startDestroyBlock(Level& level, Player& player, const TilePos& pos, Facing::Name face)
+{
+	ItemStack& item = player.getSelectedItem();
+	if (!item.isEmpty() && item.getItem() == Item::bow)
+		return true;
+
+	TileID tile = level.getTile(pos);
+
+	if (tile <= 0)
+		return false;
+	
+	Tile::tiles[tile]->attack(&level, pos, &player);
+
+	return true;
 }
 
 void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, PlayerActionPacket* packet)
 {
-	puts_ignorable("PlayerActionPacket");
 	if (!m_pLevel) return;
-
-	Entity* pEntity = m_pLevel->getEntity(packet->m_entityId);
-	if (!pEntity) return;
-	Player* pPlayer = (Player*)pEntity;
-
-	if (!pEntity->isPlayer())
-		return;
+	puts_ignorable("PlayerActionPacket");
+	VALIDATE_PLAYER_ACTION(packet->m_entityId);
 
 	switch (packet->m_action)
 	{
+	case PlayerActionPacket::START_DESTROY_BLOCK:
+		_startDestroyBlock(*m_pLevel, player, packet->m_tilePos, packet->m_tileFace);
+		//m_pMinecraft->getPlayerGameMode(player)->startDestroyBlock(&player, packet->m_tilePos, packet->m_tileFace);
+		break;
+	case PlayerActionPacket::STOP_DESTROY_BLOCK:
+		//m_pMinecraft->getPlayerGameMode(player)->stopDestroyBlock(&player, packet->m_tilePos, packet->m_tileFace);
+		break;
 	case PlayerActionPacket::STOP_USING_ITEM:
-		pPlayer->releaseUsingItem();
+		player.releaseUsingItem();
 		break;
 	default:
 		LOG_W("Unsupported PlayerAction: %d", packet->m_action);
@@ -533,43 +745,30 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, RequestChu
 
 	// @NOTE: this allows the client to request empty chunks. Is that okay?
 	ChunkDataPacket cdp(pChunk->getPos(), pChunk);
-
-	RakNet::BitStream bs;
-	cdp.write(bs);
-
-	m_pRakNetPeer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, guid, false);
+	m_pRakNetInstance->send(guid, cdp);
 }
 
 void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, AnimatePacket* packet)
 {
+	if (!m_pLevel) return;
 	//puts_ignorable("AnimatePacket");
-
-	if (!m_pLevel)
-		return;
-
-	Entity* pEntity = m_pLevel->getEntity(packet->m_entityId);
-	if (!pEntity)
-		return;
-
-	if (!pEntity->isPlayer())
-		return;
-	Player* pPlayer = (Player*)pEntity;
+	VALIDATE_PLAYER_ACTION(packet->m_entityId);
 
 	switch (packet->m_actionId)
 	{
 		case AnimatePacket::SWING:
 		{
-			pPlayer->swing();
+			player.swing();
 			break;
 		}
 		case AnimatePacket::HURT:
 		{
-			pPlayer->animateHurt();
+			player.animateHurt();
 			break;
 		}
 		default:
 		{
-			LOG_W("Received unkown action in AnimatePacket: %d, EntityType: %s", packet->m_actionId, pEntity->getDescriptor().getEntityType().getName().c_str());
+			LOG_W("Received unkown action in AnimatePacket: %d", packet->m_actionId);
 			break;
 		}
 	}
@@ -579,10 +778,9 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, AnimatePac
 
 void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, RespawnPacket* packet)
 {
+	if (!m_pLevel) return;
 	puts_ignorable("RespawnPacket");
-
-	if (!m_pLevel)
-		return;
+	VALIDATE_PLAYER_ACTION(packet->m_entityId);
 
 	NetEventCallback::handle(*m_pLevel, guid, packet);
 
@@ -591,82 +789,70 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, RespawnPac
 
 void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, SendInventoryPacket* packet)
 {
+#ifndef FEATURE_SERVER_INVENTORIES
+	if (!m_pLevel) return;
 	puts_ignorable("SendInventoryPacket");
+	VALIDATE_PLAYER_ACTION(packet->m_entityId);
 
-	if (!m_pLevel)
-		return;
+	player.m_pInventory->replace(packet->m_items);
 
-	Entity* pEntity = m_pLevel->getEntity(packet->m_entityId);
-	if (!pEntity)
-		return;
-
-	if (!pEntity->isPlayer())
-		return;
-	Player* pPlayer = (Player*)pEntity;
-
-	pPlayer->m_pInventory->replace(packet->m_items);
-
-	if (packet->m_bDropAll)
-		pPlayer->m_pInventory->dropAll();
+	if (packet->m_extra == SendInventoryPacket::EXTRA_DROP_ALL)
+		player.m_pInventory->dropAll();
+#endif
 }
 
 void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, DropItemPacket* packet)
 {
+	if (!m_pLevel) return;
 	puts_ignorable("DropItemPacket");
+	VALIDATE_PLAYER_ACTION(packet->m_entityId);
 
-	if (!m_pLevel)
-		return;
-
-	Entity* pEntity = m_pLevel->getEntity(packet->m_entityId);
-	if (!pEntity)
-		return;
-
-	if (!pEntity->isPlayer())
-		return;
-	Player* pPlayer = (Player*)pEntity;
-
-	pPlayer->drop(packet->m_item, packet->m_bRandomly);
+	player.drop(packet->m_item, packet->m_bRandomly);
 }
 
 void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ContainerClosePacket* packet)
 {
+	if (!m_pLevel) return;
 	puts_ignorable("ContainerClosePacket");
-
-	if (!m_pLevel)
-		return;
 	
 	Player* pPlayer = _findPlayer(*m_pLevel, guid);
-	if (!pPlayer)
+	if (!pPlayer /* || pPlayer->isLocalPlayer()*/) // assume all connected players are ServerPlayers
 		return;
 
-	if (pPlayer != m_pMinecraft->m_pLocalPlayer)
-	{
-		ServerPlayer* pServerPlayer = (ServerPlayer*)pPlayer;
-		pServerPlayer->doCloseContainer();
-	}
+	ServerPlayer* pServerPlayer = (ServerPlayer*)pPlayer;
+	pServerPlayer->doCloseContainer();
 }
 
 void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ContainerSetSlotPacket* packet)
 {
+	if (!m_pLevel) return;
 	puts_ignorable("ContainerSetSlotPacket");
-
-	if (!m_pLevel)
-		return;
 	
 	Player* pPlayer = _findPlayer(*m_pLevel, guid);
 	if (!pPlayer)
 		return;
 
 	ContainerMenu* pContainerMenu = pPlayer->m_pContainerMenu;
+	bool isInventory = false;
+
+	// @HACK: LocalPlayer inventory seems to always have Container ID 0
+	if (packet->m_containerId == 0)
+	{
+		pContainerMenu = pPlayer->m_pInventoryMenu;
+		isInventory = true;
+	}
+
 	if (!pContainerMenu)
 		return;
 
-	if (pContainerMenu->m_containerId == packet->m_containerId)
+	if (pContainerMenu->m_containerId == packet->m_containerId
+		|| (isInventory && packet->m_containerId == 0)) 
 	{
 		switch (pContainerMenu->m_containerType)
 		{
 		case Container::FURNACE:
-			pContainerMenu->setItem(packet->m_slot, packet->m_item);
+		case Container::CONTAINER:
+			pContainerMenu->setItem(packet->m_slotId, packet->m_item);
 			break;
 		default:
 			break;
@@ -687,10 +873,9 @@ void ServerSideNetworkHandler::tileChanged(const TilePos& pos)
 	ubp.m_tileTypeId = tileSource.getTile(pos);
 	ubp.m_data = tileSource.getData(pos);
 
-	RakNet::BitStream bs;
-	ubp.write(bs);
-
-	m_pRakNetPeer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::AddressOrGUID(), true);
+	ubp.m_reliability = RELIABLE_ORDERED;
+	ubp.m_channel = CHANNEL_TILE_EVENTS;
+	m_pRakNetInstance->send(ubp);
 }
 
 void ServerSideNetworkHandler::entityAdded(Entity* entity)
@@ -698,24 +883,12 @@ void ServerSideNetworkHandler::entityAdded(Entity* entity)
 	if (!canReplicateEntity(entity))
 		return;
 
-	if (entity->getDescriptor().isType(EntityType::ITEM))
-	{
-#if NETWORK_PROTOCOL_VERSION >= 2
-		m_pRakNetInstance->send(new AddItemEntityPacket(*(ItemEntity*)entity));
-#endif
-	}
-	else if (entity->isMob())
-	{
-		AddMobPacket packet(*((Mob*)entity));
-		//LOG_I("add mob packet!");
-		redistributePacket(&packet, m_pRakNetInstance->m_guid);
-	}
-	else
-	{
-#if NETWORK_PROTOCOL_VERSION >= 6
-		m_pRakNetInstance->send(new AddEntityPacket(*entity));
-#endif
-	}
+	Packet* packet = _getPacketForEntity(*entity);
+	if (!packet)
+		return;
+
+	// @PARITY-PE: AddMobPacket is sent as RELIABLE_ORDERED in PE using redistributePacket. Any reason for this?
+	m_pRakNetInstance->send(packet);
 }
 
 void ServerSideNetworkHandler::entityRemoved(Entity* entity)
@@ -762,7 +935,10 @@ void ServerSideNetworkHandler::allowIncomingConnections(bool b)
 Player* ServerSideNetworkHandler::popPendingPlayer(const RakNet::RakNetGUID& guid)
 {
 	if (!m_pLevel)
+	{
+		LOG_E("Could not add player since Level is NULL!");
 		return nullptr;
+	}
 
 	Player* pPlayer = getPendingPlayerByGUID(guid);
 	if (pPlayer)
@@ -801,7 +977,7 @@ void ServerSideNetworkHandler::redistributePacket(Packet* packet, const RakNet::
 	RakNet::BitStream bs;
 	packet->write(bs);
 
-	m_pRakNetPeer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, source, true);
+	m_pRakNetPeer->Send(&bs, packet->m_priority, packet->m_reliability, packet->m_channel, source, true);
 }
 
 OnlinePlayer* ServerSideNetworkHandler::getOnlinePlayerByGUID(const RakNet::RakNetGUID& guid)

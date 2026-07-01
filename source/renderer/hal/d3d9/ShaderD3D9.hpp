@@ -35,11 +35,7 @@ namespace mce
         void compileAndLinkShader();
         void reflectShaderResources(ComInterface<ID3DXConstantTable> constantTable, ShaderType shaderType);
         void reflectShaderAttributes(const std::string& shaderBytecode);
-        void reflectShader(const ShaderProgramD3D9& shaderProgram, ShaderType shaderType);
+        void reflectShader(const ShaderProgramD3D& shaderProgram, ShaderType shaderType);
         ComInterface<IDirect3DVertexDeclaration9> createVertexDeclaration(const VertexFormat& vertexFormat);
-
-        static void SpliceShaderPath(std::string& shaderName);
-        static void SpliceShaderExtension(std::string& shaderName);
-        static void BuildHeader(std::ostringstream& stream);
     };
 }

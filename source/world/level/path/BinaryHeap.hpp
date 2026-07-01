@@ -16,7 +16,7 @@ public:
 	{
 		m_count = 0;
 		m_capacity = 1024;
-		m_items = new Node*[m_capacity];
+		m_items = new Node * [m_capacity];
 	}
 
 	~BinaryHeap()
@@ -44,7 +44,7 @@ public:
 	void clear() {
 		m_count = 0;
 	}
-	
+
 	int size() const {
 		return m_count;
 	}

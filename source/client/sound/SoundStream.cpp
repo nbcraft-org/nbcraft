@@ -30,7 +30,7 @@ void SoundStream::_deleteDecoder()
     m_decoder = nullptr;
 }
 
-bool SoundStream::_stream(int bufferId)
+bool SoundStream::_stream(BufferId bufferId)
 {
     int size = 0;
     int result = 0;

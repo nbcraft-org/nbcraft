@@ -193,7 +193,7 @@ protected:
 		DataStructures::Hash<RakNet::RakString, TimeAndValueQueue*, 32, RakNet::RakString::ToInteger> dataQueues;
 	};
 
-	DataStructures::OrderedList<uint64_t, TrackedObject*,TrackedObjectComp> objects;
+	DataStructures::OrderedList<uint64_t, TrackedObject*, &StatisticsHistory::TrackedObjectComp> objects;
 
 	Time timeToTrack;
 };

@@ -70,6 +70,8 @@ VS_MAIN_BEGIN
 
 #ifdef USE_VERTEX_COLORS
 	PSInput.color = VSInput.color;
+#elif defined(USE_CURRENT_COLOR)
+	PSInput.color = CURRENT_COLOR;
 #endif
 
 #ifdef USE_OVERLAY
@@ -77,7 +79,7 @@ VS_MAIN_BEGIN
     PSInput.overlayColor = OVERLAY_COLOR;
 #endif
 
-    PSInput.light = float4( L.xxx * TILE_LIGHT_COLOR.rgb, 1.0 );
+    PSInput.light = float3( L.xxx * TILE_LIGHT_COLOR.rgb );
 
 #ifdef COLOR_BASED
     PSInput.light *= VSInput.color;
@@ -95,6 +97,6 @@ VS_MAIN_BEGIN
 
     //fog
     PSInput.fogColor.rgb = FOG_COLOR.rgb;
-    PSInput.fogColor.a = clamp( ( ( PSInput.position.z / RENDER_DISTANCE ) - FOG_CONTROL.x ) / ( FOG_CONTROL.y - FOG_CONTROL.x ), 0.0, 1.0 );
+    PSInput.fogIntensity = clamp( ( ( PSInput.position.z / RENDER_DISTANCE ) - FOG_CONTROL.x ) / ( FOG_CONTROL.y - FOG_CONTROL.x ), 0.0, 1.0 );
 VS_MAIN_END
 

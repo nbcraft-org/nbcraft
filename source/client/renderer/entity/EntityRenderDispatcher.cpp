@@ -15,6 +15,8 @@
 #include "TripodCameraRenderer.hpp"
 #include "TntRenderer.hpp"
 #include "ItemRenderer.hpp"
+
+#include "ItemSpriteRenderer.hpp"
 #include "FallingTileRenderer.hpp"
 #include "PigRenderer.hpp"
 #include "SheepRenderer.hpp"
@@ -24,6 +26,13 @@
 #include "SpiderRenderer.hpp"
 #include "ArrowRenderer.hpp"
 #include "RocketRenderer.hpp"
+#include "SquidRenderer.hpp"
+#include "GiantMobRenderer.hpp"
+#include "SlimeRenderer.hpp"
+#include "ItemSpriteRenderer.hpp"
+#include "FireballRenderer.hpp"
+#include "GhastRenderer.hpp"
+#include "FishingHookRenderer.hpp"
 
 #include "client/model/models/PigModel.hpp"
 #include "client/model/models/SheepModel.hpp"
@@ -33,6 +42,8 @@
 #include "client/model/models/SpiderModel.hpp"
 #include "client/model/models/SkeletonModel.hpp"
 #include "client/model/models/ZombieModel.hpp"
+#include "client/model/models/SquidModel.hpp"
+#include "client/model/models/SlimeModel.hpp"
 
 EntityRenderDispatcher* EntityRenderDispatcher::instance;
 Vec3 EntityRenderDispatcher::off;
@@ -45,7 +56,7 @@ EntityRenderDispatcher::EntityRenderDispatcher()
 	m_pLevel = nullptr;
 	m_pMinecraft = nullptr;
 	m_pCamera = nullptr;
-	m_rot = Vec2::ZERO;
+	m_rot = Rot2::ZERO;
 	m_pOptions = nullptr;
 	m_pFont = nullptr;
 
@@ -54,10 +65,14 @@ EntityRenderDispatcher::EntityRenderDispatcher()
 	_addRenderer(Entity::RENDER_SHEEP,        new SheepRenderer(      new SheepModel(false), new SheepModel(true), 0.7f));
 	_addRenderer(Entity::RENDER_COW,          new CowRenderer(        new CowModel,      0.7f));
 	_addRenderer(Entity::RENDER_CHICKEN,      new ChickenRenderer(    new ChickenModel,  0.3f));
+	_addRenderer(Entity::RENDER_SQUID,        new SquidRenderer(      new SquidModel,    0.7f));
 	_addRenderer(Entity::RENDER_CREEPER,      new CreeperRenderer(    new CreeperModel,  0.5f));
 	_addRenderer(Entity::RENDER_SPIDER,       new SpiderRenderer());
 	_addRenderer(Entity::RENDER_SKELETON,     new HumanoidMobRenderer(new SkeletonModel, 0.5f));
 	_addRenderer(Entity::RENDER_ZOMBIE,       new HumanoidMobRenderer(new ZombieModel,   0.5f));
+	_addRenderer(Entity::RENDER_GIANT,        new GiantMobRenderer(   new ZombieModel,   0.5f, 6.0f));
+	_addRenderer(Entity::RENDER_SLIME,        new SlimeRenderer(      new SlimeModel(16), new SlimeModel(0), 0.25f));
+	_addRenderer(Entity::RENDER_GHAST,        new GhastRenderer());
 	_addRenderer(Entity::RENDER_ARROW,        new ArrowRenderer());
 #ifdef ENH_ALLOW_SAND_GRAVITY
 	_addRenderer(Entity::RENDER_FALLING_TILE, new FallingTileRenderer());
@@ -65,7 +80,11 @@ EntityRenderDispatcher::EntityRenderDispatcher()
 	_addRenderer(Entity::RENDER_TNT,          new TntRenderer());
 	_addRenderer(Entity::RENDER_CAMERA,       new TripodCameraRenderer());
 	_addRenderer(Entity::RENDER_ITEM,         new ItemRenderer());
+	_addRenderer(Entity::RENDER_THROWN_EGG,	  new ItemSpriteRenderer(Item::egg->getIcon(0)));
+	_addRenderer(Entity::RENDER_SNOWBALL,	  new ItemSpriteRenderer(Item::snowBall->getIcon(0)));
 	_addRenderer(Entity::RENDER_ROCKET,       new RocketRenderer());
+	_addRenderer(Entity::RENDER_FIREBALL,     new FireballRenderer());
+	_addRenderer(Entity::RENDER_FISHING_HOOK, new FishingHookRenderer());
 }
 
 EntityRenderDispatcher::~EntityRenderDispatcher()
@@ -138,7 +157,7 @@ void EntityRenderDispatcher::prepare(Level* level, Textures* textures, Font* fon
 void EntityRenderDispatcher::render(const Entity& entity, float a)
 {
 	Vec3 pos = Vec3(entity.m_posPrev + (entity.m_pos - entity.m_posPrev) * a);
-	float yaw = entity.m_oRot.x + a * (entity.m_rot.x - entity.m_oRot.x);
+	float yaw = entity.m_oRot.yaw + a * (entity.m_rot.yaw - entity.m_oRot.yaw);
 
 	float bright = entity.getBrightness(1.0f);
 	currentShaderColor = Color::WHITE;

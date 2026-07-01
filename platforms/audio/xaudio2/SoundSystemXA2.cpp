@@ -128,12 +128,12 @@ void SoundSystemXA2::setListenerPos(const Vec3& pos)
     _update3D();
 }
 
-void SoundSystemXA2::setListenerAngle(const Vec2& rot)
+void SoundSystemXA2::setListenerAngle(const Rot2& rot)
 {
     if (!isAvailable()) return;
 
-    float yaw = rot.x * MTH_DEG_TO_RAD;
-    float pitch = rot.y * MTH_DEG_TO_RAD;
+    float yaw = rot.yaw * MTH_DEG_TO_RAD;
+    float pitch = rot.pitch * MTH_DEG_TO_RAD;
 
     // Calculate Look/Front Vector
     float lx = Mth::cos(pitch) * Mth::sin(yaw);
@@ -188,6 +188,9 @@ void SoundSystemXA2::playAt(const SoundDesc& sound, const Vec3& pos, float volum
     if (!isAvailable()) return;
 
     _cleanSources();
+
+    if (m_activeVoices.size() >= SOUND_MAX_SOURCES)
+        return;
 
     // 1. Get Format and Voice
     WAVEFORMATEX wf = _getWaveFormat(sound.m_header, 1.0f);

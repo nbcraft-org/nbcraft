@@ -49,14 +49,15 @@ int RakThread::Create( void* start_address( void* ), void *arglist, int priority
 {
 #ifdef _WIN32
 	HANDLE threadHandle;
-	unsigned threadID = 0;
 
 
 #if   defined(WINDOWS_PHONE_8) || defined(WINDOWS_STORE_RT)
 	threadHandle = CreateThread(NULL,0,start_address,arglist,CREATE_SUSPENDED, 0);
-#elif defined _WIN32_WCE
-	threadHandle = CreateThread(NULL,MAX_ALLOCA_STACK_ALLOCATION*2,start_address,arglist,0,(DWORD*)&threadID);
+#elif defined _WIN32_WCE || defined __CRTDLL__
+	DWORD threadID = 0;
+	threadHandle = CreateThread(NULL,MAX_ALLOCA_STACK_ALLOCATION*2,(LPTHREAD_START_ROUTINE)start_address,arglist,0,&threadID);
 #else
+	unsigned threadID = 0;
 	threadHandle = (HANDLE) _beginthreadex( NULL, MAX_ALLOCA_STACK_ALLOCATION*2, start_address, arglist, 0, &threadID );
 #endif
 	

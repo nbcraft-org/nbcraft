@@ -29,7 +29,7 @@ void LiquidTile::animateTick(TileSource* source, const TilePos& pos, Random* ran
 			source->getData(pos);
 	}
 
-	// @BUG: Redundant check for isSolidTile?
+	// @BUG: Redundant check for isSolidBlockingTile?
 	if (m_pMaterial == Material::lava && source->getMaterial(pos.above()) == Material::air && !source->isSolidBlockingTile(pos.above()) && !random->nextInt(3))
 	{
 		source->getLevel().addParticle("lava", Vec3(pos.x + random->nextFloat(), pos.y + m_aabb.max.y, pos.z + random->nextFloat()));
@@ -208,12 +208,9 @@ bool LiquidTile::isSolidRender() const
 	return false;
 }
 
-bool LiquidTile::mayPick(TileData data, bool b) const
+bool LiquidTile::mayPick(TileData data, bool includeLiquid) const
 {
-	if (!b)
-		return false;
-
-	return data == 0;
+	return includeLiquid && data == 0;
 }
 
 void LiquidTile::neighborChanged(TileSource* source, const TilePos& pos, TileID tile)

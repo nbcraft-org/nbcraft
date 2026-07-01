@@ -81,10 +81,11 @@ void LogoRenderer::render(float f)
 
 void LogoRenderer::_initTextures()
 {
-	Textures* tx = m_pMinecraft->m_pTextures;
+	Textures& tx = *m_pMinecraft->m_pTextures;
+	Options& options = *m_pMinecraft->getOptions();
 	std::string path;
 
-	switch (m_pMinecraft->getOptions()->getLogoType())
+	switch (options.getLogoType())
 	{
 	case LOGO_POCKET:
 		path = C_TITLE_PATH_POCKET;
@@ -102,11 +103,11 @@ void LogoRenderer::_initTextures()
 		break;
 	}
 
-	if (!tx->getTextureData(path, false))
+	if (!tx.getTextureData(path, false))
 	{
 		path = C_TITLE_PATH_FALLBACK;
 		// "preload" texture data
-		tx->getTextureData(path, true);
+		tx.getTextureData(path, true);
 	}
 
 	m_p2dTitleTexPath = path;
@@ -118,14 +119,20 @@ void LogoRenderer::_build2dTitleMesh()
 
 	int yPos, width, height, left;
 
-	TextureData* pTex = m_pMinecraft->m_pTextures->getTextureData(m_p2dTitleTexPath, true);
+	Textures& textures = *m_pMinecraft->m_pTextures;
+	Options& options = *m_pMinecraft->getOptions();
+
+	TextureData* pTex = textures.getTextureData(m_p2dTitleTexPath, true);
 	if (!pTex)
 		return;
 
 	UITheme uiTheme = m_pMinecraft->getUiTheme();
+	bool isPocket = uiTheme == UI_POCKET;
 	bool isConsole = uiTheme == UI_CONSOLE;
 
-	switch (m_pMinecraft->getOptions()->getLogoType())
+	LogoType logoType = m_p2dTitleTexPath == C_TITLE_PATH_FALLBACK ? LOGO_POCKET : options.getLogoType();
+
+	switch (logoType)
 	{
 	case LOGO_POCKET:
 	{
@@ -133,7 +140,13 @@ void LogoRenderer::_build2dTitleMesh()
 		width = pTex->m_imageData.m_width;
 		height = pTex->m_imageData.m_height;
 
-		if (isConsole)
+		if (isPocket)
+		{
+			yPos = 4;
+			width = Mth::Min(m_width * 0.5f, width * 0.5f);
+			height *= (float)width / pTex->m_imageData.m_width;
+		}
+		else if (isConsole)
 		{
 			yPos = 56;
 			width *= 2;
@@ -163,7 +176,14 @@ void LogoRenderer::_build2dTitleMesh()
 		int halfWidth = 155;
 		height = 44;
 
-		if (isConsole)
+		if (isPocket)
+		{
+			yPos = 4;
+			width = Mth::Min(m_width * 0.5f, width * 0.5f);
+			halfWidth *= 0.5f;
+			height *= (float)width / pTex->m_imageData.m_width;
+		}
+		else if (isConsole)
 		{
 			yPos = 56;
 			width *= 2;
@@ -204,6 +224,14 @@ void LogoRenderer::_build2dTitleMesh()
 			yPos = 15;
 			width /= 2;
 			height /= 2;
+
+			if (isPocket)
+			{
+				yPos = 4;
+				int nWidth = Mth::Min(m_width * 0.5f, width * 0.5f);
+				height *= (float)nWidth / width;
+				width = nWidth;
+			}
 		}
 
 		left = (m_width - width) / 2;
@@ -232,6 +260,7 @@ void LogoRenderer::render2d()
 void LogoRenderer::render3d(float f)
 {
 	UITheme uiTheme = m_pMinecraft->getUiTheme();
+	bool isPocket = uiTheme == UI_POCKET;
 	bool isConsole = uiTheme == UI_CONSOLE;
 
 	int Width = int(sizeof gLogoLine1 - 1);
@@ -246,10 +275,12 @@ void LogoRenderer::render3d(float f)
 				m_pTiles[y * Width + x] = new TitleTile(m_random, x, y);
 	}
 
-	int titleHeight = int(120 / Gui::GuiScale);
+	int yPos = 120;
 
-	if (m_width * 3 / 4 < 256) // cramped mode
-		titleHeight = int(80 / Gui::GuiScale);
+	if (isPocket || m_width * 3 / 4 < 256) // cramped mode
+		yPos = 80;
+
+	int titleHeight = int(yPos / Gui::GuiScale);
 
 	if (isConsole)
 		titleHeight *= 2;
@@ -257,13 +288,18 @@ void LogoRenderer::render3d(float f)
 	MatrixStack::Ref projMtx = MatrixStack::Projection.pushIdentity();
 	projMtx->setPerspective(70.0f, float(Minecraft::width) / titleHeight, 0.05f, 100.0f);
 
+	int yOffset = 0;
+	if (isPocket)
+		yOffset = 18;
+	yOffset /= Gui::GuiScale;
+
 	mce::RenderContext& renderContext = mce::RenderContextImmediate::get();
 
 	mce::ViewportOrigin viewportOrigin;
 	{
 		viewportOrigin.leftX = 0;
-		viewportOrigin.bottomLeftY = Minecraft::height - titleHeight;
-		viewportOrigin.topLeftY = 0;
+		viewportOrigin.bottomLeftY = Minecraft::height - titleHeight + yOffset;
+		viewportOrigin.topLeftY = -yOffset;
 	}
 	renderContext.setViewport(Minecraft::width, titleHeight, 0.0f, 0.7f, viewportOrigin);
 
@@ -343,7 +379,7 @@ void LogoRenderer::render3d(float f)
 					z = 0.0f;
 				}
 
-				matrix->translate(Vec3(x, y, z));
+				matrix->translate(Vec3(float(x), float(y), z));
 				matrix->scale(scale);
 				matrix->scale(Vec3(-1.0f, 1.0f, 1.0f));
 				matrix->rotate(rotation, Vec3::UNIT_Z);
@@ -414,8 +450,10 @@ Tile* TitleTile::getRandomTile(Tile* except1, Tile* except2)
 	for (;;)
 	{
 		id = _random.nextInt(256);
-		for (int i = 0; i < _tileBlockListSize; i++) {
-			if (_tileBlockList[i] == id) {
+		for (int i = 0; i < _tileBlockListSize; i++)
+		{
+			if (_tileBlockList[i] == id)
+			{
 				// N.B. Air does not have a tile
 				id = TILE_AIR;
 				break;

@@ -12,17 +12,17 @@ jobs:
                 include:
                   - name: x86_64 SDL 2
                     flags: '-DNBC_PLATFORM=sdl2 -DNBC_GFX_API=OGL'
-                    packages: 'libsdl2-dev libopenal-dev zlib1g-dev'
+                    packages: 'libsdl2-dev libopenal-dev'
                     runner: ubuntu-24.04
                     arch: x86_64
                   - name: i686 SDL 2
                     flags: '-DNBC_PLATFORM=sdl2 -DNBC_GFX_API=OGL -DCMAKE_C_FLAGS=-m32 -DCMAKE_CXX_FLAGS=-m32'
-                    packages: 'gcc-multilib g++-multilib libsdl2-dev:i386 libopenal-dev:i386 zlib1g-dev:i386'
+                    packages: 'gcc-multilib g++-multilib libsdl2-dev:i386 libopenal-dev:i386'
                     runner: ubuntu-22.04
                     arch: i686
                   - name: aarch64 SDL 2
                     flags: '-DNBC_PLATFORM=sdl2 -DNBC_GFX_API=OGL'
-                    packages: 'libsdl2-dev libopenal-dev zlib1g-dev'
+                    packages: 'libsdl2-dev libopenal-dev'
                     runner: ubuntu-24.04-arm
                     arch: aarch64
         name: Linux (${{ matrix.name }})
@@ -63,50 +63,50 @@ jobs:
             with:
               asset_paths: '["NBCraft-Linux-${{ matrix.arch }}.tar.gz"]'
 
-    # flatpak:
-    #     strategy:
-    #         fail-fast: false
-    #         matrix:
-    #             include:
-    #               - name: x86_64 SDL 2
-    #                 gfx: OGL
-    #                 arch: x86_64
-    #                 runner: ubuntu-24.04
-    #               - name: aarch64 SDL 2
-    #                 gfx: OGL
-    #                 arch: aarch64
-    #                 runner: ubuntu-24.04-arm
-    #     name: Flatpak (${{ matrix.name }})
-    #     runs-on: ${{ matrix.runner }}
-    #     steps:
-    #       - name: Checkout Repository
-    #         uses: actions/checkout@v6
-    #         with:
-    #             submodules: true
-    #       - name: Install Dependencies
-    #         run: |
-    #             sudo apt-get update
-    #             sudo apt-get install --no-install-recommends -y flatpak
-    #             flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-    #             flatpak --user install -y \
-    #                 org.freedesktop.Platform/${{ matrix.arch }}/25.08 \
-    #                 org.freedesktop.Sdk/${{ matrix.arch }}/25.08
-    #       - name: Build
-    #         run: ./platforms/linux/build-flatpak.sh
-    #         env:
-    #           ARCH: ${{ matrix.arch }}
-    #           NBC_GFX_API: ${{ matrix.gfx }}
-    #       - uses: alexellis/upload-assets@0.4.1
-    #         env:
-    #           GITHUB_TOKEN: ${{ github.token }}
-    #         with:
-    #           asset_paths: '["platforms/linux/build-flatpak/NBCraft-Linux-${{ matrix.arch }}.flatpak"]'
+    flatpak:
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                  - name: x86_64 SDL 2
+                    gfx: OGL
+                    arch: x86_64
+                    runner: ubuntu-24.04
+                  - name: aarch64 SDL 2
+                    gfx: OGL
+                    arch: aarch64
+                    runner: ubuntu-24.04-arm
+        name: Flatpak (${{ matrix.name }})
+        runs-on: ${{ matrix.runner }}
+        steps:
+          - name: Checkout Repository
+            uses: actions/checkout@v6
+            with:
+                submodules: true
+          - name: Install Dependencies
+            run: |
+                sudo apt-get update
+                sudo apt-get install --no-install-recommends -y flatpak
+                flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+                flatpak --user install -y \
+                    org.freedesktop.Platform/${{ matrix.arch }}/25.08 \
+                    org.freedesktop.Sdk/${{ matrix.arch }}/25.08
+          - name: Build
+            run: ./platforms/linux/build-flatpak.sh
+            env:
+              ARCH: ${{ matrix.arch }}
+              NBC_GFX_API: ${{ matrix.gfx }}
+          - uses: alexellis/upload-assets@0.4.1
+            env:
+              GITHUB_TOKEN: ${{ github.token }}
+            with:
+              asset_paths: '["platforms/linux/build-flatpak/NBCraft-Linux-${{ matrix.arch }}.flatpak"]'
 
     macos:
         strategy:
             fail-fast: false
         name: macOS
-        runs-on: macos-15
+        runs-on: macos-26
         steps:
           - name: Checkout Repository
             uses: actions/checkout@v6
@@ -127,8 +127,8 @@ jobs:
                   ./platforms/macos/build.sh
           - name: Pack release
             run: |
-                mv platforms/macos/build/NBCraft .
-                zip -r NBCraft-macOS.zip NBCraft
+                mv platforms/macos/build/NBCraft.app .
+                zip -r NBCraft-macOS.zip NBCraft.app
           - uses: alexellis/upload-assets@0.4.1
             env:
               GITHUB_TOKEN: ${{ github.token }}
@@ -146,11 +146,11 @@ jobs:
           - name: Install Dependencies
             run: |
                 wget https://apt.llvm.org/llvm.sh
-                sudo bash llvm.sh 21
+                sudo bash llvm.sh 22
                 sudo apt-get update
                 sudo apt-get install --no-install-recommends -y \
                     cmake \
-                    clang-21 \
+                    clang-22 \
                     libplist-utils \
                     libplist-dev \
                     libssl-dev
@@ -160,10 +160,10 @@ jobs:
               ./platforms/ios/build.sh
               mv platforms/ios/build/NBCraft.ipa NBCraft-iOS.ipa
             env:
-              CLANG: clang-21
-              AR: llvm-ar-21
-              RANLIB: llvm-ranlib-21
-              LLVM_CONFIG: llvm-config-21
+              CLANG: clang-22
+              AR: llvm-ar-22
+              RANLIB: llvm-ranlib-22
+              LLVM_CONFIG: llvm-config-22
           - uses: alexellis/upload-assets@0.4.1
             env:
               GITHUB_TOKEN: ${{ github.token }}

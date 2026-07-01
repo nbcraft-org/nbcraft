@@ -12,23 +12,24 @@
 
 #define C_TIMER 80
 
-TripodCamera::TripodCamera(TileSource& source, Player* player, const Vec3& pos) : Mob(source)
+TripodCamera::TripodCamera(Entity& owner)
+	: Mob(owner.getTileSource())
+	, m_owner(owner)
 {
 	m_countdown = C_TIMER;
 	m_bActivated = false;
 
-	m_pPlayer = player;
 	m_renderType = RENDER_CAMERA;
 
-	m_oRot = m_rot = player->m_rot;
+	m_oRot = m_rot = owner.m_rot;
 
     m_bBlocksBuilding = true;
 
 	setSize(1.0f, 1.5f);
 	m_heightOffset = m_bbHeight * 0.5f - 0.25f;
 
-	setPos(pos);
-	m_oPos = pos;
+	setPos(owner.m_pos);
+	m_oPos = owner.m_pos;
 	m_bMakeStepSound = false;
 }
 
@@ -69,7 +70,7 @@ void TripodCamera::tick()
 	}
 	else if (m_countdown == 8)
 	{
-		m_pLevel->takePicture(this, m_pPlayer);
+		m_pLevel->takePicture(this, &m_owner);
 		m_pLevel->addParticle("explode", Vec3(m_pos.x, m_pos.y + 0.6f, m_pos.z));
 		m_pLevel->addParticle("explode", Vec3(m_pos.x, m_pos.y + 0.8f, m_pos.z));
 		m_pLevel->addParticle("explode", Vec3(m_pos.x, m_pos.y + 1.0f, m_pos.z));

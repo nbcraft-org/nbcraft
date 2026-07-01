@@ -14,26 +14,28 @@
 
 #define C_ITEM_WIDTH C_SCROLLED_LIST_ITEM_WIDTH
 
-ScrolledSelectionList::ScrolledSelectionList(Minecraft* minecraft, int a3, int a4, int a5, int a6, int a7) :
-	m_pMinecraft(minecraft),
-	m_y0(float(a5)),
-	m_y1(float(a6)),
-	m_itemHeight(a7),
-	m_width(a3),
-	field_1C(a4),
-	m_x0(float(a3)),
-	m_x1(0.0f),
-	m_scrollAmount(0.0f),
-	m_accumulatedScroll(0.0f),
-	m_scrollBarGrabOffset(1.0f),
-	m_mouseYWhenPressed(-2.0f),
-	m_lastClickedIndex(-1),
-	m_lastClickTime(0),
-	m_bRenderSelection(true),
-	m_bRenderHeader(false),
-	m_bRenderScrollbar(true),
-	m_headerHeight(0)
-{	
+ScrolledSelectionList::ScrolledSelectionList(Minecraft* minecraft, int width, int height, int a5, int a6, int a7)
+	: m_pMinecraft(minecraft)
+	, m_y0(float(a5))
+	, m_y1(float(a6))
+	, m_itemHeight(a7)
+	, m_x0(width)
+	, m_x1(0.0f)
+	, m_scrollAmount(0.0f)
+	, m_accumulatedScroll(0.0f)
+	, m_scrollBarGrabOffset(1.0f)
+	, m_scrollVelocity(0.0f)
+	, m_bDecelerating(false)
+	, m_mouseYWhenPressed(-2.0f)
+	, m_lastClickedIndex(-1)
+	, m_lastClickTime(0)
+	, m_bRenderSelection(true)
+	, m_bRenderHeader(false)
+	, m_bRenderScrollbar(true)
+	, m_headerHeight(0)
+{
+	m_width = width;
+	m_height = height;
 }
 
 void ScrolledSelectionList::setRenderSelection(bool b)
@@ -112,6 +114,7 @@ void ScrolledSelectionList::checkInput(const MenuPointer& pointer)
 	{
 		if (m_mouseYWhenPressed == -1.0f)
 		{
+			m_bDecelerating = false;
 			bool isValidClickArea = true;
 
 			if (pointer.x >= m_y0 && pointer.y <= m_y1)
@@ -173,7 +176,9 @@ void ScrolledSelectionList::checkInput(const MenuPointer& pointer)
 		}
 		else if (m_mouseYWhenPressed >= 0.0f)
 		{
-			m_scrollAmount -= (pointer.y - m_mouseYWhenPressed) * m_scrollBarGrabOffset;
+			float dragDelta = (pointer.y - m_mouseYWhenPressed) * m_scrollBarGrabOffset;
+			m_scrollAmount -= dragDelta;
+			m_scrollVelocity = -dragDelta;
 			m_mouseYWhenPressed = pointer.y;
 		}
 	}
@@ -185,15 +190,19 @@ void ScrolledSelectionList::checkInput(const MenuPointer& pointer)
 			m_lastClickedIndex = -1;
 		}
 
+		if (m_scrollBarGrabOffset == 1.0f && (m_scrollVelocity > 0.5f || m_scrollVelocity < -0.5f))
+			m_bDecelerating = true;
+
 		m_mouseYWhenPressed = -1.0f;
 	}
 }
 
-void ScrolledSelectionList::render(const MenuPointer& pointer, float f)
+void ScrolledSelectionList::render(Minecraft* pMinecraft, const MenuPointer& pointer)
 {
 	mce::RenderContext& renderContext = mce::RenderContextImmediate::get();
+	const Timer& timer = pMinecraft->m_timer;
 
-	renderBackground(f);
+	renderBackground(timer.m_partialTicks);
 
 	int nItems = getNumberOfItems();
 	Tesselator& t = Tesselator::instance;
@@ -202,15 +211,21 @@ void ScrolledSelectionList::render(const MenuPointer& pointer, float f)
 
 	if (m_accumulatedScroll)
 	{
-
 		float part = m_accumulatedScroll / 10;
-
 		m_scrollAmount += part;
-
 		m_accumulatedScroll = part < 0 ? Mth::Min(m_accumulatedScroll - part, 0.0f) : Mth::Max(m_accumulatedScroll - part, 0.0f);
 	}
 
 	capYPosition();
+
+	if (m_bDecelerating)
+	{
+		m_scrollAmount += m_scrollVelocity;
+		m_scrollVelocity *= 0.92f;
+		if (m_scrollVelocity > -0.1f && m_scrollVelocity < 0.1f)
+			m_bDecelerating = false;
+		capYPosition();
+	}
 
 	m_pMinecraft->m_pTextures->loadAndBindTexture("gui/background.png");
 
@@ -223,7 +238,7 @@ void ScrolledSelectionList::render(const MenuPointer& pointer, float f)
 		renderHeader(itemX, scrollY, t);
 
 	// Note, X/Y are the lower left's X/Y coordinates, not the upper left's.
-	int lowerY = Minecraft::height - int(m_y1 / Gui::GuiScale);
+	int lowerY = Minecraft::height - int(m_y1  / Gui::GuiScale);
 	int upperY = Minecraft::height - int(m_y0  / Gui::GuiScale);
 
 	{
@@ -259,21 +274,19 @@ void ScrolledSelectionList::render(const MenuPointer& pointer, float f)
 		}
 	}
 
-	renderHoleBackground(0.0f, m_y0, 255, 255);
-	renderHoleBackground(m_y1, float(field_1C), 255, 255);
+	renderHoleBackground(0.0f, m_y0,     255, 255);
+	renderHoleBackground(m_y1, m_height, 255, 255);
 
 	renderContext.setShadeMode(mce::SHADE_MODE_SMOOTH);
 
-	t.begin(4);
+	t.begin(8);
 	t.color(0x000000, 0);
 	t.vertexUV(m_x1, m_y0 + 4.0f, 0.0f, 0.0f, 1.0f);
 	t.vertexUV(m_x0, m_y0 + 4.0f, 0.0f, 1.0f, 1.0f);
 	t.color(0x000000, 255);
 	t.vertexUV(m_x0, m_y0, 0.0f, 1.0f, 0.0f);
 	t.vertexUV(m_x1, m_y0, 0.0f, 0.0f, 0.0f);
-	t.draw(m_materials.ui_fill_gradient);
 
-	t.begin(4);
 	t.color(0x000000, 255);
 	t.vertexUV(m_x1, m_y1, 0.0f, 0.0f, 1.0f);
 	t.vertexUV(m_x0, m_y1, 0.0f, 1.0f, 1.0f);
@@ -299,22 +312,20 @@ void ScrolledSelectionList::render(const MenuPointer& pointer, float f)
 		int barLeft = m_width / 2 + 124;
 		int barRight = barLeft + 6;
 
-		t.begin(4);
-		t.color(0x000000, 255);
-		t.vertexUV(barLeft, m_y1, 0.0f, 0.0f, 1.0f);
+		t.begin(12);
+		t.color(0x000000);
+		t.vertexUV(barLeft,  m_y1, 0.0f, 0.0f, 1.0f);
 		t.vertexUV(barRight, m_y1, 0.0f, 1.0f, 1.0f);
 		t.vertexUV(barRight, m_y0, 0.0f, 1.0f, 0.0f);
-		t.vertexUV(barLeft, m_y0, 0.0f, 0.0f, 0.0f);
-		t.draw(m_materials.ui_fill_gradient);
-		t.begin(4);
-		t.color(0x808080, 255);
+		t.vertexUV(barLeft,  m_y0, 0.0f, 0.0f, 0.0f);
+
+		t.color(0x808080);
 		t.vertexUV(barLeft, (barTop + barHeight), 0.0f, 0.0f, 1.0f);
 		t.vertexUV(barRight, (barTop + barHeight), 0.0f, 1.0f, 1.0f);
 		t.vertexUV(barRight, barTop, 0.0f, 1.0f, 0.0f);
 		t.vertexUV(barLeft, barTop, 0.0f, 0.0f, 0.0f);
-		t.draw(m_materials.ui_fill_gradient);
-		t.begin(4);
-		t.color(0xC0C0C0, 255);
+
+		t.color(0xC0C0C0);
 		t.vertexUV(barLeft, (barTop + barHeight - 1), 0.0f, 0.0f, 1.0f);
 		t.vertexUV((barRight - 1), (barTop + barHeight - 1), 0.0f, 1.0f, 1.0f);
 		t.vertexUV((barRight - 1), barTop, 0.0f, 1.0f, 0.0f);
@@ -334,11 +345,11 @@ void ScrolledSelectionList::renderHoleBackground(float a, float b, int c, int d)
 	Tesselator& t = Tesselator::instance;
 	t.begin(4);
 	t.color(0x505050, d);
-	t.vertexUV(0.0f,            b, 0.0f, 0.0f,             b / 32.0f);
-	t.vertexUV(float(m_width), b, 0.0f, m_width / 32.0f, b / 32.0f);
+	t.vertexUV(0.0f,    b, 0.0f, 0.0f,            b / 32.0f);
+	t.vertexUV(m_width, b, 0.0f, m_width / 32.0f, b / 32.0f);
 	t.color(0x505050, c);
-	t.vertexUV(float(m_width), a, 0.0f, m_width / 32.0f, a / 32.0f);
-	t.vertexUV(0.0f,            a, 0.0f, 0.0f,             a / 32.0f);
+	t.vertexUV(m_width, a, 0.0f, m_width / 32.0f, a / 32.0f);
+	t.vertexUV(0.0f,    a, 0.0f, 0.0f,            a / 32.0f);
 	t.draw(m_materials.ui_texture_and_color);
 }
 

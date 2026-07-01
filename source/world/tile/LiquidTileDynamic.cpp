@@ -215,7 +215,7 @@ void LiquidTileDynamic::tick(TileSource* source, const TilePos& pos, Random* ran
 {
 	int depth = getDepth(source, pos);
 	int speed;
-	if (m_pMaterial != Material::lava || source->getDimensionConst().isWarm())
+	if (m_pMaterial != Material::lava || source->getDimensionConst().isUltraWarm())
 		speed = 1;
 	else
 		speed = 2;
@@ -274,7 +274,7 @@ void LiquidTileDynamic::tick(TileSource* source, const TilePos& pos, Random* ran
 			}
 			else
 			{
-				source->setTileAndData(pos, FullTile(m_ID, depth));
+				source->setTileAndData(pos, FullTile(this, depth));
 				source->getTickQueue(pos)->add(source, pos, m_ID, getTickDelay());
 			}
 		}

@@ -1,4 +1,5 @@
 #include "ServerPlayer.hpp"
+#include "common/Logger.hpp"
 #include "network/packets/SetHealthPacket.hpp"
 #include "network/packets/TakeItemEntityPacket.hpp"
 #include "network/packets/SendInventoryPacket.hpp"
@@ -9,8 +10,13 @@
 #include "network/packets/ContainerSetContentPacket.hpp"
 #include "network/RakNetInstance.hpp"
 #include "world/inventory/CraftingMenu.hpp"
+#include "world/inventory/FurnaceMenu.hpp"
 #include "world/inventory/ChestMenu.hpp"
 #include "world/level/Level.hpp"
+#include "world/tile/entity/FurnaceTileEntity.hpp"
+#include "world/tile/entity/DispenserTileEntity.hpp"
+#include "world/inventory/Slot.hpp"
+#include "world/inventory/TrapMenu.hpp"
 
 ServerPlayer::ServerPlayer(Level& level, GameType playerGameType)
 	: Player(level, playerGameType)
@@ -19,6 +25,11 @@ ServerPlayer::ServerPlayer(Level& level, GameType playerGameType)
 	m_containerId = 0;
 
 	m_pInventoryMenu->addSlotListener(this);
+}
+
+ServerPlayer::~ServerPlayer()
+{
+	doCloseContainer();
 }
 
 void ServerPlayer::_nextContainerCounter()
@@ -33,6 +44,9 @@ void ServerPlayer::tick()
 {
 	Player::tick();
 
+	if (m_pContainerMenu)
+		m_pContainerMenu->broadcastChanges();
+
 	if (m_health != m_lastHealth)
 	{
 		m_pLevel->m_pRakNetInstance->send(m_guid, new SetHealthPacket(m_health));
@@ -45,7 +59,7 @@ void ServerPlayer::startCrafting(const TilePos& pos)
 	_nextContainerCounter();
 
 #if NETWORK_PROTOCOL_VERSION >= 5
-	m_pLevel->m_pRakNetInstance->send(new ContainerOpenPacket(m_containerId, Container::CRAFTING, "Crafting", 9));
+	m_pLevel->m_pRakNetInstance->send(m_guid, new ContainerOpenPacket(m_containerId, Container::CRAFTING, "Crafting", 9));
 #endif
 
 	setContainerMenu(new CraftingMenu(m_pInventory, pos, m_pLevel));
@@ -53,12 +67,15 @@ void ServerPlayer::startCrafting(const TilePos& pos)
 
 void ServerPlayer::openContainer(Container* container)
 {
+	//LOG_I("Client is opening a container");
+
 	_nextContainerCounter();
 
 #if NETWORK_PROTOCOL_VERSION >= 5
 	m_pLevel->m_pRakNetInstance->send(
+		m_guid,
 		new ContainerOpenPacket(
-			m_pContainerMenu->m_containerId, Container::CONTAINER,
+			m_containerId, Container::CONTAINER,
 			container->getName(), container->getContainerSize()
 		)
 	);
@@ -69,35 +86,87 @@ void ServerPlayer::openContainer(Container* container)
 
 void ServerPlayer::closeContainer()
 {
+	//LOG_I("Client is closing a container");
+
 #if NETWORK_PROTOCOL_VERSION >= 5
-	m_pLevel->m_pRakNetInstance->send(new ContainerClosePacket(m_pContainerMenu->m_containerId));
+	m_pLevel->m_pRakNetInstance->send(m_guid, new ContainerClosePacket(m_pContainerMenu->m_containerId));
 #endif
 
 	doCloseContainer();
 }
 
+void ServerPlayer::openFurnace(FurnaceTileEntity* furnace)
+{
+	//LOG_I("Client is opening a furnace");
+
+	_nextContainerCounter();
+
+#if NETWORK_PROTOCOL_VERSION >= 5
+	m_pLevel->m_pRakNetInstance->send(
+		m_guid,
+		new ContainerOpenPacket(
+			m_containerId, Container::FURNACE,
+			furnace->getName(), furnace->getContainerSize()
+		)
+	);
+#endif
+
+	setContainerMenu(new FurnaceMenu(m_pInventory, furnace));
+}
+
+void ServerPlayer::openTrap(DispenserTileEntity* trap)
+{
+	//LOG_I("Client is opening a dispenser");
+
+	_nextContainerCounter();
+
+#if NETWORK_PROTOCOL_VERSION >= 5
+	m_pLevel->m_pRakNetInstance->send(
+		m_guid,
+		new ContainerOpenPacket(
+			m_containerId, Container::DISPENSER,
+			trap->getName(), trap->getContainerSize()
+		)
+	);
+#endif
+
+	setContainerMenu(new TrapMenu(m_pInventory, trap));
+}
+
 void ServerPlayer::take(Entity* pEnt, int count)
 {
-	m_pLevel->m_pRakNetInstance->send(new TakeItemEntityPacket(pEnt->m_EntityID, m_EntityID));
+	m_pLevel->m_pRakNetInstance->send(m_guid,
+		new TakeItemEntityPacket(pEnt->m_EntityID, m_EntityID));
 
 	Player::take(pEnt, count);
+}
+
+void ServerPlayer::checkFallDamage(float ya, bool onGround)
+{
 }
 
 void ServerPlayer::refreshContainer(ContainerMenu* menu, const std::vector<ItemStack>& items)
 {
 #if NETWORK_PROTOCOL_VERSION >= 5
-	m_pLevel->m_pRakNetInstance->send(new ContainerSetContentPacket(menu->m_containerId, items));
-	// Not called on MCPE
-	//m_pLevel->m_pRakNetInstance->send(new ContainerSetSlotPacket(-1, -1, m_pInventory->getCarried()));
+	m_pLevel->m_pRakNetInstance->send(m_guid, new ContainerSetContentPacket(menu->m_containerId, items));
+	// @PARITY-JAVA: Not called on MCPE
+	//m_pLevel->m_pRakNetInstance->send(m_guid, new ContainerSetSlotPacket(-1, -1, m_pInventory->getCarried()));
 #endif
 }
 
-void ServerPlayer::slotChanged(ContainerMenu* menu, int index, ItemStack& item, bool isResultSlot)
+void ServerPlayer::slotChanged(ContainerMenu* menu, Container::SlotID slotId, Slot* slot, ItemStack& item, bool isResultSlot)
 {
 #if NETWORK_PROTOCOL_VERSION >= 5
 	if (!isResultSlot)
 	{
-		m_pLevel->m_pRakNetInstance->send(new ContainerSetSlotPacket(menu->m_containerId, index, item));
+#ifndef FEATURE_SERVER_INVENTORIES
+		// @TODO: See my gripes in ContainerMenu::slotChanged
+		// But ultimately this is a bandaid for the fact that the client has authority over the inventory in PE
+		if (slot->m_group == Slot::INVENTORY || slot->m_group == Slot::HOTBAR)
+			return;
+#endif
+
+		m_pLevel->m_pRakNetInstance->send(m_guid, new ContainerSetSlotPacket(menu->m_containerId, slotId, item));
 	}
 #endif
 }
@@ -105,7 +174,7 @@ void ServerPlayer::slotChanged(ContainerMenu* menu, int index, ItemStack& item, 
 void ServerPlayer::setContainerData(ContainerMenu* menu, int id, int value)
 {
 #if NETWORK_PROTOCOL_VERSION >= 5
-	m_pLevel->m_pRakNetInstance->send(new ContainerSetDataPacket(menu->m_containerId, id, value));
+	m_pLevel->m_pRakNetInstance->send(m_guid, new ContainerSetDataPacket(menu->m_containerId, id, value));
 #endif
 }
 
@@ -113,7 +182,10 @@ void ServerPlayer::doCloseContainer()
 {
 	if (m_pContainerMenu)
 		m_pContainerMenu->removed(this);
-	setContainerMenu(nullptr); // m_pInventoryMenu on Java, nullptr on Pocket
+	else
+		LOG_W("Container is missing @ doCloseContainer!");
+
+	setContainerMenu(m_pInventoryMenu); // m_pInventoryMenu on Java, nullptr on Pocket
 }
 
 void ServerPlayer::setContainerMenu(ContainerMenu* menu)
@@ -121,12 +193,22 @@ void ServerPlayer::setContainerMenu(ContainerMenu* menu)
 	if (m_pContainerMenu == menu)
 		return;
 
-	SAFE_DELETE(m_pContainerMenu);
+	if (m_pContainerMenu != m_pInventoryMenu)
+		SAFE_DELETE(m_pContainerMenu);
+
 	m_pContainerMenu = menu;
 
-	if (menu)
+	// we shouldn't be changing the containerId of the InventoryMenu
+	if (menu && menu != m_pInventoryMenu)
 	{
 		m_pContainerMenu->m_containerId = m_containerId;
 		m_pContainerMenu->addSlotListener(this);
+		refreshContainer(m_pContainerMenu, m_pContainerMenu->cloneItems());
+		m_pContainerMenu->broadcastChanges();
 	}
+}
+
+void ServerPlayer::doCheckFallDamage(float ya, bool onGround)
+{
+	Player::checkFallDamage(ya, onGround);
 }

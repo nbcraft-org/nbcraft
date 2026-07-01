@@ -1,10 +1,4 @@
-#ifdef _XBOX
-#include <xtl.h>
-#else
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
-
+#include "XInput.hpp"
 #include "GameControllerHandler_xinput.hpp"
 #include "client/player/input/Keyboard.hpp"
 #include "client/player/input/GameControllerManager.hpp"
@@ -16,6 +10,12 @@
 GameControllerHandler_xinput::GameControllerHandler_xinput()
 	: GameControllerHandler()
 {
+    XInput::init();
+
+    if (!XInput::GetState)
+        for (DWORD i = 0; i < XUSER_MAX_COUNT; ++i)
+            m_connectionStates[i] = GameController::STATE_DISCONNECTED;
+
     _initButtonMap();
 
     // need to have the connection states ready for AppPlatform->hasGamepad()
@@ -42,11 +42,6 @@ void GameControllerHandler_xinput::_initButtonMap()
     m[XINPUT_GAMEPAD_START]          = GameController::BUTTON_START;
 }
 
-Keyboard::KeyState _getKeyState(bool value)
-{
-    return value ? Keyboard::DOWN : Keyboard::UP;
-}
-
 void GameControllerHandler_xinput::_processButton(GameController::ID controllerId, const XINPUT_STATE& state, GameController::NativeButtonID nativeBtn, GameController::EngineButtonID engineBtn, bool& joinGameAlreadyFired)
 {
     bool bButtonPressed = (state.Gamepad.wButtons & nativeBtn) != 0;
@@ -63,8 +58,7 @@ void GameControllerHandler_xinput::_processButton(GameController::ID controllerI
         joinGameAlreadyFired = true;
     }
 
-    // @TODO: should call GameControllerManager::feedButton() instead
-    Keyboard::feed(_getKeyState(bButtonPressed), engineBtn);
+    GameControllerManager::feedButton(btnState, engineBtn);
 
     lastBtnState = btnState;
 }
@@ -84,10 +78,13 @@ void GameControllerHandler_xinput::_processMotion(GameController::ID controllerI
 
 void GameControllerHandler_xinput::refresh()
 {
+    if (!XInput::GetState)
+        return;
+
     // Ingest our input "queue"
-    for (DWORD i = 0; i < XUSER_MAX_COUNT; i++)
+    for (DWORD i = 0; i < XUSER_MAX_COUNT; ++i)
     {
-        DWORD result = XInputGetState(i, &m_inputStates.m_inputState[i]);
+        DWORD result = XInput::GetState(i, &m_inputStates.m_inputState[i]);
         m_connectionStates[i] = result == ERROR_SUCCESS ? GameController::STATE_CONNECTED : GameController::STATE_DISCONNECTED;
     }
 
@@ -95,9 +92,9 @@ void GameControllerHandler_xinput::refresh()
     {
         XINPUT_STATE& inputState = m_inputStates.m_inputState[id];
         bool joinGameAlreadyFired = false;
-        for (ButtonIDMap::const_iterator it = m_buttonIdMap.begin(); it != m_buttonIdMap.end(); it++)
+        for (ButtonIDMap::iterator it = m_buttonIdMap.begin(); it != m_buttonIdMap.end(); it++)
         {
-            _processButton(id, inputState, it->first, it->second, joinGameAlreadyFired);
+            _processButton(id, inputState, it.key(), it.value(), joinGameAlreadyFired);
         }
 
         GameControllerManager::feedTrigger(1, (float)inputState.Gamepad.bLeftTrigger / 255.0f);

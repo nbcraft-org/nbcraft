@@ -8,6 +8,7 @@
 
 #include "client/player/input/Mouse.hpp"
 #include "client/player/input/Keyboard.hpp"
+#include "client/player/input/GameController.hpp"
 #include "common/Logger.hpp"
 
 class AppPlatform_sdl : public AppPlatform
@@ -38,6 +39,9 @@ public:
 	int getUserInputStatus() override;
 	void saveScreenshot(const std::string& fileName, int width, int height) override;
 	SoundSystem* getSoundSystem() const override { return m_pSoundSystem; }
+	
+	void setVSyncEnabled(bool enabled) override;
+	bool isVSyncSwitchable() const override;
 
 	// Also add these to allow proper turning within the game.
 	void setMouseGrabbed(bool b) override;

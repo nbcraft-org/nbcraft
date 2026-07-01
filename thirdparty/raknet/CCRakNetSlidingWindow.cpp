@@ -91,7 +91,7 @@ bool CCRakNetSlidingWindow::ShouldSendACKs(CCTimeType curTime, CCTimeType estima
 	(void) estimatedTimeToNextTick;
 
 	// iphone crashes on comparison between double and int64 http://www.jenkinssoftware.com/forum/index.php?topic=2717.0
-	if (rto==(CCTimeType) UNSET_TIME_US)
+	if (rto==(CCTimeType)(int)UNSET_TIME_US)
 	{
 		// Unknown how long until the remote system will retransmit, so better send right away
 		return true;
@@ -190,7 +190,7 @@ void CCRakNetSlidingWindow::OnNAK(CCTimeType curTime, DatagramSequenceNumberType
 
 	if (_isContinuousSend && backoffThisBlock==false)
 	{
-		// WORKAROUND: MSVC for Xbox 360
+		// MC-WORKAROUND: MSVC for Xbox 360
 		// The compiler crashes on 'ssThresh=cwnd/2' with link-time code generation enabled.
 		// Moving to a local temp variable and using multiplication solves this issue.
 		double tempCwnd = cwnd;
@@ -364,7 +364,7 @@ uint64_t CCRakNetSlidingWindow::GetBytesPerSecondLimitByCongestionControl(void) 
 CCTimeType CCRakNetSlidingWindow::GetSenderRTOForACK(void) const
 {
 	if (lastRtt==UNSET_TIME_US)
-		return (CCTimeType) UNSET_TIME_US;
+		return (CCTimeType)(int)UNSET_TIME_US;
 	return (CCTimeType)(lastRtt + SYN);
 }
 // ----------------------------------------------------------------------------------------------------------------------------

@@ -15,7 +15,7 @@ ClayTile::ClayTile(TileID id, int texture, Material* c) : Tile(id, texture, c)
 
 int ClayTile::getResource(TileData data, Random* random) const
 {
-	return 0; //@NOTE: Would be clay's item ID
+	return Item::clay->m_itemID;
 }
 
 int ClayTile::getResourceCount(Random* random) const

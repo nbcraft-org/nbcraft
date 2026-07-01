@@ -25,6 +25,7 @@ public:
 	void neighborChanged(TileSource*, const TilePos& pos, TileID tile) override;
 	bool shouldRenderFace(TileSource*, const TilePos& pos, Facing::Name face) const override;
 	void tick(TileSource*, const TilePos& pos, Random*) override;
+	void playerDestroy(Player*, const TilePos& pos, TileData data) override;
 
 	bool checkCanSurvive(TileSource*, const TilePos& pos);
 

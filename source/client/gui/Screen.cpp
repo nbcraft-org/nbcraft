@@ -14,9 +14,6 @@
 #include "renderer/RenderContextImmediate.hpp"
 #include "renderer/hal/interface/RasterizerState.hpp"
 
-#define C_SOUND_BTN_CLICK   "random.click"
-#define C_SOUND_BTN_RELEASE "random.click"
-
 #define C_POINTER_FAST_MOVE_SPEED 0.09f
 #define C_POINTER_MINIMUM_SPEED 0.04f
 #define C_POINTER_DIAGONAL_SPEED 0.4f
@@ -47,7 +44,8 @@ Screen::Screen()
 	m_bRenderPointer = false;
 	m_lastTimeMoved = 0;
 	m_cursorTick = 0;
-	m_uiTheme = UI_GENERIC;
+	m_screenType = SCREEN_GENERIC;
+	m_uiTheme = UI_POCKET;
 }
 
 Screen::~Screen()
@@ -56,7 +54,7 @@ Screen::~Screen()
 	m_elements.clear();
 }
 
-void Screen::controllerEvent(GameController::StickID stickID, double deltaTime)
+void Screen::controllerStickEvent(GameController::StickID stickID, double deltaTime)
 {
 	// @TODO: this probably shouldn't be here
 	GameController::StickEvent event;
@@ -106,7 +104,7 @@ void Screen::_playSelectSound()
 
 void Screen::initMenuPointer()
 {
-	handlePointerLocation(m_width / 2, m_height / 2);
+	centerMenuPointer();
 }
 
 void Screen::_renderPointer()
@@ -139,10 +137,10 @@ void Screen::init(Minecraft* pMinecraft, int width, int height)
 	m_pFont = pMinecraft->m_pFont;
 
 	// Apply UI theme to current Screen based on user preference
-	UITheme userTheme = m_pMinecraft->getOptions()->getUiTheme();
+	UITheme userTheme = pMinecraft->getOptions()->getUiTheme();
 	// We don't bother applying the console theme automatically for generic screens because this completely fucks scaling
-	if (m_uiTheme == UI_UNIVERSAL || (m_uiTheme == UI_GENERIC && userTheme != UI_CONSOLE))
-		m_uiTheme = m_pMinecraft->getOptions()->getUiTheme();
+	if (m_screenType == SCREEN_UNIVERSAL || (m_screenType == SCREEN_GENERIC && userTheme != UI_CONSOLE))
+		m_uiTheme = userTheme;
 
 	setSize(width, height);
 	initMenuPointer();
@@ -150,51 +148,53 @@ void Screen::init(Minecraft* pMinecraft, int width, int height)
 	m_bLastPointerPressedState = false;
 }
 
-void Screen::keyPressed(int key)
+void Screen::handleUserAction(const ActionInfo& action)
 {
 	Options& options = *m_pMinecraft->getOptions();
 	GuiElement* element = _getSelectedElement();
 
-	if (options.isKey(KM_MENU_CANCEL, key))
+	if (options.isAction(AID_MENU_CANCEL, action))
 	{
 		m_pMinecraft->handleBack(false);
 	}
 
-	if (m_pMinecraft->getOptions()->isKey(KM_MENU_TAB_LEFT, key))
+	if (options.isAction(AID_MENU_TAB_LEFT, action))
 	{
 		prevTab();
 	}
-	if (m_pMinecraft->getOptions()->isKey(KM_MENU_TAB_RIGHT, key))
+	if (options.isAction(AID_MENU_TAB_RIGHT, action))
 	{
 		nextTab();
 	}
 
 	if (doElementTabbing())
 	{
-		if (options.isKey(KM_MENU_DOWN, key))
+		if (options.isAction(AID_MENU_DOWN, action))
 		{
 			_areaNavigation(AreaNavigation::DOWN);
 		}
-		else if (options.isKey(KM_MENU_UP, key))
+		else if (options.isAction(AID_MENU_UP, action))
 		{
 			_areaNavigation(AreaNavigation::UP);
 		}
-		else if (options.isKey(KM_MENU_RIGHT, key))
+		else if (options.isAction(AID_MENU_RIGHT, action))
 		{
 			_areaNavigation(AreaNavigation::RIGHT);
 		}
-		else if (options.isKey(KM_MENU_LEFT, key))
+		else if (options.isAction(AID_MENU_LEFT, action))
 		{
 			_areaNavigation(AreaNavigation::LEFT);
 		}
-		else if (options.isKey(KM_MENU_OK, key))
+		else if (options.isAction(AID_MENU_OK, action))
 		{
 			if (element && element->isEnabled())
 			{
-				m_pMinecraft->m_pSoundEngine->playUI(C_SOUND_UI_PRESS);
 				element->pressed(m_pMinecraft);
+
 				if (element->getType() == GuiElement::TYPE_BUTTON)
 					_buttonClicked((Button*)element);
+
+				_guiElementClicked(*element);
 			}
 		}
 
@@ -204,7 +204,7 @@ void Screen::keyPressed(int key)
 	
 	if (element && element->isEnabled())
 	{
-		element->handleButtonPress(m_pMinecraft, key);
+		element->handleUserAction(m_pMinecraft, action);
 	}
 }
 
@@ -253,6 +253,11 @@ void Screen::handleKeyboardClosed()
 	{
 		element->setFocused(false);
 	}
+}
+
+bool Screen::validate(Minecraft*)
+{
+	return true;
 }
 
 static const char* g_panoramaList[] =
@@ -359,7 +364,7 @@ void Screen::renderMenuBackground(float f)
 void Screen::renderConsolePanorama(bool isNight)
 {
 	m_pMinecraft->m_pTextures->setSmoothing(true);
-	blitTexture(*m_pMinecraft->m_pTextures, isNight ? "gui/console/Panorama_Background_N.png" : "gui/console/Panorama_Background_S.png", 0, 0, getTimeS() * 1000 * m_height / 360 / 66.32f, 1, m_width, m_height + 2, m_height * 820 / 144, m_height + 2);
+	blitTexture(*m_pMinecraft->m_pTextures, isNight ? "gui/console/Panorama_Background_N.png" : "gui/console/Panorama_Background_S.png", 0, 0, getTimeMs() * m_height / 360 / 66.32f, 1, m_width, m_height + 2, m_height * 820 / 144, m_height + 2);
 	m_pMinecraft->m_pTextures->setSmoothing(false);
 }
 
@@ -388,7 +393,7 @@ void Screen::renderConsoleLoading(int x, int y, int blockSize, int blockDistance
 	currentShaderColor = Color::WHITE;
 }
 
-void Screen::pointerPressed(const MenuPointer& pointer, MouseButtonType btn) // d = clicked?
+void Screen::pointerPressed(const MenuPointer& pointer, MouseButtonType btn)
 {
 	if (btn == MOUSE_BUTTON_NONE) return;
 	
@@ -401,15 +406,14 @@ void Screen::pointerPressed(const MenuPointer& pointer, MouseButtonType btn) // 
 		{
 			m_pClickedElement = element;
 
-			if (!m_pMinecraft->isTouchscreen())
+			if (!m_pMinecraft->useTouchscreen())
 			{
-				if (_useController())
-					m_pMinecraft->m_pSoundEngine->playUI(C_SOUND_UI_PRESS);
-				else
-					m_pMinecraft->m_pSoundEngine->playUI(C_SOUND_BTN_CLICK);
 				element->pressed(m_pMinecraft, pointer);
-				if (m_pClickedElement->getType() == GuiElement::TYPE_BUTTON)
-					_buttonClicked((Button*)m_pClickedElement);
+
+				if (element->getType() == GuiElement::TYPE_BUTTON)
+					_buttonClicked((Button*)element);
+
+				_guiElementClicked(*element);
 			}
 		}
 	}
@@ -442,12 +446,14 @@ void Screen::pointerReleased(const MenuPointer& pointer, MouseButtonType btn)
 
 	if (m_pClickedElement)
 	{
-		if (m_pMinecraft->isTouchscreen() && m_pClickedElement->isHovered(m_pMinecraft, pointer))
+		if (m_pMinecraft->useTouchscreen() && m_pClickedElement->isHovered(m_pMinecraft, pointer))
 		{
-			m_pMinecraft->m_pSoundEngine->playUI(C_SOUND_BTN_RELEASE);
 			m_pClickedElement->pressed(m_pMinecraft, pointer);
+
 			if (m_pClickedElement->getType() == GuiElement::TYPE_BUTTON)
 				_buttonClicked((Button*)m_pClickedElement);
+
+			_guiElementClicked(*m_pClickedElement);
 		}
 		m_pClickedElement->released(pointer);
 		m_pClickedElement = nullptr;
@@ -484,6 +490,11 @@ void Screen::setSize(int width, int height)
 	init();
 }
 
+void Screen::centerMenuPointer()
+{
+	handlePointerLocation(m_width / 2, m_height / 2);
+}
+
 void Screen::onRender(float f)
 {
 	m_yOffset = getYOffset();
@@ -494,7 +505,7 @@ void Screen::onRender(float f)
 	{
 		// push the entire screen up
 		matrix = MatrixStack::World.push();
-		matrix->translate(Vec3(0.0f, -m_yOffset, 0.0f));
+		matrix->translate(Vec3(0, -m_yOffset, 0));
 	}
 
 	render(f);
@@ -505,8 +516,10 @@ void Screen::onRender(float f)
 bool Screen::onBack(bool b)
 {
 	bool result = handleBackEvent(b);
-	// Play the sound regardless, since NinecraftApp will set the current screen to null anyways
-	m_pMinecraft->m_pSoundEngine->playUI(C_SOUND_UI_BACK);
+
+	if (m_uiTheme == UI_CONSOLE)
+		m_pMinecraft->m_pSoundEngine->playUI(C_SOUND_UI_BACK);
+
 	return result;
 }
 
@@ -532,11 +545,14 @@ void Screen::selectElement(GuiElement* element)
 
 bool Screen::_areaNavigation(AreaNavigation::Direction dir)
 {
-	if (!m_pSelectedElement) return false;
+	if (m_pSelectedElement && m_pSelectedElement->areaNavigation(m_pMinecraft, dir)) return true;
 
-	if (m_pSelectedElement->areaNavigation(m_pMinecraft, dir)) return true;
-
-	if (selectElementById(Navigation(this).navigateCyclic(dir, m_pSelectedElement->m_xPos + m_pSelectedElement->m_width / 2, m_pSelectedElement->m_yPos + m_pSelectedElement->m_height / 2)))
+	if ((m_pSelectedElement && selectElementById(Navigation(this).navigateCyclic(dir,
+		m_pSelectedElement->m_xPos + m_pSelectedElement->m_width / 2,
+		m_pSelectedElement->m_yPos + m_pSelectedElement->m_height / 2))) ||
+		(!m_pSelectedElement && selectElementById(Navigation(this).navigate(dir,
+		m_width / 2,
+		m_height / 2, true))))
 	{
 		_playSelectSound();
 		return true;
@@ -725,7 +741,14 @@ void Screen::updateEvents()
 	if (_useController())
 	{
 		checkForPointerEvent(MOUSE_BUTTON_LEFT);
-		controllerEvent();
+
+		while(GameControllerManager::next())
+			controllerEvent();
+
+		_processControllerDirection(1);
+		_processControllerDirection(2);
+
+		controllerStickEvent(2);
 	}
 }
 
@@ -749,7 +772,7 @@ void Screen::keyboardEvent()
 	// Ugly hack
 	if (!doElementTabbing())
 	{
-		if (Keyboard::getEventKeyState() && m_pMinecraft->getOptions()->isKey(KM_MENU_OK, Keyboard::getEventKey()))
+		if (Keyboard::getEventKeyState() && m_pMinecraft->getOptions()->isKey(AID_MENU_OK, Keyboard::getEventKey()))
 		{
 			m_menuPointer.isPressed = true;
 		}
@@ -760,15 +783,26 @@ void Screen::keyboardEvent()
 	}
 
 	if (Keyboard::getEventKeyState())
-		keyPressed(Keyboard::getEventKey());
+		handleUserAction(ActionInfo(Keyboard::getEventKey(), GameController::BUTTON_NONE));
 }
 
 void Screen::controllerEvent()
 {
-	_processControllerDirection(1);
-	_processControllerDirection(2);
+	// Ugly hack x2
+	if (!doElementTabbing())
+	{
+		if (GameControllerManager::getEventButtonState() && m_pMinecraft->getOptions()->getAction(AID_MENU_OK).isControllerButton(GameControllerManager::getEventButton()))
+		{
+			m_menuPointer.isPressed = true;
+		}
+		else
+		{
+			m_menuPointer.isPressed = false;
+		}
+	}
 
-	controllerEvent(2);
+	if (GameControllerManager::getEventButtonState())
+		handleUserAction(ActionInfo(-1, GameControllerManager::getEventButton()));
 }
 
 void Screen::checkForPointerEvent(MouseButtonType button)
@@ -909,7 +943,7 @@ Screen::Navigation::Navigation(Screen* screen) : m_pScreen(screen)
 
 bool Screen::Navigation::next(int& x, int& y, bool cycle)
 {
-	while (++m_index < int(m_pScreen->m_elements.size()))
+	while (++m_index < ID(m_pScreen->m_elements.size()))
 	{
 		GuiElement* element = m_pScreen->m_elements[m_index];
 

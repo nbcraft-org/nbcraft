@@ -15,7 +15,7 @@ enum eParticleTexture
 {
 	PT_PARTICLES,
 	PT_TERRAIN,
-	PT_PARTICLES2,
+	PT_ITEM,
 	PT_PARTICLES3
 };
 
@@ -23,7 +23,8 @@ enum eParticleTextureIndex
 {
 	PTI_BUBBLE = 32,
 	PTI_FLAME = 48,
-	PTI_LAVA
+	PTI_LAVA,
+	PTI_NOTE = 64
 };
 
 class Particle : public Entity
@@ -134,4 +135,40 @@ public:
 
 public:
 	float m_oSize;
+};
+
+class NoteParticle : public Particle
+{
+public:
+	NoteParticle(Level*, const Vec3& pos, const Vec3& dir, float scale = 2.0f);
+	void tick() override;
+	void render(Tesselator&, float, float, float, float, float, float) override;
+
+public:
+	float m_oSize;
+};
+
+class ItemParticle : public Particle
+{
+public:
+	ItemParticle(Level*, const Vec3& pos, const Item* item);
+	int getParticleTexture() override;
+	void render(Tesselator&, float, float, float, float, float, float) override;
+};
+
+class TakeAnimationParticle : public Particle
+{
+public:
+	TakeAnimationParticle(Level*, Entity* throwed, Entity* thrower, float vel);
+	~TakeAnimationParticle();
+
+public:
+	void tick() override;
+	int getParticleTexture() override;
+	void render(Tesselator&, float, float, float, float, float, float) override;
+
+public:
+	Entity* m_pThrowed;
+	Entity* m_pThrower;
+	float m_speed;
 };

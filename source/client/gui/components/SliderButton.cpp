@@ -1,10 +1,11 @@
 #include "SliderButton.hpp"
 #include "renderer/ShaderConstants.hpp"
 
-SliderButton::SliderButton(int x, int y, int width, int height, OptionEntry* option, const std::string& message, float initialValue) : Button(x, y, width, height, message),
-	m_pOption(option),
-	m_value(initialValue),
-	m_bDragging(false)
+SliderButton::SliderButton(int x, int y, int width, int height, OptionEntry* option, const std::string& message, float initialValue)
+	: Button(x, y, width, height, message)
+	, m_pOption(option)
+	, m_value(initialValue)
+	, m_bDragging(false)
 {
 }
 
@@ -33,6 +34,8 @@ bool SliderButton::areaNavigation(Minecraft* pMinecraft, AreaNavigation::Directi
 
 void SliderButton::pressed(Minecraft* mc, const MenuPointer& pointer)
 {
+	Button::pressed(mc, pointer);
+
 	m_value = (pointer.x - (m_xPos + 4)) / float(m_width - 8);
 
 	getOption().fromFloat(m_value = Mth::clamp(m_value, 0.0f, 1.0f));
@@ -69,7 +72,7 @@ void SliderButton::renderBg(Minecraft* mc, const MenuPointer& pointer)
 	if (m_uiTheme == UI_CONSOLE)
 	{
 		blitSprite(texs, "gui/console/Graphics/Slider_Track.png", m_xPos, m_yPos, m_width - 2, m_height, nullptr, 0.0f, 0.0f, m_width - 2);
-		blitSprite(texs, "gui/console/Graphics/Slider_Track.png", m_xPos + m_width - 2, m_yPos, 2, m_height, nullptr, 0.0f, 0.0f, 2.0f);
+		blitSprite(texs, "gui/console/Graphics/Slider_Track.png", m_xPos + m_width - 2, m_yPos, 2, m_height, nullptr, 0.0f, 0.0f, 2);
 		if (isSelected())
 			blitNineSlice(texs, "gui/slider_highlight.png", m_xPos - 3, m_yPos - 3, m_width + 6, m_height + 6, 5);
 		blitSprite(texs, "gui/console/Graphics/Slider_Button.png", m_xPos + int(m_value * float(m_width - 16)), m_yPos, 16, m_height);

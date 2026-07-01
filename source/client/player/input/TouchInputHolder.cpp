@@ -39,6 +39,11 @@ bool TouchInputHolder::allowPicking()
 	return false;
 }
 
+bool TouchInputHolder::allowsInputMethod(InputMethod::Type type) const
+{
+	return type == InputMethod::TOUCHSCREEN;
+}
+
 IMoveInput* TouchInputHolder::getMoveInput()
 {
 	return &m_touchScreenInput;
@@ -58,6 +63,10 @@ void TouchInputHolder::setScreenSize(int width, int height)
 {
 	m_touchScreenInput.setScreenSize(width, height);
 	m_unifiedTurnBuild.field_40 = m_touchScreenInput.getRectangleArea();
+	m_unifiedTurnBuild.m_sneakExclude = m_touchScreenInput.getSneakArea();
 	m_unifiedTurnBuild.field_58 = m_pMinecraft->m_pGui->getRectangleArea(false);
 	m_unifiedTurnBuild.setScreenSize(width, height);
+#ifdef ENH_NEW_TOUCH_CONTROLS
+	m_touchScreenInput.setSneakExcludeRef(&m_unifiedTurnBuild.m_sneakExclude);
+#endif
 }

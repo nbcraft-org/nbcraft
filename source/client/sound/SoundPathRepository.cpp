@@ -42,6 +42,6 @@ bool SoundPathRepository::any(std::string& path)
     if (_all.empty())
         return false;
 
-    path = _all.at(Mth::random(_all.size()-1));
+    path = _all[Mth::random(_all.size()-1)];
     return true;
 }

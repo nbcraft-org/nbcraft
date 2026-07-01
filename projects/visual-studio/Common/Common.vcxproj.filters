@@ -71,6 +71,9 @@
     <ClCompile Include="$(MC_ROOT)\source\common\threading\AsyncTask.cpp">
       <Filter>Source Files\Threading</Filter>
     </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\common\utility\ByteBuffer.cpp">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\source\common\threading\BackgroundQueue.cpp">
       <Filter>Source Files\Threading</Filter>
     </ClCompile>
@@ -147,6 +150,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\common\threading\BackgroundQueuePool.hpp">
       <Filter>Header Files\Threading</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\common\utility\ByteBuffer.hpp">
+      <Filter>Header Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\common\utility\HashMap.hpp">
+      <Filter>Header Files\Utility</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\common\threading\LocklessPipe.hpp">
       <Filter>Header Files\Threading</Filter>

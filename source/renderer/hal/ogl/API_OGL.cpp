@@ -169,9 +169,9 @@ bool gl::supportsMipmaps()
 
 bool gl::supportsImmediateMode()
 {
-#ifndef FEATURE_GFX_SHADERS
+    // returning false here always, because I'm honestly not even sure why we'd wanna do this.
+    // enabling this seems like the equivalent of not using VBOs in the fixed-function pipeline.
     return false;
-#endif
 
     /**
      * https://stackoverflow.com/a/57723081
@@ -180,13 +180,13 @@ bool gl::supportsImmediateMode()
      * But if you use a core profile context, then a named buffer object has to be bound in any case.
      **/
 
-    static int supportsImmediateMode = -1;
+    /*static int supportsImmediateMode = -1;
     if (supportsImmediateMode < 0)
     {
         const gl::Version& glVersion = gl::Version::singleton();
         supportsImmediateMode = glVersion.core == false;
     }
-    return supportsImmediateMode == 1;
+    return supportsImmediateMode == 1;*/
 }
 
 bool gl::supports32BitIndices()
@@ -208,4 +208,22 @@ bool gl::supports16BitUnsignedUVs()
 #else
     return false;
 #endif
+}
+
+bool gl::supportsServerBuffers()
+{
+    static int isSupported = -1;
+    if (isSupported < 0)
+    {
+        const gl::Version& glVersion = gl::Version::singleton();
+        const std::string& glExtensions = gl::getOpenGLExtensions();
+        // OpenGL ES || OpenGL 1.5+
+        if ((glVersion.gles || glExtensions.find("GL_ARB_vertex_buffer_object") || (glVersion.major > 1 || glVersion.minor >= 5))
+#if MC_DYNAMIC_GL
+             && xglVBOsBound()
+#endif
+            )
+            isSupported = 1;
+    }
+    return isSupported == 1;
 }

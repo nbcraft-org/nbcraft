@@ -19,7 +19,7 @@ RedStoneOreTile::RedStoneOreTile(TileID id, int texture, bool bLit) : Tile(id, t
 
 int RedStoneOreTile::getResource(TileData data, Random* random) const
 {
-	return 0;
+	return Item::redStone->m_itemID;
 }
 
 int RedStoneOreTile::getResourceCount(Random* random) const
@@ -100,9 +100,9 @@ void RedStoneOreTile::interact(TileSource* source, const TilePos& pos)
 		source->setTile(pos, Tile::redStoneOre_lit->m_ID);
 }
 
-void RedStoneOreTile::attack(TileSource* source, const TilePos& pos, Player* player)
+void RedStoneOreTile::attack(const TilePos& pos, Player* player)
 {
-	interact(source, pos);
+	interact(&player->getTileSource(), pos);
 }
 
 bool RedStoneOreTile::use(const TilePos& pos, Player* player)

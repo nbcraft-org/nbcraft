@@ -108,14 +108,14 @@ void FarmTile::tick(TileSource* source, const TilePos& pos, Random* random)
 
 	if (isNearWater(source, pos)/* && !level->isRainingAt(pos.above())*/)
 	{
-		source->setTileAndData(pos, FullTile(m_ID, 7));
+		source->setTileAndData(pos, FullTile(this, 7));
 		return;
 	}
 
 	TileData data = source->getData(pos);
 
 	if (data > 0)
-		source->setTileAndData(pos, FullTile(m_ID, data - 1));
+		source->setTileAndData(pos, FullTile(this, data - 1));
 	else if (!isUnderCrops(source, pos))
 		source->setTile(pos, Tile::dirt->m_ID);
 }

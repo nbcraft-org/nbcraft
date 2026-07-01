@@ -27,9 +27,9 @@ protected:
     virtual bool _open(const std::string& fileName) = 0;
     virtual void _close() = 0;
     virtual void _update() = 0;
-    virtual void _publishBuffer(unsigned int destBufferId, const SoundBuffer& sourceBuffer) = 0;
+    virtual void _publishBuffer(BufferId destBufferId, const SoundBuffer& sourceBuffer) = 0;
 
-    bool _stream(int bufferId);
+    bool _stream(BufferId bufferId);
 
 public:
     float getVolume() const { return m_volume; }

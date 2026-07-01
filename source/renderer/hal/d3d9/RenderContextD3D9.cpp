@@ -45,11 +45,13 @@ bool RenderContextD3D9::VertexDeclID::operator==(const RenderContextD3D9::Vertex
 }
 
 RenderContextD3D9::RenderContextD3D9()
-    : RenderContextBase()
+    : RenderContextD3D()
 {
     memset(&m_viewport, 0, sizeof(m_viewport));
     m_width = 0;
     m_height = 0;
+
+    memset(&m_shaderLangVersions, -1, sizeof(m_shaderLangVersions));
 
     // wasn't here in 0.12.1, but where else is it supposed to go?
     createDeviceResources();
@@ -111,8 +113,15 @@ void RenderContextD3D9::drawIndexed(PrimitiveMode primitiveMode, unsigned int co
 
 void RenderContextD3D9::drawIndexed(PrimitiveMode primitiveMode, unsigned int count, unsigned int startOffset, uint8_t indexSize)
 {
+	unsigned int vertexCount;
+#ifdef _XBOX
+	vertexCount = 0;
+#else
+    vertexCount = _getVertexCount(primitiveMode, count);
+#endif
+
     ErrorHandlerD3D9::checkForErrors(
-        m_d3dDevice->DrawIndexedPrimitive(modeMap[primitiveMode], 0, 0, 0, startOffset, _getPrimitiveCount(primitiveMode, count))
+        m_d3dDevice->DrawIndexedPrimitive(modeMap[primitiveMode], 0, 0, vertexCount, startOffset, _getPrimitiveCount(primitiveMode, count))
     );
 }
 
@@ -195,6 +204,40 @@ void RenderContextD3D9::swapBuffers()
 {
     HRESULT hr = m_d3dDevice->Present(NULL, NULL, NULL, NULL);
     ErrorHandlerD3D9::checkForErrors(hr);
+}
+
+void RenderContextD3D9::getShaderLangVersion(ShaderType shaderType, int& major, int& minor)
+{
+    // Check cache
+    int* shaderLangVersion = m_shaderLangVersions[shaderType];
+    major = shaderLangVersion[0];
+    minor = shaderLangVersion[1];
+
+    if (major != -1 && minor != -1)
+        return;
+
+    D3DCAPS9 caps;
+    m_d3dDevice->GetDeviceCaps(&caps);
+
+    switch (shaderType)
+    {
+    case SHADER_TYPE_VERTEX:
+        major = D3DSHADER_VERSION_MAJOR(caps.VertexShaderVersion);
+        minor = D3DSHADER_VERSION_MINOR(caps.VertexShaderVersion);
+        break;
+    case SHADER_TYPE_FRAGMENT:
+        major = D3DSHADER_VERSION_MAJOR(caps.PixelShaderVersion);
+        minor = D3DSHADER_VERSION_MINOR(caps.PixelShaderVersion);
+        break;
+
+    default:
+        LOG_E("Unknown shader type: %d", shaderType);
+        throw std::bad_cast();
+    }
+
+    // Cache the result
+    shaderLangVersion[0] = major;
+    shaderLangVersion[1] = minor;
 }
 
 bool RenderContextD3D9::supports8BitIndices() const

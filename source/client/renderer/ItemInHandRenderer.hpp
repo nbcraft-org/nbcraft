@@ -17,6 +17,9 @@ class Minecraft;
 
 class ItemInHandRenderer : public EntityShaderManager, public AppPlatformListener
 {
+private:
+	static ItemStack stick;
+
 protected:
 	class Materials
 	{
@@ -43,7 +46,7 @@ public:
 	void renderFire(float a);
 	void renderTex(float a, int tex);
 	void tick();
-	void turn(const Vec2& rot);
+	void turn(const Rot2& rot);
 
 private:
 	int m_lastSlot;

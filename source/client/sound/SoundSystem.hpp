@@ -9,16 +9,24 @@
 #pragma once
 
 #include <string>
-#include "world/phys/Vec2.hpp"
+#include "world/phys/Rot2.hpp"
 #include "world/phys/Vec3.hpp"
 #include "SoundData.hpp"
 
 // Platform-agnostic sound settings //
-// Just guessing for this one
+
+/* Handled by game */
+// This prevents step sounds from falling behind the player. Just guessing regarding the value
 #define SOUND_ATTENUATION_MIN_DISTANCE 2.0f
+// 20.0f in PE 0.7.0, 16.0f in Java
 #define SOUND_MAX_DISTANCE 16.0f
+
+/* Handled by SoundSystem */
+// Range: 0.0f - 1.0f
+// Default value for Paulscode is 0.03f
+// attModel == 2 on Java, which uses Paulscode's impl for calculating gain, rather than OpenAL's native rolloff factor
+#define SOUND_ROLLOFF_FACTOR 0.0f
 // 28 non-streaming channels in Paulscode
-// @NOTE: Currently only SoundSystemAL adheres to this.
 #define SOUND_MAX_SOURCES 28
 
 class SoundSystem
@@ -29,7 +37,7 @@ public:
 public:
 	virtual bool isAvailable();
 	virtual void setListenerPos(const Vec3& pos);
-	virtual void setListenerAngle(const Vec2& rot);
+	virtual void setListenerAngle(const Rot2& rot);
 	virtual void setListenerVelocity(const Vec3& vel);
 
 	virtual void setMusicVolume(float vol);

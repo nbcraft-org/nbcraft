@@ -7,6 +7,8 @@
  ********************************************************************/
 
 #include <cstddef>
+#define __STDC_LIMIT_MACROS
+#include <stdint.h>
 #include "Tesselator.hpp"
 #include "GameMods.hpp"
 #include "common/Logger.hpp"
@@ -117,7 +119,7 @@ Tesselator::~Tesselator()
 void* Tesselator::_allocateIndices(int count)
 {
 	m_indices.resize(m_indexSize * count);
-	return &m_indices.front();
+	return m_indices.data();
 }
 
 void Tesselator::_tex(const Vec2& uv, int count)
@@ -246,7 +248,7 @@ void Tesselator::beginIndices(int maxIndices)
 		maxIndices *= m_indexSize;
 	}
 
-	m_indices.resize(m_indices.size() + maxIndices);
+	m_indices.resize(m_indices.getSize() + maxIndices);
 }
 
 void Tesselator::draw(const mce::MaterialPtr& materialPtr)
@@ -278,10 +280,11 @@ mce::Mesh Tesselator::end(const char* debugName, bool temporary)
 			m_indexCount,
 			m_indexSize,
 			m_drawMode,
-			&m_indices[0],
+			m_indices,
 			temporary);
 
-		if (!temporary)
+		// check if the GFX Buffer took ownership of the data, this is only done by client-sided buffers (for now)
+		if (!temporary || !m_indices)
 			clear();
 
 		return mesh;
@@ -353,15 +356,19 @@ void Tesselator::normal(float x, float y, float z)
 		LOG_W("But...");*/
 
 #if MCE_GFX_SUPPORTS_SINT8_4_N
-	int8_t bx = static_cast<int8_t>(ceilf(x * 127));
-	int8_t by = static_cast<int8_t>(ceilf(y * 127));
-	int8_t bz = static_cast<int8_t>(ceilf(z * 127));
+	int8_t bx = static_cast<int8_t>(ceilf(x * INT8_MAX));
+	int8_t by = static_cast<int8_t>(ceilf(y * INT8_MAX));
+	int8_t bz = static_cast<int8_t>(ceilf(z * INT8_MAX));
 
 	int8_t* normalarray = reinterpret_cast<int8_t*>(&m_nextVtxNormal);
 #elif MCE_GFX_SUPPORTS_UINT8_4_N
-	uint8_t bx = static_cast<uint8_t>(ceilf(x * 255));
-	uint8_t by = static_cast<uint8_t>(ceilf(y * 255));
-	uint8_t bz = static_cast<uint8_t>(ceilf(z * 255));
+	// transformation is undone by the entity shader in TransformRGBA8_SNORM
+	x = (x + 1.0f) / 2.0f;
+	y = (y + 1.0f) / 2.0f;
+	z = (z + 1.0f) / 2.0f;
+	uint8_t bx = static_cast<uint8_t>(ceilf(x * UINT8_MAX));
+	uint8_t by = static_cast<uint8_t>(ceilf(y * UINT8_MAX));
+	uint8_t bz = static_cast<uint8_t>(ceilf(z * UINT8_MAX));
 
 	uint8_t* normalarray = reinterpret_cast<uint8_t*>(&m_nextVtxNormal);
 #endif
@@ -426,18 +433,23 @@ void Tesselator::vertex(float x, float y, float z)
 	m_count++;
 
 	unsigned int vertexSize = m_vertexFormat.getVertexSize();
-	uint8_t* oldIndicesPtr = !m_indices.empty() ? &m_indices.front() : nullptr;
+	const uint8_t* oldIndicesPtr = !m_indices.isEmpty() ? m_indices.getData() : nullptr;
 
 	if (m_pendingVertices > 0)
 	{
-		m_indices.reserve(vertexSize * m_pendingVertices);
+		m_indices.reserve(m_pendingVertices * vertexSize);
 		m_pendingVertices = 0;
 	}
 
-	m_indices.resize((m_vertices+1) * vertexSize);
+	bool didResize = m_indices.resize((m_vertices+1) * vertexSize);
+	(void)didResize; // to silence dumb warnings
+
+	// useful for finding improperly pre-allocated Tesselator calls, reducing these reduces memcpy calls,
+	// which provides SUBSTANTIAL performace gains
+	//assert(!didResize);
 
 	// Make sure m_indices front pointer hasn't changed from reallocation as a result of reserve or resize
-	if (isFormatFixed() && oldIndicesPtr == &m_indices.front())
+	if (isFormatFixed() && oldIndicesPtr == m_indices.getData())
 	{
 		m_currentVertex.nextVertex();
 	}

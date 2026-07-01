@@ -53,7 +53,7 @@
     <ClInclude Include="$(MC_ROOT)\source\nbt\Int32Tag.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\source\nbt\NbtIo.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\nbt\NbtIo.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

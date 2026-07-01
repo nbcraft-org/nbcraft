@@ -12,8 +12,8 @@ namespace mce
         ImmediateBufferD3D11();
 
     public:
-        void createDynamicBuffer(RenderContext& context, unsigned int stride, const void* data, unsigned int count, BufferType bufferType);
-        void updateBuffer(RenderContext& context, unsigned int stride, void*& data, unsigned int count);
+        void createDynamicBuffer(RenderContext& context, unsigned int stride, ByteBuffer& data, unsigned int count, BufferType bufferType);
+        void updateBuffer(RenderContext& context, unsigned int stride, ByteBuffer& data, unsigned int count);
 
         bool isValid() const;
     };

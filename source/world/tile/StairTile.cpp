@@ -127,9 +127,9 @@ bool StairTile::mayPick() const
 	return m_pParent->mayPick();
 }
 
-bool StairTile::mayPick(TileData data, bool b) const
+bool StairTile::mayPick(TileData data, bool includeLiquid) const
 {
-	return m_pParent->mayPick(data, b);
+	return m_pParent->mayPick(data, includeLiquid);
 }
 
 bool StairTile::mayPlace(TileSource* source, const TilePos& pos) const
@@ -190,7 +190,7 @@ void StairTile::stepOn(TileSource* source, const TilePos& pos, Entity* entity)
 
 void StairTile::setPlacedBy(TileSource* source, const TilePos& pos, Mob* mob)
 {
-	int rot = Mth::floor(0.5f + (mob->m_rot.x * 4.0f / 360.0f)) & 3;
+	int rot = Mth::floor(0.5f + (mob->m_rot.yaw * 4.0f / 360.0f)) & 3;
 
 	TileData data = 0;
 
@@ -201,7 +201,7 @@ void StairTile::setPlacedBy(TileSource* source, const TilePos& pos, Mob* mob)
 		case 2: data = 3; break;
 	}
 
-	source->setTileAndData(pos, FullTile(m_ID, data));
+	source->setTileAndData(pos, FullTile(this, data));
 }
 
 void StairTile::prepareRender(TileSource* source, const TilePos& pos)
@@ -209,9 +209,9 @@ void StairTile::prepareRender(TileSource* source, const TilePos& pos)
 	return m_pParent->prepareRender(source, pos);
 }
 
-void StairTile::attack(TileSource* source, const TilePos& pos, Player* player)
+void StairTile::attack(const TilePos& pos, Player* player)
 {
-	m_pParent->attack(source, pos, player);
+	m_pParent->attack(pos, player);
 }
 
 void StairTile::handleEntityInside(TileSource* source, const TilePos& pos, const Entity* entity, Vec3& vec)

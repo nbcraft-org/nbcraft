@@ -30,31 +30,12 @@ bool DoorTile::use(const TilePos& pos, Player* player)
 
 	TileSource& source = player->getTileSource();
 
-	TileData data = source.getData(pos);
-
-	// if we're the top tile
-	if (data & 8)
-	{
-		if (source.getTile(pos.below()) == m_ID)
-			use(pos.below(), player);
-	}
-	else
-	{
-		data ^= 4;
-		if (source.getTile(pos.above()) == m_ID)
-			source.setTileAndData(pos.above(), FullTile(m_ID, data + 8), TileChange::UPDATE_ALL | TileChange::UPDATE_UNK3);
-
-		source.setTileAndData(pos, FullTile(m_ID, data), TileChange::UPDATE_ALL | TileChange::UPDATE_UNK3);
-
-		// there is a fireTileChanged call here, but setTileAndData should already be calling that
-
-		player->getLevel().levelEvent(LevelEvent(LevelEvent::SOUND_DOOR, pos, 0, player));
-	}
+	setOpen(&source, pos, !isOpen(source.getData(pos)));
 
 	return true;
 }
 
-void DoorTile::attack(TileSource* source, const TilePos& pos, Player* player)
+void DoorTile::attack(const TilePos& pos, Player* player)
 {
 	use(pos, player);
 }
@@ -185,21 +166,14 @@ void DoorTile::setOpen(TileSource* source, const TilePos& pos, bool bOpen)
 
 	if (isOpen(source->getData(pos)) != bOpen)
 	{
+		data ^= 4;
+
 		if (source->getTile(pos.above()) == m_ID)
-			source->setTileAndData(pos.above(), FullTile(m_ID, (data ^ 4) + 8), TileChange::UPDATE_ALL | TileChange::UPDATE_UNK3);
+			source->setTileAndData(pos.above(), FullTile(m_ID, data + 8), TileChange::UPDATE_ALL | TileChange::UPDATE_UNK3);
 
-		source->setTileAndData(pos, FullTile(m_ID, data ^ 4), TileChange::UPDATE_ALL | TileChange::UPDATE_UNK3);
+		source->setTileAndData(pos, FullTile(m_ID, data), TileChange::UPDATE_ALL | TileChange::UPDATE_UNK3);
 
-		// there is a fireTileChanged call here, but setTileAndData should already be calling that
-
-		std::string snd;
-		if (Mth::random() < 0.5f)
-			snd = "random.door_open";
-		else
-			snd = "random.door_close";
-
-		Level& level = source->getLevel();
-		level.playSound(Vec3(pos) + 0.5f, snd, 1.0f, 0.9f + 0.1f * level.m_random.nextFloat());
+		level->levelEvent(LevelEvent(LevelEvent::SOUND_DOOR, pos, 0, player));
 	}
 }
 

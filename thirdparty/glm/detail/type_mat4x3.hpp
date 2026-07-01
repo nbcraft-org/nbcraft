@@ -33,7 +33,7 @@
 #include "type_vec3.hpp"
 #include "type_vec4.hpp"
 #include "type_mat.hpp"
-#include <limits>
+#include "compat/Limits.hpp"
 
 namespace glm{
 namespace detail

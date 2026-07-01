@@ -9,4 +9,5 @@ public:
 
 public:
 	std::string getDescriptionId(ItemStack* inst) const override;
+
 };

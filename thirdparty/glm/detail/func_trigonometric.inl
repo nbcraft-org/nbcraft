@@ -28,7 +28,7 @@
 
 #include "_vectorize.hpp"
 #include <cmath>
-#include <limits>
+#include "compat/Limits.hpp"
 
 namespace glm
 {

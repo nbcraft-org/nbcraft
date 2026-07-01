@@ -11,7 +11,6 @@
 #include "GuiComponent.hpp"
 #include "common/Random.hpp"
 #include "client/player/input/RectangleArea.hpp"
-#include "client/app/Minecraft.hpp"
 #include "client/renderer/RenderChunk.hpp"
 
 class Minecraft; // in case we're included from Minecraft.hpp
@@ -42,6 +41,7 @@ protected:
 
 private:
 	static bool _isVignetteAvailable;
+
 public:
 	static bool isVignetteAvailable() { return _isVignetteAvailable; }
 	static void setIsVignetteAvailable(bool value) { _isVignetteAvailable = value; }
@@ -49,6 +49,7 @@ public:
 private:
 	void renderPumpkin(int, int);
 	void renderVignette(float, int, int);
+	void _buildFeedbackMeshes();
 
 public:
 	Gui(Minecraft* pMinecraft);
@@ -61,17 +62,18 @@ public:
 	void tick();
 	void renderSlot(int slot, int x, int y, float f);
 	void renderSlotOverlay(int slot, int x, int y, float f);
+	void renderAnimatedCharacter(int x, int y, float);
 	int  getSlotIdAt(int mx, int my);
 	bool isInside(int mx, int my);
 	void handleClick(int id, int mx, int my);
 	void handleScrollWheel(bool down);
-	void handleKeyPressed(int keyCode);
+	void handleUserAction(const ActionInfo&);
 	void renderMessages(bool bShowAll);
 	void renderHearts(bool topLeft);
 	void renderArmor(bool topLeft);
 	void renderHunger(bool topLeft);
 	void renderBubbles(bool topLeft);
-	void renderProgressIndicator(int width, int height);
+	void renderProgressIndicator(int width, int height, float f);
 	void renderExperience();
 	void renderToolBar(float f, float alpha);
 	int getNumSlots();					  // Gets the number of slots in the inventory. Includes the '...' if in touch mode.
@@ -82,12 +84,21 @@ public:
 	static float GuiScale;
 	static int GuiWidth;
 	static int GuiHeight;
+    
+private:
+	bool m_feedbackMeshesBuilt;
+	mce::Mesh m_feedbackOuter;
+	mce::Mesh m_feedbackInner;
+	float m_lastProgress;
+	int m_animatedCharacterTimer;
 
 protected:
 	Materials m_guiMaterials;
 
 public:
 	float m_progress;
+	float m_lastDestroyProgress;
+	float m_destroyProgress;
 	std::string field_C;
 	std::vector<GuiMessage> m_guiMessages;
 	int field_24;

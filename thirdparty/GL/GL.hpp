@@ -8,6 +8,14 @@
 
 #pragma once
 
+#ifndef MC_DYNAMIC_GL
+#ifdef _WIN32
+#define MC_DYNAMIC_GL 1
+#else
+#define MC_DYNAMIC_GL 0
+#endif
+#endif
+
 #include "common/Utils.hpp" // needed for M_PI
 #include "compat/PlatformDefinitions.h"
 #include "GameMods.hpp"
@@ -64,10 +72,17 @@
 		#define USE_OPENGL_2_FEATURES
 
 		#define GL_GLEXT_PROTOTYPES
+		#if MC_DYNAMIC_GL && MC_PLATFORM_UNIX
+			#define SDL_NO_GLEXT
+			#define GL_GLEXT_LEGACY
+		#endif
 		#include "thirdparty/SDL/SDL_opengl.h"
 
 		#if !defined(_WIN32) && SDL_MAJOR_VERSION == 2
 			#include <SDL2/SDL_opengl_glext.h>
+		#endif
+		#if MC_DYNAMIC_GL && MC_PLATFORM_UNIX
+			#include "thirdparty/GL/glext.h"
 		#endif
 	#else
 		#ifdef __APPLE__
@@ -86,6 +101,15 @@
 	#endif
 
 	// use our macro for glOrtho
+#endif
+
+#if MC_DYNAMIC_GL && MC_PLATFORM_UNIX
+// The Mesa headers included with Red Hat Linux 9.0 (and possibly other systems) don't provide this
+// typedef in the main gl.h. It is provided in glext.h, but that doesn't declare it because it won't
+// do it if GL_VERSION_1_3 is defined and gl.h does still define GL_VERSION_1_3. We get around this
+// by just providing the typedefs ourselves here and using a preprocessor hack to avoid conflicts.
+#define PFNGLACTIVETEXTUREPROC __NBC_PFNGLACTIVETEXTUREPROC
+typedef void (APIENTRYP PFNGLACTIVETEXTUREPROC) (GLenum texture);
 #endif
 
 #ifndef GL_LOW_FLOAT
@@ -111,13 +135,23 @@ typedef void (APIENTRY* DEBUGPROC)(GLenum source,
 	GLvoid* userParam);
 #endif
 
-#ifdef _WIN32
+#if MC_DYNAMIC_GL
 void xglInit();
 bool xglInitted();
+bool xglVBOsBound();
 #endif
 
-#if defined(USE_OPENGL_2_FEATURES) && !defined(_WIN32) && !defined(__DREAMCAST__)
+#if defined(USE_OPENGL_2_FEATURES) && !MC_DYNAMIC_GL
 
+#if GL_VERSION_1_1 || GL_VERSION_ES_CM_1_0 || GL_ES_VERSION_2_0
+#define xglEnableClientState glEnableClientState
+#define xglDisableClientState glDisableClientState
+#define xglTexCoordPointer glTexCoordPointer
+#define xglColorPointer glColorPointer
+#define xglNormalPointer glNormalPointer
+#define xglVertexPointer glVertexPointer
+#define xglDrawArrays glDrawArrays
+#endif // GL_VERSION_1_1 || GL_VERSION_ES_CM_1_0 || GL_ES_VERSION_2_0
 #if GL_VERSION_1_3 || GL_VERSION_ES_CM_1_0 || GL_ES_VERSION_2_0
 #define xglActiveTexture glActiveTexture
 #endif // GL_VERSION_1_3 || GL_VERSION_ES_CM_1_0 || GL_ES_VERSION_2_0
@@ -127,13 +161,6 @@ bool xglInitted();
 #define xglGenBuffers glGenBuffers
 #define xglDeleteBuffers glDeleteBuffers
 #define xglBufferSubData glBufferSubData
-#define xglEnableClientState glEnableClientState
-#define xglDisableClientState glDisableClientState
-#define xglTexCoordPointer glTexCoordPointer
-#define xglColorPointer glColorPointer
-#define xglNormalPointer glNormalPointer
-#define xglVertexPointer glVertexPointer
-#define xglDrawArrays glDrawArrays
 #endif // GL_VERSION_1_5 || GL_VERSION_ES_CM_1_0 || GL_ES_VERSION_2_0
 #if GL_VERSION_2_0 || GL_ES_VERSION_2_0
 #define USE_GL_STENCIL_SEPARATE
@@ -186,6 +213,15 @@ bool xglInitted();
 
 #else
 
+#if GL_VERSION_1_1 || GL_VERSION_ES_CM_1_0
+void xglEnableClientState(GLenum _array);
+void xglDisableClientState(GLenum _array);
+void xglTexCoordPointer(GLint size, GLenum type, GLsizei stride, const GLvoid* pointer);
+void xglColorPointer(GLint size, GLenum type, GLsizei stride, const GLvoid* pointer);
+void xglNormalPointer(GLenum type, GLsizei stride, const GLvoid* pointer);
+void xglVertexPointer(GLint size, GLenum type, GLsizei stride, const GLvoid* pointer);
+void xglDrawArrays(GLenum mode, GLint first, GLsizei count);
+#endif // GL_VERSION_1_1 || GL_VERSION_ES_CM_1_0
 #if GL_VERSION_1_3 || GL_VERSION_ES_CM_1_0
 void xglActiveTexture(GLenum texture);
 #endif // GL_VERSION_1_3 || GL_VERSION_ES_CM_1_0
@@ -244,15 +280,10 @@ void xglGetShaderPrecisionFormat(GLenum shadertype, GLenum precisiontype, GLint*
 #ifdef MC_GL_DEBUG_OUTPUT
 void xglDebugMessageCallback(DEBUGPROC callback, GLvoid* userParam);
 #endif
+// Been here since GL 1.0
 void xglOrthof(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat nearpl, GLfloat farpl);
+// Windows-specific, entirely optional
 void xglSwapIntervalEXT(int interval);
-void xglEnableClientState(GLenum _array);
-void xglDisableClientState(GLenum _array);
-void xglTexCoordPointer(GLint size, GLenum type, GLsizei stride, const GLvoid* pointer);
-void xglColorPointer(GLint size, GLenum type, GLsizei stride, const GLvoid* pointer);
-void xglNormalPointer(GLenum type, GLsizei stride, const GLvoid* pointer);
-void xglVertexPointer(GLint size, GLenum type, GLsizei stride, const GLvoid* pointer);
-void xglDrawArrays(GLenum mode, GLint first, GLsizei count);
 
 #endif
 

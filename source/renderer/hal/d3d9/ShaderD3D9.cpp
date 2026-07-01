@@ -7,7 +7,6 @@
 #include "API_D3D9Compiler.hpp"
 
 #include "common/Util.hpp"
-#include "client/app/Minecraft.hpp"
 #include "renderer/VertexFieldFormat.hpp"
 #include "renderer/GlobalConstantBufferManager.hpp"
 #include "renderer/ConstantBufferMetaDataManager.hpp"
@@ -313,7 +312,7 @@ void ShaderD3D9::reflectShaderAttributes(const std::string& shaderBytecode)
     m_attributeListIndex = RenderDevice::getInstance().registerOrGetAttributeListIndex(attrList);
 }
 
-void ShaderD3D9::reflectShader(const ShaderProgramD3D9& shaderProgram, ShaderType shaderType)
+void ShaderD3D9::reflectShader(const ShaderProgramD3D& shaderProgram, ShaderType shaderType)
 {
     if (!shaderProgram.isValid())
     {
@@ -393,26 +392,4 @@ ComInterface<IDirect3DVertexDeclaration9> ShaderD3D9::createVertexDeclaration(co
 
     // @TODO: probably calling an extra AddRef here, does this mean D3D9 never releases the memory?
     return ComInterface<IDirect3DVertexDeclaration9>(pDecl);
-}
-
-void ShaderD3D9::SpliceShaderPath(std::string& shaderName)
-{
-    ShaderBase::SpliceShaderPath(shaderName, "/hlsl");
-}
-
-void ShaderD3D9::SpliceShaderExtension(std::string& shaderName)
-{
-    ShaderBase::SpliceShaderExtension(shaderName, ".hlsl");
-}
-
-void ShaderD3D9::BuildHeader(std::ostringstream& stream)
-{
-    stream << "#define _DIRECT3D9\n";
-#ifdef _XBOX
-    stream << "#define _XBOX\n";
-#endif
-
-    // hack to fix dumb D3D9 bullshit: https://www.virtualdub.org/blog2/entry_366.html
-    stream << "#define __D3D9_OFFSET_X " << (-1.0f / Minecraft::width) << "\n";
-    stream << "#define __D3D9_OFFSET_Y " << (1.0f / Minecraft::height) << "\n";
 }

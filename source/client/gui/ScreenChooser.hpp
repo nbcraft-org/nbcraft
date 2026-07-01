@@ -7,6 +7,8 @@ class Player;
 class Minecraft;
 class Container;
 class Screen;
+class FurnaceTileEntity;
+class DispenserTileEntity;
 
 //@NOTE: This is just based on MCPE, not really a decompilation, make it accurate if necessary
 class ScreenChooser
@@ -21,9 +23,14 @@ public:
     virtual void pushCreateWorldScreen(Screen*);
     virtual void pushOptionsScreen(Screen*);
     virtual void pushProgressScreen();
+    virtual void pushPlayerCraftingScreen(Player*);
+    virtual void pushCreativeScreen(Player*);
     virtual void pushCraftingScreen(Player*, const TilePos&); // originally pushWorkbenchScreen
+    virtual void pushFurnaceScreen(Player*, FurnaceTileEntity*);
     virtual void pushChestScreen(Player*, Container*);
+    virtual void pushTrapScreen(Player*, DispenserTileEntity*);
     virtual void pushCreditsScreen(Screen*);
+    virtual void pushDeathScreen();
 
     static ScreenChooser* Create(Minecraft*);
 

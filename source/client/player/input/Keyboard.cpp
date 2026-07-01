@@ -8,6 +8,7 @@
 
 #include <stddef.h>
 #include "Keyboard.hpp"
+#include "client/app/Minecraft.hpp"
 
 #include "GameMods.hpp"
 
@@ -18,9 +19,8 @@ Keyboard::KeyState Keyboard::_states[KEYBOARD_STATES_SIZE];
 void Keyboard::feed(KeyState state, int key)
 {
 	// Prevent Crashes
-	if (key >= KEYBOARD_STATES_SIZE || key < 0) {
+	if (key >= KEYBOARD_STATES_SIZE || key < 0)
 		return;
-	}
 
 	_inputs.push_back(KeyboardAction(key, state));
 
@@ -30,7 +30,10 @@ void Keyboard::feed(KeyState state, int key)
 bool Keyboard::next()
 {
 	if ((size_t)_index + 1 >= _inputs.size())
+	{
+		if (!_inputs.empty()) reset();
 		return false;
+	}
 
 	_index++;
 	return true;

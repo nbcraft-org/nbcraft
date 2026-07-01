@@ -39,11 +39,12 @@ public:
 	void setPlayerGameType(GameType gameType) override;
 	void swing() override;
 	void startCrafting(const TilePos&) override;
-	//void openFurnace(FurnaceTileEntity* furnace) override;
+	void openFurnace(FurnaceTileEntity* furnace) override;
 	void openContainer(Container* container) override;
 	void closeContainer() override;
-	//void openTrap(DispenserTileEntity* tileEntity) override;
+	void openTrap(DispenserTileEntity* tileEntity) override;
 	//void openTextEdit(SignTileEntity* tileEntity) override;
+	void take(Entity* pEnt, int count) override;
 
 	virtual void hurtTo(int newHealth);
 
@@ -55,7 +56,8 @@ private:
 	// Made these private since they're only accessed by LocalPlayer
 	// multiplayer related
 	Vec3 m_lastSentPos;
-	Vec2 m_lastSentRot;
+	Rot2 m_lastSentRot;
+	Container::StackID m_lastSelectedStackId;
 	// multiplayer related -- end
 
 public:
@@ -71,9 +73,8 @@ public:
 	float field_C18;
 	float field_C1C;
 	int m_nAutoJumpFrames;
-	int m_lastSelectedSlot;
 	Minecraft* m_pMinecraft;
 	IMoveInput* m_pMoveInput;
-	Vec2 m_renderArmRot;
-	Vec2 m_lastRenderArmRot;
+	Rot2 m_renderArmRot;
+	Rot2 m_lastRenderArmRot;
 };

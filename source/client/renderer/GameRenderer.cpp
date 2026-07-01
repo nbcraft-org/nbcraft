@@ -64,6 +64,13 @@ void GameRenderer::_init()
 	m_keepPic = 0;
 
 	m_envTexturePresence = 0;
+
+#ifdef ENH_FOV_MODIFIER
+	m_fovBase = 70.0f;
+	m_fovModPrev = 1.0f;
+	m_fovMod = 1.0f;
+	m_fovModTarget = 1.0f;
+#endif
 }
 
 GameRenderer::GameRenderer(Minecraft* pMinecraft) :
@@ -81,7 +88,11 @@ GameRenderer::GameRenderer(Minecraft* pMinecraft) :
 	mce::GlobalConstantBuffers::getInstance().init();
 #endif
 
-	m_pMinecraft->getOptions()->m_gamma.apply();
+	Options& options = *m_pMinecraft->getOptions();
+	options.m_gamma.apply(*this);
+#ifdef ENH_FOV_MODIFIER
+	setFovBase(m_pMinecraft->getOptions()->m_fov.get());
+#endif
 }
 
 GameRenderer::~GameRenderer()
@@ -119,6 +130,12 @@ void GameRenderer::_clearFrameBuffer()
 
 void GameRenderer::_renderItemInHand(float f, int i)
 {
+#ifdef ENH_FOV_MODIFIER
+	MatrixStack::Ref projRef = MatrixStack::Projection.pushIdentity();
+	float fov = getFov(f, false);
+	projRef->setPerspective(fov, float(Minecraft::width) / float(Minecraft::height), 0.05f, m_renderDistance * 1.2f);
+#endif
+
 	Matrix& viewMtx = MatrixStack::View.getTop();
 	viewMtx = Matrix::IDENTITY;
 
@@ -127,29 +144,39 @@ void GameRenderer::_renderItemInHand(float f, int i)
 		viewMtx.translate(Vec3(float(2 * i - 1) * 0.1f, 0.0f, 0.0f));
 	}
 
-	MatrixStack::Ref matrix = MatrixStack::World.push();
-
-	bobHurt(matrix, f);
-
-	if (m_pMinecraft->getOptions()->m_viewBobbing.get())
 	{
-		bobView(matrix, f);
-	}
+		MatrixStack::Ref matrix = MatrixStack::World.pushIdentity();
 
-	if (!m_pMinecraft->getOptions()->m_thirdPerson.get() && !m_pMinecraft->getOptions()->m_hideGui.get())
-	{
-		mce::RenderContextImmediate::get().clearDepthStencilBuffer();
-		m_pItemInHandRenderer->render(f);
-	}
-
-	if (!m_pMinecraft->getOptions()->m_thirdPerson.get())
-	{
-		m_pItemInHandRenderer->renderScreenEffect(f);
 		bobHurt(matrix, f);
+
+		if (m_pMinecraft->getOptions()->m_viewBobbing.get())
+		{
+			bobView(matrix, f);
+		}
+
+		if (m_pMinecraft->getOptions()->m_thirdPerson.get() == TPM_FIRST && !m_pMinecraft->getOptions()->m_hideGui.get())
+		{
+			mce::RenderContextImmediate::get().clearDepthStencilBuffer();
+			m_pItemInHandRenderer->render(f);
+		}
+	}
+
+	if (m_pMinecraft->getOptions()->m_thirdPerson.get() == TPM_FIRST)
+	{
+		{
+			MatrixStack::Ref matrix = MatrixStack::World.pushIdentity();
+			m_pItemInHandRenderer->renderScreenEffect(f);
+			bobHurt(matrix, f);
+			if (m_pMinecraft->getOptions()->m_viewBobbing.get())
+			{
+				bobView(matrix, f);
+			}
+		}
 	}
 
 	if (m_pMinecraft->getOptions()->m_viewBobbing.get())
 	{
+		MatrixStack::Ref matrix = MatrixStack::World.pushIdentity();
 		bobView(matrix, f);
 	}
 }
@@ -264,7 +291,7 @@ void GameRenderer::unZoomRegion()
 
 void GameRenderer::setupCamera(float f, int i)
 {
-	m_renderDistance = float(256 >> m_pMinecraft->getOptions()->m_viewDistance.get());
+	m_renderDistance = float(256 >> (3 - m_pMinecraft->getOptions()->m_viewDistance.get()));
 
 	Matrix& projMtx = MatrixStack::Projection.getTop();
 	projMtx = Matrix::IDENTITY;
@@ -316,7 +343,9 @@ void GameRenderer::moveCameraToPlayer(Matrix& matrix, float f)
 
 	matrix.rotate(field_5C + f * (field_58 - field_5C), Vec3::UNIT_Z);
 
-	if (m_pMinecraft->getOptions()->m_thirdPerson.get())
+	int thirdPerson = m_pMinecraft->getOptions()->m_thirdPerson.get();
+
+	if (thirdPerson != TPM_FIRST)
 	{
 		float v11 = field_30 + (field_2C - field_30) * f;
 		if (m_pMinecraft->getOptions()->m_bFixedCamera)
@@ -327,14 +356,15 @@ void GameRenderer::moveCameraToPlayer(Matrix& matrix, float f)
 		}
 		else
 		{
-			float mob_yaw = mob.m_rot.x;
-			float mob_pitch = mob.m_rot.y;
+			float mob_yaw = mob.m_rot.yaw;
+			float mob_pitch = mob.m_rot.pitch;
 
 			float pitchRad = mob_pitch / 180.0f * float(M_PI);
+			float yawRad = ((thirdPerson == TPM_FRONT ? mob_yaw + 180.0f : mob_yaw) / 180.0f) * float(M_PI);
 
-			float aX = posX - (-(Mth::sin(mob_yaw / 180.0f * float(M_PI)) * Mth::cos(pitchRad)) * v11);
+			float aX = posX - (-(Mth::sin(yawRad) * Mth::cos(pitchRad)) * v11);
 			float aY = posY + (Mth::sin(pitchRad) * v11);
-			float aZ = posZ - ((Mth::cos(mob_yaw / 180.0f * float(M_PI)) * Mth::cos(pitchRad)) * v11);
+			float aZ = posZ - ((Mth::cos(yawRad) * Mth::cos(pitchRad)) * v11);
 
 			for (int i = 0; i < 8; i++)
 			{
@@ -358,11 +388,11 @@ void GameRenderer::moveCameraToPlayer(Matrix& matrix, float f)
 				}
 			}
 
-			matrix.rotate(mob.m_rot.y - mob_pitch, Vec3::UNIT_X);
-			matrix.rotate(mob.m_rot.x - mob_yaw, Vec3::UNIT_Y);
-			matrix.translate(Vec3::NEG_UNIT_Z * v11);
-			matrix.rotate(mob_yaw - mob.m_rot.x, Vec3::UNIT_Y);
-			matrix.rotate(mob_pitch - mob.m_rot.y, Vec3::UNIT_X);
+			matrix.rotate(mob.m_rot.pitch - mob_pitch, Vec3::UNIT_X);
+			matrix.rotate(mob.m_rot.yaw - mob_yaw, Vec3::UNIT_Y);
+			matrix.translate(Vec3(0.0f, 0.0f, -v11));
+			matrix.rotate(mob_yaw - mob.m_rot.yaw, Vec3::UNIT_Y);
+			matrix.rotate(mob_pitch - mob.m_rot.pitch, Vec3::UNIT_X);
 		}
 	}
 	else
@@ -372,8 +402,8 @@ void GameRenderer::moveCameraToPlayer(Matrix& matrix, float f)
 
 	if (!m_pMinecraft->getOptions()->m_bFixedCamera)
 	{
-		matrix.rotate(mob.m_oRot.y + f * (mob.m_rot.y - mob.m_oRot.y), Vec3::UNIT_X);
-		matrix.rotate(mob.m_oRot.x + f * (mob.m_rot.x - mob.m_oRot.x) + 180.0f, Vec3::UNIT_Y);
+		matrix.rotate(mob.m_oRot.pitch + f * (mob.m_rot.pitch - mob.m_oRot.pitch), Vec3::UNIT_X);
+		matrix.rotate(mob.m_oRot.yaw   + f * (mob.m_rot.yaw   - mob.m_oRot.yaw) + (thirdPerson == TPM_FRONT ? 0.0f : 180.0f), Vec3::UNIT_Y);
 	}
 
 	matrix.translate(Vec3::UNIT_Y * headHeightDiff);
@@ -452,11 +482,15 @@ void GameRenderer::renderNoCamera()
 }
 #endif
 
-float GameRenderer::getFov(float f)
+float GameRenderer::getFov(float f, bool applyFovMod)
 {
 	Mob* pMob = m_pMinecraft->m_pCameraEntity;
 
+#ifdef ENH_FOV_MODIFIER
+	float x1 = m_fovBase;
+#else
 	float x1 = 70.0f;
+#endif
 
 	if (pMob->isUnderLiquid(Material::water))
 		x1 = 60.0f;
@@ -466,6 +500,14 @@ float GameRenderer::getFov(float f)
 		float x2 = 1.0f + (-500.0f / ((pMob->m_deathTime + f) + 500.0f));
 		x1 /= (1.0f + 2.0f * x2);
 	}
+
+#ifdef ENH_FOV_MODIFIER
+	if (applyFovMod)
+	{
+		float fovMod = m_fovModPrev + (m_fovMod - m_fovModPrev) * f;
+		x1 *= fovMod;
+	}
+#endif
 
 	return field_54 + x1 + f * (field_50 - field_54);
 }
@@ -489,7 +531,8 @@ void GameRenderer::renderLevel(float f)
 		}
 	}
 
-	pick(f);
+	if (!m_pMinecraft->m_bIsGamePaused)
+		pick(f);
 
 	const Entity& camera = *pCamera;
 	Vec3 camPos = camera.m_posPrev + (camera.m_pos - camera.m_posPrev) * f;
@@ -640,7 +683,7 @@ void GameRenderer::render(const Timer& timer)
 			m_turnDelta = pMC->m_mouseHandler.m_delta;
 		}
 
-		Vec2 rot(m_turnDelta.x * diff_field_84,
+		Rot2 rot(m_turnDelta.x * diff_field_84,
 			     m_turnDelta.y * diff_field_84 * multPitch);
 		m_pItemInHandRenderer->turn(rot);
 		pMC->m_pLocalPlayer->turn(rot);
@@ -650,7 +693,7 @@ void GameRenderer::render(const Timer& timer)
 	int mouseY = -9999;
 	bool bMouseData = false;
 
-	if (m_pMinecraft->isTouchscreen())
+	if (m_pMinecraft->useTouchscreen())
 	{
 		int pointerId = Multitouch::getFirstActivePointerIdExThisUpdate();
 		if (pointerId >= 0)
@@ -664,7 +707,7 @@ void GameRenderer::render(const Timer& timer)
 	{
 		if (m_pMinecraft->m_pScreen)
 		{
-			m_pMinecraft->m_pScreen->controllerEvent(1, timer.m_deltaTime);
+			m_pMinecraft->m_pScreen->controllerStickEvent(1, timer.m_deltaTime);
 		}
 	}
 	else
@@ -781,6 +824,18 @@ void GameRenderer::tick()
 	field_C++;
 
 	m_pItemInHandRenderer->tick();
+
+#ifdef ENH_FOV_MODIFIER
+	m_fovModTarget = 1.0f;
+	if (m_pMinecraft->m_pLocalPlayer)
+	{
+		Player* pPlayer = (Player*)m_pMinecraft->m_pCameraEntity;
+		if (pPlayer && pPlayer->isPlayer() && pPlayer->m_bFlying)
+			m_fovModTarget = 1.1f;
+		m_fovModPrev = m_fovMod;
+		m_fovMod += (m_fovModTarget - m_fovMod) * 0.5f;
+	}
+#endif
 }
 
 void GameRenderer::renderWeather(float f)
@@ -860,13 +915,14 @@ void GameRenderer::renderPointer(const MenuPointer& pointer)
 	Textures& textures = *m_pMinecraft->m_pTextures;
 
 	MatrixStack::Ref mtx = MatrixStack::World.push();
-	mtx->translate(Vec3(pointer.x, pointer.y, 0));
+	mtx->translate(Vec3(pointer.x, pointer.y, 0.0f));
 
 	if (m_pMinecraft->m_pScreen && m_pMinecraft->m_pScreen->m_uiTheme == UI_CONSOLE)
 		mtx->scale(2.0f);
 
 	mtx->translate(Vec3(-(C_MENU_POINTER_WIDTH / 2), -(C_MENU_POINTER_HEIGHT / 2), 0));
 
+	currentShaderColor = Color::WHITE;
 	textures.loadAndBindTexture("gui/pointer.png", true);
 	m_pointerMesh.render(ScreenRenderer::singleton().m_materials.ui_textured);
 }
@@ -890,10 +946,20 @@ void GameRenderer::setGamma(float gamma)
 	renderContext.setGamma(gamma * (INT16_MAX+1));
 }
 
+#ifdef ENH_FOV_MODIFIER
+void GameRenderer::setFovBase(float fov)
+{
+	m_fovBase = Mth::clamp(fov, 30.0f, 110.0f);
+}
+#endif
+
 void GameRenderer::onGraphicsReset()
 {
 	// We might not need this long-term, but putting it here just in case
 	m_pMinecraft->getOptions()->m_gamma.apply();
+#ifdef ENH_FOV_MODIFIER
+	m_pMinecraft->getOptions()->m_fov.apply();
+#endif
 }
 
 void GameRenderer::pick(float f)
@@ -904,8 +970,8 @@ void GameRenderer::pick(float f)
 	Mob& mob = *m_pMinecraft->m_pCameraEntity;
 	TileSource& tileSource = mob.getTileSource();
 	HitResult& mchr = m_pMinecraft->m_hitResult;
-	float dist = m_pMinecraft->m_pGameMode->getBlockReachDistance();
-	bool isFirstPerson = !m_pMinecraft->getOptions()->m_thirdPerson.get();
+	float dist = m_pMinecraft->getLocalPlayerGameMode()->getBlockReachDistance();
+	bool isFirstPerson = m_pMinecraft->getOptions()->m_thirdPerson.get() == TPM_FIRST;
 	Vec3 touchPosNear, touchPosFar;
 	bool bUseTouchCoords = false;
 
@@ -999,7 +1065,7 @@ void GameRenderer::pick(float f)
 	if (mchr.m_hitType != HitResult::NONE)
 		dist = mchr.m_hitPos.distanceTo(mobPos);
 
-	float maxEntityDist = m_pMinecraft->m_pGameMode->getEntityReachDistance();
+	float maxEntityDist = m_pMinecraft->getLocalPlayerGameMode()->getEntityReachDistance();
 	/*if (m_pMinecraft->m_pGameMode->isCreativeType())
 		dist = 7.0f;
 	else */if (dist > maxEntityDist)

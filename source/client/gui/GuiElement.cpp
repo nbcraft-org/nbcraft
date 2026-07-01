@@ -1,4 +1,5 @@
 #include "GuiElement.hpp"
+#include "client/app/Minecraft.hpp"
 
 GuiElement::GuiElement()
 {
@@ -13,6 +14,7 @@ GuiElement::GuiElement()
 	m_bSelected = false;
 	m_bHasFocus = false;
 	m_bNavigable = true;
+	m_bHasSound = false;
 }
 
 void GuiElement::setBackground(const Color& color)
@@ -63,7 +65,7 @@ bool GuiElement::areaNavigation(Minecraft* pMinecraft, AreaNavigation::Direction
 	return false;
 }
 
-void GuiElement::handleButtonPress(Minecraft* pMinecraft, int key)
+void GuiElement::handleUserAction(Minecraft* pMinecraft, const ActionInfo& action)
 {
 }
 
@@ -81,16 +83,38 @@ void GuiElement::handleScroll(float force)
 
 bool GuiElement::isHovered(Minecraft* pMinecraft, const MenuPointer& pointer)
 {
+	// prevents "Start Game" button on Pocket UI from starting out hovered
+	if (pMinecraft->useTouchscreen() && !pointer.isPressed)
+		return false;
+
 	return _isHovered(pointer);
 }
 
 void GuiElement::pressed(Minecraft* pMinecraft)
 {
+	if (!isEnabled())
+		return;
+
+	if (hasSound() && pMinecraft->useController())
+		pMinecraft->m_pSoundEngine->playUI(C_SOUND_UI_PRESS);
 }
 
 void GuiElement::pressed(Minecraft* pMinecraft, const MenuPointer& pointer)
 {
 	pressed(pMinecraft);
+
+	if (!isEnabled())
+		return;
+
+	if (pointer.isPressed)
+	{
+		if (hasSound() && !pMinecraft->useController())
+			pMinecraft->m_pSoundEngine->playUI(C_SOUND_BTN_CLICK);
+	}
+	else
+	{
+		pMinecraft->m_pSoundEngine->playUI(C_SOUND_BTN_RELEASE);
+	}
 }
 
 void GuiElement::released(const MenuPointer& pointer)
