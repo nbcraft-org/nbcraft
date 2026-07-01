@@ -100,6 +100,12 @@ std::string Util::getFileName(const std::string& path)
 	return path.substr(namePos, nameSize);
 }
 
+std::string Util::getDirectory(const std::string& path)
+{
+	size_t index = path.find_last_of("/\\");
+	return path.substr(0, index);
+}
+
 std::string Util::getExtension(const std::string& path)
 {
 	size_t dotPos = path.rfind('.');

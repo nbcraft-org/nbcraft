@@ -95,6 +95,7 @@
     <ClCompile Include="$(MC_ROOT)\source\common\utility\JsonParser.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\common\utility\Singleton.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\common\threading\AsyncTask.cpp" />
+    <ClCompile Include="..\..\..\source\common\File.cpp" />
     <ClCompile Include="..\..\..\source\common\Stopwatch.cpp" />
     <ClCompile Include="..\..\..\source\common\threading\BackgroundQueue.cpp" />
     <ClCompile Include="..\..\..\source\common\threading\BackgroundQueuePool.cpp" />
@@ -120,6 +121,7 @@
     <ClInclude Include="$(MC_ROOT)\source\common\utility\Singleton.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\common\threading\AsyncTask.hpp" />
     <ClInclude Include="..\..\..\source\common\ByteMask.hpp" />
+    <ClInclude Include="..\..\..\source\common\File.hpp" />
     <ClInclude Include="..\..\..\source\common\MovePriorityQueue.hpp" />
     <ClInclude Include="..\..\..\source\common\Stopwatch.hpp" />
     <ClInclude Include="..\..\..\source\common\threading\BackgroundQueue.hpp" />
