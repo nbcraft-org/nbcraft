@@ -10,8 +10,9 @@
 #include <emscripten.h>
 #endif
 
-#include "thirdparty/stb_image/include/stb_image.h"
-#include "thirdparty/stb_image/include/stb_image_write.h"
+#include <stb_image.h>
+
+#include <stb_image_write.h>
 
 #if MCE_GFX_API_OGL
 // needed for screenshots
