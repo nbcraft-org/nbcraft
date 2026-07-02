@@ -120,7 +120,7 @@ void PressurePlateTile::checkPressed(TileSource& source, const TilePos& pos) con
 		source.setTileAndData(pos, FullTile(m_ID, 1));
 		source.updateNeighborsAt(pos, m_ID);
 		source.updateNeighborsAt(pos.below(), m_ID);
-		source.setTilesDirty(pos, pos);
+		//source.setTilesDirty(pos, pos);
 		level.playSound(Vec3(float(pos.x) + 0.5f, float(pos.y) + 0.1f, float(pos.z) + 0.5f), "random.click", 0.3f, 0.6f);
 	}
 	if (!var6 && var5)
@@ -128,13 +128,14 @@ void PressurePlateTile::checkPressed(TileSource& source, const TilePos& pos) con
 		source.setTileAndData(pos, FullTile(m_ID, 0));
 		source.updateNeighborsAt(pos, m_ID);
 		source.updateNeighborsAt(pos.below(), m_ID);
-		source.setTilesDirty(pos, pos);
+		//source.setTilesDirty(pos, pos);
 		level.playSound(Vec3(float(pos.x) + 0.5f, float(pos.y) + 0.1f, float(pos.z) + 0.5f), "random.click", 0.3f, 0.5f);
 	}
 
 	if (var6)
 	{
-		source.addToTickNextTick(pos, m_ID, getTickDelay());
+		TileTickingQueue* pQueue = source.getTickQueue(pos);
+		pQueue->add(source, pos, m_ID, getTickDelay());
 	}
 }
 

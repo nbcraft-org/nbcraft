@@ -167,7 +167,7 @@ bool ButtonTile::use(const TilePos& pos, Player& player)
 	else
 	{
 		source.setTileAndData(pos, FullTile(this, var7 + var8));
-		source.setTilesDirty(pos, pos);
+		//source.setTilesDirty(pos, pos);
 		level.playSound(pos + 0.5f, "random.click", 0.3f, 0.6f);
 		source.updateNeighborsAt(pos, m_ID);
 		switch (var7)
@@ -189,7 +189,9 @@ bool ButtonTile::use(const TilePos& pos, Player& player)
 			break;
 		}
 
-		source.addToTickNextTick(pos, m_ID, getTickDelay());
+		TileTickingQueue* pQueue = source.getTickQueue(pos);
+
+		pQueue->add(source, pos, m_ID, getTickDelay());
 		return true;
 	}
 }
@@ -295,7 +297,7 @@ void ButtonTile::tick(TileSource& source, const TilePos& pos, Random* random)
 			}
 
 			level.playSound(pos + 0.5f, "random.click", 0.3f, 0.5f);
-			source.setTilesDirty(pos, pos);
+			//source.setTilesDirty(pos, pos);
 		}
 	}
 }

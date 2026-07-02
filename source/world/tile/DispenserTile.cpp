@@ -187,7 +187,8 @@ void DispenserTile::neighborChanged(TileSource& source, const TilePos& pos, Tile
 		bool var6 = source.hasNeighborSignal(pos) || source.hasNeighborSignal(pos.above());
 		if (var6)
 		{
-			source.addToTickNextTick(pos, m_ID, getTickDelay());
+			TileTickingQueue* pQueue = source.getTickQueue(pos);
+			pQueue->add(source, pos, m_ID, getTickDelay());
 		}
 	}
 }

@@ -32,7 +32,6 @@ Level::Level(LevelStorage* pStor, const std::string& name, const LevelSettings& 
     m_difficulty = 2; // Java has no actual default, it just always pulls from Options. Putting 2 here just so there's no chance of mobs getting despawned accidentally.
 	m_pRakNetInstance = nullptr;
 	m_pLevelStorage = pStor;
-	m_tileEntities = TileEntityVector();
 	m_bUpdatingTileEntities = false;
 	m_randValue = 42184323;
 	m_addend = 1013904223;

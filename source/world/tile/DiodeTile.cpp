@@ -42,7 +42,8 @@ void DiodeTile::tick(TileSource& source, const TilePos& pos, Random* random)
 		if (!bShouldTurnOn)
 		{
 			int var8 = (data & 12) >> 2;
-			source.addToTickNextTick(pos, FullTile(Tile::diode_on, unk_b[var8] * 2));
+			TileTickingQueue* pQueue = source.getTickQueue(pos);
+			pQueue->add(source, pos, Tile::diode_on->m_ID, unk_b[var8] * 2);
 		}
 	}
 }
@@ -97,13 +98,14 @@ void DiodeTile::neighborChanged(TileSource& source, const TilePos& pos, TileID t
 		TileData data = source.getData(pos);
 		bool bShouldTurnOn = shouldTurnOn(source, pos, data);
 		int var8 = (data & 12) >> 2;
+		TileTickingQueue* pQueue = source.getTickQueue(pos);
 		if (m_bOn && !bShouldTurnOn)
 		{
-			source.addToTickNextTick(pos, m_ID, unk_b[var8] * 2);
+			pQueue->add(source, pos, m_ID, unk_b[var8] * 2);
 		}
 		else if (!m_bOn && bShouldTurnOn) 
 		{
-			source.addToTickNextTick(pos, m_ID, unk_b[var8] * 2);
+			pQueue->add(source, pos, m_ID, unk_b[var8] * 2);
 		}
 
 	}
@@ -153,7 +155,8 @@ void DiodeTile::setPlacedBy(const TilePos& pos, Mob& mob)
 	bool bShouldTurnOn = shouldTurnOn(source, pos, var6);
 	if (bShouldTurnOn)
 	{
-		source.addToTickNextTick(pos, m_ID, 1);
+		TileTickingQueue* pQueue = source.getTickQueue(pos);
+		pQueue->add(source, pos, m_ID, 1);
 	}
 }
 

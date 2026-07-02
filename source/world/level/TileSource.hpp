@@ -56,6 +56,9 @@ public:
 	bool hasChunksAt(int x, int y, int z, int r);
 	Brightness_t getSkyDarken() const;
 	const std::vector<MobSpawnerData>& getMobsAt(EntityType entityType, const TilePos& pos);
+	int getSignal(const TilePos& pos, Facing::Name face) const;
+	int getDirectSignal(const TilePos& pos, Facing::Name face) const;
+	bool hasDirectSignal(const TilePos& pos) const;
 	bool hasNeighborSignal(const TilePos& pos); // custom
 	bool hasNeighborSignal(int x, int y, int z);
 	void runLightUpdates(const LightLayer&, const TilePos&, const TilePos&); // unk type
@@ -86,6 +89,9 @@ public:
 	uint8_t getHeightmap(int, int);
 	TileEntity* getTileEntity(const TilePos&); // unk type
 	TileEntity* getTileEntity(int, int, int); // unk type
+	const std::vector<TileEntity*>& getAllTileEntities() const;
+	void setTileEntity(const TilePos& pos, TileEntity* tileEntity);
+	void removeTileEntity(const TilePos& pos);
 	void getGrassColor(const TilePos&); // unk type
 	void getTopRainTilePos(const TilePos&); // unk type
 	void checkIsTopRainTilePos(const TilePos&); // unk type

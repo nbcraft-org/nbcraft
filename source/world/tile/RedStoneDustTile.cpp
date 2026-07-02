@@ -124,10 +124,11 @@ void RedStoneDustTile::updatePowerStrength(TileSource& source, const TilePos& po
 
 	if (var8 != var9)
 	{
-		source.m_bNoNeighborUpdate = true;
+		// @Matt, tf do we do here?
+		//source.m_bNoNeighborUpdate = true;
 		source.setTileAndData(pos1, FullTile(this, var9));
-		source.setTilesDirty(pos1, pos1);
-		source.m_bNoNeighborUpdate = false;
+		//source.setTilesDirty(pos1, pos1);
+		//source.m_bNoNeighborUpdate = false;
 
 		for (var11 = 0; var11 < 4; var11++)
 		{

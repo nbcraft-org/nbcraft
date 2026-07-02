@@ -37,8 +37,6 @@ class RakNetInstance;
 class Packet;
 class MobSpawner;
 
-typedef std::vector<TileEntity*> TileEntityVector;
-
 class Level : public LevelListener, public TileSourceListener
 {
 protected:
@@ -150,7 +148,5 @@ public:
 	int32_t m_lastGameTimeSync;
 
 	HashMap<uint32_t, int> m_entityCountsByCategory;
-	TileEntityVector m_tileEntities;
-	TileEntityVector m_pendingTileEntities;
 };
 

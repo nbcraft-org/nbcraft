@@ -134,7 +134,7 @@ void NotGateTile::tick(TileSource& source, const TilePos& pos, Random* random)
 	Level& level = source.getLevel();
 	bool neighborSignal = hasNeighborSignal(source, pos);
 
-	while (recentToggles.size() > 0 && source.getTime() - recentToggles.at(0).when > 100)
+	while (recentToggles.size() > 0 && level.getTime() - recentToggles.at(0).when > 100)
 	{
 		recentToggles.erase(recentToggles.begin());
 	}
@@ -167,7 +167,8 @@ void NotGateTile::tick(TileSource& source, const TilePos& pos, Random* random)
 void NotGateTile::neighborChanged(TileSource& source, const TilePos& pos, TileID tile)
 {
 	TorchTile::neighborChanged(source, pos, tile);
-	source.addToTickNextTick(pos, m_ID, getTickDelay());
+	TileTickingQueue* pQueue = source.getTickQueue(pos);
+	pQueue->add(source, pos, m_ID, getTickDelay());
 }
 
 int NotGateTile::getDirectSignal(TileSource& source, const TilePos& pos, Facing::Name face) const
