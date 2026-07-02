@@ -66,7 +66,6 @@ add_library(nbcraft-core STATIC
     client/renderer/entity/PaintingRenderer.cpp
     client/renderer/entity/LightningBoltRenderer.cpp
     client/renderer/tileentity/TileEntityRenderDispatcher.cpp
-    client/renderer/tileentity/TileEntityRenderer.cpp
     client/renderer/tileentity/MobSpawnerRenderer.cpp
     client/renderer/tileentity/SignRenderer.cpp
     client/renderer/tileentity/PistonRenderer.cpp
