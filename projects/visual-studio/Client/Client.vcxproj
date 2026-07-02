@@ -111,7 +111,6 @@
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\PauseScreen.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\ProgressScreen.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\RenameMPLevelScreen.hpp" />
-    <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\SavingWorldScreen.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\SelectWorldScreen.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\StartMenuScreen.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\model\geom\Cube.hpp" />
@@ -132,7 +131,6 @@
     <ClInclude Include="$(MC_ROOT)\source\client\player\input\Mouse.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\player\input\MouseTurnInput.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\player\input\User.hpp" />
-    <ClInclude Include="$(MC_ROOT)\source\client\renderer\Chunk.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\renderer\Culler.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\renderer\DynamicTexture.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\EntityRenderDispatcher.hpp" />
@@ -287,6 +285,8 @@
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\ClientCraftContext.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\CraftingScreen_Console.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\TrapScreen_Console.hpp" />
+    <ClInclude Include="..\..\..\source\client\renderer\RenderChunkBuilder.hpp" />
+    <ClInclude Include="..\..\..\source\client\renderer\VisibilityExtimator.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\client\app\App.cpp" />
@@ -319,7 +319,6 @@
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\PauseScreen.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\ProgressScreen.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\RenameMPLevelScreen.cpp" />
-    <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\SavingWorldScreen.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\SelectWorldScreen.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\StartMenuScreen.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\model\geom\Cube.cpp" />
@@ -341,7 +340,6 @@
     <ClCompile Include="$(MC_ROOT)\source\client\player\input\KeyboardInput.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\player\input\Mouse.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\player\input\MouseTurnInput.cpp" />
-    <ClCompile Include="$(MC_ROOT)\source\client\renderer\Chunk.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\renderer\Culler.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\renderer\DynamicTexture.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\EntityRenderDispatcher.cpp" />
@@ -492,6 +490,8 @@
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\ClientCraftContext.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\CraftingScreen_Console.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\TrapScreen_Console.cpp" />
+    <ClCompile Include="..\..\..\source\client\renderer\RenderChunkBuilder.cpp" />
+    <ClCompile Include="..\..\..\source\client\renderer\VisibilityExtimator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">

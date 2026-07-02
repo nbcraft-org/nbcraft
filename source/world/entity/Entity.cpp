@@ -11,6 +11,7 @@
 #include "common/Logger.hpp"
 #include "nbt/CompoundTag.hpp"
 #include "world/level/Level.hpp"
+#include "world/level/TileSource.hpp"
 
 #include "Player.hpp"
 
@@ -69,11 +70,24 @@ void Entity::_init()
 	m_bCanBeDeleted = true;
 }
 
-Entity::Entity(Level* pLevel)
+Entity::Entity(Level& level)
+	: m_pTileSource(nullptr),
+	  m_pLevel(&level)
 {
 	_init();
 
-	m_pLevel = pLevel;
+	m_EntityID = ++entityCounter;
+	setPos(Vec3::ZERO);
+
+	m_entityData.define<SharedFlag>(DATA_SHARED_FLAGS_ID, 0);
+}
+
+Entity::Entity(TileSource& tileSource)
+	: m_pTileSource(&tileSource),
+	  m_pLevel(&tileSource.getLevel())
+{
+	_init();
+
 	m_EntityID = ++entityCounter;
 	setPos(Vec3::ZERO);
 
@@ -104,6 +118,7 @@ void Entity::setSharedFlag(SharedFlag flag, bool value)
 	}
 }
 
+// @PARITY
 #if MC_PLATFORM_MOBILE
 // 0.35f on 0.1.3, 0.25f on 0.2.1+
 #define C_STEP_SOUND_VOLUME_SCALE 0.25f
@@ -114,9 +129,11 @@ void Entity::setSharedFlag(SharedFlag flag, bool value)
 
 void Entity::playStepSound(const TilePos& pos, TileID tileId)
 {
+	TileSource& source = getTileSource();
+
 	Tile* pTile = Tile::tiles[tileId];
 	const Tile::SoundType* sound = nullptr;
-	if (m_pLevel->getTile(pos.above()) == Tile::topSnow->m_ID)
+	if (source.getTile(pos.above()) == Tile::topSnow->m_ID)
 	{
 		sound = Tile::topSnow->m_pSound;
 	}
@@ -130,7 +147,7 @@ void Entity::playStepSound(const TilePos& pos, TileID tileId)
 		m_pLevel->playSound(this, "step." + sound->name, sound->volume * C_STEP_SOUND_VOLUME_SCALE, sound->pitch);
 	}
 
-	pTile->stepOn(m_pLevel, pos, this);
+	pTile->stepOn(source, pos, this);
 }
 
 void Entity::setLevel(Level* pLvl)
@@ -141,6 +158,11 @@ void Entity::setLevel(Level* pLvl)
 void Entity::removed()
 {
 	m_bRemoved = true;
+}
+
+const Vec3& Entity::getPos() const
+{
+	return m_pos;
 }
 
 void Entity::setPos(const Vec3& pos)
@@ -195,7 +217,7 @@ void Entity::move(const Vec3& pos)
 		bool validSneaking = m_bOnGround && isSneaking();
 		if (validSneaking)
 		{
-			for (float dx = 0.05f; newPos.x != 0.0f && m_pLevel->getCubes(this, AABB(m_hitbox).move(newPos.x, -1.0f, 0.0f))->size() == 0; cPosX = newPos.x)
+			for (float dx = 0.05f; newPos.x != 0.0f && m_pTileSource->fetchAABBs(AABB(m_hitbox).move(newPos.x, -1.0f, 0.0f), true).size() == 0; cPosX = newPos.x)
 			{
 				if (newPos.x < dx && newPos.x >= -dx)
 					newPos.x = 0.0;
@@ -205,7 +227,7 @@ void Entity::move(const Vec3& pos)
 					newPos.x += dx;
 			}
 
-			for (float dz = 0.05f; newPos.z != 0.0f && m_pLevel->getCubes(this, AABB(m_hitbox).move(0.0f, -1.0f, newPos.z))->size() == 0; cPosZ = newPos.z)
+			for (float dz = 0.05f; newPos.z != 0.0f && m_pTileSource->fetchAABBs(AABB(m_hitbox).move(0.0f, -1.0f, newPos.z), true).size() == 0; cPosZ = newPos.z)
 			{
 				if (newPos.z < dz && newPos.z >= -dz)
 					newPos.z = 0.0f;
@@ -216,10 +238,10 @@ void Entity::move(const Vec3& pos)
 			}
 		}
 
-		AABBVector* cubes = m_pLevel->getCubes(this, AABB(m_hitbox).expand(newPos.x, newPos.y, newPos.z));
+		std::vector<AABB>& cubes = m_pTileSource->fetchAABBs(AABB(m_hitbox).expand(newPos.x, newPos.y, newPos.z), true);
 
-		for (size_t i = 0; i < cubes->size(); ++i)
-			newPos.y = (*cubes)[i].clipYCollide(m_hitbox, newPos.y);
+		for (size_t i = 0; i < cubes.size(); ++i)
+			newPos.y = cubes.at(i).clipYCollide(m_hitbox, newPos.y);
 
 		m_hitbox.move(0.0f, newPos.y, 0.0f);
 		if (!m_bSlide && cPosY != newPos.y)
@@ -227,15 +249,15 @@ void Entity::move(const Vec3& pos)
 
 		bool lastsOnGround = m_bOnGround || (cPosY != newPos.y && cPosY < 0.0);
 
-		for (size_t i = 0; i < cubes->size(); ++i)
-			newPos.x = (*cubes)[i].clipXCollide(m_hitbox, newPos.x);
+		for (size_t i = 0; i < cubes.size(); ++i)
+			newPos.x = cubes.at(i).clipXCollide(m_hitbox, newPos.x);
 	
 		m_hitbox.move(newPos.x, 0.0f, 0.0f);
 		if (!m_bSlide && cPosX != newPos.x)
 			newPos = Vec3::ZERO;
 
-		for (size_t i = 0; i < cubes->size(); ++i)
-			newPos.z = (*cubes)[i].clipZCollide(m_hitbox, newPos.z);
+		for (size_t i = 0; i < cubes.size(); ++i)
+			newPos.z = cubes.at(i).clipZCollide(m_hitbox, newPos.z);
 
 		m_hitbox.move(0.0f, 0.0f, newPos.z);
 		if (!m_bSlide && cPosZ != newPos.z)
@@ -249,24 +271,24 @@ void Entity::move(const Vec3& pos)
 			newPos.z = cPosZ;
 			AABB oldHit = m_hitbox;
 			m_hitbox = lastHit;
-			cubes = m_pLevel->getCubes(this, AABB(m_hitbox).expand(cPosX, newPos.y, cPosZ));
+			cubes = m_pTileSource->fetchAABBs(AABB(m_hitbox).expand(cPosX, newPos.y, cPosZ), true);
 
-			for (size_t i = 0; i < cubes->size(); ++i)
-				newPos.y = (*cubes)[i].clipYCollide(m_hitbox, newPos.y);
+			for (size_t i = 0; i < cubes.size(); ++i)
+				newPos.y = cubes.at(i).clipYCollide(m_hitbox, newPos.y);
 
 			m_hitbox.move(0.0f, newPos.y, 0.0f);
 			if (!m_bSlide && cPosY != newPos.y)
 				newPos = Vec3::ZERO;
 
-			for (size_t i = 0; i < cubes->size(); ++i)
-				newPos.x = (*cubes)[i].clipXCollide(m_hitbox, newPos.x);
+			for (size_t i = 0; i < cubes.size(); ++i)
+				newPos.x = cubes.at(i).clipXCollide(m_hitbox, newPos.x);
 
 			m_hitbox.move(newPos.x, 0.0f, 0.0f);
 			if (!m_bSlide && cPosX != newPos.x)
 				newPos = Vec3::ZERO;
 
-			for (size_t i = 0; i < cubes->size(); ++i)
-				newPos.z = (*cubes)[i].clipZCollide(m_hitbox, newPos.z);
+			for (size_t i = 0; i < cubes.size(); ++i)
+				newPos.z = cubes.at(i).clipZCollide(m_hitbox, newPos.z);
 
 			m_hitbox.move(0.0f, 0.0f, newPos.z);
 			if (!m_bSlide && cPosZ != newPos.z)
@@ -308,9 +330,9 @@ void Entity::move(const Vec3& pos)
 		{
 			m_walkDist = float(m_walkDist + Mth::sqrt(diffX * diffX + diffZ * diffZ) * 0.6f);
 			TilePos tp(m_pos.x, m_pos.y - 0.2f - m_heightOffset, m_pos.z);
-			TileID tileId = m_pLevel->getTile(tp);
+			TileID tileId = m_pTileSource->getTile(tp);
 
-			if (m_pLevel->getTile(tp.below()) == Tile::fence->m_ID)
+			if (m_pTileSource->getTile(tp.below()) == Tile::fence->m_ID)
 				tileId = Tile::fence->m_ID;
 
 			if (m_walkDist > m_nextStep && tileId > 0)
@@ -325,21 +347,21 @@ void Entity::move(const Vec3& pos)
 		TilePos maxPos(m_hitbox.max - 0.001f);
 		TilePos tilePos;
 
-		if (m_pLevel->hasChunksAt(minPos, TilePos(maxPos)))
+		if (m_pTileSource->hasChunksAt(minPos, TilePos(maxPos)))
 		{
 			for (tilePos.x = minPos.x; tilePos.x <= maxPos.x; tilePos.x++)
 				for (tilePos.y = minPos.y; tilePos.y <= maxPos.y; tilePos.y++)
 					for (tilePos.z = minPos.z; tilePos.z <= maxPos.z; tilePos.z++)
 					{
-						TileID tileID = m_pLevel->getTile(tilePos);
+						TileID tileID = m_pTileSource->getTile(tilePos);
 						if (tileID > 0)
-							Tile::tiles[tileID]->entityInside(m_pLevel, tilePos, this);
+							Tile::tiles[tileID]->entityInside(*m_pTileSource, tilePos, this);
 					}
 		}
 
 		bool bIsInWater = isInWater();
 
-		if (m_pLevel->containsFireTile(AABB(minPos, maxPos)))
+		if (m_pTileSource->containsFireTile(AABB(minPos, maxPos)))
 		{
 			burn(1);
 
@@ -611,11 +633,9 @@ bool Entity::isFree(const Vec3& off) const
 	AABB aabb = m_hitbox;
 	aabb.move(off);
 
-	AABBVector* pCubes = m_pLevel->getCubes(this, aabb);
-	if (!pCubes)
-		return false;
+	std::vector<AABB>& pCubes = m_pTileSource->fetchAABBs(aabb, true);
 
-	return !m_pLevel->containsAnyLiquid(aabb);
+	return !m_pTileSource->containsAnyLiquid(aabb);
 }
 
 bool Entity::isFree(const Vec3& off, float expand) const
@@ -624,16 +644,14 @@ bool Entity::isFree(const Vec3& off, float expand) const
 	aabb.move(off);
 	aabb.grow(expand, expand, expand);
 
-	AABBVector* pCubes = m_pLevel->getCubes(this, aabb);
-	if (!pCubes)
-		return false;
+	std::vector<AABB>& pCubes = m_pTileSource->fetchAABBs(aabb, true);
 
-	return !m_pLevel->containsAnyLiquid(aabb);
+	return !m_pTileSource->containsAnyLiquid(aabb);
 }
 
 bool Entity::isInWall() const
 {
-	return m_pLevel->isSolidTile(TilePos(m_pos.x, m_pos.y + getHeadHeight(), m_pos.z));
+	return m_pTileSource->isSolidBlockingTile(TilePos(m_pos.x, m_pos.y + getHeadHeight(), m_pos.z));
 }
 
 bool Entity::isInWater()
@@ -647,18 +665,18 @@ bool Entity::isInLava() const
 {
 	AABB aabb = m_hitbox;
 	aabb.grow(-0.1f, -0.4f, -0.1f);
-	return m_pLevel->containsMaterial(aabb, Material::lava);
+	return m_pTileSource->containsMaterial(aabb, Material::lava);
 }
 
 bool Entity::isUnderLiquid(Material* pMtl) const
 {
 	TilePos tilePos(m_pos.x, m_pos.y + getHeadHeight(), m_pos.z);
 
-	Tile* pTile = Tile::tiles[m_pLevel->getTile(tilePos)];
+	Tile* pTile = Tile::tiles[m_pTileSource->getTile(tilePos)];
 	if (!pTile || pTile->m_pMaterial != pMtl)
 		return false;
 
-	TileData data = m_pLevel->getData(tilePos);
+	TileData data = m_pTileSource->getData(tilePos);
 	int level = data <= 7 ? data + 1 : 1;
 
 	return float(tilePos.y) < float(tilePos.y + 1) - (float(level) / 9.0f - 0.11111f);
@@ -671,14 +689,13 @@ float Entity::getBrightness(float f) const
 	TilePos tileMin(m_hitbox.min);
 	TilePos tileMax(m_hitbox.max);
 
-	if (!m_pLevel->hasChunksAt(tileMin, tileMax))
+	if (!m_pTileSource->hasChunksAt(tileMin, tileMax))
 		return 0;
 
-	return Mth::Max(m_minBrightness, m_pLevel->getBrightness(tilePos));
+	return Mth::Max(m_minBrightness, m_pTileSource->getBrightness(tilePos));
 }
 
-// renamed to getInterpolatedPosition in 0.12.1
-Vec3 Entity::getPos(float f) const
+Vec3 Entity::getInterpolatedPosition(float f) const
 {
 	if (f == 1.0f)
 		return m_pos;
@@ -690,11 +707,10 @@ Vec3 Entity::getPos(float f) const
 	);
 }
 
-// renamed to getInterpolatedRotation in 0.12.1
-Rot2 Entity::getRot(float f) const
+Rot2 Entity::getInterpolatedRotation(float f) const
 {
 	return Rot2(
-		Mth::Lerp(m_oRot.yaw, m_rot.yaw, f),
+		Mth::Lerp(m_oRot.yaw,   m_rot.yaw,   f),
 		Mth::Lerp(m_oRot.pitch, m_rot.pitch, f)
 	);
 }
@@ -823,11 +839,11 @@ void Entity::animateHurt()
 
 ItemEntity* Entity::spawnAtLocation(const ItemStack& itemStack, float y)
 {
-	ItemEntity *itemEntity = new ItemEntity(m_pLevel, Vec3(m_pos.x, m_pos.y + y, m_pos.z), itemStack);
+	ItemEntity* itemEntity = new ItemEntity(getTileSource(), Vec3(m_pos.x, m_pos.y + y, m_pos.z), itemStack);
 	// @TODO: not sure what this does, or is for
 	itemEntity->m_oPos.x = 10;
 	m_pLevel->addEntity(itemEntity);
-	
+
 	return itemEntity;
 }
 
@@ -898,10 +914,10 @@ void Entity::resetPos(bool respawn)
 	{
 		setPos(m_pos);
 
-		AABBVector* pCubes = m_pLevel->getCubes(this, m_hitbox);
+		std::vector<AABB>& pCubes = m_pTileSource->fetchAABBs(m_hitbox, true);
 
 		// if we aren't inside any tiles, great!
-		if (!pCubes->size())
+		if (pCubes.size() == 0)
 			break;
 
 		m_pos.y += 1.0f;
@@ -1204,6 +1220,11 @@ void Entity::readAdditionalSaveData(const CompoundTag& tag)
 EntityType::ID Entity::getEncodeId() const
 {
 	return getDescriptor().getEntityType().getId();
+}
+
+Dimension& Entity::getDimension() const
+{
+	return m_pTileSource->getDimension();
 }
 
 bool Entity::operator==(const Entity& other) const

@@ -12,6 +12,7 @@ add_library(nbcraft-core STATIC
     common/Random.cpp
     common/SmoothFloat.cpp
     common/Timer.cpp
+    common/Stopwatch.cpp
     common/Util.cpp
     common/utility/AlignmentHelper.cpp
     common/utility/JsonParser.cpp
@@ -94,6 +95,7 @@ add_library(nbcraft-core STATIC
     client/renderer/PortalTexture.cpp
     client/renderer/FoliageColor.cpp
     client/renderer/GrassColor.cpp
+    client/renderer/VisibilityExtimator.cpp
     client/renderer/LogoRenderer.cpp
     client/sound/SoundData.cpp
     client/sound/SoundPathRepository.cpp

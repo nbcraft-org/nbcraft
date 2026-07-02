@@ -11,7 +11,7 @@
 #include "common/Logger.hpp"
 #include "client/app/AppPlatform.hpp"
 
-#ifndef DEMO
+#if false
 
 ExternalFileLevelStorageSource::ExternalFileLevelStorageSource(const std::string& path)
 {

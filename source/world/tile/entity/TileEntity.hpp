@@ -8,6 +8,7 @@
 class Tile;
 class Level;
 class Packet;
+class TileSource;
 
 class TileEntity
 {
@@ -44,6 +45,6 @@ protected:
     bool m_bRemove;
 
 public:
-    Level* m_pLevel;
+    TileSource* m_pTileSource;
     TilePos m_pos;
 };

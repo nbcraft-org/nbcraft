@@ -9,5 +9,5 @@ public:
 
 	int getResource(TileData data, Random*) const override;
 	int getResourceCount(Random*) const override;
-	void tick(Level*, const TilePos& pos, Random*) override;
+	void tick(TileSource&, const TilePos& pos, Random*) override;
 };

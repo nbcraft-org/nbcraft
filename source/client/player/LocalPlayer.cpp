@@ -15,6 +15,7 @@
 #include "client/gui/screens/inventory/ChestScreen.hpp"
 #include "client/gui/screens/inventory/FurnaceScreen.hpp"
 #include "client/gui/screens/inventory/TrapScreen.hpp"
+#include "world/level/TileSource.hpp"
 
 int dword_250ADC, dword_250AE0;
 
@@ -31,7 +32,7 @@ void LocalPlayer::_init()
 	m_lastRenderArmRot = Rot2::ZERO;
 }
 
-LocalPlayer::LocalPlayer(Minecraft* pMinecraft, Level* pLevel, User* pUser, GameType playerGameType, int dimensionId) : Player(pLevel, playerGameType)
+LocalPlayer::LocalPlayer(Minecraft* pMinecraft, Level& level, User* pUser, GameType playerGameType, DimensionId dimensionId) : Player(level, playerGameType)
 {
 	m_lastSelectedStackId = 0;
 
@@ -327,18 +328,18 @@ void LocalPlayer::move(const Vec3& pos)
 			int x1 = Mth::floor(pos.x / dist + m_pos.x);
 			int z1 = Mth::floor(pos.z / dist + m_pos.z);
 
-			TileID tileOnTop = m_pLevel->getTile(TilePos(x1, int(m_pos.y - 1.0f), z1));
+			TileID tileOnTop = m_pTileSource->getTile(TilePos(x1, int(m_pos.y - 1.0f), z1));
 
 			// not standing on top of a tile?
-			if (!m_pLevel->isSolidTile(TilePos(x1, int(m_pos.y - 1.0f), z1)))
+			if (!m_pTileSource->isSolidBlockingTile(TilePos(x1, int(m_pos.y - 1.0f), z1)))
 				return;
 
 			// aren't inside of a tile right now
-			if (m_pLevel->isSolidTile(TilePos(x1, int(m_pos.y), z1)))
+			if (m_pTileSource->isSolidBlockingTile(TilePos(x1, int(m_pos.y), z1)))
 				return;
 
 			// don't have anything on top of us
-			if (m_pLevel->isSolidTile(TilePos(x1, int(m_pos.y + 1.0f), z1)))
+			if (m_pTileSource->isSolidBlockingTile(TilePos(x1, int(m_pos.y + 1.0f), z1)))
 				return;
 
 			// are we trying to walk into stairs or a slab?

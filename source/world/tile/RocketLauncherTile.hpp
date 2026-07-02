@@ -15,15 +15,18 @@ class RocketLauncherTile : public Tile
 public:
 	RocketLauncherTile(TileID id);
 
+private:
+	bool _use(TileSource& source, const TilePos& pos);
+
 public:
 	int getTexture(Facing::Name face, TileData data) const override;
-	AABB* getAABB(const Level*, const TilePos& pos) override;
+	AABB* getAABB(TileSource&, const TilePos& pos) override;
 	eRenderShape getRenderShape() const override;
 	bool isCubeShaped() const override;
 	bool isSolidRender() const override;
 	bool isSignalSource() const override;
-	bool use(Level* pLevel, const TilePos& pos, Player* player) override;
-	void neighborChanged(Level*, const TilePos& pos, TileID newTile) override;
-	void tick(Level*, const TilePos& pos, Random*) override;
+	bool use(const TilePos& pos, Player& player) override;
+	void neighborChanged(TileSource& source, const TilePos& pos, TileID newTile) override;
+	void tick(TileSource&, const TilePos& pos, Random*) override;
 	int getTickDelay() const override;
 };

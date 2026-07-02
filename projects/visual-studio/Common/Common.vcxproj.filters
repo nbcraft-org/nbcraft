@@ -74,6 +74,21 @@
     <ClCompile Include="$(MC_ROOT)\source\common\utility\ByteBuffer.cpp">
       <Filter>Source Files\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\common\threading\BackgroundQueue.cpp">
+      <Filter>Source Files\Threading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\common\threading\BackgroundQueuePool.cpp">
+      <Filter>Source Files\Threading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\common\threading\Semaphore.cpp">
+      <Filter>Source Files\Threading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\common\Stopwatch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\common\File.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\common\Logger.hpp">
@@ -130,11 +145,38 @@
     <ClInclude Include="$(MC_ROOT)\source\common\threading\AsyncTask.hpp">
       <Filter>Header Files\Threading</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\source\common\threading\BackgroundQueue.hpp">
+      <Filter>Header Files\Threading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\common\threading\BackgroundQueuePool.hpp">
+      <Filter>Header Files\Threading</Filter>
+    </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\common\utility\ByteBuffer.hpp">
       <Filter>Header Files\Utility</Filter>
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\common\utility\HashMap.hpp">
       <Filter>Header Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\common\threading\LocklessPipe.hpp">
+      <Filter>Header Files\Threading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\common\threading\Semaphore.hpp">
+      <Filter>Header Files\Threading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\common\threading\ThreadLocal.hpp">
+      <Filter>Header Files\Threading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\common\Stopwatch.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\common\ByteMask.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\common\MovePriorityQueue.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\common\File.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

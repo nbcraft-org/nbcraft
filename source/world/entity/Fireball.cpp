@@ -1,6 +1,7 @@
 #include "Fireball.hpp"
 #include "Mob.hpp"
 #include "world/level/Level.hpp"
+#include "world/level/TileSource.hpp"
 #include "nbt/CompoundTag.hpp"
 
 const unsigned int Fireball::ARROW_BASE_DAMAGE = 0;
@@ -23,18 +24,20 @@ void Fireball::_init()
     m_powerVel = Vec3::ZERO;
 }
 
-Fireball::Fireball(Level* pLevel) : Entity(pLevel)
+Fireball::Fireball(TileSource& source)
+    : Entity(source)
 {
     _init();
 }
 
-Fireball::Fireball(Level* pLevel, Mob* pMob, Vec3 pos) : Entity(pLevel)
+Fireball::Fireball(Mob& mob, Vec3 pos)
+    : Entity(mob.getTileSource())
 {
     _init();
 
-    m_owner = pMob;
+    m_owner = &mob;
     m_bIsPlayerOwned = m_owner->isPlayer();
-    moveTo(Vec3(pMob->m_pos.x, pMob->m_pos.y, pMob->m_pos.z), pMob->m_rot);
+    moveTo(Vec3(mob.m_pos.x, mob.m_pos.y, mob.m_pos.z), mob.m_rot);
 
     setPos(m_pos);
 
@@ -68,7 +71,7 @@ void Fireball::tick()
 
     if (m_bInGround)
     {
-        if (m_pLevel->getTile(m_tilePos) == m_lastTile)
+        if (m_pTileSource->getTile(m_tilePos) == m_lastTile)
         {
             ++m_life;
             if (m_life == 1200)
@@ -92,7 +95,7 @@ void Fireball::tick()
     }
 
     Vec3 future_pos = m_pos + m_vel;
-    HitResult hit_result = m_pLevel->clip(m_pos, future_pos);
+    HitResult hit_result = m_pTileSource->clip(m_pos, future_pos);
     if (hit_result.isHit())
     {
         future_pos = hit_result.m_hitPos;
@@ -101,11 +104,11 @@ void Fireball::tick()
     Entity* hit_ent = nullptr;
     AABB hitbox = m_hitbox;
     hitbox.expand(m_vel.x, m_vel.y, m_vel.z).grow(1.0f);
-    EntityVector entities = m_pLevel->getEntities(this, hitbox);
+    Entity::Vector entities = m_pTileSource->getEntities(this, hitbox);
 
     float max_dist = 0.0f;
     constexpr float var10 = 0.3f;
-    for (EntityVector::iterator it = entities.begin(); it != entities.end(); it++)
+    for (Entity::Vector::iterator it = entities.begin(); it != entities.end(); it++)
     {
         Entity* ent = *it;
         if (ent->isPickable() && (ent != m_owner || m_flightTime >= 25))

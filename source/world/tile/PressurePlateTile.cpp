@@ -1,5 +1,6 @@
 #include "PressurePlateTile.hpp"
 #include "world/level/Level.hpp"
+#include "world/level/TileSource.hpp"
 
 PressurePlateTile::PressurePlateTile(TileID id, int texture, Sensitivity sensitivity) : Tile(id, texture, Material::stone)
 {
@@ -14,7 +15,7 @@ int PressurePlateTile::getTickDelay() const
 	return 20;
 }
 
-AABB* PressurePlateTile::getAABB(const Level*, const TilePos& pos)
+AABB* PressurePlateTile::getAABB(TileSource& source, const TilePos& pos)
 {
 	return nullptr;
 }
@@ -29,54 +30,60 @@ bool PressurePlateTile::isCubeShaped() const
 	return false;
 }
 
-bool PressurePlateTile::mayPlace(const Level* level, const TilePos& pos) const
+bool PressurePlateTile::mayPlace(TileSource& source, const TilePos& pos) const
 {
-	return level->isSolidTile(pos.below());
+	return source.isSolidBlockingTile(pos.below());
 }
 
-void PressurePlateTile::onPlace(Level*, const TilePos& pos)
+void PressurePlateTile::onPlace(TileSource& source, const TilePos& pos)
 {
 }
 
-void PressurePlateTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
+void PressurePlateTile::neighborChanged(TileSource& source, const TilePos& pos, TileID tile)
 {
-	if (level->isSolidTile(pos.below()))
+	if (source.isSolidBlockingTile(pos.below()))
 		return; // all good
 
-	spawnResources(level, pos, level->getData(pos));
-	level->setTile(pos, TILE_AIR);
+	spawnResources(source, pos, source.getData(pos));
+	source.setTile(pos, TILE_AIR);
 }
 
-void PressurePlateTile::tick(Level* level, const TilePos& pos, Random* random)
+void PressurePlateTile::tick(TileSource& source, const TilePos& pos, Random* random)
 {
-	if (!level->m_bIsClientSide)
+	Level& level = source.getLevel();
+
+	if (!level.m_bIsClientSide)
 	{
-		if (level->getData(pos) != 0)
+		if (source.getData(pos) != 0)
 		{
-			checkPressed(level, pos);
+			checkPressed(source, pos);
 		}
 	}
 }
 
-void PressurePlateTile::entityInside(Level* level, const TilePos& pos, Entity* entity) const
+void PressurePlateTile::entityInside(TileSource& source, const TilePos& pos, Entity* entity) const
 {
-	if (!level->m_bIsClientSide)
+	Level& level = source.getLevel();
+
+	if (!level.m_bIsClientSide)
 	{
-		if (level->getData(pos) != 1)
+		if (source.getData(pos) != 1)
 		{
-			checkPressed(level, pos);
+			checkPressed(source, pos);
 		}
 	}
 }
 
-void PressurePlateTile::checkPressed(Level* level, const TilePos& pos) const
+void PressurePlateTile::checkPressed(TileSource& source, const TilePos& pos) const
 {
+	Level& level = source.getLevel();
+
 	// copied from the redstonev2 branch because there isn't an equivalent of getEntitiesOfClass yet
-	bool var5 = level->getData(pos) == 1;
+	bool var5 = source.getData(pos) == 1;
 	bool var6 = false;
 	float var7 = 0.125f;
 	AABB aabb(float(pos.x) + var7, float(pos.y), float(pos.z) + var7, float(pos.x + 1) - var7, float(pos.y) + 0.25f, float(pos.z + 1) - var7);
-	EntityVector var8 = level->getEntities(nullptr, aabb);
+	Entity::Vector var8 = source.getEntities(nullptr, aabb);
 	switch (m_sensitivity)
 	{
 	case SENSITIVITY_EVERYTHING:
@@ -110,42 +117,43 @@ void PressurePlateTile::checkPressed(Level* level, const TilePos& pos) const
 
 	if (var6 && !var5)
 	{
-		level->setData(pos, 1);
-		level->updateNeighborsAt(pos, m_ID);
-		level->updateNeighborsAt(pos.below(), m_ID);
-		level->setTilesDirty(pos, pos);
-		level->playSound(Vec3(float(pos.x) + 0.5f, float(pos.y) + 0.1f, float(pos.z) + 0.5f), "random.click", 0.3f, 0.6f);
+		source.setTileAndData(pos, FullTile(m_ID, 1));
+		source.updateNeighborsAt(pos, m_ID);
+		source.updateNeighborsAt(pos.below(), m_ID);
+		//source.setTilesDirty(pos, pos);
+		level.playSound(Vec3(float(pos.x) + 0.5f, float(pos.y) + 0.1f, float(pos.z) + 0.5f), "random.click", 0.3f, 0.6f);
 	}
 	if (!var6 && var5)
 	{
-		level->setData(pos, 0);
-		level->updateNeighborsAt(pos, m_ID);
-		level->updateNeighborsAt(pos.below(), m_ID);
-		level->setTilesDirty(pos, pos);
-		level->playSound(Vec3(float(pos.x) + 0.5f, float(pos.y) + 0.1f, float(pos.z) + 0.5f), "random.click", 0.3f, 0.5f);
+		source.setTileAndData(pos, FullTile(m_ID, 0));
+		source.updateNeighborsAt(pos, m_ID);
+		source.updateNeighborsAt(pos.below(), m_ID);
+		//source.setTilesDirty(pos, pos);
+		level.playSound(Vec3(float(pos.x) + 0.5f, float(pos.y) + 0.1f, float(pos.z) + 0.5f), "random.click", 0.3f, 0.5f);
 	}
 
 	if (var6)
 	{
-		level->addToTickNextTick(pos, m_ID, getTickDelay());
+		TileTickingQueue* pQueue = source.getTickQueue(pos);
+		pQueue->add(source, pos, m_ID, getTickDelay());
 	}
 }
 
-void PressurePlateTile::onRemove(Level* level, const TilePos& pos)
+void PressurePlateTile::onRemove(TileSource& source, const TilePos& pos)
 {
-	TileData data = level->getData(pos);
+	TileData data = source.getData(pos);
 	if (data > 0)
 	{
-		level->updateNeighborsAt(pos, m_ID);
-		level->updateNeighborsAt(pos.below(), m_ID);
+		source.updateNeighborsAt(pos, m_ID);
+		source.updateNeighborsAt(pos.below(), m_ID);
 	}
 
-	Tile::onRemove(level, pos);
+	Tile::onRemove(source, pos);
 }
 
-void PressurePlateTile::updateShape(const LevelSource* level, const TilePos& pos)
+void PressurePlateTile::updateShape(TileSource& source, const TilePos& pos)
 {
-	bool var5 = level->getData(pos) == 1;
+	bool var5 = source.getData(pos) == 1;
 	float var6 = 1.0f / 16.0f;
 	if (var5) {
 		setShape(var6, 0.0f, var6, 1.0f - var6, 0.03125f, 1.0f - var6);
@@ -155,14 +163,14 @@ void PressurePlateTile::updateShape(const LevelSource* level, const TilePos& pos
 	}
 }
 
-int PressurePlateTile::getSignal(const LevelSource* level, const TilePos& pos, Facing::Name face) const
+int PressurePlateTile::getSignal(TileSource& source, const TilePos& pos, Facing::Name face) const
 {
-	return level->getData(pos) > 0;
+	return source.getData(pos) > 0;
 }
 
-int PressurePlateTile::getDirectSignal(const Level* level, const TilePos& pos, Facing::Name face) const
+int PressurePlateTile::getDirectSignal(TileSource& source, const TilePos& pos, Facing::Name face) const
 {
-	return level->getData(pos) == 0 ? false : face == Facing::UP;
+	return source.getData(pos) == 0 ? false : face == Facing::UP;
 }
 
 bool PressurePlateTile::isSignalSource() const

@@ -12,7 +12,6 @@
 #include "client/gui/screens/PauseScreen.hpp"
 #include "client/gui/screens/StartMenuScreen.hpp"
 #include "client/gui/screens/RenameMPLevelScreen.hpp"
-#include "client/gui/screens/SavingWorldScreen.hpp"
 #include "client/gui/screens/DeathScreen.hpp"
 #include "client/gui/screens/ProgressScreen.hpp"
 #include "client/gui/screens/ConvertWorldScreen.hpp"
@@ -37,6 +36,7 @@
 #include "client/player/input/Multitouch.hpp"
 
 #include "world/tile/SandTile.hpp"
+#include "world/level/TileSource.hpp"
 
 #include "client/renderer/GrassColor.hpp"
 #include "client/renderer/FoliageColor.hpp"
@@ -46,6 +46,8 @@
 #include "client/renderer/LogoRenderer.hpp"
 
 Minecraft* Minecraft::_singletonPtr;
+#include "common/threading/BackgroundQueuePool.hpp"
+
 float Minecraft::_renderScaleMultiplier = 1.0f;
 
 int Minecraft::width  = C_DEFAULT_SCREEN_WIDTH;
@@ -113,6 +115,8 @@ Minecraft::Minecraft()
 	m_lastInteractTime = 0;
 
 	_singletonPtr = this;
+
+	BackgroundQueuePool::start(std::thread::hardware_concurrency());
 }
 
 Minecraft::~Minecraft()
@@ -491,7 +495,9 @@ void Minecraft::handleBuildAction(const BuildActionIntention& action)
 		}
 		case HitResult::TILE:
 		{
-			Tile* pTile = Tile::tiles[m_pLevel->getTile(m_hitResult.m_tilePos)];
+			TileSource& source = player->getTileSource();
+
+			Tile* pTile = Tile::tiles[source.getTile(m_hitResult.m_tilePos)];
 
 			if (action.isDestroy())
 			{
@@ -519,7 +525,7 @@ void Minecraft::handleBuildAction(const BuildActionIntention& action)
 					bool contDestory = pGameMode->continueDestroyBlock(player, m_hitResult.m_tilePos, m_hitResult.m_hitSide);
 
 					destroyed = destroyed || contDestory;
-					m_pParticleEngine->crack(m_hitResult.m_tilePos, m_hitResult.m_hitSide);
+					m_pParticleEngine->crack(player, m_hitResult.m_tilePos, m_hitResult.m_hitSide);
 
 					m_lastBlockBreakTime = getTimeMs();
 
@@ -533,13 +539,13 @@ void Minecraft::handleBuildAction(const BuildActionIntention& action)
 			else if (action.isPick())
 			{
 				// Try to pick the tile.
-				int auxValue = m_pLevel->getData(m_hitResult.m_tilePos);
+				TileData auxValue = source.getData(m_hitResult.m_tilePos);
 				player->m_pInventory->pickItem(pTile->m_ID, auxValue, C_MAX_HOTBAR_ITEMS);
 			}
 			else if (action.isPlace() && canInteract)
 			{
 				ItemStack& item = getSelectedItem();
-				if (pGameMode->useItemOn(player, m_pLevel, item, m_hitResult.m_tilePos, m_hitResult.m_hitSide))
+				if (m_pGameMode->useItemOn(player, item, m_hitResult.m_tilePos, m_hitResult.m_hitSide))
 				{
 					bInteract = false;
 
@@ -560,7 +566,7 @@ void Minecraft::handleBuildAction(const BuildActionIntention& action)
 		if (!item.isEmpty())
 		{
 			m_lastInteractTime = getTimeMs();
-			if (pGameMode->useItem(player, m_pLevel, item))
+			if (m_pGameMode->useItem(player, item))
 				m_pGameRenderer->m_pItemInHandRenderer->itemUsed();
 		}
 	}
@@ -858,22 +864,16 @@ void Minecraft::freeResources(bool bCopyMap)
 	m_pCameraEntity = nullptr;
 	m_pLocalPlayer = nullptr;
 
-#ifndef ENH_IMPROVED_SAVING
 	if (bCopyMap)
 		setScreen(new RenameMPLevelScreen("_LastJoinedServer"));
 	else
 		gotoMainMenu();
-#endif
 
 	m_pGameRenderer->setLevel(nullptr, nullptr);
 
 	delete m_pNetEventCallback;
 	m_pNetEventCallback = nullptr;
 
-#ifdef ENH_IMPROVED_SAVING
-	m_bIsGamePaused = true;
-	setScreen(new SavingWorldScreen(bCopyMap/*, m_pLocalPlayer*/));
-#else
 	if (m_pLevel)
 	{
 		LevelStorage* pStorage = m_pLevel->getLevelStorage();
@@ -882,7 +882,6 @@ void Minecraft::freeResources(bool bCopyMap)
 
 		m_pLevel = nullptr;
 	}
-#endif
 
 	field_D9C = 0;
 }
@@ -949,7 +948,7 @@ void Minecraft::tick()
 
 			if (m_pLocalPlayer)
 			{
-				m_pLevel->animateTick(m_pLocalPlayer->m_pos);
+				m_pLevel->animateTick(m_pLocalPlayer);
 			}
 		}
 
@@ -1001,6 +1000,8 @@ void Minecraft::update()
 	m_pSoundEngine->update();
 #endif
 
+	BackgroundQueuePool::getInstance().processCoroutines();
+
 	mce::RenderContext& renderContext = mce::RenderContextImmediate::get();
 
 	renderContext.beginRender();
@@ -1028,6 +1029,7 @@ void Minecraft::init()
 
 void Minecraft::prepareLevel(const std::string& unused)
 {
+	// @TODO: redo this function
 	field_DA0 = 1;
 
 	//float startTime = float(getTimeS());
@@ -1243,7 +1245,7 @@ void Minecraft::onClientStartedLevel(Level* pLevel, LocalPlayer* pLocalPlayer)
 	setupLevelRendering(pLevel, pLocalPlayer->getDimension(), pLocalPlayer);
 }
 
-void Minecraft::generateLevel(const std::string& unused, Level* pLevel)
+void Minecraft::generateLevel(const std::string& unused, Level& level)
 {
 	//float time = float(getTimeS()); //@UNUSED
 
@@ -1259,7 +1261,7 @@ void Minecraft::generateLevel(const std::string& unused, Level* pLevel)
 	LocalPlayer* pLocalPlayer = m_pLocalPlayer;
 	if (!pLocalPlayer)
 	{
-		pLocalPlayer = pGameMode->createPlayer(pLevel);
+		pLocalPlayer = m_pGameMode->createPlayer(level);
 		pLocalPlayer->resetPos();
 		pGameMode->initPlayer(pLocalPlayer);
 	}
@@ -1269,8 +1271,8 @@ void Minecraft::generateLevel(const std::string& unused, Level* pLevel)
 
 	pGameMode->adjustPlayer(pLocalPlayer);
 
-	pLevel->validateSpawn();
-	pLevel->loadPlayer(*pLocalPlayer);
+	level.validateSpawn();
+	level.loadPlayer(*pLocalPlayer);
 
 	m_pLocalPlayer = pLocalPlayer;
 
@@ -1284,7 +1286,7 @@ void* Minecraft::prepareLevel_tspawn(void* ptr)
 {
 	Minecraft* pMinecraft = (Minecraft*)ptr;
 
-	pMinecraft->generateLevel("Currently not used", pMinecraft->m_pLevel);
+	pMinecraft->generateLevel("Currently not used", *pMinecraft->m_pLevel);
 
 	return nullptr;
 }
@@ -1363,9 +1365,8 @@ void Minecraft::selectLevel(const LevelSummary& ls, bool forceConversion)
 void Minecraft::selectLevel(const std::string& levelDir, const std::string& levelName, const LevelSettings& levelSettings, bool forceConversion)
 {
 	LevelStorage* pStor = m_pLevelStorageSource->selectLevel(levelDir, false, forceConversion);
-	Dimension* pDim = Dimension::createNew(DIMENSION_OVERWORLD);
 
-	m_pLevel = new Level(pStor, levelName, levelSettings, LEVEL_STORAGE_VERSION_DEFAULT, pDim);
+	m_pLevel = new Level(pStor, levelName, levelSettings, LEVEL_STORAGE_VERSION_DEFAULT);
 	setLevel(m_pLevel, "Generating level", nullptr);
 
 	field_D9C = 1;

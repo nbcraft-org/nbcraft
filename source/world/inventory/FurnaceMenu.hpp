@@ -10,7 +10,7 @@ public:
     FurnaceMenu(Inventory* inventory, FurnaceTileEntity* container);
 
 public:
-    bool stillValid(Player* player) const override;
+    bool stillValid(Player& player) const override;
     void addSlotListener(ContainerListener* listener) override;
     void broadcastChanges() override;
     void setData(int, int) override;

@@ -12,6 +12,6 @@ public:
 
 public:
 	bool hasTileEntity() const override;
-    void onPlace(Level* level, const TilePos& pos) override;
-	void onRemove(Level* level, const TilePos& pos) override;
+    void onPlace(TileSource& source, const TilePos& pos) override;
+	void onRemove(TileSource& source, const TilePos& pos) override;
 };

@@ -7,5 +7,6 @@ class RedStoneItem : public Item
 public:
 	RedStoneItem(int id);
 
-	bool useOn(ItemStack*, Player*, Level*, const TilePos& pos, Facing::Name face) const override;
+public:
+	bool useOn(ItemStack&, Player&, const TilePos& pos, Facing::Name face) const override;
 };

@@ -97,6 +97,11 @@
     <ClCompile Include="$(MC_ROOT)\source\common\utility\Singleton.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\common\threading\AsyncTask.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\common\utility\ByteBuffer.cpp" />
+    <ClCompile Include="..\..\..\source\common\File.cpp" />
+    <ClCompile Include="..\..\..\source\common\Stopwatch.cpp" />
+    <ClCompile Include="..\..\..\source\common\threading\BackgroundQueue.cpp" />
+    <ClCompile Include="..\..\..\source\common\threading\BackgroundQueuePool.cpp" />
+    <ClCompile Include="..\..\..\source\common\threading\Semaphore.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\common\threading\CThread.hpp" />
@@ -119,6 +124,15 @@
     <ClInclude Include="$(MC_ROOT)\source\common\threading\AsyncTask.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\common\utility\ByteBuffer.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\common\utility\HashMap.hpp" />
+    <ClInclude Include="..\..\..\source\common\ByteMask.hpp" />
+    <ClInclude Include="..\..\..\source\common\File.hpp" />
+    <ClInclude Include="..\..\..\source\common\MovePriorityQueue.hpp" />
+    <ClInclude Include="..\..\..\source\common\Stopwatch.hpp" />
+    <ClInclude Include="..\..\..\source\common\threading\BackgroundQueue.hpp" />
+    <ClInclude Include="..\..\..\source\common\threading\BackgroundQueuePool.hpp" />
+    <ClInclude Include="..\..\..\source\common\threading\LocklessPipe.hpp" />
+    <ClInclude Include="..\..\..\source\common\threading\Semaphore.hpp" />
+    <ClInclude Include="..\..\..\source\common\threading\ThreadLocal.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

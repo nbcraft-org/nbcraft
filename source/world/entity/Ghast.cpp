@@ -1,19 +1,22 @@
 #include "Ghast.hpp"
 #include "world/level/Level.hpp"
+#include "world/level/TileSource.hpp"
 #include "world/entity/Fireball.hpp"
 
-Ghast::Ghast(Level* pLevel) : FlyingMob(pLevel)
+Ghast::Ghast(TileSource& source) : FlyingMob(source)
 {
 	m_pDescriptor = &EntityTypeDescriptor::ghast;
 	m_renderType = RENDER_GHAST;
 	m_texture = "mob/ghast.png";
 	setSize(4.0f, 4.0f);
+
 	m_bFireImmune = true;
+
+	m_target = nullptr;
+	m_retargetTime = 0;
 	m_floatDuration = 0;
 	m_oCharge = 0;
 	m_charge = 0;
-	m_target = nullptr;
-	m_retargetTime = 0;
 }
 
 void Ghast::updateAi()
@@ -82,7 +85,7 @@ void Ghast::updateAi()
 			if (m_charge == 20)
 			{
 				m_pLevel->playSound(this, "mob.ghast.fireball", getSoundVolume(), (m_random.nextFloat() - m_random.nextFloat()) * 0.2f + 1.0f);
-				Fireball* entity = new Fireball(m_pLevel, this, Vec3(var11, var13, var15)); // var17
+				Fireball* entity = new Fireball(*this, Vec3(var11, var13, var15)); // var17
 				float var18 = 4.0f;
 				Vec3 var20 = getViewVector(1.0f);
 				entity->m_pos.x = m_pos.x + var20.x * var18;
@@ -109,6 +112,11 @@ void Ghast::updateAi()
 	m_texture = m_charge > 10 ? "mob/ghast_fire.png" : "mob/ghast.png";
 }
 
+bool Ghast::canSpawn()
+{
+	return m_pLevel->m_difficulty > 0 && FlyingMob::canSpawn() && m_random.nextInt(20) == 0;
+}
+
 bool Ghast::_canReach(const Vec3& travel, float var7)
 {
 	Vec3 var9 = (m_targetPos - m_pos) / var7;
@@ -117,7 +125,7 @@ bool Ghast::_canReach(const Vec3& travel, float var7)
 	for (int var16 = 1; (float)var16 < var7; ++var16)
 	{
 		aabb.move(var9);
-		if (m_pLevel->getCubes(this, aabb)->size() > 0)
+		if (m_pTileSource->fetchAABBs(aabb).size() > 0)
 		{
 			return false;
 		}

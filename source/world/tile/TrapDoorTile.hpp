@@ -14,18 +14,18 @@ public:
 	bool isCubeShaped() const override { return false; }
 	bool isSolidRender() const override { return false; }
 public:
-	AABB* getAABB(const Level*, const TilePos& pos) override;
-	AABB getTileAABB(const Level*, const TilePos& pos) override;
-	HitResult clip(const Level*, const TilePos& pos, Vec3, Vec3) override;
+	AABB* getAABB(TileSource& source, const TilePos& pos) override;
+	AABB getTileAABB(TileSource& source, const TilePos& pos) override;
+	HitResult clip(TileSource& source, const TilePos& pos, Vec3, Vec3) override;
 public:
-	void updateShape(const LevelSource*, const TilePos& pos) override;
+	void updateShape(TileSource& source, const TilePos& pos) override;
 	void updateDefaultShape() override;
-	void attack(Level*, const TilePos& pos, Player*) override;
-	void neighborChanged(Level*, const TilePos& pos, TileID newTile) override;
-	void setPlacedOnFace(Level* level, const TilePos& pos, Facing::Name face) override;
-	void setOpen(Level*, const TilePos& pos, bool bOpen);
-	bool use(Level*, const TilePos& pos, Player*) override;
-	bool mayPlace(const Level* level, const TilePos& pos) const override;
+	void attack(const TilePos& pos, Player&) override;
+	void neighborChanged(TileSource& source, const TilePos& pos, TileID newTile) override;
+	void setPlacedOnFace(TileSource& source, const TilePos& pos, Facing::Name face) override;
+	void setOpen(TileSource& source, const TilePos& pos, bool bOpen);
+	bool use(const TilePos& pos, Player&) override;
+	bool mayPlace(TileSource& source, const TilePos& pos) const override;
 	bool blocksLight() const;
 	
 	// @NOTE: These are inlined.

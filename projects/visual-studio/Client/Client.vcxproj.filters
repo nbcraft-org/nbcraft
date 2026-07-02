@@ -200,9 +200,6 @@
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\RenameMPLevelScreen.hpp">
       <Filter>Header Files\GUI\Screens</Filter>
     </ClInclude>
-    <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\SavingWorldScreen.hpp">
-      <Filter>Header Files\GUI\Screens</Filter>
-    </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\SelectWorldScreen.hpp">
       <Filter>Header Files\GUI\Screens</Filter>
     </ClInclude>
@@ -268,9 +265,6 @@
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\TripodCameraRenderer.hpp">
       <Filter>Header Files\Renderer\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MC_ROOT)\source\client\renderer\Chunk.hpp">
-      <Filter>Header Files\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\client\renderer\Culler.hpp">
       <Filter>Header Files\Renderer</Filter>
@@ -761,6 +755,12 @@
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\TrapScreen_Console.hpp">
       <Filter>Header Files\GUI\Screens\Inventory</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\source\client\renderer\RenderChunkBuilder.hpp">
+      <Filter>Header Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\client\renderer\VisibilityExtimator.hpp">
+      <Filter>Header Files\Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\client\gui\components\AvailableGamesList.cpp">
@@ -832,9 +832,6 @@
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\RenameMPLevelScreen.cpp">
       <Filter>Source Files\GUI\Screens</Filter>
     </ClCompile>
-    <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\SavingWorldScreen.cpp">
-      <Filter>Source Files\GUI\Screens</Filter>
-    </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\SelectWorldScreen.cpp">
       <Filter>Source Files\GUI\Screens</Filter>
     </ClCompile>
@@ -899,9 +896,6 @@
       <Filter>Source Files\Renderer\Entity</Filter>
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\client\renderer\WaterTexture.cpp">
-      <Filter>Source Files\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MC_ROOT)\source\client\renderer\Chunk.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\client\renderer\Culler.cpp">
@@ -1374,6 +1368,12 @@
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\TrapScreen_Console.cpp">
       <Filter>Source Files\GUI\Screens\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\client\renderer\RenderChunkBuilder.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\client\renderer\VisibilityExtimator.cpp">
+      <Filter>Source Files\Renderer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

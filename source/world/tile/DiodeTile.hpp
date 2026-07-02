@@ -11,27 +11,27 @@ public:
 	DiodeTile(TileID id, bool on);
 
 	bool isCubeShaped() const override;
-	bool mayPlace(const Level*, const TilePos& pos) const override;
-	bool canSurvive(const Level*, const TilePos& pos) const override;
-	void tick(Level*, const TilePos& pos, Random*) override;
+	bool mayPlace(TileSource&, const TilePos& pos) const override;
+	bool canSurvive(TileSource&, const TilePos& pos) const override;
+	void tick(TileSource&, const TilePos& pos, Random*) override;
 	int getTexture(Facing::Name face, TileData data) const override;
-	bool shouldRenderFace(const LevelSource*, const TilePos& pos, Facing::Name face) const override;
+	bool shouldRenderFace(TileSource&, const TilePos& pos, Facing::Name face) const override;
 	eRenderShape getRenderShape() const override;
 	int getTexture(Facing::Name face) const override;
-	int getDirectSignal(const Level*, const TilePos& pos, Facing::Name face) const override;
-	int getSignal(const LevelSource*, const TilePos& pos, Facing::Name face) const override;
-	void neighborChanged(Level* level, const TilePos& pos, TileID tile) override;
-	bool use(Level*, const TilePos& pos, Player*) override;
+	int getDirectSignal(TileSource&, const TilePos& pos, Facing::Name face) const override;
+	int getSignal(TileSource&, const TilePos& pos, Facing::Name face) const override;
+	void neighborChanged(TileSource&, const TilePos& pos, TileID tile) override;
+	bool use(const TilePos& pos, Player&) override;
 	bool isSignalSource() const override;
-	void setPlacedBy(Level*, const TilePos& pos, Mob*) override;
-	void onPlace(Level*, const TilePos& pos) override;
+	void setPlacedBy(const TilePos& pos, Mob&) override;
+	void onPlace(TileSource&, const TilePos& pos) override;
 	bool isSolidRender() const override;
 	int getResource(TileData data, Random* random) const override;
-	void animateTick(Level*, const TilePos& pos, Random*) override;
+	void animateTick(TileSource&, const TilePos& pos, Random*) override;
 
 private:
 	//static const constexpr int unk_b[4] = { 1, 2, 3, 4 };
 	static const int unk_b[4];
 	bool m_bOn;
-	bool shouldTurnOn(Level* level, const TilePos& pos, TileData data);
+	bool shouldTurnOn(TileSource& source, const TilePos& pos, TileData data);
 };

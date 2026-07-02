@@ -7,7 +7,9 @@ class RecordingItem : public Item
 public:
 	RecordingItem(int id, const std::string& recording);
 
-	bool useOn(ItemStack*, Player*, Level*, const TilePos& pos, Facing::Name face) const override;
+public:
+	bool useOn(ItemStack&, Player&, const TilePos& pos, Facing::Name face) const override;
+
 private:
 	std::string m_recording;
 };

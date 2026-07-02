@@ -13,7 +13,6 @@
 #include "world/phys/Vec2.hpp"
 #include "world/phys/Rot2.hpp"
 #include "world/phys/AABB.hpp"
-#include "world/level/Dimension.hpp"
 #include "world/level/Material.hpp"
 #include "world/level/levelgen/chunk/ChunkPos.hpp"
 #include "world/tile/Tile.hpp"
@@ -25,6 +24,9 @@ class Level;
 class Player;
 class ItemStack;
 class ItemEntity;
+class TileSource;
+class Dimension;
+enum DimensionId;
 
 struct EntityPos
 {
@@ -64,6 +66,7 @@ protected:
 public:
 	typedef int32_t ID;
 	typedef int32_t AuxValue;
+	typedef std::vector<Entity*> Vector;
 public:
 	class EventType
 	{
@@ -125,7 +128,8 @@ private:
 	void _init();
 public:
 	Entity() { _init(); }
-	Entity(Level*);
+	Entity(Level& level);
+	Entity(TileSource& tileSource);
 	virtual ~Entity();
 
 public:
@@ -137,6 +141,7 @@ public:
 	virtual void reset();
 	virtual void setLevel(Level*);
 	virtual void removed();
+	virtual const Vec3& getPos() const;
 	virtual void setPos(const Vec3& pos);
 	virtual void remove();
 	virtual void move(const Vec3& posIn);
@@ -164,8 +169,8 @@ public:
 	virtual float getShadowHeightOffs() const { return m_bbHeight / 2.0f; }
 	virtual float getBrightness(float f) const;
 	virtual DimensionId getDimensionId() const { return m_dimensionId; }
-	virtual Vec3 getPos(float f) const;
-	virtual Rot2 getRot(float f) const;
+	virtual Vec3 getInterpolatedPosition(float f) const;
+	virtual Rot2 getInterpolatedRotation(float f) const;
 	virtual Vec3 getViewVector(float f) const;
 	virtual AuxValue getAuxValue() const;
 	virtual void setAuxValue(AuxValue value);
@@ -242,6 +247,9 @@ public:
 	const EntityTypeDescriptor& getDescriptor() const { return *m_pDescriptor; }
 	SynchedEntityData& getEntityData() { return m_entityData; }
 	const SynchedEntityData& getEntityData() const { return m_entityData; }
+	Level& getLevel() const { return *m_pLevel; }
+	TileSource& getTileSource() const { return *m_pTileSource; }
+	Dimension& getDimension() const;
 
 	bool operator==(const Entity& other) const;
 
@@ -261,6 +269,7 @@ protected:
 	SynchedEntityData m_entityData;
 	bool m_bMakeStepSound;
 	const EntityTypeDescriptor* m_pDescriptor;
+	TileSource* m_pTileSource;
 
 public:
 	Vec3 m_pos;
@@ -269,7 +278,6 @@ public:
 	int m_chunkPosY;
 	Entity::ID m_EntityID;
 	float m_viewScale;
-	//TileSource* m_pTileSource;
 	DimensionId m_dimensionId;
 	bool m_bRiding;
 	bool m_bBlocksBuilding;

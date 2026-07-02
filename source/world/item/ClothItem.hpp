@@ -8,7 +8,7 @@ public:
 	ClothItem(int id);
 
 public:
-	std::string getDescriptionId(ItemStack* item) const override;
+	std::string getDescriptionId(ItemStack& item) const override;
 	int getIcon(const ItemStack*) const override;
 	TileData getLevelDataForAuxValue(int x) const override;
 };

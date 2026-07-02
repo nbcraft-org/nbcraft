@@ -30,6 +30,7 @@ public:
 	static bool isValidPath(const std::string& path);
 	// Returns the name of a file, without its extension
 	static std::string getFileName(const std::string& path);
+	static std::string getDirectory(const std::string& path);
 	static std::string getExtension(const std::string& path);
 
 	static std::string toString(int value);

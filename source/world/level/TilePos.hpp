@@ -49,6 +49,29 @@ public:
 	TilePos west(int steps = 1) const  { return relative(Facing::WEST, steps); }
 	TilePos east(int steps = 1) const  { return relative(Facing::EAST, steps); }
 
+	int volume() const
+	{
+		return x * y * z;
+	}
+
+	TilePos min(const TilePos& other) const
+	{
+		return TilePos(
+			x < other.x ? x : other.x,
+			y < other.y ? y : other.y,
+			z < other.z ? z : other.z
+		);
+	}
+
+	TilePos max(const TilePos& other) const
+	{
+		return TilePos(
+			x < other.x ? other.x : x,
+			y < other.y ? other.y : y,
+			z < other.z ? other.z : z
+		);
+	}
+
 	bool operator<(const TilePos& b) const
 	{
 		if (x != b.x)
@@ -167,6 +190,26 @@ public:
 		// Dunno if the top is more optimal than the bottom when compiled
 		//return x != b.x || z != b.z;
 		return !(*this == b);
+	}
+
+	int& operator[](size_t i)
+	{
+		return reinterpret_cast<int*>(this)[i];
+	}
+
+	const int& operator[](size_t i) const
+	{
+		return reinterpret_cast<const int*>(this)[i];
+	}
+
+	operator int* ()
+	{
+		return reinterpret_cast<int*>(this);
+	}
+
+	operator const int* () const
+	{
+		return reinterpret_cast<const int*>(this);
 	}
 
 	operator Vec3() const

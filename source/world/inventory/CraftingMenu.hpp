@@ -11,8 +11,8 @@ public:
     ~CraftingMenu();
 
     void slotsChanged(Container* container) override;
-    void removed(Player* player) override;
-    bool stillValid(Player* player) const override;
+    void removed(Player& player) override;
+    bool stillValid(Player& player) const override;
     ItemStack quickMoveStack(Container::SlotID slotId) override;
 
 private:

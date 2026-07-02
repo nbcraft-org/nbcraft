@@ -612,22 +612,17 @@ int Item::getIcon(const ItemStack* item) const
 	return m_icon;
 }
 
-bool Item::useOn(ItemStack* instance, Level* level, const TilePos& pos, Facing::Name face) const
+bool Item::useOn(ItemStack& itemStack, Player& player, const TilePos& pos, Facing::Name face) const
 {
 	return false;
 }
 
-bool Item::useOn(ItemStack* instance, Player* player, Level* level, const TilePos& pos, Facing::Name face) const
-{
-	return false;
-}
-
-float Item::getDestroySpeed(ItemStack* instance, const Tile* tile) const
+float Item::getDestroySpeed(ItemStack& itemStack, const Tile* tile) const
 {
 	return 1.0f;
 }
 
-bool Item::use(ItemStack& item, Level* level, Mob& user) const
+bool Item::use(ItemStack& item, Mob& user) const
 {
 	return false;
 }
@@ -663,17 +658,17 @@ int Item::getMaxDamage() const
 	return m_maxDamage;
 }
 
-void Item::hurtEnemy(ItemStack* instance, Mob* mob) const
+void Item::hurtEnemy(ItemStack& itemStack, Mob& mob) const
 {
 
 }
 
-void Item::mineBlock(ItemStack* instance, const TilePos& pos, Facing::Name face, Mob* mob) const
+void Item::mineBlock(ItemStack& itemStack, const TilePos& pos, Facing::Name face, Mob& mob) const
 {
 
 }
 
-int Item::getAttackDamage(Entity* ent) const
+int Item::getAttackDamage(Entity& ent) const
 {
 	return 1;
 }
@@ -683,7 +678,7 @@ bool Item::canDestroySpecial(const Tile* tile) const
 	return false;
 }
 
-void Item::interactEnemy(ItemStack* instance, Mob* mob) const
+void Item::interactEnemy(ItemStack& itemStack, Mob& mob) const
 {
 
 }
@@ -713,7 +708,7 @@ std::string Item::getDescriptionId() const
 	return m_DescriptionID;
 }
 
-std::string Item::getDescriptionId(ItemStack* inst) const
+std::string Item::getDescriptionId(ItemStack& inst) const
 {
 	return m_DescriptionID;
 }
@@ -740,7 +735,7 @@ std::string Item::getHovertextName() const
 
 std::string Item::getName(ItemStack& stack) const
 {
-	return getDescriptionId(&stack) + ".name";
+	return getDescriptionId(stack) + ".name";
 }
 
 std::string Item::getHovertextName(ItemStack& stack) const

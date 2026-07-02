@@ -5,7 +5,7 @@
 class Squid : public WaterAnimal
 {
 public:
-	Squid(Level* pLevel);
+	Squid(TileSource& source);
 
 	std::string getAmbientSound() const override { return ""; }
 	std::string getDeathSound() const override { return ""; }

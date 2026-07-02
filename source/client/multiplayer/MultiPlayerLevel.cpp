@@ -1,14 +1,15 @@
 #include "MultiPlayerLevel.hpp"
 
-MultiPlayerLevel::MultiPlayerLevel(LevelStorage* pStor, const std::string& name, const LevelSettings& settings, int storageVersion, Dimension* pDimension)
-	: Level(pStor, name, settings, storageVersion, pDimension)
+MultiPlayerLevel::MultiPlayerLevel(LevelStorage* pStor, const std::string& name, const LevelSettings& settings, int storageVersion)
+	: Level(pStor, name, settings, storageVersion)
 {
 }
 
 void MultiPlayerLevel::tick()
 {
-    _setTime(getTime() + 1); // Bypasses the normally-required update to LevelListeners
-    updateSkyDarken();
+    Level::tick();
+
+    setTime(getTime() + 1);
 
     for (size_t i = 0; i < 10 && i < m_reEntries.size(); i++)
     {
@@ -28,11 +29,6 @@ void MultiPlayerLevel::tick()
             m_updatesToReset.erase(it);
         }
     }
-}
-
-ChunkSource* MultiPlayerLevel::createChunkSource()
-{
-    return nullptr;
 }
 
 void MultiPlayerLevel::putEntity(int id, Entity* e)
