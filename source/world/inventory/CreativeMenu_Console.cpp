@@ -93,8 +93,8 @@ void CreativeMenu_Console::initCreativeItems()
     _addTile(REDSTONE_AND_TRANSPORT, Tile::dispenser);
     _addTile(REDSTONE_AND_TRANSPORT, Tile::musicBlock);
 #if MC_VERSION >= MC_VER_BETA(1, 7, 0)
-    //_addTile(REDSTONE_AND_TRANSPORT, Tile::piston);
-    //_addTile(REDSTONE_AND_TRANSPORT, Tile::stickyPiston);
+    _addTile(REDSTONE_AND_TRANSPORT, Tile::piston);
+    _addTile(REDSTONE_AND_TRANSPORT, Tile::stickyPiston);
 #endif
     _addTile(REDSTONE_AND_TRANSPORT, Tile::tnt);
     _addTile(REDSTONE_AND_TRANSPORT, Tile::lever);

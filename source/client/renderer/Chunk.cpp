@@ -13,6 +13,7 @@
 #include "world/level/Level.hpp"
 #include "world/level/Region.hpp"
 #include "TileRenderer.hpp"
+#include "tileentity/TileEntityRenderDispatcher.hpp"
 
 int Chunk::updates;
 
@@ -176,12 +177,9 @@ void Chunk::rebuild()
 
 					if (!layer && Tile::isEntityTile[tile])
 					{
-						/*
-						// @TODO: ADD TILE ENTITY RENDER DISPATCHER
 						TileEntity* et = region.getTileEntity(tp);
 						if (TileEntityRenderDispatcher::getInstance()->hasRenderer(et))
 							m_tileEntities.push_back(et);
-						*/
 					}
 
 					Tile* pTile = Tile::tiles[tile];

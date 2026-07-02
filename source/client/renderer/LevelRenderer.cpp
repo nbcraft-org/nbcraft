@@ -15,6 +15,7 @@
 #include "renderer/GlobalConstantBuffers.hpp"
 #include "renderer/ShaderConstants.hpp"
 #include "renderer/RenderContextImmediate.hpp"
+#include "tileentity/TileEntityRenderDispatcher.hpp"
 
 #if MCE_GFX_API_OGL
 #include "thirdparty/GL/GL.hpp"
@@ -1619,13 +1620,14 @@ void LevelRenderer::renderEntities(Vec3 pos, Culler* culler, float f)
 
 	const Mob* camera = m_pMinecraft->m_pCameraEntity;
 
+	TileEntityRenderDispatcher::getInstance()->prepare(m_pLevel, m_pMinecraft->m_pTextures, m_pMinecraft->m_pFont, camera, f);
 	EntityRenderDispatcher::getInstance()->prepare(m_pLevel, m_pMinecraft->m_pTextures, m_pMinecraft->m_pFont, camera, m_pMinecraft->getOptions(), f);
 
 	m_totalEntities = 0;
 	m_renderedEntities = 0;
 	m_culledEntities = 0;
 
-	EntityRenderDispatcher::off = camera->m_posPrev + (camera->m_pos - camera->m_posPrev) * f;
+	EntityRenderDispatcher::off = TileEntityRenderDispatcher::off = camera->m_posPrev + (camera->m_pos - camera->m_posPrev) * f;
 
 	const EntityMap* pVec = m_pLevel->getAllEntities();
 	m_totalEntities = int(pVec->size());
@@ -1649,15 +1651,12 @@ void LevelRenderer::renderEntities(Vec3 pos, Culler* culler, float f)
 		}
 	}
 
-	/*
-	// @TODO: TileEntityRenderDispatcher
 	for (TileEntityVector::const_iterator it = m_renderableTileEntities.begin();
 		it != m_renderableTileEntities.end(); ++it)
 	{
 		TileEntity* tileEntity = *it;
 		TileEntityRenderDispatcher::getInstance()->render(tileEntity, f);
 	}
-	*/
 }
 
 void LevelRenderer::renderShadow(const Entity& entity, const Vec3& pos, float r, float pow, float a)
@@ -2044,16 +2043,66 @@ void LevelRenderer::skyColorChanged()
 
 void LevelRenderer::levelEvent(const LevelEvent& event)
 {
+	Random& random = m_pLevel->m_random;
 	switch (event.id)
 	{
+	case LevelEvent::SOUND_CLICK:
+		m_pLevel->playSound(event.pos, "random.click", 1.0F, 1.0F);
+		break;
+	case LevelEvent::SOUND_CLICK_FAIL:
+		m_pLevel->playSound(event.pos, "random.click", 1.0F, 1.2F);
+		break;
+	case LevelEvent::SOUND_SHOOT:
+		m_pLevel->playSound(event.pos, "random.bow", 1.0F, 1.2F);
+		break;
 	case LevelEvent::SOUND_DOOR:
+	{
 		std::string snd;
 		if (Mth::random() < 0.5f)
 			snd = "random.door_open";
 		else
 			snd = "random.door_close";
 
-		m_pLevel->playSound(Vec3(event.pos) + 0.5f, snd, 1.0f, 0.9f + 0.1f * m_pLevel->m_random.nextFloat());
+		m_pLevel->playSound(Vec3(event.pos) + 0.5f, snd, 1.0f, 0.9f + 0.1f * random.nextFloat());
 		break;
+	}
+	case LevelEvent::SOUND_FIZZ:
+		m_pLevel->playSound(Vec3(event.pos) + 0.5f, "random.fizz", 0.5F, 2.6F + (random.nextFloat() - random.nextFloat()) * 0.8F);
+		break;
+	case LevelEvent::SOUND_PLAY_RECORD:
+		m_pLevel->playStreamingMusic(event.data ? Item::items[event.data]->getStreamingMusic() : Util::EMPTY_STRING, Vec3(event.pos));
+		break;
+	case LevelEvent::PARTICLE_SHOOT:
+	{
+		int var8 = event.data % 3 - 1;
+		int var9 = event.data / 3 % 3 - 1;
+		float var10 = event.pos.x + var8 * 0.6 + 0.5;
+		float var12 = event.pos.y + 0.5;
+		float var14 = event.pos.z + var9 * 0.6 + 0.5;
+
+		for (int i = 0; i < 10; ++i)
+		{
+			float var31 = random.nextFloat() * 0.2 + 0.01;
+			float var19 = var10 + var8 * 0.01 + (random.nextFloat() - 0.5) * var9 * 0.5;
+			float var21 = var12 + (random.nextFloat() - 0.5) * 0.5;
+			float var23 = var14 + var9 * 0.01 + (random.nextFloat() - 0.5) * var8 * 0.5;
+			float var25 = var8 * var31 + random.nextGaussian() * 0.01;
+			float var27 = -0.03 + random.nextGaussian() * 0.01;
+			float var29 = var9 * var31 + random.nextGaussian() * 0.01;
+			addParticle("smoke", Vec3(var19, var21, var23), Vec3(var25, var27, var29));
+		}
+		break;
+	}
+	case LevelEvent::PARTICLE_DESTROY:
+	{
+		TileID tileID = event.data & 255;
+		if (tileID > 0)
+		{
+			const Tile::SoundType* sound = Tile::tiles[tileID]->m_pSound;
+			m_pMinecraft->m_pSoundEngine->play(sound->name, Vec3(event.pos) + 0.5f, (sound->volume + 1.0F) / 2.0F, sound->pitch * 0.8F);
+		}
+		m_pMinecraft->m_pParticleEngine->destroyEffect(event.pos, tileID, (event.data >> 8 & 255));
+		break;
+	}
 	}
 }

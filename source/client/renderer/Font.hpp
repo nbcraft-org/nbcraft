@@ -32,8 +32,8 @@ public:
 	void init(Options* pOpts);
 	void buildChar(unsigned char chr, float x, float y);
 	void draw(const std::string&, int x, int y, const Color& color);
-	void draw(const std::string&, int x, int y, const Color& color, bool bShadow);
-	void drawSlow(const std::string&, int x, int y, const Color& color, bool bShadow);
+	void draw(const std::string&, int x, int y, const Color& color, bool bShadow, mce::MaterialPtr* material = nullptr);
+	void drawSlow(const std::string&, int x, int y, const Color& color, bool bShadow, mce::MaterialPtr* material);
 	void drawShadow(const std::string&, int x, int y, const Color& color);
 	void drawScalable(const std::string&, int x, int y, const Color& color, float scale = 2.0f, bool shadow = false);
 	void drawScalableShadow(const std::string&, int x, int y, const Color& color, float scale = 2.0f);

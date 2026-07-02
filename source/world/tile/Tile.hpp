@@ -124,10 +124,13 @@ public: // virtual functions
 	virtual Tile* setDestroyTime(float);
 	virtual Tile* setTicking(bool);
 	virtual Tile* setBlockUpdate();
+	virtual Tile* untrackStat();
 	virtual int getSpawnResourcesAuxValue(int) const;
 	Tile* setToolTypes(unsigned int toolMask);
 	Tile* setToolLevel(int toolLevel);
 	Tile* setToolTypesAndLevel(unsigned int toolMask, int toolLevel = 0);
+	virtual PushReaction getPistonPushReaction() const;
+	virtual bool shouldTrack() const;
 
 private:
 	void _init();
@@ -267,7 +270,15 @@ public: // static variables
 		* trapDoor,
 		* rail,
 		* poweredRail,
-		* detectorRail;
+		* detectorRail,
+		* mobSpawner,
+		* sign,
+		* wallSign,
+		* piston,
+		* stickyPiston,
+		* pistonHead,
+		* movingPiston,
+		* portal;
 
 public:
 	int m_TextureFrame;
@@ -283,6 +294,7 @@ public:
 	int m_requiredToolLevel;
 	AABB m_aabbReturned;
 	std::string m_descriptionID;
+	bool m_bTrackStat;
 
 protected:
 	RenderLayer m_renderLayer;

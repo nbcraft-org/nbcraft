@@ -37,9 +37,10 @@ bool GameMode::destroyBlock(Player* player, const TilePos& pos, Facing::Name fac
 	if (!oldTile)
 		return false;
 
-	m_pMinecraft->m_pParticleEngine->destroyEffect(pos);
+	TileData tileData = _level.getData(pos);
 
-	int tileData = _level.getData(pos);
+	m_pMinecraft->m_pParticleEngine->destroyEffect(pos, oldTile->m_ID, tileData);
+
 	oldTile->playerWillDestroy(player, pos, face);
 	bool changed = _level.setTile(pos, TILE_AIR);
 	if (!changed)

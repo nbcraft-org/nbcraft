@@ -41,6 +41,7 @@
 #include "BoatItem.hpp"
 #include "SaddleItem.hpp"
 #include "PaintingItem.hpp"
+#include "SignItem.hpp"
 
 #define ITEM(x) ((x) - 256)
 
@@ -594,7 +595,7 @@ void Item::initItems()
 		->setIcon(12, 5)
 		->setDescriptionId("cookie");
 
-	Item::sign = NEW_ITEM(ITEM_SIGN)
+	Item::sign = NEW_X_ITEMN(SignItem, ITEM_SIGN)
 		->setIcon(10, 2)
 		->setDescriptionId("sign");
 

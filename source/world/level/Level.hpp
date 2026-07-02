@@ -246,7 +246,7 @@ public:
 	std::vector<Player*> m_players;
 	int m_skyDarken;
 	int m_skyFlashTime;
-	uint8_t field_30;
+	uint8_t m_bNoNeighborUpdate;
 	Dimension* m_pDimension;
     int m_difficulty; // @TODO: Difficulty enum
 	Random m_random;

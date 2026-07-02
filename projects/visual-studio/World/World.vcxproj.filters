@@ -878,9 +878,6 @@
     <ClCompile Include="$(MC_ROOT)\source\world\entity\Wolf.cpp">
       <Filter>Source Files\Entity</Filter>
     </ClCompile>
-    <ClCompile Include="$(MC_ROOT)\source\world\entity\LightningBolt.cpp">
-      <Filter>Source Files\Entity</Filter>
-    </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\world\particle\SplashParticle.cpp">
       <Filter>Source Files\Particle</Filter>
     </ClCompile>
@@ -889,6 +886,51 @@
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\world\particle\PortalParticle.cpp">
       <Filter>Source Files\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\entity\MobSpawnerTileEntity.cpp">
+      <Filter>Source Files\Tile\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\MobSpawnerTile.cpp">
+      <Filter>Source Files\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\entity\SignTileEntity.cpp">
+      <Filter>Source Files\Tile\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\entity\RecordPlayerTileEntity.cpp">
+      <Filter>Source Files\Tile\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\SignTile.cpp">
+      <Filter>Source Files\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\item\SignItem.cpp">
+      <Filter>Source Files\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\entity\LightningBolt.cpp">
+      <Filter>Source Files\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\entity\PistonMovingTileEntity.cpp">
+      <Filter>Source Files\Tile\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\PortalTile.cpp">
+      <Filter>Source Files\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\MovingPistonTile.cpp">
+      <Filter>Source Files\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\Mushroom.cpp">
+      <Filter>Source Files\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\PistonBaseTile.cpp">
+      <Filter>Source Files\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\PistonHeadTile.cpp">
+      <Filter>Source Files\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\level\MapColor.cpp">
+      <Filter>Source Files\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\item\PistonItem.cpp">
+      <Filter>Source Files\Item</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1575,6 +1617,45 @@
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Wolf.hpp">
       <Filter>Header Files\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\entity\MobSpawnerTileEntity.hpp">
+      <Filter>Header Files\Tile\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\MobSpawnerTile.hpp">
+      <Filter>Header Files\Tile</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\entity\SignTileEntity.hpp">
+      <Filter>Header Files\Tile\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\entity\RecordPlayerTileEntity.hpp">
+      <Filter>Header Files\Tile\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\SignTile.hpp">
+      <Filter>Header Files\Tile</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\item\SignItem.hpp">
+      <Filter>Header Files\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\entity\PistonMovingTileEntity.hpp">
+      <Filter>Header Files\Tile\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\MovingPistonTile.hpp">
+      <Filter>Header Files\Tile</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\Mushroom.hpp">
+      <Filter>Header Files\Tile</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\PistonBaseTile.hpp">
+      <Filter>Header Files\Tile</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\PistonHeadTile.hpp">
+      <Filter>Header Files\Tile</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\PortalTile.hpp">
+      <Filter>Header Files\Tile</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\item\PistonItem.hpp">
+      <Filter>Header Files\Item</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

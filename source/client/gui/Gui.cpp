@@ -54,9 +54,9 @@ Gui::Gui(Minecraft* pMinecraft)
 	field_28 = 0;
 	field_2C = 0;
 	m_ticks = 0;
-	field_A00 = "";
-	field_A18 = 0;
-	field_A1C = false;
+	m_overlayMessage = "";
+	m_overlayMessageDuration = 0;
+	m_bHasOverlayMessage = false;
 	m_tbr = 1.0f;
 	field_A3C = true;
 	m_bRenderMessages = true;
@@ -112,9 +112,9 @@ void Gui::addMessage(const std::string& s)
 
 void Gui::setNowPlaying(const std::string& str)
 {
-	field_A00 = "Now playing: " + str;
-	field_A18 = 60;
-	field_A1C = true;
+	m_overlayMessage = "Now playing: " + str;
+	m_overlayMessageDuration = 60;
+	m_bHasOverlayMessage = true;
 }
 
 void Gui::renderPumpkin(int var1, int var2)
@@ -232,6 +232,22 @@ void Gui::render(float f, bool bHaveScreen, int mouseX, int mouseY)
 	alpha = 0.50f; // 0.65f on 0.12.1
 #endif
 	renderToolBar(f, alpha);
+
+
+	if (m_overlayMessageDuration > 0 && m_bHasOverlayMessage)
+	{
+		float var25 = m_overlayMessageDuration - f;
+		int var16 = (int)(var25 * 256.0F / 20.0F);
+		if (var16 > 255)
+			var16 = 255;
+
+		if (var16 > 0)
+		{
+			m_pMinecraft->m_pFont->draw(m_overlayMessage, - (m_pMinecraft->m_pFont->width(m_overlayMessage)) / 2, -4 - 48, Mth::HSBtoRGB(var25 / 50.0F, 0.7F, 0.6F) & 16777215 + (var16 << 24));
+		}
+	}
+	else m_bHasOverlayMessage = false;
+
 	matrix.release();
 
 	if (m_bRenderMessages)
@@ -254,8 +270,8 @@ void Gui::render(float f, bool bHaveScreen, int mouseX, int mouseY)
 
 void Gui::tick()
 {
-	if (field_A18 > 0)
-		field_A18--;
+	if (m_overlayMessageDuration > 0)
+		m_overlayMessageDuration--;
 
 	m_ticks++;
 

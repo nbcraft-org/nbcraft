@@ -58,6 +58,11 @@ Packet* TileEntity::getUpdatePacket()
     return nullptr;
 }
 
+const TileEntityType* TileEntity::getType() const
+{
+    return m_pType;
+}
+
 bool TileEntity::isRemoved() const
 {
     return m_bRemove;

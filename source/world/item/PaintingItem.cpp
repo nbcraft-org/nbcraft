@@ -4,7 +4,6 @@
 
 PaintingItem::PaintingItem(int id) : Item(id)
 {
-	m_maxDamage = 64;
 }
 
 bool PaintingItem::useOn(ItemStack* instance, Player* player, Level* level, const TilePos& pos, Facing::Name face) const

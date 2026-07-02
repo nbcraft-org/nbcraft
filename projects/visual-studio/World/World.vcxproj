@@ -300,6 +300,20 @@
     <ClCompile Include="$(MC_ROOT)\source\world\tile\DetectorRailTile.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\tile\Rail.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\tile\RailTile.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\item\PistonItem.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\item\SignItem.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\level\MapColor.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\entity\MobSpawnerTileEntity.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\entity\PistonMovingTileEntity.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\entity\RecordPlayerTileEntity.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\entity\SignTileEntity.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\MobSpawnerTile.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\MovingPistonTile.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\Mushroom.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\PistonBaseTile.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\PistonHeadTile.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\PortalTile.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\SignTile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Entity.hpp" />
@@ -530,6 +544,19 @@
     <ClInclude Include="$(MC_ROOT)\source\world\tile\DetectorRailTile.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\tile\Rail.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\tile\RailTile.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\item\PistonItem.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\item\SignItem.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\entity\MobSpawnerTileEntity.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\entity\PistonMovingTileEntity.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\entity\RecordPlayerTileEntity.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\entity\SignTileEntity.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\MobSpawnerTile.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\MovingPistonTile.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\Mushroom.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\PistonBaseTile.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\PistonHeadTile.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\PortalTile.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\SignTile.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NBT\NBT.vcxproj">

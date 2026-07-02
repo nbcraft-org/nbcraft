@@ -9,12 +9,19 @@
 #pragma once
 
 #include "compat/LegacyCPP.hpp"
+#include "MapColor.hpp"
+
+enum class PushReaction
+{
+	NORMAL,
+	DESTROY,
+	BLOCK
+};
 
 class Material
 {
 public:
-	Material();
-	Material(bool bFlammable);
+	Material(MapColor* mapColor);
 	virtual ~Material();
 
 	static void initMaterials();
@@ -27,7 +34,12 @@ public:
 	virtual bool blocksLight() const;
 	virtual bool blocksMotion() const;
 	virtual bool isFlammable() const;
+	virtual Material* setReplaceable();
+	virtual Material* setFlammable();
 	virtual Material* setNotAlwaysDestroyable();
+	virtual Material* setTranslucent();
+	virtual Material* destroyOnPush();
+	virtual Material* notPushable();
 
 	Material* setToolTypes(unsigned int toolMask);
 	Material* setToolLevel(int toolLevel);
@@ -36,6 +48,7 @@ public:
 public:
 	static Material
 		*air,
+		*grass,
 		*dirt,
 		*wood,
 		*stone,
@@ -60,18 +73,24 @@ public:
 		*vegetable,
 		*portal,
 		*cake,
-		*web;
+		*web,
+		*piston;
 
 public:
+	const MapColor* m_pMapColor;
 	bool m_bFlammable;
+	bool m_bReplaceable;
 	bool m_bMineable;
-
+	bool m_bTranslucent;
+	PushReaction m_pushReaction;
 	unsigned int m_toolMask;
 	int m_requiredToolLevel;
 };
 
 class GasMaterial : public Material
 {
+public:
+	GasMaterial(MapColor*);
 	bool isSolid() const override;
 	bool blocksLight() const override;
 	bool blocksMotion() const override;
@@ -79,6 +98,8 @@ class GasMaterial : public Material
 
 class LiquidMaterial : public Material
 {
+public:
+	LiquidMaterial(MapColor*);
 	bool isLiquid() const override;
 	bool isSolid() const override;
 	bool blocksMotion() const override;
@@ -86,8 +107,9 @@ class LiquidMaterial : public Material
 
 class DecorationMaterial : public Material
 {
+public:
+	DecorationMaterial(MapColor*);
 	bool isSolid() const override;
 	bool blocksLight() const override;
 	bool blocksMotion() const override;
 };
-

@@ -34,7 +34,7 @@ Level::Level(LevelStorage* pStor, const std::string& name, const LevelSettings& 
 	m_bPostProcessing = false;
 	m_skyDarken = 0;
 	m_skyFlashTime = 0;
-	field_30 = 0;
+	m_bNoNeighborUpdate = 0;
 	m_pDimension = nullptr;
     m_difficulty = 2; // Java has no actual default, it just always pulls from Options. Putting 2 here just so there's no chance of mobs getting despawned accidentally.
 	m_pRakNetInstance = nullptr;
@@ -833,7 +833,7 @@ void Level::sendTileUpdated(const TilePos& pos)
 
 void Level::neighborChanged(const TilePos& pos, TileID tile)
 {
-	if (field_30 || m_bIsClientSide) return;
+	if (m_bNoNeighborUpdate || m_bIsClientSide) return;
 
 	Tile* pTile = Tile::tiles[getTile(pos)];
 	if (pTile)
@@ -1914,8 +1914,8 @@ void Level::tickWeather()
 
 		m_thunderLevel = Mth::clamp(m_thunderLevel, 0.0f, 1.0f);
 
-		//if (wasRaining != isRaining())
-		//	broadcastAll(new GameEventPacket(isRaining() ? GameEventPacket::START_RAINING : GameEventPacket::STOP_RAINING));
+		if (wasRaining != isRaining())
+			levelEvent(LevelEvent(isRaining() ? LevelEvent::START_RAIN : LevelEvent::STOP_RAIN, TilePos::ZERO));
 	}
 }
 

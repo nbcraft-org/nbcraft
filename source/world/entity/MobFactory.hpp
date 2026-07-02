@@ -2,6 +2,7 @@
 
 #include "EntityType.hpp"
 #include "Mob.hpp"
+#include "common/utility/HashMap.hpp"
 
 class MobCategory;
 

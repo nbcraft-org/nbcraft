@@ -8,6 +8,9 @@ public:
 	RecordingItem(int id, const std::string& recording);
 
 	bool useOn(ItemStack*, Player*, Level*, const TilePos& pos, Facing::Name face) const override;
+
+	const std::string& getStreamingMusic() const override;
+
 private:
 	std::string m_recording;
 };

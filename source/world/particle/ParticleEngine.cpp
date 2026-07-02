@@ -109,35 +109,30 @@ void ParticleEngine::crack(const TilePos& tilePos, Facing::Name face)
 	add((new TerrainParticle(m_pLevel, pos, pTile))->init(tilePos, face)->setPower(0.2f)->scale(0.6f));
 }
 
-void ParticleEngine::destroyEffect(const TilePos& pos)
+void ParticleEngine::destroyEffect(const TilePos& pos, TileID tileID, TileData data)
 {
-	TileID tileID = m_pLevel->getTile(pos);
 	if (!tileID) return;
 
-	//float timeS = getTimeS();
+	float timeS = getTimeS();
 
 	Tile* pTile = Tile::tiles[tileID];
 
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 4; i++)
 	{
-		for (int j = 0; j < 3; j++)
+		for (int j = 0; j < 4; j++)
 		{
-			for (int k = 0; k < 3; k++)
+			for (int k = 0; k < 4; k++)
 			{
-				Vec3 vec1(float(pos.x) + (float(i) + 0.5f) / 3.0f,
-					     float(pos.y) + (float(j) + 0.5f) / 3.0f,
-					     float(pos.z) + (float(k) + 0.5f) / 3.0f);
-				Vec3 vec2(vec1.x - float(pos.x) - 0.5f,
-					      vec1.y - float(pos.y) - 0.5f,
-					      vec1.z - float(pos.z) - 0.5f);
+				Vec3 vec1(pos + (i + 0.5f) / 4.0f);
+				Vec3 vec2 = vec1 - pos - 0.5f;
 
-				add((new TerrainParticle(m_pLevel, vec1, vec2, pTile))->init(pos));
+				add((new TerrainParticle(m_pLevel, vec1, vec2, pTile))->init(pos, data));
 			}
 		}
 	}
 
-	//if (timeS != -1.0)
-	//	getTimeS();
+	if (timeS != -1.0)
+		getTimeS();
 
 	// @NOTE: Useless string creation
 #ifdef ORIGINAL_CODE

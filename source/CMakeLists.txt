@@ -65,6 +65,11 @@ add_library(nbcraft-core STATIC
     client/renderer/entity/MinecartRenderer.cpp
     client/renderer/entity/PaintingRenderer.cpp
     client/renderer/entity/LightningBoltRenderer.cpp
+    client/renderer/tileentity/TileEntityRenderDispatcher.cpp
+    client/renderer/tileentity/TileEntityRenderer.cpp
+    client/renderer/tileentity/MobSpawnerRenderer.cpp
+    client/renderer/tileentity/SignRenderer.cpp
+    client/renderer/tileentity/PistonRenderer.cpp
     client/renderer/renderer/EntityShaderManager.cpp
     client/renderer/renderer/RenderMaterialGroup.cpp
     client/renderer/renderer/ShaderGroup.cpp
@@ -150,6 +155,7 @@ add_library(nbcraft-core STATIC
     client/gui/screens/inventory/ChestScreen.cpp
 	  client/gui/screens/inventory/TrapScreen.cpp
     client/gui/screens/inventory/TrapScreen_Console.cpp
+    client/gui/screens/inventory/TextEditScreen.cpp
     client/gui/screens/inventory/ClientCraftContext.cpp
     client/gui/components/ScrolledSelectionList.cpp
     client/gui/components/AvailableGamesList.cpp
@@ -198,6 +204,7 @@ add_library(nbcraft-core STATIC
     client/model/models/WolfModel.cpp
     client/model/models/BoatModel.cpp
     client/model/models/MinecartModel.cpp
+    client/model/models/SignModel.cpp
     client/multiplayer/MultiPlayerLevel.cpp
     client/multiplayer/MultiplayerLocalPlayer.cpp
     client/player/input/ControllerBuildInput.cpp
@@ -355,6 +362,7 @@ add_library(nbcraft-core STATIC
     world/entity/vehicle/Minecart.cpp
     world/level/Dimension.cpp
     world/level/Material.cpp
+    world/level/MapColor.cpp
     world/level/LevelListener.cpp
     world/level/TickNextTickData.cpp
     world/level/TilePos.cpp
@@ -462,6 +470,8 @@ add_library(nbcraft-core STATIC
     world/item/BoatItem.cpp
     world/item/MinecartItem.cpp
     world/item/PaintingItem.cpp
+    world/item/PistonItem.cpp
+    world/item/SignItem.cpp
     world/particle/RedDustParticle.cpp
     world/particle/TerrainParticle.cpp
     world/particle/NoteParticle.cpp
@@ -545,12 +555,23 @@ add_library(nbcraft-core STATIC
     world/tile/RailTile.cpp
     world/tile/Rail.cpp
     world/tile/DetectorRailTile.cpp
+    world/tile/PistonBaseTile.cpp
+    world/tile/PistonHeadTile.cpp
+    world/tile/MovingPistonTile.cpp
+    world/tile/PortalTile.cpp
+    world/tile/SignTile.cpp
+    world/tile/MobSpawnerTile.cpp
+    world/tile/Mushroom.cpp
     world/tile/entity/TileEntity.cpp
     world/tile/entity/TileEntityType.cpp
     world/tile/entity/ChestTileEntity.cpp
     world/tile/entity/FurnaceTileEntity.cpp
     world/tile/entity/MusicTileEntity.cpp
   	world/tile/entity/DispenserTileEntity.cpp
+    world/tile/entity/MobSpawnerTileEntity.cpp
+    world/tile/entity/RecordPlayerTileEntity.cpp
+    world/tile/entity/SignTileEntity.cpp
+    world/tile/entity/PistonMovingTileEntity.cpp
     world/Facing.cpp
     renderer/GL/GL.cpp
     renderer/Attribute.cpp

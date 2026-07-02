@@ -51,5 +51,19 @@ public:
 		return *this;
 	}
 	AABB& shrink(float x, float y, float z) { return shrink(Vec3(x, y, z)); }
+
+	float byIndex(int index)
+	{
+		switch (index)
+		{
+		case 0: return min.x;
+		case 1: return min.y;
+		case 2: return min.z;
+		case 3: return max.x;
+		case 4: return max.y;
+		case 5: return max.z;
+		}
+		return 0;
+	}
 };
 

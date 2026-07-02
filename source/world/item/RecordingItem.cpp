@@ -2,8 +2,11 @@
 #include "world/level/Level.hpp"
 #include "world/entity/Player.hpp"
 #include "world/tile/Tile.hpp"
+#include "world/tile/RecordPlayerTile.hpp"
 
-RecordingItem::RecordingItem(int id, const std::string& recording) : Item(id), m_recording(recording)
+RecordingItem::RecordingItem(int id, const std::string& recording) 
+	: Item(id)
+	, m_recording(recording)
 {
 	m_maxStackSize = 1;
 }
@@ -12,8 +15,8 @@ bool RecordingItem::useOn(ItemStack* instance, Player* player, Level* level, con
 {
 	if (level->getTile(pos) == Tile::recordPlayer->m_ID && level->getData(pos) == 0)
 	{
-		level->setData(pos, m_itemID - Item::record_01->m_itemID + 1);
-		level->playStreamingMusic(m_recording, pos);
+		RecordPlayerTile::playRecord(level, pos, m_itemID);
+		level->levelEvent(LevelEvent(LevelEvent::SOUND_PLAY_RECORD, pos, m_itemID));
 		instance->m_count--;
 		return true;
 	}
@@ -21,4 +24,9 @@ bool RecordingItem::useOn(ItemStack* instance, Player* player, Level* level, con
 	{
 		return false;
 	}
+}
+
+const std::string& RecordingItem::getStreamingMusic() const
+{
+	return m_recording;
 }

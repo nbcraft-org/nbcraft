@@ -295,6 +295,13 @@
     <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\MinecartRenderer.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\PaintingRenderer.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\WolfRenderer.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\TextEditScreen.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\model\models\SignModel.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\tileentity\MobSpawnerRenderer.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\tileentity\PistonRenderer.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\tileentity\SignRenderer.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\tileentity\TileEntityRenderDispatcher.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\tileentity\TileEntityRenderer.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\client\app\App.cpp" />
@@ -508,6 +515,12 @@
     <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\MinecartRenderer.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\PaintingRenderer.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\WolfRenderer.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\TextEditScreen.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\model\models\SignModel.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\tileentity\MobSpawnerRenderer.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\tileentity\PistonRenderer.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\tileentity\SignRenderer.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\tileentity\TileEntityRenderDispatcher.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">

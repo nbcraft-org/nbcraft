@@ -80,6 +80,7 @@ void NinecraftApp::_initTextures()
 	m_pTextures->addDynamicTexture(new LavaSideTexture);
 	m_pTextures->addDynamicTexture(new FireTexture(0));
 	m_pTextures->addDynamicTexture(new FireTexture(1));
+	m_pTextures->addDynamicTexture(new PortalTexture);
 
 	//m_pTextures->loadList("startup.images");
 	//m_pTextures->loadList("background.images");

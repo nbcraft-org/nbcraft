@@ -129,6 +129,12 @@
     <Filter Include="Source Files\Locale">
       <UniqueIdentifier>{8d211c71-2764-43ef-8587-7414109f4ff5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Renderer\TileEntity">
+      <UniqueIdentifier>{4fef8064-3b23-4ace-a8df-73c966be2b65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Renderer\TileEntity">
+      <UniqueIdentifier>{72e6422e-e5ae-4bce-b78e-4f7611f22f49}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\client\gui\components\AvailableGamesList.hpp">
@@ -785,6 +791,27 @@
     <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\LightningBoltRenderer.hpp">
       <Filter>Header Files\Renderer\Entity</Filter>
     </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\tileentity\TileEntityRenderDispatcher.hpp">
+      <Filter>Header Files\Renderer\TileEntity</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\tileentity\TileEntityRenderer.hpp">
+      <Filter>Header Files\Renderer\TileEntity</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\tileentity\MobSpawnerRenderer.hpp">
+      <Filter>Header Files\Renderer\TileEntity</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\model\models\SignModel.hpp">
+      <Filter>Header Files\Model\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\tileentity\SignRenderer.hpp">
+      <Filter>Header Files\Renderer\TileEntity</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\TextEditScreen.hpp">
+      <Filter>Header Files\GUI\Screens\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\tileentity\PistonRenderer.hpp">
+      <Filter>Header Files\Renderer\TileEntity</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\client\gui\components\AvailableGamesList.cpp">
@@ -1422,6 +1449,24 @@
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\LightningBoltRenderer.cpp">
       <Filter>Source Files\Renderer\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\tileentity\TileEntityRenderDispatcher.cpp">
+      <Filter>Source Files\Renderer\TileEntity</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\tileentity\MobSpawnerRenderer.cpp">
+      <Filter>Source Files\Renderer\TileEntity</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\model\models\SignModel.cpp">
+      <Filter>Source Files\Model\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\tileentity\SignRenderer.cpp">
+      <Filter>Source Files\Renderer\TileEntity</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\TextEditScreen.cpp">
+      <Filter>Source Files\GUI\Screens\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\tileentity\PistonRenderer.cpp">
+      <Filter>Source Files\Renderer\TileEntity</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
