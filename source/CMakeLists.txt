@@ -353,7 +353,6 @@ add_library(nbcraft-core STATIC
     world/entity/PigZombie.cpp
     world/entity/FlyingMob.cpp
     world/entity/Ghast.cpp
-    world/entity/Boat.cpp
     world/entity/Painting.cpp
     world/entity/PaintingType.cpp
     world/entity/LightningBolt.cpp
