@@ -97,6 +97,7 @@
     <ClCompile Include="$(MC_ROOT)\source\common\utility\Singleton.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\common\threading\AsyncTask.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\common\utility\ByteBuffer.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\common\File.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\common\threading\CThread.hpp" />
@@ -119,6 +120,7 @@
     <ClInclude Include="$(MC_ROOT)\source\common\threading\AsyncTask.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\common\utility\ByteBuffer.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\common\utility\HashMap.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\common\File.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

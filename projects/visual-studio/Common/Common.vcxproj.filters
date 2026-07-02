@@ -74,6 +74,9 @@
     <ClCompile Include="$(MC_ROOT)\source\common\utility\ByteBuffer.cpp">
       <Filter>Source Files\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\common\File.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\common\Logger.hpp">
@@ -135,6 +138,9 @@
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\common\utility\HashMap.hpp">
       <Filter>Header Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\common\File.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

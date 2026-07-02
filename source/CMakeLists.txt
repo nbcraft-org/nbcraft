@@ -13,6 +13,7 @@ add_library(nbcraft-core STATIC
     common/SmoothFloat.cpp
     common/Timer.cpp
     common/Util.cpp
+    common/File.cpp
     common/utility/AlignmentHelper.cpp
     common/utility/JsonParser.cpp
     common/utility/Singleton.cpp
