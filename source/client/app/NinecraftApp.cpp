@@ -202,7 +202,8 @@ void NinecraftApp::_initAll()
 #ifdef DEMO
 	m_pLevelStorageSource = new MemoryLevelStorageSource;
 #else
-	m_pLevelStorageSource = new ExternalFileLevelStorageSource(platform()->m_externalStorageDir);
+	m_pLevelStorageSource = nullptr;
+	//m_pLevelStorageSource = new ExternalFileLevelStorageSource(platform()->m_externalStorageDir);
 #endif
 
 	_initInput();

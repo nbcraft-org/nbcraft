@@ -95,15 +95,15 @@ public:
 	bool operator<=(const TilePos& b) const
 	{
 		return x <= b.x &&
-			y <= b.y &&
-			z <= b.z;
+			   y <= b.y &&
+			   z <= b.z;
 	}
 
 	bool operator>=(const TilePos& b) const
 	{
 		return x >= b.x &&
-			y >= b.y &&
-			z >= b.z;
+			   y >= b.y &&
+			   z >= b.z;
 	}
 
 	TilePos operator+(const TilePos& b) const
@@ -158,6 +158,11 @@ public:
 	TilePos operator-() const
 	{
 		return TilePos(-x, -y, -z);
+	}
+
+	TilePos operator*(const TilePos& b) const
+	{
+		return TilePos(x * b.x, y * b.y, z * b.z);
 	}
 
 	TilePos operator*(int i) const

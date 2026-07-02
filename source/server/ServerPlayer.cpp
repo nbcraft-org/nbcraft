@@ -181,7 +181,7 @@ void ServerPlayer::setContainerData(ContainerMenu* menu, int id, int value)
 void ServerPlayer::doCloseContainer()
 {
 	if (m_pContainerMenu)
-		m_pContainerMenu->removed(this);
+		m_pContainerMenu->removed(*this);
 	else
 		LOG_W("Container is missing @ doCloseContainer!");
 

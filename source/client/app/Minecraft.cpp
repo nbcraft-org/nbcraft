@@ -164,7 +164,8 @@ void Minecraft::_levelGenerated()
 
 void Minecraft::_resetPlayer(Player* player)
 {
-	m_pLevel->validateSpawn();
+	// @MATT
+	//m_pLevel->validateSpawn();
 	player->reset();
 
 	TilePos pos = m_pLevel->getSharedSpawnPos();
@@ -477,7 +478,7 @@ void Minecraft::handleBuildAction(const BuildActionIntention& action)
 				pkt.m_channel = CHANNEL_PLAYER_EVENTS;
 				m_pRakNetInstance->send(pkt);
 
-				pGameMode->attack(player, pTarget);
+				pGameMode->attack(*player, *pTarget);
 				m_lastBlockBreakTime = getTimeMs();
 			}
 			else if (action.isInteract() && canInteract)
@@ -488,7 +489,7 @@ void Minecraft::handleBuildAction(const BuildActionIntention& action)
 				InteractPacket pkt(player->m_EntityID, pTarget->m_EntityID, InteractPacket::INTERACT);
 				m_pRakNetInstance->send(pkt);
 
-				pGameMode->interact(player, pTarget);
+				pGameMode->interact(*player, *pTarget);
 				m_lastInteractTime = getTimeMs();
 			}
 			break;
@@ -518,14 +519,14 @@ void Minecraft::handleBuildAction(const BuildActionIntention& action)
 					bool destroyed = false;
 					if (action.isDestroyStart())
 					{
-						destroyed = pGameMode->startDestroyBlock(player, m_hitResult.m_tilePos, m_hitResult.m_hitSide);
+						destroyed = pGameMode->startDestroyBlock(*player, m_hitResult.m_tilePos, m_hitResult.m_hitSide);
 						player->startDestroying();
 					}
 
-					bool contDestory = pGameMode->continueDestroyBlock(player, m_hitResult.m_tilePos, m_hitResult.m_hitSide);
+					bool contDestory = pGameMode->continueDestroyBlock(*player, m_hitResult.m_tilePos, m_hitResult.m_hitSide);
 
 					destroyed = destroyed || contDestory;
-					m_pParticleEngine->crack(player, m_hitResult.m_tilePos, m_hitResult.m_hitSide);
+					m_pParticleEngine->crack(*player, m_hitResult.m_tilePos, m_hitResult.m_hitSide);
 
 					m_lastBlockBreakTime = getTimeMs();
 
@@ -545,7 +546,7 @@ void Minecraft::handleBuildAction(const BuildActionIntention& action)
 			else if (action.isPlace() && canInteract)
 			{
 				ItemStack& item = getSelectedItem();
-				if (m_pGameMode->useItemOn(player, item, m_hitResult.m_tilePos, m_hitResult.m_hitSide))
+				if (pGameMode->useItemOn(*player, item, m_hitResult.m_tilePos, m_hitResult.m_hitSide))
 				{
 					bInteract = false;
 
@@ -566,7 +567,7 @@ void Minecraft::handleBuildAction(const BuildActionIntention& action)
 		if (!item.isEmpty())
 		{
 			m_lastInteractTime = getTimeMs();
-			if (m_pGameMode->useItem(player, item))
+			if (pGameMode->useItem(*player, item))
 				m_pGameRenderer->m_pItemInHandRenderer->itemUsed();
 		}
 	}
@@ -1035,7 +1036,8 @@ void Minecraft::prepareLevel(const std::string& unused)
 	//float startTime = float(getTimeS());
 	Level* pLevel = m_pLevel;
 
-	if (!pLevel->field_B0C)
+	// @MATT
+	/*if (!pLevel->field_B0C)
 	{
 		pLevel->setUpdateLights(0);
 	}
@@ -1064,16 +1066,18 @@ void Minecraft::prepareLevel(const std::string& unused)
 			//if (time2 != -1.0f)
 			//	getTimeS();
 		}
-	}
+	}*/
 
 	//if (startTime != -1.0f)
 	//	getTimeS();
 
-	pLevel->setUpdateLights(1);
+	// @MATT
+	//pLevel->setUpdateLights(1);
 
 	//startTime = float(getTimeS());
 
-	ChunkPos cp(0, 0);
+	// @MATT
+	/*ChunkPos cp(0, 0);
 	for (cp.x = 0; cp.x < C_MAX_CHUNKS_X; cp.x++)
 	{
 		for (cp.z = 0; cp.z < C_MAX_CHUNKS_Z; cp.z++)
@@ -1088,7 +1092,7 @@ void Minecraft::prepareLevel(const std::string& unused)
 			pChunk->m_bUnsaved = false;
 			pChunk->clearUpdateMap();
 		}
-	}
+	}*/
 
 	//if (startTime != -1.0f)
 	//	getTimeS();
@@ -1097,9 +1101,11 @@ void Minecraft::prepareLevel(const std::string& unused)
 
 	if (pLevel->field_B0C)
 	{
-		pLevel->setInitialSpawn();
+		// @MATT
+		//pLevel->setInitialSpawn();
 		pLevel->saveLevelData();
-		pLevel->getChunkSource()->saveAll();
+		// @MATT
+		//pLevel->getChunkSource()->saveAll();
 		pLevel->saveGame();
 	}
 	else
@@ -1113,7 +1119,8 @@ void Minecraft::prepareLevel(const std::string& unused)
 
 	//startTime = float(getTimeS());
 
-	pLevel->prepare();
+	// @MATT
+	//pLevel->prepare();
 
 	//if (startTime != -1.0f)
 	//	getTimeS();
@@ -1242,7 +1249,7 @@ void Minecraft::onClientStartedLevel(Level* pLevel, LocalPlayer* pLocalPlayer)
 {
 	// already added in Level::loadPlayer()
 	//pLevel->addEntity(pLocalPlayer); // addPlayer on 0.12.1
-	setupLevelRendering(pLevel, pLocalPlayer->getDimension(), pLocalPlayer);
+	setupLevelRendering(pLevel, &pLocalPlayer->getDimension(), pLocalPlayer);
 }
 
 void Minecraft::generateLevel(const std::string& unused, Level& level)
@@ -1261,9 +1268,9 @@ void Minecraft::generateLevel(const std::string& unused, Level& level)
 	LocalPlayer* pLocalPlayer = m_pLocalPlayer;
 	if (!pLocalPlayer)
 	{
-		pLocalPlayer = m_pGameMode->createPlayer(level);
+		pLocalPlayer = pGameMode->createPlayer(level);
 		pLocalPlayer->resetPos();
-		pGameMode->initPlayer(pLocalPlayer);
+		pGameMode->initPlayer(*pLocalPlayer);
 	}
 
 	if (pLocalPlayer)
@@ -1271,7 +1278,8 @@ void Minecraft::generateLevel(const std::string& unused, Level& level)
 
 	pGameMode->adjustPlayer(pLocalPlayer);
 
-	level.validateSpawn();
+	// @MATT
+	//level.validateSpawn();
 	level.loadPlayer(*pLocalPlayer);
 
 	m_pLocalPlayer = pLocalPlayer;

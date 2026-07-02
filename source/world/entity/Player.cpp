@@ -490,11 +490,6 @@ int Player::getInventorySlot(int x) const
 	return 0;
 }
 
-Dimension* Player::getDimension() const
-{
-	return m_pLevel->getDimension(getDimensionId());
-}
-
 void Player::prepareCustomTextures()
 {
 

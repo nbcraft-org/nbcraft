@@ -135,7 +135,7 @@ bool File::createFolder(const std::string& path)
 
 bool File::deleteEmptyDirectory(const std::string& path)
 {
-	return rmdir(path.c_str()) == 0;
+	return _rmdir(path.c_str()) == 0;
 }
 
 static void GetSizeCallback(uint64_t& size, const std::string& path, const struct stat& fileStat)

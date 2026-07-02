@@ -240,7 +240,7 @@ bool RenderChunkBuilder::_sortTiles(TileSource& region, RenderChunk& renderChunk
 					if (visibilityHelper)
 						visibilityHelper->setTile(pos, tile);
 
-					Tile::RenderLayer renderLayer = tile->getRenderLayer(&region, pos);
+					Tile::RenderLayer renderLayer = tile->getRenderLayer(region, pos);
 					if (Tile::leaves == tile || Tile::leaves_carried == tile)
 					{
 						if ((region.getData(pos) & 3) == 3 || LeafTile::isDeepLeafTile(region, pos))
@@ -248,9 +248,9 @@ bool RenderChunkBuilder::_sortTiles(TileSource& region, RenderChunk& renderChunk
 					}
 					else if (Tile::topSnow == tile)
 					{
-						FullTile fullTile = TopSnowTile::dataIDToRecoverableFullTile(&region, pos, region.getData(pos));
+						FullTile fullTile = TopSnowTile::dataIDToRecoverableFullTile(region, pos, region.getData(pos));
 						if (fullTile.getType())
-							m_tileQueue->add(fullTile.getType()->getRenderLayer(&region, pos), pos);
+							m_tileQueue->add(fullTile.getType()->getRenderLayer(region, pos), pos);
 					}
 
 					m_tileQueue->add(renderLayer, pos);

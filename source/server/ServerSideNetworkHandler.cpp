@@ -321,7 +321,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, LoginPacke
 	pPlayer->m_name = std::string(packet->m_userName.C_String());
 
 	GameMode* pGameMode = m_pMinecraft->getPlayerGameMode(*pPlayer);
-	pGameMode->initPlayer(pPlayer);
+	pGameMode->initPlayer(*pPlayer);
 
 #ifdef ENH_SAVE_REMOTE_PLAYERS
 	LevelStorage* pLevelStorage = m_pLevel->getLevelStorage();
@@ -621,11 +621,11 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, InteractPa
 	{
 	case InteractPacket::INTERACT:
 		player.swing();
-		m_pMinecraft->getPlayerGameMode(player)->interact(&player, pTarget);
+		m_pMinecraft->getPlayerGameMode(player)->interact(player, *pTarget);
 		break;
 	case InteractPacket::ATTACK:
 		player.swing();
-		m_pMinecraft->getPlayerGameMode(player)->attack(&player, pTarget);
+		m_pMinecraft->getPlayerGameMode(player)->attack(player, *pTarget);
 		break;
 	default:
 		LOG_W("Received unkown action in InteractPacket: %d", packet->m_actionType);

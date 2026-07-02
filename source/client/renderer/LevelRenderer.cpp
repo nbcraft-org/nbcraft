@@ -85,8 +85,9 @@ LevelRenderer::LevelRenderer(Minecraft* pMC, Textures* pTexs)
 	m_zMaxChunk = 0;
 	m_pLevel = nullptr;
 	m_pDimension = nullptr;
-	m_chunks = nullptr;
-	m_sortedChunks = nullptr;
+	// @MATT
+	/*m_chunks = nullptr;
+	//m_sortedChunks = nullptr;*/
 	m_chunksLength = 0;
 	m_pTileRenderer = nullptr;
 	m_xChunks = 0;
@@ -430,7 +431,7 @@ void LevelRenderer::_setupFog(const Entity& camera, int i)
 	mce::FogStateDescription& desc = Fog::nextState;
 	Minecraft& mc = *m_pMinecraft;
 	GameRenderer& gameRenderer = *mc.m_pGameRenderer;
-	Dimension& dimension = *camera.getDimension();
+	Dimension& dimension = camera.getDimension();
 	float renderDistance = gameRenderer.m_renderDistance;
 
 	if (camera.isUnderLiquid(Material::water))
@@ -561,6 +562,7 @@ void LevelRenderer::onAppSuspended()
 
 void LevelRenderer::deleteChunks()
 {
+	/* @MATT
 	for (int i = 0; i < m_zChunks; i++)
 	{
 		for (int j = 0; j < m_yChunks; j++)
@@ -579,11 +581,12 @@ void LevelRenderer::deleteChunks()
 
 	if (m_sortedChunks)
 		delete[] m_sortedChunks;
-	m_sortedChunks = nullptr;
+	m_sortedChunks = nullptr;*/
 }
 
 void LevelRenderer::cull(Culler* pCuller, float f)
 {
+	/* @MATT
 	for (int i = 0; i < m_chunksLength; i++)
 	{
 		Chunk* pChunk = m_chunks[i];
@@ -594,7 +597,7 @@ void LevelRenderer::cull(Culler* pCuller, float f)
 		{
 			pChunk->cull(pCuller);
 		}
-	}
+	}*/
 
 	m_cullStep++;
 }
@@ -623,14 +626,16 @@ void LevelRenderer::allChanged()
 
 	m_chunksLength = m_yChunks * m_xChunks * m_zChunks;
 	LOG_I("chunksLength: %d", m_chunksLength);
+	/* @MATT
 	m_chunks = new Chunk* [m_chunksLength];
-	m_sortedChunks = new Chunk* [m_chunksLength];
+	m_sortedChunks = new Chunk* [m_chunksLength];*/
 
 	m_xMinChunk = 0;
 	m_yMinChunk = 0;
 	m_zMinChunk = 0;
 
-	m_dirtyChunks.clear();
+	/* @MATT
+	m_dirtyChunks.clear();*/
 	m_renderableTileEntities.clear();
 
 	m_xMaxChunk = m_xChunks;
@@ -639,6 +644,7 @@ void LevelRenderer::allChanged()
 
 	int count = 0, id = 0;
 
+	/* @MATT
 	// These are actually Chunk coordinates that get converted to Tile coordinates
 	TilePos cp(0, 0, 0);
 	for (cp.x = 0; cp.x < m_xChunks; cp.x++)
@@ -680,13 +686,14 @@ void LevelRenderer::allChanged()
 
 			std::sort(&m_sortedChunks[0], &m_sortedChunks[m_chunksLength], DistanceChunkSorter(*pMob));
 		}
-	}
+	}*/
 
 	m_noEntityRenderFrames = 2;
 }
 
 void LevelRenderer::resortChunks(const TilePos& pos)
 {
+	/* @MATT
 	TilePos tp(pos - 8);
 	m_xMinChunk = INT_MIN;
 	m_yMinChunk = INT_MIN;
@@ -740,7 +747,7 @@ void LevelRenderer::resortChunks(const TilePos& pos)
 					m_dirtyChunks.push_back(pChunk);
 			}
 		}
-	}
+	}*/
 }
 
 void LevelRenderer::entityAdded(Entity* pEnt)
@@ -839,6 +846,7 @@ void LevelRenderer::renderSameAsLast(TerrainLayer layer, float alpha, bool fog)
 
 int LevelRenderer::renderChunks(int start, int end, Tile::RenderLayer layer, float alpha, bool fog)
 {
+	/* @MATT
 	field_24.clear();
 
 	int result = 0;
@@ -886,11 +894,14 @@ int LevelRenderer::renderChunks(int start, int end, Tile::RenderLayer layer, flo
 	}
 
 	renderSameAsLast(renderLayerToTerrainLayerMap[layer], alpha, fog);
-	return result;
+	return result;*/
+
+	return 0;
 }
 
 void LevelRenderer::render(const Entity& camera, Tile::RenderLayer layer, float alpha, bool fog)
 {
+	/* @MATT
 	for (int i = 0; i < 10; i++)
 	{
 		field_68 = (field_68 + 1) % m_chunksLength;
@@ -904,7 +915,7 @@ void LevelRenderer::render(const Entity& camera, Tile::RenderLayer layer, float 
 			continue;
 
 		m_dirtyChunks.push_back(pChunk);
-	}
+	}*/
 
 	if (m_pMinecraft->getOptions()->m_viewDistance.get() != m_lastViewDistance)
 		allChanged();
@@ -921,7 +932,8 @@ void LevelRenderer::render(const Entity& camera, Tile::RenderLayer layer, float 
 		m_posPrev = camera.m_pos;
 
 		resortChunks(camera.m_pos);
-		std::sort(&m_sortedChunks[0], &m_sortedChunks[m_chunksLength], DistanceChunkSorter(camera));
+		/* @MATT
+		std::sort(&m_sortedChunks[0], &m_sortedChunks[m_chunksLength], DistanceChunkSorter(camera));*/
 	}
 
 	if (layer == Tile::RENDER_LAYER_BLEND)
@@ -1015,7 +1027,7 @@ const Color& LevelRenderer::setupClearColor(float f)
 	Minecraft& mc = *m_pMinecraft;
 	const Options& options = *mc.getOptions();
 	const Entity& camera = *mc.m_pCameraEntity;
-	const Dimension& dimension = *camera.getDimension();
+	const Dimension& dimension = camera.getDimension();
 
 	float x1 = 1.0f - powf(1.0f / (1 + options.m_viewDistance.get()), 0.25f);
 
@@ -1066,7 +1078,8 @@ void LevelRenderer::setLevel(Level* level)
 	m_pLevel = level;
 
 	delete m_pTileRenderer;
-	m_pTileRenderer = new TileRenderer(Tesselator::instance, m_pLevel);
+	// @MATT
+	//m_pTileRenderer = new TileRenderer(Tesselator::instance, m_pLevel);
 
 	if (level)
 	{
@@ -1089,7 +1102,7 @@ void LevelRenderer::setDimension(Dimension* dimension)
 void LevelRenderer::setDirty(const TilePos& min, const TilePos& max)
 {
 	// @TODO: @Matt, update this to use RenderChunks, obviously check 0.12.1
-	int minX = Mth::intFloorDiv(min.x, 16);
+	/*int minX = Mth::intFloorDiv(min.x, 16);
 	int minY = Mth::intFloorDiv(min.y, 16);
 	int minZ = Mth::intFloorDiv(min.z, 16);
 	int maxX = Mth::intFloorDiv(max.x, 16);
@@ -1122,7 +1135,7 @@ void LevelRenderer::setDirty(const TilePos& min, const TilePos& max)
 				pChunk->setDirty();
 			}
 		}
-	}
+	}*/
 }
 
 void LevelRenderer::setTilesDirty(const TilePos& min, const TilePos& max)
@@ -1344,7 +1357,7 @@ void LevelRenderer::renderHitSelect(const Entity& camera, const HitResult& hr, i
 
 	m_pTileRenderer->tesselateInWorld(pTile, hr.m_tilePos);
 
-	Tile::RenderLayer renderLayer = pTile->getRenderLayer(&tileSource, hr.m_tilePos);
+	Tile::RenderLayer renderLayer = pTile->getRenderLayer(tileSource, hr.m_tilePos);
 	const mce::MaterialPtr& material = _chooseOverlayMaterial(renderLayer);
 
 	t.draw(material);
@@ -1368,12 +1381,12 @@ void LevelRenderer::renderHitOutline(const Entity& camera, const HitResult& hr, 
 	if (tile > 0)
 	{
 		Tile::tiles[tile]->updateShape(
-			&tileSource,
+			tileSource,
 			hr.m_tilePos);
 		float posX = camera.m_posPrev.x + ((camera.m_pos.x - camera.m_posPrev.x) * a);
 		float posY = camera.m_posPrev.y + ((camera.m_pos.y - camera.m_posPrev.y) * a);
 		float posZ = camera.m_posPrev.z + ((camera.m_pos.z - camera.m_posPrev.z) * a);
-		AABB aabb, tileAABB = Tile::tiles[tile]->getTileAABB(&tileSource, hr.m_tilePos);
+		AABB aabb, tileAABB = Tile::tiles[tile]->getTileAABB(tileSource, hr.m_tilePos);
 		aabb.min.y = tileAABB.min.y - distance - posY;
 		aabb.max.y = tileAABB.max.y + distance - posY;
 		aabb.min.z = tileAABB.min.z - distance - posZ;
@@ -1448,7 +1461,7 @@ void LevelRenderer::addParticle(const std::string& name, const Vec3& pos, const 
 	}
 	if (name == "note")
 	{
-		pe->add(new NoteParticle(m_pLevel, pos, dir));
+		pe.add(new NoteParticle(tileSource, pos, dir));
 		return;
 	}
 	if (name == "explode")
@@ -1496,12 +1509,12 @@ void LevelRenderer::addParticle(const std::string& name, const Vec3& pos, const 
 	}
 	if (name == "snowballpoof")
 	{
-		pe->add(new ItemParticle(m_pLevel, pos, Item::snowBall));
+		pe.add(new ItemParticle(tileSource, pos, Item::snowBall));
 		return;
 	}
 	if (name == "slime")
 	{
-		pe->add(new ItemParticle(m_pLevel, pos, Item::slimeBall));
+		pe.add(new ItemParticle(tileSource, pos, Item::slimeBall));
 		return;
 	}
 
@@ -1642,19 +1655,19 @@ void LevelRenderer::renderEntities(Vec3 pos, Culler* culler, float f)
 
 	EntityRenderDispatcher::off = camera.m_posPrev + (camera.m_pos - camera.m_posPrev) * f;
 
-	const EntityMap& entities = tileSource.getEntities((Entity*)&camera, _getEntityRenderBounds(camera));;
+	const Entity::Vector& entities = tileSource.getEntities((Entity*)&camera, _getEntityRenderBounds(camera));;
 	m_totalEntities = int(entities.size());
 
-	for (EntityMap::const_iterator it = entities.begin(); it != entities.end(); ++it)
+	for (Entity::Vector::const_iterator it = entities.begin(); it != entities.end(); ++it)
     {
-		const Entity* entity = it->second;
+		const Entity* entity = *it;
 		if (!entity->shouldRender(pos))
 			continue;
 
 		if (!culler->isVisible(entity->m_hitbox))
 			continue;
 
-		if (mc.m_pCameraEntity == entity && !options.m_thirdPerson.get() == TPM_FIRST)
+		if (mc.m_pCameraEntity == entity && options.m_thirdPerson.get() == TPM_FIRST)
 			continue;
 
 		if (tileSource.hasChunkAt(entity->m_pos))
@@ -1809,7 +1822,7 @@ void LevelRenderer::renderClouds(const Entity& camera, float alpha)
 		return;
 	}
 
-	Dimension& dimension = *camera.getDimension();
+	Dimension& dimension = camera.getDimension();
 
 	mce::RenderContext& renderContext = mce::RenderContextImmediate::get();
 
@@ -1875,7 +1888,7 @@ void LevelRenderer::renderAdvancedClouds(float alpha)
 	Options& options = *mc.getOptions();
 	const Entity& camera = *mc.m_pCameraEntity;
 	mce::RenderContext& renderContext = mce::RenderContextImmediate::get();
-	Dimension& dimension = *camera.getDimension();
+	Dimension& dimension = camera.getDimension();
 
 	float yOffs = //Mth::Lerp(camera.m_posPrev.y, camera.m_pos.y, alpha);
     camera.m_posPrev.y + (camera.m_pos.y - camera.m_posPrev.y) * alpha;

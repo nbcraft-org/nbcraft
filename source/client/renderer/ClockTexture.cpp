@@ -27,12 +27,18 @@ ClockTexture::ClockTexture(Minecraft* minecraft)
 
 void ClockTexture::tick()
 {
+    LocalPlayer* pLocalPlayer = m_pMinecraft->m_pLocalPlayer;
+    if (!pLocalPlayer)
+        return;
+
+    Dimension& dimension = pLocalPlayer->getDimension();
+
     float rott = 0.0f;
     if (m_pMinecraft->m_pLevel && m_pMinecraft->m_pLocalPlayer)
     {
-        float time = m_pMinecraft->m_pLevel->getTimeOfDay(1.0f);
+        float time = dimension.getTimeOfDay(1.0f);
         rott = (float)(-time * M_PI * 2.0f);
-        if (m_pMinecraft->m_pLevel->m_pDimension->m_bFoggy)
+        if (dimension.isFoggy())
             rott = Mth::random() * M_PI * 2.0f;
     }
 

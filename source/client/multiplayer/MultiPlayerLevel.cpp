@@ -20,7 +20,8 @@ void MultiPlayerLevel::tick()
         }
     }
 
-    for (std::vector<ResetInfo>::iterator it = m_updatesToReset.begin(); it != m_updatesToReset.end(); it++)
+    // @MATT
+    /*for (std::vector<ResetInfo>::iterator it = m_updatesToReset.begin(); it != m_updatesToReset.end(); it++)
     {
         if (--it->ticks == 0)
         {
@@ -28,7 +29,7 @@ void MultiPlayerLevel::tick()
             sendTileUpdated(it->pos);
             m_updatesToReset.erase(it);
         }
-    }
+    }*/
 }
 
 void MultiPlayerLevel::putEntity(int id, Entity* e)

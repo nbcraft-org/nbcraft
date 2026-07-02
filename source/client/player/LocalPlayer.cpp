@@ -169,7 +169,7 @@ void LocalPlayer::openContainer(Container* container)
 void LocalPlayer::closeContainer()
 {
 	Player::closeContainer();
-	m_pMinecraft->getLocalPlayerGameMode()->handleCloseInventory(m_pContainerMenu->m_containerId, this);
+	m_pMinecraft->getLocalPlayerGameMode()->handleCloseInventory(m_pContainerMenu->m_containerId, *this);
 	m_pMinecraft->setScreen(nullptr);
 }
 
@@ -200,7 +200,8 @@ void LocalPlayer::animateRespawn()
 
 void LocalPlayer::take(Entity* pEnt, int count)
 {
-	m_pMinecraft->m_pParticleEngine->add(new TakeAnimationParticle(m_pLevel, pEnt, this, -0.5f));
+	TileSource& tileSource = pEnt->getTileSource();
+	m_pMinecraft->m_pParticleEngine->add(new TakeAnimationParticle(tileSource, pEnt, this, -0.5f));
 }
 
 void LocalPlayer::hurtTo(int newHealth)

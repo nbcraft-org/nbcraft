@@ -24,7 +24,8 @@ void ChunkDataPacket::write(RakNet::BitStream& bs)
 	// Well, we first have to prepare the data.
 	m_data.Reset();
 
-	for (int i = 0; i < 256; i++)
+	// @MATT
+	/*for (int i = 0; i < 256; i++)
 	{
 		m_data.Write(m_pChunk->m_updateMap[i]);
 
@@ -43,7 +44,7 @@ void ChunkDataPacket::write(RakNet::BitStream& bs)
 				m_data.Write((const char*) &m_pChunk->getTileData().m_array[idx >> 1], 8);
 			}
 		}
-	}
+	}*/
 
 	m_data.ResetReadPointer();
 	bs.Write(m_data);

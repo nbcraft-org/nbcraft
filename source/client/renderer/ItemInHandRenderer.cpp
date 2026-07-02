@@ -80,7 +80,7 @@ void ItemInHandRenderer::render(float a)
 	currentShaderDarkColor = Color(fBright, fBright, fBright);
 
 	ItemStack* pItem = &m_selectedItem;
-	if (pLP->m_pFishing)
+	if (player.m_pFishing)
     {
         if (stick.isEmpty()) stick = ItemStack(Item::stick);
 		pItem = &stick;
@@ -91,7 +91,7 @@ void ItemInHandRenderer::render(float a)
     float h = m_oHeight + (m_height - m_oHeight) * a;
     constexpr float d = 0.8f;
     
-	if (!item.isEmpty())
+	if (!pItem->isEmpty())
 	{
         matrix->translate(Vec3(-0.4f * Mth::sin(float(M_PI) * Mth::sqrt(fAnim)), 0.2f * Mth::sin(2.0f * float(M_PI) * Mth::sqrt(fAnim)), -0.2f * Mth::sin(float(M_PI) * fAnim)));
         matrix->translate(Vec3(0.7f * d, -0.65f * d - (1.0f - h) * 0.6f, -0.9f * d));
@@ -105,12 +105,12 @@ void ItemInHandRenderer::render(float a)
         matrix->rotate(swing2 * -80.0f, Vec3::UNIT_X);
         matrix->scale(0.4f);
 
-        if (item.getItem()->isMirroredArt())
+        if (pItem->getItem()->isMirroredArt())
         {
             matrix->rotate(180.0f, Vec3::UNIT_Y);
         }
 
-        renderItem(player, item, a);
+        renderItem(player, pItem, a);
 	}
 	else
 	{

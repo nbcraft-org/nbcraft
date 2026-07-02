@@ -116,7 +116,7 @@ Vec2 TileRenderer::getLightColor(const Tile* tile, const TilePos& pos)
 	if (pos.y > 127)
 		return Vec2(240.0f / 255.0f, 0.0f);
 
-	float brightness = tile->getBrightness(m_pTileSource, pos);
+	float brightness = tile->getBrightness(*m_pTileSource, pos);
 	return Vec2(brightness, brightness);
 }
 
@@ -243,7 +243,7 @@ void TileRenderer::renderEast(Tile* tile, const Vec3& pos, int texture)
 	t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_l, texV_u);
 
 	if (tile->getRenderShape() == SHAPE_CACTUS)
-		tile->updateShape(m_pTileSource, pos);
+		tile->updateShape(*m_pTileSource, pos);
 }
 
 void TileRenderer::renderWest(Tile* tile, const Vec3& pos, int texture)
@@ -325,7 +325,7 @@ void TileRenderer::renderWest(Tile* tile, const Vec3& pos, int texture)
 	t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_r, texV_d);
 
 	if (tile->getRenderShape() == SHAPE_CACTUS)
-		tile->updateShape(m_pTileSource, pos);
+		tile->updateShape(*m_pTileSource, pos);
 }
 
 void TileRenderer::renderSouth(Tile* tile, const Vec3& pos, int texture)
@@ -407,7 +407,7 @@ void TileRenderer::renderSouth(Tile* tile, const Vec3& pos, int texture)
 	t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_r, texV_u);
 
 	if (tile->getRenderShape() == SHAPE_CACTUS)
-		tile->updateShape(m_pTileSource, pos);
+		tile->updateShape(*m_pTileSource, pos);
 }
 
 void TileRenderer::renderNorth(Tile* tile, const Vec3& pos, int texture)
@@ -489,7 +489,7 @@ void TileRenderer::renderNorth(Tile* tile, const Vec3& pos, int texture)
 	t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.min.z + pos.z, texU_r, texV_d);
 
 	if (tile->getRenderShape() == SHAPE_CACTUS)
-		tile->updateShape(m_pTileSource, pos);
+		tile->updateShape(*m_pTileSource, pos);
 }
 
 void TileRenderer::renderFaceUp(Tile* tile, const Vec3& pos, int texture)
@@ -560,7 +560,7 @@ void TileRenderer::renderFaceUp(Tile* tile, const Vec3& pos, int texture)
 	t.vertexUV(aabb.min.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_1, texV_2);
 
 	if (tile->getRenderShape() == SHAPE_CACTUS)
-		tile->updateShape(m_pTileSource, pos);
+		tile->updateShape(*m_pTileSource, pos);
 }
 
 void TileRenderer::renderFaceDown(Tile* tile, const Vec3& pos, int texture)
@@ -631,7 +631,7 @@ void TileRenderer::renderFaceDown(Tile* tile, const Vec3& pos, int texture)
 	t.vertexUV(aabb.max.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_2, texV_2);
 
 	if (tile->getRenderShape() == SHAPE_CACTUS)
-		tile->updateShape(m_pTileSource, pos);
+		tile->updateShape(*m_pTileSource, pos);
 }
 
 void TileRenderer::tesselateCrossTexture(const FullTile& tile, const Vec3& pos, bool simple)
@@ -766,42 +766,42 @@ bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, float r
 
 	Tesselator& t = m_tessellator;
 
-	float fLightHere = tile->getBrightness(m_pTileSource, pos);
+	float fLightHere = tile->getBrightness(*m_pTileSource, pos);
 	bool bDrewAnything = false;
 
-	if (m_bNoCulling || tile->shouldRenderFace(m_pTileSource, pos.below(), Facing::DOWN))
+	if (m_bNoCulling || tile->shouldRenderFace(*m_pTileSource, pos.below(), Facing::DOWN))
 	{
 		bDrewAnything = true;
 
-		float fLight = tile->getBrightness(m_pTileSource, pos.below());
+		float fLight = tile->getBrightness(*m_pTileSource, pos.below());
 		t.color(r * 0.5f * fLight, g * 0.5f * fLight, b * 0.5f * fLight);
 
-		renderFaceDown(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::DOWN));
+		renderFaceDown(tile, pos, tile->getTexture(*m_pTileSource, pos, Facing::DOWN));
 	}
 
-	if (m_bNoCulling || tile->shouldRenderFace(m_pTileSource, pos.above(), Facing::UP))
+	if (m_bNoCulling || tile->shouldRenderFace(*m_pTileSource, pos.above(), Facing::UP))
 	{
 		bDrewAnything = true;
 
-		float fLight = tile->getBrightness(m_pTileSource, pos.above());
+		float fLight = tile->getBrightness(*m_pTileSource, pos.above());
 		if (tile->m_aabb.max.y != 1.0f && !tile->m_pMaterial->isLiquid())
 			fLight = fLightHere;
 
 		t.color(topR * fLight, topG * fLight, topB * fLight);
 
-		renderFaceUp(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::UP));
+		renderFaceUp(tile, pos, tile->getTexture(*m_pTileSource, pos, Facing::UP));
 	}
 
-	if (m_bNoCulling || tile->shouldRenderFace(m_pTileSource, pos.north(), Facing::NORTH))
+	if (m_bNoCulling || tile->shouldRenderFace(*m_pTileSource, pos.north(), Facing::NORTH))
 	{
 		bDrewAnything = true;
 
-		float fLight = tile->getBrightness(m_pTileSource, pos.north());
+		float fLight = tile->getBrightness(*m_pTileSource, pos.north());
 		if (tile->m_aabb.min.z > 0.0f)
 			fLight = fLightHere;
 
 		t.color(r * 0.8f * fLight, g * 0.8f * fLight, b * 0.8f * fLight);
-		int texture = tile->getTexture(m_pTileSource, pos, Facing::NORTH);
+		int texture = tile->getTexture(*m_pTileSource, pos, Facing::NORTH);
 		renderNorth(tile, pos, texture);
 
 		if (m_bFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
@@ -811,16 +811,16 @@ bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, float r
 		}
 	}
 
-	if (m_bNoCulling || tile->shouldRenderFace(m_pTileSource, pos.south(), Facing::SOUTH))
+	if (m_bNoCulling || tile->shouldRenderFace(*m_pTileSource, pos.south(), Facing::SOUTH))
 	{
 		bDrewAnything = true;
 
-		float fLight = tile->getBrightness(m_pTileSource, pos.south());
+		float fLight = tile->getBrightness(*m_pTileSource, pos.south());
 		if (tile->m_aabb.max.z < 1.0f)
 			fLight = fLightHere;
 
 		t.color(r * 0.8f * fLight, g * 0.8f * fLight, b * 0.8f * fLight);
-		int texture = tile->getTexture(m_pTileSource, pos, Facing::SOUTH);
+		int texture = tile->getTexture(*m_pTileSource, pos, Facing::SOUTH);
 		renderSouth(tile, pos, texture);
 
 		if (m_bFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
@@ -830,16 +830,16 @@ bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, float r
 		}
 	}
 
-	if (m_bNoCulling || tile->shouldRenderFace(m_pTileSource, pos.west(), Facing::WEST))
+	if (m_bNoCulling || tile->shouldRenderFace(*m_pTileSource, pos.west(), Facing::WEST))
 	{
 		bDrewAnything = true;
 
-		float fLight = tile->getBrightness(m_pTileSource, pos.west());
+		float fLight = tile->getBrightness(*m_pTileSource, pos.west());
 		if (tile->m_aabb.min.x > 0.0f)
 			fLight = fLightHere;
 
 		t.color(r * 0.6f * fLight, g * 0.6f * fLight, b * 0.6f * fLight);
-		int texture = tile->getTexture(m_pTileSource, pos, Facing::WEST);
+		int texture = tile->getTexture(*m_pTileSource, pos, Facing::WEST);
 		renderWest(tile, pos, texture);
 
 		if (m_bFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
@@ -849,16 +849,16 @@ bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, float r
 		}
 	}
 
-	if (m_bNoCulling || tile->shouldRenderFace(m_pTileSource, pos.east(), Facing::EAST))
+	if (m_bNoCulling || tile->shouldRenderFace(*m_pTileSource, pos.east(), Facing::EAST))
 	{
 		bDrewAnything = true;
 
-		float fLight = tile->getBrightness(m_pTileSource, pos.east());
+		float fLight = tile->getBrightness(*m_pTileSource, pos.east());
 		if (tile->m_aabb.max.x < 1.0f)
 			fLight = fLightHere;
 
 		t.color(r * 0.6f * fLight, g * 0.6f * fLight, b * 0.6f * fLight);
-		int texture = tile->getTexture(m_pTileSource, pos, Facing::EAST);
+		int texture = tile->getTexture(*m_pTileSource, pos, Facing::EAST);
 		renderEast(tile, pos, texture);
 
 		if (m_bFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
@@ -906,7 +906,7 @@ bool TileRenderer::tesselateRowInWorld(Tile* tile, const TilePos& pos)
 
 	Color color = _getTileColor(pos, tile);
 	color.a = 1.0f;
-	t.color(color * ((0.85f * tile->getBrightness(m_pTileSource, pos)) + 0.15f));
+	t.color(color * ((0.85f * tile->getBrightness(*m_pTileSource, pos)) + 0.15f));
 
 	tesselateRowTexture(tile, m_pTileSource->getData(pos), pos);
 
@@ -922,13 +922,13 @@ bool TileRenderer::tesselateWaterInWorld(Tile* tile1, const TilePos& pos)
 
 	Tesselator& t = m_tessellator;
 
-	bRenderFaceDown = tile->shouldRenderFace(m_pTileSource, pos.above(), Facing::UP);
-	bRenderFaceUp   = tile->shouldRenderFace(m_pTileSource, pos.below(), Facing::DOWN);
+	bRenderFaceDown = tile->shouldRenderFace(*m_pTileSource, pos.above(), Facing::UP);
+	bRenderFaceUp   = tile->shouldRenderFace(*m_pTileSource, pos.below(), Facing::DOWN);
 
-	bRenderSides[0] = tile->shouldRenderFace(m_pTileSource, pos.north(), Facing::NORTH);
-	bRenderSides[1] = tile->shouldRenderFace(m_pTileSource, pos.south(), Facing::SOUTH);
-	bRenderSides[2] = tile->shouldRenderFace(m_pTileSource, pos.west(), Facing::WEST);
-	bRenderSides[3] = tile->shouldRenderFace(m_pTileSource, pos.east(), Facing::EAST);
+	bRenderSides[0] = tile->shouldRenderFace(*m_pTileSource, pos.north(), Facing::NORTH);
+	bRenderSides[1] = tile->shouldRenderFace(*m_pTileSource, pos.south(), Facing::SOUTH);
+	bRenderSides[2] = tile->shouldRenderFace(*m_pTileSource, pos.west(), Facing::WEST);
+	bRenderSides[3] = tile->shouldRenderFace(*m_pTileSource, pos.east(), Facing::EAST);
 
 	if (!bRenderFaceDown &&
 		!bRenderFaceUp   &&
@@ -963,7 +963,7 @@ bool TileRenderer::tesselateWaterInWorld(Tile* tile1, const TilePos& pos)
 		// @NOTE: Have to use tile1 because for whatever reason MSVC doesn't think an overload
 		// for `tile` exists that takes 2 int arguments
 		int texFaceDown = tile->getTexture(Facing::UP, tileData);
-		float slopeAngle = tile->getSlopeAngle(m_pTileSource, pos, tile->m_pMaterial);
+		float slopeAngle = tile->getSlopeAngle(*m_pTileSource, pos, tile->m_pMaterial);
 
 		int texX, texY;
 
@@ -995,7 +995,7 @@ bool TileRenderer::tesselateWaterInWorld(Tile* tile1, const TilePos& pos)
 		texUV_3 = C_RATIO * 8.0f * Mth::sin(slopeAngle);
 		texUV_4 = C_RATIO * 8.0f * Mth::cos(slopeAngle);
 
-		float bright = tile->getBrightness(m_pTileSource, pos);
+		float bright = tile->getBrightness(*m_pTileSource, pos);
 
 		texUV_5 = texUV_1 - texUV_4;
 		texUV_6 = texUV_2 - texUV_4;
@@ -1018,7 +1018,7 @@ bool TileRenderer::tesselateWaterInWorld(Tile* tile1, const TilePos& pos)
 	{
 	label_6:
 	label_7:
-		float bright = tile->getBrightness(m_pTileSource, pos.below());
+		float bright = tile->getBrightness(*m_pTileSource, pos.below());
 		t.color(bright * 0.5f, bright * 0.5f, bright * 0.5f);
 		renderFaceDown(tile1, pos, tile->getTexture(Facing::DOWN));
 		bFlag1 = true;
@@ -1101,7 +1101,7 @@ label_8:
 		//bRenderedSides = true;
 
 		float brightMul = dir >= Facing::WEST ? 0.6f : 0.8f;
-		float bright = tile->getBrightness(m_pTileSource, TilePos(checkX, pos.y, checkZ));
+		float bright = tile->getBrightness(*m_pTileSource, TilePos(checkX, pos.y, checkZ));
 		t.color(bright* brightMul, bright* brightMul, bright* brightMul);
 		t.vertexUV(vtxX1, float(pos.y) + height1, vtxZ1, texU_1, texV_1);
 		t.vertexUV(vtxX2, float(pos.y) + height2, vtxZ2, texU_2, texV_2);
@@ -1175,10 +1175,10 @@ bool TileRenderer::tesselateFenceInWorld(Tile* tile, const TilePos& pos)
 
 	FenceTile* pFenceTile = (FenceTile*)Tile::fence;
 
-	bool tileWest = pFenceTile->shouldConnectTo(m_pTileSource, pos.west());
-	bool tileEast = pFenceTile->shouldConnectTo(m_pTileSource, pos.east());
-	bool tileNorth = pFenceTile->shouldConnectTo(m_pTileSource, pos.north());
-	bool tileSouth = pFenceTile->shouldConnectTo(m_pTileSource, pos.south());
+	bool tileWest = pFenceTile->shouldConnectTo(*m_pTileSource, pos.west());
+	bool tileEast = pFenceTile->shouldConnectTo(*m_pTileSource, pos.east());
+	bool tileNorth = pFenceTile->shouldConnectTo(*m_pTileSource, pos.north());
+	bool tileSouth = pFenceTile->shouldConnectTo(*m_pTileSource, pos.south());
 
 	bool connectsHorizontally = tileWest || tileEast;
 	bool connectsVertically = tileNorth || tileSouth;
@@ -1370,53 +1370,53 @@ bool TileRenderer::tesselateFenceGateInWorld(Tile* tile, const TilePos& pos)
 bool TileRenderer::tesselateDoorInWorld(Tile* tile, const TilePos& pos)
 {
 	Tesselator& t = m_tessellator;
-	float fBrightHere = tile->getBrightness(m_pTileSource, pos), fBright;
+	float fBrightHere = tile->getBrightness(*m_pTileSource, pos), fBright;
 	int texture;
 
-	fBright = tile->getBrightness(m_pTileSource, pos.below());
+	fBright = tile->getBrightness(*m_pTileSource, pos.below());
 	if (tile->m_aabb.min.y > 0.0f)       fBright = fBrightHere;
 	if (Tile::lightEmission[tile->m_ID]) fBright = 1.0f;
 	t.color(fBright * 0.5f, fBright * 0.5f, fBright * 0.5f);
-	renderFaceDown(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::DOWN));
+	renderFaceDown(tile, pos, tile->getTexture(*m_pTileSource, pos, Facing::DOWN));
 
-	fBright = tile->getBrightness(m_pTileSource, pos.above());
+	fBright = tile->getBrightness(*m_pTileSource, pos.above());
 	if (tile->m_aabb.max.y < 1.0f)       fBright = fBrightHere;
 	if (Tile::lightEmission[tile->m_ID]) fBright = 1.0f;
 	t.color(fBright, fBright, fBright);
-	renderFaceUp(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::UP));
+	renderFaceUp(tile, pos, tile->getTexture(*m_pTileSource, pos, Facing::UP));
 
-	fBright = tile->getBrightness(m_pTileSource, pos.north());
+	fBright = tile->getBrightness(*m_pTileSource, pos.north());
 	if (tile->m_aabb.min.z > 0.0f)       fBright = fBrightHere;
 	if (Tile::lightEmission[tile->m_ID]) fBright = 1.0f;
 	t.color(fBright * 0.8f, fBright * 0.8f, fBright * 0.8f);
-	texture = tile->getTexture(m_pTileSource, pos, Facing::NORTH);
+	texture = tile->getTexture(*m_pTileSource, pos, Facing::NORTH);
 	if (texture < 0) texture = -texture, m_bXFlipTexture = true;
 	renderNorth(tile, pos, texture);
 	m_bXFlipTexture = false;
 
-	fBright = tile->getBrightness(m_pTileSource, pos.south());
+	fBright = tile->getBrightness(*m_pTileSource, pos.south());
 	if (tile->m_aabb.max.z < 1.0f)       fBright = fBrightHere;
 	if (Tile::lightEmission[tile->m_ID]) fBright = 1.0f;
 	t.color(fBright * 0.8f, fBright * 0.8f, fBright * 0.8f);
-	texture = tile->getTexture(m_pTileSource, pos, Facing::SOUTH);
+	texture = tile->getTexture(*m_pTileSource, pos, Facing::SOUTH);
 	if (texture < 0) texture = -texture, m_bXFlipTexture = true;
 	renderSouth(tile, pos, texture);
 	m_bXFlipTexture = false;
 
-	fBright = tile->getBrightness(m_pTileSource,pos.west());
+	fBright = tile->getBrightness(*m_pTileSource,pos.west());
 	if (tile->m_aabb.min.x > 0.0f)       fBright = fBrightHere;
 	if (Tile::lightEmission[tile->m_ID]) fBright = 1.0f;
 	t.color(fBright * 0.6f, fBright * 0.6f, fBright * 0.6f);
-	texture = tile->getTexture(m_pTileSource, pos, Facing::WEST);
+	texture = tile->getTexture(*m_pTileSource, pos, Facing::WEST);
 	if (texture < 0) texture = -texture, m_bXFlipTexture = true;
 	renderWest(tile, pos, texture);
 	m_bXFlipTexture = false;
 
-	fBright = tile->getBrightness(m_pTileSource, pos.east());
+	fBright = tile->getBrightness(*m_pTileSource, pos.east());
 	if (tile->m_aabb.max.x < 1.0f)       fBright = fBrightHere;
 	if (Tile::lightEmission[tile->m_ID]) fBright = 1.0f;
 	t.color(fBright * 0.6f, fBright * 0.6f, fBright * 0.6f);
-	texture = tile->getTexture(m_pTileSource, pos, Facing::EAST);
+	texture = tile->getTexture(*m_pTileSource, pos, Facing::EAST);
 	if (texture < 0) texture = -texture, m_bXFlipTexture = true;
 	renderEast(tile, pos, texture);
 	m_bXFlipTexture = false;
@@ -1518,7 +1518,7 @@ void TileRenderer::tesselateTorch(Tile* tile, const Vec3& pos, float a, float b)
 bool TileRenderer::tesselateTorchInWorld(Tile* tile, const TilePos& pos)
 {
 	TileData data = m_pTileSource->getData(pos);
-	float bright = tile->getBrightness(m_pTileSource, pos);
+	float bright = tile->getBrightness(*m_pTileSource, pos);
 
 	if (Tile::lightEmission[tile->m_ID] > 0)
 		bright = 1.0f;
@@ -1555,7 +1555,7 @@ bool TileRenderer::tesselateDiodeInWorld(Tile* tile, const TilePos& pos)
 	int flipped = (data & 12) >> 2; // var7
 	tesselateBlockInWorld(tile, pos);
 	Tesselator& t = Tesselator::instance; // var8
-	float br = tile->getBrightness(m_pTileSource, pos); // var9
+	float br = tile->getBrightness(*m_pTileSource, pos); // var9
 	if (Tile::lightEmission[tile->m_ID] > 0)
 	{
 		br = (br + 1.0f) * 0.5f;
@@ -1721,7 +1721,7 @@ bool TileRenderer::tesselateLeverInWorld(Tile* tile, const TilePos& pos)
 		m_fixedTexture = -1;
 	}
 
-	float br = tile->getBrightness(m_pTileSource, pos);
+	float br = tile->getBrightness(*m_pTileSource, pos);
 	if (Tile::lightEmission[tile->m_ID] > 0)
 	{
 		br = 1.0f;
@@ -1941,7 +1941,7 @@ bool TileRenderer::tesselateFireInWorld(Tile* tile, const TilePos& pos)
 	Tesselator& t = m_tessellator;
 
 	int texture = tile->getTexture(Facing::DOWN);
-	float bright = tile->getBrightness(m_pTileSource, pos);
+	float bright = tile->getBrightness(*m_pTileSource, pos);
 
 	t.color(bright, bright, bright);
 
@@ -1956,7 +1956,7 @@ bool TileRenderer::tesselateFireInWorld(Tile* tile, const TilePos& pos)
 	float texV_2 = C_RATIO * (texY + 15.99f);
 	float xf = float(pos.x), yf = float(pos.y), zf = float(pos.z);
 
-	if (m_pTileSource->isSolidBlockingTile(pos.below()) || pFireTile->canBurn(m_pTileSource, pos.below()))
+	if (m_pTileSource->isSolidBlockingTile(pos.below()) || pFireTile->canBurn(*m_pTileSource, pos.below()))
 	{
 		t.vertexUV(xf + 0.5f - 0.3f, yf + 1.4f, zf + 1.0f, texU_2, texV_1);
 		t.vertexUV(xf + 0.5f + 0.2f, yf + 0.0f, zf + 1.0f, texU_2, texV_2);
@@ -2004,7 +2004,7 @@ bool TileRenderer::tesselateFireInWorld(Tile* tile, const TilePos& pos)
 	if (((pos.y / 2 + pos.x / 2 + pos.z / 2) & 1) == 0)
 		std::swap(texU_1, texU_2);
 
-	if (pFireTile->canBurn(m_pTileSource, pos.west()))
+	if (pFireTile->canBurn(*m_pTileSource, pos.west()))
 	{
 		t.vertexUV(xf + 0.2f, (yf + 1.4f) + 0.0625f, zf + 1.0f, texU_1, texV_1);
 		t.vertexUV(xf + 0.0f, (yf + 0.0f) + 0.0625f, zf + 1.0f, texU_1, texV_2);
@@ -2016,7 +2016,7 @@ bool TileRenderer::tesselateFireInWorld(Tile* tile, const TilePos& pos)
 		t.vertexUV(xf + 0.2f, (yf + 1.4f) + 0.0625f, zf + 1.0f, texU_1, texV_1);
 	}
 
-	if (pFireTile->canBurn(m_pTileSource, pos.east()))
+	if (pFireTile->canBurn(*m_pTileSource, pos.east()))
 	{
 		t.vertexUV(xf + 1.0f - 0.2f, (pos.y + 1.4f) + 0.0625f, pos.z + 0.0f, texU_2, texV_1);
 		t.vertexUV(xf + 1.0f + 0.0f, (pos.y + 0.0f) + 0.0625f, pos.z + 0.0f, texU_2, texV_2);
@@ -2028,7 +2028,7 @@ bool TileRenderer::tesselateFireInWorld(Tile* tile, const TilePos& pos)
 		t.vertexUV(xf + 1.0f - 0.2f, (pos.y + 1.4f) + 0.0625f, pos.z + 0.0f, texU_2, texV_1);
 	}
 
-	if (pFireTile->canBurn(m_pTileSource, pos - 1))
+	if (pFireTile->canBurn(*m_pTileSource, pos - 1))
 	{
 		t.vertexUV(pos.x + 0.0f, (pos.y + 1.4f) + 0.0625f, pos.z + 0.2f, texU_1, texV_1);
 		t.vertexUV(pos.x + 0.0f, (pos.y + 0.0f) + 0.0625f, pos.z + 0.0f, texU_1, texV_2);
@@ -2040,7 +2040,7 @@ bool TileRenderer::tesselateFireInWorld(Tile* tile, const TilePos& pos)
 		t.vertexUV(pos.x + 0.0f, (pos.y + 1.4f) + 0.0625f, pos.z + 0.2f, texU_1, texV_1);
 	}
 
-	if (pFireTile->canBurn(m_pTileSource, pos + 1))
+	if (pFireTile->canBurn(*m_pTileSource, pos + 1))
 	{
 		t.vertexUV(pos.x + 1.0f, (pos.y + 1.4f) + 0.0625f, pos.z + 1.0f - 0.2f, texU_2, texV_1);
 		t.vertexUV(pos.x + 1.0f, (pos.y + 0.0f) + 0.0625f, pos.z + 1.0f + 0.0f, texU_2, texV_2);
@@ -2052,7 +2052,7 @@ bool TileRenderer::tesselateFireInWorld(Tile* tile, const TilePos& pos)
 		t.vertexUV(pos.x + 1.0f, (pos.y + 1.4f) + 0.0625f, pos.z + 1.0f - 0.2f, texU_2, texV_1);
 	}
 
-	if (pFireTile->canBurn(m_pTileSource, pos.above()))
+	if (pFireTile->canBurn(*m_pTileSource, pos.above()))
 	{
 		// @NOTE: Converting z and x to uint8_t for whatever reason
 		if (((uint8_t(pos.z) + uint8_t(pos.x) + pos.y + 1) & 1) != 0)
@@ -2095,7 +2095,7 @@ bool TileRenderer::tesselateDustInWorld(Tile* tile, const TilePos& pos)
 		texture = m_fixedTexture;
 	}
 
-	float bright = tile->getBrightness(m_pTileSource, pos); // var8
+	float bright = tile->getBrightness(*m_pTileSource, pos); // var8
 	float power = float(data) / 15.0f; // var9
 	float rt = power * 0.6f + 0.4f; // var10
 	if (data == 0)
@@ -2114,28 +2114,28 @@ bool TileRenderer::tesselateDustInWorld(Tile* tile, const TilePos& pos)
 	float v1 = ((float(yt) + 15.99f) / 256.0f);
 	float o = 0.0f;
 	float r = 0.03125f;
-	bool w = RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.west())
-		|| (!m_pTileSource->isSolidBlockingTile(pos.west()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.west().below()));
-	bool e = RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.east())
-		|| (!m_pTileSource->isSolidBlockingTile(pos.east()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.east().below()));
-	bool n = RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.north())
-		|| (!m_pTileSource->isSolidBlockingTile(pos.north()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.below().north()));
-	bool s = RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.south())
-		|| (!m_pTileSource->isSolidBlockingTile(pos.south()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.below().south()));
+	bool w = RedStoneDustTile::shouldConnectTo(*m_pTileSource, pos.west())
+		|| (!m_pTileSource->isSolidBlockingTile(pos.west()) && RedStoneDustTile::shouldConnectTo(*m_pTileSource, pos.west().below()));
+	bool e = RedStoneDustTile::shouldConnectTo(*m_pTileSource, pos.east())
+		|| (!m_pTileSource->isSolidBlockingTile(pos.east()) && RedStoneDustTile::shouldConnectTo(*m_pTileSource, pos.east().below()));
+	bool n = RedStoneDustTile::shouldConnectTo(*m_pTileSource, pos.north())
+		|| (!m_pTileSource->isSolidBlockingTile(pos.north()) && RedStoneDustTile::shouldConnectTo(*m_pTileSource, pos.below().north()));
+	bool s = RedStoneDustTile::shouldConnectTo(*m_pTileSource, pos.south())
+		|| (!m_pTileSource->isSolidBlockingTile(pos.south()) && RedStoneDustTile::shouldConnectTo(*m_pTileSource, pos.below().south()));
 	if (!m_pTileSource->isSolidBlockingTile(pos.above())) {
-		if (m_pTileSource->isSolidBlockingTile(pos.west()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.west().above())) {
+		if (m_pTileSource->isSolidBlockingTile(pos.west()) && RedStoneDustTile::shouldConnectTo(*m_pTileSource, pos.west().above())) {
 			w = true;
 		}
 
-		if (m_pTileSource->isSolidBlockingTile(pos.east()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.east().above())) {
+		if (m_pTileSource->isSolidBlockingTile(pos.east()) && RedStoneDustTile::shouldConnectTo(*m_pTileSource, pos.east().above())) {
 			e = true;
 		}
 
-		if (m_pTileSource->isSolidBlockingTile(pos.north()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.above().north())) {
+		if (m_pTileSource->isSolidBlockingTile(pos.north()) && RedStoneDustTile::shouldConnectTo(*m_pTileSource, pos.above().north())) {
 			n = true;
 		}
 
-		if (m_pTileSource->isSolidBlockingTile(pos.south()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.above().south())) {
+		if (m_pTileSource->isSolidBlockingTile(pos.south()) && RedStoneDustTile::shouldConnectTo(*m_pTileSource, pos.above().south())) {
 			s = true;
 		}
 	}
@@ -2256,7 +2256,7 @@ bool TileRenderer::tesselateDustInWorld(Tile* tile, const TilePos& pos)
 bool TileRenderer::tesselateInWorld(Tile* tile, const TilePos& pos)
 {
 	int shape = tile->getRenderShape();
-	tile->updateShape(m_pTileSource, pos);
+	tile->updateShape(*m_pTileSource, pos);
 
 	_tex1(getLightColor(tile, pos));
 
@@ -2583,7 +2583,7 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 				   pos.y + diffY[dir],
 				   pos.z + diffZ[dir]);
 
-		if (!m_bNoCulling && !tile->shouldRenderFace(m_pTileSource, tp, (Facing::Name)dir))
+		if (!m_bNoCulling && !tile->shouldRenderFace(*m_pTileSource, tp, (Facing::Name)dir))
 			continue;
 
 		bBother = true;
@@ -2600,16 +2600,16 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 
 	//Tesselator& t = m_tessellator;
 
-	//float fLightHere = tile->getBrightness(m_pTileSource, pos);
+	//float fLightHere = tile->getBrightness(*m_pTileSource, pos);
 
 	float lights[ETILE_FACE_COUNT];
 
 	// Get the brightness of the tile we're processing, as well as all tiles around it
-	lights[ETILE_FACE_HERE] = tile->getBrightness(m_pTileSource, pos);
+	lights[ETILE_FACE_HERE] = tile->getBrightness(*m_pTileSource, pos);
 
 	for (int i = 1; i < ETILE_FACE_COUNT; i++)
 	{
-		lights[i] = tile->getBrightness(m_pTileSource, TilePos(pos.x + diffEX[i], pos.y + diffEY[i], pos.z + diffEZ[i]));
+		lights[i] = tile->getBrightness(*m_pTileSource, TilePos(pos.x + diffEX[i], pos.y + diffEY[i], pos.z + diffEZ[i]));
 	}
 
 	// Render all the faces.
@@ -2620,7 +2620,7 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 			pos.z + diffZ[dir]);
 
 		// check if we should bother in the first place
-		if (!m_bNoCulling && !tile->shouldRenderFace(m_pTileSource, tp, (Facing::Name)dir))
+		if (!m_bNoCulling && !tile->shouldRenderFace(*m_pTileSource, tp, (Facing::Name)dir))
 		{
 			continue;
 		}
@@ -2665,26 +2665,26 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 		switch (dir) 
 		{
 			case Facing::DOWN:
-				renderFaceDown  (tile, pos, tile->getTexture(m_pTileSource, pos, Facing::DOWN));
+				renderFaceDown  (tile, pos, tile->getTexture(*m_pTileSource, pos, Facing::DOWN));
 				break;
 			case Facing::UP:
-				renderFaceUp(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::UP));
+				renderFaceUp(tile, pos, tile->getTexture(*m_pTileSource, pos, Facing::UP));
 				break;
 			case Facing::NORTH:
-				renderNorth   (tile, pos, tile->getTexture(m_pTileSource, pos, Facing::NORTH));
+				renderNorth   (tile, pos, tile->getTexture(*m_pTileSource, pos, Facing::NORTH));
 				break;
 			case Facing::SOUTH:
-				renderSouth   (tile, pos, tile->getTexture(m_pTileSource, pos, Facing::SOUTH));
+				renderSouth   (tile, pos, tile->getTexture(*m_pTileSource, pos, Facing::SOUTH));
 				break;
 			case Facing::WEST:
-				renderWest    (tile, pos, tile->getTexture(m_pTileSource, pos, Facing::WEST));
+				renderWest    (tile, pos, tile->getTexture(*m_pTileSource, pos, Facing::WEST));
 				break;
 			case Facing::EAST:
-				renderEast    (tile, pos, tile->getTexture(m_pTileSource, pos, Facing::EAST));
+				renderEast    (tile, pos, tile->getTexture(*m_pTileSource, pos, Facing::EAST));
 				break;
 		}
 
-		if (TileRenderer::m_bFancyGrass && tile->getTexture(m_pTileSource, pos, (Facing::Name)dir) == TEXTURE_GRASS_SIDE && (dir == Facing::WEST || dir == Facing::EAST || dir == Facing::NORTH || dir == Facing::SOUTH))
+		if (TileRenderer::m_bFancyGrass && tile->getTexture(*m_pTileSource, pos, (Facing::Name)dir) == TEXTURE_GRASS_SIDE && (dir == Facing::WEST || dir == Facing::EAST || dir == Facing::NORTH || dir == Facing::SOUTH))
 		{
 			for (int i = 0; i < 4; i++)
 				m_vtxRed[i] = m_vtxGreen[i] = m_vtxBlue[i] = 1.0f;
@@ -2742,7 +2742,7 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 
 Color TileRenderer::_getTileColor(const TilePos& pos, Tile* tile)
 {
-	uint32_t tileColor = tile->getColor(m_pTileSource, pos);
+	uint32_t tileColor = tile->getColor(*m_pTileSource, pos);
 
 	Color color(
 		GET_RED(tileColor) / 255.0f,

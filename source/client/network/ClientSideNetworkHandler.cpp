@@ -407,22 +407,22 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, PlaceBl
 	if (!areAllChunksLoaded())
 		return;
 
-	Dimension& dimension = *pPlayer->getDimension();
+	Dimension& dimension = pPlayer->getDimension();
 	TileSource& tileSource = *dimension.getTileSource();
 
 	const TilePos& pos = pPlaceBlockPkt->m_pos;
 	TileID tileTypeId = pPlaceBlockPkt->m_tileTypeId;
 	Facing::Name face = (Facing::Name)pPlaceBlockPkt->m_face;
 
-	if (!tileSource.mayPlace(tileTypeId, pos, face, pPlayer, true))
+	if (!tileSource.mayPlace(tileTypeId, pos, face, *pPlayer, true))
 		return;
 
 	Tile* pTile = Tile::tiles[tileTypeId];
 	if (!tileSource.setTile(pos, tileTypeId))
 		return;
 
-	pTile->setPlacedOnFace(&tileSource, pos, face);
-	pTile->setPlacedBy(&tileSource, pos, pPlayer);
+	pTile->setPlacedOnFace(tileSource, pos, face);
+	pTile->setPlacedBy(pos, *pPlayer);
 
 	const Tile::SoundType* pSound = pTile->m_pSound;
 	m_pLevel->playSound(pos + 0.5f, "step." + pSound->name, 0.5f * (1.0f + pSound->volume), 0.8f * pSound->pitch);
@@ -449,14 +449,13 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, RemoveB
 	if (!areAllChunksLoaded())
 		return;
 
-	Dimension& dimension = *pPlayer->getDimension();
-	TileSource& tileSource = *dimension.getTileSource();
+	TileSource& tileSource = pPlayer->getTileSource();
 
 	const TilePos& pos = pRemoveBlockPkt->m_pos;
 	Tile* pTile = Tile::tiles[tileSource.getTile(pos)];
 	int auxValue = tileSource.getData(pos);
 
-	m_pMinecraft->m_pParticleEngine->destroyEffect(pPlayer, pos);
+	m_pMinecraft->m_pParticleEngine->destroyEffect(*pPlayer, pos);
 
 	bool setTileResult = tileSource.setTile(pos, TILE_AIR);
 	if (pTile && setTileResult)
@@ -464,7 +463,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, RemoveB
 		const Tile::SoundType* pSound = pTile->m_pSound;
 		m_pLevel->playSound(pos + 0.5f, "step." + pSound->name, 0.5f * (1.0f + pSound->volume), 0.8f * pSound->pitch);
 
-		pTile->destroy(&tileSource, pos, auxValue);
+		pTile->destroy(tileSource, pos, auxValue);
 	}
 }
 
@@ -601,7 +600,8 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, ChunkDa
 	if (updated)
 		m_pLevel->setTilesDirty(TilePos(minX + x16, minY, minZ), TilePos(maxX + x16, maxY, maxZ + z16));
 
-	pChunk->m_bUnsaved = true;
+	// @MATT
+	//pChunk->m_bUnsaved = true;
 	m_chunkStates[pChunkDataPkt->m_chunkPos.x][pChunkDataPkt->m_chunkPos.z] = true;
 	if (!m_bUseLevelDataPkt)
 	{
@@ -653,11 +653,11 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, Interac
 	{
 	case InteractPacket::INTERACT:
 		pPlayer->swing();
-		m_pMinecraft->getPlayerGameMode(*pPlayer)->interact(pPlayer, pTarget);
+		m_pMinecraft->getPlayerGameMode(*pPlayer)->interact(*pPlayer, *pTarget);
 		break;
 	case InteractPacket::ATTACK:
 		pPlayer->swing();
-		m_pMinecraft->getPlayerGameMode(*pPlayer)->attack(pPlayer, pTarget);
+		m_pMinecraft->getPlayerGameMode(*pPlayer)->attack(*pPlayer, *pTarget);
 		break;
 	default:
 		LOG_W("Received unkown action in InteractPacket: %d", pkt->m_actionType);
