@@ -9,10 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Header Files\db">
       <UniqueIdentifier>{7d0f9941-3463-4635-b106-5c2dd22962e0}</UniqueIdentifier>
     </Filter>
@@ -54,300 +50,300 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\db\builder.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\db\builder.h">
       <Filter>Header Files\db</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\db\db_impl.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\db\db_impl.h">
       <Filter>Header Files\db</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\db\db_iter.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\db\db_iter.h">
       <Filter>Header Files\db</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\db\dbformat.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\db\dbformat.h">
       <Filter>Header Files\db</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\db\filename.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\db\filename.h">
       <Filter>Header Files\db</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\db\log_format.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\db\log_format.h">
       <Filter>Header Files\db</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\db\log_reader.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\db\log_reader.h">
       <Filter>Header Files\db</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\db\log_writer.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\db\log_writer.h">
       <Filter>Header Files\db</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\db\memtable.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\db\memtable.h">
       <Filter>Header Files\db</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\db\skiplist.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\db\skiplist.h">
       <Filter>Header Files\db</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\db\snapshot.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\db\snapshot.h">
       <Filter>Header Files\db</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\db\table_cache.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\db\table_cache.h">
       <Filter>Header Files\db</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\db\version_edit.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\db\version_edit.h">
       <Filter>Header Files\db</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\helpers\memenv\memenv.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\helpers\memenv\memenv.h">
       <Filter>Header Files\helpers\memenv</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\cache.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\include\leveldb\cache.h">
       <Filter>Header Files\leveldb</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\comparator.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\include\leveldb\comparator.h">
       <Filter>Header Files\leveldb</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\compressor.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\include\leveldb\compressor.h">
       <Filter>Header Files\leveldb</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\db.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\include\leveldb\db.h">
       <Filter>Header Files\leveldb</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\decompress_allocator.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\include\leveldb\decompress_allocator.h">
       <Filter>Header Files\leveldb</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\dumpfile.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\include\leveldb\dumpfile.h">
       <Filter>Header Files\leveldb</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\env.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\include\leveldb\env.h">
       <Filter>Header Files\leveldb</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\filter_policy.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\include\leveldb\filter_policy.h">
       <Filter>Header Files\leveldb</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\iterator.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\include\leveldb\iterator.h">
       <Filter>Header Files\leveldb</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\options.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\include\leveldb\options.h">
       <Filter>Header Files\leveldb</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\slice.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\include\leveldb\slice.h">
       <Filter>Header Files\leveldb</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\snappy_compressor.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\include\leveldb\snappy_compressor.h">
       <Filter>Header Files\leveldb</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\status.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\include\leveldb\status.h">
       <Filter>Header Files\leveldb</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\table.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\include\leveldb\table.h">
       <Filter>Header Files\leveldb</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\table_builder.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\include\leveldb\table_builder.h">
       <Filter>Header Files\leveldb</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\write_batch.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\include\leveldb\write_batch.h">
       <Filter>Header Files\leveldb</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\zlib_compressor.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\include\leveldb\zlib_compressor.h">
       <Filter>Header Files\leveldb</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\zopfli_compressor.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\include\leveldb\zopfli_compressor.h">
       <Filter>Header Files\leveldb</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\include\leveldb\zstd_compressor.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\include\leveldb\zstd_compressor.h">
       <Filter>Header Files\leveldb</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\port\atomic_pointer.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\port\atomic_pointer.h">
       <Filter>Header Files\port</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\port\port.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\port\port.h">
       <Filter>Header Files\port</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\port\port_win.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\port\port_win.h">
       <Filter>Header Files\port</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\port\thread_annotations.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\port\thread_annotations.h">
       <Filter>Header Files\port</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\table\block.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\table\block.h">
       <Filter>Header Files\table</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\table\block_builder.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\table\block_builder.h">
       <Filter>Header Files\table</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\table\filter_block.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\table\filter_block.h">
       <Filter>Header Files\table</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\table\format.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\table\format.h">
       <Filter>Header Files\table</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\table\iterator_wrapper.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\table\iterator_wrapper.h">
       <Filter>Header Files\table</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\table\merger.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\table\merger.h">
       <Filter>Header Files\table</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\table\two_level_iterator.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\table\two_level_iterator.h">
       <Filter>Header Files\table</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\util\arena.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\util\arena.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\util\coding.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\util\coding.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\util\crc32c.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\util\crc32c.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\util\Filepath.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\util\Filepath.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\util\hash.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\util\hash.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\util\histogram.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\util\histogram.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\util\logging.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\util\logging.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\util\mutexlock.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\util\mutexlock.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\util\random.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\util\random.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\thirdparty\LevelDB\util\win_logger.h">
+    <ClInclude Include="$(MC_ROOT)\thirdparty\LevelDB\util\win_logger.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\builder.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\db\builder.cc">
       <Filter>Source Files\db</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\db_impl.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\db\db_impl.cc">
       <Filter>Source Files\db</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\db_iter.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\db\db_iter.cc">
       <Filter>Source Files\db</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\dbformat.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\db\dbformat.cc">
       <Filter>Source Files\db</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\filename.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\db\filename.cc">
       <Filter>Source Files\db</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\leveldbutil.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\db\leveldbutil.cc">
       <Filter>Source Files\db</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\log_reader.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\db\log_reader.cc">
       <Filter>Source Files\db</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\log_writer.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\db\log_writer.cc">
       <Filter>Source Files\db</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\memtable.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\db\memtable.cc">
       <Filter>Source Files\db</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\repair.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\db\repair.cc">
       <Filter>Source Files\db</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\snappy_compressor.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\db\snappy_compressor.cc">
       <Filter>Source Files\db</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\table_cache.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\db\table_cache.cc">
       <Filter>Source Files\db</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\version_edit.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\db\version_edit.cc">
       <Filter>Source Files\db</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\version_set.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\db\version_set.cc">
       <Filter>Source Files\db</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\write_batch.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\db\write_batch.cc">
       <Filter>Source Files\db</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\zlib_compressor.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\db\zlib_compressor.cc">
       <Filter>Source Files\db</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\zopfli_compressor.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\db\zopfli_compressor.cc">
       <Filter>Source Files\db</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\db\zstd_compressor.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\db\zstd_compressor.cc">
       <Filter>Source Files\db</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\helpers\memenv\memenv.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\helpers\memenv\memenv.cc">
       <Filter>Source Files\helpers\memenv</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\port\port_win.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\port\port_win.cc">
       <Filter>Source Files\port</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\table\block.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\table\block.cc">
       <Filter>Source Files\table</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\table\block_builder.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\table\block_builder.cc">
       <Filter>Source Files\table</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\table\filter_block.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\table\filter_block.cc">
       <Filter>Source Files\table</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\table\format.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\table\format.cc">
       <Filter>Source Files\table</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\table\iterator.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\table\iterator.cc">
       <Filter>Source Files\table</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\table\merger.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\table\merger.cc">
       <Filter>Source Files\table</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\table\table.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\table\table.cc">
       <Filter>Source Files\table</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\table\table_builder.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\table\table_builder.cc">
       <Filter>Source Files\table</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\table\two_level_iterator.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\table\two_level_iterator.cc">
       <Filter>Source Files\table</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\arena.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\util\arena.cc">
       <Filter>Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\bloom.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\util\bloom.cc">
       <Filter>Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\cache.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\util\cache.cc">
       <Filter>Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\coding.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\util\coding.cc">
       <Filter>Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\comparator.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\util\comparator.cc">
       <Filter>Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\crc32c.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\util\crc32c.cc">
       <Filter>Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\env.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\util\env.cc">
       <Filter>Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\env_winrt.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\util\env_winrt.cc">
       <Filter>Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\filter_policy.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\util\filter_policy.cc">
       <Filter>Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\hash.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\util\hash.cc">
       <Filter>Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\histogram.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\util\histogram.cc">
       <Filter>Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\logging.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\util\logging.cc">
       <Filter>Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\options.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\util\options.cc">
       <Filter>Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\status.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\util\status.cc">
       <Filter>Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\thirdparty\LevelDB\util\win_logger.cc">
+    <ClCompile Include="$(MC_ROOT)\thirdparty\LevelDB\util\win_logger.cc">
       <Filter>Source Files\util</Filter>
     </ClCompile>
   </ItemGroup>
