@@ -48,24 +48,26 @@ void TrapdoorTile::updateDefaultShape()
 	Tile::setShape(0.0f, 0.5f - f / 2.0f, 0.0f, 1.0f, 0.5f + f / 2.0f, 1.0f);
 }
 
-void TrapdoorTile::attack(const TilePos& pos, Player* player)
+void TrapdoorTile::attack(const TilePos& pos, Player& player)
 {
 	use(pos, player);
 }
 
 void TrapdoorTile::setOpen(TileSource& source, const TilePos& pos, bool bOpen)
 {
-	TileData data = source.getExtraData(pos);
+	TileData data = source.getData(pos);
 	if (isOpen(data) != bOpen)
 	{
+		Level& level = source.getLevel();
+
 		source.setTileAndData(pos, FullTile(this, data ^ C_OPEN_BIT));
-		level->levelEvent(LevelEvent(LevelEvent::SOUND_DOOR, pos, 0));
+		level.levelEvent(LevelEvent(LevelEvent::SOUND_DOOR, pos, 0));
 	}
 }
 
 void TrapdoorTile::neighborChanged(TileSource& source, const TilePos& pos, TileID newTile) // check this
 {
-	int data = source.getExtraData(pos);
+	TileData data = source.getData(pos);
 	TilePos newPos = pos;
 
 	switch (data & C_DIR_MASK)
@@ -84,17 +86,17 @@ void TrapdoorTile::neighborChanged(TileSource& source, const TilePos& pos, TileI
 
 	if (newTile > 0 && Tile::tiles[newTile]->isSignalSource()) {
 		int l = source.hasNeighborSignal(pos);
-		setOpen(*source, pos, (bool)l);
+		setOpen(source, pos, (bool)l);
 	}
 }
 
-HitResult TrapdoorTile::clip(const Level* level, const TilePos& pos, Vec3 v1, Vec3 v2)
+HitResult TrapdoorTile::clip(TileSource& source, const TilePos& pos, Vec3 v1, Vec3 v2)
 {
-	updateShape(level, pos);
-	return Tile::clip(level, pos, v1, v2);
+	updateShape(source, pos);
+	return Tile::clip(source, pos, v1, v2);
 }
 
-void TrapdoorTile::setPlacedOnFace(Level* level, const TilePos& pos, Facing::Name face) // check this
+void TrapdoorTile::setPlacedOnFace(TileSource& source, const TilePos& pos, Facing::Name face) // check this
 {
 	int updateFlag = 0;
 	switch (face)
@@ -105,27 +107,30 @@ void TrapdoorTile::setPlacedOnFace(Level* level, const TilePos& pos, Facing::Nam
 		case (Facing::EAST):  updateFlag = 3; break;
 		default: break;
 	}
-	level->setData(pos, updateFlag);
+	source.setTileAndData(pos, FullTile(this, updateFlag));
 }
 
 bool TrapdoorTile::mayPlace(TileSource& source, const TilePos& pos) const // check this
 {
-	if (level->isSolidBlockingTile(pos.west())) return true;
-	if (level->isSolidBlockingTile(pos.east())) return true;
-	if (level->isSolidBlockingTile(pos.north())) return true;
-	if (level->isSolidBlockingTile(pos.south())) return true;
+	if (source.isSolidBlockingTile(pos.west())) return true;
+	if (source.isSolidBlockingTile(pos.east())) return true;
+	if (source.isSolidBlockingTile(pos.north())) return true;
+	if (source.isSolidBlockingTile(pos.south())) return true;
 
 	return false;
 }
 
-bool TrapdoorTile::use(TileSource& source, const TilePos& pos, Player* player)
+bool TrapdoorTile::use(const TilePos& pos, Player& player)
 {
 	// Door Tile Leftover
 	if (m_pMaterial == Material::metal)
 		return true;
 
-	TileData data = level->getData(pos);
-	level->setData(pos, data ^ C_OPEN_BIT);
-	level->levelEvent(LevelEvent(LevelEvent::SOUND_DOOR, pos, 0, player));
+	Level& level = player.getLevel();
+	TileSource& source = player.getTileSource();
+
+	TileData data = source.getData(pos);
+	source.setTileAndData(pos, FullTile(this, data ^ C_OPEN_BIT));
+	level.levelEvent(LevelEvent(LevelEvent::SOUND_DOOR, pos, 0, &player));
 	return true;
 }

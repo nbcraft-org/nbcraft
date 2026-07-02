@@ -32,8 +32,11 @@ public:
 	virtual void playStreamingMusic(const std::string&, const TilePos& pos) {}
 	virtual void entityAdded(Entity*) {}
 	virtual void entityRemoved(Entity*) {}
+
+	// @MATT we may want to move a lot these to TileSource or Dimension or something
 	virtual void levelEvent(const LevelEvent& event) {}
 	virtual void tileEvent(const TileEvent& event) {}
+
 	virtual void onNewChunkFor(Player& player, LevelChunk& chunk);
 };
 

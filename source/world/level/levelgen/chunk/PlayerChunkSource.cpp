@@ -38,7 +38,7 @@ void PlayerChunkSource::centerAt(const Vec3& pos, float updateThresholdDistance)
 		m_gridArea.move(minPos, maxPos);
 		m_parent->hintDiscardBatchEnd();
 
-		m_lastCenterPos = Vec3(pos.x, 0, pos.z);
+		m_lastCenterPos = Vec3(pos.x, 0.0f, pos.z);
 	}
 	else
 	{

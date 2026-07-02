@@ -1,4 +1,5 @@
 #include "DispenserTileEntity.hpp"
+#include "world/level/TileSource.hpp"
 
 DispenserTileEntity::DispenserTileEntity() : SimpleContainer(9, "Dispenser")
 {
@@ -43,10 +44,12 @@ void DispenserTileEntity::save(CompoundTag& tag) const
 
 bool DispenserTileEntity::stillValid(Player& player) const
 {
-    if (m_pLevel->getTileEntity(m_pos) != this)
+	TileSource& source = player.getTileSource();
+
+    if (source.getTileEntity(m_pos) != this)
         return false;
 
-    return player->distanceToSqr(m_pos + 0.5f) <= 64.0f;
+    return player.distanceToSqr(m_pos + 0.5f) <= 64.0f;
 }
 
 void DispenserTileEntity::setContainerChanged(StackID stackId)

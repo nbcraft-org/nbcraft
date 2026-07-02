@@ -88,9 +88,19 @@ public:
 		z += b.z;
 	}
 
+	void operator+= (int i)
+	{
+		(*this) += ChunkPos(i, i);
+	}
+
 	void operator-=(const ChunkPos& b)
 	{
 		(*this) += -b;
+	}
+
+	void operator-=(int i)
+	{
+		(*this) -= ChunkPos(i, i);
 	}
 
 	void operator*=(int i)
