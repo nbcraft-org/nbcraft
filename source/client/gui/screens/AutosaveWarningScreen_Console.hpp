@@ -18,10 +18,12 @@ public:
 	void init() override;
 	void render(float f) override;
 	void renderPanel(float f) override;
+	void tick() override;
 
 public:
 	Button m_btnLoad;
 private:
 	std::string m_autosaveText;
 	std::vector<std::string> m_autosaveLine;
+	int m_timer;
 };

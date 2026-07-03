@@ -7,7 +7,7 @@ AutosaveWarningScreen_Console::AutosaveWarningScreen_Console(Screen* parent) :
 	PanelScreen_Console(parent),
 	m_btnLoad(0, 0, 400, 40, "OK")
 {
-
+	m_timer = 0;
 }
 
 void AutosaveWarningScreen_Console::_buttonClicked(Button* pButton)
@@ -64,4 +64,19 @@ void AutosaveWarningScreen_Console::render(float f)
 void AutosaveWarningScreen_Console::renderPanel(float f)
 {
 	blitNineSlice(*m_pMinecraft->m_pTextures, ScreenRenderer::PANEL_SLICES, m_panel.x, m_panel.y, m_panel.w, m_panel.h, 32);
+}
+
+void AutosaveWarningScreen_Console::tick()
+{
+	if (m_timer < 0)
+		return;
+
+	m_timer++;
+
+	if (m_timer == 200)
+	{
+		m_pMinecraft->getScreenChooser()->pushStartScreen();
+		m_timer = -1;
+	}
+
 }
