@@ -33,5 +33,5 @@ public:
 
 private:
 	PingedCompatibleServer m_server;
-	float m_panelAlpha = 1.0f;
+	float m_panelAlpha;
 };
