@@ -321,7 +321,7 @@ Tile* Tile::setToolTypesAndLevel(unsigned int toolMask, int toolLevel)
 	return this;
 }
 
-PushReaction Tile::getPistonPushReaction() const
+PushReaction::Type Tile::getPistonPushReaction() const
 {
 	return m_pMaterial->m_pushReaction;
 }

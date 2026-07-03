@@ -129,7 +129,7 @@ public: // virtual functions
 	Tile* setToolTypes(unsigned int toolMask);
 	Tile* setToolLevel(int toolLevel);
 	Tile* setToolTypesAndLevel(unsigned int toolMask, int toolLevel = 0);
-	virtual PushReaction getPistonPushReaction() const;
+	virtual PushReaction::Type getPistonPushReaction() const;
 	virtual bool shouldTrack() const;
 
 private:

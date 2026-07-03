@@ -13,6 +13,7 @@
 
 class PushReaction
 {
+public:
 	enum Type
 	{
 		NORMAL,
@@ -85,7 +86,7 @@ public:
 	bool m_bReplaceable;
 	bool m_bMineable;
 	bool m_bTranslucent;
-	PushReaction m_pushReaction;
+	PushReaction::Type m_pushReaction;
 	unsigned int m_toolMask;
 	int m_requiredToolLevel;
 };
