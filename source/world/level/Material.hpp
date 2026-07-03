@@ -11,11 +11,14 @@
 #include "compat/LegacyCPP.hpp"
 #include "MapColor.hpp"
 
-enum class PushReaction
+class PushReaction
 {
-	NORMAL,
-	DESTROY,
-	BLOCK
+	enum Type
+	{
+		NORMAL,
+		DESTROY,
+		BLOCK
+	};
 };
 
 class Material
