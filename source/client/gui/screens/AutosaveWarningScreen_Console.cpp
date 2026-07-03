@@ -5,7 +5,7 @@
 
 AutosaveWarningScreen_Console::AutosaveWarningScreen_Console(Screen* parent) :
 	PanelScreen_Console(parent),
-	m_btnLoad(0, 0, 400, 40, "OK")
+	m_btnLoad(0, 0, 400, 40, Language::get("autosaveWarning.load"))
 {
 	m_timer = 0;
 }
@@ -32,7 +32,7 @@ void AutosaveWarningScreen_Console::init()
 	m_btnLoad.m_yPos = m_panel.y + 340;
 	_addElement(m_btnLoad);
 
-	std::string text = "This game has a level autosave feature. When you see the icon above displayed, the game is saving your data. \n Please do not turn off your Xbox 360 console while this icon is on-screen.";
+	std::string text = Language::get("autosaveWarning.warning");
 
 	int maxTextWidth = 220;
 

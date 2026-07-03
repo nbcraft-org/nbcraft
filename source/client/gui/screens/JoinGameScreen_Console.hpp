@@ -28,7 +28,6 @@ public:
 	void renderPanel(float f) override;
 
 public:
-	Button m_btnLoad;
 	Button m_btnJoinGame;
 	UsernameButton m_btnUsername;
 

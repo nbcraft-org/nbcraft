@@ -15,7 +15,7 @@ SavingWorldScreen_Console::SavingWorldScreen_Console(bool bCopyMap/*, Entity* pE
 	m_uiTheme = UI_CONSOLE;
 	Screen::init();
 
-	m_header = "Preparing to Save Level";
+	m_header = Language::get("saving.save");
 }
 
 void SavingWorldScreen_Console::render(float f)
@@ -24,7 +24,7 @@ void SavingWorldScreen_Console::render(float f)
 
 	int loadingBarX = m_width / 2 - 320;
 	int loadingBarY = m_height / 2 + 30;
-	m_pFont->drawScalableShadow("Preparing Chunks...", loadingBarX + 7, loadingBarY - 15, Color::WHITE, 1.5f);
+	m_pFont->drawScalableShadow(Language::get("saving.progress"), loadingBarX + 7, loadingBarY - 15, Color::WHITE, 1.5f);
 	blitTexture(*m_pMinecraft->m_pTextures, "gui/loading_background.png", loadingBarX, loadingBarY, 0, 0, 640, 20);
 
 	float prog = Mth::clamp(m_pMinecraft->m_progressPercent / 100.0f, 0.0f, 1.0f);

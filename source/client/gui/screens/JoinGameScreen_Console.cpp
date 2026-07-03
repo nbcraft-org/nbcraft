@@ -1,5 +1,4 @@
 #include "JoinGameScreen_Console.hpp"
-#include "common/Util.hpp"
 #include "client/locale/Language.hpp"
 #include "renderer/ShaderConstants.hpp"
 
@@ -37,8 +36,7 @@ void UsernameButton::renderMessage(Font& font, const Color& textColor)
 JoinGameScreen_Console::JoinGameScreen_Console(Screen* parent, const PingedCompatibleServer& server) :
 	PanelScreen_Console(parent),
 	m_server(server),
-	m_btnLoad(0, 0, 400, 40, "OK"),
-	m_btnJoinGame(0, 0, 450, 40, "Join Game"),
+	m_btnJoinGame(0, 0, 450, 40, Language::get("joinMenu.join")),
 	m_btnUsername(server.m_name.C_String()),
 	m_panelAlpha(1.0f)
 {
