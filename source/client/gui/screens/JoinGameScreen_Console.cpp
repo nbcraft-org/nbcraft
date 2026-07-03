@@ -36,8 +36,8 @@ void UsernameButton::renderMessage(Font& font, const Color& textColor)
 JoinGameScreen_Console::JoinGameScreen_Console(Screen* parent, const PingedCompatibleServer& server) :
 	PanelScreen_Console(parent),
 	m_btnJoinGame(0, 0, 450, 40, Language::get("joinMenu.join")),
-	m_server(server),
 	m_btnUsername(server.m_name.C_String()),
+	m_server(server),
 	m_panelAlpha(1.0f)
 {
 
