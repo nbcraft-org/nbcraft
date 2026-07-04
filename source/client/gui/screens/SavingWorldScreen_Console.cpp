@@ -22,8 +22,6 @@ void SavingWorldScreen_Console::init()
 
 void SavingWorldScreen_Console::tick()
 {
-	Level* pLevel = m_pMinecraft->m_pLevel;
-
 	if (m_timer < 0)
 		return;
 
