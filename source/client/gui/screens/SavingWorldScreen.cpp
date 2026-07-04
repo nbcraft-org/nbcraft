@@ -7,8 +7,6 @@
  ********************************************************************/
 
 #include "SavingWorldScreen.hpp"
-#include "RenameMPLevelScreen.hpp"
-#include "StartMenuScreen.hpp"
 
 #ifdef ENH_IMPROVED_SAVING
 

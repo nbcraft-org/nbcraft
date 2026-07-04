@@ -1,9 +1,5 @@
 #include "SavingWorldScreen_Console.hpp"
-#include "RenameMPLevelScreen.hpp"
-#include "StartMenuScreen.hpp"
-#include "client/resources/LoadingTipManager.hpp"
 #include "client/locale/Language.hpp"
-#include "client/renderer/LogoRenderer.hpp"
 
 #ifdef ENH_IMPROVED_SAVING
 

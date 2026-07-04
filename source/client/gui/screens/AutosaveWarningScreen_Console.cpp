@@ -1,7 +1,6 @@
 #include "AutosaveWarningScreen_Console.hpp"
 #include "common/Util.hpp"
 #include "client/locale/Language.hpp"
-#include "CreateWorldScreen.hpp"
 
 #define C_AUTOSAVE_TIMER (200)
 
