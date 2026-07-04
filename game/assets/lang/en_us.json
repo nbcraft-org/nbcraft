@@ -155,6 +155,6 @@
     "joinMenu.join": "Join Game",
     "saving.save": "Preparing to Save Level",
     "saving.progress": "Preparing Chunks...",
-    "autosaveWarning.warning": "This game has a level autosave feature. When you see the icon above displayed, the game is saving your data.\n Please do not turn off your Xbox 360 console while this icon is on-screen.",
+    "autosaveWarning.warning": "This game has a level autosave feature. When you see the icon above displayed, the game is saving your data.\n Please do not turn off your device while this icon is on-screen.",
     "autosaveWarning.load":  "OK"
 }

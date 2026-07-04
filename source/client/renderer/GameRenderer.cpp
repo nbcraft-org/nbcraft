@@ -226,7 +226,7 @@ void GameRenderer::_renderDebugOverlay(float a)
 
 	if (m_pMinecraft->getUiTheme() == UI_CONSOLE)
 	{
-		font.drawScalable(debugText.str(), 4, 4, Color(0.25f, 0.25f, 0.25f));
+		font.drawScalable(debugText.str(), 4, 4, Color::TEXT_GREY);
 		font.drawScalable(debugText.str(), 2, 2, Color::WHITE);
 	}
 	else

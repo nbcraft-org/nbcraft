@@ -42,37 +42,7 @@ void SavingWorldScreen::tick()
 	{
 		m_timer = -1;
 
-		Level* pLevel = m_pMinecraft->m_pLevel;
-		if (pLevel)
-		{
-			pLevel->saveUnsavedChunks();
-			pLevel->saveLevelData();
-			pLevel->savePlayerData();
-
-			LevelStorage* pStorage = pLevel->getLevelStorage();
-			SAFE_DELETE(pStorage);
-			SAFE_DELETE(pLevel);
-
-			m_pMinecraft->m_pLevel = nullptr;
-		}
-
-		// this is safe to do, since on destruction, nothing accesses the parent level or anything
-		//SAFE_DELETE(m_pEntityToDeleteAfterSave);
-		// already done by the Level
-
-		m_pMinecraft->m_pCameraEntity = m_pMinecraft->m_pLocalPlayer = nullptr;
-
-
-		m_pMinecraft->m_bUsingScreen = true;
-
-		if (m_bCopyMapAtEnd)
-			m_pMinecraft->setScreen(new RenameMPLevelScreen("_LastJoinedServer"));
-		else
-			m_pMinecraft->gotoMainMenu();
-
-		m_pMinecraft->m_bUsingScreen = false;
-
-		m_pMinecraft->m_bIsGamePaused = false;
+		m_pMinecraft->unloadLevel(m_bCopyMapAtEnd);
 	}
 }
 

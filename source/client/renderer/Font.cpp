@@ -42,8 +42,8 @@ void Font::init(Options* pOpts)
 		if (i == 32) // space
 		{
 			widthMax = 2;
-			if (m_pOptions->getUiTheme() == UI_CONSOLE)
-				widthMax = 4;
+			//if (m_pOptions->getUiTheme() == UI_CONSOLE) // @PARITY-LCE: TU2 has extra spacing between words in UI screens compared to Java.
+			//	widthMax = 4;
 		}
 		else
 		{

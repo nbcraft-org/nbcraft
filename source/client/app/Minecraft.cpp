@@ -887,6 +887,40 @@ void Minecraft::freeResources(bool bCopyMap)
 	field_D9C = 0;
 }
 
+void Minecraft::unloadLevel(bool bCopyMap)
+{
+	if (m_pLevel)
+	{
+		m_pLevel->saveUnsavedChunks();
+		m_pLevel->saveLevelData();
+		m_pLevel->savePlayerData();
+
+		LevelStorage* pStorage = m_pLevel->getLevelStorage();
+		SAFE_DELETE(pStorage);
+		SAFE_DELETE(m_pLevel);
+
+		m_pLevel = nullptr;
+	}
+
+	// this is safe to do, since on destruction, nothing accesses the parent level or anything
+	//SAFE_DELETE(m_pEntityToDeleteAfterSave);
+	// already done by the Level
+
+	m_pCameraEntity = m_pLocalPlayer = nullptr;
+
+
+	m_bUsingScreen = true;
+
+	if (bCopyMap)
+		setScreen(new RenameMPLevelScreen("_LastJoinedServer"));
+	else
+		gotoMainMenu();
+
+	m_bUsingScreen = false;
+
+	m_bIsGamePaused = false;
+}
+
 std::string Minecraft::getVersionString(const std::string& str) const
 {
 	return "v0.3.3" + str + " alpha";

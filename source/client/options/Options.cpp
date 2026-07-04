@@ -897,9 +897,4 @@ void UIThemeOption::apply()
 	{
 		m_pMinecraft->getOptions()->m_logoType.apply();
 	}
-
-	if (m_pMinecraft->m_pFont)
-	{
-		m_pMinecraft->m_pFont->onGraphicsReset();
-	}
 }

@@ -1,20 +1,20 @@
-#include "LoadSaveScreen_Console.hpp"
+#include "LoadWorldScreen_Console.hpp"
 #include "common/Util.hpp"
 #include "client/locale/Language.hpp"
 
-LoadSaveScreen_Console::LoadSaveScreen_Console(Options& options, Screen* parent, const LevelSummary& summary) :
-	PanelScreen_Console(parent),
-	m_onlineGame(0, 0, true, Language::get("loadMenu.online")),
-	m_inviteOnly(0, 0, false, Language::get("loadMenu.inviteOnly")),
-	m_difficultySlider(0, 0, 400, 32, &options.m_difficulty, options.m_difficulty.getMessage(), options.m_difficulty.toFloat()),
-	m_btnLoad(0, 0, 400, 40, Language::get("loadMenu.load")),
-	m_summary(summary)
+LoadWorldScreen_Console::LoadWorldScreen_Console(Options& options, Screen* parent, const LevelSummary& summary) 
+	: PanelScreen_Console(parent)
+	, m_onlineGame(0, 0, true, Language::get("loadMenu.online"))
+	, m_inviteOnly(0, 0, false, Language::get("loadMenu.inviteOnly"))
+	, m_difficultySlider(0, 0, 400, 32, &options.m_difficulty, options.m_difficulty.getMessage(), options.m_difficulty.toFloat())
+	, m_btnLoad(0, 0, 400, 40, Language::get("loadMenu.load"))
+	, m_summary(summary)
 {
 	m_onlineGame.setEnabled(false);
 	m_inviteOnly.setEnabled(false);
 }
 
-void LoadSaveScreen_Console::_buttonClicked(Button* pButton)
+void LoadWorldScreen_Console::_buttonClicked(Button* pButton)
 {
 	if (pButton->getId() == m_btnLoad.getId())
 	{
@@ -22,7 +22,7 @@ void LoadSaveScreen_Console::_buttonClicked(Button* pButton)
 	}
 }
 
-void LoadSaveScreen_Console::init()
+void LoadWorldScreen_Console::init()
 {
 	m_panel.w = 450;
 	m_panel.h = 360;
@@ -48,7 +48,7 @@ void LoadSaveScreen_Console::init()
 	_addElement(m_btnLoad);
 }
 
-void LoadSaveScreen_Console::render(float f)
+void LoadWorldScreen_Console::render(float f)
 {
 	PanelScreen_Console::render(f);
 	Font& font = *m_pFont;
@@ -64,7 +64,7 @@ void LoadSaveScreen_Console::render(float f)
 	font.drawScalable(seedString, m_panel.x + 28, m_panel.y + 100, Color::TEXT_GREY);
 }
 
-void LoadSaveScreen_Console::renderPanel(float f)
+void LoadWorldScreen_Console::renderPanel(float f)
 {
 	blitNineSlice(*m_pMinecraft->m_pTextures, ScreenRenderer::PANEL_SLICES, m_panel.x, m_panel.y, m_panel.w, m_panel.h, 32);
 }

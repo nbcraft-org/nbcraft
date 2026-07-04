@@ -82,7 +82,7 @@ void Button::_renderMessageConsole(Font& font)
 
 	if (!isEnabled())
 		textColor.a *= 0.5f;
-//		textColor = Color(167, 167, 167); // PARITY-XBOX: In TU2 the text is colored gray instead of having reduced transparency.
+//		textColor = Color(167, 167, 167); // @PARITY-LCE: In TU2 the text is colored gray instead of having reduced transparency.
 
 	int textWidth = font.width(getMessage()) * 2;
 	font.drawScalableShadow(getMessage(), (m_xPos + (m_width - textWidth) / 2) + 2, (m_yPos + (m_height - 16) / 2) + 1, textColor);

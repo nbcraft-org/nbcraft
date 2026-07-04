@@ -2,17 +2,19 @@
 
 #include "PanelScreen_Console.hpp"
 #include "client/gui/components/Button.hpp"
-#include "client/gui/components/TickBox.hpp"
-#include "client/gui/components/SliderButton.hpp"
-#include "client/gui/components/TextBox.hpp"
 
 class AutosaveWarningScreen_Console : public PanelScreen_Console
 {
-public:
-	AutosaveWarningScreen_Console(Screen*);
+private:
+	std::string m_autosaveText;
+	std::vector<std::string> m_autosaveLine;
+	int m_timer;
 
 protected:
 	void _buttonClicked(Button* pButton) override;
+
+public:
+	AutosaveWarningScreen_Console(Screen*);
 
 public:
 	void init() override;
@@ -22,8 +24,4 @@ public:
 
 public:
 	Button m_btnLoad;
-private:
-	std::string m_autosaveText;
-	std::vector<std::string> m_autosaveLine;
-	int m_timer;
 };

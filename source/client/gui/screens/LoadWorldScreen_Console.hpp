@@ -4,15 +4,14 @@
 #include "client/gui/components/Button.hpp"
 #include "client/gui/components/TickBox.hpp"
 #include "client/gui/components/SliderButton.hpp"
-#include "client/gui/components/TextBox.hpp"
 
-class LoadSaveScreen_Console : public PanelScreen_Console
+class LoadWorldScreen_Console : public PanelScreen_Console
 {
-public:
-	LoadSaveScreen_Console(Options& options, Screen* parent, const LevelSummary& summary);
-
 protected:
 	void _buttonClicked(Button* pButton) override;
+
+public:
+	LoadWorldScreen_Console(Options& options, Screen* parent, const LevelSummary& summary);
 
 public:
 	void init() override;

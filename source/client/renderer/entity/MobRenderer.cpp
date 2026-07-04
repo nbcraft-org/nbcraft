@@ -202,7 +202,7 @@ void MobRenderer::renderNameTag(const Mob& mob, const std::string& str, const Ve
 
 	Font* font = getFont();
 
-	Lighting::turnOff(false);
+	
 
 	MatrixStack::Ref matrix = MatrixStack::World.push();
 	matrix->translate(Vec3(pos.x + 0.0f, pos.y + 2.3f, pos.z));
@@ -227,23 +227,25 @@ void MobRenderer::renderNameTag(const Mob& mob, const std::string& str, const Ve
 	t.vertex(widthHalf + 1.0f, -1.0f, 0.0f);
 	t.draw(m_materials.name_tag);
 
-	currentShaderColor = Color(0.0f, 1.0f, 0.0f, 1.0f); //@TODO: Currently hardcoded to green, but should be changed to use different colors for players like in Xbox 360 Edition.
-
-#if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
-	// Maximize Line Width
-	glEnable(GL_LINE_SMOOTH);
-
-	float range[2];
-	glGetFloatv(GL_SMOOTH_LINE_WIDTH_RANGE, range);
-
-	float lineWidth = 2.0f;
-	if (lineWidth > range[1])
-		lineWidth = range[1];
-
-	glLineWidth(lineWidth);
-#endif
+	Lighting::turnOff(false);
 	if (m_pDispatcher->m_pMinecraft->getUiTheme() == UI_CONSOLE)
 	{
+		currentShaderColor = Color(0.0f, 1.0f, 0.0f, 1.0f); //@TODO: Currently hardcoded to green, but should be changed to use different colors for players like in Xbox 360 Edition.
+
+#if MCE_GFX_API_OGL && !defined(FEATURE_GFX_SHADERS)
+		// Maximize Line Width
+		glEnable(GL_LINE_SMOOTH);
+
+		float range[2];
+		glGetFloatv(GL_SMOOTH_LINE_WIDTH_RANGE, range);
+
+		float lineWidth = 2.0f;
+		if (lineWidth > range[1])
+			lineWidth = range[1];
+
+		glLineWidth(lineWidth);
+#endif
+
 		t.begin(mce::PRIMITIVE_MODE_LINE_STRIP, 5);
 
 		t.normal(Vec3::UNIT_Y);

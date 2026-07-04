@@ -1,5 +1,5 @@
 #include "SelectWorldScreen_Console.hpp"
-#include "LoadSaveScreen_Console.hpp"
+#include "LoadWorldScreen_Console.hpp"
 #include "JoinGameScreen_Console.hpp"
 #include "client/locale/Language.hpp"
 #include "renderer/ShaderConstants.hpp"
@@ -191,7 +191,7 @@ void SaveButton::render(Minecraft* mc, const MenuPointer& pointer)
 
 void SaveButton::pressed(Minecraft* mc)
 {
-	mc->setScreen(new LoadSaveScreen_Console(*mc->getOptions(), mc->m_pScreen, m_summary));
+	mc->setScreen(new LoadWorldScreen_Console(*mc->getOptions(), mc->m_pScreen, m_summary));
 }
 
 JoinButton::JoinButton(const PingedCompatibleServer& server) : ListButton(Util::format(Language::get("playGame.joinButton").c_str(), server.m_name.C_String())),

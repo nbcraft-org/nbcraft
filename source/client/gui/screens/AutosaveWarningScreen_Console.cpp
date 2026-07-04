@@ -3,9 +3,11 @@
 #include "client/locale/Language.hpp"
 #include "CreateWorldScreen.hpp"
 
-AutosaveWarningScreen_Console::AutosaveWarningScreen_Console(Screen* parent) :
-	PanelScreen_Console(parent),
-	m_btnLoad(0, 0, 400, 40, Language::get("autosaveWarning.load"))
+#define C_AUTOSAVE_TIMER (200)
+
+AutosaveWarningScreen_Console::AutosaveWarningScreen_Console(Screen* parent) 
+	: PanelScreen_Console(parent)
+	, m_btnLoad(0, 0, 400, 40, Language::get("autosaveWarning.load"))
 {
 	m_timer = 0;
 }
@@ -44,7 +46,7 @@ void AutosaveWarningScreen_Console::render(float f)
 	PanelScreen_Console::render(f);
 	Font& font = *m_pFont;
 
-	int yOffs = std::sin(getTimeMs() / 210.0f) * 4.0f;
+	int yOffs = std::sin((m_timer + f)/ 4.0f) * 4.0f;
 
 	blitTexture(*m_pMinecraft->m_pTextures, "gui/console/Graphics/SaveChest.png", m_panel.x + 235, m_panel.y + 60, 0, 0, 48, 48);
 	blitTexture(*m_pMinecraft->m_pTextures, "gui/console/Graphics/SaveArrow.png", m_panel.x + 235, m_panel.y + 40 + yOffs, 0, 0, 48, 48);
@@ -73,7 +75,7 @@ void AutosaveWarningScreen_Console::tick()
 
 	m_timer++;
 
-	if (m_timer == 200)
+	if (m_timer == C_AUTOSAVE_TIMER)
 	{
 		m_pMinecraft->getScreenChooser()->pushStartScreen();
 		m_timer = -1;

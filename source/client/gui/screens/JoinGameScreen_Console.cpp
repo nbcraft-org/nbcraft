@@ -33,12 +33,12 @@ void UsernameButton::renderMessage(Font& font, const Color& textColor)
 	font.drawScalableShadow(getMessage(), m_xPos + 10, m_yPos + (m_height - 16) / 2, textColor);
 }
 
-JoinGameScreen_Console::JoinGameScreen_Console(Screen* parent, const PingedCompatibleServer& server) :
-	PanelScreen_Console(parent),
-	m_btnJoinGame(0, 0, 450, 40, Language::get("joinMenu.join")),
-	m_btnUsername(server.m_name.C_String()),
-	m_server(server),
-	m_panelAlpha(1.0f)
+JoinGameScreen_Console::JoinGameScreen_Console(Screen* parent, const PingedCompatibleServer& server)
+	: PanelScreen_Console(parent)
+	, m_btnJoinGame(0, 0, 450, 40, Language::get("joinMenu.join"))
+	, m_btnUsername(server.m_name.C_String())
+	, m_server(server)
+	, m_panelAlpha(1.0f)
 {
 
 }
@@ -77,7 +77,7 @@ void JoinGameScreen_Console::renderPanel(float f)
 {
 	float targetAlpha = m_btnJoinGame.isSelected() ? 0.5f : 1.0f;
 
-	float fadeSpeed = 0.05f;
+	constexpr float fadeSpeed = 0.05f;
 
 	if (m_panelAlpha < targetAlpha)
 	{

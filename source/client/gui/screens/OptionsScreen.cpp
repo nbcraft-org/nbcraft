@@ -25,6 +25,7 @@ OptionsScreen::OptionsScreen(Screen* parent)
 {
 	m_bRenderPointer = true;
 	m_bDeletePrevious = false;
+	m_uiTheme = UI_JAVA;
 }
 
 OptionsScreen::~OptionsScreen()
