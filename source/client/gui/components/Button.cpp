@@ -85,7 +85,7 @@ void Button::_renderMessageConsole(Font& font)
 //		textColor = Color(167, 167, 167); // @PARITY-LCE: In TU2 the text is colored gray instead of having reduced transparency.
 
 	int textWidth = font.width(getMessage()) * 2;
-	font.drawScalableShadow(getMessage(), (m_xPos + (m_width - textWidth) / 2) + 2, (m_yPos + (m_height - 16) / 2) + 1, textColor);
+	font.drawScalableShadow(getMessage(), m_xPos + (m_width - textWidth) / 2, m_yPos + (m_height - 16) / 2, textColor);
 }
 
 Button::Button(int x, int y, int width, int height, const std::string& text)
