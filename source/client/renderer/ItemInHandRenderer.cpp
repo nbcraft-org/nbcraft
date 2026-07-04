@@ -178,10 +178,6 @@ void ItemInHandRenderer::renderItem(const Entity& entity, const ItemStack& item,
     {
 
         MatrixStack::Ref matrix = MatrixStack::World.push();
-
-        if (m_pMinecraft->getUiTheme() == UI_CONSOLE) //@PARITY-LCE: Item Lighting (not blocks) is for some reason broken in TU0/1/2/3/4 and will render without any shading, even though it worked in Build 0033.
-            Lighting::turnOff();
-
         std::string toBind;
         if (pTile)
             toBind = C_TERRAIN_NAME;
@@ -269,8 +265,6 @@ void ItemInHandRenderer::renderItem(const Entity& entity, const ItemStack& item,
 #else
         t.draw(m_materials.item_in_hand_color);
 #endif
-        if (m_pMinecraft->getUiTheme() == UI_CONSOLE) //@PARITY-LCE: Item Lighting (not blocks) is for some reason broken in TU0/1/2/3/4 and will render without any shading, even though it worked in Build 0033.
-            Lighting::turnOn(matrix);
     }
 }
 
