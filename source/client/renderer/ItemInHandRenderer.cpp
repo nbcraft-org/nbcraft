@@ -178,6 +178,7 @@ void ItemInHandRenderer::renderItem(const Entity& entity, const ItemStack& item,
     {
 
         MatrixStack::Ref matrix = MatrixStack::World.push();
+
         std::string toBind;
         if (pTile)
             toBind = C_TERRAIN_NAME;
