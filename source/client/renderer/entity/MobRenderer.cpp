@@ -225,6 +225,8 @@ void MobRenderer::renderNameTag(const Mob& mob, const std::string& str, const Ve
 	t.vertex(widthHalf + 1.0f, -1.0f, 0.0f);
 	t.draw(m_materials.name_tag);
 
+	//@TODO: Come back here after implementing line width setting support in HAL.
+
 	if (m_pDispatcher->m_pMinecraft->getUiTheme() == UI_CONSOLE)
 	{
 		currentShaderColor = Color(0.0f, 1.0f, 0.0f, 1.0f); //@TODO: Currently hardcoded to green, but should be changed to use different colors for players like in Xbox 360 Edition.
