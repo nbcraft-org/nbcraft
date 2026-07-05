@@ -14,13 +14,6 @@ public:
 
 class JoinGameScreen_Console : public PanelScreen_Console
 {
-private:
-	PingedCompatibleServer m_server;
-	float m_panelAlpha;
-
-protected:
-	void _buttonClicked(Button* pButton) override;
-
 public:
 	JoinGameScreen_Console(Screen*, const PingedCompatibleServer& server);
 
@@ -28,6 +21,13 @@ public:
 	void init() override;
 	void render(float f) override;
 	void renderPanel(float f) override;
+
+protected:
+	void _buttonClicked(Button* pButton) override;
+
+private:
+	PingedCompatibleServer m_server;
+	float m_panelAlpha;
 
 public:
 	Button m_btnJoinGame;

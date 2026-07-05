@@ -17,7 +17,6 @@ void SavingWorldScreen_Console::init()
 	ProgressScreen_Console::init();
 
 	m_header = Language::get("saving.save");
-	m_subtext = Language::get("saving.progress");
 }
 
 void SavingWorldScreen_Console::tick()
@@ -27,24 +26,11 @@ void SavingWorldScreen_Console::tick()
 
 	m_timer++;
 
-	if (m_timer == 5)
+	if (m_timer >= 5)
 	{
-		m_pMinecraft->m_progressPercent = 33;
-		
-	}
-
-	if (m_timer == 10)
-	{
-		m_pMinecraft->m_progressPercent = 66;
-	}
-
-	if (m_timer == 15)
-	{
-		m_pMinecraft->m_progressPercent = 100;
+		m_timer = -1;
 
 		m_pMinecraft->unloadLevel(m_bCopyMapAtEnd);
-
-		m_timer = -1;
 	}
 }
 
@@ -54,3 +40,8 @@ void SavingWorldScreen_Console::updateEvents()
 }
 
 #endif
+
+std::string SavingWorldScreen_Console::updateText()
+{
+	return Language::get("saving.progress");
+}

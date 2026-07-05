@@ -10,10 +10,11 @@ public:
 	bool isInGameScreen() override;
 	void init() override;
 public:
-	std::string m_header;
-	std::string m_subtext;
+	virtual std::string updateText();
 private:
 	std::string m_loadingTip;
 	std::vector<std::string> m_loadingTipLines;
+public:
+	std::string m_header;
 };
 

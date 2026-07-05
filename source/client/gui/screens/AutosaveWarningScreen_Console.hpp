@@ -5,14 +5,6 @@
 
 class AutosaveWarningScreen_Console : public PanelScreen_Console
 {
-private:
-	std::string m_autosaveText;
-	std::vector<std::string> m_autosaveLine;
-	int m_timer;
-
-protected:
-	void _buttonClicked(Button* pButton) override;
-
 public:
 	AutosaveWarningScreen_Console(Screen*);
 
@@ -21,6 +13,14 @@ public:
 	void render(float f) override;
 	void renderPanel(float f) override;
 	void tick() override;
+
+protected:
+	void _buttonClicked(Button* pButton) override;
+
+private:
+	std::string m_autosaveText;
+	std::vector<std::string> m_autosaveLine;
+	int m_timer;
 
 public:
 	Button m_btnLoad;

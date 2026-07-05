@@ -2,7 +2,7 @@
 #include "common/Util.hpp"
 #include "client/locale/Language.hpp"
 
-#define C_AUTOSAVE_TIMER (200)
+#define C_AUTOSAVE_TIMER (10)
 
 AutosaveWarningScreen_Console::AutosaveWarningScreen_Console(Screen* parent) 
 	: PanelScreen_Console(parent)
@@ -38,6 +38,7 @@ void AutosaveWarningScreen_Console::init()
 	int maxTextWidth = 220;
 
 	m_autosaveLine = m_pFont->split(text, maxTextWidth);
+	m_timer = m_pMinecraft->m_timer.m_lastUpdateTime;
 }
 
 void AutosaveWarningScreen_Console::render(float f)
@@ -45,7 +46,7 @@ void AutosaveWarningScreen_Console::render(float f)
 	PanelScreen_Console::render(f);
 	Font& font = *m_pFont;
 
-	int yOffs = std::sin((m_timer + f)/ 4.0f) * 4.0f;
+	int yOffs = std::sin((m_pMinecraft->m_timer.m_lastUpdateTime - m_timer) * 4.0f) * 4.0f;
 
 	blitTexture(*m_pMinecraft->m_pTextures, "gui/console/Graphics/SaveChest.png", m_panel.x + 235, m_panel.y + 60, 0, 0, 48, 48);
 	blitTexture(*m_pMinecraft->m_pTextures, "gui/console/Graphics/SaveArrow.png", m_panel.x + 235, m_panel.y + 40 + yOffs, 0, 0, 48, 48);
@@ -72,9 +73,7 @@ void AutosaveWarningScreen_Console::tick()
 	if (m_timer < 0)
 		return;
 
-	m_timer++;
-
-	if (m_timer == C_AUTOSAVE_TIMER)
+	if (m_pMinecraft->m_timer.m_lastUpdateTime - m_timer >= C_AUTOSAVE_TIMER)
 	{
 		m_pMinecraft->getScreenChooser()->pushStartScreen();
 		m_timer = -1;
