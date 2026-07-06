@@ -168,17 +168,21 @@ void ListButton::renderMessage(Font& font, const Color& textColor)
 	font.drawScalableShadow(getMessage(), m_xPos + 67, m_yPos + (m_height - 16) / 2, textColor);
 }
 
-CreateButton::CreateButton(const std::string& text) : ListButton(text)
+CreateButton::CreateButton(const std::string& text)
+	: ListButton(text)
 {
 }
 
 void CreateButton::pressed(Minecraft* mc)
 {
+	ListButton::pressed(mc);
+
 	mc->getScreenChooser()->pushCreateWorldScreen(mc->m_pScreen);
 }
 
-SaveButton::SaveButton(const LevelSummary& summary) : ListButton(summary.m_levelName),
-	m_summary(summary)
+SaveButton::SaveButton(const LevelSummary& summary)
+	: ListButton(summary.m_levelName)
+	, m_summary(summary)
 {
 }
 
@@ -191,11 +195,14 @@ void SaveButton::render(Minecraft* mc, const MenuPointer& pointer)
 
 void SaveButton::pressed(Minecraft* mc)
 {
+	ListButton::pressed(mc);
+
 	mc->setScreen(new LoadWorldScreen_Console(*mc->getOptions(), mc->m_pScreen, m_summary));
 }
 
-JoinButton::JoinButton(const PingedCompatibleServer& server) : ListButton(Util::format(Language::get("playGame.joinButton").c_str(), server.m_name.C_String())),
-	m_server(server)
+JoinButton::JoinButton(const PingedCompatibleServer& server)
+	: ListButton(Util::format(Language::get("playGame.joinButton").c_str(), server.m_name.C_String()))
+	, m_server(server)
 {
 }
 
@@ -206,5 +213,7 @@ void JoinButton::renderMessage(Font& font, const Color& textColor)
 
 void JoinButton::pressed(Minecraft* mc)
 {
+	ListButton::pressed(mc);
+
 	mc->setScreen(new JoinGameScreen_Console(mc->m_pScreen, m_server));
 }

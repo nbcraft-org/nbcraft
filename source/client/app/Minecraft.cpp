@@ -891,14 +891,17 @@ void Minecraft::unloadLevel(bool bCopyMap)
 {
 	if (m_pLevel)
 	{
-		m_progressPercent = 33;
-		m_pLevel->saveUnsavedChunks();
+		if (!m_pLevel->m_bIsClientSide || bCopyMap)
+		{
+			m_progressPercent = 33;
+			m_pLevel->saveUnsavedChunks();
 
-		m_progressPercent = 66;
-		m_pLevel->saveLevelData();
+			m_progressPercent = 66;
+			m_pLevel->saveLevelData();
 
-		m_progressPercent = 100;
-		m_pLevel->savePlayerData();
+			m_progressPercent = 100;
+			m_pLevel->savePlayerData();
+		}
 
 		LevelStorage* pStorage = m_pLevel->getLevelStorage();
 		SAFE_DELETE(pStorage);
