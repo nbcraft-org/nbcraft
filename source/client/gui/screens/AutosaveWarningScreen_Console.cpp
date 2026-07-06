@@ -2,7 +2,7 @@
 #include "common/Util.hpp"
 #include "client/locale/Language.hpp"
 
-#define C_AUTOSAVE_TIMER (10)
+#define C_AUTOSAVE_TIMER (10) // seconds
 
 AutosaveWarningScreen_Console::AutosaveWarningScreen_Console(Screen* parent) 
 	: PanelScreen_Console(parent)

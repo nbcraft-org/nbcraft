@@ -10,13 +10,13 @@ class LoadWorldScreen_Console : public PanelScreen_Console
 public:
 	LoadWorldScreen_Console(Options& options, Screen* parent, const LevelSummary& summary);
 
+protected:
+	void _buttonClicked(Button* pButton) override;
+
 public:
 	void init() override;
 	void render(float f) override;
 	void renderPanel(float f) override;
-
-protected:
-	void _buttonClicked(Button* pButton) override;
 
 public:
 	TickBox m_onlineGame;
