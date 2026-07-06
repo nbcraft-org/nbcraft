@@ -39,6 +39,9 @@ void AutosaveWarningScreen_Console::init()
 
 	m_autosaveLine = m_pFont->split(text, maxTextWidth);
 	m_timer = m_pMinecraft->m_timer.m_lastUpdateTime;
+
+	// Start playing music, since this is basically the StartMenuScreen
+	m_pMinecraft->m_pSoundEngine->playMusic();
 }
 
 void AutosaveWarningScreen_Console::render(float f)
