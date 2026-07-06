@@ -14,7 +14,6 @@ public:
 	void tick() override;
 	void updateEvents() override;
 	void init() override;
-	std::string updateText() override;
 private:
 	std::string m_loadingTip;
 	std::vector<std::string> m_loadingTipLines;

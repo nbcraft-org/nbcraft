@@ -17,6 +17,7 @@ void SavingWorldScreen_Console::init()
 	ProgressScreen_Console::init();
 
 	m_header = Language::get("saving.save");
+	m_subtext = Language::get("saving.progress");
 }
 
 void SavingWorldScreen_Console::tick()
@@ -41,7 +42,3 @@ void SavingWorldScreen_Console::updateEvents()
 
 #endif
 
-std::string SavingWorldScreen_Console::updateText()
-{
-	return Language::get("saving.progress");
-}

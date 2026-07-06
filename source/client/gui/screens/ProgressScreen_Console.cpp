@@ -15,6 +15,7 @@ void ProgressScreen_Console::init()
 	Screen::init();
 
 	m_header = Language::get("loading.initializing");
+	m_subtext = m_pMinecraft->getProgressMessage();
 }
 
 void ProgressScreen_Console::render(float f)
@@ -23,7 +24,7 @@ void ProgressScreen_Console::render(float f)
 
 	int loadingBarX = m_width / 2 - 320;
 	int loadingBarY = m_height / 2 + 30;
-	m_pFont->drawScalableShadow(updateText(), loadingBarX + 7, loadingBarY - 15, Color::WHITE, 1.5f);
+	m_pFont->drawScalableShadow(_getSubText(), loadingBarX + 7, loadingBarY - 15, Color::WHITE, 1.5f);
 	blitTexture(*m_pMinecraft->m_pTextures, "gui/loading_background.png", loadingBarX, loadingBarY, 0, 0, 640, 20);
 
 	float prog = Mth::clamp(m_pMinecraft->m_progressPercent / 100.0f, 0.0f, 1.0f);
@@ -72,11 +73,12 @@ void ProgressScreen_Console::updateEvents()
 		m_pMinecraft->setScreen(nullptr);
 		return;
 	}
+	m_subtext = m_pMinecraft->getProgressMessage();
 
 	Screen::updateEvents();
 }
 
-std::string ProgressScreen_Console::updateText()
+std::string ProgressScreen_Console::_getSubText() const
 {
-	return m_pMinecraft->getProgressMessage();
+	return m_subtext;
 }

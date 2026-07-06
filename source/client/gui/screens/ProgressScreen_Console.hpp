@@ -4,17 +4,18 @@
 
 class ProgressScreen_Console : public Screen
 {
+protected:
+	std::string _getSubText() const;
 public:
 	void render(float f) override;
 	void updateEvents() override;
 	bool isInGameScreen() override;
 	void init() override;
-public:
-	virtual std::string updateText();
 private:
 	std::string m_loadingTip;
 	std::vector<std::string> m_loadingTipLines;
 public:
 	std::string m_header;
+	std::string m_subtext;
 };
 
