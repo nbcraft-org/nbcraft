@@ -4,8 +4,6 @@
 
 class ProgressScreen_Console : public Screen
 {
-protected:
-	std::string _getSubText() const;
 public:
 	void render(float f) override;
 	void updateEvents() override;

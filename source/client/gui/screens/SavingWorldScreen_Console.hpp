@@ -14,9 +14,6 @@ public:
 	void tick() override;
 	void updateEvents() override;
 	void init() override;
-private:
-	std::string m_loadingTip;
-	std::vector<std::string> m_loadingTipLines;
 public:
 	bool m_bCopyMapAtEnd;
 	int m_timer;
