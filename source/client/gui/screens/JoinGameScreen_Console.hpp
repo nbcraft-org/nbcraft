@@ -16,6 +16,7 @@ class JoinGameScreen_Console : public PanelScreen_Console
 {
 public:
 	JoinGameScreen_Console(Screen*, const PingedCompatibleServer& server);
+
 protected:
 	void _buttonClicked(Button* pButton) override;
 

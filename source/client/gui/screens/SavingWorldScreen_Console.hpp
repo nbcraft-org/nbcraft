@@ -14,6 +14,7 @@ public:
 	void tick() override;
 	void updateEvents() override;
 	void init() override;
+
 public:
 	bool m_bCopyMapAtEnd;
 	int m_timer;
