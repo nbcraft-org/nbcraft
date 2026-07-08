@@ -22,6 +22,7 @@ public:
 	float getValue(float, float) override;
 
 	ImprovedNoise();
+	virtual ~ImprovedNoise() {}
 	ImprovedNoise(Random* pRandom);
 
 	void init(Random* pRandom);

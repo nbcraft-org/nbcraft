@@ -30,16 +30,18 @@ void ImprovedNoise::init(Random* pRandom)
 	m_offsetZ = pRandom->nextFloat() * 256.0f;
 	
     for (int i = 0; i < 256; i++)
+    {
         m_permutation[i] = i;
+    }
 
-	for (int i = 0; i < 256; i++)
-	{
-		int x = pRandom->nextInt(256 - i) + i;
-		int t = m_permutation[i];
-		m_permutation[i] = m_permutation[x];
-		m_permutation[x] = t;
-		m_permutation[256 + i] = m_permutation[i];
-	}
+    for (int i = 0; i < 256; i++)
+    {
+        int x = pRandom->nextInt(256 - i) + i;
+        int t = m_permutation[i];
+        m_permutation[i] = m_permutation[x];
+        m_permutation[x] = t;
+        m_permutation[256 + i] = m_permutation[i];
+    }
 }
 
 float ImprovedNoise::getValue(float x, float y)
@@ -114,8 +116,6 @@ float ImprovedNoise::noise(float x, float y, float z)
 
 void ImprovedNoise::add(std::vector<float>& output, float x, float y, float z, int xSize, int ySize, int zSize, float xScale, float yScale, float zScale, float amplitude)
 {
-    int i = 0;
-
     if (ySize == 1)
     {
         int i = 0;
