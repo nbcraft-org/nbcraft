@@ -12,6 +12,13 @@ Wolf::Wolf(Level* pLevel) : Animal(pLevel)
 	setSize(0.8f, 0.8f);
 	m_health = 8;
 	_defineSynchedData();
+	m_bInterested = false;
+	m_interestedAngle = 0.0f;
+	m_interestedAngleO = 0.0f;
+	m_bIsShaking = false;
+	m_bIsWet = false;
+	m_shakeAnim = 0.0f;
+	m_shakeAnimO = 0.0f;
 }
 
 void Wolf::_defineSynchedData()

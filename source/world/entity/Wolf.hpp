@@ -51,11 +51,11 @@ private:
 	void addTamingParticles(bool);
 
 private:
-	bool m_bInterested = false;
-	float m_interestedAngle = 0.0f;
-	float m_interestedAngleO = 0.0f;
-	bool m_bIsShaking = false;
-	bool m_bIsWet = false;
-	float m_shakeAnim = 0.0f;
-	float m_shakeAnimO = 0.0f;
+	bool m_bInterested;
+	float m_interestedAngle;
+	float m_interestedAngleO;
+	bool m_bIsShaking;
+	bool m_bIsWet;
+	float m_shakeAnim;
+	float m_shakeAnimO;
 };

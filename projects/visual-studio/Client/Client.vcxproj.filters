@@ -811,6 +811,7 @@
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\client\renderer\tileentity\PistonRenderer.hpp">
       <Filter>Header Files\Renderer\TileEntity</Filter>
+    </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\LoadWorldScreen_Console.hpp">
       <Filter>Header Files\GUI\Screens</Filter>
     </ClInclude>
@@ -1478,6 +1479,7 @@
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\client\renderer\tileentity\PistonRenderer.cpp">
       <Filter>Source Files\Renderer\TileEntity</Filter>
+    </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\LoadWorldScreen_Console.cpp">
       <Filter>Source Files\GUI\Screens</Filter>
     </ClCompile>
