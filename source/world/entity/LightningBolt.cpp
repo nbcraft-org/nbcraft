@@ -33,7 +33,7 @@ LightningBolt::LightningBolt(Level* level)
 }
 
 LightningBolt::LightningBolt(Level* level, const Vec3& pos) 
-	: LightningBolt(level)
+	: Entity(level)
 {
 	_init();
 	moveTo(pos);

@@ -24,7 +24,7 @@ Boat::Boat(Level* level) : Entity(level)
     _init();
 }
 
-Boat::Boat(Level* level, const Vec3& pos) : Boat(level)
+Boat::Boat(Level* level, const Vec3& pos) : Entity(level)
 {
     _init();
 	setPos(Vec3(pos.x, pos.y + m_heightOffset, pos.z));
@@ -68,7 +68,7 @@ void Boat::tick()
     for (int var4 = 0; var4 < 5; ++var4)
     {
         float var5 = m_hitbox.min.y + (m_hitbox.max.y - m_hitbox.min.y) * (var4 + 0) / 5 - 0.125;
-        float var7 = m_hitbox.min.y + (m_hitbox.max.y - m_hitbox.min.y) * (var4 + 1) / 5 - 0.125;
+        //float var7 = m_hitbox.min.y + (m_hitbox.max.y - m_hitbox.min.y) * (var4 + 1) / 5 - 0.125;
         AABB var9 = AABB(m_hitbox.min.x, var5, m_hitbox.min.z, m_hitbox.max.x, var5, m_hitbox.max.z);
         if (m_pLevel->containsLiquid(var9, Material::water))
         {
