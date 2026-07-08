@@ -88,10 +88,10 @@ void TextEditScreen::handleUserAction(const ActionInfo& action)
     Options& opts = *m_pMinecraft->getOptions();
 
     if (opts.isAction(AID_MENU_UP, action))
-        m_line = (m_line - 1) & 3;
+        m_line = m_line - 1 & 3;
 
     if (opts.isAction(AID_MENU_DOWN, action) || action.isKey(AKEYCODE_ENTER))
-        m_line = (m_line + 1) & 3;
+        m_line = m_line + 1 & 3;
 
     std::string& line = m_pSign->m_messages[m_line];
     if (action.isKey(AKEYCODE_DEL) && line.length() > 0)
