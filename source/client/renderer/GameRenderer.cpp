@@ -842,7 +842,7 @@ void GameRenderer::renderSnowAndRain(float f)
 
 	if (rainLevel <= 0) return;
 
-	Player* pLP = m_pMinecraft->m_pLocalPlayer;
+	LocalPlayer* pLP = m_pMinecraft->m_pLocalPlayer;
 	int bPosX = Mth::floor(pLP->m_pos.x);
 	int bPosY = Mth::floor(pLP->m_pos.y);
 	int bPosZ = Mth::floor(pLP->m_pos.z);
@@ -910,7 +910,7 @@ void GameRenderer::renderSnowAndRain(float f)
 			}
 			if (biome->canOnlyRain())
 			{
-				float x2 = ((float)(m_ticks + tp.x * tp.x * 3121 + tp.x * 45238971 + tp.z * tp.z * 418711 + tp.z * 13761 & 31) + f) / 32.0F * (3.0F + m_random.nextFloat());
+				float x2 = ((float)(m_ticks + tp.x * tp.x * 3121 + tp.x * 45238971 + tp.z * tp.z * 418711 + tp.z * 13761 & 31) + f) / 32.0f * (3.0f + m_random.nextFloat());
 				m_pMinecraft->m_pTextures->loadAndBindTexture("environment/rain.png");
 				t.begin(8);
 				f4 = f4 * 0.85f + 0.15f;
@@ -935,7 +935,7 @@ void GameRenderer::renderSnowAndRain(float f)
 
 void GameRenderer::tickRain()
 {
-	float rainLevel = m_pMinecraft->m_pLevel->getRainLevel(1.0F);
+	float rainLevel = m_pMinecraft->m_pLevel->getRainLevel(1.0f);
 	if (!m_pMinecraft->getOptions()->m_fancyGraphics.get())
 		rainLevel /= 2.0f;
 
@@ -952,7 +952,7 @@ void GameRenderer::tickRain()
 		int var14 = 0;
 
 		TilePos tp;
-		for (int var15 = 0; var15 < (int)(100.0F * rainLevel * rainLevel); ++var15)
+		for (int var15 = 0; var15 < (int)(100.0f * rainLevel * rainLevel); ++var15)
 		{
 			tp.x = var4 + m_random.nextInt(var7) - m_random.nextInt(var7);
 			tp.z = var6 + m_random.nextInt(var7) - m_random.nextInt(var7);
@@ -965,18 +965,18 @@ void GameRenderer::tickRain()
 				if (var19 > 0)
 				{
 					if (Tile::tiles[var19]->m_pMaterial == Material::lava)
-						m_pMinecraft->m_pParticleEngine->add(new SmokeParticle(var3, Vec3(tp.x + var20, tp.y + 0.1F - Tile::tiles[var19]->m_aabb.min.y, tp.z + var21), Vec3::ZERO));
+						m_pMinecraft->m_pParticleEngine->add(new SmokeParticle(var3, Vec3(tp.x + var20, tp.y + 0.1f - Tile::tiles[var19]->m_aabb.min.y, tp.z + var21), Vec3::ZERO));
 					else
 					{
 						++var14;
 						if (m_random.nextInt(var14) == 0)
 						{
 							rainPos.x = tp.x + var20;
-							rainPos.y = (tp.y + 0.1F) - Tile::tiles[var19]->m_aabb.min.y;
+							rainPos.y = (tp.y + 0.1f) - Tile::tiles[var19]->m_aabb.min.y;
 							rainPos.z = tp.z + var21;
 						}
 
-						m_pMinecraft->m_pParticleEngine->add(new WaterDropParticle(var3, Vec3(tp.x + var20, tp.y + 0.1F - Tile::tiles[var19]->m_aabb.min.y, tp.z + var21)));
+						m_pMinecraft->m_pParticleEngine->add(new WaterDropParticle(var3, Vec3(tp.x + var20, tp.y + 0.1f - Tile::tiles[var19]->m_aabb.min.y, tp.z + var21)));
 					}
 				}
 			}
@@ -985,10 +985,10 @@ void GameRenderer::tickRain()
 		if (var14 > 0 && m_random.nextInt(3) < m_rainSoundTime++)
 		{
 			m_rainSoundTime = 0;
-			if (rainPos.y > var2->m_pos.y + 1.0 && var3->getTopSolidBlock(var2->m_pos))
-				var3->playSound(rainPos, "ambient.weather.rain", 0.1F, 0.5F);
+			if (rainPos.y > var2->m_pos.y + 1.0f && var3->getTopSolidBlock(var2->m_pos))
+				var3->playSound(rainPos, "ambient.weather.rain", 0.1f, 0.5f);
 			else
-				var3->playSound(rainPos, "ambient.weather.rain", 0.2F, 1.0F);
+				var3->playSound(rainPos, "ambient.weather.rain", 0.2f, 1.0f);
 		}
 
 	}

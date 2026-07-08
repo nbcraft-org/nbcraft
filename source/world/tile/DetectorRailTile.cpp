@@ -47,7 +47,7 @@ void DetectorRailTile::setStateIfMinecartInteractsWithRail(Level* level, const T
 {
 	bool var6 = (data & 8) != 0;
 	bool var7 = false;
-	constexpr float var8 = 2.0F / 16.0F;
+	constexpr float var8 = 2.0f / 16.0f;
 	EntityVector var9 = level->getEntitiesOfCategory(EntityCategories::MINECART, AABB(pos.x + var8, pos.y, pos.z + var8, pos.x + 1 - var8, pos.y + 0.25, pos.z + 1 - var8));
 	if (var9.size() > 0) {
 		var7 = true;

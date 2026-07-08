@@ -7,7 +7,7 @@ void Painting::_init()
     m_pDescriptor = &EntityTypeDescriptor::painting;
     m_renderType = RENDER_PAINTING;
     m_heightOffset = 0.0f;
-    setSize(0.5F, 0.5F);
+    setSize(0.5f, 0.5f);
     m_checkInterval = 0;
     m_paintingType = 0;
     m_dir = 0;
@@ -64,15 +64,15 @@ void Painting::setDir(int face)
     float var3 = getPaintingType().m_height;
     float var4 = getPaintingType().m_width;
     if (face != 0 && face != 2)
-        var2 = 0.5F;
+        var2 = 0.5f;
     else
-        var4 = 0.5F;
+        var4 = 0.5f;
 
-    var2 /= 32.0F;
-    var3 /= 32.0F;
-    var4 /= 32.0F;
+    var2 /= 32.0f;
+    var3 /= 32.0f;
+    var4 /= 32.0f;
     Vec3 putPos = m_tilePos + 0.5f;
-    const float var8 = 0.5625F;
+    const float var8 = 0.5625f;
     if (face == 0)
         putPos.z -= var8;
 
@@ -99,7 +99,7 @@ void Painting::setDir(int face)
 
     putPos.y += offs(getPaintingType().m_height);
     setPos(putPos);
-    constexpr float var9 = -0.00625F;
+    constexpr float var9 = -0.00625f;
     m_hitbox = AABB((putPos.x - var2 - var9), (putPos.y - var3 - var9), (putPos.z - var4 - var9), (putPos.x + var2 + var9), (putPos.y + var3 + var9), (putPos.z + var4 + var9));
 }
 
@@ -126,18 +126,18 @@ bool Painting::survives()
         int var2 = getPaintingType().m_height / 16;
         TilePos tp(m_tilePos);
         if (m_dir == 0)
-            tp.x = Mth::floor(m_pos.x - (getPaintingType().m_width / 32.0F));
+            tp.x = Mth::floor(m_pos.x - (getPaintingType().m_width / 32.0f));
 
         if (m_dir == 1)
-            tp.z = Mth::floor(m_pos.z - (getPaintingType().m_width / 32.0F));
+            tp.z = Mth::floor(m_pos.z - (getPaintingType().m_width / 32.0f));
 
         if (m_dir == 2)
-            tp.x = Mth::floor(m_pos.x - (getPaintingType().m_width / 32.0F));
+            tp.x = Mth::floor(m_pos.x - (getPaintingType().m_width / 32.0f));
       
         if (m_dir == 3)
-            tp.z = Mth::floor(m_pos.z - (getPaintingType().m_width / 32.0F));
+            tp.z = Mth::floor(m_pos.z - (getPaintingType().m_width / 32.0f));
 
-        tp.y = Mth::floor(m_pos.y - (getPaintingType().m_height / 32.0F));
+        tp.y = Mth::floor(m_pos.y - (getPaintingType().m_height / 32.0f));
 
         int dy;
         for (int dxz = 0; dxz < var1; ++dxz) {

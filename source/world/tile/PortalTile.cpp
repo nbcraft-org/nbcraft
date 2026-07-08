@@ -17,15 +17,15 @@ void PortalTile::updateShape(const LevelSource* level, const TilePos& pos)
     float var6;
     if (level->getTile(pos.west()) != m_ID && level->getTile(pos.east()) != m_ID)
     {
-        var5 = 0.125F;
-        var6 = 0.5F;
+        var5 = 0.125f;
+        var6 = 0.5f;
     }
     else
     {
-        var5 = 0.5F;
-        var6 = 0.125F;
+        var5 = 0.5f;
+        var6 = 0.125f;
     }
-    setShape(0.5F - var5, 0.0F, 0.5F - var6, 0.5F + var5, 1.0F, 0.5F + var6);
+    setShape(0.5f - var5, 0.0f, 0.5f - var6, 0.5f + var5, 1.0f, 0.5f + var6);
 }
 
 bool PortalTile::isCubeShaped() const
@@ -152,7 +152,7 @@ bool PortalTile::shouldRenderFace(const LevelSource* level, const TilePos& pos, 
 void PortalTile::animateTick(Level* level, const TilePos& pos, Random* random)
 {
     if (random->nextInt(100) == 0)
-        level->playSound(Vec3(pos) + 0.5f, "portal.portal", 1.0F, random->nextFloat() * 0.4F + 0.8F);
+        level->playSound(Vec3(pos) + 0.5f, "portal.portal", 1.0f, random->nextFloat() * 0.4f + 0.8f);
 
     for (int var6 = 0; var6 < 4; ++var6)
     {
@@ -166,11 +166,11 @@ void PortalTile::animateTick(Level* level, const TilePos& pos, Random* random)
         vel.z = (random->nextFloat() - 0.5) * 0.5;
         if (level->getTile(pos.west()) != m_ID && level->getTile(pos.east()) != m_ID) {
             var7 = pos.x + 0.5 + 0.25 * var19;
-            vel.x = (random->nextFloat() * 2.0F * var19);
+            vel.x = (random->nextFloat() * 2.0f * var19);
         }
         else {
             var11 = pos.z + 0.5 + 0.25 * var19;
-            vel.z = (random->nextFloat() * 2.0F * var19);
+            vel.z = (random->nextFloat() * 2.0f * var19);
         }
 
         level->addParticle("portal", Vec3(var7, var9, var11), vel);

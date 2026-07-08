@@ -6,7 +6,7 @@ SignTile::SignTile(TileID id, bool isWall)
 	: EntityTile(id, TEXTURE_PLANKS, Material::wood)
 	, m_bIsWall(isWall)
 {
-	setShape(0.25F, 0.0f, 0.25F, 0.75F, 1.0f, 0.75F);
+	setShape(0.25f, 0.0f, 0.25f, 0.75f, 1.0f, 0.75f);
 }
 
 void SignTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)

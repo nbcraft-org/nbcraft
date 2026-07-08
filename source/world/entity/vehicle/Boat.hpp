@@ -28,15 +28,15 @@ public:
 	void lerpTo(const Vec3& pos, const Rot2& rot, int steps) override;
 	void lerpMotion(const Vec3& vel) override;
 
-public:
-	int m_damage;
-	int m_hurtTime;
-	int m_hurtDir;
-
 private:
 	int m_lSteps;
 	Vec3 m_lPos;
 	Vec3 m_lPosD;
 	Rot2 m_lRot;
+
+public:
+	int m_damage;
+	int m_hurtTime;
+	int m_hurtDir;
 };
 

@@ -44,8 +44,8 @@ void LightningBolt::tick()
 	Entity::tick();
 	if (m_life == 2)
 	{
-		m_pLevel->playSound(m_pos, "ambient.weather.thunder", 10000.0F, 0.8F + m_random.nextFloat() * 0.2F);
-		m_pLevel->playSound(m_pos, "random.explode", 2.0F, 0.5F + m_random.nextFloat() * 0.2F);
+		m_pLevel->playSound(m_pos, "ambient.weather.thunder", 10000.0f, 0.8f + m_random.nextFloat() * 0.2f);
+		m_pLevel->playSound(m_pos, "random.explode", 2.0f, 0.5f + m_random.nextFloat() * 0.2f);
 	}
 
 	--m_life;
@@ -69,8 +69,8 @@ void LightningBolt::tick()
 
 	if (m_life >= 0)
 	{
-		constexpr float var6 = 3.0;
-		EntityVector ents = m_pLevel->getEntities(this, AABB(m_pos - var6, m_pos + var6));
+		constexpr float range = 3.0f;
+		EntityVector ents = m_pLevel->getEntities(this, AABB(m_pos - range, m_pos + range));
 
 		if (!ents.empty())
 		{

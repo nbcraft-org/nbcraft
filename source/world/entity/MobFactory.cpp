@@ -67,7 +67,7 @@ void MobFactory::initMobLists()
     addSpawnData(EntityCategories::ANIMAL, EntityType::SHEEP, 12);
     addSpawnData(EntityCategories::ANIMAL, EntityType::PIG, 10);
     addSpawnData(EntityCategories::ANIMAL, EntityType::CHICKEN, 10);
-    addSpawnData(EntityCategories::ANIMAL, EntityType::COW, 10);
+    addSpawnData(EntityCategories::ANIMAL, EntityType::COW, 8);
     addSpawnData(EntityCategories::ANIMAL, EntityType::WOLF, new SingleBiomeSpawnData(Biome::taiga, 2));
 
     addSpawnData(EntityCategories::WATER_ANIMAL, EntityType::SQUID, 10);

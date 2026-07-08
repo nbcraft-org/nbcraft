@@ -76,17 +76,17 @@ float Biome::adjustScale(float f)
 
 int Biome::getSkyColor(float x)
 {
-	x /= 3.0F;
-	if (x < -1.0F) {
-		x = -1.0F;
+	x /= 3.0f;
+	if (x < -1.0f) {
+		x = -1.0f;
 	}
 
-	if (x > 1.0F) {
-		x = 1.0F;
+	if (x > 1.0f) {
+		x = 1.0f;
 	}
 
 
-	return Mth::HSBtoRGB(0.62222224F - x * 0.05F, 0.5F + x * 0.1F, 1.0F);
+	return Color::getHSBColor(0.62222224f - x * 0.05f, 0.5f + x * 0.1f, 1.0f);
 }
 
 Biome* Biome::getBiome(float hum, float temp)

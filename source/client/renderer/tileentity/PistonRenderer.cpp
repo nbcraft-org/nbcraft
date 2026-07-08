@@ -8,7 +8,7 @@
 void PistonRenderer::renderTyped(PistonMovingTileEntity* piston, const Vec3& pos, float partialTicks)
 {
 	Tile* tile = Tile::tiles[piston->getTileId()];
-	if (tile && piston->getProgress(partialTicks) < 1.0F)
+	if (tile && piston->getProgress(partialTicks) < 1.0f)
 	{
 		mce::RenderContext& renderContext = mce::RenderContextImmediate::get();
 		m_tileRenderer.setTileSource(piston->m_pLevel);
@@ -24,7 +24,7 @@ void PistonRenderer::renderTyped(PistonMovingTileEntity* piston, const Vec3& pos
 		Vec3 off = piston->getOff(partialTicks);
 		t.setOffset(pos.x - piston->m_pos.x + off.x, pos.y - piston->m_pos.y + off.y, pos.z - piston->m_pos.z + off.z);
 		t.color(Color::WHITE);
-		if (tile == Tile::pistonHead && piston->getProgress(partialTicks) < 0.5F)
+		if (tile == Tile::pistonHead && piston->getProgress(partialTicks) < 0.5f)
 		{
 			m_tileRenderer.tesselateHeadPistonInWorldNoCulling(tile, piston->m_pos, false);
 		}
@@ -32,7 +32,7 @@ void PistonRenderer::renderTyped(PistonMovingTileEntity* piston, const Vec3& pos
 		{
 			PistonHeadTile* pistonHead = (PistonHeadTile*)Tile::pistonHead;
 			pistonHead->setHeadTexture(((PistonBaseTile*)tile)->getFaceTexture());
-			m_tileRenderer.tesselateHeadPistonInWorldNoCulling(Tile::pistonHead, piston->m_pos, piston->getProgress(partialTicks) < 0.5F);
+			m_tileRenderer.tesselateHeadPistonInWorldNoCulling(Tile::pistonHead, piston->m_pos, piston->getProgress(partialTicks) < 0.5f);
 			pistonHead->resetHeadTexture();
 			t.setOffset(pos.x - piston->m_pos.x, pos.y - piston->m_pos.y, pos.z - piston->m_pos.z);
 			m_tileRenderer.tesselatePistonInWorldNoCulling(tile, piston->m_pos);
@@ -40,7 +40,7 @@ void PistonRenderer::renderTyped(PistonMovingTileEntity* piston, const Vec3& pos
 		else
 			m_tileRenderer.tesselateInWorldNoCulling(tile, piston->m_pos);
 
-		t.setOffset(0.0, 0.0, 0.0);
+		t.setOffset(Vec3::ZERO);
 		t.draw(RenderChunk::materialMap[TERRAIN_LAYER_BLEND]);
 		Lighting::turnOn();
 	}

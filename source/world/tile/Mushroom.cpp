@@ -4,7 +4,7 @@
 Mushroom::Mushroom(TileID id, int texture) 
 	: Bush(id, texture)
 {
-	setShape(0.3F, 0.0F, 0.3F, 0.7F, 0.4F, 0.7F);
+	setShape(0.3f, 0.0f, 0.3f, 0.7f, 0.4f, 0.7f);
 	setTicking(true);
 }
 

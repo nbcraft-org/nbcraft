@@ -11,7 +11,7 @@ SnowballItem::SnowballItem(int itemID) : Item(itemID)
 bool SnowballItem::use(ItemStack& inst, Level* level, Mob& user) const 
 {
 	--inst.m_count;
-	level->playSound(&user, "random.bow", 0.5f, 0.4F / (level->m_random.nextFloat() * 0.4F + 0.8F));
+	level->playSound(&user, "random.bow", 0.5f, 0.4f / (level->m_random.nextFloat() * 0.4f + 0.8f));
 	if (!level->m_bIsClientSide)
 		level->addEntity(new Snowball(level, &user));
 	return true;

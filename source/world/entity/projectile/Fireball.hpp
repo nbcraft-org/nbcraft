@@ -4,9 +4,6 @@
 
 class Fireball : public Snowball
 {
-public:
-	static const unsigned int ARROW_BASE_DAMAGE;
-
 private:
 	void _init();
 

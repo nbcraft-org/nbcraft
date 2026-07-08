@@ -7,15 +7,18 @@ void MobSpawnerRenderer::renderTyped(MobSpawnerTileEntity* spawner, const Vec3& 
     MatrixStack::Ref mtx = MatrixStack::World.push();
     mtx->translate(Vec3(pos.x + 0.5f, pos.y, pos.z + 0.5f));
 
-    HashMap<const EntityTypeDescriptor*, Entity*>::iterator it = m_models.find(spawner->m_pEntityDescriptor);
+    EntityType::ID entityId = spawner->m_pEntityDescriptor->getEntityType().getId();
+
+    HashMap<EntityType::ID, Entity*> ::iterator it = m_models.find(entityId);
     Entity* e = nullptr;
 
     if (it == m_models.end())
     {
-        e = MobFactory::CreateMob(spawner->m_pEntityDescriptor->getEntityType().getId(), nullptr);
+        e = MobFactory::CreateMob(entityId, nullptr);
         if (e)
-            m_models[spawner->m_pEntityDescriptor] = e;
-    } else
+            m_models[entityId] = e;
+    } 
+    else
         e = it->second;
 
     if (e)
@@ -32,7 +35,7 @@ void MobSpawnerRenderer::renderTyped(MobSpawnerTileEntity* spawner, const Vec3& 
 
         mtx->scale(scale);
 
-        e->moveTo(pos, Rot2::ZERO);
+        e->moveTo(spawner->m_pos, Rot2::ZERO);
         EntityRenderDispatcher::getInstance()->render(*e, Vec3::ZERO, 0.0f, partialTicks);
     }
 

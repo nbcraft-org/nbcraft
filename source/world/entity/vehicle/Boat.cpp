@@ -149,7 +149,7 @@ void Boat::tick()
             var12 = Mth::sin(m_rot.pitch * M_PI / 180.0f);
 
             for (int var14 = 0; var14 < 1.0f + var8 * 60.0f; ++var14) {
-                float var15 = (m_random.nextFloat() * 2.0F - 1.0F);
+                float var15 = (m_random.nextFloat() * 2.0f - 1.0f);
                 float var17 = (m_random.nextInt(2) * 2 - 1) * 0.7;
                 float var19;
                 float var21;
@@ -175,10 +175,10 @@ void Boat::tick()
 
                 int var24;
                 for (var24 = 0; var24 < 3; ++var24)
-                    spawnAtLocation(Tile::wood->m_ID, 1, 0.0F);
+                    spawnAtLocation(Tile::wood->m_ID, 1, 0.0f);
 
                 for (var24 = 0; var24 < 2; ++var24)
-                    spawnAtLocation(Item::stick->m_itemID, 1, 0.0F);
+                    spawnAtLocation(Item::stick->m_itemID, 1, 0.0f);
             }
         }
         else
@@ -230,7 +230,7 @@ void Boat::tick()
 
 float Boat::getRideHeight() const
 {
-	return -0.3;
+	return -0.3f;
 }
 
 void Boat::positionRider() 
@@ -254,11 +254,11 @@ bool Boat::hurt(Entity*, int mul)
         if (m_damage > 40) 
         {
             for (int i = 0; i < 3; ++i) {
-                spawnAtLocation(Tile::wood->m_ID, 1, 0.0F);
+                spawnAtLocation(Tile::wood->m_ID, 1, 0.0f);
             }
 
             for (int i = 0; i < 2; ++i) {
-                spawnAtLocation(Item::stick->m_itemID, 1, 0.0F);
+                spawnAtLocation(Item::stick->m_itemID, 1, 0.0f);
             }
 
             remove();

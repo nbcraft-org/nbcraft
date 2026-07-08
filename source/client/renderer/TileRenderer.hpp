@@ -51,13 +51,13 @@ public:
 	void renderNorth(Tile*, const Vec3& pos, int texture, const Color& color = Color::WHITE);
 	void renderUp(Tile*, const Vec3& pos, int texture, const Color& color = Color::WHITE);
 	void renderDown(Tile*, const Vec3& pos, int texture, const Color& color = Color::WHITE);
-	void renderPistonFace(float, float, float, float, float, float, float, float, Facing::Name dir);
+	void renderPistonFace(const AABB&, float, float, Facing::Name dir);
 	void tesselateCrossTexture(const FullTile& tile, const Vec3& pos, bool simple = false);
 	void tesselateRowTexture(Tile* tile, int data, const Vec3& pos);
 	void tesselateTorch(Tile*, const Vec3& pos, float a, float b);
 	
 	bool tesselateBlockInWorldWithAmbienceOcclusion(Tile*, const TilePos& pos, float r, float g, float b);
-	bool tesselateBlockInWorld(Tile*, const TilePos& pos, float r, float g, float b);
+	bool tesselateBlockInWorld(Tile*, const TilePos& pos, const Color&);
 	bool tesselateBlockInWorld(Tile*, const TilePos& pos);
 	bool tesselateCrossInWorld(Tile*, const TilePos& pos);
 	bool tesselateRowInWorld(Tile*, const TilePos& pos);
@@ -80,7 +80,7 @@ public:
 	void tesselateHeadPistonInWorldNoCulling(Tile* tile, const TilePos& pos, bool extended);
 	bool tesselateHeadPistonInWorld(Tile* tile, const TilePos& pos, bool extended);
 #ifdef ENH_USE_OWN_AO
-	bool tesselateBlockInWorldWithAmbienceOcclusionV2(Tile*, const TilePos& pos, float r, float g, float b);
+	bool tesselateBlockInWorldWithAmbienceOcclusionV2(Tile*, const TilePos& pos, const Color&);
 #endif
 
 	int getTileColor(Tile*, const TilePos& pos);
@@ -99,7 +99,7 @@ private:
 	bool m_bXFlipTexture;
 	bool m_bNoCulling;
 	bool m_bRenderingGui;
-	bool m_ambientOcclusion;
+	bool m_bAmbientOcclusion;
 	float field_C;
 	float field_10;
 	float field_14;

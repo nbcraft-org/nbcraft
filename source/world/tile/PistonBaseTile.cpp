@@ -38,7 +38,7 @@ void PistonBaseTile::triggerEvent(Level* level, const TileEvent& event)
 		if (_moveBlocks(level, event.pos, (Facing::Name) event.b1))
 		{
 			level->setData(event.pos, event.b1 | 8);
-			level->playSound(Vec3(event.pos) + 0.5f, "tile.piston.out", 0.5F, level->m_random.nextFloat() * 0.25F + 0.6F);
+			level->playSound(Vec3(event.pos) + 0.5f, "tile.piston.out", 0.5f, level->m_random.nextFloat() * 0.25f + 0.6f);
 		}
 	}
 	else if (event.b0 == 1)
@@ -92,7 +92,7 @@ void PistonBaseTile::triggerEvent(Level* level, const TileEvent& event)
 			m_bUpdating = true;
 		}
 
-		level->playSound(Vec3(event.pos) + 0.5f, "tile.piston.in", 0.5F, level->m_random.nextFloat() * 0.15F + 0.6F);
+		level->playSound(Vec3(event.pos) + 0.5f, "tile.piston.in", 0.5f, level->m_random.nextFloat() * 0.15f + 0.6f);
 	}
 
 	m_bUpdating = false;
@@ -125,36 +125,36 @@ void PistonBaseTile::updateShape(const LevelSource* source, const TilePos& pos)
 		switch (getFacing(data))
 		{
 		case 0:
-			setShape(0.0F, 0.25F, 0.0F, 1.0F, 1.0F, 1.0F);
+			setShape(0.0f, 0.25f, 0.0f, 1.0f, 1.0f, 1.0f);
 			break;
 		case 1:
-			setShape(0.0F, 0.0F, 0.0F, 1.0F, 12.0F / 16.0F, 1.0F);
+			setShape(0.0f, 0.0f, 0.0f, 1.0f, 12.0f / 16.0f, 1.0f);
 			break;
 		case 2:
-			setShape(0.0F, 0.0F, 0.25F, 1.0F, 1.0F, 1.0F);
+			setShape(0.0f, 0.0f, 0.25f, 1.0f, 1.0f, 1.0f);
 			break;
 		case 3:
-			setShape(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 12.0F / 16.0F);
+			setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 12.0f / 16.0f);
 			break;
 		case 4:
-			setShape(0.25F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+			setShape(0.25f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 			break;
 		case 5:
-			setShape(0.0F, 0.0F, 0.0F, 12.0F / 16.0F, 1.0F, 1.0F);
+			setShape(0.0f, 0.0f, 0.0f, 12.0f / 16.0f, 1.0f, 1.0f);
 		}
 	}
 	else
-		setShape(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+		setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 }
 
 void PistonBaseTile::updateDefaultShape()
 {
-	setShape(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+	setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 }
 
 void PistonBaseTile::addAABBs(const Level* level, const TilePos& pos, const AABB* aabb, std::vector<AABB>& out)
 {
-	setShape(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+	setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 	Tile::addAABBs(level, pos, aabb, out);
 }
 
@@ -212,7 +212,7 @@ bool PistonBaseTile::_getNeighborSignal(Level* level, const TilePos& pos, Facing
 
 int PistonBaseTile::_getRotationData(Level* level, const TilePos& pos, Player* player)
 {
-	if (Mth::abs(player->m_pos.x - pos.x) < 2.0F && Mth::abs(player->m_pos.z - pos.z) < 2.0F)
+	if (Mth::abs(player->m_pos.x - pos.x) < 2.0f && Mth::abs(player->m_pos.z - pos.z) < 2.0f)
 	{
 		float var5 = player->m_pos.y + 0.2;
 		if (var5 - pos.y > 2.0)
@@ -222,7 +222,7 @@ int PistonBaseTile::_getRotationData(Level* level, const TilePos& pos, Player* p
 			return 0;
 	}
 
-	int var7 = Mth::floor((player->m_rot.yaw * 4.0F / 360.0F) + 0.5) & 3;
+	int var7 = Mth::floor((player->m_rot.yaw * 4.0f / 360.0f) + 0.5) & 3;
 	return var7 == 0 ? 2 : (var7 == 1 ? 5 : (var7 == 2 ? 3 : (var7 == 3 ? 4 : 0)));
 }
 
@@ -234,7 +234,7 @@ bool PistonBaseTile::_isPushable(TileID tile, Level* level, const TilePos& pos, 
 	{
 		if (tile != Tile::piston->m_ID && tile != Tile::stickyPiston->m_ID)
 		{
-			if (Tile::tiles[tile]->m_hardness == -1.0F)
+			if (Tile::tiles[tile]->m_hardness == -1.0f)
 				return false;
 
 			if (Tile::tiles[tile]->getPistonPushReaction() == PushReaction::BLOCK)

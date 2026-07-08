@@ -3,7 +3,7 @@
 
 RailTile::RailTile(TileID id, int texture, bool isPowered) : Tile(id, texture, Material::decoration), m_bIsPowered(isPowered)
 {
-	setShape(0.0F, 0.0F, 0.0F, 1.0F, 2.0F / 16.0F, 1.0F);
+	setShape(0.0f, 0.0f, 0.0f, 1.0f, 2.0f / 16.0f, 1.0f);
 	m_renderLayer = RENDER_LAYER_ALPHATEST;
 }
 
@@ -93,9 +93,9 @@ void RailTile::updateShape(const LevelSource* level, const TilePos& pos)
 {
 	TileData var5 = level->getData(pos);
 	if (var5 >= 2 && var5 <= 5)
-		setShape(0.0F, 0.0F, 0.0F, 1.0F, 10.0F / 16.0F, 1.0F);
+		setShape(0.0f, 0.0f, 0.0f, 1.0f, 10.0f / 16.0f, 1.0f);
 	else
-		setShape(0.0F, 0.0F, 0.0F, 1.0F, 2.0F / 16.0F, 1.0F);
+		setShape(0.0f, 0.0f, 0.0f, 1.0f, 2.0f / 16.0f, 1.0f);
 }
 
 void RailTile::onPlace(Level* level, const TilePos& pos)

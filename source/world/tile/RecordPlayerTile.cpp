@@ -58,7 +58,7 @@ void RecordPlayerTile::ejectRecord(Level* level, const TilePos& pos)
             player->m_record = 0;
             player->setChanged();
             level->setData(pos, 0);
-            float var8 = 0.7F;
+            float var8 = 0.7f;
             float var9 = (level->m_random.nextFloat() * var8) + (1.0f - var8) * 0.5f;
             float var11 = (level->m_random.nextFloat() * var8) + (1.0f - var8) * 0.2f + 0.6f;
             float var13 = (level->m_random.nextFloat() * var8) + (1.0f - var8) * 0.5f;

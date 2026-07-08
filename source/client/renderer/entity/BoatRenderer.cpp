@@ -9,6 +9,7 @@ BoatRenderer::BoatRenderer() : m_pModel(new BoatModel())
 
 void BoatRenderer::render(const Entity& entity, const Vec3& pos, float rot, float a)
 {
+    _setupShaderParameters(entity, a);
     const Boat& boat = (const Boat&)entity;
     MatrixStack::Ref matrix = MatrixStack::World.push();
     matrix->translate(pos);

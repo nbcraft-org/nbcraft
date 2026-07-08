@@ -1606,20 +1606,20 @@ bool Level::canSeeSky(const TilePos& pos) const
 
 Vec3 Level::getSkyColor(const Entity& entity, float f) const
 {
-	float var4 = Mth::cos(getSunAngle(f)) * 2.0F + 0.5F;
-	if (var4 < 0.0F) {
-		var4 = 0.0F;
+	float var4 = Mth::cos(getSunAngle(f)) * 2.0f + 0.5f;
+	if (var4 < 0.0f) {
+		var4 = 0.0f;
 	}
 
-	if (var4 > 1.0F) {
-		var4 = 1.0F;
+	if (var4 > 1.0f) {
+		var4 = 1.0f;
 	}
 
 	int var5 = Mth::floor(entity.m_pos.x);
 	int var6 = Mth::floor(entity.m_pos.z);
 	float var7 = getBiomeSource()->getTemperature(var5, var6);
 	int var8 = getBiomeSource()->getBiomeAt(TilePos(var5, 0, var6))->getSkyColor(var7);
-	Vec3 sky((var8 >> 16 & 255) / 255.0F, (var8 >> 8 & 255) / 255.0F, (var8 & 255) / 255.0F);
+	Vec3 sky((var8 >> 16 & 255) / 255.0f, (var8 >> 8 & 255) / 255.0f, (var8 & 255) / 255.0f);
 	sky.x *= var4;
 	sky.y *= var4;
 	sky.z *= var4;
@@ -1628,34 +1628,34 @@ Vec3 Level::getSkyColor(const Entity& entity, float f) const
 
 	if (rain > 0)
 	{
-		float m = (sky.x * 0.3F + sky.y * 0.59F + sky.z * 0.11F) * 0.6F;
-		float light = 1.0F - rain * (12.0F / 16.0F);
-		sky.x = sky.x * light + m * (1.0F - light);
-		sky.y = sky.y * light + m * (1.0F - light);
-		sky.z = sky.z * light + m * (1.0F - light);
+		float m = (sky.x * 0.3f + sky.y * 0.59f + sky.z * 0.11f) * 0.6f;
+		float light = 1.0f - rain * (12.0f / 16.0f);
+		sky.x = sky.x * light + m * (1.0f - light);
+		sky.y = sky.y * light + m * (1.0f - light);
+		sky.z = sky.z * light + m * (1.0f - light);
 	}
 
 	float thunder = getThunderLevel(f);
 
 	if (thunder > 0)
 	{
-		float m = (sky.x * 0.3F + sky.y * 0.59F + sky.z * 0.11F) * 0.2F;
-		float light = 1.0F - thunder * (12.0F / 16.0F);
-		sky.x = sky.x * light + m * (1.0F - light);
-		sky.y = sky.y * light + m * (1.0F - light);
-		sky.z = sky.z * light + m * (1.0F - light);
+		float m = (sky.x * 0.3f + sky.y * 0.59f + sky.z * 0.11f) * 0.2f;
+		float light = 1.0f - thunder * (12.0f / 16.0f);
+		sky.x = sky.x * light + m * (1.0f - light);
+		sky.y = sky.y * light + m * (1.0f - light);
+		sky.z = sky.z * light + m * (1.0f - light);
 	}
 
 	if (m_skyFlashTime > 0)
 	{
 		float flash = m_skyFlashTime - f;
-		if (flash > 1.0F)
-			flash = 1.0F;
+		if (flash > 1.0f)
+			flash = 1.0f;
 
-		flash *= 0.45F;
-		sky.x = sky.x * (1.0F - flash) + 0.8F * flash;
-		sky.y = sky.y * (1.0F - flash) + 0.8F * flash;
-		sky.z = sky.z * (1.0F - flash) + 1.0F * flash;
+		flash *= 0.45f;
+		sky.x = sky.x * (1.0f - flash) + 0.8f * flash;
+		sky.y = sky.y * (1.0f - flash) + 0.8f * flash;
+		sky.z = sky.z * (1.0f - flash) + 1.0f * flash;
 	}
 	return sky;
 }

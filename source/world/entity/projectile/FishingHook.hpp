@@ -4,9 +4,6 @@
 
 class FishingHook : public Entity
 {
-public:
-	static const unsigned int ARROW_BASE_DAMAGE;
-
 private:
 	void _init();
 

@@ -1,8 +1,5 @@
 #include "Fireball.hpp"
 #include "world/level/Level.hpp"
-#include "nbt/CompoundTag.hpp"
-
-const unsigned int Fireball::ARROW_BASE_DAMAGE = 0;
 
 void Fireball::_init()
 {

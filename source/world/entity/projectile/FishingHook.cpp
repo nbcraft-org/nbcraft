@@ -3,8 +3,6 @@
 #include "nbt/CompoundTag.hpp"
 #include "world/level/Level.hpp"
 
-const unsigned int FishingHook::ARROW_BASE_DAMAGE = 0;
-
 void FishingHook::_init()
 {
     m_pDescriptor = &EntityTypeDescriptor::fishingHook;
@@ -235,7 +233,7 @@ void FishingHook::tick()
 
         if (hit_result.isHit())
         {
-            if (hit_result.m_pEnt != nullptr && hit_result.m_pEnt->hurt(m_owner, ARROW_BASE_DAMAGE))
+            if (hit_result.m_pEnt != nullptr && hit_result.m_pEnt->hurt(m_owner, 0))
             {
                 m_hookedIn = hit_result.m_pEnt;
             }

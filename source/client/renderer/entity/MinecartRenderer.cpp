@@ -1,5 +1,6 @@
 #include "MinecartRenderer.hpp"
 #include "client/model/models/MinecartModel.hpp"
+#include "client/renderer/entity/EntityRenderDispatcher.hpp"
 #include "world/entity/vehicle/Minecart.hpp"
 
 MinecartRenderer::MinecartRenderer() : m_pModel(new MinecartModel())
@@ -9,6 +10,7 @@ MinecartRenderer::MinecartRenderer() : m_pModel(new MinecartModel())
 
 void MinecartRenderer::render(const Entity& entity, const Vec3& pos, float rot, float a)
 {
+    _setupShaderParameters(entity, a);
     const Minecart& cart = (const Minecart&)entity;
     Vec3 cPos = pos;
     MatrixStack::Ref matrix = MatrixStack::World.push();
@@ -59,14 +61,14 @@ void MinecartRenderer::render(const Entity& entity, const Vec3& pos, float rot, 
     {
         MatrixStack::Ref tileMatrix = MatrixStack::World.push();
         bindTexture(C_TERRAIN_NAME);
-        float ss = 0.75F;
+        constexpr float ss = 0.75f;
         tileMatrix->scale(ss);
         tileMatrix->translate(Vec3(0.0f, 0.3125f, 0.0f));
         tileMatrix->rotate(90.0f, Vec3::UNIT_Y);
         if (cart.m_type == 1)
-            m_tileRenderer.renderTile(FullTile(Tile::chest, 0), m_shaderMaterials.entity, entity.getBrightness(a));
+            m_pDispatcher->m_tileRenderer->renderTile(FullTile(Tile::chest, 0), m_shaderMaterials.entity, entity.getBrightness(a));
         else if (cart.m_type == 2)
-            m_tileRenderer.renderTile(FullTile(Tile::furnace, 0), m_shaderMaterials.entity, entity.getBrightness(a));
+            m_pDispatcher->m_tileRenderer->renderTile(FullTile(Tile::furnace, 0), m_shaderMaterials.entity, entity.getBrightness(a));
     }
 
     bindTexture("item/cart.png");

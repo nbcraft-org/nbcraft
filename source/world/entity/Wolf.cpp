@@ -28,7 +28,7 @@ int Wolf::getDeathLoot() const
 
 float Wolf::getWetShade(float f) const
 {
-	return Mth::Min(12.0F / 16.0F + Mth::Lerp(m_shakeAnimO, m_shakeAnim, f) / 2.0f * 0.25f, 1.0f);
+	return Mth::Min(12.0f / 16.0f + Mth::Lerp(m_shakeAnimO, m_shakeAnim, f) / 2.0f * 0.25f, 1.0f);
 }
 
 float Wolf::getBodyRollAngle(float f, float g) const
@@ -40,7 +40,7 @@ float Wolf::getBodyRollAngle(float f, float g) const
 
 float Wolf::getHeadRollAngle(float f) const
 {
-	return Mth::Lerp(m_interestedAngleO, m_interestedAngle, f) * 0.15F * M_PI;
+	return Mth::Lerp(m_interestedAngleO, m_interestedAngle, f) * 0.15f * M_PI;
 }
 
 std::string Wolf::getOwner() const
@@ -88,7 +88,7 @@ void Wolf::setOrderedToSit(bool b)
 
 void Wolf::updateAttackTarget(Entity* ent, float dist)
 {
-	if (!m_pLevel->findPath(&m_path, this, ent, 16.0F) && dist > 12.0F)
+	if (!m_pLevel->findPath(&m_path, this, ent, 16.0f) && dist > 12.0f)
 	{
 		TilePos base(ent->m_pos.x - 2, ent->m_hitbox.min.y, ent->m_pos.z - 2);
 
@@ -114,9 +114,9 @@ void Wolf::addTamingParticles(bool heart)
 	Vec3 vel;
 	for (int var3 = 0; var3 < 7; ++var3)
 	{
-		pos.x = m_pos.x + (m_random.nextFloat() * m_bbWidth * 2.0F) - m_bbWidth;
-		pos.y = m_pos.y + (m_random.nextFloat() * m_bbHeight * 2.0F) - m_bbHeight;
-		pos.z = m_pos.z + (m_random.nextFloat() * m_bbWidth * 2.0F) - m_bbWidth;
+		pos.x = m_pos.x + (m_random.nextFloat() * m_bbWidth * 2.0f) - m_bbWidth;
+		pos.y = m_pos.y + (m_random.nextFloat() * m_bbHeight * 2.0f) - m_bbHeight;
+		pos.z = m_pos.z + (m_random.nextFloat() * m_bbWidth * 2.0f) - m_bbWidth;
 		vel.x = m_random.nextGaussian() * 0.02;
 		vel.y = m_random.nextGaussian() * 0.02;
 		vel.z = m_random.nextGaussian() * 0.02;
@@ -160,7 +160,7 @@ void Wolf::updateAi()
 		if (player)
 		{
 			float var2 = player->distanceToSqr(this);
-			if (var2 > 5.0F)
+			if (var2 > 5.0f)
 				updateAttackTarget(player, var2);
 		}
 		else if (!isInWater())
@@ -206,8 +206,8 @@ void Wolf::aiStep()
 	if (!interpolateOnly() && m_bIsShaking && !m_bIsWet && !isPathFinding() && m_bOnGround)
 	{
 		m_bIsWet = true;
-		m_shakeAnim = 0.0F;
-		m_shakeAnimO = 0.0F;
+		m_shakeAnim = 0.0f;
+		m_shakeAnimO = 0.0f;
 		m_pLevel->broadcastEntityEvent(*this, EventType::SHAKE_WETNESS);
 	}
 }
@@ -218,9 +218,9 @@ void Wolf::tick()
 
 	m_interestedAngleO = m_interestedAngle;
 	if (m_bInterested)
-		m_interestedAngle += (1.0F - m_interestedAngle) * 0.4F;
+		m_interestedAngle += (1.0f - m_interestedAngle) * 0.4f;
 	else
-		m_interestedAngle += (0.0F - m_interestedAngle) * 0.4F;
+		m_interestedAngle += (0.0f - m_interestedAngle) * 0.4f;
 
 	if (m_bInterested)
 		m_lookTime = 10;
@@ -229,33 +229,33 @@ void Wolf::tick()
 	{
 		m_bIsShaking = true;
 		m_bIsWet = false;
-		m_shakeAnim = 0.0F;
-		m_shakeAnimO = 0.0F;
+		m_shakeAnim = 0.0f;
+		m_shakeAnimO = 0.0f;
 	}
 	else if (m_bIsWet)
 	{
-		if (m_shakeAnim == 0.0F)
-			m_pLevel->playSound(this, "mob.wolf.shake", getSoundVolume(), (m_random.nextFloat() - m_random.nextFloat()) * 0.2F + 1.0F);
+		if (m_shakeAnim == 0.0f)
+			m_pLevel->playSound(this, "mob.wolf.shake", getSoundVolume(), (m_random.nextFloat() - m_random.nextFloat()) * 0.2f + 1.0f);
 
 		m_shakeAnimO = m_shakeAnim;
-		m_shakeAnim += 0.05F;
-		if (m_shakeAnim >= 2.0F)
+		m_shakeAnim += 0.05f;
+		if (m_shakeAnim >= 2.0f)
 		{
 			m_bIsShaking = false;
 			m_bIsWet = false;
-			m_shakeAnim = 0.0F;
-			m_shakeAnimO = 0.0F;
+			m_shakeAnim = 0.0f;
+			m_shakeAnimO = 0.0f;
 		}
 
-		if (m_shakeAnim > 0.4F)
+		if (m_shakeAnim > 0.4f)
 		{
 			float var1 = m_hitbox.min.y;
-			int var2 = (int)(Mth::sin((m_shakeAnim - 0.4F) * M_PI) * 7.0F);
+			int var2 = (int)(Mth::sin((m_shakeAnim - 0.4f) * M_PI) * 7.0f);
 
 			for (int var3 = 0; var3 < var2; ++var3) {
-				float var4 = (m_random.nextFloat() * 2.0F - 1.0F) * m_bbWidth * 0.5F;
-				float var5 = (m_random.nextFloat() * 2.0F - 1.0F) * m_bbWidth * 0.5F;
-				m_pLevel->addParticle("splash", Vec3(m_pos.x + var4, (var1 + 0.8F), m_pos.z + var5), m_vel);
+				float var4 = (m_random.nextFloat() * 2.0f - 1.0f) * m_bbWidth * 0.5f;
+				float var5 = (m_random.nextFloat() * 2.0f - 1.0f) * m_bbWidth * 0.5f;
+				m_pLevel->addParticle("splash", Vec3(m_pos.x + var4, (var1 + 0.8f), m_pos.z + var5), m_vel);
 			}
 		}
 	}
@@ -278,16 +278,16 @@ bool Wolf::isImmobile() const
 
 void Wolf::checkHurtTarget(Entity* ent, float dist)
 {
-	if (dist > 2.0F && dist < 6.0F && m_random.nextInt(10) == 0)
+	if (dist > 2.0f && dist < 6.0f && m_random.nextInt(10) == 0)
 	{
 		if (m_bOnGround)
 		{
 			float diffX = ent->m_pos.x - m_pos.x;
 			float diffZ = ent->m_pos.z - m_pos.z;
 			float length = Mth::sqrt(diffX * diffX + diffZ * diffZ);
-			m_vel.x = diffX / length * 0.5 * 0.8F + m_vel.x * 0.2F;
-			m_vel.z = diffZ / length * 0.5 * 0.8F + m_vel.z * 0.2F;
-			m_vel.y = 0.4F;
+			m_vel.x = diffX / length * 0.5 * 0.8f + m_vel.x * 0.2f;
+			m_vel.z = diffZ / length * 0.5 * 0.8f + m_vel.z * 0.2f;
+			m_vel.y = 0.4f;
 		}
 	}
 	else if (dist < 1.5 && ent->m_hitbox.max.y > m_hitbox.min.y && ent->m_hitbox.min.y < m_hitbox.max.y)
@@ -427,8 +427,8 @@ void Wolf::handleEntityEvent(EventType::ID event)
 		break;
 	case EventType::SHAKE_WETNESS:
 		m_bIsWet = true;
-		m_shakeAnim = 0.0F;
-		m_shakeAnimO = 0.0F;
+		m_shakeAnim = 0.0f;
+		m_shakeAnimO = 0.0f;
 		break;
 	default:
 		Animal::handleEntityEvent(event);
@@ -441,7 +441,7 @@ float Wolf::getTailAngle() const
 	if (isAngry())
 		return M_PI_2;
 	else
-		return isTamed() ? (0.55F - (getMaxHealth() - m_entityData.get<int>(18)) * 0.02F) * M_PI : (M_PI / 5);
+		return isTamed() ? (0.55f - (getMaxHealth() - m_entityData.get<int>(18)) * 0.02f) * M_PI : (M_PI / 5);
 }
 
 bool Wolf::isShaking() const

@@ -66,35 +66,35 @@ EntityRenderDispatcher::EntityRenderDispatcher()
 	m_pOptions = nullptr;
 	m_pFont = nullptr;
 
-	_addRenderer(Entity::RENDER_HUMANOID,     new HumanoidMobRenderer(new HumanoidModel, 0.5f));
-	_addRenderer(Entity::RENDER_PIG,          new PigRenderer(        new PigModel(0.0f), new PigModel(0.5f), 0.7f));
-	_addRenderer(Entity::RENDER_SHEEP,        new SheepRenderer(      new SheepModel(false), new SheepModel(true), 0.7f));
-	_addRenderer(Entity::RENDER_COW,          new CowRenderer(        new CowModel,      0.7f));
-	_addRenderer(Entity::RENDER_CHICKEN,      new ChickenRenderer(    new ChickenModel,  0.3f));
-	_addRenderer(Entity::RENDER_SQUID,        new SquidRenderer(      new SquidModel,    0.7f));
-	_addRenderer(Entity::RENDER_CREEPER,      new CreeperRenderer(    new CreeperModel,  0.5f));
-	_addRenderer(Entity::RENDER_SPIDER,       new SpiderRenderer());
-	_addRenderer(Entity::RENDER_SKELETON,     new HumanoidMobRenderer(new SkeletonModel, 0.5f));
-	_addRenderer(Entity::RENDER_ZOMBIE,       new HumanoidMobRenderer(new ZombieModel,   0.5f));
-	_addRenderer(Entity::RENDER_GIANT,        new GiantMobRenderer(   new ZombieModel,   0.5f, 6.0f));
-	_addRenderer(Entity::RENDER_SLIME,        new SlimeRenderer(      new SlimeModel(16), new SlimeModel(0), 0.25f));
-	_addRenderer(Entity::RENDER_GHAST,        new GhastRenderer());
-	_addRenderer(Entity::RENDER_WOLF,		  new WolfRenderer(new WolfModel, 0.5f));
-	_addRenderer(Entity::RENDER_ARROW,        new ArrowRenderer());
+	_addRenderer(Entity::RENDER_HUMANOID,		new HumanoidMobRenderer(new HumanoidModel, 0.5f));
+	_addRenderer(Entity::RENDER_PIG,			new PigRenderer(        new PigModel(0.0f), new PigModel(0.5f), 0.7f));
+	_addRenderer(Entity::RENDER_SHEEP,			new SheepRenderer(      new SheepModel(false), new SheepModel(true), 0.7f));
+	_addRenderer(Entity::RENDER_COW,			new CowRenderer(        new CowModel,      0.7f));
+	_addRenderer(Entity::RENDER_CHICKEN,		new ChickenRenderer(    new ChickenModel,  0.3f));
+	_addRenderer(Entity::RENDER_SQUID,			new SquidRenderer(      new SquidModel,    0.7f));
+	_addRenderer(Entity::RENDER_CREEPER,		new CreeperRenderer(    new CreeperModel,  0.5f));
+	_addRenderer(Entity::RENDER_SPIDER,			new SpiderRenderer());
+	_addRenderer(Entity::RENDER_SKELETON,		new HumanoidMobRenderer(new SkeletonModel, 0.5f));
+	_addRenderer(Entity::RENDER_ZOMBIE,			new HumanoidMobRenderer(new ZombieModel,   0.5f));
+	_addRenderer(Entity::RENDER_GIANT,			new GiantMobRenderer(   new ZombieModel,   0.5f, 6.0f));
+	_addRenderer(Entity::RENDER_SLIME,			new SlimeRenderer(      new SlimeModel(16), new SlimeModel(0), 0.25f));
+	_addRenderer(Entity::RENDER_GHAST,			new GhastRenderer());
+	_addRenderer(Entity::RENDER_WOLF,			new WolfRenderer(		new WolfModel, 0.5f));
+	_addRenderer(Entity::RENDER_ARROW,			new ArrowRenderer());
 #ifdef ENH_ALLOW_SAND_GRAVITY
-	_addRenderer(Entity::RENDER_FALLING_TILE, new FallingTileRenderer());
+	_addRenderer(Entity::RENDER_FALLING_TILE,	new FallingTileRenderer());
 #endif
-	_addRenderer(Entity::RENDER_TNT,          new TntRenderer());
-	_addRenderer(Entity::RENDER_CAMERA,       new TripodCameraRenderer());
-	_addRenderer(Entity::RENDER_ITEM,         new ItemRenderer());
-	_addRenderer(Entity::RENDER_THROWN_EGG,	  new ItemSpriteRenderer(Item::egg->getIcon(0)));
-	_addRenderer(Entity::RENDER_SNOWBALL,	  new ItemSpriteRenderer(Item::snowBall->getIcon(0)));
-	_addRenderer(Entity::RENDER_ROCKET,       new RocketRenderer());
-	_addRenderer(Entity::RENDER_FIREBALL,     new FireballRenderer());
-	_addRenderer(Entity::RENDER_FISHING_HOOK, new FishingHookRenderer());
-	_addRenderer(Entity::RENDER_MINECART,	  new MinecartRenderer());
-	_addRenderer(Entity::RENDER_BOAT,		  new BoatRenderer());
-	_addRenderer(Entity::RENDER_PAINTING,	  new PaintingRenderer());
+	_addRenderer(Entity::RENDER_TNT,			new TntRenderer());
+	_addRenderer(Entity::RENDER_CAMERA,			new TripodCameraRenderer());
+	_addRenderer(Entity::RENDER_ITEM,			new ItemRenderer());
+	_addRenderer(Entity::RENDER_THROWN_EGG,		new ItemSpriteRenderer(Item::egg->getIcon(0)));
+	_addRenderer(Entity::RENDER_SNOWBALL,		new ItemSpriteRenderer(Item::snowBall->getIcon(0)));
+	_addRenderer(Entity::RENDER_ROCKET,			new RocketRenderer());
+	_addRenderer(Entity::RENDER_FIREBALL,		new FireballRenderer());
+	_addRenderer(Entity::RENDER_FISHING_HOOK,	new FishingHookRenderer());
+	_addRenderer(Entity::RENDER_MINECART,		new MinecartRenderer());
+	_addRenderer(Entity::RENDER_BOAT,			new BoatRenderer());
+	_addRenderer(Entity::RENDER_PAINTING,		new PaintingRenderer());
 	_addRenderer(Entity::RENDER_LIGHTNING_BOLT, new LightningBoltRenderer());
 }
 

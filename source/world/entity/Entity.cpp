@@ -240,7 +240,7 @@ void Entity::move(const Vec3& pos)
 		if (!m_bSlide && cPosZ != newPos.z)
 			newPos = Vec3::ZERO;
 
-		if (m_footSize > 0.0f && lastsOnGround && m_ySlideOffset < 0.05F && (cPosX != newPos.x || cPosZ != newPos.z))
+		if (m_footSize > 0.0f && lastsOnGround && m_ySlideOffset < 0.05f && (cPosX != newPos.x || cPosZ != newPos.z))
 		{
 			Vec3 oldPos = newPos;
 			newPos.x = cPosX;

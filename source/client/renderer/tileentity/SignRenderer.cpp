@@ -1,5 +1,11 @@
 #include "SignRenderer.hpp"
 #include "renderer/ShaderConstants.hpp"
+#include "client/renderer/renderer/RenderMaterialGroup.hpp"
+
+SignRenderer::Materials::Materials()
+{
+    MATERIAL_PTR(common, sign_text);
+}
 
 void SignRenderer::renderTyped(SignTileEntity* sign, const Vec3& pos, float partialTicks)
 {
@@ -28,7 +34,7 @@ void SignRenderer::renderTyped(SignTileEntity* sign, const Vec3& pos, float part
             rot = -90.0f;
 
         mtx->rotate(-rot, Vec3::UNIT_Y);
-        mtx->translate(Vec3(0.0f, -0.3125F, -0.4375F));
+        mtx->translate(Vec3(0.0f, -0.3125f, -0.4375f));
         m_signModel.m_cube2.m_bVisible = false;
     }
 
@@ -38,8 +44,8 @@ void SignRenderer::renderTyped(SignTileEntity* sign, const Vec3& pos, float part
     m_signModel.render();
     mtx2.release();
     Font* font = getFont();
-    rot = 0.016666668F * size;
-    mtx->translate(Vec3(0.0f, 0.5F * size, 0.07F * size));
+    rot = 0.016666668f * size;
+    mtx->translate(Vec3(0.0f, 0.5f * size, 0.07f * size));
     mtx->scale(Vec3(rot, -rot, rot));
     //glNormal3f(0.0f, 0.0f, -1.0f * rot);
     int col = 0;
@@ -52,10 +58,10 @@ void SignRenderer::renderTyped(SignTileEntity* sign, const Vec3& pos, float part
         if (i == sign->m_selectedLine)
         {
             std::string select = "> " + msg + " <";
-            font->draw(select, -font->width(select) / 2, i * 10 - messagesSize * 5, col, false, &m_signModel.m_materials.entity_alphatest);
+            font->draw(select, -font->width(select) / 2, i * 10 - messagesSize * 5, col, false, &m_materials.sign_text);
         }
         else
-            font->draw(msg, -font->width(msg) / 2, i * 10 - messagesSize * 5, col, false, &m_signModel.m_materials.entity_alphatest);
+            font->draw(msg, -font->width(msg) / 2, i * 10 - messagesSize * 5, col, false, &m_materials.sign_text);
     }
 
     currentShaderDarkColor = Color::WHITE;

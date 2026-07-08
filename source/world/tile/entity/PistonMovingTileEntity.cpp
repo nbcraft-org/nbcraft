@@ -47,13 +47,13 @@ float PistonMovingTileEntity::getProgress(float partialTick) const
 Vec3 PistonMovingTileEntity::getOff(float partialTick) const
 {
 	Vec3 normal = TilePos::ZERO.relative(m_direction);
-	return m_bExtending ? normal * (getProgress(partialTick) - 1.0F) : normal * (1.0F - getProgress(partialTick));
+	return m_bExtending ? normal * (getProgress(partialTick) - 1.0f) : normal * (1.0f - getProgress(partialTick));
 }
 
 void PistonMovingTileEntity::tick()
 {
 	m_progressO = m_progress;
-	if (m_progressO >= 1.0F)
+	if (m_progressO >= 1.0f)
 	{
 		_moveCollidedEntities(1.0f, 0.25f);
 		m_pLevel->removeTileEntity(m_pos);
@@ -63,12 +63,12 @@ void PistonMovingTileEntity::tick()
 	}
 	else
 	{
-		m_progress += 0.5F;
-		if (m_progress >= 1.0F)
-			m_progress = 1.0F;
+		m_progress += 0.5f;
+		if (m_progress >= 1.0f)
+			m_progress = 1.0f;
 
 		if (m_bExtending)
-			_moveCollidedEntities(m_progress, m_progress - m_progressO + 1.0F / 16.0F);
+			_moveCollidedEntities(m_progress, m_progress - m_progressO + 1.0f / 16.0f);
 	}
 }
 
@@ -97,7 +97,7 @@ void PistonMovingTileEntity::_moveCollidedEntities(float progress, float force)
 	if (!m_bExtending)
 		progress--;
 	else
-		progress = 1.0F - progress;
+		progress = 1.0f - progress;
 
 	AABB* aabb = ((MovingPistonTile*)Tile::movingPiston)->moveByPositionAndProgress(m_pLevel, m_pos, m_tileId, progress, m_direction);
 	if (aabb)
@@ -114,9 +114,9 @@ void PistonMovingTileEntity::_moveCollidedEntities(float progress, float force)
 
 void PistonMovingTileEntity::finalTick()
 {
-	if (m_progressO < 1.0F)
+	if (m_progressO < 1.0f)
 	{
-		m_progressO = m_progress = 1.0F;
+		m_progressO = m_progress = 1.0f;
 		m_pLevel->removeTileEntity(m_pos);
 		setRemoved();
 		if (m_pLevel->getTile(m_pos) == Tile::movingPiston->m_ID)

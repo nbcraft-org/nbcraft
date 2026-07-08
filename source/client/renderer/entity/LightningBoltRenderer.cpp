@@ -1,6 +1,7 @@
 #include "LightningBoltRenderer.hpp"
 #include "client/renderer/Lighting.hpp"
 #include "world/entity/LightningBolt.hpp"
+#include "renderer/ShaderConstants.hpp"
 
 LightningBoltRenderer::LightningBoltRenderer()
 {
@@ -24,6 +25,9 @@ void LightningBoltRenderer::render(const Entity& ent, const Vec3& pos, float rot
 		var13 += (float)(var17.nextInt(11) - 5);
 		var15 += (float)(var17.nextInt(11) - 5);
 	}
+
+	constexpr float intensity = 0.5f;
+	currentShaderColor = Color(0.9f * intensity, 0.9f * intensity, 1.0f * intensity, 0.3f);
 
 	for (int var45 = 0; var45 < 4; ++var45)
 	{
@@ -58,17 +62,14 @@ void LightningBoltRenderer::render(const Entity& ent, const Vec3& pos, float rot
 				}
 
 				var10.begin(mce::PRIMITIVE_MODE_TRIANGLE_STRIP, 10);
-				float var31 = 0.5f;
-				var10.color(0.9f * var31, 0.9f * var31, 1.0f * var31, 0.3f);
 				float var32 = 0.1f + var45 * 0.2f;
 				if (var19 == 0) {
 					var32 *= var26 * 0.1f + 1.0f;
 				}
 
 				float var34 = 0.1f + var45 * 0.2f;
-				if (var19 == 0) {
+				if (var19 == 0)
 					var34 *= (var26 - 1) * 0.1 + 1.0;
-				}
 
 				for (int var36 = 0; var36 < 5; ++var36)
 				{

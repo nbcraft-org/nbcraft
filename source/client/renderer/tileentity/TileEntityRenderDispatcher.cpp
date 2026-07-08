@@ -5,6 +5,8 @@
 #include "PistonRenderer.hpp"
 #include "renderer/ShaderConstants.hpp"
 
+#define C_MAX_TILE_ENTITY_VIEW_DISTANCE 4096.0f
+
 Vec3 TileEntityRenderDispatcher::off;
 
 TileEntityRenderDispatcher* TileEntityRenderDispatcher::instance;
@@ -62,11 +64,12 @@ void TileEntityRenderDispatcher::render(TileEntity* e, float a)
 {
     if (!e || !m_pLevel) return;
 
-    if (e->distanceToSqr(m_pos) < 4096.0f)
+    if (e->distanceToSqr(m_pos) < C_MAX_TILE_ENTITY_VIEW_DISTANCE)
     {
         float br = m_pLevel->getBrightness(e->m_pos);
         currentShaderColor = Color::WHITE;
         currentShaderDarkColor = Color(br, br, br);
+        _setupShaderParameters(br, Color::NIL);
         render(e, -off + e->m_pos, a);
     }
 }

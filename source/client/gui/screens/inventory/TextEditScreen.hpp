@@ -6,13 +6,13 @@
 
 class TextEditScreen : public Screen
 {
+public:
+    TextEditScreen(SignTileEntity*);
 
 protected:
     void _buttonClicked(Button* pButton) override;
 
 public:
-    TextEditScreen(SignTileEntity*);
-
     void init() override;
     void render(float partialTick) override;
     void removed() override;

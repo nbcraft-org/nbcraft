@@ -41,7 +41,7 @@ void TileRenderer::_init()
 	m_bXFlipTexture = false;
 	m_bNoCulling = false;
 	m_bRenderingGui = false;
-	m_ambientOcclusion = false;
+	m_bAmbientOcclusion = false;
 
 	// AO stuff
 	field_C = 0;
@@ -255,15 +255,17 @@ void TileRenderer::renderFace(Tile* tile, const Vec3& pos, int texture, Facing::
 
 	Tesselator& t = Tesselator::instance;
 
-	if (!m_ambientOcclusion) t.color(color);
+	if (!m_bAmbientOcclusion) t.color(color);
 
 	for (int i = 0; i < 4; ++i)
 	{
 		const int* vertex = Facing::CORNERS[Facing::VERTICES[face][i]];
-		if (m_ambientOcclusion) t.color(m_vtxRed[i] * color.r, m_vtxGreen[i] * color.g, m_vtxBlue[i] * color.b, color.a);
+		if (m_bAmbientOcclusion) t.color(m_vtxRed[i] * color.r, m_vtxGreen[i] * color.g, m_vtxBlue[i] * color.b, color.a);
 		int rotIndex = rotatedIndex[i];
 		bool useU2 = baseUVs[rotIndex][0];
 		if (flip) useU2 = !useU2;
+		if (m_bAmbientOcclusion)
+			_tex1(m_vtxLightTex[i]);
 		t.vertexUV(pos.x + aabb.byIndex(vertex[0]), pos.y + aabb.byIndex(vertex[1]), pos.z + aabb.byIndex(vertex[2]), useU2 ? u2 : u1, baseUVs[rotIndex][1] ? v2 : v1);
 	}
 
@@ -306,9 +308,9 @@ void TileRenderer::renderUp(Tile* tile, const Vec3& pos, int texture, const Colo
 	renderFace(tile, pos, texture, Facing::UP, color);
 }
 
-void TileRenderer::renderPistonFace(float minX, float minY, float minZ, float maxX, float maxY, float maxZ, float bright, float offY, Facing::Name dir)
+void TileRenderer::renderPistonFace(const AABB& aabb, float bright, float offY, Facing::Name dir)
 {
-	int tex = 108;
+	int tex = TEXTURE_PISTON_FACE;
 	if (m_fixedTexture >= 0)
 		tex = m_fixedTexture;
 
@@ -318,27 +320,27 @@ void TileRenderer::renderPistonFace(float minX, float minY, float minZ, float ma
 	float u1 = texX / 256.0f;
 	float u2 = texY / 256.0f;
 	float v1 = (texX + offY - 0.01f) / 256.0f;
-	float v2 = ((texY + 4.0F) - 0.01f) / 256.0;
+	float v2 = ((texY + 4.0f) - 0.01f) / 256.0f;
 	t.color(bright, bright, bright);
 	switch (dir)
 	{
 	case Facing::UP: case Facing::DOWN:
-		t.vertexUV(minX, maxX, maxY, v1, u2);
-		t.vertexUV(minX, minZ, maxY, u1, u2);
-		t.vertexUV(minY, minZ, maxZ, u1, v2);
-		t.vertexUV(minY, maxX, maxZ, v1, v2);
+		t.vertexUV(aabb.min.x, aabb.max.x, aabb.max.y, v1, u2);
+		t.vertexUV(aabb.min.x, aabb.min.z, aabb.max.y, u1, u2);
+		t.vertexUV(aabb.min.y, aabb.min.z, aabb.max.z, u1, v2);
+		t.vertexUV(aabb.min.y, aabb.max.x, aabb.max.z, v1, v2);
 		break;
 	case Facing::NORTH: case Facing::SOUTH:
-		t.vertexUV(minX, minZ, maxZ, v1, u2);
-		t.vertexUV(minX, minZ, maxY, u1, u2);
-		t.vertexUV(minY, maxX, maxY, u1, v2);
-		t.vertexUV(minY, maxX, maxZ, v1, v2);
+		t.vertexUV(aabb.min.x, aabb.min.z, aabb.max.z, v1, u2);
+		t.vertexUV(aabb.min.x, aabb.min.z, aabb.max.y, u1, u2);
+		t.vertexUV(aabb.min.y, aabb.max.x, aabb.max.y, u1, v2);
+		t.vertexUV(aabb.min.y, aabb.max.x, aabb.max.z, v1, v2);
 		break;
 	case Facing::WEST: case Facing::EAST:
-		t.vertexUV(minY, minZ, maxY, v1, u2);
-		t.vertexUV(minX, minZ, maxY, u1, u2);
-		t.vertexUV(minX, maxX, maxZ, u1, v2);
-		t.vertexUV(minY, maxX, maxZ, v1, v2);
+		t.vertexUV(aabb.min.y, aabb.min.z, aabb.max.y, v1, u2);
+		t.vertexUV(aabb.min.x, aabb.min.z, aabb.max.y, u1, u2);
+		t.vertexUV(aabb.min.x, aabb.max.x, aabb.max.z, u1, v2);
+		t.vertexUV(aabb.min.y, aabb.max.x, aabb.max.z, v1, v2);
 	}
 }
 
@@ -465,114 +467,58 @@ void TileRenderer::tesselateRowTexture(Tile* tile, int data, const Vec3& pos)
 	t.vertexUV(x1, pos.y + 1.0, z1, u1, v0);
 }
 
-bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, float r, float g, float b)
+bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, const Color& color)
 {
-	float topR = r, topG = g, topB = b;
-
-	if (tile == Tile::grass)
-		r = g = b = 1.0f;
-
-	Tesselator& t = m_tessellator;
-
+	Tesselator& t = Tesselator::instance;
 	float fLightHere = tile->getBrightness(m_pTileSource, pos);
 	bool bDrewAnything = false;
 
-	if (m_bNoCulling || tile->shouldRenderFace(m_pTileSource, pos.below(), Facing::DOWN))
+	for (int dir = Facing::DOWN; dir <= Facing::EAST; dir++)
 	{
+		Facing::Name face = (Facing::Name)dir;
+		TilePos neighborPos = pos.relative(face);
+
+		if (!m_bNoCulling && !tile->shouldRenderFace(m_pTileSource, neighborPos, face))
+			continue;
+
 		bDrewAnything = true;
 
-		float fLight = tile->getBrightness(m_pTileSource, pos.below());
-		t.color(r * 0.5f * fLight, g * 0.5f * fLight, b * 0.5f * fLight);
+		float light = tile->getBrightness(m_pTileSource, neighborPos);
 
-		renderDown(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::DOWN));
-	}
-
-	if (m_bNoCulling || tile->shouldRenderFace(m_pTileSource, pos.above(), Facing::UP))
-	{
-		bDrewAnything = true;
-
-		float fLight = tile->getBrightness(m_pTileSource, pos.above());
-		if (tile->m_aabb.max.y != 1.0f && !tile->m_pMaterial->isLiquid())
-			fLight = fLightHere;
-
-		t.color(topR * fLight, topG * fLight, topB * fLight);
-
-		renderUp(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::UP));
-	}
-
-	if (m_bNoCulling || tile->shouldRenderFace(m_pTileSource, pos.north(), Facing::NORTH))
-	{
-		bDrewAnything = true;
-
-		float fLight = tile->getBrightness(m_pTileSource, pos.north());
-		if (tile->m_aabb.min.z > 0.0f)
-			fLight = fLightHere;
-
-		t.color(r * 0.8f * fLight, g * 0.8f * fLight, b * 0.8f * fLight);
-		int texture = tile->getTexture(m_pTileSource, pos, Facing::NORTH);
-		renderNorth(tile, pos, texture);
-
-		if (m_bFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
+		switch (face)
 		{
-			t.color(topR * 0.8f * fLight, topG * 0.8f * fLight, topB * 0.8f * fLight);
-			renderNorth(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
+		case Facing::UP:
+			if (tile->m_aabb.max.y != 1.0f && !tile->m_pMaterial->isLiquid())
+				light = fLightHere;
+			break;
+		case Facing::NORTH:
+			if (tile->m_aabb.min.z > 0.0f)
+				light = fLightHere;
+			break;
+		case Facing::SOUTH:
+			if (tile->m_aabb.max.z < 1.0f)
+				light = fLightHere;
+			break;
+		case Facing::WEST:
+			if (tile->m_aabb.min.x > 0.0f)
+				light = fLightHere;
+			break;
+		case Facing::EAST:
+			if (tile->m_aabb.max.x < 1.0f)
+				light = fLightHere;
+			break;
+		default:
+			break;
 		}
-	}
 
-	if (m_bNoCulling || tile->shouldRenderFace(m_pTileSource, pos.south(), Facing::SOUTH))
-	{
-		bDrewAnything = true;
+		int texture = tile->getTexture(m_pTileSource, pos, face);
+		Color faceColor = Color(tile != Tile::grass || face == Facing::UP ? color : Color::WHITE);
 
-		float fLight = tile->getBrightness(m_pTileSource, pos.south());
-		if (tile->m_aabb.max.z < 1.0f)
-			fLight = fLightHere;
+		renderFace(tile, pos, texture, face, faceColor.mulRGB(Facing::LIGHT[face] * light));
 
-		t.color(r * 0.8f * fLight, g * 0.8f * fLight, b * 0.8f * fLight);
-		int texture = tile->getTexture(m_pTileSource, pos, Facing::SOUTH);
-		renderSouth(tile, pos, texture);
-
-		if (m_bFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
+		if (m_bFancyGrass && m_fixedTexture < 0 && texture == TEXTURE_GRASS_SIDE && Facing::isHorizontal(face))
 		{
-			t.color(topR * 0.8f * fLight, topG * 0.8f * fLight, topB * 0.8f * fLight);
-			renderSouth(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
-		}
-	}
-
-	if (m_bNoCulling || tile->shouldRenderFace(m_pTileSource, pos.west(), Facing::WEST))
-	{
-		bDrewAnything = true;
-
-		float fLight = tile->getBrightness(m_pTileSource, pos.west());
-		if (tile->m_aabb.min.x > 0.0f)
-			fLight = fLightHere;
-
-		t.color(r * 0.6f * fLight, g * 0.6f * fLight, b * 0.6f * fLight);
-		int texture = tile->getTexture(m_pTileSource, pos, Facing::WEST);
-		renderWest(tile, pos, texture);
-
-		if (m_bFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
-		{
-			t.color(topR * 0.6f * fLight, topG * 0.6f * fLight, topB * 0.6f * fLight);
-			renderWest(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
-		}
-	}
-
-	if (m_bNoCulling || tile->shouldRenderFace(m_pTileSource, pos.east(), Facing::EAST))
-	{
-		bDrewAnything = true;
-
-		float fLight = tile->getBrightness(m_pTileSource, pos.east());
-		if (tile->m_aabb.max.x < 1.0f)
-			fLight = fLightHere;
-
-		t.color(r * 0.6f * fLight, g * 0.6f * fLight, b * 0.6f * fLight);
-		int texture = tile->getTexture(m_pTileSource, pos, Facing::EAST);
-		renderEast(tile, pos, texture);
-
-		if (m_bFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
-		{
-			t.color(topR * 0.6f * fLight, topG * 0.6f * fLight, topB * 0.6f * fLight);
-			renderEast(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
+			renderFace(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY, face, Color(color).mulRGB(Facing::LIGHT[face] * light));
 		}
 	}
 
@@ -581,25 +527,21 @@ bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, float r
 
 bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos)
 {
-	int color = getTileColor(tile, pos);
-
-	float r = float(GET_RED  (color)) / 255.0f;
-	float g = float(GET_GREEN(color)) / 255.0f;
-	float b = float(GET_BLUE (color)) / 255.0f;
+	Color color = Color(getTileColor(tile, pos), 1.0f);
 
 	if (useAmbientOcclusion())
 	{
 		if (Tile::lightEmission[tile->m_ID] == 0 /*&& Tile::translucency[tile->m_ID] < 0.9*/)
 		{
 #ifdef ENH_USE_OWN_AO
-			return tesselateBlockInWorldWithAmbienceOcclusionV2(tile, pos, r, g, b);
+			return tesselateBlockInWorldWithAmbienceOcclusionV2(tile, pos, color);
 #else
-			return tesselateBlockInWorldWithAmbienceOcclusion(tile, pos, r, g, b);
+			return tesselateBlockInWorldWithAmbienceOcclusion(tile, pos, color.r, color.g, color.b);
 #endif
 		}
 	}
 
-	return tesselateBlockInWorld(tile, pos, r, g, b);
+	return tesselateBlockInWorld(tile, pos, color);
 }
 
 bool TileRenderer::tesselateCrossInWorld(Tile* tile, const TilePos& pos)
@@ -1282,11 +1224,11 @@ bool TileRenderer::tesselateRailInWorld(Tile* tile, const TilePos& pos)
 	t.color(br, br, br);
 	int xt = (tex & 15) << 4;
 	int yt = tex & 240;
-	float u0 = xt / 256.0F;
-	float u1 = (xt + 15.99F) / 256.0F;
-	float v0 = yt / 256.0F;
-	float v1 = (yt + 15.99F) / 256.0F;
-	float r = 0.0625F;
+	float u0 = xt / 256.0f;
+	float u1 = (xt + 15.99f) / 256.0f;
+	float v0 = yt / 256.0f;
+	float v1 = (yt + 15.99f) / 256.0f;
+	constexpr float r = 0.0625f;
 	float x0 = (float)(pos.x + 1);
 	float x1 = (float)(pos.x + 1);
 	float x2 = (float)(pos.x + 0);
@@ -2072,36 +2014,36 @@ bool TileRenderer::tesselatePistonInWorld(Tile* tile, const TilePos& pos, bool h
 		case Facing::DOWN:
 			for (int i = 0; i < 4; ++i)
 				m_faceRotation[Facing::HORIZONTAL[i]] = 3;
-			tile->setShape(0.0F, 0.25F, 0.0F, 1.0F, 1.0F, 1.0F);
+			tile->setShape(0.0f, 0.25f, 0.0f, 1.0f, 1.0f, 1.0f);
 			break;
 		case Facing::UP:
-			tile->setShape(0.0F, 0.0F, 0.0F, 1.0F, 12.0F / 16.0F, 1.0F);
+			tile->setShape(0.0f, 0.0f, 0.0f, 1.0f, 12.0f / 16.0f, 1.0f);
 			break;
 		case Facing::NORTH:
 			m_faceRotation[Facing::EAST] = 1;
 			m_faceRotation[Facing::WEST] = 2;
-			tile->setShape(0.0F, 0.0F, 0.25F, 1.0F, 1.0F, 1.0F);
+			tile->setShape(0.0f, 0.0f, 0.25f, 1.0f, 1.0f, 1.0f);
 			break;
 		case Facing::SOUTH:
 			m_faceRotation[Facing::EAST] = 2;
 			m_faceRotation[Facing::WEST] = 1;
 			m_faceRotation[Facing::UP] = 3;
 			m_faceRotation[Facing::DOWN] = 3;
-			tile->setShape(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 12.0F / 16.0F);
+			tile->setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 12.0f / 16.0f);
 			break;
 		case Facing::WEST:
 			m_faceRotation[Facing::NORTH] = 1;
 			m_faceRotation[Facing::SOUTH] = 2;
 			m_faceRotation[Facing::UP] = 2;
 			m_faceRotation[Facing::DOWN] = 1;
-			tile->setShape(0.25F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+			tile->setShape(0.25f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 			break;
 		case Facing::EAST:
 			m_faceRotation[Facing::NORTH] = 2;
 			m_faceRotation[Facing::SOUTH] = 1;
 			m_faceRotation[Facing::UP] = 1;
 			m_faceRotation[Facing::DOWN] = 2;
-			tile->setShape(0.0F, 0.0F, 0.0F, 12.0F / 16.0F, 1.0F, 1.0F);
+			tile->setShape(0.0f, 0.0f, 0.0f, 12.0f / 16.0f, 1.0f, 1.0f);
 		}
 
 		tesselateBlockInWorld(tile, pos);
@@ -2109,7 +2051,7 @@ bool TileRenderer::tesselatePistonInWorld(Tile* tile, const TilePos& pos, bool h
 		for (int i = 0; i < 6; ++i)
 			m_faceRotation[i] = 0;
 
-		tile->setShape(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+		tile->setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 	}
 	else
 	{
@@ -2168,7 +2110,7 @@ bool TileRenderer::tesselateHeadPistonInWorld(Tile* tile, const TilePos& tp, boo
 	TileID data = m_pTileSource->getData(tp);
 	int dir = PistonHeadTile::getDirection(data);
 	float bright = tile->getBrightness(m_pTileSource, tp);
-	float headDepth = extended ? 1.0F : 0.5F;
+	float headDepth = extended ? 1.0f : 0.5f;
 	Vec3 pos = tp;
 	float offY = extended ? 16.0 : 8.0;
 	switch (dir)
@@ -2176,72 +2118,72 @@ bool TileRenderer::tesselateHeadPistonInWorld(Tile* tile, const TilePos& tp, boo
 	case Facing::DOWN:
 		for (int i = 0; i < 4; ++i)
 			m_faceRotation[Facing::HORIZONTAL[i]] = 3;
-		tile->setShape(0.0F, 0.0F, 0.0F, 1.0F, 0.25F, 1.0F);
+		tile->setShape(0.0f, 0.0f, 0.0f, 1.0f, 0.25f, 1.0f);
 		tesselateBlockInWorld(tile, tp);
-		renderPistonFace((pos.x + 6.0F / 16.0F), (pos.x + 10.0F / 16.0F), (pos.y + 0.25F), (pos.y + 0.25 + headDepth), (pos.z + 10.0 / 16.0F), (pos.z + 10.0F / 16.0F), bright * 0.8F, offY, Facing::DOWN);
-		renderPistonFace((pos.x + 10.0F / 16.0F), (pos.x + 6.0F / 16.0F), (pos.y + 0.25F), (pos.y + 0.25 + headDepth), (pos.z + 6.0 / 16.0F), (pos.z + 6.0F / 16.0F), bright * 0.8F, offY, Facing::DOWN);
-		renderPistonFace((pos.x + 6.0F / 16.0F), (pos.x + 6.0F / 16.0F), (pos.y + 0.25F), (pos.y + 0.25 + headDepth), (pos.z + 6.0 / 16.0F), (pos.z + 10.0F / 16.0F), bright * 0.6F, offY, Facing::DOWN);
-		renderPistonFace((pos.x + 10.0F / 16.0F), (pos.x + 10.0F / 16.0F), (pos.y + 0.25F), (pos.y + 0.25 + headDepth), (pos.z + 10.0 / 16.0F), (pos.z + 6.0F / 16.0F), bright * 0.6F, offY, Facing::DOWN);
+		renderPistonFace(AABB((pos.x + 6.0f / 16.0f), (pos.x + 10.0f / 16.0f), (pos.y + 0.25f), (pos.y + 0.25 + headDepth), (pos.z + 10.0 / 16.0f), (pos.z + 10.0f / 16.0f)), bright * 0.8f, offY, Facing::DOWN);
+		renderPistonFace(AABB((pos.x + 10.0f / 16.0f), (pos.x + 6.0f / 16.0f), (pos.y + 0.25f), (pos.y + 0.25 + headDepth), (pos.z + 6.0 / 16.0f), (pos.z + 6.0f / 16.0f)), bright * 0.8f, offY, Facing::DOWN);
+		renderPistonFace(AABB((pos.x + 6.0f / 16.0f), (pos.x + 6.0f / 16.0f), (pos.y + 0.25f), (pos.y + 0.25 + headDepth), (pos.z + 6.0 / 16.0f), (pos.z + 10.0f / 16.0f)), bright * 0.6f, offY, Facing::DOWN);
+		renderPistonFace(AABB((pos.x + 10.0f / 16.0f), (pos.x + 10.0f / 16.0f), (pos.y + 0.25f), (pos.y + 0.25 + headDepth), (pos.z + 10.0 / 16.0f), (pos.z + 6.0f / 16.0f)), bright * 0.6f, offY, Facing::DOWN);
 		break;
 	case Facing::UP:
-		tile->setShape(0.0F, 12.0F / 16.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+		tile->setShape(0.0f, 12.0f / 16.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 		tesselateBlockInWorld(tile, tp);
-		renderPistonFace((pos.x + 6.0F / 16.0F), (pos.x + 10.0F / 16.0F), (pos.y - 0.25F + 1.0F - headDepth), (pos.y - 0.25F + 1.0F), (pos.z + 10.0F / 16.0F), (pos.z + 10.0F / 16.0F), bright * 0.8F, offY, Facing::UP);
-		renderPistonFace((pos.x + 10.0F / 16.0F), (pos.x + 6.0F / 16.0F), (pos.y - 0.25F + 1.0F - headDepth), (pos.y - 0.25F + 1.0F), (pos.z + 6.0F / 16.0F), (pos.z + 6.0F / 16.0F), bright * 0.8F, offY, Facing::UP);
-		renderPistonFace((pos.x + 6.0F / 16.0F), (pos.x + 6.0F / 16.0F), (pos.y - 0.25F + 1.0F - headDepth), (pos.y - 0.25F + 1.0F), (pos.z + 6.0F / 16.0F), (pos.z + 10.0F / 16.0F), bright * 0.6F, offY, Facing::UP);
-		renderPistonFace((pos.x + 10.0F / 16.0F), (pos.x + 10.0F / 16.0F), (pos.y - 0.25F + 1.0F - headDepth), (pos.y - 0.25F + 1.0F), (pos.z + 10.0F / 16.0F), (pos.z + 6.0F / 16.0F), bright * 0.6F, offY, Facing::UP);
+		renderPistonFace(AABB((pos.x + 6.0f / 16.0f), (pos.x + 10.0f / 16.0f), (pos.y - 0.25f + 1.0f - headDepth), (pos.y - 0.25f + 1.0f), (pos.z + 10.0f / 16.0f), (pos.z + 10.0f / 16.0f)), bright * 0.8f, offY, Facing::UP);
+		renderPistonFace(AABB((pos.x + 10.0f / 16.0f), (pos.x + 6.0f / 16.0f), (pos.y - 0.25f + 1.0f - headDepth), (pos.y - 0.25f + 1.0f), (pos.z + 6.0f / 16.0f), (pos.z + 6.0f / 16.0f)), bright * 0.8f, offY, Facing::UP);
+		renderPistonFace(AABB((pos.x + 6.0f / 16.0f), (pos.x + 6.0f / 16.0f), (pos.y - 0.25f + 1.0f - headDepth), (pos.y - 0.25f + 1.0f), (pos.z + 6.0f / 16.0f), (pos.z + 10.0f / 16.0f)), bright * 0.6f, offY, Facing::UP);
+		renderPistonFace(AABB((pos.x + 10.0f / 16.0f), (pos.x + 10.0f / 16.0f), (pos.y - 0.25f + 1.0f - headDepth), (pos.y - 0.25f + 1.0f), (pos.z + 10.0f / 16.0f), (pos.z + 6.0f / 16.0f)), bright * 0.6f, offY, Facing::UP);
 		break;
 	case Facing::NORTH:
 		m_faceRotation[Facing::EAST] = 1;
 		m_faceRotation[Facing::WEST] = 2;
-		tile->setShape(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 0.25F);
+		tile->setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.25f);
 		tesselateBlockInWorld(tile, tp);
-		renderPistonFace((pos.x + 6.0F / 16.0F), (pos.x + 6.0F / 16.0F), (pos.y + 10.0F / 16.0F), (pos.y + 6.0F / 16.0F), (pos.z + 0.25F), (pos.z + 0.25F + headDepth), bright * 0.6F, offY, Facing::NORTH);
-		renderPistonFace((pos.x + 10.0F / 16.0F), (pos.x + 10.0F / 16.0F), (pos.y + 6.0F / 16.0F), (pos.y + 10.0F / 16.0F), (pos.z + 0.25F), (pos.z + 0.25F + headDepth), bright * 0.6F, offY, Facing::NORTH);
-		renderPistonFace((pos.x + 6.0F / 16.0F), (pos.x + 10.0F / 16.0F), (pos.y + 6.0F / 16.0F), (pos.y + 6.0F / 16.0F), (pos.z + 0.25F), (pos.z + 0.25F + headDepth), bright * 0.5F, offY, Facing::NORTH);
-		renderPistonFace((pos.x + 10.0F / 16.0F), (pos.x + 6.0F / 16.0F), (pos.y + 10.0F / 16.0F), (pos.y + 10.0F / 16.0F), (pos.z + 0.25F), (pos.z + 0.25F + headDepth), bright, offY, Facing::NORTH);
+		renderPistonFace(AABB((pos.x + 6.0f / 16.0f), (pos.x + 6.0f / 16.0f), (pos.y + 10.0f / 16.0f), (pos.y + 6.0f / 16.0f), (pos.z + 0.25f), (pos.z + 0.25f + headDepth)), bright * 0.6f, offY, Facing::NORTH);
+		renderPistonFace(AABB((pos.x + 10.0f / 16.0f), (pos.x + 10.0f / 16.0f), (pos.y + 6.0f / 16.0f), (pos.y + 10.0f / 16.0f), (pos.z + 0.25f), (pos.z + 0.25f + headDepth)), bright * 0.6f, offY, Facing::NORTH);
+		renderPistonFace(AABB((pos.x + 6.0f / 16.0f), (pos.x + 10.0f / 16.0f), (pos.y + 6.0f / 16.0f), (pos.y + 6.0f / 16.0f), (pos.z + 0.25f), (pos.z + 0.25f + headDepth)), bright * 0.5f, offY, Facing::NORTH);
+		renderPistonFace(AABB((pos.x + 10.0f / 16.0f), (pos.x + 6.0f / 16.0f), (pos.y + 10.0f / 16.0f), (pos.y + 10.0f / 16.0f), (pos.z + 0.25f), (pos.z + 0.25f + headDepth)), bright, offY, Facing::NORTH);
 		break;
 	case Facing::SOUTH:
 		m_faceRotation[Facing::EAST] = 2;
 		m_faceRotation[Facing::WEST] = 1;
 		m_faceRotation[Facing::UP] = 3;
 		m_faceRotation[Facing::DOWN] = 3;
-		tile->setShape(0.0F, 0.0F, 12.0F / 16.0F, 1.0F, 1.0F, 1.0F);
+		tile->setShape(0.0f, 0.0f, 12.0f / 16.0f, 1.0f, 1.0f, 1.0f);
 		tesselateBlockInWorld(tile, tp);
-		renderPistonFace((pos.x + 6.0F / 16.0F), (pos.x + 6.0F / 16.0F), (pos.y + 10.0F / 16.0F), (pos.y + 6.0F / 16.0F), (pos.z - 0.25F + 1.0F - headDepth), (pos.z - 0.25F + 1.0F), bright * 0.6F, offY, Facing::SOUTH);
-		renderPistonFace((pos.x + 10.0F / 16.0F), (pos.x + 10.0F / 16.0F), (pos.y + 6.0F / 16.0F), (pos.y + 10.0F / 16.0F), (pos.z - 0.25F + 1.0F - headDepth), (pos.z - 0.25F + 1.0F), bright * 0.6F, offY, Facing::SOUTH);
-		renderPistonFace((pos.x + 6.0F / 16.0F), (pos.x + 10.0F / 16.0F), (pos.y + 6.0F / 16.0F), (pos.y + 6.0F / 16.0F), (pos.z - 0.25F + 1.0F - headDepth), (pos.z - 0.25F + 1.0F), bright * 0.5F, offY, Facing::SOUTH);
-		renderPistonFace((pos.x + 10.0F / 16.0F), (pos.x + 6.0F / 16.0F), (pos.y + 10.0F / 16.0F), (pos.y + 10.0F / 16.0F), (pos.z - 0.25F + 1.0F - headDepth), (pos.z - 0.25F + 1.0F), bright, offY, Facing::SOUTH);
+		renderPistonFace(AABB((pos.x + 6.0f / 16.0f), (pos.x + 6.0f / 16.0f), (pos.y + 10.0f / 16.0f), (pos.y + 6.0f / 16.0f), (pos.z - 0.25f + 1.0f - headDepth), (pos.z - 0.25f + 1.0f)), bright * 0.6f, offY, Facing::SOUTH);
+		renderPistonFace(AABB((pos.x + 10.0f / 16.0f), (pos.x + 10.0f / 16.0f), (pos.y + 6.0f / 16.0f), (pos.y + 10.0f / 16.0f), (pos.z - 0.25f + 1.0f - headDepth), (pos.z - 0.25f + 1.0f)), bright * 0.6f, offY, Facing::SOUTH);
+		renderPistonFace(AABB((pos.x + 6.0f / 16.0f), (pos.x + 10.0f / 16.0f), (pos.y + 6.0f / 16.0f), (pos.y + 6.0f / 16.0f), (pos.z - 0.25f + 1.0f - headDepth), (pos.z - 0.25f + 1.0f)), bright * 0.5f, offY, Facing::SOUTH);
+		renderPistonFace(AABB((pos.x + 10.0f / 16.0f), (pos.x + 6.0f / 16.0f), (pos.y + 10.0f / 16.0f), (pos.y + 10.0f / 16.0f), (pos.z - 0.25f + 1.0f - headDepth), (pos.z - 0.25f + 1.0f)), bright, offY, Facing::SOUTH);
 		break;
 	case Facing::WEST:
 		m_faceRotation[Facing::NORTH] = 1;
 		m_faceRotation[Facing::SOUTH] = 2;
 		m_faceRotation[Facing::UP] = 2;
 		m_faceRotation[Facing::DOWN] = 1;
-		tile->setShape(0.0F, 0.0F, 0.0F, 0.25F, 1.0F, 1.0F);
+		tile->setShape(0.0f, 0.0f, 0.0f, 0.25f, 1.0f, 1.0f);
 		tesselateBlockInWorld(tile, tp);
-		renderPistonFace((pos.x + 0.25F), (pos.x + 0.25F + headDepth), (pos.y + 6.0F / 16.0F), (pos.y + 6.0F / 16.0F), (pos.z + 10.0F / 16.0F), (pos.z + 6.0F / 16.0F), bright * 0.5F, offY, Facing::WEST);
-		renderPistonFace((pos.x + 0.25F), (pos.x + 0.25F + headDepth), (pos.y + 10.0F / 16.0F), (pos.y + 10.0F / 16.0F), (pos.z + 6.0F / 16.0F), (pos.z + 10.0F / 16.0F), bright, offY, Facing::WEST);
-		renderPistonFace((pos.x + 0.25F), (pos.x + 0.25F + headDepth), (pos.y + 6.0F / 16.0F), (pos.y + 10.0F / 16.0F), (pos.z + 6.0F / 16.0F), (pos.z + 6.0F / 16.0F), bright * 0.6F, offY, Facing::WEST);
-		renderPistonFace((pos.x + 0.25F), (pos.x + 0.25F + headDepth), (pos.y + 10.0F / 16.0F), (pos.y + 6.0F / 16.0F), (pos.z + 10.0F / 16.0F), (pos.z + 10.0F / 16.0F), bright * 0.6F, offY, Facing::WEST);
+		renderPistonFace(AABB((pos.x + 0.25f), (pos.x + 0.25f + headDepth), (pos.y + 6.0f / 16.0f), (pos.y + 6.0f / 16.0f), (pos.z + 10.0f / 16.0f), (pos.z + 6.0f / 16.0f)), bright * 0.5f, offY, Facing::WEST);
+		renderPistonFace(AABB((pos.x + 0.25f), (pos.x + 0.25f + headDepth), (pos.y + 10.0f / 16.0f), (pos.y + 10.0f / 16.0f), (pos.z + 6.0f / 16.0f), (pos.z + 10.0f / 16.0f)), bright, offY, Facing::WEST);
+		renderPistonFace(AABB((pos.x + 0.25f), (pos.x + 0.25f + headDepth), (pos.y + 6.0f / 16.0f), (pos.y + 10.0f / 16.0f), (pos.z + 6.0f / 16.0f), (pos.z + 6.0f / 16.0f)), bright * 0.6f, offY, Facing::WEST);
+		renderPistonFace(AABB((pos.x + 0.25f), (pos.x + 0.25f + headDepth), (pos.y + 10.0f / 16.0f), (pos.y + 6.0f / 16.0f), (pos.z + 10.0f / 16.0f), (pos.z + 10.0f / 16.0f)), bright * 0.6f, offY, Facing::WEST);
 		break;
 	case Facing::EAST:
 		m_faceRotation[Facing::NORTH] = 2;
 		m_faceRotation[Facing::SOUTH] = 1;
 		m_faceRotation[Facing::UP] = 1;
 		m_faceRotation[Facing::DOWN] = 2;
-		tile->setShape(12.0F / 16.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+		tile->setShape(12.0f / 16.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 		tesselateBlockInWorld(tile, tp);
-		renderPistonFace((pos.x - 0.25F + 1.0F - headDepth), (pos.x - 0.25F + 1.0F), (pos.y + 6.0F / 16.0F), (pos.y + 6.0F / 16.0F), (pos.z + 10.0F / 16.0F), (pos.z + 6.0F / 16.0F), bright * 0.5F, offY, Facing::EAST);
-		renderPistonFace((pos.x - 0.25F + 1.0F - headDepth), (pos.x - 0.25F + 1.0F), (pos.y + 10.0F / 16.0F), (pos.y + 10.0F / 16.0F), (pos.z + 6.0F / 16.0F), (pos.z + 10.0F / 16.0F), bright, offY, Facing::EAST);
-		renderPistonFace((pos.x - 0.25F + 1.0F - headDepth), (pos.x - 0.25F + 1.0F), (pos.y + 6.0F / 16.0F), (pos.y + 10.0F / 16.0F), (pos.z + 6.0F / 16.0F), (pos.z + 6.0F / 16.0F), bright * 0.6F, offY, Facing::EAST);
-		renderPistonFace((pos.x - 0.25F + 1.0F - headDepth), (pos.x - 0.25F + 1.0F), (pos.y + 10.0F / 16.0F), (pos.y + 6.0F / 16.0F), (pos.z + 10.0F / 16.0F), (pos.z + 10.0F / 16.0F), bright * 0.6F, offY, Facing::EAST);
+		renderPistonFace(AABB((pos.x - 0.25f + 1.0f - headDepth), (pos.x - 0.25f + 1.0f), (pos.y + 6.0f / 16.0f), (pos.y + 6.0f / 16.0f), (pos.z + 10.0f / 16.0f), (pos.z + 6.0f / 16.0f)), bright * 0.5f, offY, Facing::EAST);
+		renderPistonFace(AABB((pos.x - 0.25f + 1.0f - headDepth), (pos.x - 0.25f + 1.0f), (pos.y + 10.0f / 16.0f), (pos.y + 10.0f / 16.0f), (pos.z + 6.0f / 16.0f), (pos.z + 10.0f / 16.0f)), bright, offY, Facing::EAST);
+		renderPistonFace(AABB((pos.x - 0.25f + 1.0f - headDepth), (pos.x - 0.25f + 1.0f), (pos.y + 6.0f / 16.0f), (pos.y + 10.0f / 16.0f), (pos.z + 6.0f / 16.0f), (pos.z + 6.0f / 16.0f)), bright * 0.6f, offY, Facing::EAST);
+		renderPistonFace(AABB((pos.x - 0.25f + 1.0f - headDepth), (pos.x - 0.25f + 1.0f), (pos.y + 10.0f / 16.0f), (pos.y + 6.0f / 16.0f), (pos.z + 10.0f / 16.0f), (pos.z + 10.0f / 16.0f)), bright * 0.6f, offY, Facing::EAST);
 	}
 
 	for (int i = 0; i < 6; ++i)
 		m_faceRotation[i] = 0;
 
-	tile->setShape(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+	tile->setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 	return true;
 }
 
@@ -2533,7 +2475,7 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusion(Tile* a2, const Ti
 	int v221; // [sp+28h] [bp-40h]
 	int v222; // [sp+2Ch] [bp-3Ch]
 
-	this->m_ambientOcclusion = true;
+	this->m_bAmbientOcclusion = true;
 	v12 = a2->getBrightness(this->m_pTileSource, pos);
 	v13 = this->m_pTileSource;
 	this->field_C = v12;
@@ -3306,7 +3248,7 @@ LABEL_101:
 	renderEast(a2, pos, v193);
 LABEL_102:
 	result = v69;
-	this->m_ambientOcclusion = false;
+	this->m_bAmbientOcclusion = false;
 	return result;
 }
 
@@ -3349,7 +3291,7 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 					continue;
 				const int* normal = Facing::NORMALS[dir];
 				t.normal(normal[0], normal[1], normal[2]);
-				renderFace(tile.getType(), Vec3::ZERO, tile.getType()->getTexture(dir, tile.data), dir, getTileFaceColor(tile, dir, Facing::LIGHT[dir]));
+				renderFace(tile.getType(), Vec3::ZERO, tile.getType()->getTexture(dir, tile.data), dir, color * getTileFaceColor(tile, dir, Facing::LIGHT[dir], preshade));
 			}
 			t.draw(material);
 			t.addOffset(0.5f, 0.5f, 0.5f);
@@ -3383,7 +3325,7 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 					Facing::Name dir = (Facing::Name)i;
 					const int* normal = Facing::NORMALS[dir];
 					t.normal(normal[0], normal[1], normal[2]);
-					renderFace(tile.getType(), Vec3::ZERO, tile.getType()->getTexture(dir, tile.data), dir, getTileFaceColor(tile, dir, Facing::LIGHT[dir]));
+					renderFace(tile.getType(), Vec3::ZERO, tile.getType()->getTexture(dir, tile.data), dir, color * getTileFaceColor(tile, dir, Facing::LIGHT[dir], preshade));
 				}
 				t.draw(material);
 			}
@@ -3411,7 +3353,7 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 					Facing::Name dir = (Facing::Name)i;
 					const int* normal = Facing::NORMALS[dir];
 					t.normal(normal[0], normal[1], normal[2]);
-					renderFace(tile.getType(), Vec3::ZERO, tile.getType()->getTexture(dir, tile.data), dir, getTileFaceColor(tile, dir, Facing::LIGHT[dir]));
+					renderFace(tile.getType(), Vec3::ZERO, tile.getType()->getTexture(dir, tile.data), dir, color * getTileFaceColor(tile, dir, Facing::LIGHT[dir], preshade));
 				}
 				t.draw(material);
 			}
@@ -3442,7 +3384,7 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 					Facing::Name dir = (Facing::Name)i;
 					const int* normal = Facing::NORMALS[dir];
 					t.normal(normal[0], normal[1], normal[2]);
-					renderFace(tile.getType(), Vec3::ZERO, tile.getType()->getTexture(dir, tile.data), dir, getTileFaceColor(tile, dir, Facing::LIGHT[dir]));
+					renderFace(tile.getType(), Vec3::ZERO, tile.getType()->getTexture(dir, tile.data), dir, color * getTileFaceColor(tile, dir, Facing::LIGHT[dir], preshade));
 				}
 				t.draw(material);
 			}
@@ -3453,7 +3395,7 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 }
 
 #ifdef ENH_USE_OWN_AO
-bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, const TilePos& pos, float r, float g, float b)
+bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, const TilePos& pos, const Color& color)
 {
 	// START OF AUXILIARY DATA FOR AO
 
@@ -3518,9 +3460,6 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 		ETILE_FACE_DE, ETILE_FACE_SE, ETILE_FACE_DSE,   ETILE_FACE_DE, ETILE_FACE_NE, ETILE_FACE_DNE,   ETILE_FACE_UE, ETILE_FACE_NE, ETILE_FACE_UNE,   ETILE_FACE_UE, ETILE_FACE_SE, ETILE_FACE_USE,
 	};
 
-	// Depending on the face, add a multiplier to our lighting value. This is the same as in regular block rendering without AO.
-	static const float lightingMult[] = { 0.5f, 1.0f, 0.8f, 0.8f, 0.6f, 0.6f };
-
 	// END OF AUXILIARY DATA FOR AO
 
 	bool bBother = false;
@@ -3542,11 +3481,6 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 	if (!bBother)
 		return false;
 
-	float topR = r, topG = g, topB = b;
-
-	if (tile == Tile::grass)
-		r = g = b = 1.0f;
-
 	//Tesselator& t = m_tessellator;
 
 	//float fLightHere = tile->getBrightness(m_pTileSource, pos);
@@ -3564,19 +3498,18 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 	// Render all the faces.
 	for (int dir = Facing::DOWN; dir <= Facing::EAST; dir++)
 	{
+		Facing::Name face = (Facing::Name)dir;
 		TilePos tp(pos.x + diffX[dir],
 			pos.y + diffY[dir],
 			pos.z + diffZ[dir]);
 
 		// check if we should bother in the first place
-		if (!m_bNoCulling && !tile->shouldRenderFace(m_pTileSource, tp, (Facing::Name)dir))
+		if (!m_bNoCulling && !tile->shouldRenderFace(m_pTileSource, tp, face))
 		{
 			continue;
 		}
 
-		float fR = r, fG = g, fB = b;
-		if (dir == Facing::UP)
-			fR = topR, fG = topG, fB = topB;
+		Color faceColor = tile != Tile::grass || face == Facing::UP ? color : Color::WHITE;
 
 		for (int i = 0; i < 4; i++)
 			m_vtxRed[i] = m_vtxGreen[i] = m_vtxBlue[i] = 1.0f;
@@ -3602,38 +3535,11 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 			m_vtxLightTex[i] = br;
 		}
 
-		for (int i = 0; i < 4; i++)
-		{
-			m_vtxRed  [i] *= fR * lightingMult[dir];
-			m_vtxGreen[i] *= fG * lightingMult[dir];
-			m_vtxBlue [i] *= fB * lightingMult[dir];
-		}
+		m_bAmbientOcclusion = true;
 
-		m_ambientOcclusion = true;
+		renderFace(tile, pos, tile->getTexture(m_pTileSource, pos, face), face, faceColor.mulRGB(Facing::LIGHT[dir]));
 
-		switch (dir) 
-		{
-			case Facing::DOWN:
-				renderDown  (tile, pos, tile->getTexture(m_pTileSource, pos, Facing::DOWN));
-				break;
-			case Facing::UP:
-				renderUp(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::UP));
-				break;
-			case Facing::NORTH:
-				renderNorth   (tile, pos, tile->getTexture(m_pTileSource, pos, Facing::NORTH));
-				break;
-			case Facing::SOUTH:
-				renderSouth   (tile, pos, tile->getTexture(m_pTileSource, pos, Facing::SOUTH));
-				break;
-			case Facing::WEST:
-				renderWest    (tile, pos, tile->getTexture(m_pTileSource, pos, Facing::WEST));
-				break;
-			case Facing::EAST:
-				renderEast    (tile, pos, tile->getTexture(m_pTileSource, pos, Facing::EAST));
-				break;
-		}
-
-		if (TileRenderer::m_bFancyGrass && tile->getTexture(m_pTileSource, pos, (Facing::Name)dir) == TEXTURE_GRASS_SIDE && (dir == Facing::WEST || dir == Facing::EAST || dir == Facing::NORTH || dir == Facing::SOUTH))
+		if (TileRenderer::m_bFancyGrass && tile->getTexture(m_pTileSource, pos, face) == TEXTURE_GRASS_SIDE && Facing::isHorizontal(face))
 		{
 			for (int i = 0; i < 4; i++)
 				m_vtxRed[i] = m_vtxGreen[i] = m_vtxBlue[i] = 1.0f;
@@ -3653,37 +3559,10 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 				m_vtxBlue[i] = br;
 			}
 
-			for (int i = 0; i < 4; i++)
-			{
-				m_vtxRed[i] *= topR * lightingMult[dir];
-				m_vtxGreen[i] *= topG * lightingMult[dir];
-				m_vtxBlue[i] *= topB * lightingMult[dir];
-			}
-
-			switch (dir) 
-			{
-				case Facing::DOWN:
-					renderDown(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
-					break;
-				case Facing::UP:
-					renderUp(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
-					break;
-				case Facing::NORTH:
-					renderNorth(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
-					break;
-				case Facing::SOUTH:
-					renderSouth(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
-					break;
-				case Facing::WEST:
-					renderWest(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
-					break;
-				case Facing::EAST:
-					renderEast(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
-					break;
-			}
+			renderFace(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY, face, Color(color).mulRGB(Facing::LIGHT[dir]));
 		}
 
-		m_ambientOcclusion = false;
+		m_bAmbientOcclusion = false;
 	}
 
 	return true;

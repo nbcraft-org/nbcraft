@@ -283,9 +283,9 @@ void Minecart::tick()
                     }
                 }
 
-                m_vel.x *= 0.96F;
+                m_vel.x *= 0.96f;
                 m_vel.y *= 0.0f;
-                m_vel.z *= 0.96F;
+                m_vel.z *= 0.96f;
             }
 
             if (var49) 
@@ -397,7 +397,7 @@ void Minecart::tick()
         {
             m_rot.yaw = Mth::atan2(var44, var43) * 180.0f / M_PI;
             if (m_bFlipped)
-                m_rot.yaw += 180.0F;
+                m_rot.yaw += 180.0f;
         }
 
         float var13;
@@ -444,7 +444,7 @@ void Minecart::tick()
 
 float Minecart::getRideHeight() const
 {
-	return -0.3;
+	return -0.3f;
 }
 
 bool Minecart::hurt(Entity*, int mul)
@@ -502,9 +502,9 @@ void Minecart::remove()
 
                 var2.m_count -= var6;
                 ItemEntity* var7 = new ItemEntity(m_pLevel, Vec3(m_pos.x + var3, m_pos.y + var4, m_pos.z + var5), ItemStack(var2.getId(), var6, var2.getAuxValue()));
-                float var8 = 0.05F;
+                float var8 = 0.05f;
                 var7->m_vel.x = m_random.nextGaussian() * var8;
-                var7->m_vel.y = m_random.nextGaussian() * var8 + 0.2F;
+                var7->m_vel.y = m_random.nextGaussian() * var8 + 0.2f;
                 var7->m_vel.z = m_random.nextGaussian() * var8;
                 m_pLevel->addEntity(var7);
             }
@@ -666,21 +666,21 @@ void Minecart::push(Entity* ent)
     float var2 = ent->m_pos.x - m_pos.x;
     float var4 = ent->m_pos.z - m_pos.z;
     float var6 = var2 * var2 + var4 * var4;
-    if (var6 >= 9.999999747378752E-5)
+    if (var6 >= 1.0E-4f)
     {
         var6 = Mth::sqrt(var6);
         var2 /= var6;
         var4 /= var6;
-        float var8 = 1.0 / var6;
-        if (var8 > 1.0)
-            var8 = 1.0;
+        float var8 = 1.0f / var6;
+        if (var8 > 1.0f)
+            var8 = 1.0f;
 
         var2 *= var8;
         var4 *= var8;
         var2 *= 0.1;
         var4 *= 0.1;
-        var2 *= 1.0F - m_pushThrough;
-        var4 *= 1.0F - m_pushThrough;
+        var2 *= 1.0f - m_pushThrough;
+        var4 *= 1.0f - m_pushThrough;
         var2 *= 0.5;
         var4 *= 0.5;
         if (ent->getDescriptor().hasCategory(EntityCategories::MINECART))
@@ -691,43 +691,43 @@ void Minecart::push(Entity* ent)
 
             float var14 = xDiff * minecart->m_vel.z + zDiff * minecart->m_oPos.x;
             var14 *= var14;
-            if (var14 > 5.0)
+            if (var14 > 5.0f)
                 return;
 
             float var10 = ent->m_vel.x + m_vel.x;
             float var12 = ent->m_vel.z + m_vel.z;
             if (minecart->m_type == FURNACE && m_type != FURNACE)
             {
-                m_vel.x *= 0.2;
-                m_vel.z *= 0.2;
+                m_vel.x *= 0.2f;
+                m_vel.z *= 0.2f;
                 Entity::push(Vec3(ent->m_vel.x - var2, 0.0f, ent->m_vel.z - var4));
-                ent->m_vel.x *= 0.7;
-                ent->m_vel.z *= 0.7;
+                ent->m_vel.x *= 0.7f;
+                ent->m_vel.z *= 0.7f;
             }
             else if (minecart->m_type != FURNACE && m_type == FURNACE)
             {
                 ent->m_vel.x *= 0.2;
                 ent->m_vel.z *= 0.2;
                 ent->push(Vec3(m_vel.x + var2, 0.0f, m_vel.z + var4));
-                m_vel.x *= 0.7;
-                m_vel.z *= 0.7;
+                m_vel.x *= 0.7f;
+                m_vel.z *= 0.7f;
             }
             else
             {
-                var10 /= 2.0;
-                var12 /= 2.0;
-                m_vel.x *= 0.2;
-                m_vel.z *= 0.2;
+                var10 /= 2.0f;
+                var12 /= 2.0f;
+                m_vel.x *= 0.2f;
+                m_vel.z *= 0.2f;
                 Entity::push(Vec3(var10 - var2, 0.0f, var12 - var4));
-                ent->m_vel.x *= 0.2;
-                ent->m_vel.z *= 0.2;
+                ent->m_vel.x *= 0.2f;
+                ent->m_vel.z *= 0.2f;
                 ent->push(Vec3(var10 + var2, 0.0f, var12 + var4));
             }
         }
         else
         {
             Entity::push(Vec3(-var2, 0.0f, -var4));
-            ent->push(Vec3(var2 / 4.0f, 0.0f, var4 / 4.0));
+            ent->push(Vec3(var2 / 4.0f, 0.0f, var4 / 4.0f));
         }
     }
 }
@@ -747,5 +747,5 @@ void Minecart::lerpMotion(const Vec3& motion)
 
 bool Minecart::stillValid(Player* var1) const
 {
-    return !m_bRemoved && !(var1->distanceToSqr(this) > 64.0);
+    return !m_bRemoved && !(var1->distanceToSqr(this) > 64.0f);
 }

@@ -6,10 +6,11 @@
 #include "client/renderer/Textures.hpp"
 #include "world/tile/entity/TileEntity.hpp"
 #include "world/entity/Player.hpp"
+#include "client/renderer/renderer/EntityShaderManager.hpp"
 
 class TileEntityRendererBase;
 
-class TileEntityRenderDispatcher
+class TileEntityRenderDispatcher : public EntityShaderManager
 {
 private:
     TileEntityRenderDispatcher();

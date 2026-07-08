@@ -76,9 +76,9 @@ AABB* MovingPistonTile::getAABB(const Level* level, const TilePos& pos)
     PistonMovingTileEntity* piston = static_cast<PistonMovingTileEntity*>(level->getTileEntity(pos));
     if (piston)
     {
-        float progress = piston->getProgress(0.0F);
+        float progress = piston->getProgress(0.0f);
         if (piston->isExtending())
-            progress = 1.0F - progress;
+            progress = 1.0f - progress;
 
         return moveByPositionAndProgress(level, pos, piston->getTileId(), progress, piston->getDirection());
     }
@@ -94,9 +94,9 @@ void MovingPistonTile::updateShape(const LevelSource* level, const TilePos& pos)
             return;
 
         tile->updateShape(level, pos);
-        float progress = piston->getProgress(0.0F);
+        float progress = piston->getProgress(0.0f);
         if (piston->isExtending())
-            progress = 1.0F - progress;
+            progress = 1.0f - progress;
 
         m_aabb.move(Vec3(TilePos::ZERO.relative(piston->getDirection())) * -progress);
     }

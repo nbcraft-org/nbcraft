@@ -109,7 +109,6 @@ public:
 	int m_ticks;
 	std::string m_overlayMessage;
 	int m_overlayMessageDuration;
-	bool m_bHasOverlayMessage;
 	float m_tbr;
 	RenderChunk m_renderChunk;
 	bool field_A3C;

@@ -63,7 +63,7 @@
 #define AKEYCODE_FORWARD_DEL   VK_DELETE
 #define AKEYCODE_ARROW_LEFT    VK_LEFT
 #define AKEYCODE_ARROW_RIGHT   VK_RIGHT
-#define AKEYCODE_DEL               VK_BACK
+#define AKEYCODE_DEL           VK_BACK
 #define AKEYCODE_ENTER         VK_RETURN
 #define AKEYCODE_A             'A'
 #define AKEYCODE_Z             'Z'

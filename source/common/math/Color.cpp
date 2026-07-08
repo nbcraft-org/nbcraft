@@ -21,7 +21,51 @@ Color Color::WHITE  = Color(1.0f, 1.0f, 1.0f);
 
 Color Color::TEXT_GREY = Color(0x404040);
 
-Color Color::getHSBColor(float h, float s, float b)
+Color Color::getHSBColor(float hue, float saturation, float brightness)
 {
-	return Color(Mth::HSBtoRGB(h, s, b));
+	Color c = Color::WHITE;
+	if (saturation == 0)
+		c.r = c.g = c.b = brightness;
+	else
+	{
+		float h = (hue - Mth::floor(hue)) * 6.0f;
+		float f = h - Mth::floor(h);
+		float p = brightness * (1.0f - saturation);
+		float q = brightness * (1.0f - saturation * f);
+		float t = brightness * (1.0f - (saturation * (1.0f - f)));
+		switch ((int)h)
+		{
+		case 0:
+			c.r = brightness;
+			c.g = t;
+			c.b = p;
+			break;
+		case 1:
+			c.r = q;
+			c.g = brightness;
+			c.b = p;
+			break;
+		case 2:
+			c.r = p;
+			c.g = brightness;
+			c.b = t;
+			break;
+		case 3:
+			c.r = p;
+			c.g = q;
+			c.b = brightness;
+			break;
+		case 4:
+			c.r = t;
+			c.g = p;
+			c.b = brightness;
+			break;
+		case 5:
+			c.r = brightness;
+			c.g = p;
+			c.b = q;
+			break;
+		}
+	}
+	return c;
 }

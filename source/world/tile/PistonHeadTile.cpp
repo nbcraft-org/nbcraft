@@ -52,22 +52,22 @@ void PistonHeadTile::updateShape(const LevelSource* source, const TilePos& pos)
 	switch (getDirection(data))
 	{
 	case Facing::DOWN:
-		setShape(0.0F, 0.0F, 0.0F, 1.0F, 0.25F, 1.0F);
+		setShape(0.0f, 0.0f, 0.0f, 1.0f, 0.25f, 1.0f);
 		break;
 	case Facing::UP:
-		setShape(0.0F, 12.0F / 16.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+		setShape(0.0f, 12.0f / 16.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 		break;
 	case Facing::NORTH:
-		setShape(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 0.25F);
+		setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.25f);
 		break;
 	case Facing::SOUTH:
-		setShape(0.0F, 0.0F, 12.0F / 16.0F, 1.0F, 1.0F, 1.0F);
+		setShape(0.0f, 0.0f, 12.0f / 16.0f, 1.0f, 1.0f, 1.0f);
 		break;
 	case Facing::WEST:
-		setShape(0.0F, 0.0F, 0.0F, 0.25F, 1.0F, 1.0F);
+		setShape(0.0f, 0.0f, 0.0f, 0.25f, 1.0f, 1.0f);
 		break;
 	case Facing::EAST:
-		setShape(12.0F / 16.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+		setShape(12.0f / 16.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 }
@@ -77,43 +77,43 @@ void PistonHeadTile::addAABBs(const Level* level, const TilePos& pos, const AABB
 	int var7 = level->getData(pos);
 	switch (getDirection(var7)) {
 	case 0:
-		setShape(0.0F, 0.0F, 0.0F, 1.0F, 0.25F, 1.0F);
+		setShape(0.0f, 0.0f, 0.0f, 1.0f, 0.25f, 1.0f);
 		Tile::addAABBs(level, pos, aabb, out);
-		setShape(6.0F / 16.0F, 0.25F, 6.0F / 16.0F, 10.0F / 16.0F, 1.0F, 10.0F / 16.0F);
+		setShape(6.0f / 16.0f, 0.25f, 6.0f / 16.0f, 10.0f / 16.0f, 1.0f, 10.0f / 16.0f);
 		Tile::addAABBs(level, pos, aabb, out);
 		break;
 	case 1:
-		setShape(0.0F, 12.0F / 16.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+		setShape(0.0f, 12.0f / 16.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 		Tile::addAABBs(level, pos, aabb, out);
-		setShape(6.0F / 16.0F, 0.0F, 6.0F / 16.0F, 10.0F / 16.0F, 12.0F / 16.0F, 10.0F / 16.0F);
+		setShape(6.0f / 16.0f, 0.0f, 6.0f / 16.0f, 10.0f / 16.0f, 12.0f / 16.0f, 10.0f / 16.0f);
 		Tile::addAABBs(level, pos, aabb, out);
 		break;
 	case 2:
-		setShape(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 0.25F);
+		setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.25f);
 		Tile::addAABBs(level, pos, aabb, out);
-		setShape(0.25F, 6.0F / 16.0F, 0.25F, 12.0F / 16.0F, 10.0F / 16.0F, 1.0F);
+		setShape(0.25f, 6.0f / 16.0f, 0.25f, 12.0f / 16.0f, 10.0f / 16.0f, 1.0f);
 		Tile::addAABBs(level, pos, aabb, out);
 		break;
 	case 3:
-		setShape(0.0F, 0.0F, 12.0F / 16.0F, 1.0F, 1.0F, 1.0F);
+		setShape(0.0f, 0.0f, 12.0f / 16.0f, 1.0f, 1.0f, 1.0f);
 		Tile::addAABBs(level, pos, aabb, out);
-		setShape(0.25F, 6.0F / 16.0F, 0.0F, 12.0F / 16.0F, 10.0F / 16.0F, 12.0F / 16.0F);
+		setShape(0.25f, 6.0f / 16.0f, 0.0f, 12.0f / 16.0f, 10.0f / 16.0f, 12.0f / 16.0f);
 		Tile::addAABBs(level, pos, aabb, out);
 		break;
 	case 4:
-		setShape(0.0F, 0.0F, 0.0F, 0.25F, 1.0F, 1.0F);
+		setShape(0.0f, 0.0f, 0.0f, 0.25f, 1.0f, 1.0f);
 		Tile::addAABBs(level, pos, aabb, out);
-		setShape(6.0F / 16.0F, 0.25F, 0.25F, 10.0F / 16.0F, 12.0F / 16.0F, 1.0F);
+		setShape(6.0f / 16.0f, 0.25f, 0.25f, 10.0f / 16.0f, 12.0f / 16.0f, 1.0f);
 		Tile::addAABBs(level, pos, aabb, out);
 		break;
 	case 5:
-		setShape(12.0F / 16.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+		setShape(12.0f / 16.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 		Tile::addAABBs(level, pos, aabb, out);
-		setShape(0.0F, 6.0F / 16.0F, 0.25F, 12.0F / 16.0F, 10.0F / 16.0F, 12.0F / 16.0F);
+		setShape(0.0f, 6.0f / 16.0f, 0.25f, 12.0f / 16.0f, 10.0f / 16.0f, 12.0f / 16.0f);
 		Tile::addAABBs(level, pos, aabb, out);
 	}
 
-	setShape(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+	setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 }
 
 bool PistonHeadTile::isSolidRender() const

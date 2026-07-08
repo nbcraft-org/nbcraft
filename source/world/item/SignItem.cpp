@@ -24,7 +24,7 @@ bool SignItem::useOn(ItemStack* stack, Player* player, Level* level, const TileP
         else
         {
             if (face == Facing::UP)
-                level->setTileAndData(tp, Tile::sign->m_ID, Mth::floor(((player->m_rot.yaw + 180.0F) * 16.0F / 360.0F) + 0.5) & 15);
+                level->setTileAndData(tp, Tile::sign->m_ID, Mth::floor(((player->m_rot.yaw + 180.0f) * 16.0f / 360.0f) + 0.5) & 15);
             else
                 level->setTileAndData(tp, Tile::wallSign->m_ID, face);
 

@@ -8,7 +8,7 @@ public:
 	SignModel();
 	~SignModel();
 
-	void render(float time = 0, float r = 0, float bob = 0, float yRot = 0, float xRot = 0, float scale = 0) override;
+	void render(float time = 0.0f, float r = 0.0f, float bob = 0.0f, float yRot = 0.0f, float xRot = 0.0f, float scale = 0.0f) override;
 
 public:
 	ModelPart m_cube;

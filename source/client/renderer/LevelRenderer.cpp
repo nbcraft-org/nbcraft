@@ -1862,7 +1862,7 @@ void LevelRenderer::renderAdvancedClouds(float alpha)
 	float zo = (m_pMinecraft->m_pCameraEntity->m_oPos.z + (m_pMinecraft->m_pCameraEntity->m_pos.z - m_pMinecraft->m_pCameraEntity->m_oPos.z) * alpha) / ss + 0.33f;
 
 	float yy = ((float)C_MAX_Y - yOffs) + 0.33f; // 108.0f on b1.2_02, see below
-    //float yy = 108.0f - yOffs + 0.33F;
+    //float yy = 108.0f - yOffs + 0.33f;
 
 	int xOffs = Mth::floor(xo / 2048);
 	int zOffs = Mth::floor(zo / 2048);
@@ -2047,13 +2047,13 @@ void LevelRenderer::levelEvent(const LevelEvent& event)
 	switch (event.id)
 	{
 	case LevelEvent::SOUND_CLICK:
-		m_pLevel->playSound(event.pos, "random.click", 1.0F, 1.0F);
+		m_pLevel->playSound(event.pos, "random.click");
 		break;
 	case LevelEvent::SOUND_CLICK_FAIL:
-		m_pLevel->playSound(event.pos, "random.click", 1.0F, 1.2F);
+		m_pLevel->playSound(event.pos, "random.click", 1.0f, 1.2f);
 		break;
 	case LevelEvent::SOUND_SHOOT:
-		m_pLevel->playSound(event.pos, "random.bow", 1.0F, 1.2F);
+		m_pLevel->playSound(event.pos, "random.bow", 1.0f, 1.2f);
 		break;
 	case LevelEvent::SOUND_DOOR:
 	{
@@ -2067,7 +2067,7 @@ void LevelRenderer::levelEvent(const LevelEvent& event)
 		break;
 	}
 	case LevelEvent::SOUND_FIZZ:
-		m_pLevel->playSound(Vec3(event.pos) + 0.5f, "random.fizz", 0.5F, 2.6F + (random.nextFloat() - random.nextFloat()) * 0.8F);
+		m_pLevel->playSound(Vec3(event.pos) + 0.5f, "random.fizz", 0.5f, 2.6f + (random.nextFloat() - random.nextFloat()) * 0.8f);
 		break;
 	case LevelEvent::SOUND_PLAY_RECORD:
 		m_pLevel->playStreamingMusic(event.data ? Item::items[event.data]->getStreamingMusic() : Util::EMPTY_STRING, Vec3(event.pos));
@@ -2099,7 +2099,7 @@ void LevelRenderer::levelEvent(const LevelEvent& event)
 		if (tileID > 0)
 		{
 			const Tile::SoundType* sound = Tile::tiles[tileID]->m_pSound;
-			m_pMinecraft->m_pSoundEngine->play(sound->name, Vec3(event.pos) + 0.5f, (sound->volume + 1.0F) / 2.0F, sound->pitch * 0.8F);
+			m_pMinecraft->m_pSoundEngine->play(sound->name, Vec3(event.pos) + 0.5f, (sound->volume + 1.0f) / 2.0f, sound->pitch * 0.8f);
 		}
 		m_pMinecraft->m_pParticleEngine->destroyEffect(event.pos, tileID, (event.data >> 8 & 255));
 		break;
