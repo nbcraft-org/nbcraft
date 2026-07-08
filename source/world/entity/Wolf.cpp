@@ -199,7 +199,7 @@ void Wolf::aiStep()
 		if (lookingAt->isPlayer())
 		{
 			Player* player = (Player*)lookingAt;
-			auto selected = player->getSelectedItem();
+			ItemStack& selected = player->getSelectedItem();
 			if (selected)
 			{
 				if (!isTamed() && selected.getId() == Item::bone->m_itemID)
@@ -337,9 +337,9 @@ bool Wolf::hurt(Entity* ent, int dmg)
 				hit.grow(16.0, 4.0, 16.0);
 				EntityVector wolfs = m_pLevel->getEntitiesOfType(EntityType::WOLF, hit);
 
-				for (auto& entity : wolfs)
+				for (EntityVector::iterator it = wolfs.begin(); it != wolfs.end(); ++it)
 				{
-					Wolf* wolf = (Wolf*) entity;
+					Wolf* wolf = (Wolf*) *it;
 					if (!wolf->isTamed() && !wolf->m_pAttackTarget) {
 						wolf->m_pAttackTarget = ent;
 						if (ent->isPlayer())
