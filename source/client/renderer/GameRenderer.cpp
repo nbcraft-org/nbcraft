@@ -918,7 +918,7 @@ void GameRenderer::renderSnowAndRain(float f)
 			}
 			if (biome->canOnlyRain())
 			{
-				float x2 = ((float)(m_ticks + tp.x * tp.x * 3121 + tp.x * 45238971 + tp.z * tp.z * 418711 + tp.z * 13761 & 31) + f) / 32.0f * (3.0f + m_random.nextFloat());
+				float x2 = ((float)((m_ticks + tp.x * tp.x * 3121 + tp.x * 45238971 + tp.z * tp.z * 418711 + tp.z * 13761) & 31) + f) / 32.0f * (3.0f + m_random.nextFloat());
 				m_pMinecraft->m_pTextures->loadAndBindTexture("environment/rain.png");
 				t.begin(8);
 				f4 = f4 * 0.85f + 0.15f;

@@ -16,7 +16,7 @@ void MinecartRenderer::render(const Entity& entity, const Vec3& pos, float rot, 
     MatrixStack::Ref matrix = MatrixStack::World.push();
     Vec3 smoothPos = cart.m_oPos + (cart.m_pos - cart.m_oPos) * a;
     constexpr float r = 0.3f;
-    Vec3* p = cart.getPos(smoothPos);
+    Vec3* p = cart.getOnRailPos(smoothPos);
     float xRot = cart.m_oRot.pitch + (cart.m_rot.pitch - cart.m_oRot.pitch) * a;
     if (p)
     {
@@ -57,7 +57,7 @@ void MinecartRenderer::render(const Entity& entity, const Vec3& pos, float rot, 
     if (hurt > 0.0f)
         matrix->rotate(Mth::sin(hurt) * hurt * dmg / 10.0f * cart.m_hurtDir, Vec3::UNIT_X);
 
-    if (cart.m_type != Minecart::DEFAULT)
+    if (cart.m_type != Minecart::TYPE_DEFAULT)
     {
         MatrixStack::Ref tileMatrix = MatrixStack::World.push();
         bindTexture(C_TERRAIN_NAME);

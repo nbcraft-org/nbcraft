@@ -16,7 +16,7 @@ void Minecart::_init()
     m_xPush = 0;
     m_zPush = 0;
     m_fuel = 0;
-    m_type = Type::DEFAULT;
+    m_type = TYPE_DEFAULT;
     m_damage = 0;
     m_hurtTime = 0;
     m_hurtDir = 1;
@@ -57,7 +57,7 @@ AABB* Minecart::getCollideAgainstBox(Entity* ent) const
 
 bool Minecart::interact(Player* player)
 {
-    if (m_type == Minecart::DEFAULT)
+    if (m_type == TYPE_DEFAULT)
     {
         if (getRider() && getRider()->isPlayer() && getRider() != player)
             return true;
@@ -65,12 +65,12 @@ bool Minecart::interact(Player* player)
         if (!m_pLevel->m_bIsClientSide) 
             player->ride(this);
     }
-    else if (m_type == Minecart::CHEST) 
+    else if (m_type == Minecart::TYPE_CHEST) 
     {
         if (!m_pLevel->m_bIsClientSide) 
             player->openContainer(this);
     }
-    else if (m_type == Minecart::FURNACE)
+    else if (m_type == Minecart::TYPE_FURNACE)
     {
         ItemStack& var2 = player->m_pInventory->getSelected();
         if (var2 && var2.getId() == Item::coal->m_itemID)
@@ -137,7 +137,7 @@ void Minecart::tick()
         TileID tile = m_pLevel->getTile(tp);
         if (RailTile::isRail(tile))
         {
-            Vec3* var9 = getPos(m_pos);
+            Vec3* var9 = getOnRailPos(m_pos);
             TileData data = m_pLevel->getData(tp);
             m_pos.y = tp.y;
 
@@ -260,7 +260,7 @@ void Minecart::tick()
             }
             else 
             {
-                if (m_type == Type::FURNACE) 
+                if (m_type == TYPE_FURNACE) 
                 {
                     var36 = Mth::sqrt(m_xPush * m_xPush + m_zPush * m_zPush);
                     if (var36 > 0.01) 
@@ -321,7 +321,7 @@ void Minecart::tick()
                 }
             }
 
-            Vec3* var46 = getPos(m_pos);
+            Vec3* var46 = getOnRailPos(m_pos);
             if (var46 && var9) 
             {
                 float var37 = (var9->y - var46->y) * 0.05;
@@ -347,7 +347,7 @@ void Minecart::tick()
                 m_vel.z = var20 * (var48 - tp.z);
             }
 
-            if (m_type == Type::FURNACE)
+            if (m_type == TYPE_FURNACE)
             {
                 float var39 = Mth::sqrt(m_xPush * m_xPush + m_zPush * m_zPush);
                 if (var39 > 0.01 && m_vel.x * m_vel.x + m_vel.z * m_vel.z > 0.001) {
@@ -548,7 +548,7 @@ Vec3* Minecart::getPosOffs(const Vec3& pos, float var7) const
         else if (exits[1][1] != 0 && Mth::floor(pos.x) - tp.x == exits[1][0] && Mth::floor(newPos.z) - tp.z == exits[1][2])
             newPos.y += exits[1][1];
 
-        return getPos(newPos);
+        return getOnRailPos(newPos);
     }
         
     return nullptr;
@@ -557,25 +557,25 @@ Vec3* Minecart::getPosOffs(const Vec3& pos, float var7) const
 void Minecart::addAdditionalSaveData(CompoundTag& tag) const
 {
     tag.putInt8("Type", m_type);
-    if (m_type == Type::FURNACE) 
+    if (m_type == TYPE_FURNACE) 
     {
         tag.putFloat("PushX", m_xPush);
         tag.putFloat("PushZ", m_zPush);
         tag.putInt16("Fuel", m_fuel);
-    } else if (m_type == Type::CHEST) 
+    } else if (m_type == TYPE_CHEST) 
         SimpleContainer::save(tag);
 }
 
 void Minecart::readAdditionalSaveData(const CompoundTag& tag)
 {
     m_type = (Type) tag.getInt8("Type");
-    if (m_type == Type::FURNACE) 
+    if (m_type == TYPE_FURNACE) 
     {
         m_xPush = tag.getDouble("PushX");
         m_zPush = tag.getDouble("PushZ");
         m_fuel = tag.getInt16("Fuel");
     }
-    else if (m_type == Type::CHEST)
+    else if (m_type == TYPE_CHEST)
         SimpleContainer::load(tag);
 }
 
@@ -592,7 +592,7 @@ float Minecart::getLootContent()
     return (float)var1 / getContainerSize();
 }
 
-Vec3* Minecart::getPos(const Vec3& vec) const
+Vec3* Minecart::getOnRailPos(const Vec3& vec) const
 {
     TilePos tp(vec);
     if (RailTile::isRail(m_pLevel->getTile(tp.below())))
@@ -660,7 +660,7 @@ void Minecart::push(Entity* ent)
 {
     if (m_pLevel->m_bIsClientSide || ent == getRider()) return;
     
-    if (ent->getDescriptor().hasCategory(EntityCategories::MOB) && !ent->isPlayer() && m_type == DEFAULT && (m_vel.x * m_vel.x + m_vel.z * m_vel.z) > 0.01f && !getRider() && !getRiding())
+    if (ent->getDescriptor().hasCategory(EntityCategories::MOB) && !ent->isPlayer() && m_type == TYPE_DEFAULT && (m_vel.x * m_vel.x + m_vel.z * m_vel.z) > 0.01f && !getRider() && !getRiding())
         ent->ride(this);
 
     float var2 = ent->m_pos.x - m_pos.x;
@@ -696,7 +696,7 @@ void Minecart::push(Entity* ent)
 
             float var10 = ent->m_vel.x + m_vel.x;
             float var12 = ent->m_vel.z + m_vel.z;
-            if (minecart->m_type == FURNACE && m_type != FURNACE)
+            if (minecart->m_type == TYPE_FURNACE && m_type != TYPE_FURNACE)
             {
                 m_vel.x *= 0.2f;
                 m_vel.z *= 0.2f;
@@ -704,7 +704,7 @@ void Minecart::push(Entity* ent)
                 ent->m_vel.x *= 0.7f;
                 ent->m_vel.z *= 0.7f;
             }
-            else if (minecart->m_type != FURNACE && m_type == FURNACE)
+            else if (minecart->m_type != TYPE_FURNACE && m_type == TYPE_FURNACE)
             {
                 ent->m_vel.x *= 0.2;
                 ent->m_vel.z *= 0.2;

@@ -14,7 +14,7 @@ private:
 public:
 	enum Type
 	{
-		DEFAULT, CHEST, FURNACE
+		TYPE_DEFAULT, TYPE_CHEST, TYPE_FURNACE
 	};
 
 
@@ -33,7 +33,7 @@ public:
 	void animateHurt() override;
 	void remove() override;
 	Vec3* getPosOffs(const Vec3&, float) const;
-	Vec3* getPos(const Vec3&) const;
+	Vec3* getOnRailPos(const Vec3&) const;
 	void push(Entity*) override;
 	void lerpTo(const Vec3& pos, const Rot2& rot, int steps) override;
 	void lerpMotion(const Vec3& vel) override;
