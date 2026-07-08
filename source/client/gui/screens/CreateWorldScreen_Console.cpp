@@ -92,15 +92,20 @@ void CreateWorldScreen_Console::init()
 void CreateWorldScreen_Console::render(float f)
 {
 	PanelScreen_Console::render(f);
+
 	Font& font = *m_pFont;
-	std::string gameModeStr = GameTypeConv::GameTypeToNonLocString(m_gameMode);
 	font.drawScalable(Language::get("selectWorld.enterName"), m_textName.m_xPos + 1, m_textName.m_yPos - 19, Color::TEXT_GREY);
 	font.drawScalable(Language::get("selectWorld.enterSeed"), m_textSeed.m_xPos + 1, m_textSeed.m_yPos - 19, Color::TEXT_GREY);
-	font.drawScalable(Language::get("selectWorld.seedInfo"), m_textSeed.m_xPos + 1, m_textSeed.m_yPos + 41, Color::TEXT_GREY);
-	m_btnGameMode.setMessage(Util::format(Language::get("playGame.gameMode").c_str(), gameModeStr.c_str()));
+	font.drawScalable(Language::get("selectWorld.seedInfo"),  m_textSeed.m_xPos + 1, m_textSeed.m_yPos + 41, Color::TEXT_GREY);
 }
 
 void CreateWorldScreen_Console::renderPanel(float f)
 {
 	blitNineSlice(*m_pMinecraft->m_pTextures, ScreenRenderer::PANEL_SLICES, m_panel.x, m_panel.y, m_panel.w, m_panel.h, 32);
+}
+
+void CreateWorldScreen_Console::tick()
+{
+	std::string gameModeStr = GameTypeConv::GameTypeToNonLocString(m_gameMode);
+	m_btnGameMode.setMessage(Util::format(Language::get("playGame.gameMode").c_str(), gameModeStr.c_str()));
 }

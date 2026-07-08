@@ -18,6 +18,7 @@ public:
 	void init() override;
 	void render(float f) override;
 	void renderPanel(float f) override;
+	void tick() override;
 
 public:
 	TickBox m_onlineGame;
