@@ -420,7 +420,7 @@ void Item::initItems()
 		->setDescriptionId("sulphur");
 
 	Item::seeds = NEW_X_ITEM(SeedItem, ITEM_SEEDS, TILE_WHEAT)
-		->setIcon(9, 0)
+		->setIcon(9, 0)ng 
 		->setDescriptionId("seeds");
 
 	Item::reeds = NEW_X_ITEM(TilePlanterItem, ITEM_REEDS, TILE_REEDS)
@@ -439,11 +439,11 @@ void Item::initItems()
 		->setIcon(6, 0)
 		->setDescriptionId("flint");
 
-	Item::porkChop_raw = NEW_X_ITEM(FoodItem, ITEM_PORKCHOP_RAW, 3, true)
+	Item::porkChop_raw = (new FoodItem(ITEM(ITEM_PORKCHOP_RAW), 3, true))
 		->setIcon(7, 5)
 		->setDescriptionId("porkchopRaw");
 
-	Item::porkChop_cooked = NEW_X_ITEM(FoodItem, ITEM_PORKCHOP_COOKED, 8, true)
+	Item::porkChop_cooked = (new FoodItem(ITEM(ITEM_PORKCHOP_COOKED), 8, true))
 		->setIcon(8, 5)
 		->setDescriptionId("porkchopCooked");
 
