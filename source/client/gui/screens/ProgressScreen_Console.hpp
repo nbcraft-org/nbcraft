@@ -11,9 +11,11 @@ public:
 	void init() override;
 
 private:
-	std::string m_header;
-
 	std::string m_loadingTip;
 	std::vector<std::string> m_loadingTipLines;
+
+public:
+	std::string m_header;
+	std::string m_subtext;
 };
 

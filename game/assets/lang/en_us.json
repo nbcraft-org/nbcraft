@@ -146,5 +146,15 @@
     "container.tab.tools": "Tools and Weapons",
     "container.tab.tools_and_armour": "Tools, Weapons & Armor",
     "container.tab.transport": "Transport",
-    "container.tab.armour": "Armour"
+    "container.tab.armour": "Armour",
+    "loadMenu.online": "Online game",
+    "loadMenu.inviteOnly": "Invite only",
+    "loadMenu.load": "Load",
+    "loadMenu.gamemodeInfo": "Created in %s Mode",
+    "loadMenu.seed": "Seed:  %s",
+    "joinMenu.join": "Join Game",
+    "saving.save": "Preparing to Save Level",
+    "saving.progress": "Preparing Chunks...",
+    "autosaveWarning.warning": "This game has a level autosave feature. When you see the icon above displayed, the game is saving your data.\n Please do not turn off your device while this icon is on-screen.",
+    "autosaveWarning.load":  "OK"
 }

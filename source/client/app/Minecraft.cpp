@@ -872,7 +872,7 @@ void Minecraft::freeResources(bool bCopyMap)
 
 #ifdef ENH_IMPROVED_SAVING
 	m_bIsGamePaused = true;
-	setScreen(new SavingWorldScreen(bCopyMap/*, m_pLocalPlayer*/));
+	getScreenChooser()->pushSavingScreen(bCopyMap/*, m_pLocalPlayer*/);
 #else
 	if (m_pLevel)
 	{
@@ -885,6 +885,48 @@ void Minecraft::freeResources(bool bCopyMap)
 #endif
 
 	field_D9C = 0;
+}
+
+void Minecraft::unloadLevel(bool bCopyMap)
+{
+	if (m_pLevel)
+	{
+		if (!m_pLevel->m_bIsClientSide || bCopyMap)
+		{
+			m_progressPercent = 33;
+			m_pLevel->saveUnsavedChunks();
+
+			m_progressPercent = 66;
+			m_pLevel->saveLevelData();
+
+			m_progressPercent = 100;
+			m_pLevel->savePlayerData();
+		}
+
+		LevelStorage* pStorage = m_pLevel->getLevelStorage();
+		SAFE_DELETE(pStorage);
+		SAFE_DELETE(m_pLevel);
+
+		m_pLevel = nullptr;
+	}
+
+	// this is safe to do, since on destruction, nothing accesses the parent level or anything
+	//SAFE_DELETE(m_pEntityToDeleteAfterSave);
+	// already done by the Level
+
+	m_pCameraEntity = m_pLocalPlayer = nullptr;
+
+
+	m_bUsingScreen = true;
+
+	if (bCopyMap)
+		setScreen(new RenameMPLevelScreen("_LastJoinedServer"));
+	else
+		gotoMainMenu();
+
+	m_bUsingScreen = false;
+
+	m_bIsGamePaused = false;
 }
 
 std::string Minecraft::getVersionString(const std::string& str) const
