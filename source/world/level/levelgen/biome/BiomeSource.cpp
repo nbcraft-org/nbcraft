@@ -38,7 +38,7 @@ const std::vector<Biome*>& BiomeSource::getBiomeBlock(const TilePos& pos, int c,
 
 const std::vector<Biome*>& BiomeSource::getBiomeBlock(std::vector<Biome*>& biomes, const TilePos& pos, int c, int d)
 {
-	int size = c * d;
+	size_t size = c * d;
 	if (biomes.size() < size) biomes.resize(size);
 	m_temperatureMap.getBiomeRegion(m_temperatures, pos.x, pos.z, c, c, 0.025f, 0.025f, 0.25f);
 	m_downfallMap.getBiomeRegion(m_downfalls, pos.x, pos.z, c, c, 0.05f, 0.05f, 1 / 3.0f);
