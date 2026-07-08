@@ -56,7 +56,7 @@ bool MovingPistonTile::use(Level* level, const TilePos& pos, Player* player)
         return false;
 }
 
-int MovingPistonTile::getResource(int, Random*)
+int MovingPistonTile::getResource(TileData, Random*)
 {
     return 0;
 }

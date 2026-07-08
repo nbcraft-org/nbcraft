@@ -82,9 +82,10 @@ struct HashFunction<double>
 {
     size_t operator()(const double& key) const
     {
-        size_t result;
-        memcpy(&result, &key, sizeof(double));
-        return result;
+        uint64_t bits;
+        memcpy(&bits, &key, sizeof(double));
+
+        return static_cast<size_t>(bits ^ (bits >> 32));
     }
 };
 

@@ -68,7 +68,8 @@ void PistonBaseTile::triggerEvent(Level* level, const TileEvent& event)
 				}
 			}
 
-			if (flag || tile <= 0 || !_isPushable(tile, level, tp, false) || Tile::tiles[tile]->getPistonPushReaction() != PushReaction::NORMAL && tile != Tile::piston->m_ID && tile != Tile::stickyPiston->m_ID) {
+			if (flag || tile <= 0 || !_isPushable(tile, level, tp, false) || (Tile::tiles[tile]->getPistonPushReaction() != PushReaction::NORMAL && tile != Tile::piston->m_ID && tile != Tile::stickyPiston->m_ID))
+			{
 				if (!flag)
 				{
 					m_bUpdating = false;

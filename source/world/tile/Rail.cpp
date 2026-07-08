@@ -123,13 +123,10 @@ void Rail::connectTo(Rail& other)
     }
 
     if (newData < 0)
-    {
         newData = !RailTile::isRail(m_pLevel->getTile(m_pos)) ? 0 : m_pLevel->getData(m_pos);
-    }
 
-    if (m_bPowered) {
-        newData = m_pLevel->getData(m_pos) & 8 | newData;
-    }
+    if (m_bPowered)
+        newData = (m_pLevel->getData(m_pos) & 8) | newData;
 
     m_pLevel->setData(m_pos, newData);
 }
@@ -207,7 +204,7 @@ void Rail::place(bool hasSignal, bool checkNeighbors)
     updateConnections(newData);
 
     if (m_bPowered)
-        newData = m_pLevel->getData(m_pos) & 8 | newData;
+        newData = (m_pLevel->getData(m_pos) & 8) | newData;
 
     if (checkNeighbors || m_pLevel->getData(m_pos) != newData)
     {

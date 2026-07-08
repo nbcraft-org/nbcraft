@@ -56,10 +56,13 @@ bool PortalTile::trySpawnPortal(Level* level, const TilePos& pos)
 
         int var7;
         int var8;
-        for (var7 = -1; var7 <= 2; ++var7) {
-            for (var8 = -1; var8 <= 3; ++var8) {
+        for (var7 = -1; var7 <= 2; ++var7)
+        {
+            for (var8 = -1; var8 <= 3; ++var8)
+            {
                 bool var9 = var7 == -1 || var7 == 2 || var8 == -1 || var8 == 3;
-                if (var7 != -1 && var7 != 2 || var8 != -1 && var8 != 3) {
+                if ((var7 != -1 && var7 != 2) || (var8 != -1 && var8 != 3))
+                {
                     int var10 = level->getTile(tp + TilePos(xDiff * var7, var8, zDiff * var7));
                     if (var9)
                     {
