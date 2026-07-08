@@ -17,7 +17,7 @@ public:
 	bool isSolidRender() const override;
 	bool isCubeShaped() const override;
 	bool use(Level*, const TilePos& pos, Player*) override;
-	int getResource(TileData, Random*) override;
+	int getResource(TileData, Random*) const override;
 	void spawnResources(Level*, const TilePos& pos, TileData, float) override;
 	AABB* getAABB(const Level*, const TilePos& pos) override;
 	void updateShape(const LevelSource*, const TilePos&) override;

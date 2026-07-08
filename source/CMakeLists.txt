@@ -360,6 +360,7 @@ add_library(nbcraft-core STATIC
     world/entity/Painting.cpp
     world/entity/PaintingType.cpp
     world/entity/LightningBolt.cpp
+    world/entity/Wolf.cpp
     world/entity/vehicle/Boat.cpp
     world/entity/vehicle/Minecart.cpp
     world/level/Dimension.cpp
