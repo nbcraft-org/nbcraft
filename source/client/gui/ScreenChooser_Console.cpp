@@ -11,6 +11,7 @@
 #include "screens/CreateWorldScreen_Console.hpp"
 #include "screens/ProgressScreen_Console.hpp"
 #include "screens/DeathScreen_Console.hpp"
+#include "screens/SavingWorldScreen_Console.hpp"
 
 ScreenChooser_Console::ScreenChooser_Console(Minecraft* mc) : ScreenChooser(mc, UI_CONSOLE)
 {
@@ -74,4 +75,9 @@ void ScreenChooser_Console::pushTrapScreen(Player* player, DispenserTileEntity* 
 void ScreenChooser_Console::pushDeathScreen()
 {
 	m_pMinecraft->setScreen(new DeathScreen_Console);
+}
+
+void ScreenChooser_Console::pushSavingScreen(bool bCopyMap)
+{
+	m_pMinecraft->setScreen(new SavingWorldScreen_Console(bCopyMap));
 }

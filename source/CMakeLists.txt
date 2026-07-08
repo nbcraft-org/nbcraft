@@ -134,6 +134,10 @@ add_library(nbcraft-core STATIC
     client/gui/screens/PauseScreen_Console.cpp
     client/gui/screens/DeathScreen.cpp
     client/gui/screens/PanelScreen_Console.cpp
+    client/gui/screens/AutosaveWarningScreen_Console.cpp
+    client/gui/screens/JoinGameScreen_Console.cpp
+    client/gui/screens/LoadWorldScreen_Console.cpp
+    client/gui/screens/SavingWorldScreen_Console.cpp
     client/gui/screens/inventory/ContainerScreen.cpp
     client/gui/screens/inventory/CreativeScreen.cpp
     client/gui/screens/inventory/CreativeScreen_Console.cpp

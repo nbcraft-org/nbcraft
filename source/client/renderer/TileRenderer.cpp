@@ -2028,38 +2028,38 @@ bool TileRenderer::tesselateFireInWorld(Tile* tile, const TilePos& pos)
 
 	if (pFireTile->canBurn(m_pTileSource, pos.east()))
 	{
-		t.vertexUV(xf + 1.0f - 0.2f, (pos.y + 1.4f) + 0.0625f, pos.z + 0.0f, texU_2, texV_1);
-		t.vertexUV(xf + 1.0f + 0.0f, (pos.y + 0.0f) + 0.0625f, pos.z + 0.0f, texU_2, texV_2);
-		t.vertexUV(xf + 1.0f + 0.0f, (pos.y + 0.0f) + 0.0625f, pos.z + 1.0f, texU_1, texV_2);
-		t.vertexUV(xf + 1.0f - 0.2f, (pos.y + 1.4f) + 0.0625f, pos.z + 1.0f, texU_1, texV_1);
-		t.vertexUV(xf + 1.0f - 0.2f, (pos.y + 1.4f) + 0.0625f, pos.z + 1.0f, texU_1, texV_1);
-		t.vertexUV(xf + 1.0f + 0.0f, (pos.y + 0.0f) + 0.0625f, pos.z + 1.0f, texU_1, texV_2);
-		t.vertexUV(xf + 1.0f + 0.0f, (pos.y + 0.0f) + 0.0625f, pos.z + 0.0f, texU_2, texV_2);
-		t.vertexUV(xf + 1.0f - 0.2f, (pos.y + 1.4f) + 0.0625f, pos.z + 0.0f, texU_2, texV_1);
+		t.vertexUV(xf + 1.0f - 0.2f, (yf + 1.4f) + 0.0625f, zf + 0.0f, texU_2, texV_1);
+		t.vertexUV(xf + 1.0f + 0.0f, (yf + 0.0f) + 0.0625f, zf + 0.0f, texU_2, texV_2);
+		t.vertexUV(xf + 1.0f + 0.0f, (yf + 0.0f) + 0.0625f, zf + 1.0f, texU_1, texV_2);
+		t.vertexUV(xf + 1.0f - 0.2f, (yf + 1.4f) + 0.0625f, zf + 1.0f, texU_1, texV_1);
+		t.vertexUV(xf + 1.0f - 0.2f, (yf + 1.4f) + 0.0625f, zf + 1.0f, texU_1, texV_1);
+		t.vertexUV(xf + 1.0f + 0.0f, (yf + 0.0f) + 0.0625f, zf + 1.0f, texU_1, texV_2);
+		t.vertexUV(xf + 1.0f + 0.0f, (yf + 0.0f) + 0.0625f, zf + 0.0f, texU_2, texV_2);
+		t.vertexUV(xf + 1.0f - 0.2f, (yf + 1.4f) + 0.0625f, zf + 0.0f, texU_2, texV_1);
 	}
 
-	if (pFireTile->canBurn(m_pTileSource, pos - 1))
+	if (pFireTile->canBurn(m_pTileSource, pos.north()))
 	{
-		t.vertexUV(pos.x + 0.0f, (pos.y + 1.4f) + 0.0625f, pos.z + 0.2f, texU_1, texV_1);
-		t.vertexUV(pos.x + 0.0f, (pos.y + 0.0f) + 0.0625f, pos.z + 0.0f, texU_1, texV_2);
-		t.vertexUV(pos.x + 1.0f, (pos.y + 0.0f) + 0.0625f, pos.z + 0.0f, texU_2, texV_2);
-		t.vertexUV(pos.x + 1.0f, (pos.y + 1.4f) + 0.0625f, pos.z + 0.2f, texU_2, texV_1);
-		t.vertexUV(pos.x + 1.0f, (pos.y + 1.4f) + 0.0625f, pos.z + 0.2f, texU_2, texV_1);
-		t.vertexUV(pos.x + 1.0f, (pos.y + 0.0f) + 0.0625f, pos.z + 0.0f, texU_2, texV_2);
-		t.vertexUV(pos.x + 0.0f, (pos.y + 0.0f) + 0.0625f, pos.z + 0.0f, texU_1, texV_2);
-		t.vertexUV(pos.x + 0.0f, (pos.y + 1.4f) + 0.0625f, pos.z + 0.2f, texU_1, texV_1);
+		t.vertexUV(xf + 0.0f, (yf + 1.4f) + 0.0625f, zf + 0.2f, texU_1, texV_1);
+		t.vertexUV(xf + 0.0f, (yf + 0.0f) + 0.0625f, zf + 0.0f, texU_1, texV_2);
+		t.vertexUV(xf + 1.0f, (yf + 0.0f) + 0.0625f, zf + 0.0f, texU_2, texV_2);
+		t.vertexUV(xf + 1.0f, (yf + 1.4f) + 0.0625f, zf + 0.2f, texU_2, texV_1);
+		t.vertexUV(xf + 1.0f, (yf + 1.4f) + 0.0625f, zf + 0.2f, texU_2, texV_1);
+		t.vertexUV(xf + 1.0f, (yf + 0.0f) + 0.0625f, zf + 0.0f, texU_2, texV_2);
+		t.vertexUV(xf + 0.0f, (yf + 0.0f) + 0.0625f, zf + 0.0f, texU_1, texV_2);
+		t.vertexUV(xf + 0.0f, (yf + 1.4f) + 0.0625f, zf + 0.2f, texU_1, texV_1);
 	}
 
-	if (pFireTile->canBurn(m_pTileSource, pos + 1))
+	if (pFireTile->canBurn(m_pTileSource, pos.south()))
 	{
-		t.vertexUV(pos.x + 1.0f, (pos.y + 1.4f) + 0.0625f, pos.z + 1.0f - 0.2f, texU_2, texV_1);
-		t.vertexUV(pos.x + 1.0f, (pos.y + 0.0f) + 0.0625f, pos.z + 1.0f + 0.0f, texU_2, texV_2);
-		t.vertexUV(pos.x + 0.0f, (pos.y + 0.0f) + 0.0625f, pos.z + 1.0f + 0.0f, texU_1, texV_2);
-		t.vertexUV(pos.x + 0.0f, (pos.y + 1.4f) + 0.0625f, pos.z + 1.0f - 0.2f, texU_1, texV_1);
-		t.vertexUV(pos.x + 0.0f, (pos.y + 1.4f) + 0.0625f, pos.z + 1.0f - 0.2f, texU_1, texV_1);
-		t.vertexUV(pos.x + 0.0f, (pos.y + 0.0f) + 0.0625f, pos.z + 1.0f + 0.0f, texU_1, texV_2);
-		t.vertexUV(pos.x + 1.0f, (pos.y + 0.0f) + 0.0625f, pos.z + 1.0f + 0.0f, texU_2, texV_2);
-		t.vertexUV(pos.x + 1.0f, (pos.y + 1.4f) + 0.0625f, pos.z + 1.0f - 0.2f, texU_2, texV_1);
+		t.vertexUV(xf + 1.0f, (yf + 1.4f) + 0.0625f, zf + 1.0f - 0.2f, texU_2, texV_1);
+		t.vertexUV(xf + 1.0f, (yf + 0.0f) + 0.0625f, zf + 1.0f + 0.0f, texU_2, texV_2);
+		t.vertexUV(xf + 0.0f, (yf + 0.0f) + 0.0625f, zf + 1.0f + 0.0f, texU_1, texV_2);
+		t.vertexUV(xf + 0.0f, (yf + 1.4f) + 0.0625f, zf + 1.0f - 0.2f, texU_1, texV_1);
+		t.vertexUV(xf + 0.0f, (yf + 1.4f) + 0.0625f, zf + 1.0f - 0.2f, texU_1, texV_1);
+		t.vertexUV(xf + 0.0f, (yf + 0.0f) + 0.0625f, zf + 1.0f + 0.0f, texU_1, texV_2);
+		t.vertexUV(xf + 1.0f, (yf + 0.0f) + 0.0625f, zf + 1.0f + 0.0f, texU_2, texV_2);
+		t.vertexUV(xf + 1.0f, (yf + 1.4f) + 0.0625f, zf + 1.0f - 0.2f, texU_2, texV_1);
 	}
 
 	if (pFireTile->canBurn(m_pTileSource, pos.above()))
@@ -2067,7 +2067,7 @@ bool TileRenderer::tesselateFireInWorld(Tile* tile, const TilePos& pos)
 		// @NOTE: Converting z and x to uint8_t for whatever reason
 		if (((uint8_t(pos.z) + uint8_t(pos.x) + pos.y + 1) & 1) != 0)
 		{
-			float y1f = float(pos.y + 1);
+			float y1f = float(yf + 1);
 			t.vertexUV(xf + 0.0f, y1f - 0.2f, zf + 0.5f + 0.5f, texU_2, texV_1);
 			t.vertexUV(xf + 0.0f, y1f + 0.0f, zf + 0.5f - 0.5f, texU_2, texV_2);
 			t.vertexUV(xf + 1.0f, y1f + 0.0f, zf + 0.5f - 0.5f, texU_1, texV_2);
@@ -2079,7 +2079,7 @@ bool TileRenderer::tesselateFireInWorld(Tile* tile, const TilePos& pos)
 		}
 		else
 		{
-			float y1f = float(pos.y + 1);
+			float y1f = float(yf + 1);
 			t.vertexUV(xf + 0.0f, y1f - 0.2f, zf + 0.0f, texU_2, texV_1);
 			t.vertexUV(xf + 1.0f, y1f + 0.0f, zf + 0.0f, texU_2, texV_2);
 			t.vertexUV(xf + 1.0f, y1f + 0.0f, zf + 1.0f, texU_1, texV_2);

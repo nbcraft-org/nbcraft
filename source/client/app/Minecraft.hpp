@@ -82,6 +82,7 @@ public:
 	void sendMessage(const std::string& message);
 	void respawnPlayer();
 	void freeResources(bool bCopyMap);
+	void unloadLevel(bool bCopyMap);
 	std::string getVersionString(const std::string& str = Util::EMPTY_STRING) const;
 	bool useTouchscreen() const;
 	bool useSplitControls() const;
