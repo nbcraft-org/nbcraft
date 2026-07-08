@@ -174,7 +174,6 @@ void TileRenderer::renderFace(Tile* tile, const Vec3& pos, int texture, Facing::
 		{
 		case Facing::NORTH: case Facing::SOUTH: tile->setShape(0, 0, 0.0625, 1, 1, 0.9375); break;
 		case Facing::WEST: case Facing::EAST: tile->setShape(0.0625, 0, 0, 0.9375, 1, 1); break;
-		default: break;
 		}
 	}
 
@@ -470,6 +469,7 @@ void TileRenderer::tesselateRowTexture(Tile* tile, int data, const Vec3& pos)
 
 bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, const Color& color)
 {
+	Tesselator& t = Tesselator::instance;
 	float fLightHere = tile->getBrightness(m_pTileSource, pos);
 	bool bDrewAnything = false;
 
