@@ -4,7 +4,7 @@ set -e
 
 ipaname='NBCraft.ipa'
 # must be kept in sync with the cmake executable name
-bin="${1:-build/renbcraft}"
+bin="${1:-build/nbcraft}"
 # must be kept in sync with the info.plist
 execname='nbcraft'
 
