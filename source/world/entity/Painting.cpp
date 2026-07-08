@@ -184,7 +184,7 @@ void Painting::readAdditionalSaveData(const CompoundTag& tag)
 
     std::string type = tag.getString("Motive");
 
-    for (int i = 0; i < PaintingType::types.size(); ++i)
+    for (int i = 0; i < int(PaintingType::types.size()); ++i)
         if (PaintingType::types[i].m_name == type)
         {
             m_paintingType = i;
