@@ -420,7 +420,7 @@ void Item::initItems()
 		->setDescriptionId("sulphur");
 
 	Item::seeds = NEW_X_ITEM(SeedItem, ITEM_SEEDS, TILE_WHEAT)
-		->setIcon(9, 0)ng 
+		->setIcon(9, 0)
 		->setDescriptionId("seeds");
 
 	Item::reeds = NEW_X_ITEM(TilePlanterItem, ITEM_REEDS, TILE_REEDS)
