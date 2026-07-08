@@ -150,7 +150,7 @@ void ExternalFileLevelStorageSource::addLevelSummaryIfExists(std::vector<LevelSu
 	if (!ExternalFileLevelStorage::readLevelData(levelDat, ld))
 		return;
 
-	vls.push_back(LevelSummary(name, ld.getLevelName(), ld.getLastPlayed(), ld.getSizeOnDisk(), ld.getGameType(), ld.getStorageVersion()));
+	vls.push_back(LevelSummary(name, ld.getLevelName(), ld.getLastPlayed(), ld.getSizeOnDisk(), ld.getSeed(), ld.getGameType(), ld.getStorageVersion()));
 }
 
 #endif

@@ -108,12 +108,12 @@ void CraftingScreen_Console::_renderLabels()
     if (m_tabLayout.m_pSelectedElement)
     {
         const std::string& message = Language::get(m_tabLayout.m_pSelectedElement->getMessage());
-        m_pFont->drawScalable(message, m_imageWidth / 2 - m_pFont->width(message), 100, Color::TEXT_GREY);
+        m_pFont->drawScalable(message, m_imageWidth / 2 - m_pFont->width(message) + 7, 99, Color::TEXT_GREY);
     }
 
     const std::string& invName = m_pMinecraft->m_pLocalPlayer->m_pInventory->getName();
 
-    m_pFont->drawScalable(invName, (m_craftContext.bIs2x2 ? 270 + 306 / 2 : 313 + 361 / 2) - m_pFont->width(invName), 294, Color::TEXT_GREY);
+    m_pFont->drawScalable(invName, (m_craftContext.bIs2x2 ? 270 + 306 / 2 : 313 + 361 / 2) - m_pFont->width(invName) + 7, 296, Color::TEXT_GREY);
 
     const int gridSize = ((CraftingMenu*)m_pMenu)->m_pCraftSlots->getContainerSize();
 
@@ -144,7 +144,7 @@ void CraftingScreen_Console::_renderLabels()
 
     std::string resultName = Language::get(m_pMenu->getSlot(0)->getItem().getHovertextName());
 
-    m_pFont->drawScalable(resultName, 15 + (m_craftContext.bIs2x2 ? 250 : 293) / 2 - m_pFont->width(resultName), 294, Color::TEXT_GREY);
+    m_pFont->drawScalable(resultName, 16 + (m_craftContext.bIs2x2 ? 250 : 293) / 2 - m_pFont->width(resultName), 296, Color::TEXT_GREY);
 }
 
 void CraftingScreen_Console::_renderBg(float partialTicks)

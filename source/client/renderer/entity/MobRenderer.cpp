@@ -12,6 +12,7 @@
 #include "client/app/Minecraft.hpp"
 #include "renderer/ShaderConstants.hpp"
 #include "EntityRenderDispatcher.hpp"
+#include "client/renderer/Lighting.hpp"
 
 MobRenderer::MobRenderer(Model* pModel, float f)
 {
@@ -208,7 +209,7 @@ void MobRenderer::renderNameTag(const Mob& mob, const std::string& str, const Ve
 	matrix->rotate(-m_pDispatcher->m_rot.yaw, Vec3::UNIT_Y);
 	matrix->rotate(+m_pDispatcher->m_rot.pitch, Vec3::UNIT_X);
 	matrix->scale(Vec3(-0.026667f, -0.026667f, 0.026667f));
-	
+
 	currentShaderColor = Color(0.0f, 0.0f, 0.0f, 0.25f);
 
 	Tesselator& t = Tesselator::instance;
@@ -223,6 +224,21 @@ void MobRenderer::renderNameTag(const Mob& mob, const std::string& str, const Ve
 	t.vertex(widthHalf + 1.0f, 8.0f, 0.0f);
 	t.vertex(widthHalf + 1.0f, -1.0f, 0.0f);
 	t.draw(m_materials.name_tag);
+
+	//@TODO: Come back here after implementing line width setting support in HAL.
+
+	if (m_pDispatcher->m_pMinecraft->getUiTheme() == UI_CONSOLE)
+	{
+		currentShaderColor = Color(0.0f, 1.0f, 0.0f, 1.0f); //@TODO: Currently hardcoded to green, but should be changed to use different colors for players like in Xbox 360 Edition.
+		t.begin(mce::PRIMITIVE_MODE_LINE_STRIP, 5);
+
+		t.vertex(-1.0f - widthHalf, -1.0f, 0.0f);
+		t.vertex(-1.0f - widthHalf, 8.0f, 0.0f);
+		t.vertex(widthHalf + 1.0f, 8.0f, 0.0f);
+		t.vertex(widthHalf + 1.0f, -1.0f, 0.0f);
+		t.vertex(-1.0f - widthHalf, -1.0f, 0.0f);
+		t.draw(m_materials.name_tag);
+	}
 
 	font->draw(str, -font->width(str) / 2, 0, 0x20FFFFFF);
 	font->draw(str, -font->width(str) / 2, 0, 0xFFFFFFFF);

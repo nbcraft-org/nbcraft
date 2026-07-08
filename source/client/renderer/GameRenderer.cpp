@@ -225,7 +225,15 @@ void GameRenderer::_renderDebugOverlay(float a)
 	debugText << "\nGameRenderer::m_turnDelta.x: "      << m_turnDelta.x;
 	debugText << "\nGameRenderer::m_turnDelta.y: "      << m_turnDelta.y;*/
 
-	font.drawShadow(debugText.str(), 2, 2, Color::WHITE);
+	if (m_pMinecraft->getUiTheme() == UI_CONSOLE)
+	{
+		font.drawScalable(debugText.str(), 46, 40, Color::TEXT_GREY);
+		font.drawScalable(debugText.str(), 44, 38, Color::WHITE);
+	}
+	else
+	{
+		font.drawShadow(debugText.str(), 2, 2, Color::WHITE);
+	}
 
 #ifdef SHOW_VERTEX_COUNTER_GRAPHIC
 	g_nVertices = 0;

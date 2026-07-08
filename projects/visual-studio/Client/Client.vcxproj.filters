@@ -811,6 +811,17 @@
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\client\renderer\tileentity\PistonRenderer.hpp">
       <Filter>Header Files\Renderer\TileEntity</Filter>
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\LoadWorldScreen_Console.hpp">
+      <Filter>Header Files\GUI\Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\AutosaveWarningScreen_Console.hpp">
+      <Filter>Header Files\GUI\Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\JoinGameScreen_Console.hpp">
+      <Filter>Header Files\GUI\Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\SavingWorldScreen_Console.hpp">
+      <Filter>Header Files\GUI\Screens</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1467,6 +1478,17 @@
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\client\renderer\tileentity\PistonRenderer.cpp">
       <Filter>Source Files\Renderer\TileEntity</Filter>
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\LoadWorldScreen_Console.cpp">
+      <Filter>Source Files\GUI\Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\AutosaveWarningScreen_Console.cpp">
+      <Filter>Source Files\GUI\Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\JoinGameScreen_Console.cpp">
+      <Filter>Source Files\GUI\Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\SavingWorldScreen_Console.cpp">
+      <Filter>Source Files\GUI\Screens</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

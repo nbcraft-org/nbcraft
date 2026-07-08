@@ -321,6 +321,7 @@ void Textures::setupAtlases(bool forceReset)
 		addSprite(ScreenRenderer::SMALL_PANEL_SLICES[i], m_guiAtlas);
 		addSprite(ScreenRenderer::PANEL_RECESS_SLICES[i], m_guiAtlas);
 		addSprite(ScreenRenderer::POINTER_TEXT_PANEL_SLICES[i], m_guiAtlas);
+		addSprite(ScreenRenderer::PANEL_SQUARE_RECESS_SLICES[i], m_guiAtlas);
 	}
 
 	setupAtlas(m_guiAtlas);

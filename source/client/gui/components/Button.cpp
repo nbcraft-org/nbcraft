@@ -41,7 +41,8 @@ void Button::_renderBgConsole(Minecraft* mc, const MenuPointer& pointer)
 	Textures& texs = *mc->m_pTextures;
 
 	if (!isEnabled())
-		currentShaderColor.a *= 0.5f;
+		currentShaderColor.a *= 0.5f; // Not translucent on TU2.
+
 	blitSprite(texs, isSelected() && !hasFocus() ? "gui/console/Graphics/MainMenuButton_Over.png" : "gui/console/Graphics/MainMenuButton_Norm.png", m_xPos, m_yPos, m_width, m_height, &m_materials.ui_textured_and_glcolor);
 	if (hasFocus())
 	{
@@ -81,6 +82,7 @@ void Button::_renderMessageConsole(Font& font)
 
 	if (!isEnabled())
 		textColor.a *= 0.5f;
+//		textColor = Color(167, 167, 167); // @PARITY-LCE: In TU2 the text is colored gray instead of having reduced transparency.
 
 	int textWidth = font.width(getMessage()) * 2;
 	font.drawScalableShadow(getMessage(), m_xPos + (m_width - textWidth) / 2, m_yPos + (m_height - 16) / 2, textColor);

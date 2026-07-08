@@ -4,7 +4,8 @@
 
 FlintAndSteelItem::FlintAndSteelItem(int itemID) : Item(itemID)
 {
-	m_maxStackSize = 16;
+	m_maxStackSize = 1;
+    m_maxDamage = 64;
 }
 
 bool FlintAndSteelItem::useOn(ItemStack* instance, Player* player, Level* level, const TilePos& pos, Facing::Name face) const

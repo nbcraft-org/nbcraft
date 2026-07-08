@@ -31,6 +31,7 @@ public:
     virtual void pushTrapScreen(Player*, DispenserTileEntity*);
     virtual void pushCreditsScreen(Screen*);
     virtual void pushDeathScreen();
+    virtual void pushSavingScreen(bool);
 
     static ScreenChooser* Create(Minecraft*);
 
