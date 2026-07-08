@@ -12,8 +12,8 @@ void LightningBoltRenderer::render(const Entity& ent, const Vec3& pos, float rot
 	Lighting::turnOff();
 	Tesselator& var10 = Tesselator::instance;
 	const LightningBolt& lightning = (const LightningBolt&)ent;
-	float var11[8]{};
-	float var12[8]{};
+	float var11[8] = {0};
+	float var12[8] = {0};
 	float var13 = 0.0f;
 	float var15 = 0.0f;
 	Random var17(lightning.m_seed);
