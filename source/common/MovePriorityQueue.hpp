@@ -3,7 +3,7 @@
 #include <vector>
 #include <algorithm>
 
-template<typename T, typename Comparator = std::less<T>>
+template<typename T, typename Comparator = std::less<T> >
 class MovePriorityQueue
 {
 public:

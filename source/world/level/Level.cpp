@@ -654,7 +654,7 @@ void Level::updateLight(const LightLayer& ll, const TilePos& tilePos1, const Til
 		for (size_t i = 0; i < count; i++)
 		{
 			LightUpdate& update = m_lightUpdates[size - i - 1];
-			if (&update.m_lightLayer == &ll && update.expandIfCloseEnough(tilePos1, tilePos2))
+			if (update.m_pLightLayer == &ll && update.expandIfCloseEnough(tilePos1, tilePos2))
 			{
 				nUpdateLevels--;
 				return;

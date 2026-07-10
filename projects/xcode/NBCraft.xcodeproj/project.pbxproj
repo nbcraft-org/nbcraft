@@ -199,6 +199,15 @@
 		842610882AE98A4C0065905F /* libRakNet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 84FFBD7E2ACA2876005A8CCF /* libRakNet.a */; };
 		842B21892F5414660006C1FA /* Default-667h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 842B21872F5414660006C1FA /* Default-667h@2x.png */; };
 		842B218A2F5414660006C1FA /* Default-736h@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 842B21882F5414660006C1FA /* Default-736h@3x.png */; };
+		8432C4073001A0D6005C8BC9 /* Brightness.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8432C4003001A0D6005C8BC9 /* Brightness.hpp */; };
+		8432C4083001A0D6005C8BC9 /* LevelConstants.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8432C4013001A0D6005C8BC9 /* LevelConstants.hpp */; };
+		8432C4093001A0D6005C8BC9 /* Tick.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8432C4023001A0D6005C8BC9 /* Tick.hpp */; };
+		8432C40A3001A0D6005C8BC9 /* TileSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8432C4033001A0D6005C8BC9 /* TileSource.cpp */; };
+		8432C40B3001A0D6005C8BC9 /* TileSource.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8432C4043001A0D6005C8BC9 /* TileSource.hpp */; };
+		8432C40C3001A0D6005C8BC9 /* TileTickingQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8432C4053001A0D6005C8BC9 /* TileTickingQueue.cpp */; };
+		8432C40D3001A0D6005C8BC9 /* TileTickingQueue.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8432C4063001A0D6005C8BC9 /* TileTickingQueue.hpp */; };
+		8432C40F3001A289005C8BC9 /* DimensionId.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8432C40E3001A289005C8BC9 /* DimensionId.hpp */; };
+		8432C4123001A5B8005C8BC9 /* Brightness.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8432C4103001A5B8005C8BC9 /* Brightness.cpp */; };
 		8435BB192DCD47F400D38282 /* SoundStreamOAL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8435BB182DCD47F400D38282 /* SoundStreamOAL.cpp */; };
 		8435BB1A2DCD47F400D38282 /* SoundStreamOAL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8435BB182DCD47F400D38282 /* SoundStreamOAL.cpp */; };
 		8440D0302FED267E00FD4A51 /* ClockTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8440D02D2FED267E00FD4A51 /* ClockTexture.cpp */; };
@@ -625,7 +634,6 @@
 		84BF633C2AF18631008A9995 /* ExternalFileLevelStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840DD6B82AC810620006A435 /* ExternalFileLevelStorage.cpp */; };
 		84BF633D2AF18631008A9995 /* ExternalFileLevelStorageSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840DD6BA2AC810620006A435 /* ExternalFileLevelStorageSource.cpp */; };
 		84BF633E2AF18631008A9995 /* LevelData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840DD6BC2AC810620006A435 /* LevelData.cpp */; };
-		84BF633F2AF18631008A9995 /* LevelSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840DD6BE2AC810620006A435 /* LevelSource.cpp */; };
 		84BF63402AF18631008A9995 /* LevelStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840DD6C02AC810620006A435 /* LevelStorage.cpp */; };
 		84BF63412AF18631008A9995 /* LevelStorageSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840DD6C22AC810620006A435 /* LevelStorageSource.cpp */; };
 		84BF63422AF18631008A9995 /* MemoryChunkStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840DD6C42AC810620006A435 /* MemoryChunkStorage.cpp */; };
@@ -723,7 +731,6 @@
 		84BF63A02AF186C8008A9995 /* ExternalFileLevelStorage.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 840DD6B92AC810620006A435 /* ExternalFileLevelStorage.hpp */; };
 		84BF63A12AF186C8008A9995 /* ExternalFileLevelStorageSource.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 840DD6BB2AC810620006A435 /* ExternalFileLevelStorageSource.hpp */; };
 		84BF63A22AF186C8008A9995 /* LevelData.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 840DD6BD2AC810620006A435 /* LevelData.hpp */; };
-		84BF63A32AF186C8008A9995 /* LevelSource.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 840DD6BF2AC810620006A435 /* LevelSource.hpp */; };
 		84BF63A42AF186C8008A9995 /* LevelStorage.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 840DD6C12AC810620006A435 /* LevelStorage.hpp */; };
 		84BF63A52AF186C8008A9995 /* LevelStorageSource.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 840DD6C32AC810620006A435 /* LevelStorageSource.hpp */; };
 		84BF63A62AF186C8008A9995 /* MemoryChunkStorage.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 840DD6C52AC810620006A435 /* MemoryChunkStorage.hpp */; };
@@ -2010,8 +2017,6 @@
 		840DD6BB2AC810620006A435 /* ExternalFileLevelStorageSource.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ExternalFileLevelStorageSource.hpp; sourceTree = "<group>"; };
 		840DD6BC2AC810620006A435 /* LevelData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelData.cpp; sourceTree = "<group>"; };
 		840DD6BD2AC810620006A435 /* LevelData.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LevelData.hpp; sourceTree = "<group>"; };
-		840DD6BE2AC810620006A435 /* LevelSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelSource.cpp; sourceTree = "<group>"; };
-		840DD6BF2AC810620006A435 /* LevelSource.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LevelSource.hpp; sourceTree = "<group>"; };
 		840DD6C02AC810620006A435 /* LevelStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelStorage.cpp; sourceTree = "<group>"; };
 		840DD6C12AC810620006A435 /* LevelStorage.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LevelStorage.hpp; sourceTree = "<group>"; };
 		840DD6C22AC810620006A435 /* LevelStorageSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelStorageSource.cpp; sourceTree = "<group>"; };
@@ -2425,6 +2430,15 @@
 		842610682AE988D30065905F /* libNetwork.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNetwork.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		842B21872F5414660006C1FA /* Default-667h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-667h@2x.png"; path = "../../game/assets/app/launch/Default-667h@2x.png"; sourceTree = "<group>"; };
 		842B21882F5414660006C1FA /* Default-736h@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-736h@3x.png"; path = "../../game/assets/app/launch/Default-736h@3x.png"; sourceTree = "<group>"; };
+		8432C4003001A0D6005C8BC9 /* Brightness.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Brightness.hpp; sourceTree = "<group>"; };
+		8432C4013001A0D6005C8BC9 /* LevelConstants.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LevelConstants.hpp; sourceTree = "<group>"; };
+		8432C4023001A0D6005C8BC9 /* Tick.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Tick.hpp; sourceTree = "<group>"; };
+		8432C4033001A0D6005C8BC9 /* TileSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TileSource.cpp; sourceTree = "<group>"; };
+		8432C4043001A0D6005C8BC9 /* TileSource.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TileSource.hpp; sourceTree = "<group>"; };
+		8432C4053001A0D6005C8BC9 /* TileTickingQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TileTickingQueue.cpp; sourceTree = "<group>"; };
+		8432C4063001A0D6005C8BC9 /* TileTickingQueue.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TileTickingQueue.hpp; sourceTree = "<group>"; };
+		8432C40E3001A289005C8BC9 /* DimensionId.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = DimensionId.hpp; sourceTree = "<group>"; };
+		8432C4103001A5B8005C8BC9 /* Brightness.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Brightness.cpp; sourceTree = "<group>"; };
 		84336BA42B1EB50E00097DB0 /* Settings_iOS.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Settings_iOS.xcconfig; path = Configuration/Settings_iOS.xcconfig; sourceTree = "<group>"; };
 		84336BA52B1EB57E00097DB0 /* Settings_iOS_Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Settings_iOS_Debug.xcconfig; path = Configuration/Settings_iOS_Debug.xcconfig; sourceTree = "<group>"; };
 		84336BA82B1EB88500097DB0 /* Settings_macOS.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Settings_macOS.xcconfig; path = Configuration/Settings_macOS.xcconfig; sourceTree = "<group>"; };
@@ -4344,12 +4358,16 @@
 		840DD67E2AC810620006A435 /* level */ = {
 			isa = PBXGroup;
 			children = (
+				8432C4103001A5B8005C8BC9 /* Brightness.cpp */,
+				8432C4003001A0D6005C8BC9 /* Brightness.hpp */,
 				840DD67F2AC810620006A435 /* Dimension.cpp */,
 				840DD6802AC810620006A435 /* Dimension.hpp */,
+				8432C40E3001A289005C8BC9 /* DimensionId.hpp */,
 				840DD6812AC810620006A435 /* Explosion.cpp */,
 				840DD6822AC810620006A435 /* Explosion.hpp */,
 				840DD6832AC810620006A435 /* Level.cpp */,
 				840DD6842AC810620006A435 /* Level.hpp */,
+				8432C4013001A0D6005C8BC9 /* LevelConstants.hpp */,
 				84F77A612EA1C0610045C907 /* LevelEvent.hpp */,
 				840DD6852AC810620006A435 /* levelgen */,
 				840DD6AF2AC810620006A435 /* LevelListener.cpp */,
@@ -4360,12 +4378,17 @@
 				840DD6B32AC810620006A435 /* Region.cpp */,
 				840DD6B42AC810620006A435 /* Region.hpp */,
 				840DD6B52AC810620006A435 /* storage */,
+				8432C4023001A0D6005C8BC9 /* Tick.hpp */,
 				840DD6CC2AC810620006A435 /* TickNextTickData.cpp */,
 				840DD6CD2AC810620006A435 /* TickNextTickData.hpp */,
 				84EE51332E8DCD4900D3DCA2 /* TileChange.hpp */,
 				84DAF5752F3464DD00D67310 /* TileEvent.hpp */,
 				8477B3AA2C4DC3F6004E1AC5 /* TilePos.cpp */,
 				8477B3AB2C4DC3F6004E1AC5 /* TilePos.hpp */,
+				8432C4033001A0D6005C8BC9 /* TileSource.cpp */,
+				8432C4043001A0D6005C8BC9 /* TileSource.hpp */,
+				8432C4053001A0D6005C8BC9 /* TileTickingQueue.cpp */,
+				8432C4063001A0D6005C8BC9 /* TileTickingQueue.hpp */,
 			);
 			path = level;
 			sourceTree = "<group>";
@@ -4467,8 +4490,6 @@
 				840DD6BB2AC810620006A435 /* ExternalFileLevelStorageSource.hpp */,
 				840DD6BC2AC810620006A435 /* LevelData.cpp */,
 				840DD6BD2AC810620006A435 /* LevelData.hpp */,
-				840DD6BE2AC810620006A435 /* LevelSource.cpp */,
-				840DD6BF2AC810620006A435 /* LevelSource.hpp */,
 				840DD6C02AC810620006A435 /* LevelStorage.cpp */,
 				840DD6C12AC810620006A435 /* LevelStorage.hpp */,
 				840DD6C22AC810620006A435 /* LevelStorageSource.cpp */,
@@ -6503,6 +6524,7 @@
 				84BF63932AF186C8008A9995 /* PerformanceTestChunkSource.hpp in Headers */,
 				84E023012F2A0245003C8FFE /* ChestMenu.hpp in Headers */,
 				84E8FA312FEF617F00D0669F /* DispenserTile.hpp in Headers */,
+				8432C40B3001A0D6005C8BC9 /* TileSource.hpp in Headers */,
 				84E0230D2F2A0245003C8FFE /* CreativeMenu.hpp in Headers */,
 				845A8D312FEBAB0900D26FD2 /* CraftContext.hpp in Headers */,
 				84B1E03A2E04FD7900ED000A /* Arrow.hpp in Headers */,
@@ -6535,7 +6557,6 @@
 				84BF63A12AF186C8008A9995 /* ExternalFileLevelStorageSource.hpp in Headers */,
 				84BF63A22AF186C8008A9995 /* LevelData.hpp in Headers */,
 				84E8FA372FEF617F00D0669F /* PressurePlateTile.hpp in Headers */,
-				84BF63A32AF186C8008A9995 /* LevelSource.hpp in Headers */,
 				84BF63A42AF186C8008A9995 /* LevelStorage.hpp in Headers */,
 				84E24C862FC969D9004C4D06 /* TrapDoorTile.hpp in Headers */,
 				84E1C9DA2E7FDC26007D2F5D /* SoulSandTile.hpp in Headers */,
@@ -6625,12 +6646,14 @@
 				84BF63CD2AF186C9008A9995 /* StoneSlabTile.hpp in Headers */,
 				84E8FA352FEF617F00D0669F /* NotGateTile.hpp in Headers */,
 				84BF63CE2AF186C9008A9995 /* StoneTile.hpp in Headers */,
+				8432C40F3001A289005C8BC9 /* DimensionId.hpp in Headers */,
 				84E7BF1D2F286A08002D3936 /* ContainerMenu.hpp in Headers */,
 				840823DB2F4FF4B80097F6A5 /* CoalItem.hpp in Headers */,
 				848AA3162F34E897007E9A3E /* DyePowderItem.hpp in Headers */,
 				84BF63CF2AF186C9008A9995 /* Tile.hpp in Headers */,
 				84BF63D02AF186C9008A9995 /* TntTile.hpp in Headers */,
 				84BF63D12AF186C9008A9995 /* TopSnowTile.hpp in Headers */,
+				8432C4093001A0D6005C8BC9 /* Tick.hpp in Headers */,
 				84BF63D22AF186C9008A9995 /* TorchTile.hpp in Headers */,
 				84E8FA392FEF617F00D0669F /* RecordPlayerTile.hpp in Headers */,
 				84BF63D32AF186C9008A9995 /* TransparentTile.hpp in Headers */,
@@ -6644,6 +6667,7 @@
 				84ED41482FC3EC730038BAC4 /* Snowball.hpp in Headers */,
 				84AA8B532B32F39A003F5B82 /* Node.hpp in Headers */,
 				84AA8B552B32F39A003F5B82 /* Path.hpp in Headers */,
+				8432C4073001A0D6005C8BC9 /* Brightness.hpp in Headers */,
 				84AA8B572B32F39A003F5B82 /* PathFinder.hpp in Headers */,
 				84E1C9DE2E7FDC26007D2F5D /* Web.hpp in Headers */,
 				848CCB462F3A38E800031D1F /* MobSpawner.hpp in Headers */,
@@ -6661,7 +6685,9 @@
 				8477B3B42C4DC414004E1AC5 /* ChunkPos.hpp in Headers */,
 				84E023052F2A0255003C8FFE /* DyeColor.hpp in Headers */,
 				84AA8B972B32F3B5003F5B82 /* WaterAnimal.hpp in Headers */,
+				8432C40D3001A0D6005C8BC9 /* TileTickingQueue.hpp in Headers */,
 				84E78C7C2B58B3E000D515EF /* Rocket.hpp in Headers */,
+				8432C4083001A0D6005C8BC9 /* LevelConstants.hpp in Headers */,
 				84E78C842B58B5FB00D515EF /* RocketItem.hpp in Headers */,
 				84E78C882B58B66B00D515EF /* RocketLauncherTile.hpp in Headers */,
 				8477B3B72C4DC414004E1AC5 /* EmptyLevelChunk.hpp in Headers */,
@@ -7762,6 +7788,7 @@
 				84E8FA082FEF611800D0669F /* Squid.cpp in Sources */,
 				84BF63392AF18631008A9995 /* Material.cpp in Sources */,
 				84BF633A2AF18631008A9995 /* Region.cpp in Sources */,
+				8432C4123001A5B8005C8BC9 /* Brightness.cpp in Sources */,
 				84BF633B2AF18631008A9995 /* ChunkStorage.cpp in Sources */,
 				84E1C9EE2E7FDC89007D2F5D /* CactusFeature.cpp in Sources */,
 				8445E7A02D769329008DC834 /* EntityCategories.cpp in Sources */,
@@ -7775,7 +7802,6 @@
 				84E1C9EF2E7FDC89007D2F5D /* PumpkinFeature.cpp in Sources */,
 				84E8FA3C2FEF617F00D0669F /* SnowTile.cpp in Sources */,
 				84E8FA2C2FEF617F00D0669F /* ButtonTile.cpp in Sources */,
-				84BF633F2AF18631008A9995 /* LevelSource.cpp in Sources */,
 				84BF63402AF18631008A9995 /* LevelStorage.cpp in Sources */,
 				84BF63412AF18631008A9995 /* LevelStorageSource.cpp in Sources */,
 				84E1C9D32E7FDC26007D2F5D /* FenceTile.cpp in Sources */,
@@ -7787,6 +7813,7 @@
 				84E8FA042FEF611800D0669F /* PigZombie.cpp in Sources */,
 				8477B3B62C4DC414004E1AC5 /* EmptyLevelChunk.cpp in Sources */,
 				84E24C792FC969D9004C4D06 /* ChestTileEntity.cpp in Sources */,
+				8432C40C3001A0D6005C8BC9 /* TileTickingQueue.cpp in Sources */,
 				84BF63442AF18631008A9995 /* MemoryLevelStorageSource.cpp in Sources */,
 				84BF63452AF18631008A9995 /* RegionFile.cpp in Sources */,
 				84BF63462AF18631008A9995 /* TickNextTickData.cpp in Sources */,
@@ -7884,6 +7911,7 @@
 				84E8FA302FEF617F00D0669F /* DispenserTile.cpp in Sources */,
 				84E0230C2F2A0245003C8FFE /* CreativeMenu.cpp in Sources */,
 				8477B3B32C4DC414004E1AC5 /* ChunkPos.cpp in Sources */,
+				8432C40A3001A0D6005C8BC9 /* TileSource.cpp in Sources */,
 				84AA8B782B32F3B5003F5B82 /* Animal.cpp in Sources */,
 				84AA8B7A2B32F3B5003F5B82 /* Chicken.cpp in Sources */,
 				84B1E03B2E04FD7900ED000A /* Skeleton.cpp in Sources */,

@@ -29,18 +29,18 @@ void LightUpdate::update()
 
 			for (; pos.y <= m_max.y; pos.y++)
 			{
-				Brightness_t currentBrightness = m_pSource->getBrightness(m_lightLayer, pos);
+				Brightness_t currentBrightness = m_pSource->getBrightness(*m_pLightLayer, pos);
 
 				TileID currentTile = m_pSource->getTile(pos);
 				Brightness_t lightBlockLevel = std::min(Tile::lightBlock[currentTile], static_cast<Brightness_t>(1));
 
 				Brightness_t maxBrightness = Brightness::MIN;
-				if (&m_lightLayer == &LightLayer::Sky)
+				if (m_pLightLayer == &LightLayer::Sky)
 				{
 					if (m_pSource->canSeeSky(pos))
 						maxBrightness = Brightness::MAX;
 				}
-				else if (&m_lightLayer == &LightLayer::Block)
+				else if (m_pLightLayer == &LightLayer::Block)
 				{
 					maxBrightness = Tile::lightEmission[currentTile];
 				}
@@ -51,7 +51,7 @@ void LightUpdate::update()
 					Brightness_t brightestNeighbor = 0;
 					for (int i = 0; i < Facing::COUNT; i++)
 					{
-						Brightness_t neighborBrightness = m_pSource->getBrightness(m_lightLayer, pos + Facing::DIRECTION[i]);
+						Brightness_t neighborBrightness = m_pSource->getBrightness(*m_pLightLayer, pos + Facing::DIRECTION[i]);
 						if (neighborBrightness > brightestNeighbor)
 							brightestNeighbor = neighborBrightness;
 					}
@@ -66,21 +66,21 @@ void LightUpdate::update()
 
 				if (currentBrightness != newBrightness)
 				{
-					m_pSource->setBrightness(m_lightLayer, pos, newBrightness);
+					m_pSource->setBrightness(*m_pLightLayer, pos, newBrightness);
 
 					Brightness_t spreadBrightness = std::max(static_cast<Brightness_t>(newBrightness - 1), Brightness::MIN);
 
 					// why dont we check if we're in range here?
-					m_pSource->updateLightIfOtherThan(m_lightLayer, pos - TilePos(1, 0, 0), spreadBrightness);
-					m_pSource->updateLightIfOtherThan(m_lightLayer, pos - TilePos(0, 1, 0), spreadBrightness);
-					m_pSource->updateLightIfOtherThan(m_lightLayer, pos - TilePos(0, 0, 1), spreadBrightness);
+					m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos - TilePos(1, 0, 0), spreadBrightness);
+					m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos - TilePos(0, 1, 0), spreadBrightness);
+					m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos - TilePos(0, 0, 1), spreadBrightness);
 
 					if ((pos.x + 1) >= m_max.x)
-						m_pSource->updateLightIfOtherThan(m_lightLayer, pos + TilePos(1, 0, 0), spreadBrightness);
+						m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos + TilePos(1, 0, 0), spreadBrightness);
 					if ((pos.y + 1) >= m_max.y)
-						m_pSource->updateLightIfOtherThan(m_lightLayer, pos + TilePos(0, 1, 0), spreadBrightness);
+						m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos + TilePos(0, 1, 0), spreadBrightness);
 					if ((pos.z + 1) >= m_max.z)
-						m_pSource->updateLightIfOtherThan(m_lightLayer, pos + TilePos(0, 0, 1), spreadBrightness);
+						m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos + TilePos(0, 0, 1), spreadBrightness);
 				}
 			}
 		}

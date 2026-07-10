@@ -20,6 +20,7 @@
 #include "world/level/levelgen/chunk/ChunkPos.hpp"
 #include "world/tile/Tile.hpp"
 #include "world/item/ItemStack.hpp"
+#include "world/level/DimensionId.hpp"
 #include "SynchedEntityData.hpp"
 #include "EntityTypeDescriptor.hpp"
 
@@ -29,7 +30,6 @@ class ItemStack;
 class ItemEntity;
 class TileSource;
 class Dimension;
-enum DimensionId;
 
 struct EntityPos
 {

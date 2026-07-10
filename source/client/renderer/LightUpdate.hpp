@@ -7,14 +7,14 @@ class TileSource;
 class LightUpdate
 {
 private:
-	const LightLayer& m_lightLayer;
+	const LightLayer* m_pLightLayer; // non-static reference member can't use copy assignment operator
 	TileSource* m_pSource;
 	TilePos m_min;
 	TilePos m_max;
 
 public:
 	LightUpdate(TileSource& source, const LightLayer& lightLayer, const TilePos& min, const TilePos& max)
-		: m_lightLayer(lightLayer)
+		: m_pLightLayer(&lightLayer)
 		, m_pSource(&source)
 		, m_min(min)
 		, m_max(max)
