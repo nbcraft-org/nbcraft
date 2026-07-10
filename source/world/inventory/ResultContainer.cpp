@@ -43,7 +43,7 @@ void ResultContainer::setContainerChanged(StackID stackId)
 {
 }
 
-bool ResultContainer::stillValid(Player*) const
+bool ResultContainer::stillValid(Player&) const
 {
     return true;
 }

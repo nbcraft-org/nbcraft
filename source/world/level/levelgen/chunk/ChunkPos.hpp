@@ -1,5 +1,7 @@
 #pragma once
+
 #include <cmath>
+#include <functional>
 #include "world/phys/Vec3.hpp"
 
 #ifndef __TILEPOS_HPP
@@ -22,6 +24,12 @@ public:
 	ChunkPos(int x, int z) : x(x), z(z) {}
 	ChunkPos(const Vec3& pos) { _init(pos); }
 	ChunkPos(const TilePos& pos) { _init(pos); }
+
+	int hashCode() const
+	{
+		// From Java
+		return x << 8 | z;
+	}
 
 	int lengthSqr() const
 	{
@@ -80,9 +88,19 @@ public:
 		z += b.z;
 	}
 
+	void operator+= (int i)
+	{
+		(*this) += ChunkPos(i, i);
+	}
+
 	void operator-=(const ChunkPos& b)
 	{
 		(*this) += -b;
+	}
+
+	void operator-=(int i)
+	{
+		(*this) -= ChunkPos(i, i);
 	}
 
 	void operator*=(int i)
@@ -128,4 +146,20 @@ public:
 	{
 		return int(floorf(value / 16));
 	}
+
+public:
+	static const ChunkPos INVALID;
 };
+
+namespace std
+{
+	template <>
+	class hash<ChunkPos>
+	{
+	public:
+		size_t operator()(const ChunkPos& cp) const
+		{
+			return cp.hashCode();
+		}
+	};
+}

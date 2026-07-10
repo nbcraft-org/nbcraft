@@ -22,10 +22,72 @@
 class Level;
 class AABB;
 class Entity;
+class EntityType;
 class TileEntity;
 
 class LevelChunk
 {
+public:
+	struct NibbleTileArray
+	{
+		NibbleTileArray()
+		{
+			array = new uint8_t[getSize()];
+		}
+
+		~NibbleTileArray()
+		{
+			delete[] array;
+		}
+
+		uint8_t get(const ChunkTilePos& pos) const
+		{
+			uint8_t byte = array[pos.index() >> 1];
+
+			if ((pos.y & 1) == 0)
+			{
+				// get low bits
+				return byte & 0xF;
+			}
+			else
+			{
+				// get high bits
+				return byte >> 4;
+			}
+		}
+
+		bool set(const ChunkTilePos& pos, uint8_t value)
+		{
+			int index = pos.index() >> 1;
+			uint8_t byte = array[index];
+
+			if ((pos.y & 1) == 0)
+			{
+				// low bits
+				if ((byte & 0xF) != value)
+				{
+					array[index] = (value & 0xF) | (byte & 0xF0);
+					return true;
+				}
+			}
+			else
+			{
+				// high bits
+				if ((byte >> 4) != value)
+				{
+					array[index] = (value << 4) | (byte & 0xF);
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		size_t getSize() const { return ChunkConstants::TILE_COUNT / 2; }
+
+		uint8_t* array;
+	};
+
 private:
 	void _init();
 protected:
@@ -63,6 +125,8 @@ public:
 	virtual void markUnsaved();
 	virtual int  countEntities();
 	virtual void getEntities(Entity* pEntExclude, const AABB&, std::vector<Entity*>& out);
+	virtual void getEntities(const EntityType& type, const AABB& aabb, std::vector<Entity*>& output) const;
+	virtual void getEntities(const EntityType& type, const AABB& aabb, Entity* pEntExclude, std::vector<Entity*>& output) const;
 	virtual TileID getTile(const ChunkTilePos& pos);
 	virtual bool setTile(const ChunkTilePos& pos, TileID tile);
 	virtual bool setTileAndData(const ChunkTilePos& pos, TileID tile, TileData data);
@@ -80,6 +144,10 @@ public:
 	virtual bool isEmpty();
 	//...
 
+	TileID* getTiles() { return m_pBlockData; }
+	NibbleTileArray& getTileData() { return m_tileData; }
+	const ChunkPos& getPos() const { return m_chunkPos; }
+
 public:
 	static bool touchedSky;
 
@@ -87,9 +155,9 @@ public:
 	int field_4;
 	bool m_bLoaded;
 	Level* m_pLevel;
-	DataLayer m_tileData;
-	DataLayer m_lightSky;
-	DataLayer m_lightBlk;
+	NibbleTileArray m_tileData;
+	NibbleTileArray m_lightSky;
+	NibbleTileArray m_lightBlk;
 	uint8_t m_heightMap[256];
 	uint8_t m_updateMap[256];
 	int field_228;

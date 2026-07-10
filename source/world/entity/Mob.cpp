@@ -12,6 +12,7 @@
 #include "network/RakNetInstance.hpp"
 #include "network/packets/MoveEntityPacket_PosRot.hpp"
 #include "network/packets/SetEntityMotionPacket.hpp"
+#include "world/level/TileSource.hpp"
 
 void Mob::_init()
 {
@@ -58,22 +59,27 @@ void Mob::_init()
 	m_bSwinging = false;
 	m_swingTime = 0;
 	m_ambientSoundTime = 0;
-}
-
-Mob::Mob(Level* pLevel) : Entity(pLevel)
-{
-	_init();
 
 	m_texture = "/mob/pig.png";
 	m_class = "";
 
-    m_bBlocksBuilding = true;
+	m_bBlocksBuilding = true;
 
 	m_rotA = (Mth::random() + 1.0f) * 0.01f;
 	setPos(m_pos);
 	m_timeOffs = Mth::random() * 12398.0f;
 	m_rot.yaw = float(Mth::random() * M_PI);
 	m_footSize = 0.5f;
+}
+
+Mob::Mob(TileSource& source) : Entity(source)
+{
+	_init();
+}
+
+Mob::Mob(Level& level) : Entity(level)
+{
+	_init();
 }
 
 Mob::~Mob()
@@ -459,7 +465,7 @@ void Mob::causeFallDamage(float level)
 
 		hurt(nullptr, x);
 
-		TileID tileId = m_pLevel->getTile(TilePos(m_pos.x, m_pos.y - 0.2f - m_heightOffset, m_pos.z));
+		TileID tileId = m_pTileSource->getTile(TilePos(m_pos.x, m_pos.y - 0.2f - m_heightOffset, m_pos.z));
 		if (tileId > 0)
 		{
 			const Tile::SoundType* pSound = Tile::tiles[tileId]->m_pSound;
@@ -529,14 +535,14 @@ void Mob::knockback(Entity* pEnt, int a, float x, float z)
 bool Mob::onLadder() const
 {
 #ifdef ENH_NEW_LADDER_BEHAVIOR
-	return m_pLevel->getTile(TilePos(m_pos.x, m_hitbox.min.y, m_pos.z)) == Tile::ladder->m_ID;
+	return m_pTileSource->getTile(TilePos(m_pos.x, m_hitbox.min.y, m_pos.z)) == Tile::ladder->m_ID;
 #else
 	TilePos tilePos = TilePos(m_pos.x, m_hitbox.min.y, m_pos.z);
 
 	//@INFO: Pre Beta 1.5 stair behaviour
 	return
-		m_pLevel->getTile(tilePos) == Tile::ladder->m_ID ||
-		m_pLevel->getTile(tilePos.above()) == Tile::ladder->m_ID;
+		m_pTileSource->getTile(tilePos) == Tile::ladder->m_ID ||
+		m_pTileSource->getTile(tilePos.above()) == Tile::ladder->m_ID;
 #endif
 }
 
@@ -579,11 +585,12 @@ void Mob::heal(int health)
 
 HitResult Mob::pick(float f1, float f2)
 {
-	Vec3 pos = getPos(f2);
+	Vec3 pos = getInterpolatedPosition(f2);
 	Vec3 view = getViewVector(f2);
 
 	Vec3 limit = pos + view * f1;
-	return m_pLevel->clip(pos, limit, false, false);
+
+	return m_pTileSource->clip(pos, limit);
 }
 
 void Mob::travel(const Vec2& pos)
@@ -612,7 +619,7 @@ void Mob::travel(const Vec2& pos)
 	else
 	{
 		float _x1;
-		TileID tile = m_pLevel->getTile(TilePos(m_pos.x, m_hitbox.min.y - 1, m_pos.z));
+		TileID tile = m_pTileSource->getTile(TilePos(m_pos.x, m_hitbox.min.y - 1, m_pos.z));
 		if (tile <= 0)
 			_x1 = 0.546f;
 		else
@@ -632,7 +639,7 @@ void Mob::travel(const Vec2& pos)
 	else
 	{
 
-		TileID tile = m_pLevel->getTile(TilePos(m_pos.x, m_hitbox.min.y - 1, m_pos.z));
+		TileID tile = m_pTileSource->getTile(TilePos(m_pos.x, m_hitbox.min.y - 1, m_pos.z));
 		if (tile <= 0)
 			dragFactor = 0.546f;
 		else
@@ -700,7 +707,8 @@ bool Mob::canSee(Entity* pEnt) const
 	Vec3 v2 = pEnt->m_pos;
 	v2.y += pEnt->getHeadHeight();
 
-	return m_pLevel->clip(v1, v2).m_hitType == HitResult::NONE;
+	HitResult result = m_pTileSource->clip(v1, v2);
+	return result.m_hitType == HitResult::NONE;
 }
 
 void Mob::updateWalkAnim()
@@ -748,8 +756,8 @@ void Mob::aiStep()
 	AABB aabb = m_hitbox;
 	aabb.grow(0.2f, 0.2f, 0.2f);
 
-	EntityVector ents = m_pLevel->getEntities(this, aabb);
-	for (EntityVector::iterator it = ents.begin(); it != ents.end(); it++)
+	const std::vector<Entity*>& ents = m_pTileSource->getEntities(this, aabb);
+	for (std::vector<Entity*>::const_iterator it = ents.begin(); it != ents.end(); it++)
 	{
 		Entity* pEnt = *it;
 		if (pEnt->isPushable())
@@ -790,7 +798,7 @@ Entity* Mob::getLookingAt() const
 
 bool Mob::canSpawn()
 {
-	return m_pLevel->getCubes(this, m_hitbox)->empty();
+	return m_pTileSource->fetchAABBs(m_hitbox, true).empty();
 }
 
 float Mob::getAttackAnim(float f) const

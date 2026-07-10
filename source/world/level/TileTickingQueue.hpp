@@ -1,0 +1,32 @@
+#pragma once
+#include "world/tile/Tile.hpp"
+#include "Tick.hpp"
+#include "TickNextTickData.hpp"
+#include "common/MovePriorityQueue.hpp"
+
+class TileSource;
+
+class TileTickingQueue
+{
+private:
+	Tick_t m_currentTick;
+	MovePriorityQueue<TickNextTickData> m_tickData;
+	bool m_instaTick;
+	Random m_random;
+
+public:
+	TileTickingQueue();
+
+public:
+	void add(TileSource& region, const TilePos& pos, TileID tileID, int tickDelay);
+
+	bool tickPendingTicks(TileSource& region, Tick_t until, int max, bool instaTick);
+	bool tickPendingTicks(TileSource& region, int max, bool instaTick);
+	void tickAllPendingTicks(TileSource& region);
+
+	void save(CompoundTag& tag);
+	void load(const CompoundTag& tag);
+
+private:
+	void _tick(TileSource& region, const TilePos& pos, TileID tileID);
+};

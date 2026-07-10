@@ -363,12 +363,12 @@ LevelChunk* ExternalFileLevelStorage::load(Level* level, const ChunkPos& pos)
 	pBitStream->Read((char*)pData, 16 * 16 * 128 * sizeof(TileID));
 
 	LevelChunk* pChunk = new LevelChunk(level, pData, pos);
-	pBitStream->Read((char*)pChunk->m_tileData.m_data, 16 * 16 * 128 / 2);
+	pBitStream->Read((char*)pChunk->m_tileData.array, 16 * 16 * 128 / 2);
 
 	if (m_storageVersion >= 1)
 	{
-		pBitStream->Read((char*)pChunk->m_lightSky.m_data, 16 * 16 * 128 / 2);
-		pBitStream->Read((char*)pChunk->m_lightBlk.m_data, 16 * 16 * 128 / 2);
+		pBitStream->Read((char*)pChunk->m_lightSky.array, 16 * 16 * 128 / 2);
+		pBitStream->Read((char*)pChunk->m_lightBlk.array, 16 * 16 * 128 / 2);
 	}
 
 	pBitStream->Read((char*)pChunk->m_updateMap, sizeof pChunk->m_updateMap);
@@ -439,7 +439,7 @@ void ExternalFileLevelStorage::loadEntities(Level* level, LevelChunk* chunk)
 						if (!betterTag || betterTag->getId() != Tag::TAG_TYPE_COMPOUND)
 							continue;
 
-						Entity* entity = EntityFactory::LoadEntity(*(CompoundTag*)betterTag, level);
+						Entity* entity = EntityFactory::LoadEntity(*(CompoundTag*)betterTag, *level);
 						if (entity)
 							level->addEntity(entity);
 					}
@@ -489,12 +489,12 @@ void ExternalFileLevelStorage::save(Level* level, LevelChunk* chunk)
 
 	RakNet::BitStream bs;
 	bs.Write((const char*)chunk->m_pBlockData,        16 * 16 * 128 * sizeof(TileID));
-	bs.Write((const char*)chunk->m_tileData.m_data, chunk->m_tileData.m_size);
+	bs.Write((const char*)chunk->m_tileData.array, chunk->m_tileData.getSize());
 
 	if (m_pLevelData->getStorageVersion() >= 1)
 	{
-		bs.Write((const char*)chunk->m_lightSky.m_data, chunk->m_lightSky.m_size);
-		bs.Write((const char*)chunk->m_lightBlk.m_data, chunk->m_lightBlk.m_size);
+		bs.Write((const char*)chunk->m_lightSky.array, chunk->m_lightSky.getSize());
+		bs.Write((const char*)chunk->m_lightBlk.array, chunk->m_lightBlk.getSize());
 	}
 
 	bs.Write((const char*)chunk->m_updateMap, sizeof chunk->m_updateMap);
@@ -508,8 +508,8 @@ void ExternalFileLevelStorage::saveEntities(Level* level, LevelChunk* chunk)
 	//getTimeS();
 	ListTag* entitiesTag = new ListTag();
 
-	const EntityMap* entities = level->getAllEntities();
-	for (EntityMap::const_iterator it = entities->begin(); it != entities->end(); it++)
+	const Entity::IdMap* entities = level->getAllEntities();
+	for (Entity::IdMap::const_iterator it = entities->begin(); it != entities->end(); it++)
 	{
 		const Entity* entity = it->second;
 		CompoundTag* tag = new CompoundTag();
@@ -522,8 +522,8 @@ void ExternalFileLevelStorage::saveEntities(Level* level, LevelChunk* chunk)
 
 	ListTag* tileEntitiesTag = new ListTag();
 
-	const TileEntityVector* tileEntities = level->getAllTileEntities();
-	for (TileEntityVector::const_iterator it = tileEntities->begin(); it != tileEntities->end(); it++)
+	const TileEntity::Vector& tileEntities = level->getAllTileEntities();
+	for (TileEntity::Vector::const_iterator it = tileEntities.begin(); it != tileEntities.end(); it++)
 	{
 		const TileEntity* tileEntity = *it;
 		CompoundTag* tag = new CompoundTag();

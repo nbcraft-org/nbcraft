@@ -105,7 +105,6 @@
     <ClCompile Include="$(MC_ROOT)\source\world\level\storage\ExternalFileLevelStorage.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\storage\ExternalFileLevelStorageSource.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\storage\LevelData.cpp" />
-    <ClCompile Include="$(MC_ROOT)\source\world\level\storage\LevelSource.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\storage\LevelStorage.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\storage\LevelStorageSource.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\storage\MemoryChunkStorage.cpp" />
@@ -284,6 +283,8 @@
     <ClCompile Include="$(MC_ROOT)\source\world\particle\TakeAnimationParticle.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\item\BucketItem.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\phys\Rot2.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\level\TileSource.cpp" />
+    <ClCompile Include="..\..\..\source\world\level\TileTickingQueue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Entity.hpp" />
@@ -332,7 +333,6 @@
     <ClInclude Include="$(MC_ROOT)\source\world\level\storage\ExternalFileLevelStorage.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\level\storage\ExternalFileLevelStorageSource.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\level\storage\LevelData.hpp" />
-    <ClInclude Include="$(MC_ROOT)\source\world\level\storage\LevelSource.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\level\storage\LevelStorage.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\level\storage\LevelStorageSource.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\level\storage\MemoryChunkStorage.hpp" />
@@ -502,6 +502,12 @@
     <ClInclude Include="$(MC_ROOT)\source\world\inventory\CraftContext.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\item\BucketItem.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\phys\Rot2.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\level\TileSource.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\level\Brightness.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\level\LevelConstants.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\level\levelgen\chunk\ChunkConstants.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\level\Tick.hpp" />
+    <ClInclude Include="..\..\..\source\world\level\TileTickingQueue.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NBT\NBT.vcxproj">

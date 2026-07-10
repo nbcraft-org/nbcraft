@@ -183,7 +183,7 @@ void CreativeMenu::updateScroll(float scroll)
     }
 }
 
-bool CreativeMenu::stillValid(Player* player) const
+bool CreativeMenu::stillValid(Player& player) const
 {
     return true;
 }

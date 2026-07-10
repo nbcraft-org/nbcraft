@@ -7,6 +7,8 @@
  ********************************************************************/
 #include "RocketLauncherTile.hpp"
 #include "world/level/Level.hpp"
+#include "world/level/TileSource.hpp"
+#include "world/level/TileTickingQueue.hpp"
 #include "world/entity/Rocket.hpp"
 
 #define STATE_RECHARGING (0x1)
@@ -18,12 +20,30 @@ RocketLauncherTile::RocketLauncherTile(TileID id) : Tile(id, 16*14+2, Material::
 	setTicking(true);
 }
 
+bool RocketLauncherTile::_use(TileSource& source, const TilePos& pos)
+{
+	int data = source.getData(pos);
+	if (data & STATE_RECHARGING)
+		return true;
+
+	source.setTileAndData(pos, FullTile(this, data | STATE_RECHARGING));
+
+	// spawn a rocket
+	Level& level = source.getLevel();
+	level.addEntity(new Rocket(source, Vec3(pos) + 0.5f));
+
+	// add a tick so that the rocket launcher will reset
+	source.getTickQueue(pos)->add(source, pos, m_ID, getTickDelay());
+
+	return true;
+}
+
 int RocketLauncherTile::getTexture(Facing::Name face, TileData data) const
 {
 	return (data & STATE_RECHARGING) ? 16*14+3 : 16*14+2;
 }
 
-AABB* RocketLauncherTile::getAABB(const Level*, const TilePos& pos)
+AABB* RocketLauncherTile::getAABB(const TileSource&, const TilePos& pos)
 {
 	return nullptr;
 }
@@ -49,52 +69,42 @@ bool RocketLauncherTile::isSignalSource() const
 	return true;
 }
 
-bool RocketLauncherTile::use(Level* level, const TilePos& pos, Player* player)
+bool RocketLauncherTile::use(const TilePos& pos, Player& player)
 {
-	int data = level->getData(pos);
-	if (data & STATE_RECHARGING)
-		return true;
+	TileSource& source = player.getTileSource();
 
-	level->setData(pos, data | STATE_RECHARGING);
-
-	// spawn a rocket
-	level->addEntity(new Rocket(level, Vec3(pos) + 0.5f));
-
-	// add a tick so that the rocket launcher will reset
-	level->addToTickNextTick(pos, m_ID, getTickDelay());
-
-	return true;
+	return _use(source, pos);
 }
 
-void RocketLauncherTile::neighborChanged(Level* level, const TilePos& pos, TileID newTile)
+void RocketLauncherTile::neighborChanged(TileSource& source, const TilePos& pos, TileID newTile)
 {
 	if (newTile <= 0 || !Tile::tiles[newTile]->isSignalSource())
 		return;
 
-	int data = level->getData(pos);
+	TileData data = source.getData(pos);
 
-	if (level->hasNeighborSignal(pos))
+	if (source.hasNeighborSignal(pos))
 	{
 		if (data & (STATE_POWERED | STATE_RECHARGING))
 			return;
 
-		level->setDataNoUpdate(pos, data | STATE_POWERED);
-		use(level, pos, nullptr);
+		source.setTileAndDataNoUpdate(pos, FullTile(m_ID, data | STATE_POWERED));
+		_use(source, pos);
 	}
 	else
 	{
 		if (data & STATE_POWERED)
-			level->setDataNoUpdate(pos, data & ~STATE_POWERED);
+			source.setTileAndDataNoUpdate(pos, FullTile(m_ID, data & ~STATE_POWERED));
 	}
 }
 
-void RocketLauncherTile::tick(Level* level, const TilePos& pos, Random* random)
+void RocketLauncherTile::tick(TileSource& source, const TilePos& pos, Random* random)
 {
-	int data = level->getData(pos);
+	int data = source.getData(pos);
 	if (~data & STATE_RECHARGING)
 		return;
 
-	level->setData(pos, data & ~STATE_RECHARGING);
+	source.setTileAndData(pos, FullTile(this, data & ~STATE_RECHARGING));
 }
 
 int RocketLauncherTile::getTickDelay() const

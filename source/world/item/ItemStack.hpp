@@ -72,22 +72,22 @@ public:
 	int getMaxDamage() const;
 	int getMaxStackSize() const;
 	void hurt(int by);
-	void hurtAndBreak(int, Entity*);
-	void hurtEnemy(Mob*, Mob*);
-	void interactEnemy(Mob*);
+	void hurtAndBreak(int, Entity&);
+	void hurtEnemy(Mob&, Mob&);
+	void interactEnemy(Mob&);
 	bool isDamageableItem() const;
 	bool isDamaged() const;
 	bool isStackable() const;
 	bool isStackedByData() const;
-	void mineBlock(const TilePos& pos, Facing::Name face, Mob* mob);
+	void mineBlock(const TilePos& pos, Facing::Name face, Mob& mob);
 	void shrink(int count = 1);
 	ItemStack remove(int count);
 	void setDescriptionId(const std::string&);
-	void snap(Player*);
+	void snap(Player&);
 	std::string toString() const;
-	bool use(Level*, Mob&);
+	bool use(Mob&);
 	void releaseUsing(Level&, Mob&, int durationLeft);
-	bool useOn(Player*, Level*, const TilePos& pos, Facing::Name face);
+	bool useOn(Player&, const TilePos& pos, Facing::Name face);
 	void onCraftedBy(Player*, Level*);
 	void onCraftedBy(Player*, Level*, int amount);
 
@@ -98,8 +98,8 @@ public:
 	ItemStack* copy() const;
 
 	// v0.2.0
-	int getAttackDamage(Entity *pEnt) const;
-	//formerly known as isNull
+	int getAttackDamage(Entity &entity) const;
+	// formerly known as isNull
 	bool isEmpty() const;
 	void setEmpty();
 	bool sameIngredient(const ItemStack&) const;
@@ -114,7 +114,7 @@ public:
 	void load(const CompoundTag& tag);
 	CompoundTag& save(CompoundTag& tag) const;
 
-	//formerly known as isNull
+	// formerly known as isNull
 	static bool isEmpty(const ItemStack*);
 	static bool matches(const ItemStack&, const ItemStack&);
 	static ItemStack fromTag(const CompoundTag& tag);

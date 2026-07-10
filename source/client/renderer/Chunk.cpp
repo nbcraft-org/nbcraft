@@ -186,7 +186,7 @@ void Chunk::rebuild()
 
 					Tile* pTile = Tile::tiles[tile];
 
-					if (layer == pTile->getRenderLayer())
+					if (layer == pTile->getRenderLayer(*m_pLevel, tp))
 					{
 						if (tileRenderer.tesselateInWorld(pTile, tp))
 							rendered = true;
@@ -219,7 +219,7 @@ void Chunk::rebuild()
 	// get TileEntity diff and update m_globalTileEntities (renderable TileEntities) accordingly
 
 	std::set<TileEntity*> newSet(m_tileEntities.begin(), m_tileEntities.end());
-	TileEntityVector toAdd, toRemove;
+	TileEntity::Vector toAdd, toRemove;
 
 	std::set_difference(
 		newSet.begin(), newSet.end(),
@@ -234,15 +234,15 @@ void Chunk::rebuild()
 	);
 
 	// Add
-	for (TileEntityVector::iterator it = toAdd.begin(); it != toAdd.end(); ++it)
+	for (TileEntity::Vector::iterator it = toAdd.begin(); it != toAdd.end(); ++it)
 	{
 		m_globalTileEntities.push_back(*it);
 	}
 
 	// Remove
-	for (TileEntityVector::iterator it = toRemove.begin(); it != toRemove.end(); ++it)
+	for (TileEntity::Vector::iterator it = toRemove.begin(); it != toRemove.end(); ++it)
 	{
-		TileEntityVector::iterator f =
+		TileEntity::Vector::iterator f =
 			std::find(m_globalTileEntities.begin(),
 					m_globalTileEntities.end(),
 					*it);
@@ -255,7 +255,7 @@ void Chunk::rebuild()
 	m_bCompiled = true;
 }
 
-Chunk::Chunk(Level* level, TileEntityVector& tileEntities, const TilePos& pos, int size, int lists)
+Chunk::Chunk(Level* level, TileEntity::Vector& tileEntities, const TilePos& pos, int size, int lists)
 	: m_globalTileEntities(tileEntities)
 {
 	m_bOcclusionVisible = true;

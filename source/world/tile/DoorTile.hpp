@@ -16,23 +16,23 @@ public:
 	DoorTile(int ID, Material*);
 
 public:
-	void attack(Level*, const TilePos& pos, Player*) override;
-	bool use(Level*, const TilePos& pos, Player*) override;
-	HitResult clip(const Level*, const TilePos& pos, Vec3, Vec3) override;
-	AABB* getAABB(const Level*, const TilePos& pos) override;
+	void attack(const TilePos& pos, Player&) override;
+	bool use(const TilePos& pos, Player&) override;
+	HitResult clip(const TileSource&, const TilePos& pos, Vec3, Vec3) override;
+	AABB* getAABB(const TileSource&, const TilePos& pos) override;
 	eRenderShape getRenderShape() const override;
 	int getResource(TileData data, Random*) const override;
 	int getTexture(Facing::Name face, TileData data) const override;
-	AABB getTileAABB(const Level*, const TilePos& pos) override;
+	AABB getTileAABB(TileSource&, const TilePos& pos) override;
 	bool isCubeShaped() const override;
 	bool isSolidRender() const override;
-	bool mayPlace(const Level*, const TilePos& pos) const override;
-	void updateShape(const LevelSource*, const TilePos& pos) override;
-	void neighborChanged(Level*, const TilePos& pos, TileID newTile) override;
+	bool mayPlace(const TileSource&, const TilePos& pos) const override;
+	void updateShape(const TileSource&, const TilePos& pos) override;
+	void neighborChanged(TileSource&, const TilePos& pos, TileID newTile) override;
 
 	bool blocksLight() const;
 	int getDir(TileData data) const;
-	void setOpen(Level*, const TilePos& pos, bool bOpen, Player* player = nullptr);
+	void setOpen(TileSource&, const TilePos& pos, bool bOpen);
 	
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"

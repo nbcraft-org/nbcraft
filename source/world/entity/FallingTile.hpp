@@ -13,11 +13,11 @@
 class FallingTile : public Entity
 {
 private:
-	void _init(Level*, const Vec3& pos, int id);
+	void _init(const Vec3& pos, int id);
 
 public:
-	FallingTile(Level*);
-	FallingTile(Level*, const Vec3& pos, int id);
+	FallingTile(TileSource& source);
+	FallingTile(TileSource& source, const Vec3& pos, int id);
 
 private:
 	void _defineEntityData();
@@ -31,7 +31,6 @@ public:
 
 	int getTile() const;
 	void setTile(int id);
-	Level* getLevel() { return m_pLevel; }
 
 public:
 	int m_time;

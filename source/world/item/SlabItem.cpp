@@ -5,9 +5,9 @@ SlabItem::SlabItem(int id) : AuxTileItem(id)
 {
 }
 
-std::string SlabItem::getDescriptionId(ItemStack* item) const
+std::string SlabItem::getDescriptionId(ItemStack& item) const
 {
-	int var2 = item->getAuxValue();
+	int var2 = item.getAuxValue();
 	if (var2 < 0 || var2 >= 4)
 	{
 		var2 = 0;

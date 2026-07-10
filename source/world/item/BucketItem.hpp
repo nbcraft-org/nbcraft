@@ -6,7 +6,7 @@ class BucketItem : public Item
 {
 public:
 	BucketItem(int id, TileID content);
-	bool use(ItemStack&, Level*, Mob&) const override;
+	bool use(ItemStack&, Mob&) const override;
 protected:
 	TileID m_content;
 };

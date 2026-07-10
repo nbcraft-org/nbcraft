@@ -14,7 +14,7 @@ public:
 
     void updateScroll(float scroll);
 
-    bool stillValid(Player* player) const override;
+    bool stillValid(Player& player) const override;
 
     static const std::vector<ItemStack>& GetCreativeItems() { return creativeItems; }
 

@@ -86,12 +86,12 @@ void ContainerMenu::broadcastChanges()
     }
 }
 
-void ContainerMenu::removed(Player* player)
+void ContainerMenu::removed(Player& player)
 {
-    Inventory* inv = player->m_pInventory;
+    Inventory* inv = player.m_pInventory;
     if (!inv->getCarried().isEmpty())
     {
-        player->drop(inv->getCarried());
+        player.drop(inv->getCarried());
         inv->setCarried(ItemStack::EMPTY);
     }
 }

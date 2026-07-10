@@ -5,7 +5,7 @@
 class PigZombie : public Zombie
 {
 public:
-	PigZombie(Level* pLevel);
+	PigZombie(TileSource& source);
 
 private:
 	void _alert(Entity*);

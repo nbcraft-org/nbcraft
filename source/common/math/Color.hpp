@@ -41,7 +41,7 @@ private:
 public:
     Color()
     {
-		*this = NIL;
+        _init(0.0f, 0.0f, 0.0f, 0.0f);
     }
 
     Color(float r, float g, float b, float a = 1.0f)
@@ -79,6 +79,26 @@ public:
         return *this;
     }
 
+    Color operator+(float f) const
+    {
+        return Color(r + f, g + f, b + f, a);
+    }
+
+    Color operator+(const Color& c) const
+    {
+        return Color(r + c.r, g + c.g, b + c.b, a + c.a);
+    }
+
+    Color operator-(float f) const
+    {
+        return Color(r - f, g - f, b - f, a);
+    }
+
+    Color operator-(const Color& c) const
+    {
+        return Color(r - c.r, g - c.g, b - c.b, a - c.a);
+    }
+
     Color operator*(float f) const
     {
         return Color(r * f, g * f, b * f, a);
@@ -87,6 +107,54 @@ public:
     Color operator*(const Color& c) const
     {
         return Color(r * c.r, g * c.g, b * c.b, a * c.a);
+    }
+
+    Color operator/(float f) const
+    {
+        return Color(r / f, g / f, b / f, a);
+    }
+
+    Color operator/(const Color& c) const
+    {
+        return Color(r / c.r, g / c.g, b / c.b, a / c.a);
+    }
+
+    Color& operator+=(const Color& c)
+    {
+        r += c.r;
+        g += c.g;
+        b += c.b;
+        a += c.a;
+
+        return *this;
+    }
+
+    Color& operator+=(float f)
+    {
+        r += f;
+        g += f;
+        b += f;
+
+        return *this;
+    }
+
+    Color& operator-=(const Color& c)
+    {
+        r -= c.r;
+        g -= c.g;
+        b -= c.b;
+        a -= c.a;
+
+        return *this;
+    }
+
+    Color& operator-=(float f)
+    {
+        r -= f;
+        g -= f;
+        b -= f;
+
+        return *this;
     }
 
     Color& operator*=(const Color& c)
@@ -104,6 +172,25 @@ public:
         r *= f;
         g *= f;
         b *= f;
+
+        return *this;
+    }
+
+    Color& operator/=(const Color& c)
+    {
+        r /= c.r;
+        g /= c.g;
+        b /= c.b;
+        a /= c.a;
+
+        return *this;
+    }
+
+    Color& operator/=(float f)
+    {
+        r /= f;
+        g /= f;
+        b /= f;
 
         return *this;
     }

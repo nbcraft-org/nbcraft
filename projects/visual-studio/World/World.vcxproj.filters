@@ -290,9 +290,6 @@
     <ClCompile Include="$(MC_ROOT)\source\world\level\storage\LevelData.cpp">
       <Filter>Source Files\Level\Storage</Filter>
     </ClCompile>
-    <ClCompile Include="$(MC_ROOT)\source\world\level\storage\LevelSource.cpp">
-      <Filter>Source Files\Level\Storage</Filter>
-    </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\world\level\storage\LevelStorage.cpp">
       <Filter>Source Files\Level\Storage</Filter>
     </ClCompile>
@@ -830,6 +827,12 @@
     <ClCompile Include="$(MC_ROOT)\source\world\phys\Rot2.cpp">
       <Filter>Source Files\Phys</Filter>
     </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\level\TileSource.cpp">
+      <Filter>Source Files\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\world\level\TileTickingQueue.cpp">
+      <Filter>Source Files\Level</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Entity.hpp">
@@ -965,9 +968,6 @@
       <Filter>Header Files\Level\Storage</Filter>
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\world\level\storage\LevelData.hpp">
-      <Filter>Header Files\Level\Storage</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MC_ROOT)\source\world\level\storage\LevelSource.hpp">
       <Filter>Header Files\Level\Storage</Filter>
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\world\level\storage\LevelStorage.hpp">
@@ -1479,6 +1479,24 @@
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\world\phys\Rot2.hpp">
       <Filter>Header Files\Phys</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\level\TileSource.hpp">
+      <Filter>Header Files\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\level\levelgen\chunk\ChunkConstants.hpp">
+      <Filter>Header Files\Level\LevelGen\Chunk</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\level\Brightness.hpp">
+      <Filter>Header Files\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\level\LevelConstants.hpp">
+      <Filter>Header Files\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\level\Tick.hpp">
+      <Filter>Header Files\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\world\level\TileTickingQueue.hpp">
+      <Filter>Header Files\Level</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

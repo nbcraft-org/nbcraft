@@ -1,12 +1,13 @@
 #pragma once
 
 #include "Mob.hpp"
-#include "world/level/Level.hpp"
 
 class FlyingMob : public Mob
 {
 public:
-	FlyingMob(Level* pLevel);
+	FlyingMob(TileSource& source);
+
+public:
 	void causeFallDamage(float) override { }
 	void travel(const Vec2& pos) override;
 	bool onLadder() const override { return false; }

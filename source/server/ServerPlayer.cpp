@@ -18,8 +18,8 @@
 #include "world/inventory/Slot.hpp"
 #include "world/inventory/TrapMenu.hpp"
 
-ServerPlayer::ServerPlayer(Level* pLevel, GameType playerGameType)
-	: Player(pLevel, playerGameType)
+ServerPlayer::ServerPlayer(Level& level, GameType playerGameType)
+	: Player(level, playerGameType)
 {
 	m_lastHealth = -999; // -99999999 on Java
 	m_containerId = 0;
@@ -181,7 +181,7 @@ void ServerPlayer::setContainerData(ContainerMenu* menu, int id, int value)
 void ServerPlayer::doCloseContainer()
 {
 	if (m_pContainerMenu)
-		m_pContainerMenu->removed(this);
+		m_pContainerMenu->removed(*this);
 	else
 		LOG_W("Container is missing @ doCloseContainer!");
 

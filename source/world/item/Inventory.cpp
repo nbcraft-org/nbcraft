@@ -501,13 +501,13 @@ void Inventory::selectSlot(StackID stackId)
 	m_selectedStackId = stackId;
 }
 
-int Inventory::getAttackDamage(Entity* pEnt)
+int Inventory::getAttackDamage(Entity& entity)
 {
 	ItemStack& item = getSelected();
 	if (item.isEmpty())
 		return 1;
 
-	return item.getAttackDamage(pEnt);
+	return item.getAttackDamage(entity);
 }
 
 int Inventory::getArmorValue() const
@@ -546,10 +546,10 @@ void Inventory::hurtArmor(int amount)
 		if (!armor || armor.getItem()->getDefense() <= 0)
 			continue;
 
-		armor.hurtAndBreak(amount, m_pPlayer);
+		armor.hurtAndBreak(amount, *m_pPlayer);
 		if (!armor.m_count)
 		{
-			armor.snap(m_pPlayer);
+			armor.snap(*m_pPlayer);
 			m_armor[i] = ItemStack::EMPTY;
 		}
 	}

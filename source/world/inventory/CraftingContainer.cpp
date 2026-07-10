@@ -77,7 +77,7 @@ void CraftingContainer::setContainerChanged(StackID stackId)
 {
 }
 
-bool CraftingContainer::stillValid(Player* player) const
+bool CraftingContainer::stillValid(Player& player) const
 {
     return true;
 }

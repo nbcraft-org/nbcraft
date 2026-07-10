@@ -1,7 +1,7 @@
 #include "Particle.hpp"
 
-ItemParticle::ItemParticle(Level* level, const Vec3& pos, const Item* item) :
-	Particle(level, pos, Vec3::ZERO)
+ItemParticle::ItemParticle(TileSource& tileSource, const Vec3& pos, const Item* item)
+	: Particle(tileSource, pos, Vec3::ZERO)
 {
 	m_tex = item->getIcon(0);
     m_gravity = Tile::snow->m_gravity;
@@ -16,7 +16,7 @@ int ItemParticle::getParticleTexture()
 
 void ItemParticle::render(Tesselator& t, float f, float a, float b, float c, float d, float e)
 {
-    float MagicValue = 0.015609375f;
+    const float MagicValue = 0.015609375f;
     float fa = (m_tex % 16 + m_uo/ 4.0F) / 16.0F;
     float ga = fa + MagicValue;
     float ha = (m_tex / 16 + m_vo / 4.0F) / 16.0F;

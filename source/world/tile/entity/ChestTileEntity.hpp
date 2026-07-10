@@ -13,7 +13,7 @@ public:
     void load(const CompoundTag& tag) override;
     void save(CompoundTag& tag) const override;
 
-    bool stillValid(Player* player) const override;
+    bool stillValid(Player& player) const override;
 
     void setContainerChanged(StackID stackId) override;
 };

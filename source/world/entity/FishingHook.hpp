@@ -11,9 +11,9 @@ private:
 	void _init();
 
 public:
-	FishingHook(Level* pLevel);
-	FishingHook(Level* pLevel, const Vec3& pos);
-	FishingHook(Level* pLevel, Player* pMob);
+	FishingHook(TileSource& source);
+	FishingHook(TileSource& source, const Vec3& pos);
+	FishingHook(Player& owner);
 
 private:
 	void _lerpMotion(const Vec3& vel);

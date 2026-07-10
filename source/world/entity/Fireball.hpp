@@ -11,8 +11,8 @@ private:
 	void _init();
 
 public:
-	Fireball(Level* pLevel);
-	Fireball(Level* pLevel, Mob* pMob, Vec3 pos);
+	Fireball(TileSource& source);
+	Fireball(Mob& mob, Vec3 pos);
 
 	bool shouldRenderAtSqrDistance(float distSqr) const;
 

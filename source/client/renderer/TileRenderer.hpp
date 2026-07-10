@@ -8,9 +8,10 @@
 
 #pragma once
 
-#include "world/level/Region.hpp"
-#include "client/renderer/Chunk.hpp"
 #include "client/renderer/renderer/Tesselator.hpp"
+#include "world/tile/Tile.hpp"
+
+class TileSource;
 
 class TileRenderer
 {
@@ -26,7 +27,7 @@ protected:
 private:
 	void _init();
 public:
-	TileRenderer(Tesselator& tessellator = Tesselator::instance, LevelSource* pLevelSource = nullptr);
+	TileRenderer(Tesselator& tessellator = Tesselator::instance, TileSource* tileSource = nullptr);
 
 private:
 	void _tex1(const Vec2& uv);
@@ -36,8 +37,6 @@ public:
 	float getWaterHeight(const TilePos& pos, const Material*);
 	void renderTile(const FullTile& tile, const mce::MaterialPtr& material, float bright, bool preshade = false);
 	void renderTile(const FullTile& tile, const mce::MaterialPtr& material = mce::MaterialPtr::NONE, const Color& color = Color::WHITE, bool preshade = false);
-
-	// TODO
 
 	bool tesselateInWorld(Tile*, const TilePos& pos);
 	bool tesselateInWorldNoCulling(Tile*, const TilePos& pos);
@@ -53,7 +52,7 @@ public:
 	void tesselateRowTexture(Tile* tile, int data, const Vec3& pos);
 	void tesselateTorch(Tile*, const Vec3& pos, float a, float b);
 	
-	bool tesselateBlockInWorldWithAmbienceOcclusion(Tile*, const TilePos& pos, float r, float g, float b);
+	bool tesselateBlockInWorldWithAmbienceOcclusionV2(Tile*, const TilePos& pos, float r, float g, float b);
 	bool tesselateBlockInWorld(Tile*, const TilePos& pos, float r, float g, float b);
 	bool tesselateBlockInWorld(Tile*, const TilePos& pos);
 	bool tesselateCrossInWorld(Tile*, const TilePos& pos);
@@ -71,20 +70,20 @@ public:
 	bool tesselateFireInWorld(Tile*, const TilePos& pos);
 #endif
 	bool tesselateDustInWorld(Tile*, const TilePos& pos);
-#ifdef ENH_USE_OWN_AO
-	bool tesselateBlockInWorldWithAmbienceOcclusionV2(Tile*, const TilePos& pos, float r, float g, float b);
-#endif
 
-	int getTileColor(Tile*, const TilePos& pos);
 	bool useAmbientOcclusion() const;
 
+protected:
+	Color _getTileColor(const TilePos& pos, Tile* tile);
+
+public:
 	static bool canRender(int renderShape);
 
 	static bool m_bFancyGrass;
 	static bool m_bBiomeColors;
 
 private:
-	LevelSource* m_pTileSource;
+	TileSource* m_pTileSource;
 	int m_fixedTexture;
 	bool m_bXFlipTexture;
 	bool m_bNoCulling;

@@ -20,6 +20,7 @@
 #include "world/tile/LeafTile.hpp"
 
 #include "world/tile/FenceTile.hpp"
+#include "world/level/TileSource.hpp"
 #include "GameMods.hpp"
 
 #define DEFAULT_LIGHT_COLOR 0xFF00FF
@@ -83,11 +84,11 @@ void TileRenderer::_init()
 	field_B7 = false;
 }
 
-TileRenderer::TileRenderer(Tesselator& tessellator, LevelSource* pLevelSource)
+TileRenderer::TileRenderer(Tesselator& tessellator, TileSource* tileSource)
 	: m_tessellator(tessellator)
 {
 	_init();
-	m_pTileSource = pLevelSource;
+	m_pTileSource = tileSource;
 }
 
 // tex1 should be mandatory to keep opengl happy as there are no explicit padding available in glsl
@@ -115,7 +116,7 @@ Vec2 TileRenderer::getLightColor(const Tile* tile, const TilePos& pos)
 	if (pos.y > 127)
 		return Vec2(240.0f / 255.0f, 0.0f);
 
-	float brightness = tile->getBrightness(m_pTileSource, pos);
+	float brightness = tile->getBrightness(*m_pTileSource, pos);
 	return Vec2(brightness, brightness);
 }
 
@@ -242,7 +243,7 @@ void TileRenderer::renderEast(Tile* tile, const Vec3& pos, int texture)
 	t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_l, texV_u);
 
 	if (tile->getRenderShape() == SHAPE_CACTUS)
-		tile->updateShape(m_pTileSource, pos);
+		tile->updateShape(*m_pTileSource, pos);
 }
 
 void TileRenderer::renderWest(Tile* tile, const Vec3& pos, int texture)
@@ -324,7 +325,7 @@ void TileRenderer::renderWest(Tile* tile, const Vec3& pos, int texture)
 	t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_r, texV_d);
 
 	if (tile->getRenderShape() == SHAPE_CACTUS)
-		tile->updateShape(m_pTileSource, pos);
+		tile->updateShape(*m_pTileSource, pos);
 }
 
 void TileRenderer::renderSouth(Tile* tile, const Vec3& pos, int texture)
@@ -406,7 +407,7 @@ void TileRenderer::renderSouth(Tile* tile, const Vec3& pos, int texture)
 	t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_r, texV_u);
 
 	if (tile->getRenderShape() == SHAPE_CACTUS)
-		tile->updateShape(m_pTileSource, pos);
+		tile->updateShape(*m_pTileSource, pos);
 }
 
 void TileRenderer::renderNorth(Tile* tile, const Vec3& pos, int texture)
@@ -488,7 +489,7 @@ void TileRenderer::renderNorth(Tile* tile, const Vec3& pos, int texture)
 	t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.min.z + pos.z, texU_r, texV_d);
 
 	if (tile->getRenderShape() == SHAPE_CACTUS)
-		tile->updateShape(m_pTileSource, pos);
+		tile->updateShape(*m_pTileSource, pos);
 }
 
 void TileRenderer::renderFaceUp(Tile* tile, const Vec3& pos, int texture)
@@ -559,7 +560,7 @@ void TileRenderer::renderFaceUp(Tile* tile, const Vec3& pos, int texture)
 	t.vertexUV(aabb.min.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_1, texV_2);
 
 	if (tile->getRenderShape() == SHAPE_CACTUS)
-		tile->updateShape(m_pTileSource, pos);
+		tile->updateShape(*m_pTileSource, pos);
 }
 
 void TileRenderer::renderFaceDown(Tile* tile, const Vec3& pos, int texture)
@@ -630,7 +631,7 @@ void TileRenderer::renderFaceDown(Tile* tile, const Vec3& pos, int texture)
 	t.vertexUV(aabb.max.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_2, texV_2);
 
 	if (tile->getRenderShape() == SHAPE_CACTUS)
-		tile->updateShape(m_pTileSource, pos);
+		tile->updateShape(*m_pTileSource, pos);
 }
 
 void TileRenderer::tesselateCrossTexture(const FullTile& tile, const Vec3& pos, bool simple)
@@ -765,42 +766,42 @@ bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, float r
 
 	Tesselator& t = m_tessellator;
 
-	float fLightHere = tile->getBrightness(m_pTileSource, pos);
+	float fLightHere = tile->getBrightness(*m_pTileSource, pos);
 	bool bDrewAnything = false;
 
-	if (m_bNoCulling || tile->shouldRenderFace(m_pTileSource, pos.below(), Facing::DOWN))
+	if (m_bNoCulling || tile->shouldRenderFace(*m_pTileSource, pos.below(), Facing::DOWN))
 	{
 		bDrewAnything = true;
 
-		float fLight = tile->getBrightness(m_pTileSource, pos.below());
+		float fLight = tile->getBrightness(*m_pTileSource, pos.below());
 		t.color(r * 0.5f * fLight, g * 0.5f * fLight, b * 0.5f * fLight);
 
-		renderFaceDown(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::DOWN));
+		renderFaceDown(tile, pos, tile->getTexture(*m_pTileSource, pos, Facing::DOWN));
 	}
 
-	if (m_bNoCulling || tile->shouldRenderFace(m_pTileSource, pos.above(), Facing::UP))
+	if (m_bNoCulling || tile->shouldRenderFace(*m_pTileSource, pos.above(), Facing::UP))
 	{
 		bDrewAnything = true;
 
-		float fLight = tile->getBrightness(m_pTileSource, pos.above());
+		float fLight = tile->getBrightness(*m_pTileSource, pos.above());
 		if (tile->m_aabb.max.y != 1.0f && !tile->m_pMaterial->isLiquid())
 			fLight = fLightHere;
 
 		t.color(topR * fLight, topG * fLight, topB * fLight);
 
-		renderFaceUp(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::UP));
+		renderFaceUp(tile, pos, tile->getTexture(*m_pTileSource, pos, Facing::UP));
 	}
 
-	if (m_bNoCulling || tile->shouldRenderFace(m_pTileSource, pos.north(), Facing::NORTH))
+	if (m_bNoCulling || tile->shouldRenderFace(*m_pTileSource, pos.north(), Facing::NORTH))
 	{
 		bDrewAnything = true;
 
-		float fLight = tile->getBrightness(m_pTileSource, pos.north());
+		float fLight = tile->getBrightness(*m_pTileSource, pos.north());
 		if (tile->m_aabb.min.z > 0.0f)
 			fLight = fLightHere;
 
 		t.color(r * 0.8f * fLight, g * 0.8f * fLight, b * 0.8f * fLight);
-		int texture = tile->getTexture(m_pTileSource, pos, Facing::NORTH);
+		int texture = tile->getTexture(*m_pTileSource, pos, Facing::NORTH);
 		renderNorth(tile, pos, texture);
 
 		if (m_bFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
@@ -810,16 +811,16 @@ bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, float r
 		}
 	}
 
-	if (m_bNoCulling || tile->shouldRenderFace(m_pTileSource, pos.south(), Facing::SOUTH))
+	if (m_bNoCulling || tile->shouldRenderFace(*m_pTileSource, pos.south(), Facing::SOUTH))
 	{
 		bDrewAnything = true;
 
-		float fLight = tile->getBrightness(m_pTileSource, pos.south());
+		float fLight = tile->getBrightness(*m_pTileSource, pos.south());
 		if (tile->m_aabb.max.z < 1.0f)
 			fLight = fLightHere;
 
 		t.color(r * 0.8f * fLight, g * 0.8f * fLight, b * 0.8f * fLight);
-		int texture = tile->getTexture(m_pTileSource, pos, Facing::SOUTH);
+		int texture = tile->getTexture(*m_pTileSource, pos, Facing::SOUTH);
 		renderSouth(tile, pos, texture);
 
 		if (m_bFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
@@ -829,16 +830,16 @@ bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, float r
 		}
 	}
 
-	if (m_bNoCulling || tile->shouldRenderFace(m_pTileSource, pos.west(), Facing::WEST))
+	if (m_bNoCulling || tile->shouldRenderFace(*m_pTileSource, pos.west(), Facing::WEST))
 	{
 		bDrewAnything = true;
 
-		float fLight = tile->getBrightness(m_pTileSource, pos.west());
+		float fLight = tile->getBrightness(*m_pTileSource, pos.west());
 		if (tile->m_aabb.min.x > 0.0f)
 			fLight = fLightHere;
 
 		t.color(r * 0.6f * fLight, g * 0.6f * fLight, b * 0.6f * fLight);
-		int texture = tile->getTexture(m_pTileSource, pos, Facing::WEST);
+		int texture = tile->getTexture(*m_pTileSource, pos, Facing::WEST);
 		renderWest(tile, pos, texture);
 
 		if (m_bFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
@@ -848,16 +849,16 @@ bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, float r
 		}
 	}
 
-	if (m_bNoCulling || tile->shouldRenderFace(m_pTileSource, pos.east(), Facing::EAST))
+	if (m_bNoCulling || tile->shouldRenderFace(*m_pTileSource, pos.east(), Facing::EAST))
 	{
 		bDrewAnything = true;
 
-		float fLight = tile->getBrightness(m_pTileSource, pos.east());
+		float fLight = tile->getBrightness(*m_pTileSource, pos.east());
 		if (tile->m_aabb.max.x < 1.0f)
 			fLight = fLightHere;
 
 		t.color(r * 0.6f * fLight, g * 0.6f * fLight, b * 0.6f * fLight);
-		int texture = tile->getTexture(m_pTileSource, pos, Facing::EAST);
+		int texture = tile->getTexture(*m_pTileSource, pos, Facing::EAST);
 		renderEast(tile, pos, texture);
 
 		if (m_bFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
@@ -872,38 +873,27 @@ bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, float r
 
 bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos)
 {
-	int color = getTileColor(tile, pos);
-
-	float r = float(GET_RED  (color)) / 255.0f;
-	float g = float(GET_GREEN(color)) / 255.0f;
-	float b = float(GET_BLUE (color)) / 255.0f;
+	Color color = _getTileColor(pos, tile);
+	color.a = 1.0f;
 
 	if (useAmbientOcclusion())
 	{
 		if (Tile::lightEmission[tile->m_ID] == 0 /*&& Tile::translucency[tile->m_ID] < 0.9*/)
 		{
-#ifdef ENH_USE_OWN_AO
-			return tesselateBlockInWorldWithAmbienceOcclusionV2(tile, pos, r, g, b);
-#else
-			return tesselateBlockInWorldWithAmbienceOcclusion(tile, pos, r, g, b);
-#endif
+			return tesselateBlockInWorldWithAmbienceOcclusionV2(tile, pos, color.r, color.g, color.b);
 		}
 	}
 
-	return tesselateBlockInWorld(tile, pos, r, g, b);
+	return tesselateBlockInWorld(tile, pos, color.r, color.g, color.b);
 }
 
 bool TileRenderer::tesselateCrossInWorld(Tile* tile, const TilePos& pos)
 {
 	Tesselator& t = m_tessellator;
 
-	float bright = tile->getBrightness(m_pTileSource, pos);
-	int color = getTileColor(tile, pos);
-	float r = bright * (float(GET_RED(color)) / 255.0f);
-	float g = bright * (float(GET_GREEN(color)) / 255.0f);
-	float b = bright * (float(GET_BLUE(color)) / 255.0f);
-
-	t.color(r, g, b);
+	Color color = _getTileColor(pos, tile);
+	color.a = 1.0f;
+	t.color(color);
 
 	tesselateCrossTexture(FullTile(tile, m_pTileSource->getData(pos)), pos);
 
@@ -914,9 +904,9 @@ bool TileRenderer::tesselateRowInWorld(Tile* tile, const TilePos& pos)
 {
 	Tesselator& t = m_tessellator;
 
-	Color color = getTileColor(tile, pos);
+	Color color = _getTileColor(pos, tile);
 	color.a = 1.0f;
-	t.color(color * ((0.85f * tile->getBrightness(m_pTileSource, pos)) + 0.15f));
+	t.color(color * ((0.85f * tile->getBrightness(*m_pTileSource, pos)) + 0.15f));
 
 	tesselateRowTexture(tile, m_pTileSource->getData(pos), pos);
 
@@ -932,13 +922,13 @@ bool TileRenderer::tesselateWaterInWorld(Tile* tile1, const TilePos& pos)
 
 	Tesselator& t = m_tessellator;
 
-	bRenderFaceDown = tile->shouldRenderFace(m_pTileSource, pos.above(), Facing::UP);
-	bRenderFaceUp   = tile->shouldRenderFace(m_pTileSource, pos.below(), Facing::DOWN);
+	bRenderFaceDown = tile->shouldRenderFace(*m_pTileSource, pos.above(), Facing::UP);
+	bRenderFaceUp   = tile->shouldRenderFace(*m_pTileSource, pos.below(), Facing::DOWN);
 
-	bRenderSides[0] = tile->shouldRenderFace(m_pTileSource, pos.north(), Facing::NORTH);
-	bRenderSides[1] = tile->shouldRenderFace(m_pTileSource, pos.south(), Facing::SOUTH);
-	bRenderSides[2] = tile->shouldRenderFace(m_pTileSource, pos.west(), Facing::WEST);
-	bRenderSides[3] = tile->shouldRenderFace(m_pTileSource, pos.east(), Facing::EAST);
+	bRenderSides[0] = tile->shouldRenderFace(*m_pTileSource, pos.north(), Facing::NORTH);
+	bRenderSides[1] = tile->shouldRenderFace(*m_pTileSource, pos.south(), Facing::SOUTH);
+	bRenderSides[2] = tile->shouldRenderFace(*m_pTileSource, pos.west(), Facing::WEST);
+	bRenderSides[3] = tile->shouldRenderFace(*m_pTileSource, pos.east(), Facing::EAST);
 
 	if (!bRenderFaceDown &&
 		!bRenderFaceUp   &&
@@ -973,7 +963,7 @@ bool TileRenderer::tesselateWaterInWorld(Tile* tile1, const TilePos& pos)
 		// @NOTE: Have to use tile1 because for whatever reason MSVC doesn't think an overload
 		// for `tile` exists that takes 2 int arguments
 		int texFaceDown = tile->getTexture(Facing::UP, tileData);
-		float slopeAngle = tile->getSlopeAngle(m_pTileSource, pos, tile->m_pMaterial);
+		float slopeAngle = tile->getSlopeAngle(*m_pTileSource, pos, tile->m_pMaterial);
 
 		int texX, texY;
 
@@ -1005,7 +995,7 @@ bool TileRenderer::tesselateWaterInWorld(Tile* tile1, const TilePos& pos)
 		texUV_3 = C_RATIO * 8.0f * Mth::sin(slopeAngle);
 		texUV_4 = C_RATIO * 8.0f * Mth::cos(slopeAngle);
 
-		float bright = tile->getBrightness(m_pTileSource, pos);
+		float bright = tile->getBrightness(*m_pTileSource, pos);
 
 		texUV_5 = texUV_1 - texUV_4;
 		texUV_6 = texUV_2 - texUV_4;
@@ -1028,7 +1018,7 @@ bool TileRenderer::tesselateWaterInWorld(Tile* tile1, const TilePos& pos)
 	{
 	label_6:
 	label_7:
-		float bright = tile->getBrightness(m_pTileSource, pos.below());
+		float bright = tile->getBrightness(*m_pTileSource, pos.below());
 		t.color(bright * 0.5f, bright * 0.5f, bright * 0.5f);
 		renderFaceDown(tile1, pos, tile->getTexture(Facing::DOWN));
 		bFlag1 = true;
@@ -1111,7 +1101,7 @@ label_8:
 		//bRenderedSides = true;
 
 		float brightMul = dir >= Facing::WEST ? 0.6f : 0.8f;
-		float bright = tile->getBrightness(m_pTileSource, TilePos(checkX, pos.y, checkZ));
+		float bright = tile->getBrightness(*m_pTileSource, TilePos(checkX, pos.y, checkZ));
 		t.color(bright* brightMul, bright* brightMul, bright* brightMul);
 		t.vertexUV(vtxX1, float(pos.y) + height1, vtxZ1, texU_1, texV_1);
 		t.vertexUV(vtxX2, float(pos.y) + height2, vtxZ2, texU_2, texV_2);
@@ -1185,10 +1175,10 @@ bool TileRenderer::tesselateFenceInWorld(Tile* tile, const TilePos& pos)
 
 	FenceTile* pFenceTile = (FenceTile*)Tile::fence;
 
-	bool tileWest = pFenceTile->shouldConnectTo(m_pTileSource, pos.west());
-	bool tileEast = pFenceTile->shouldConnectTo(m_pTileSource, pos.east());
-	bool tileNorth = pFenceTile->shouldConnectTo(m_pTileSource, pos.north());
-	bool tileSouth = pFenceTile->shouldConnectTo(m_pTileSource, pos.south());
+	bool tileWest = pFenceTile->shouldConnectTo(*m_pTileSource, pos.west());
+	bool tileEast = pFenceTile->shouldConnectTo(*m_pTileSource, pos.east());
+	bool tileNorth = pFenceTile->shouldConnectTo(*m_pTileSource, pos.north());
+	bool tileSouth = pFenceTile->shouldConnectTo(*m_pTileSource, pos.south());
 
 	bool connectsHorizontally = tileWest || tileEast;
 	bool connectsVertically = tileNorth || tileSouth;
@@ -1380,53 +1370,53 @@ bool TileRenderer::tesselateFenceGateInWorld(Tile* tile, const TilePos& pos)
 bool TileRenderer::tesselateDoorInWorld(Tile* tile, const TilePos& pos)
 {
 	Tesselator& t = m_tessellator;
-	float fBrightHere = tile->getBrightness(m_pTileSource, pos), fBright;
+	float fBrightHere = tile->getBrightness(*m_pTileSource, pos), fBright;
 	int texture;
 
-	fBright = tile->getBrightness(m_pTileSource, pos.below());
+	fBright = tile->getBrightness(*m_pTileSource, pos.below());
 	if (tile->m_aabb.min.y > 0.0f)       fBright = fBrightHere;
 	if (Tile::lightEmission[tile->m_ID]) fBright = 1.0f;
 	t.color(fBright * 0.5f, fBright * 0.5f, fBright * 0.5f);
-	renderFaceDown(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::DOWN));
+	renderFaceDown(tile, pos, tile->getTexture(*m_pTileSource, pos, Facing::DOWN));
 
-	fBright = tile->getBrightness(m_pTileSource, pos.above());
+	fBright = tile->getBrightness(*m_pTileSource, pos.above());
 	if (tile->m_aabb.max.y < 1.0f)       fBright = fBrightHere;
 	if (Tile::lightEmission[tile->m_ID]) fBright = 1.0f;
 	t.color(fBright, fBright, fBright);
-	renderFaceUp(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::UP));
+	renderFaceUp(tile, pos, tile->getTexture(*m_pTileSource, pos, Facing::UP));
 
-	fBright = tile->getBrightness(m_pTileSource, pos.north());
+	fBright = tile->getBrightness(*m_pTileSource, pos.north());
 	if (tile->m_aabb.min.z > 0.0f)       fBright = fBrightHere;
 	if (Tile::lightEmission[tile->m_ID]) fBright = 1.0f;
 	t.color(fBright * 0.8f, fBright * 0.8f, fBright * 0.8f);
-	texture = tile->getTexture(m_pTileSource, pos, Facing::NORTH);
+	texture = tile->getTexture(*m_pTileSource, pos, Facing::NORTH);
 	if (texture < 0) texture = -texture, m_bXFlipTexture = true;
 	renderNorth(tile, pos, texture);
 	m_bXFlipTexture = false;
 
-	fBright = tile->getBrightness(m_pTileSource, pos.south());
+	fBright = tile->getBrightness(*m_pTileSource, pos.south());
 	if (tile->m_aabb.max.z < 1.0f)       fBright = fBrightHere;
 	if (Tile::lightEmission[tile->m_ID]) fBright = 1.0f;
 	t.color(fBright * 0.8f, fBright * 0.8f, fBright * 0.8f);
-	texture = tile->getTexture(m_pTileSource, pos, Facing::SOUTH);
+	texture = tile->getTexture(*m_pTileSource, pos, Facing::SOUTH);
 	if (texture < 0) texture = -texture, m_bXFlipTexture = true;
 	renderSouth(tile, pos, texture);
 	m_bXFlipTexture = false;
 
-	fBright = tile->getBrightness(m_pTileSource,pos.west());
+	fBright = tile->getBrightness(*m_pTileSource,pos.west());
 	if (tile->m_aabb.min.x > 0.0f)       fBright = fBrightHere;
 	if (Tile::lightEmission[tile->m_ID]) fBright = 1.0f;
 	t.color(fBright * 0.6f, fBright * 0.6f, fBright * 0.6f);
-	texture = tile->getTexture(m_pTileSource, pos, Facing::WEST);
+	texture = tile->getTexture(*m_pTileSource, pos, Facing::WEST);
 	if (texture < 0) texture = -texture, m_bXFlipTexture = true;
 	renderWest(tile, pos, texture);
 	m_bXFlipTexture = false;
 
-	fBright = tile->getBrightness(m_pTileSource, pos.east());
+	fBright = tile->getBrightness(*m_pTileSource, pos.east());
 	if (tile->m_aabb.max.x < 1.0f)       fBright = fBrightHere;
 	if (Tile::lightEmission[tile->m_ID]) fBright = 1.0f;
 	t.color(fBright * 0.6f, fBright * 0.6f, fBright * 0.6f);
-	texture = tile->getTexture(m_pTileSource, pos, Facing::EAST);
+	texture = tile->getTexture(*m_pTileSource, pos, Facing::EAST);
 	if (texture < 0) texture = -texture, m_bXFlipTexture = true;
 	renderEast(tile, pos, texture);
 	m_bXFlipTexture = false;
@@ -1528,7 +1518,7 @@ void TileRenderer::tesselateTorch(Tile* tile, const Vec3& pos, float a, float b)
 bool TileRenderer::tesselateTorchInWorld(Tile* tile, const TilePos& pos)
 {
 	TileData data = m_pTileSource->getData(pos);
-	float bright = tile->getBrightness(m_pTileSource, pos);
+	float bright = tile->getBrightness(*m_pTileSource, pos);
 
 	if (Tile::lightEmission[tile->m_ID] > 0)
 		bright = 1.0f;
@@ -1565,7 +1555,7 @@ bool TileRenderer::tesselateDiodeInWorld(Tile* tile, const TilePos& pos)
 	int flipped = (data & 12) >> 2; // var7
 	tesselateBlockInWorld(tile, pos);
 	Tesselator& t = Tesselator::instance; // var8
-	float br = tile->getBrightness(m_pTileSource, pos); // var9
+	float br = tile->getBrightness(*m_pTileSource, pos); // var9
 	if (Tile::lightEmission[tile->m_ID] > 0)
 	{
 		br = (br + 1.0f) * 0.5f;
@@ -1731,7 +1721,7 @@ bool TileRenderer::tesselateLeverInWorld(Tile* tile, const TilePos& pos)
 		m_fixedTexture = -1;
 	}
 
-	float br = tile->getBrightness(m_pTileSource, pos);
+	float br = tile->getBrightness(*m_pTileSource, pos);
 	if (Tile::lightEmission[tile->m_ID] > 0)
 	{
 		br = 1.0f;
@@ -1951,7 +1941,7 @@ bool TileRenderer::tesselateFireInWorld(Tile* tile, const TilePos& pos)
 	Tesselator& t = m_tessellator;
 
 	int texture = tile->getTexture(Facing::DOWN);
-	float bright = tile->getBrightness(m_pTileSource, pos);
+	float bright = tile->getBrightness(*m_pTileSource, pos);
 
 	t.color(bright, bright, bright);
 
@@ -1966,7 +1956,7 @@ bool TileRenderer::tesselateFireInWorld(Tile* tile, const TilePos& pos)
 	float texV_2 = C_RATIO * (texY + 15.99f);
 	float xf = float(pos.x), yf = float(pos.y), zf = float(pos.z);
 
-	if (m_pTileSource->isSolidTile(pos.below()) || pFireTile->canBurn(m_pTileSource, pos.below()))
+	if (m_pTileSource->isSolidBlockingTile(pos.below()) || pFireTile->canBurn(*m_pTileSource, pos.below()))
 	{
 		t.vertexUV(xf + 0.5f - 0.3f, yf + 1.4f, zf + 1.0f, texU_2, texV_1);
 		t.vertexUV(xf + 0.5f + 0.2f, yf + 0.0f, zf + 1.0f, texU_2, texV_2);
@@ -2014,7 +2004,7 @@ bool TileRenderer::tesselateFireInWorld(Tile* tile, const TilePos& pos)
 	if (((pos.y / 2 + pos.x / 2 + pos.z / 2) & 1) == 0)
 		std::swap(texU_1, texU_2);
 
-	if (pFireTile->canBurn(m_pTileSource, pos.west()))
+	if (pFireTile->canBurn(*m_pTileSource, pos.west()))
 	{
 		t.vertexUV(xf + 0.2f, (yf + 1.4f) + 0.0625f, zf + 1.0f, texU_1, texV_1);
 		t.vertexUV(xf + 0.0f, (yf + 0.0f) + 0.0625f, zf + 1.0f, texU_1, texV_2);
@@ -2026,7 +2016,7 @@ bool TileRenderer::tesselateFireInWorld(Tile* tile, const TilePos& pos)
 		t.vertexUV(xf + 0.2f, (yf + 1.4f) + 0.0625f, zf + 1.0f, texU_1, texV_1);
 	}
 
-	if (pFireTile->canBurn(m_pTileSource, pos.east()))
+	if (pFireTile->canBurn(*m_pTileSource, pos.east()))
 	{
 		t.vertexUV(xf + 1.0f - 0.2f, (yf + 1.4f) + 0.0625f, zf + 0.0f, texU_2, texV_1);
 		t.vertexUV(xf + 1.0f + 0.0f, (yf + 0.0f) + 0.0625f, zf + 0.0f, texU_2, texV_2);
@@ -2038,7 +2028,7 @@ bool TileRenderer::tesselateFireInWorld(Tile* tile, const TilePos& pos)
 		t.vertexUV(xf + 1.0f - 0.2f, (yf + 1.4f) + 0.0625f, zf + 0.0f, texU_2, texV_1);
 	}
 
-	if (pFireTile->canBurn(m_pTileSource, pos.north()))
+	if (pFireTile->canBurn(*m_pTileSource, pos.north()))
 	{
 		t.vertexUV(xf + 0.0f, (yf + 1.4f) + 0.0625f, zf + 0.2f, texU_1, texV_1);
 		t.vertexUV(xf + 0.0f, (yf + 0.0f) + 0.0625f, zf + 0.0f, texU_1, texV_2);
@@ -2050,7 +2040,7 @@ bool TileRenderer::tesselateFireInWorld(Tile* tile, const TilePos& pos)
 		t.vertexUV(xf + 0.0f, (yf + 1.4f) + 0.0625f, zf + 0.2f, texU_1, texV_1);
 	}
 
-	if (pFireTile->canBurn(m_pTileSource, pos.south()))
+	if (pFireTile->canBurn(*m_pTileSource, pos.south()))
 	{
 		t.vertexUV(xf + 1.0f, (yf + 1.4f) + 0.0625f, zf + 1.0f - 0.2f, texU_2, texV_1);
 		t.vertexUV(xf + 1.0f, (yf + 0.0f) + 0.0625f, zf + 1.0f + 0.0f, texU_2, texV_2);
@@ -2062,7 +2052,7 @@ bool TileRenderer::tesselateFireInWorld(Tile* tile, const TilePos& pos)
 		t.vertexUV(xf + 1.0f, (yf + 1.4f) + 0.0625f, zf + 1.0f - 0.2f, texU_2, texV_1);
 	}
 
-	if (pFireTile->canBurn(m_pTileSource, pos.above()))
+	if (pFireTile->canBurn(*m_pTileSource, pos.above()))
 	{
 		// @NOTE: Converting z and x to uint8_t for whatever reason
 		if (((uint8_t(pos.z) + uint8_t(pos.x) + pos.y + 1) & 1) != 0)
@@ -2105,7 +2095,7 @@ bool TileRenderer::tesselateDustInWorld(Tile* tile, const TilePos& pos)
 		texture = m_fixedTexture;
 	}
 
-	float bright = tile->getBrightness(m_pTileSource, pos); // var8
+	float bright = tile->getBrightness(*m_pTileSource, pos); // var8
 	float power = float(data) / 15.0f; // var9
 	float rt = power * 0.6f + 0.4f; // var10
 	if (data == 0)
@@ -2124,28 +2114,28 @@ bool TileRenderer::tesselateDustInWorld(Tile* tile, const TilePos& pos)
 	float v1 = ((float(yt) + 15.99f) / 256.0f);
 	float o = 0.0f;
 	float r = 0.03125f;
-	bool w = RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.west())
-		|| (!m_pTileSource->isSolidTile(pos.west()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.west().below()));
-	bool e = RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.east())
-		|| (!m_pTileSource->isSolidTile(pos.east()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.east().below()));
-	bool n = RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.north())
-		|| (!m_pTileSource->isSolidTile(pos.north()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.below().north()));
-	bool s = RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.south())
-		|| (!m_pTileSource->isSolidTile(pos.south()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.below().south()));
-	if (!m_pTileSource->isSolidTile(pos.above())) {
-		if (m_pTileSource->isSolidTile(pos.west()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.west().above())) {
+	bool w = RedStoneDustTile::shouldConnectTo(*m_pTileSource, pos.west())
+		|| (!m_pTileSource->isSolidBlockingTile(pos.west()) && RedStoneDustTile::shouldConnectTo(*m_pTileSource, pos.west().below()));
+	bool e = RedStoneDustTile::shouldConnectTo(*m_pTileSource, pos.east())
+		|| (!m_pTileSource->isSolidBlockingTile(pos.east()) && RedStoneDustTile::shouldConnectTo(*m_pTileSource, pos.east().below()));
+	bool n = RedStoneDustTile::shouldConnectTo(*m_pTileSource, pos.north())
+		|| (!m_pTileSource->isSolidBlockingTile(pos.north()) && RedStoneDustTile::shouldConnectTo(*m_pTileSource, pos.below().north()));
+	bool s = RedStoneDustTile::shouldConnectTo(*m_pTileSource, pos.south())
+		|| (!m_pTileSource->isSolidBlockingTile(pos.south()) && RedStoneDustTile::shouldConnectTo(*m_pTileSource, pos.below().south()));
+	if (!m_pTileSource->isSolidBlockingTile(pos.above())) {
+		if (m_pTileSource->isSolidBlockingTile(pos.west()) && RedStoneDustTile::shouldConnectTo(*m_pTileSource, pos.west().above())) {
 			w = true;
 		}
 
-		if (m_pTileSource->isSolidTile(pos.east()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.east().above())) {
+		if (m_pTileSource->isSolidBlockingTile(pos.east()) && RedStoneDustTile::shouldConnectTo(*m_pTileSource, pos.east().above())) {
 			e = true;
 		}
 
-		if (m_pTileSource->isSolidTile(pos.north()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.above().north())) {
+		if (m_pTileSource->isSolidBlockingTile(pos.north()) && RedStoneDustTile::shouldConnectTo(*m_pTileSource, pos.above().north())) {
 			n = true;
 		}
 
-		if (m_pTileSource->isSolidTile(pos.south()) && RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.above().south())) {
+		if (m_pTileSource->isSolidBlockingTile(pos.south()) && RedStoneDustTile::shouldConnectTo(*m_pTileSource, pos.above().south())) {
 			s = true;
 		}
 	}
@@ -2230,29 +2220,29 @@ bool TileRenderer::tesselateDustInWorld(Tile* tile, const TilePos& pos)
 	u1 = ((float(xt + 16) + 15.99f) / 256.0f);
 	v0 = (float(yt) / 256.0f);
 	v1 = ((float(yt) + 15.99f) / 256.0f);
-	if (!m_pTileSource->isSolidTile(pos.above())) {
-		if (m_pTileSource->isSolidTile(pos.west()) && m_pTileSource->getTile(pos.west().above()) == Tile::redStoneDust->m_ID) {
+	if (!m_pTileSource->isSolidBlockingTile(pos.above())) {
+		if (m_pTileSource->isSolidBlockingTile(pos.west()) && m_pTileSource->getTile(pos.west().above()) == Tile::redStoneDust->m_ID) {
 			t.vertexUV((float(pos.x) + r), (float(pos.y + 1) + o), (float(pos.z + 1) + o), u1, v0);
 			t.vertexUV((float(pos.x) + r), (float(pos.y + 0) - o), (float(pos.z + 1) + o), u0, v0);
 			t.vertexUV((float(pos.x) + r), (float(pos.y + 0) - o), (float(pos.z + 0) - o), u0, v1);
 			t.vertexUV((float(pos.x) + r), (float(pos.y + 1) + o), (float(pos.z + 0) - o), u1, v1);
 		}
 
-		if (m_pTileSource->isSolidTile(pos.east()) && m_pTileSource->getTile(pos.east().above()) == Tile::redStoneDust->m_ID) {
+		if (m_pTileSource->isSolidBlockingTile(pos.east()) && m_pTileSource->getTile(pos.east().above()) == Tile::redStoneDust->m_ID) {
 			t.vertexUV((float(pos.x + 1) - r), (float(pos.y + 0) - o), (float(pos.z + 1) + o), u0, v1);
 			t.vertexUV((float(pos.x + 1) - r), (float(pos.y + 1) + o), (float(pos.z + 1) + o), u1, v1);
 			t.vertexUV((float(pos.x + 1) - r), (float(pos.y + 1) + o), (float(pos.z + 0) - o), u1, v0);
 			t.vertexUV((float(pos.x + 1) - r), (float(pos.y + 0) - o), (float(pos.z + 0) - o), u0, v0);
 		}
 
-		if (m_pTileSource->isSolidTile(pos.north()) && m_pTileSource->getTile(pos.above().north()) == Tile::redStoneDust->m_ID) {
+		if (m_pTileSource->isSolidBlockingTile(pos.north()) && m_pTileSource->getTile(pos.above().north()) == Tile::redStoneDust->m_ID) {
 			t.vertexUV((float(pos.x + 1) + o), (float(pos.y + 0) - o), (float(pos.z) + r), u0, v1);
 			t.vertexUV((float(pos.x + 1) + o), (float(pos.y + 1) + o), (float(pos.z) + r), u1, v1);
 			t.vertexUV((float(pos.x + 0) - o), (float(pos.y + 1) + o), (float(pos.z) + r), u1, v0);
 			t.vertexUV((float(pos.x + 0) - o), (float(pos.y + 0) - o), (float(pos.z) + r), u0, v0);
 		}
 
-		if (m_pTileSource->isSolidTile(pos.south()) && m_pTileSource->getTile(pos.above().south()) == Tile::redStoneDust->m_ID) {
+		if (m_pTileSource->isSolidBlockingTile(pos.south()) && m_pTileSource->getTile(pos.above().south()) == Tile::redStoneDust->m_ID) {
 			t.vertexUV((float(pos.x + 1) + o), (float(pos.y + 1) + o), (float(pos.z + 1) - r), u1, v0);
 			t.vertexUV((float(pos.x + 1) + o), (float(pos.y + 0) - o), (float(pos.z + 1) - r), u0, v0);
 			t.vertexUV((float(pos.x + 0) - o), (float(pos.y + 0) - o), (float(pos.z + 1) - r), u0, v1);
@@ -2266,7 +2256,7 @@ bool TileRenderer::tesselateDustInWorld(Tile* tile, const TilePos& pos)
 bool TileRenderer::tesselateInWorld(Tile* tile, const TilePos& pos)
 {
 	int shape = tile->getRenderShape();
-	tile->updateShape(m_pTileSource, pos);
+	tile->updateShape(*m_pTileSource, pos);
 
 	_tex1(getLightColor(tile, pos));
 
@@ -2329,997 +2319,6 @@ bool TileRenderer::tesselateInWorld(Tile* tile, const TilePos& pos, int a)
 	bool r = tesselateInWorld(tile, pos);
 	m_fixedTexture = -1;
 	return r;
-}
-
-bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusion(Tile* a2, const TilePos& pos, float r, float g, float b)
-{
-	float v12; // r0
-	LevelSource* v13; // r1
-	float v14; // r0
-	LevelSource* v15; // r1
-	float v16; // r0
-	LevelSource* v17; // r1
-	float v18; // r0
-	LevelSource* v19; // r1
-	float v20; // r0
-	LevelSource* v21; // r1
-	float v22; // r0
-	LevelSource* v23; // r1
-	char v24; // r3
-	LevelSource* v25; // r0
-	char v26; // r3
-	LevelSource* v27; // r0
-	char v28; // r3
-	LevelSource* v29; // r0
-	char v30; // r3
-	LevelSource* v31; // r0
-	char v32; // r3
-	LevelSource* v33; // r0
-	char v34; // r3
-	LevelSource* v35; // r0
-	char v36; // r3
-	LevelSource* v37; // r0
-	char v38; // r3
-	LevelSource* v39; // r0
-	char v40; // r3
-	LevelSource* v41; // r0
-	char v42; // r3
-	LevelSource* v43; // r0
-	char v44; // r3
-	LevelSource* v45; // r0
-	int v46; // r8
-	float v47; // r0
-	LevelSource* v48; // r1
-	float v49; // r0
-	LevelSource* v50; // r1
-	float v51; // r0
-	LevelSource* v52; // r1
-	float v53; // r0
-	bool v54; // r3
-	float v55; // s12
-	float v56; // s11
-	float v57; // s8
-	float v58; // s14
-	float v59; // s13
-	float v60; // s9
-	float v61; // s10
-	float v62; // s13
-	float v63; // s11
-	float v64; // s10
-	float v65; // s14
-	float v66; // s15
-	float v67; // s12
-	LevelSource* v68; // r1
-	int v69; // r8
-	int v70; // r0
-	float v71; // r0
-	LevelSource* v72; // r1
-	float v73; // r0
-	LevelSource* v74; // r1
-	float v75; // r0
-	LevelSource* v76; // r1
-	float v77; // r0
-	bool v78; // r3
-	float v79; // s13
-	float v80; // s10
-	float v81; // s9
-	float v82; // s11
-	float v83; // s12
-	float v84; // s15
-	float v85; // s12
-	float v86; // s10
-	float v87; // s15
-	float v88; // s13
-	float v89; // s14
-	LevelSource* v90; // r1
-	int v91; // r0
-	float v92; // r0
-	LevelSource* v93; // r1
-	float v94; // r0
-	LevelSource* v95; // r1
-	float v96; // r0
-	LevelSource* v97; // r1
-	float v98; // r0
-	bool v99; // r3
-	float v100; // s13
-	float v101; // s11
-	float v102; // s8
-	float v103; // s14
-	float v104; // s12
-	float v105; // s10
-	float v106; // s11
-	float v107; // s12
-	float v108; // s9
-	float v109; // s10
-	float v110; // s11
-	float v111; // s13
-	float v112; // s15
-	float v113; // s14
-	float v114; // s12
-	LevelSource* v115; // r1
-	int v116; // r0
-	float v117; // r0
-	LevelSource* v118; // r1
-	float v119; // r0
-	LevelSource* v120; // r1
-	float v121; // r0
-	LevelSource* v122; // r1
-	float v123; // r0
-	bool v124; // r3
-	float v125; // s15
-	float v126; // s11
-	float v127; // s8
-	float v128; // s12
-	float v129; // s13
-	float v130; // s9
-	float v131; // s10
-	float v132; // s13
-	float v133; // s11
-	float v134; // s10
-	float v135; // s15
-	float v136; // s14
-	float v137; // s12
-	LevelSource* v138; // r1
-	int v139; // r0
-	float v140; // r0
-	LevelSource* v141; // r1
-	float v142; // r0
-	LevelSource* v143; // r1
-	float v144; // r0
-	LevelSource* v145; // r1
-	float v146; // r0
-	bool v147; // r3
-	float v148; // s12
-	float v149; // s9
-	float v150; // s11
-	float v151; // s14
-	float v152; // s10
-	float v153; // s13
-	float v154; // s9
-	float v155; // s12
-	float v156; // s13
-	float v157; // s9
-	float v158; // s10
-	float v159; // s11
-	float v160; // s15
-	float v161; // s14
-	float v162; // s12
-	LevelSource* v163; // r1
-	int v164; // r0
-	float v165; // r0
-	LevelSource* v166; // r1
-	float v167; // r0
-	LevelSource* v168; // r1
-	float v169; // r0
-	LevelSource* v170; // r1
-	float v171; // r0
-	bool v172; // r3
-	float v173; // r0
-	bool v174; // r3
-	float v175; // r0
-	bool v176; // r3
-	float v177; // r0
-	float v178; // s15
-	float v179; // s13
-	float v180; // s10
-	float v181; // s12
-	float v182; // s9
-	float v183; // s11
-	float v184; // s13
-	float v185; // s15
-	float v186; // s13
-	float v187; // s11
-	float v188; // s10
-	float v189; // s14
-	float v190; // s15
-	float v191; // s12
-	LevelSource* v192; // r1
-	int v193; // r0
-	int result; // r0
-	bool v195; // r3
-	bool v196; // r3
-	float v197; // r0
-	bool v198; // r3
-	float v199; // r0
-	bool v200; // r3
-	float v201; // r0
-	bool v202; // r3
-	float v203; // r0
-	float v204; // r0
-	bool v205; // r3
-	float v206; // r0
-	float v207; // r0
-	float v208; // r0
-	bool v209; // r3
-	float v210; // r0
-	float v211; // r0
-	bool v212; // r3
-	float v213; // r0
-	int v214; // [sp+Ch] [bp-5Ch]
-	int v215; // [sp+10h] [bp-58h]
-	int v216; // [sp+14h] [bp-54h]
-	int v217; // [sp+18h] [bp-50h]
-	int v218; // [sp+1Ch] [bp-4Ch]
-	int v219; // [sp+20h] [bp-48h]
-	int v220; // [sp+24h] [bp-44h]
-	int v221; // [sp+28h] [bp-40h]
-	int v222; // [sp+2Ch] [bp-3Ch]
-
-	this->m_ambientOcclusion = true;
-	v12 = a2->getBrightness(this->m_pTileSource, pos);
-	v13 = this->m_pTileSource;
-	this->field_C = v12;
-	v14 = a2->getBrightness(v13, pos.west());
-	v218 = pos.y - 1;
-	v15 = this->m_pTileSource;
-	this->field_10 = v14;
-	v16 = a2->getBrightness(v15, pos.below());
-	v217 = pos.z - 1;
-	v17 = this->m_pTileSource;
-	this->field_14 = v16;
-	v18 = a2->getBrightness(v17, pos.north());
-	v214 = pos.x + 1;
-	v19 = this->m_pTileSource;
-	this->field_18 = v18;
-	v20 = a2->getBrightness(v19, pos.east());
-	v216 = pos.y + 1;
-	v21 = this->m_pTileSource;
-	this->field_1C = v20;
-	v22 = a2->getBrightness(v21, pos.above());
-	v215 = pos.z + 1;
-	v23 = this->m_pTileSource;
-	this->field_20 = v22;
-	this->field_24 = a2->getBrightness(v23, pos.south());
-	v24 = Tile::translucent[this->m_pTileSource->getTile(pos.above().east())];
-	v25 = this->m_pTileSource;
-	this->field_AD = v24;
-	v26 = Tile::translucent[v25->getTile(pos.below().east())];
-	v27 = this->m_pTileSource;
-	this->field_B5 = v26;
-	v28 = Tile::translucent[v27->getTile(pos.south().east())];
-	v29 = this->m_pTileSource;
-	this->field_B1 = v28;
-	v30 = Tile::translucent[v29->getTile(pos.north().east())];
-	v31 = this->m_pTileSource;
-	this->field_B3 = v30;
-	v32 = Tile::translucent[v31->getTile(pos.above().west())];
-	v33 = this->m_pTileSource;
-	this->field_AE = v32;
-	v34 = Tile::translucent[v33->getTile(pos.below().west())];
-	v35 = this->m_pTileSource;
-	this->field_B6 = v34;
-	v36 = Tile::translucent[v35->getTile(TilePos(pos.west() - 1))];
-	v37 = this->m_pTileSource;
-	this->field_B0 = v36;
-	v38 = Tile::translucent[v37->getTile(TilePos(pos.west() + 1))];
-	v39 = this->m_pTileSource;
-	this->field_B2 = v38;
-	v40 = Tile::translucent[v39->getTile(pos.above().south())];
-	v41 = this->m_pTileSource;
-	this->field_AF = v40;
-	v42 = Tile::translucent[v41->getTile(pos.above().north())];
-	v43 = this->m_pTileSource;
-	this->field_AC = v42;
-	v44 = Tile::translucent[v43->getTile(pos.below().south())];
-	v45 = this->m_pTileSource;
-	this->field_B7 = v44;
-	this->field_B4 = Tile::translucent[v45->getTile(pos.below().north())];
-	if (a2->m_TextureFrame == 3)
-	{
-		v219 = 0;
-		v220 = 0;
-		v46 = 0;
-		v221 = 0;
-		v222 = 0;
-	}
-	else
-	{
-		v46 = 1;
-		v219 = 1;
-		v220 = 1;
-		v221 = 1;
-		v222 = 1;
-	}
-	if (!this->m_bNoCulling
-		&& !a2->shouldRenderFace(this->m_pTileSource, TilePos(pos.x, v218, pos.z), Facing::DOWN))
-	{
-		v69 = 0;
-		goto LABEL_20;
-	}
-	if (this->field_78 > 0)
-	{
-		v47 = a2->getBrightness(this->m_pTileSource, TilePos(pos.x - 1, v218, pos.z));
-		v48 = this->m_pTileSource;
-		this->field_2C = v47;
-		v49 = a2->getBrightness(v48, TilePos(pos.x, v218, v217));
-		v50 = this->m_pTileSource;
-		this->field_34 = v49;
-		v51 = a2->getBrightness(v50, TilePos(pos.x, v218, v215));
-		v52 = this->m_pTileSource;
-		this->field_38 = v51;
-		v53 = a2->getBrightness(v52, TilePos(v214, v218, pos.z));
-		v54 = this->field_B4;
-		this->field_40 = v53;
-		if (v54 || this->field_B6)
-			this->field_28 = a2->getBrightness(this->m_pTileSource, TilePos(pos.x - 1, v218, v217));
-		else
-			this->field_28 = this->field_2C;
-		if (this->field_B7 || this->field_B6)
-			this->field_30 = a2->getBrightness(this->m_pTileSource, TilePos(pos.x - 1, v218, v215));
-		else
-			this->field_30 = this->field_2C;
-		if (this->field_B4 || this->field_B5)
-			this->field_3C = a2->getBrightness(this->m_pTileSource, TilePos(v214, v218, v217));
-		else
-			this->field_3C = this->field_40;
-		if (this->field_B7 || this->field_B5)
-		{
-			v203 = a2->getBrightness(this->m_pTileSource, TilePos(v214, v218, v215));
-			v55 = this->field_40;
-			v56 = v203;
-			this->field_44 = v203;
-		}
-		else
-		{
-			v55 = this->field_40;
-			v56 = v55;
-			this->field_44 = v55;
-		}
-		v57 = this->field_2C;
-		v58 = this->field_14;
-		v59 = this->field_38;
-		v60 = (float)((float)((float)(v57 + this->field_30) + v59) + v58) * 0.25f;
-		v61 = this->field_34;
-		v62 = (float)((float)(v56 + (float)(v59 + v58)) + v55) * 0.25f;
-		v63 = (float)((float)(v55 + (float)(v58 + v61)) + this->field_3C) * 0.25f;
-		v64 = (float)(v61 + (float)(v58 + (float)(v57 + this->field_28))) * 0.25f;
-		if (v46)
-			goto LABEL_18;
-	LABEL_34:
-		v66 = 0.5f;
-		this->m_vtxRed[3] = 0.5f;
-		this->m_vtxRed[2] = 0.5f;
-		this->m_vtxRed[1] = 0.5f;
-		this->m_vtxRed[0] = 0.5f;
-		this->m_vtxGreen[3] = 0.5f;
-		this->m_vtxGreen[2] = 0.5f;
-		this->m_vtxGreen[1] = 0.5f;
-		this->m_vtxGreen[0] = 0.5f;
-		v65 = 0.5f;
-		v67 = 0.5f;
-		goto LABEL_19;
-	}
-	v62 = this->field_14;
-	v63 = v62;
-	v64 = v62;
-	v60 = v62;
-	if (!v46)
-		goto LABEL_34;
-LABEL_18:
-	v65 = r * 0.5f;
-	v66 = g * 0.5f;
-	this->m_vtxRed[3] = r * 0.5f;
-	this->m_vtxRed[2] = r * 0.5f;
-	this->m_vtxRed[1] = r * 0.5f;
-	this->m_vtxRed[0] = r * 0.5f;
-	v67 = b * 0.5f;
-	this->m_vtxGreen[3] = g * 0.5f;
-	this->m_vtxGreen[2] = g * 0.5f;
-	this->m_vtxGreen[1] = g * 0.5f;
-	this->m_vtxGreen[0] = g * 0.5f;
-LABEL_19:
-	v68 = this->m_pTileSource;
-	v69 = 1;
-	this->m_vtxRed[0] = v60 * v65;
-	this->m_vtxGreen[0] = v60 * v66;
-	this->m_vtxBlue[0] = v60 * v67;
-	this->m_vtxRed[1] = v64 * v65;
-	this->m_vtxGreen[1] = v64 * v66;
-	this->m_vtxBlue[1] = v64 * v67;
-	this->m_vtxRed[2] = v63 * v65;
-	this->m_vtxGreen[2] = v63 * v66;
-	this->m_vtxGreen[3] = v62 * v66;
-	this->m_vtxBlue[2] = v63 * v67;
-	this->m_vtxRed[3] = v62 * v65;
-	this->m_vtxBlue[3] = v62 * v67;
-	v70 = a2->getTexture(v68, pos, Facing::DOWN);
-	renderFaceDown(a2, pos, v70);
-LABEL_20:
-	if (this->m_bNoCulling || a2->shouldRenderFace(this->m_pTileSource, TilePos(pos.x, v216, pos.z), Facing::UP))
-	{
-		if (this->field_78 <= 0)
-		{
-			v87 = this->field_20;
-			v89 = v87;
-			v88 = v87;
-			v85 = v87;
-			goto LABEL_36;
-		}
-		v71 = a2->getBrightness(this->m_pTileSource, TilePos(pos.x - 1, v216, pos.z));
-		v72 = this->m_pTileSource;
-		this->field_4C = v71;
-		v73 = a2->getBrightness(v72, TilePos(v214, v216, pos.z));
-		v74 = this->m_pTileSource;
-		this->field_5C = v73;
-		v75 = a2->getBrightness(v74, TilePos(pos.x, v216, v217));
-		v76 = this->m_pTileSource;
-		this->field_54 = v75;
-		v77 = a2->getBrightness(v76, TilePos(pos.x, v216, v215));
-		v78 = this->field_AC;
-		this->field_60 = v77;
-		if (v78 || this->field_AE)
-		{
-			v197 = a2->getBrightness(this->m_pTileSource, TilePos(pos.x - 1, v216, v217));
-			v198 = this->field_AC;
-			this->field_48 = v197;
-			if (v198)
-				goto LABEL_125;
-		}
-		else
-		{
-			this->field_48 = this->field_4C;
-		}
-		if (!this->field_AD)
-		{
-			this->field_58 = this->field_5C;
-		LABEL_27:
-			if (this->field_AF || this->field_AE)
-			{
-				v211 = a2->getBrightness(this->m_pTileSource, TilePos(pos.x - 1, v216, v215));
-				v212 = this->field_AF;
-				this->field_50 = v211;
-				if (v212)
-					goto LABEL_141;
-			}
-			else
-			{
-				this->field_50 = this->field_4C;
-			}
-			if (!this->field_AD)
-			{
-				v79 = this->field_5C;
-				v80 = v79;
-				this->field_64 = v79;
-			LABEL_32:
-				v81 = this->field_4C;
-				v82 = this->field_20;
-				v83 = this->field_60;
-				v84 = (float)(v81 + this->field_50) + v83;
-				v85 = (float)((float)(v80 + (float)(v83 + v82)) + v79) * 0.25f;
-				v86 = this->field_54;
-				v87 = (float)(v84 + v82) * 0.25f;
-				v88 = (float)((float)(v79 + (float)(v82 + v86)) + this->field_58) * 0.25f;
-				v89 = (float)(v86 + (float)(v82 + (float)(v81 + this->field_48))) * 0.25f;
-			LABEL_36:
-				v90 = this->m_pTileSource;
-				v69 = 1;
-				this->m_vtxRed[0] = v85 * r;
-				this->m_vtxGreen[0] = v85 * g;
-				this->m_vtxBlue[0] = v85 * b;
-				this->m_vtxRed[1] = v88 * r;
-				this->m_vtxGreen[1] = v88 * g;
-				this->m_vtxBlue[1] = v88 * b;
-				this->m_vtxRed[2] = v89 * r;
-				this->m_vtxGreen[2] = v89 * g;
-				this->m_vtxBlue[2] = v89 * b;
-				this->m_vtxRed[3] = v87 * r;
-				this->m_vtxGreen[3] = v87 * g;
-				this->m_vtxBlue[3] = v87 * b;
-				v91 = a2->getTexture(v90, pos, Facing::UP);
-				renderFaceUp(a2, pos, v91);
-				goto LABEL_37;
-			}
-		LABEL_141:
-			v213 = a2->getBrightness(this->m_pTileSource, TilePos(v214, v216, v215));
-			v79 = this->field_5C;
-			v80 = v213;
-			this->field_64 = v213;
-			goto LABEL_32;
-		}
-	LABEL_125:
-		this->field_58 = a2->getBrightness(this->m_pTileSource, TilePos(v214, v216, v217));
-		goto LABEL_27;
-	}
-LABEL_37:
-	if (!this->m_bNoCulling && !a2->shouldRenderFace(this->m_pTileSource, TilePos(pos.x, pos.y, v217), Facing::NORTH))
-	{
-		if (this->m_bNoCulling)
-			goto LABEL_54;
-		goto LABEL_107;
-	}
-	if (this->field_78 <= 0)
-	{
-		v111 = this->field_18;
-		v110 = v111;
-		v109 = v111;
-		v108 = v111;
-		if (!v222)
-			goto LABEL_50;
-		goto LABEL_52;
-	}
-	v92 = a2->getBrightness(this->m_pTileSource, TilePos(pos.x - 1, pos.y, v217));
-	v93 = this->m_pTileSource;
-	this->field_68 = v92;
-	v94 = a2->getBrightness(v93, TilePos(pos.x, v218, v217));
-	v95 = this->m_pTileSource;
-	this->field_34 = v94;
-	v96 = a2->getBrightness(v95, TilePos(pos.x, v216, v217));
-	v97 = this->m_pTileSource;
-	this->field_54 = v96;
-	v98 = a2->getBrightness(v97, TilePos(v214, pos.y, v217));
-	v99 = this->field_B0;
-	this->field_6C = v98;
-	if (v99 || this->field_B4)
-	{
-		v201 = a2->getBrightness(this->m_pTileSource, TilePos(pos.x - 1, v218, v217));
-		v202 = this->field_B0;
-		this->field_28 = v201;
-		if (v202)
-			goto LABEL_131;
-	}
-	else
-	{
-		this->field_28 = this->field_68;
-	}
-	if (this->field_AC)
-	{
-	LABEL_131:
-		this->field_48 = a2->getBrightness(this->m_pTileSource, TilePos(pos.x - 1, v216, v217));
-		goto LABEL_44;
-	}
-	this->field_48 = this->field_68;
-LABEL_44:
-	if (this->field_B3 || this->field_B4)
-	{
-		v204 = a2->getBrightness(this->m_pTileSource, TilePos(v214, v218, v217));
-		v205 = this->field_B3;
-		this->field_3C = v204;
-		if (v205)
-			goto LABEL_136;
-	}
-	else
-	{
-		this->field_3C = this->field_6C;
-	}
-	if (!this->field_AC)
-	{
-		v100 = this->field_6C;
-		v101 = v100;
-		this->field_58 = v100;
-		goto LABEL_49;
-	}
-LABEL_136:
-	v206 = a2->getBrightness(this->m_pTileSource, TilePos(v214, v216, v217));
-	v100 = this->field_6C;
-	v101 = v206;
-	this->field_58 = v206;
-LABEL_49:
-	v102 = this->field_68;
-	v103 = this->field_18;
-	v104 = this->field_54;
-	v105 = (float)((float)(v102 + this->field_48) + v103) + v104;
-	v106 = v101 + (float)((float)(v103 + v104) + v100);
-	v107 = this->field_34;
-	v108 = v105 * 0.25f;
-	v109 = v106 * 0.25f;
-	v110 = (float)(v100 + (float)((float)(v103 + v107) + this->field_3C)) * 0.25f;
-	v111 = (float)(v103 + (float)(v107 + (float)(v102 + this->field_28))) * 0.25f;
-	if (!v222)
-	{
-	LABEL_50:
-		v112 = 0.8f;
-		this->m_vtxRed[3] = 0.8f;
-		this->m_vtxRed[2] = 0.8f;
-		this->m_vtxRed[1] = 0.8f;
-		this->m_vtxRed[0] = 0.8f;
-		this->m_vtxGreen[3] = 0.8f;
-		this->m_vtxGreen[2] = 0.8f;
-		this->m_vtxGreen[1] = 0.8f;
-		this->m_vtxGreen[0] = 0.8f;
-		v113 = 0.8f;
-		v114 = 0.8f;
-		goto LABEL_53;
-	}
-LABEL_52:
-	v113 = r * 0.8f;
-	v112 = g * 0.8f;
-	this->m_vtxRed[3] = r * 0.8f;
-	this->m_vtxRed[2] = r * 0.8f;
-	this->m_vtxRed[1] = r * 0.8f;
-	this->m_vtxRed[0] = r * 0.8f;
-	v114 = b * 0.8f;
-	this->m_vtxGreen[3] = g * 0.8f;
-	this->m_vtxGreen[2] = g * 0.8f;
-	this->m_vtxGreen[1] = g * 0.8f;
-	this->m_vtxGreen[0] = g * 0.8f;
-LABEL_53:
-	v115 = this->m_pTileSource;
-	v69 = 1;
-	this->m_vtxRed[0] = v108 * v113;
-	this->m_vtxGreen[0] = v108 * v112;
-	this->m_vtxBlue[0] = v108 * v114;
-	this->m_vtxRed[1] = v109 * v113;
-	this->m_vtxGreen[1] = v109 * v112;
-	this->m_vtxBlue[1] = v109 * v114;
-	this->m_vtxRed[2] = v110 * v113;
-	this->m_vtxGreen[2] = v110 * v112;
-	this->m_vtxGreen[3] = v111 * v112;
-	this->m_vtxBlue[2] = v110 * v114;
-	this->m_vtxRed[3] = v111 * v113;
-	this->m_vtxBlue[3] = v111 * v114;
-	v116 = a2->getTexture(v115, pos, Facing::NORTH);
-	renderNorth(a2, pos, v116);
-	if (this->m_bNoCulling)
-		goto LABEL_54;
-LABEL_107:
-	if (!a2->shouldRenderFace(this->m_pTileSource, TilePos(pos.x, pos.y, v215), Facing::SOUTH))
-	{
-		if (this->m_bNoCulling)
-			goto LABEL_70;
-		goto LABEL_109;
-	}
-LABEL_54:
-	if (this->field_78 <= 0)
-	{
-		v132 = this->field_24;
-		v133 = v132;
-		v134 = v132;
-		v130 = v132;
-		if (!v221)
-			goto LABEL_66;
-		goto LABEL_68;
-	}
-	v117 = a2->getBrightness(this->m_pTileSource, TilePos(pos.x - 1, pos.y, v215));
-	v118 = this->m_pTileSource;
-	this->field_70 = v117;
-	v119 = a2->getBrightness(v118, TilePos(v214, pos.y, v215));
-	v120 = this->m_pTileSource;
-	this->field_74 = v119;
-	v121 = a2->getBrightness(v120, TilePos(pos.x, v218, v215));
-	v122 = this->m_pTileSource;
-	this->field_38 = v121;
-	v123 = a2->getBrightness(v122, TilePos(pos.x, v216, v215));
-	v124 = this->field_B2;
-	this->field_60 = v123;
-	if (v124 || this->field_B7)
-	{
-		v199 = a2->getBrightness(this->m_pTileSource, TilePos(pos.x - 1, v218, v215));
-		v200 = this->field_B2;
-		this->field_30 = v199;
-		if (v200)
-			goto LABEL_129;
-	}
-	else
-	{
-		this->field_30 = this->field_70;
-	}
-	if (this->field_AF)
-	{
-	LABEL_129:
-		this->field_50 = a2->getBrightness(this->m_pTileSource, TilePos(pos.x - 1, v216, v215));
-		goto LABEL_60;
-	}
-	this->field_50 = this->field_70;
-LABEL_60:
-	if (this->field_B1 || this->field_B7)
-	{
-		v208 = a2->getBrightness(this->m_pTileSource, TilePos(v214, v218, v215));
-		v209 = this->field_B1;
-		this->field_44 = v208;
-		if (v209)
-			goto LABEL_139;
-	}
-	else
-	{
-		this->field_44 = this->field_74;
-	}
-	if (!this->field_AF)
-	{
-		v125 = this->field_74;
-		v126 = v125;
-		this->field_64 = v125;
-		goto LABEL_65;
-	}
-LABEL_139:
-	v210 = a2->getBrightness(this->m_pTileSource, TilePos(v214, v216, v215));
-	v125 = this->field_74;
-	v126 = v210;
-	this->field_64 = v210;
-LABEL_65:
-	v127 = this->field_70;
-	v128 = this->field_24;
-	v129 = this->field_60;
-	v130 = (float)((float)((float)(v127 + this->field_50) + v128) + v129) * 0.25f;
-	v131 = this->field_38;
-	v132 = (float)(v126 + (float)((float)(v128 + v129) + v125)) * 0.25f;
-	v133 = (float)(v125 + (float)((float)(v128 + v131) + this->field_44)) * 0.25f;
-	v134 = (float)(v128 + (float)(v131 + (float)(v127 + this->field_30))) * 0.25f;
-	if (!v221)
-	{
-	LABEL_66:
-		v135 = 0.8f;
-		this->m_vtxRed[3] = 0.8f;
-		this->m_vtxRed[2] = 0.8f;
-		this->m_vtxRed[1] = 0.8f;
-		this->m_vtxRed[0] = 0.8f;
-		this->m_vtxGreen[3] = 0.8f;
-		this->m_vtxGreen[2] = 0.8f;
-		this->m_vtxGreen[1] = 0.8f;
-		this->m_vtxGreen[0] = 0.8f;
-		v136 = 0.8f;
-		v137 = 0.8f;
-		goto LABEL_69;
-	}
-LABEL_68:
-	v136 = r * 0.8f;
-	v135 = g * 0.8f;
-	this->m_vtxRed[3] = r * 0.8f;
-	this->m_vtxRed[2] = r * 0.8f;
-	this->m_vtxRed[1] = r * 0.8f;
-	this->m_vtxRed[0] = r * 0.8f;
-	v137 = b * 0.8f;
-	this->m_vtxGreen[3] = g * 0.8f;
-	this->m_vtxGreen[2] = g * 0.8f;
-	this->m_vtxGreen[1] = g * 0.8f;
-	this->m_vtxGreen[0] = g * 0.8f;
-LABEL_69:
-	v138 = this->m_pTileSource;
-	v69 = 1;
-	this->m_vtxRed[0] = v130 * v136;
-	this->m_vtxGreen[0] = v130 * v135;
-	this->m_vtxBlue[0] = v130 * v137;
-	this->m_vtxRed[1] = v134 * v136;
-	this->m_vtxGreen[1] = v134 * v135;
-	this->m_vtxBlue[1] = v134 * v137;
-	this->m_vtxRed[2] = v133 * v136;
-	this->m_vtxGreen[2] = v133 * v135;
-	this->m_vtxGreen[3] = v132 * v135;
-	this->m_vtxBlue[2] = v133 * v137;
-	this->m_vtxRed[3] = v132 * v136;
-	this->m_vtxBlue[3] = v132 * v137;
-	v139 = a2->getTexture(v138, pos, Facing::SOUTH);
-	renderSouth(a2, pos, v139);
-	if (this->m_bNoCulling)
-		goto LABEL_70;
-LABEL_109:
-	if (!a2->shouldRenderFace(this->m_pTileSource, pos.west(), Facing::WEST))
-	{
-		if (this->m_bNoCulling)
-			goto LABEL_88;
-		goto LABEL_111;
-	}
-LABEL_70:
-	if (this->field_78 <= 0)
-	{
-		v156 = this->field_10;
-		v159 = v156;
-		v158 = v156;
-		v157 = v156;
-		if (!v220)
-		{
-		LABEL_84:
-			v160 = 0.6f;
-			this->m_vtxRed[3] = 0.6f;
-			this->m_vtxRed[2] = 0.6f;
-			this->m_vtxRed[1] = 0.6f;
-			this->m_vtxRed[0] = 0.6f;
-			this->m_vtxGreen[3] = 0.6f;
-			this->m_vtxGreen[2] = 0.6f;
-			this->m_vtxGreen[1] = 0.6f;
-			this->m_vtxGreen[0] = 0.6f;
-			v161 = 0.6f;
-			v162 = 0.6f;
-			goto LABEL_87;
-		}
-	}
-	else
-	{
-		v140 = a2->getBrightness(this->m_pTileSource, TilePos(pos.x - 1, v218, pos.z));
-		v141 = this->m_pTileSource;
-		this->field_2C = v140;
-		v142 = a2->getBrightness(v141, TilePos(pos.x - 1, pos.y, v217));
-		v143 = this->m_pTileSource;
-		this->field_68 = v142;
-		v144 = a2->getBrightness(v143, TilePos(pos.x - 1, pos.y, v215));
-		v145 = this->m_pTileSource;
-		this->field_70 = v144;
-		v146 = a2->getBrightness(v145, TilePos(pos.x - 1, v216, pos.z));
-		v147 = this->field_B0;
-		this->field_4C = v146;
-		if (v147 || this->field_B6)
-			this->field_28 = a2->getBrightness(this->m_pTileSource, TilePos(pos.x - 1, v218, v217));
-		else
-			this->field_28 = this->field_68;
-		if (this->field_B2 || this->field_B6)
-			this->field_30 = a2->getBrightness(this->m_pTileSource, TilePos(pos.x - 1, v218, v215));
-		else
-			this->field_30 = this->field_70;
-		if (this->field_B0 || this->field_AE)
-			this->field_48 = a2->getBrightness(this->m_pTileSource, TilePos(pos.x - 1, v216, v217));
-		else
-			this->field_48 = this->field_68;
-		if (this->field_B2 || this->field_AE)
-		{
-			v207 = a2->getBrightness(this->m_pTileSource, TilePos(pos.x - 1, v216, v215));
-			v148 = this->field_70;
-			v149 = v207;
-			this->field_50 = v207;
-		}
-		else
-		{
-			v148 = this->field_70;
-			v149 = v148;
-			this->field_50 = v148;
-		}
-		v150 = this->field_2C;
-		v151 = this->field_10;
-		v152 = this->field_4C;
-		v153 = (float)((float)(v150 + this->field_30) + v151) + v148;
-		v154 = v149 + (float)((float)(v151 + v148) + v152);
-		v155 = this->field_68;
-		v156 = v153 * 0.25f;
-		v157 = v154 * 0.25f;
-		v158 = (float)(v152 + (float)((float)(v151 + v155) + this->field_48)) * 0.25f;
-		v159 = (float)(v151 + (float)(v155 + (float)(v150 + this->field_28))) * 0.25f;
-		if (!v220)
-			goto LABEL_84;
-	}
-	v161 = r * 0.6f;
-	v160 = g * 0.6f;
-	this->m_vtxRed[3] = r * 0.6f;
-	this->m_vtxRed[2] = r * 0.6f;
-	this->m_vtxRed[1] = r * 0.6f;
-	this->m_vtxRed[0] = r * 0.6f;
-	v162 = b * 0.6f;
-	this->m_vtxGreen[3] = g * 0.6f;
-	this->m_vtxGreen[2] = g * 0.6f;
-	this->m_vtxGreen[1] = g * 0.6f;
-	this->m_vtxGreen[0] = g * 0.6f;
-LABEL_87:
-	v163 = this->m_pTileSource;
-	v69 = 1;
-	this->m_vtxRed[0] = v161 * v157;
-	this->m_vtxGreen[0] = v160 * v157;
-	this->m_vtxBlue[0] = v162 * v157;
-	this->m_vtxRed[1] = v161 * v158;
-	this->m_vtxGreen[1] = v160 * v158;
-	this->m_vtxBlue[1] = v162 * v158;
-	this->m_vtxRed[2] = v161 * v159;
-	this->m_vtxGreen[2] = v160 * v159;
-	this->m_vtxGreen[3] = v160 * v156;
-	this->m_vtxBlue[2] = v162 * v159;
-	this->m_vtxRed[3] = v161 * v156;
-	this->m_vtxBlue[3] = v162 * v156;
-	v164 = a2->getTexture(v163, pos, Facing::WEST);
-	renderWest(a2, pos, v164);
-	if (this->m_bNoCulling)
-		goto LABEL_88;
-LABEL_111:
-	if (!a2->shouldRenderFace(this->m_pTileSource, TilePos(v214, pos.y, pos.z), Facing::EAST))
-		goto LABEL_102;
-LABEL_88:
-	if (this->field_78 <= 0)
-	{
-		v186 = this->field_1C;
-		v187 = v186;
-		v188 = v186;
-		v182 = v186;
-		if (v219)
-			goto LABEL_100;
-	LABEL_104:
-		v190 = 0.6f;
-		this->m_vtxRed[3] = 0.6f;
-		this->m_vtxRed[2] = 0.6f;
-		this->m_vtxRed[1] = 0.6f;
-		this->m_vtxRed[0] = 0.6f;
-		this->m_vtxGreen[3] = 0.6f;
-		this->m_vtxGreen[2] = 0.6f;
-		this->m_vtxGreen[1] = 0.6f;
-		this->m_vtxGreen[0] = 0.6f;
-		v189 = 0.6f;
-		v191 = 0.6f;
-		goto LABEL_101;
-	}
-	v165 = a2->getBrightness(this->m_pTileSource, TilePos(v214, v218, pos.z));
-	v166 = this->m_pTileSource;
-	this->field_40 = v165;
-	v167 = a2->getBrightness(v166, TilePos(v214, pos.y, v217));
-	v168 = this->m_pTileSource;
-	this->field_6C = v167;
-	v169 = a2->getBrightness(v168, TilePos(v214, pos.y, v215));
-	v170 = this->m_pTileSource;
-	this->field_74 = v169;
-	v171 = a2->getBrightness(v170, TilePos(v214, v216, pos.z));
-	v172 = this->field_B5;
-	this->field_5C = v171;
-	if (v172 || this->field_B3)
-	{
-		v173 = a2->getBrightness(this->m_pTileSource, TilePos(v214, v218, v217));
-		v174 = this->field_B5;
-		this->field_3C = v173;
-		if (v174 || this->field_B1)
-			goto LABEL_93;
-	LABEL_121:
-		this->field_44 = this->field_74;
-		goto LABEL_94;
-	}
-	v196 = this->field_B1;
-	this->field_3C = this->field_6C;
-	if (!v196)
-		goto LABEL_121;
-LABEL_93:
-	this->field_44 = a2->getBrightness(this->m_pTileSource, TilePos(v214, v218, v215));
-LABEL_94:
-	if (this->field_AD || this->field_B3)
-	{
-		v175 = a2->getBrightness(this->m_pTileSource, TilePos(v214, v216, v217));
-		v176 = this->field_AD;
-		this->field_58 = v175;
-		if (v176 || this->field_B1)
-			goto LABEL_98;
-	}
-	else
-	{
-		v195 = this->field_B1;
-		this->field_58 = this->field_6C;
-		if (v195)
-		{
-		LABEL_98:
-			v177 = a2->getBrightness(this->m_pTileSource, TilePos(v214, v216, v215));
-			v178 = this->field_74;
-			v179 = v177;
-			this->field_64 = v177;
-			goto LABEL_99;
-		}
-	}
-	v178 = this->field_74;
-	v179 = v178;
-	this->field_64 = v178;
-LABEL_99:
-	v180 = this->field_40;
-	v181 = this->field_1C;
-	v182 = (float)((float)((float)(v180 + this->field_44) + v181) + v178) * 0.25f;
-	v183 = this->field_5C;
-	v184 = v179 + (float)((float)(v181 + v178) + v183);
-	v185 = this->field_6C;
-	v186 = v184 * 0.25f;
-	v187 = (float)(v183 + (float)((float)(v181 + v185) + this->field_58)) * 0.25f;
-	v188 = (float)(v181 + (float)(v185 + (float)(v180 + this->field_3C))) * 0.25f;
-	if (!v219)
-		goto LABEL_104;
-LABEL_100:
-	v189 = r * 0.6f;
-	v190 = g * 0.6f;
-	this->m_vtxRed[3] = r * 0.6f;
-	this->m_vtxRed[2] = r * 0.6f;
-	this->m_vtxRed[1] = r * 0.6f;
-	this->m_vtxRed[0] = r * 0.6f;
-	v191 = b * 0.6f;
-	this->m_vtxGreen[3] = g * 0.6f;
-	this->m_vtxGreen[2] = g * 0.6f;
-	this->m_vtxGreen[1] = g * 0.6f;
-	this->m_vtxGreen[0] = g * 0.6f;
-LABEL_101:
-	v192 = this->m_pTileSource;
-	v69 = 1;
-	this->m_vtxRed[0] = v189 * v182;
-	this->m_vtxGreen[0] = v190 * v182;
-	this->m_vtxBlue[0] = v191 * v182;
-	this->m_vtxRed[1] = v189 * v188;
-	this->m_vtxGreen[1] = v190 * v188;
-	this->m_vtxBlue[1] = v191 * v188;
-	this->m_vtxRed[2] = v189 * v187;
-	this->m_vtxGreen[2] = v190 * v187;
-	this->m_vtxGreen[3] = v190 * v186;
-	this->m_vtxBlue[2] = v191 * v187;
-	this->m_vtxRed[3] = v189 * v186;
-	this->m_vtxBlue[3] = v191 * v186;
-	v193 = a2->getTexture(v192, pos, Facing::EAST);
-	renderEast(a2, pos, v193);
-LABEL_102:
-	result = v69;
-	this->m_ambientOcclusion = false;
-	return result;
 }
 
 Color getTileFaceColor(const FullTile& tile, Facing::Name face, float shading = 1.0f, bool preshade = false)
@@ -3505,7 +2504,6 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 		}
 }
 
-#ifdef ENH_USE_OWN_AO
 bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, const TilePos& pos, float r, float g, float b)
 {
 	// START OF AUXILIARY DATA FOR AO
@@ -3585,7 +2583,7 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 				   pos.y + diffY[dir],
 				   pos.z + diffZ[dir]);
 
-		if (!m_bNoCulling && !tile->shouldRenderFace(m_pTileSource, tp, (Facing::Name)dir))
+		if (!m_bNoCulling && !tile->shouldRenderFace(*m_pTileSource, tp, (Facing::Name)dir))
 			continue;
 
 		bBother = true;
@@ -3602,16 +2600,16 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 
 	//Tesselator& t = m_tessellator;
 
-	//float fLightHere = tile->getBrightness(m_pTileSource, pos);
+	//float fLightHere = tile->getBrightness(*m_pTileSource, pos);
 
 	float lights[ETILE_FACE_COUNT];
 
 	// Get the brightness of the tile we're processing, as well as all tiles around it
-	lights[ETILE_FACE_HERE] = tile->getBrightness(m_pTileSource, pos);
+	lights[ETILE_FACE_HERE] = tile->getBrightness(*m_pTileSource, pos);
 
 	for (int i = 1; i < ETILE_FACE_COUNT; i++)
 	{
-		lights[i] = tile->getBrightness(m_pTileSource, TilePos(pos.x + diffEX[i], pos.y + diffEY[i], pos.z + diffEZ[i]));
+		lights[i] = tile->getBrightness(*m_pTileSource, TilePos(pos.x + diffEX[i], pos.y + diffEY[i], pos.z + diffEZ[i]));
 	}
 
 	// Render all the faces.
@@ -3622,7 +2620,7 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 			pos.z + diffZ[dir]);
 
 		// check if we should bother in the first place
-		if (!m_bNoCulling && !tile->shouldRenderFace(m_pTileSource, tp, (Facing::Name)dir))
+		if (!m_bNoCulling && !tile->shouldRenderFace(*m_pTileSource, tp, (Facing::Name)dir))
 		{
 			continue;
 		}
@@ -3667,26 +2665,26 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 		switch (dir) 
 		{
 			case Facing::DOWN:
-				renderFaceDown  (tile, pos, tile->getTexture(m_pTileSource, pos, Facing::DOWN));
+				renderFaceDown  (tile, pos, tile->getTexture(*m_pTileSource, pos, Facing::DOWN));
 				break;
 			case Facing::UP:
-				renderFaceUp(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::UP));
+				renderFaceUp(tile, pos, tile->getTexture(*m_pTileSource, pos, Facing::UP));
 				break;
 			case Facing::NORTH:
-				renderNorth   (tile, pos, tile->getTexture(m_pTileSource, pos, Facing::NORTH));
+				renderNorth   (tile, pos, tile->getTexture(*m_pTileSource, pos, Facing::NORTH));
 				break;
 			case Facing::SOUTH:
-				renderSouth   (tile, pos, tile->getTexture(m_pTileSource, pos, Facing::SOUTH));
+				renderSouth   (tile, pos, tile->getTexture(*m_pTileSource, pos, Facing::SOUTH));
 				break;
 			case Facing::WEST:
-				renderWest    (tile, pos, tile->getTexture(m_pTileSource, pos, Facing::WEST));
+				renderWest    (tile, pos, tile->getTexture(*m_pTileSource, pos, Facing::WEST));
 				break;
 			case Facing::EAST:
-				renderEast    (tile, pos, tile->getTexture(m_pTileSource, pos, Facing::EAST));
+				renderEast    (tile, pos, tile->getTexture(*m_pTileSource, pos, Facing::EAST));
 				break;
 		}
 
-		if (TileRenderer::m_bFancyGrass && tile->getTexture(m_pTileSource, pos, (Facing::Name)dir) == TEXTURE_GRASS_SIDE && (dir == Facing::WEST || dir == Facing::EAST || dir == Facing::NORTH || dir == Facing::SOUTH))
+		if (TileRenderer::m_bFancyGrass && tile->getTexture(*m_pTileSource, pos, (Facing::Name)dir) == TEXTURE_GRASS_SIDE && (dir == Facing::WEST || dir == Facing::EAST || dir == Facing::NORTH || dir == Facing::SOUTH))
 		{
 			for (int i = 0; i < 4; i++)
 				m_vtxRed[i] = m_vtxGreen[i] = m_vtxBlue[i] = 1.0f;
@@ -3701,16 +2699,16 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 
 				br *= 0.25f;
 
-				m_vtxRed[i] = br;
+				m_vtxRed[i]   = br;
 				m_vtxGreen[i] = br;
-				m_vtxBlue[i] = br;
+				m_vtxBlue[i]  = br;
 			}
 
 			for (int i = 0; i < 4; i++)
 			{
-				m_vtxRed[i] *= topR * lightingMult[dir];
+				m_vtxRed[i]   *= topR * lightingMult[dir];
 				m_vtxGreen[i] *= topG * lightingMult[dir];
-				m_vtxBlue[i] *= topB * lightingMult[dir];
+				m_vtxBlue[i]  *= topB * lightingMult[dir];
 			}
 
 			switch (dir) 
@@ -3741,38 +2739,22 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 
 	return true;
 }
-#endif
 
-int TileRenderer::getTileColor(Tile* tile, const TilePos& pos)
+Color TileRenderer::_getTileColor(const TilePos& pos, Tile* tile)
 {
-	if (tile == nullptr)
-	{
-		return 0xffffff;
-	}
+	uint32_t tileColor = tile->getColor(*m_pTileSource, pos);
 
-	if ((tile == Tile::grass || tile == Tile::tallGrass) && GrassColor::isAvailable() && m_bBiomeColors)
-	{
-		m_pTileSource->getBiomeSource()->getBiomeBlock(pos, 1, 1);
-		return GrassColor::get(m_pTileSource->getBiomeSource()->field_4[0], m_pTileSource->getBiomeSource()->field_8[0]);
-	}
-	if (tile == Tile::leaves && FoliageColor::isAvailable() && m_bBiomeColors)
-	{
-		TileData data = m_pTileSource->getData(pos);
+	Color color(
+		GET_RED(tileColor) / 255.0f,
+		GET_GREEN(tileColor) / 255.0f,
+		GET_BLUE(tileColor) / 255.0f,
+		1.0f // NOTE: not supported
+	);
 
-		if ((data & 1) == 1)
-		{
-			return FoliageColor::getEvergreenColor();
-		}
-		if ((data & 2) == 2)
-		{
-			return FoliageColor::getBirchColor();
-		}
+	if (tile->isSeasonTinted())
+		color.b = 1.0f;
 
-		m_pTileSource->getBiomeSource()->getBiomeBlock(pos, 1, 1);
-		return FoliageColor::get(m_pTileSource->getBiomeSource()->field_4[0], m_pTileSource->getBiomeSource()->field_8[0]);
-	}
-
-	return tile->getColor(m_pTileSource, pos);
+	return color;
 }
 
 bool TileRenderer::useAmbientOcclusion() const

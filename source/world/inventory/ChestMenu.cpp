@@ -27,7 +27,7 @@ ChestMenu::ChestMenu(Container* inventory, Container* container)
     }
 }
 
-bool ChestMenu::stillValid(Player* player) const
+bool ChestMenu::stillValid(Player& player) const
 {
     return m_pContainer->stillValid(player);
 }

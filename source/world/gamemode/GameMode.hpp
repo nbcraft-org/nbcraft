@@ -24,26 +24,26 @@ public:
 	virtual ~GameMode();
 	virtual void initLevel(Level*);
 	//virtual bool isDestroyingBlock() const;
-	virtual bool startDestroyBlock(Player* player, const TilePos& pos, Facing::Name face);
-	virtual bool destroyBlock(Player* player, const TilePos& pos, Facing::Name face);
-	virtual bool continueDestroyBlock(Player* player, const TilePos& pos, Facing::Name face);
+	virtual bool startDestroyBlock(Player& player, const TilePos& pos, Facing::Name face);
+	virtual bool destroyBlock(Player& player, const TilePos& pos, Facing::Name face);
+	virtual bool continueDestroyBlock(Player& player, const TilePos& pos, Facing::Name face);
 	virtual void stopDestroyBlock();
 	virtual void tick();
 	virtual void render(float f);
 	// Used to be called getPickRange
 	virtual float getBlockReachDistance() const;
 	virtual float getEntityReachDistance() const;
-	virtual bool useItem(Player* player, Level* level, ItemStack& item);
-	virtual bool useItemOn(Player*, Level*, ItemStack&, const TilePos& pos, Facing::Name face);
+	virtual bool useItem(Player& player, ItemStack& item);
+	virtual bool useItemOn(Player&, ItemStack&, const TilePos& pos, Facing::Name face);
 	virtual void releaseUsingItem(Player* player);
-	virtual LocalPlayer* createPlayer(Level*);
-	virtual void initPlayer(Player*);
+	virtual LocalPlayer* createPlayer(Level&);
+	virtual void initPlayer(Player&);
 	virtual void adjustPlayer(Player*);
 	virtual bool canHurtPlayer();
-	virtual void interact(Player*, Entity*);
-	virtual void attack(Player*, Entity*);
+	virtual void interact(Player&, Entity&);
+	virtual void attack(Player&, Entity&);
 	virtual ItemStack handleInventoryMouseClick(int containerId, Container::SlotID slotId, MouseButtonType, bool, Player*);
-	virtual void handleCloseInventory(int, Player*);
+	virtual void handleCloseInventory(int, Player&);
 	virtual bool isCreativeType() const { return true; }
 	virtual bool isSurvivalType() const { return false; }
 	virtual float getDestroyModifier() const { return 1.0; }

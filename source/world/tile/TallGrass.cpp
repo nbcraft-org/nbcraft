@@ -1,5 +1,5 @@
 #include "TallGrass.hpp"
-#include "world/level/Level.hpp"
+#include "world/level/TileSource.hpp"
 #include "client/renderer/PatchManager.hpp"
 #include "client/renderer/FoliageColor.hpp"
 
@@ -18,7 +18,7 @@ int TallGrass::getResource(TileData data, Random* random) const
 	return random->nextInt(8) == 0 ? Item::seeds->m_itemID : 0;
 }
 
-int TallGrass::getColor(const LevelSource* levelSource, const TilePos& pos) const
+int TallGrass::getColor(TileSource& source, const TilePos& pos) const
 {
 	if (GetPatchManager()->IsGrassTinted())
 	{
@@ -32,8 +32,9 @@ int TallGrass::getColor(Facing::Name face, TileData data) const
 	return data == 0 ? 0xFFFFFF : FoliageColor::getDefaultColor();
 }
 
-int TallGrass::getTexture(Facing::Name face, TileData data) const
+int TallGrass::getTexture(TileSource& source, const TilePos& pos, Facing::Name face) const
 {
+	TileData data = source.getData(pos);
 	return data == 1 ? m_TextureFrame : (data == 2 ? m_TextureFrame + 16 + 1 : (data == 1 ? m_TextureFrame : m_TextureFrame + 16));
 }
 

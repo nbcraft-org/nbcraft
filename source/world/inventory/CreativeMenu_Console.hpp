@@ -26,7 +26,7 @@ public:
 
     void updateGrid(float scroll, int tab = STRUCTURES);
 
-    bool stillValid(Player* player) const override;
+    bool stillValid(Player& player) const override;
 
     static const std::vector<ItemStack>& GetCreativeItems(int tab) { return creativeItems[tab]; }
 

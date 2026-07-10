@@ -1,4 +1,5 @@
 #include "MusicTileEntity.hpp"
+#include "world/level/TileSource.hpp"
 #include "world/level/Level.hpp"
 
 MusicTileEntity::MusicTileEntity() : TileEntity()
@@ -26,14 +27,14 @@ void MusicTileEntity::tune()
     setChanged();
 }
 
-void MusicTileEntity::play(Level* pLevel, const TilePos& pos)
+void MusicTileEntity::play(TileSource& source, const TilePos& pos)
 {
     // noteblocks only play if the block above them is air
-    if (pLevel->getMaterial(TilePos(pos.x, pos.y + 1, pos.z)) != Material::air)
+    if (source.getMaterial(TilePos(pos.x, pos.y + 1, pos.z)) != Material::air)
         return;
 
     int instrument = 0;
-    Material* below = pLevel->getMaterial(TilePos(pos.x, pos.y - 1, pos.z));
+    Material* below = source.getMaterial(TilePos(pos.x, pos.y - 1, pos.z));
 
     if (below == Material::stone)
         instrument = 1;
@@ -44,5 +45,7 @@ void MusicTileEntity::play(Level* pLevel, const TilePos& pos)
     else if (below == Material::wood)
         instrument = 4;
 
-    pLevel->tileEvent(TileEvent(pos, instrument, m_note));
+    Level& level = source.getLevel();
+
+    level.tileEvent(TileEvent(pos, instrument, m_note));
 }
