@@ -52,7 +52,7 @@ void LightUpdate::update()
 					for (int i = 0; i < Facing::COUNT; i++)
 					{
 						Brightness_t neighborBrightness = m_pSource->getBrightness(*m_pLightLayer, pos + Facing::DIRECTION[i]);
-						if (neighborBrightness > brightestNeighbor)
+                        if (neighborBrightness > brightestNeighbor)
 							brightestNeighbor = neighborBrightness;
 					}
 
@@ -69,18 +69,18 @@ void LightUpdate::update()
 					m_pSource->setBrightness(*m_pLightLayer, pos, newBrightness);
 
 					Brightness_t spreadBrightness = std::max(static_cast<Brightness_t>(newBrightness - 1), Brightness::MIN);
-
+                    
 					// why dont we check if we're in range here?
-					m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos - TilePos(1, 0, 0), spreadBrightness);
-					m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos - TilePos(0, 1, 0), spreadBrightness);
-					m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos - TilePos(0, 0, 1), spreadBrightness);
+					m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos.west(),  spreadBrightness);
+					m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos.below(), spreadBrightness);
+					m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos.north(), spreadBrightness);
 
-					if ((pos.x + 1) >= m_max.x)
-						m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos + TilePos(1, 0, 0), spreadBrightness);
-					if ((pos.y + 1) >= m_max.y)
-						m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos + TilePos(0, 1, 0), spreadBrightness);
-					if ((pos.z + 1) >= m_max.z)
-						m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos + TilePos(0, 0, 1), spreadBrightness);
+					if ((pos.x + 1) <= m_max.x)
+						m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos.east(),  spreadBrightness);
+					if ((pos.y + 1) <= m_max.y)
+						m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos.above(), spreadBrightness);
+					if ((pos.z + 1) <= m_max.z)
+						m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos.south(), spreadBrightness);
 				}
 			}
 		}

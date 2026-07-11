@@ -201,6 +201,7 @@ Brightness_t Level::getBrightness(const LightLayer& ll, const TilePos& pos) cons
 		// there's nothing out there!
 		return ll.getSurrounding();
 
+    // @TODO: just do getAvailableChunk or whatever instead and check its return value
 	if (!hasChunk(pos))
 		return 0;
 
@@ -501,6 +502,8 @@ bool Level::updateLights()
 		field_B08--;
 		return false;
 	}
+    
+    LOG_I("LightUpdates: %d", m_lightUpdates.size());
 
 	for (int i = 499; i; i--)
 	{
@@ -1769,7 +1772,7 @@ int LASTTICKED = 0;
 
 void Level::tick()
 {
-	m_pMobSpawner->tick(*this, m_difficulty > 0, true);
+	//m_pMobSpawner->tick(*this, m_difficulty > 0, true);
 	m_pChunkSource->tick();
 
 #ifdef ENH_RUN_DAY_NIGHT_CYCLE
