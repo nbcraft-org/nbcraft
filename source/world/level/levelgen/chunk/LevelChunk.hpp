@@ -33,6 +33,7 @@ public:
 		NibbleTileArray()
 		{
 			array = new uint8_t[getSize()];
+            memset(array, 0, getSize());
 		}
 
 		~NibbleTileArray()

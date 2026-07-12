@@ -79,7 +79,7 @@ public:
 	GameType getDefaultGameType() const { return m_pLevelData->getGameType(); }
 	uint8_t getHeightmap(const TilePos& pos) const override;
 	bool isDay() const;
-	bool isSkyLit(const TilePos& pos) const;
+	bool canSeeSky(const TilePos& pos) const override;
 	bool isEmptyTile(const TilePos& pos) const override;
 	bool hasChunkAt(const TilePos& pos) const override;
 	bool hasChunk(const ChunkPos& pos) const override;
@@ -134,7 +134,6 @@ public:
 	void setInitialSpawn();
 	void setSpawnPos(const TilePos& pos) { m_pLevelData->setSpawn(pos); }
 	void setSpawnSettings(bool a, bool b) { }
-	bool canSeeSky(const TilePos& pos) const override;
 	Color getSkyColor(const Entity& entity, float f) const;
 	Color getFogColor(float f) const;
 	Color getCloudColor(float f) const;

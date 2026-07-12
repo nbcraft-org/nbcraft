@@ -689,7 +689,7 @@ void Level::updateLightIfOtherThan(const LightLayer& ll, const TilePos& tilePos,
 
 	if (&ll == &LightLayer::Sky)
 	{
-		if (isSkyLit(tilePos))
+		if (canSeeSky(tilePos))
 			bright = 15;
 	}
 	else if (&ll == &LightLayer::Block)
@@ -706,10 +706,11 @@ void Level::updateLightIfOtherThan(const LightLayer& ll, const TilePos& tilePos,
 	}
 }
 
-bool Level::isSkyLit(const TilePos& pos) const
+bool Level::canSeeSky(const TilePos& pos) const
 {
+    // @TODO: do we need this logic?
 	//@BUG: checking x >= C_MAX_X, but not z >= C_MAX_Z.
-	if (pos.x < C_MIN_X || pos.z < C_MIN_Z || pos.x >= C_MAX_X || pos.z > C_MAX_Z || pos.y < C_MIN_Y)
+	/*if (pos.x < C_MIN_X || pos.z < C_MIN_Z || pos.x >= C_MAX_X || pos.z > C_MAX_Z || pos.y < C_MIN_Y)
 		// there's nothing out there!
 		return false;
 
@@ -719,7 +720,13 @@ bool Level::isSkyLit(const TilePos& pos) const
 	if (!hasChunk(pos))
 		return false;
 
-	return getChunk(pos)->isSkyLit(pos);
+	return getChunk(pos)->isSkyLit(pos);*/
+    
+    LevelChunk* pChunk = getChunk(pos);
+    if (!pChunk)
+        return true;
+    
+    return pChunk->isSkyLit(pos);
 }
 
 bool Level::setTileAndDataNoUpdate(const TilePos& pos, const FullTile& tile)
@@ -1482,19 +1489,6 @@ _failure:
 
 	return;
 #endif
-}
-
-bool Level::canSeeSky(const TilePos& pos) const
-{
-	LevelChunk* pChunk = getChunk(pos);
-
-	//@BUG: no nullptr check
-#ifndef ORIGINAL_CODE
-	if (!pChunk)
-		return true;
-#endif
-
-	return pChunk->isSkyLit(pos);
 }
 
 Color Level::getSkyColor(const Entity& entity, float f) const
