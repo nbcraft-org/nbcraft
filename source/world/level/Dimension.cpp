@@ -58,13 +58,15 @@ Color Dimension::getSkyColor(const Entity& entity, float f) const
 
 Color Dimension::getFogColor(float a) const
 {
-	float x1 = cosf(a * M_PI * 2.0f);
+    float time = getTimeOfDay(a);
+	float x1 = cosf(time * M_PI * 2.0f);
 	float x2 = x1 * 2 + 0.5f;
 
 	if (x2 < 0.0f)
 		return Color(0.045176f, 0.050824f, 0.09f);
 
 	Color c;
+    c.a = 1.0f;
 	c.b = 1.0f;
 
 	if (x2 <= 1.0f)

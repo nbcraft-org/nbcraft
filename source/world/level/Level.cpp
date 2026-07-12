@@ -502,6 +502,8 @@ bool Level::updateLights()
 		field_B08--;
 		return false;
 	}
+    
+    LOG_I("LightUpdates: %d", m_lightUpdates.size());
 
 	for (int i = 499; i; i--)
 	{

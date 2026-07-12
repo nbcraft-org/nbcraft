@@ -299,7 +299,7 @@ void LevelRenderer::_renderSunrise(float alpha)
 	const Dimension& dimension = *m_pDimension;
 
 	Color c = dimension.getSunriseColor(dimension.getTimeOfDay(alpha), alpha);
-	if (c != Color::NIL, arePlanetsAvailable())
+	if (c != Color::NIL && arePlanetsAvailable())
 	{
 		MatrixStack::Ref matrix = MatrixStack::World.push();
 		matrix->rotate(90.0f, Vec3::UNIT_X);
