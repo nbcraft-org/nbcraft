@@ -15,22 +15,22 @@ FlameParticle::FlameParticle(Level* level, const Vec3& pos, const Vec3& dir) :
 
 	m_vel = m_vel * 0.01f + dir;
 
-	// @NOTE: Useless genrand_int32 calls. Will keep them in to keep consistent
-	m_random.genrand_int32();
-	m_random.genrand_int32();
-	m_random.genrand_int32();
-	m_random.genrand_int32();
-	m_random.genrand_int32();
-	m_random.genrand_int32();
-
 	m_oSize = m_size;
 	m_rCol = m_gCol = m_bCol = 1.0f;
 	m_lifetime = int(8.0f / (0.2f + 0.8f * Mth::random())) + 4;
+	m_bNoPhysics = true;
 	m_tex = PTI_FLAME;
 }
 
 float FlameParticle::getBrightness(float unused) const
 {
+	// Unused flame burn out code from b1.2_02-20110517
+	/*float life = float(m_age + unused) / float(m_lifetime);
+	if (life < 0.0f) life = 0.0f;
+	if (life > 1.0f) life = 1.0f;
+	float br = Particle::getBrightness(unused);
+	return br * life + 1.0f - life;*/
+
 	return 1.0f;
 }
 

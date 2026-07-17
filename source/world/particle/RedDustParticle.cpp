@@ -16,9 +16,9 @@ RedDustParticle::RedDustParticle(Level* level, const Vec3& pos, const Vec3& dir)
 	m_vel = dir + m_vel * 0.1f;
 
 	float f = Mth::random() * 0.4f + 0.6f;
-	m_rCol  = f * (dir.x != 0.0f ? dir.x : 1.0f) * (Mth::random() * 0.2f + 0.8f);
-	m_gCol  = f * dir.y						   * (Mth::random() * 0.2f + 0.8f);
-	m_bCol = f * dir.z						   * (Mth::random() * 0.2f + 0.8f);
+	m_rCol = f * (dir.x != 0.0f ? dir.x : 1.0f) * (Mth::random() * 0.2f + 0.8f);
+	m_gCol = f * dir.y * (Mth::random() * 0.2f + 0.8f);
+	m_bCol = f * dir.z * (Mth::random() * 0.2f + 0.8f);
 
 	m_oSize = m_size = m_size * 0.75f;
 
@@ -42,11 +42,9 @@ void RedDustParticle::tick()
 {
 	m_oPos = m_pos;
 
-	m_age++;
-	if (m_age > m_lifetime)
+	if (m_age++ >= m_lifetime)
 		remove();
 
-	m_vel.y += 0.004f;
 	m_tex = -8 * m_age / m_lifetime + 7;
 
 	move(m_vel);

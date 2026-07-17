@@ -56,7 +56,7 @@ std::string ParticleEngine::countParticles()
 {
 	// @NOTE: For whatever reason this returns a string??
 	std::stringstream ss;
-	ss << (m_particles[0].size() + m_particles[1].size() + m_particles[2].size() + m_particles[3].size());
+	ss << (m_particles[0].size() + m_particles[1].size() + m_particles[2].size());
 	return ss.str();
 }
 
@@ -113,7 +113,7 @@ void ParticleEngine::destroyEffect(const TilePos& pos, TileID tileID, TileData d
 {
 	if (!tileID) return;
 
-	float timeS = getTimeS();
+	//float timeS = getTimeS();
 
 	Tile* pTile = Tile::tiles[tileID];
 
@@ -123,16 +123,19 @@ void ParticleEngine::destroyEffect(const TilePos& pos, TileID tileID, TileData d
 		{
 			for (int k = 0; k < 4; k++)
 			{
-				Vec3 vec1(pos + (i + 0.5f) / 4.0f);
-				Vec3 vec2 = vec1 - pos - 0.5f;
+				// @BUG: Original code used only the i loop variable for all three axes
+				// (pos + (i + 0.5f) / 4.0f), causing particles to spawn in a vertical
+				// column pattern instead of filling the 4x4x4 block volume.
+				Vec3 vec1(pos.x + (i + 0.5f) / 4.0f, pos.y + (j + 0.5f) / 4.0f, pos.z + (k + 0.5f) / 4.0f);
+				Vec3 vec2 = vec1 - Vec3(pos) - 0.5f;
 
 				add((new TerrainParticle(m_pLevel, vec1, vec2, pTile))->init(pos, data));
 			}
 		}
 	}
 
-	if (timeS != -1.0)
-		getTimeS();
+	/*if (timeS != -1.0)
+		getTimeS();*/
 
 	// @NOTE: Useless string creation
 #ifdef ORIGINAL_CODE

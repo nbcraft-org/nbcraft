@@ -4182,8 +4182,6 @@
 			children = (
 				84AA8B582B32F3B5003F5B82 /* Animal.cpp */,
 				84AA8B592B32F3B5003F5B82 /* Animal.hpp */,
-				84B1E0312E04FD7900ED000A /* Arrow.cpp */,
-				84B1E0322E04FD7900ED000A /* Arrow.hpp */,
 				84AA8B5A2B32F3B5003F5B82 /* Chicken.cpp */,
 				84AA8B5B2B32F3B5003F5B82 /* Chicken.hpp */,
 				84AA8B5C2B32F3B5003F5B82 /* Cow.cpp */,
@@ -4202,10 +4200,6 @@
 				8445E7992D769329008DC834 /* EntityTypeDescriptor.hpp */,
 				840DD65A2AC810620006A435 /* FallingTile.cpp */,
 				840DD65B2AC810620006A435 /* FallingTile.hpp */,
-				84E8F9EA2FEF611800D0669F /* Fireball.cpp */,
-				84E8F9EB2FEF611800D0669F /* Fireball.hpp */,
-				84E8F9EC2FEF611800D0669F /* FishingHook.cpp */,
-				84E8F9ED2FEF611800D0669F /* FishingHook.hpp */,
 				84E8F9EE2FEF611800D0669F /* FlyingMob.cpp */,
 				84E8F9EF2FEF611800D0669F /* FlyingMob.hpp */,
 				84E8F9F02FEF611800D0669F /* Ghast.cpp */,
@@ -4234,6 +4228,7 @@
 				840DD6632AC810620006A435 /* Player.hpp */,
 				840DD6642AC810620006A435 /* PrimedTnt.cpp */,
 				840DD6652AC810620006A435 /* PrimedTnt.hpp */,
+				84ED41502FC3EC730038BAC4 /* projectile */,
 				84E78C792B58B3E000D515EF /* Rocket.cpp */,
 				84E78C7A2B58B3E000D515EF /* Rocket.hpp */,
 				8445E79C2D769329008DC834 /* Sheep.cpp */,
@@ -4242,16 +4237,12 @@
 				84B1E0342E04FD7900ED000A /* Skeleton.hpp */,
 				84E8F9F62FEF611800D0669F /* Slime.cpp */,
 				84E8F9F72FEF611800D0669F /* Slime.hpp */,
-				84ED41432FC3EC730038BAC4 /* Snowball.cpp */,
-				84ED41442FC3EC730038BAC4 /* Snowball.hpp */,
 				84B1E0352E04FD7900ED000A /* Spider.cpp */,
 				84B1E0362E04FD7900ED000A /* Spider.hpp */,
 				84E8F9F82FEF611800D0669F /* Squid.cpp */,
 				84E8F9F92FEF611800D0669F /* Squid.hpp */,
 				8445E79E2D769329008DC834 /* SynchedEntityData.cpp */,
 				8445E79F2D769329008DC834 /* SynchedEntityData.hpp */,
-				84ED41452FC3EC730038BAC4 /* ThrownEgg.cpp */,
-				84ED41462FC3EC730038BAC4 /* ThrownEgg.hpp */,
 				840DD6662AC810620006A435 /* TripodCamera.cpp */,
 				840DD6672AC810620006A435 /* TripodCamera.hpp */,
 				84AA8B762B32F3B5003F5B82 /* WaterAnimal.cpp */,
@@ -4260,6 +4251,23 @@
 				84B1E0382E04FD7900ED000A /* Zombie.hpp */,
 			);
 			path = entity;
+			sourceTree = "<group>";
+		};
+		84ED41502FC3EC730038BAC4 /* projectile */ = {
+			isa = PBXGroup;
+			children = (
+				84B1E0312E04FD7900ED000A /* Arrow.cpp */,
+				84B1E0322E04FD7900ED000A /* Arrow.hpp */,
+				84E8F9EA2FEF611800D0669F /* Fireball.cpp */,
+				84E8F9EB2FEF611800D0669F /* Fireball.hpp */,
+				84E8F9EC2FEF611800D0669F /* FishingHook.cpp */,
+				84E8F9ED2FEF611800D0669F /* FishingHook.hpp */,
+				84ED41432FC3EC730038BAC4 /* Snowball.cpp */,
+				84ED41442FC3EC730038BAC4 /* Snowball.hpp */,
+				84ED41452FC3EC730038BAC4 /* ThrownEgg.cpp */,
+				84ED41462FC3EC730038BAC4 /* ThrownEgg.hpp */,
+			);
+			path = projectile;
 			sourceTree = "<group>";
 		};
 		840DD6682AC810620006A435 /* gamemode */ = {

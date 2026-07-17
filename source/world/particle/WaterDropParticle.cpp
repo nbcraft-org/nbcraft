@@ -24,8 +24,10 @@ void WaterDropParticle::tick()
 	if (m_lifetime-- <= 0)
 		remove();
 
-    if (m_bOnGround) {
-        if (Mth::random() < 0.5) {
+    if (m_bOnGround)
+    {
+        if (Mth::random() < 0.5)
+        {
             remove();
         }
 
@@ -37,7 +39,8 @@ void WaterDropParticle::tick()
     if (m->isLiquid() || m->isSolid())
     {
         float y0 = Mth::floor(m_pos.y) + 1 - LiquidTile::getHeight(m_pLevel->getData(m_pos));
-        if (m_vel.y < y0) {
+        if (m_pos.y < y0)
+        {
             remove();
         }
     }
