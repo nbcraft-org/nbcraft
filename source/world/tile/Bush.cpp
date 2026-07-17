@@ -34,8 +34,11 @@ bool Bush::isSolidRender() const
 
 bool Bush::mayPlace(const Level* level, const TilePos& pos) const
 {
-	TileID tile = level->getTile(pos.below());
+	return Tile::mayPlace(level, pos) && isValidGrowTile(level->getTile(pos.below()));
+}
 
+bool Bush::isValidGrowTile(const TileID tile) const
+{
 	return tile == Tile::grass->m_ID || tile == Tile::dirt->m_ID || tile == Tile::farmland->m_ID;
 }
 
@@ -44,7 +47,7 @@ bool Bush::canSurvive(const Level* level, const TilePos& pos) const
 	if (level->getRawBrightness(pos) <= 7 && !level->canSeeSky(pos))
 		return false;
 
-	return mayPlace(level, pos);
+	return isValidGrowTile(level->getTile(pos.below()));
 }
 
 void Bush::checkAlive(Level* level, const TilePos& pos)

@@ -10,7 +10,7 @@ SheepRenderer::~SheepRenderer()
 {
 }
 
-int SheepRenderer::prepareArmor(const Mob& mob, int layer, float a)
+bool SheepRenderer::prepareArmor(const Mob& mob, int layer, float a)
 {
     const Sheep& sheep = (const Sheep&)mob;
     if (layer == 0 && !sheep.isSheared())
@@ -20,11 +20,11 @@ int SheepRenderer::prepareArmor(const Mob& mob, int layer, float a)
         int color = sheep.getColor();
         currentShaderColor = Sheep::COLOR[color];
         currentShaderDarkColor = Color(brightness, brightness, brightness);
-        return 1;
+        return true;
     }
     else
     {
-        return 0;
+        return false;
     }
 }
 

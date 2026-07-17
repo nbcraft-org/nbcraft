@@ -2,7 +2,7 @@
 #include "EntityRenderDispatcher.hpp"
 #include "client/renderer/renderer/RenderMaterialGroup.hpp"
 #include "renderer/ShaderConstants.hpp"
-#include "world/entity/FishingHook.hpp"
+#include "world/entity/projectile/FishingHook.hpp"
 
 FishingHookRenderer::FishingHookRenderer()
 {

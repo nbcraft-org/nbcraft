@@ -43,6 +43,7 @@ struct LevelEvent
 		SOUND_ARMOR_STAND_HIT        = 1061,
 		SOUND_ARMOR_STAND_FALL       = 1062,
 		SOUND_ARMOR_STAND_PLACE      = 1063,
+		SOUND_PLAY_RECORD			 = 1064,
 		PARTICLE_SHOOT               = 2000,
 		PARTICLE_DESTROY             = 2001,
 		PARTICLE_SPLASH              = 2002,

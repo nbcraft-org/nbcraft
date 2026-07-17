@@ -4,7 +4,7 @@
 #include <vector>
 #include <cstring>
 #include <utility>
-#include <stdint.h>
+#include "TypesHelper.hpp"
 
 template<typename TKey, typename TValue>
 struct HashMapEntry
@@ -16,58 +16,77 @@ struct HashMapEntry
     HashMapEntry() : bOccupied(false), bDeleted(false) {}
 };
 
-template<typename TKey>
-struct HashFunction
+template<typename TKey,
+    bool bIsIntegral,
+    bool bIsEnum,
+    bool bIsPointer>
+struct HashFunctionImpl
 {
     size_t operator()(const TKey& key) const;
 };
 
-template<>
-struct HashFunction<int8_t>
+template<typename TKey>
+struct HashFunctionImpl<TKey, true, false, false>
 {
-    size_t operator()(const int8_t& key) const { return key; }
+    size_t operator()(const TKey& key) const
+    {
+        return static_cast<size_t>(key);
+    }
+};
+
+template<typename TKey>
+struct HashFunctionImpl<TKey, false, true, false>
+{
+    size_t operator()(const TKey& key) const
+    {
+        return static_cast<size_t>(static_cast<int>(key));
+    }
+};
+
+template<typename TKey>
+struct HashFunctionImpl<TKey, false, false, true>
+{
+    size_t operator()(const TKey& key) const
+    {
+        return reinterpret_cast<size_t>(key);
+    }
+};
+
+template<typename TKey>
+struct HashFunction
+{
+    size_t operator()(const TKey& key) const
+    {
+        return HashFunctionImpl<
+            TKey,
+            IsIntegral<TKey>::value,
+            IsEnum<TKey>::value,
+            IsPointer<TKey>::value
+        > ()(key);
+    }
 };
 
 template<>
-struct HashFunction<uint8_t>
+struct HashFunction<float>
 {
-    size_t operator()(const uint8_t& key) const { return key; }
+    size_t operator()(const float& key) const
+    {
+        size_t result;
+        memcpy(&result, &key, sizeof(float));
+        return result;
+    }
 };
 
 template<>
-struct HashFunction<int16_t>
+struct HashFunction<double>
 {
-    size_t operator()(const int16_t& key) const { return key; }
-};
+    size_t operator()(const double& key) const
+    {
+        uint64_t bits;
+        memcpy(&bits, &key, sizeof(double));
 
-template<>
-struct HashFunction<uint16_t>
-{
-    size_t operator()(const uint16_t& key) const { return key; }
-};
-
-template<>
-struct HashFunction<int32_t>
-{
-    size_t operator()(const int32_t& key) const { return key; }
-};
-
-template<>
-struct HashFunction<uint32_t>
-{
-    size_t operator()(const uint32_t& key) const { return key; }
-};
-
-template<>
-struct HashFunction<int64_t>
-{
-    size_t operator()(const int64_t& key) const { return key; }
-};
-
-template<>
-struct HashFunction<uint64_t>
-{
-    size_t operator()(const uint64_t& key) const { return key; }
+        return static_cast<size_t>(bits ^ (bits >> 32));
+    }
 };
 
 template<>

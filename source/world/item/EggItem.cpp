@@ -1,7 +1,7 @@
 #include "EggItem.hpp"
 
 #include "world/level/Level.hpp"
-#include "world/entity/ThrownEgg.hpp"
+#include "world/entity/projectile/ThrownEgg.hpp"
 
 
 EggItem::EggItem(int itemID) : Item(itemID)

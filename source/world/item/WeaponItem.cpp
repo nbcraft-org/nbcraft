@@ -11,14 +11,16 @@ float WeaponItem::getDestroySpeed(ItemStack* instance, const Tile* tile) const
 	return (_canDestroyTile(tile) || _canDestroyMaterial(tile->m_pMaterial)) ? 15.0f : 1.5f;
 }
 
-void WeaponItem::hurtEnemy(ItemStack* instance, Mob* mob) const
+bool WeaponItem::hurtEnemy(ItemStack* instance, Mob* mob, Mob* attacker) const
 {
 	instance->hurtAndBreak(1, mob);
+	return true;
 }
 
-void WeaponItem::mineBlock(ItemStack* instance, const TilePos& pos, Facing::Name face, Mob* mob) const
+bool WeaponItem::mineBlock(ItemStack* instance, const TilePos& pos, Facing::Name face, Mob* mob) const
 {
 	instance->hurtAndBreak(2, mob);
+	return true;
 }
 
 int WeaponItem::getAttackDamage(Entity* entity) const

@@ -1,9 +1,9 @@
 #include "DispenserTile.hpp"
 #include "world/level/Level.hpp"
 #include "world/tile/entity/DispenserTileEntity.hpp"
-#include "world/entity/Arrow.hpp"
-#include "world/entity/Snowball.hpp"
-#include "world/entity/ThrownEgg.hpp"
+#include "world/entity/projectile/Arrow.hpp"
+#include "world/entity/projectile/Snowball.hpp"
+#include "world/entity/projectile/ThrownEgg.hpp"
 
 DispenserTile::DispenserTile(int id) : EntityTile(id, TEXTURE_FURNACE_SIDE, Material::stone)
 {

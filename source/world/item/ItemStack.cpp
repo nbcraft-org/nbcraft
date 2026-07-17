@@ -300,7 +300,7 @@ void ItemStack::hurtAndBreak(int amount, Entity* ent)
 
 void ItemStack::hurtEnemy(Mob* mob, Mob* attacker)
 {
-	getItem()->hurtEnemy(this, mob);
+	getItem()->hurtEnemy(this, mob, attacker);
 }
 
 void ItemStack::interactEnemy(Mob* mob)
@@ -336,7 +336,7 @@ bool ItemStack::isStackedByData() const
 
 void ItemStack::mineBlock(const TilePos& pos, Facing::Name face, Mob* mob)
 {
-	return getItem()->mineBlock(this, pos, face, mob);
+	getItem()->mineBlock(this, pos, face, mob);
 }
 
 void ItemStack::shrink(int count)

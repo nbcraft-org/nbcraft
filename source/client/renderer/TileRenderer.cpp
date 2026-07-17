@@ -20,6 +20,9 @@
 #include "world/tile/LeafTile.hpp"
 
 #include "world/tile/FenceTile.hpp"
+#include "world/tile/RailTile.hpp"
+#include "world/tile/PistonBaseTile.hpp"
+#include "world/tile/PistonHeadTile.hpp"
 #include "GameMods.hpp"
 
 #define DEFAULT_LIGHT_COLOR 0xFF00FF
@@ -38,7 +41,7 @@ void TileRenderer::_init()
 	m_bXFlipTexture = false;
 	m_bNoCulling = false;
 	m_bRenderingGui = false;
-	m_ambientOcclusion = false;
+	m_bAmbientOcclusion = false;
 
 	// AO stuff
 	field_C = 0;
@@ -138,11 +141,11 @@ float TileRenderer::getWaterHeight(const TilePos& pos, const Material* pCheckMtl
 			TileData data = m_pTileSource->getData(checkPos);
 			if (data >= 8 || data == 0)
 			{
-				fHeight += LiquidTile::getWaterVolume(data) * 10.0f;
+				fHeight += LiquidTile::getHeight(data) * 10.0f;
 				iBias += 10;
 			}
 
-			fHeight += LiquidTile::getWaterVolume(data);
+			fHeight += LiquidTile::getHeight(data);
 			iBias++;
 			continue;
 		}
@@ -159,478 +162,187 @@ float TileRenderer::getWaterHeight(const TilePos& pos, const Material* pCheckMtl
 
 bool TileRenderer::canRender(int renderShape)
 {
-	return renderShape == SHAPE_SOLID || renderShape == SHAPE_STAIRS || renderShape == SHAPE_FENCE || renderShape == SHAPE_FENCE_GATE || renderShape == SHAPE_CACTUS;
+	return renderShape == SHAPE_SOLID || renderShape == SHAPE_STAIRS || renderShape == SHAPE_FENCE || renderShape == SHAPE_FENCE_GATE || renderShape == SHAPE_CACTUS || renderShape == SHAPE_PISTON;
 }
 
-// @NOTE: This sucks! Very badly! But it's how they did it.
-void TileRenderer::renderEast(Tile* tile, const Vec3& pos, int texture)
+void TileRenderer::renderFace(Tile* tile, const Vec3& pos, int texture, Facing::Name face, const Color& color, int rot)
 {
-	if (tile->getRenderShape() == SHAPE_CACTUS)
-		tile->setShape(0.0625, 0, 0, 0.9375, 1, 1);
+	int renderShape = tile->getRenderShape();
+	if (renderShape == SHAPE_CACTUS)
+	{
+		switch (face)
+		{
+		case Facing::NORTH: case Facing::SOUTH: tile->setShape(0, 0, 0.0625, 1, 1, 0.9375); break;
+		case Facing::WEST: case Facing::EAST: tile->setShape(0.0625, 0, 0, 0.9375, 1, 1); break;
+		default: break;
+		}
+	}
 
 	static constexpr float C_RATIO = 1.0f / 256.0f;
 
 	if (m_fixedTexture >= 0)
 		texture = m_fixedTexture;
 
+	bool flip = texture < 0;
+
+	if (flip) texture = -texture;
+
 	float texX = float(16 * (texture % 16));
 	float texY = float(16 * (texture / 16));
 
-	float texU_l, texU_r, texV_u, texV_d;
+	float u1, u2, v1, v2;
 
 	AABB& aabb = tile->m_aabb;
 
-	if (aabb.min.z < 0.0f || aabb.max.z > 1.0f)
+	const int* uvAxes = Facing::UV_AXES[face / 2];
+
+	float minU = aabb.byIndex(uvAxes[0]);
+	float maxU = aabb.byIndex(uvAxes[1]);
+	float minV = aabb.byIndex(uvAxes[2]);
+	float maxV = aabb.byIndex(uvAxes[3]);
+
+	if (rot == 1 || rot == 2)
 	{
-		texU_l = C_RATIO * (texX);
-		texU_r = C_RATIO * (texX + 15.99f);
-	}
-	// if flipping on the Z coordinate
-	else if (m_bXFlipTexture)
-	{
-		texU_r = C_RATIO * (texX + aabb.min.z * 16);
-		texU_l = C_RATIO * (texX + aabb.max.z * 16 - 0.01f);
-	}
-	else
-	{
-		texU_l = C_RATIO * (texX + aabb.min.z * 16);
-		texU_r = C_RATIO * (texX + aabb.max.z * 16 - 0.01f);
+		std::swap(minU, minV);
+		std::swap(maxU, maxV);
+
+		if (face == Facing::UP || face == Facing::NORTH || face == Facing::EAST)
+		{
+			std::swap(minV, maxV);
+			minV = 1.0 - minV;
+			maxV = 1.0 - maxV;
+		}
 	}
 
-	if (aabb.min.y < 0.0f || aabb.max.y > 1.0f)
+	if (rot == 3 || rot == 2)
 	{
-		texV_u = C_RATIO * (texY);
-		texV_d = C_RATIO * (texY + 15.99f);
+		std::swap(minV, maxV);
+		minV = 1.0 - minV;
+		maxV = 1.0 - maxV;
+	}
+
+	if (minU < 0.0f || maxU > 1.0f)
+	{
+		u1 = C_RATIO * (texX);
+		u2 = C_RATIO * (texX + 15.99f);
 	}
 	else
 	{
+		u1 = C_RATIO * (texX + 16.0f * minU);
+		u2 = C_RATIO * (texX + 16.0f * maxU - 0.01f);
+	}
+
+	if (minV < 0.0f || maxV > 1.0f)
+	{
+		v1 = C_RATIO * (texY);
+		v2 = C_RATIO * (texY + 15.99f);
+	}
 #ifdef ENH_BETA_1_7_TERRAIN_ATLAS
-		texV_u = C_RATIO * (texY + (1.0f - aabb.max.y) * 16.0f);
-		texV_d = C_RATIO * (texY + (1.0f - aabb.min.y) * 16.0f - 0.01f);
-#else
-		texV_u = C_RATIO * (texY + aabb.min.y * 16.0f);
-		texV_d = C_RATIO * (texY + aabb.max.y * 16.0f - 0.01f);
+	else if (Facing::isHorizontal(face))
+	{
+		v1 = C_RATIO * (16.0f + texY - 16.0f * maxV);
+		v2 = C_RATIO * (16.0f + texY - 16.0f * minV - 0.01f);
+	}
 #endif
-	}
-
-	Tesselator& t = m_tessellator;
-
-	if (m_ambientOcclusion)
+	else
 	{
-		t.color(m_vtxRed[0], m_vtxGreen[0], m_vtxBlue[0]);
-		_tex1(m_vtxLightTex[0]);
-		t.vertexUV(aabb.max.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_l, texV_d);
-
-		t.color(m_vtxRed[1], m_vtxGreen[1], m_vtxBlue[1]);
-		_tex1(m_vtxLightTex[1]);
-		t.vertexUV(aabb.max.x + pos.x, aabb.min.y + pos.y, aabb.min.z + pos.z, texU_r, texV_d);
-
-		t.color(m_vtxRed[2], m_vtxGreen[2], m_vtxBlue[2]);
-		_tex1(m_vtxLightTex[2]);
-		t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.min.z + pos.z, texU_r, texV_u);
-
-		t.color(m_vtxRed[3], m_vtxGreen[3], m_vtxBlue[3]);
-		_tex1(m_vtxLightTex[3]);
-		t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_l, texV_u);
-
-		return;
+		v1 = C_RATIO * (texY + 16.0f * minV);
+		v2 = C_RATIO * (texY + 16.0f * maxV - 0.01f);
 	}
-	
-	t.vertexUV(aabb.max.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_l, texV_d);
-	t.vertexUV(aabb.max.x + pos.x, aabb.min.y + pos.y, aabb.min.z + pos.z, texU_r, texV_d);
-	t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.min.z + pos.z, texU_r, texV_u);
-	t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_l, texV_u);
 
-	if (tile->getRenderShape() == SHAPE_CACTUS)
+	const int (*baseUVs)[2] = Facing::UVS[face];
+
+	const int* rotatedIndex = Facing::ROTATED_INDEX[rot];
+
+	Tesselator& t = Tesselator::instance;
+
+	if (!m_bAmbientOcclusion) t.color(color);
+
+	for (int i = 0; i < 4; ++i)
+	{
+		const int* vertex = Facing::CORNERS[Facing::VERTICES[face][i]];
+		if (m_bAmbientOcclusion) t.color(m_vtxRed[i] * color.r, m_vtxGreen[i] * color.g, m_vtxBlue[i] * color.b, color.a);
+		int rotIndex = rotatedIndex[i];
+		bool useU2 = baseUVs[rotIndex][0];
+		if (flip) useU2 = !useU2;
+		if (m_bAmbientOcclusion)
+			_tex1(m_vtxLightTex[i]);
+		t.vertexUV(pos.x + aabb.byIndex(vertex[0]), pos.y + aabb.byIndex(vertex[1]), pos.z + aabb.byIndex(vertex[2]), useU2 ? u2 : u1, baseUVs[rotIndex][1] ? v2 : v1);
+	}
+
+	if (renderShape == SHAPE_CACTUS && Facing::isHorizontal(face))
 		tile->updateShape(m_pTileSource, pos);
 }
 
-void TileRenderer::renderWest(Tile* tile, const Vec3& pos, int texture)
+void TileRenderer::renderFace(Tile* tile, const Vec3& pos, int texture, Facing::Name face, const Color& color)
 {
-	if (tile->getRenderShape() == SHAPE_CACTUS)
-		tile->setShape(0.0625, 0, 0, 0.9375, 1, 1);
-
-	static constexpr float C_RATIO = 1.0f / 256.0f;
-
-	if (m_fixedTexture >= 0)
-		texture = m_fixedTexture;
-
-	float texX = float(16 * (texture % 16));
-	float texY = float(16 * (texture / 16));
-
-	float texU_l, texU_r, texV_u, texV_d;
-
-	AABB& aabb = tile->m_aabb;
-
-	if (aabb.min.z < 0.0f || aabb.max.z > 1.0f)
-	{
-		texU_l = C_RATIO * (texX);
-		texU_r = C_RATIO * (texX + 15.99f);
-	}
-	// if flipping on the Z coordinate
-	else if (m_bXFlipTexture)
-	{
-		texU_r = C_RATIO * (texX + aabb.min.z * 16);
-		texU_l = C_RATIO * (texX + aabb.max.z * 16 - 0.01f);
-	}
-	else
-	{
-		texU_l = C_RATIO * (texX + aabb.min.z * 16);
-		texU_r = C_RATIO * (texX + aabb.max.z * 16 - 0.01f);
-	}
-
-	if (aabb.min.y < 0.0f || aabb.max.y>1.0f)
-	{
-		texV_u = C_RATIO * (texY);
-		texV_d = C_RATIO * (texY + 15.99f);
-	}
-	else
-	{
-#ifdef ENH_BETA_1_7_TERRAIN_ATLAS
-		texV_u = C_RATIO * (texY + (1.0f - aabb.max.y) * 16.0f);
-		texV_d = C_RATIO * (texY + (1.0f - aabb.min.y) * 16.0f - 0.01f);
-#else
-		texV_u = C_RATIO * (texY + aabb.min.y * 16.0f);
-		texV_d = C_RATIO * (texY + aabb.max.y * 16.0f - 0.01f);
-#endif
-	}
-
-	Tesselator& t = m_tessellator;
-
-	if (m_ambientOcclusion)
-	{
-		t.color(m_vtxRed[0], m_vtxGreen[0], m_vtxBlue[0]);
-		_tex1(m_vtxLightTex[0]);
-		t.vertexUV(aabb.min.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_r, texV_u);
-
-		t.color(m_vtxRed[1], m_vtxGreen[1], m_vtxBlue[1]);
-		_tex1(m_vtxLightTex[1]);
-		t.vertexUV(aabb.min.x + pos.x, aabb.max.y + pos.y, aabb.min.z + pos.z, texU_l, texV_u);
-
-		t.color(m_vtxRed[2], m_vtxGreen[2], m_vtxBlue[2]);
-		_tex1(m_vtxLightTex[2]);
-		t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.min.z + pos.z, texU_l, texV_d);
-
-		t.color(m_vtxRed[3], m_vtxGreen[3], m_vtxBlue[3]);
-		_tex1(m_vtxLightTex[3]);
-		t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_r, texV_d);
-
-		return;
-	}
-	
-	t.vertexUV(aabb.min.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_r, texV_u);
-	t.vertexUV(aabb.min.x + pos.x, aabb.max.y + pos.y, aabb.min.z + pos.z, texU_l, texV_u);
-	t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.min.z + pos.z, texU_l, texV_d);
-	t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_r, texV_d);
-
-	if (tile->getRenderShape() == SHAPE_CACTUS)
-		tile->updateShape(m_pTileSource, pos);
+	renderFace(tile, pos, texture, face, color, m_faceRotation[face]);
 }
 
-void TileRenderer::renderSouth(Tile* tile, const Vec3& pos, int texture)
+void TileRenderer::renderEast(Tile* tile, const Vec3& pos, int texture, const Color& color)
 {
-	if (tile->getRenderShape() == SHAPE_CACTUS)
-		tile->setShape(0, 0, 0.0625, 1, 1, 0.9375);
-
-	static constexpr float C_RATIO = 1.0f / 256.0f;
-
-	if (m_fixedTexture >= 0)
-		texture = m_fixedTexture;
-
-	float texX = float(16 * (texture % 16));
-	float texY = float(16 * (texture / 16));
-
-	float texU_l, texU_r, texV_u, texV_d;
-
-	AABB& aabb = tile->m_aabb;
-
-	if (aabb.min.x < 0.0f || aabb.max.x > 1.0f)
-	{
-		texU_l = C_RATIO * (texX);
-		texU_r = C_RATIO * (texX + 15.99f);
-	}
-	// if flipping on the X coordinate
-	else if (m_bXFlipTexture)
-	{
-		texU_r = C_RATIO * (texX + aabb.min.x * 16);
-		texU_l = C_RATIO * (texX + aabb.max.x * 16 - 0.01f);
-	}
-	else
-	{
-		texU_l = C_RATIO * (texX + aabb.min.x * 16);
-		texU_r = C_RATIO * (texX + aabb.max.x * 16 - 0.01f);
-	}
-
-	if (aabb.min.y < 0.0f || aabb.max.y>1.0f)
-	{
-		texV_u = C_RATIO * (texY);
-		texV_d = C_RATIO * (texY + 15.99f);
-	}
-	else
-	{
-#ifdef ENH_BETA_1_7_TERRAIN_ATLAS
-		texV_u = C_RATIO * (texY + (1.0f - aabb.max.y) * 16.0f);
-		texV_d = C_RATIO * (texY + (1.0f - aabb.min.y) * 16.0f - 0.01f);
-#else
-		texV_u = C_RATIO * (texY + aabb.min.y * 16.0f);
-		texV_d = C_RATIO * (texY + aabb.max.y * 16.0f - 0.01f);
-#endif
-	}
-
-	Tesselator& t = m_tessellator;
-
-	if (m_ambientOcclusion)
-	{
-		t.color(m_vtxRed[0], m_vtxGreen[0], m_vtxBlue[0]);
-		_tex1(m_vtxLightTex[0]);
-		t.vertexUV(aabb.min.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_l, texV_u);
-
-		t.color(m_vtxRed[1], m_vtxGreen[1], m_vtxBlue[1]);
-		_tex1(m_vtxLightTex[1]);
-		t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_l, texV_d);
-
-		t.color(m_vtxRed[2], m_vtxGreen[2], m_vtxBlue[2]);
-		_tex1(m_vtxLightTex[2]);
-		t.vertexUV(aabb.max.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_r, texV_d);
-
-		t.color(m_vtxRed[3], m_vtxGreen[3], m_vtxBlue[3]);
-		_tex1(m_vtxLightTex[3]);
-		t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_r, texV_u);
-
-		return;
-	}
-
-	t.vertexUV(aabb.min.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_l, texV_u);
-	t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_l, texV_d);
-	t.vertexUV(aabb.max.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_r, texV_d);
-	t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_r, texV_u);
-
-	if (tile->getRenderShape() == SHAPE_CACTUS)
-		tile->updateShape(m_pTileSource, pos);
+	renderFace(tile, pos, texture, Facing::EAST, color);
 }
 
-void TileRenderer::renderNorth(Tile* tile, const Vec3& pos, int texture)
+void TileRenderer::renderWest(Tile* tile, const Vec3& pos, int texture, const Color& color)
 {
-	if (tile->getRenderShape() == SHAPE_CACTUS)
-		tile->setShape(0, 0, 0.0625, 1, 1, 0.9375);
-
-	static constexpr float C_RATIO = 1.0f / 256.0f;
-
-	if (m_fixedTexture >= 0)
-		texture = m_fixedTexture;
-
-	float texX = float(16 * (texture % 16));
-	float texY = float(16 * (texture / 16));
-
-	float texU_l, texU_r, texV_u, texV_d;
-
-	AABB& aabb = tile->m_aabb;
-
-	if (aabb.min.x < 0.0f || aabb.max.x > 1.0f)
-	{
-		texU_l = C_RATIO * (texX);
-		texU_r = C_RATIO * (texX + 15.99f);
-	}
-	// if flipping on the X coordinate
-	else if (m_bXFlipTexture)
-	{
-		texU_r = C_RATIO * (texX + aabb.min.x * 16);
-		texU_l = C_RATIO * (texX + aabb.max.x * 16 - 0.01f);
-	}
-	else
-	{
-		texU_l = C_RATIO * (texX + aabb.min.x * 16);
-		texU_r = C_RATIO * (texX + aabb.max.x * 16 - 0.01f);
-	}
-
-	if (aabb.min.y < 0.0f || aabb.max.y>1.0f)
-	{
-		texV_u = C_RATIO * (texY);
-		texV_d = C_RATIO * (texY + 15.99f);
-	}
-	else
-	{
-#ifdef ENH_BETA_1_7_TERRAIN_ATLAS
-		texV_u = C_RATIO * (texY + (1.0f - aabb.max.y) * 16.0f);
-		texV_d = C_RATIO * (texY + (1.0f - aabb.min.y) * 16.0f - 0.01f);
-#else
-		texV_u = C_RATIO * (texY + aabb.min.y * 16.0f);
-		texV_d = C_RATIO * (texY + aabb.max.y * 16.0f - 0.01f);
-#endif
-	}
-
-	Tesselator& t = m_tessellator;
-
-	if (m_ambientOcclusion)
-	{
-		t.color(m_vtxRed[0], m_vtxGreen[0], m_vtxBlue[0]);
-		_tex1(m_vtxLightTex[0]);
-		t.vertexUV(aabb.min.x + pos.x, aabb.max.y + pos.y, aabb.min.z + pos.z, texU_r, texV_u);
-
-		t.color(m_vtxRed[1], m_vtxGreen[1], m_vtxBlue[1]);
-		_tex1(m_vtxLightTex[1]);
-		t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.min.z + pos.z, texU_l, texV_u);
-
-		t.color(m_vtxRed[2], m_vtxGreen[2], m_vtxBlue[2]);
-		_tex1(m_vtxLightTex[2]);
-		t.vertexUV(aabb.max.x + pos.x, aabb.min.y + pos.y, aabb.min.z + pos.z, texU_l, texV_d);
-
-		t.color(m_vtxRed[3], m_vtxGreen[3], m_vtxBlue[3]);
-		_tex1(m_vtxLightTex[3]);
-		t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.min.z + pos.z, texU_r, texV_d);
-
-		return;
-	}
-
-	t.vertexUV(aabb.min.x + pos.x, aabb.max.y + pos.y, aabb.min.z + pos.z, texU_r, texV_u);
-	t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.min.z + pos.z, texU_l, texV_u);
-	t.vertexUV(aabb.max.x + pos.x, aabb.min.y + pos.y, aabb.min.z + pos.z, texU_l, texV_d);
-	t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.min.z + pos.z, texU_r, texV_d);
-
-	if (tile->getRenderShape() == SHAPE_CACTUS)
-		tile->updateShape(m_pTileSource, pos);
+	renderFace(tile, pos, texture, Facing::WEST, color);
 }
 
-void TileRenderer::renderFaceUp(Tile* tile, const Vec3& pos, int texture)
+void TileRenderer::renderSouth(Tile* tile, const Vec3& pos, int texture, const Color& color)
 {
-	if (tile->getRenderShape() == SHAPE_CACTUS)
-		tile->setShape(0, 0, 0, 1, 1, 1);
-
-	static constexpr float C_RATIO = 1.0f / 256.0f;
-
-	if (m_fixedTexture >= 0)
-		texture = m_fixedTexture;
-
-	float texX = float(16 * (texture % 16));
-	float texY = float(16 * (texture / 16));
-
-	float texU_1, texU_2, texV_1, texV_2;
-
-	AABB& aabb = tile->m_aabb;
-
-	if (aabb.min.x >= 0.0f && aabb.max.x <= 1.0f)
-	{
-		texU_1 = C_RATIO * (texX + 16.0f * aabb.min.x);
-		texU_2 = C_RATIO * (texX + 16.0f * aabb.max.x - 0.01f);
-	}
-	else
-	{
-		texU_1 = C_RATIO * (texX);
-		texU_2 = C_RATIO * (texX + 15.99f);
-	}
-
-	if (aabb.min.z >= 0.0f && aabb.max.z <= 1.0f)
-	{
-		texV_1 = C_RATIO * (texY + 16.0f * aabb.min.z);
-		texV_2 = C_RATIO * (texY + 16.0f * aabb.max.z - 0.01f);
-	}
-	else
-	{
-		texV_1 = C_RATIO * (texY);
-		texV_2 = C_RATIO * (texY + 15.99f);
-	}
-
-	Tesselator& t = m_tessellator;
-
-	if (m_ambientOcclusion)
-	{
-		t.color(m_vtxRed[0], m_vtxGreen[0], m_vtxBlue[0]);
-		_tex1(m_vtxLightTex[0]);
-		t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_2, texV_2);
-
-		t.color(m_vtxRed[1], m_vtxGreen[1], m_vtxBlue[1]);
-		_tex1(m_vtxLightTex[1]);
-		t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.min.z + pos.z, texU_2, texV_1);
-
-		t.color(m_vtxRed[2], m_vtxGreen[2], m_vtxBlue[2]);
-		_tex1(m_vtxLightTex[2]);
-		t.vertexUV(aabb.min.x + pos.x, aabb.max.y + pos.y, aabb.min.z + pos.z, texU_1, texV_1);
-
-		t.color(m_vtxRed[3], m_vtxGreen[3], m_vtxBlue[3]);
-		_tex1(m_vtxLightTex[3]);
-		t.vertexUV(aabb.min.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_1, texV_2);
-
-		return;
-	}
-
-	t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_2, texV_2);
-	t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.min.z + pos.z, texU_2, texV_1);
-	t.vertexUV(aabb.min.x + pos.x, aabb.max.y + pos.y, aabb.min.z + pos.z, texU_1, texV_1);
-	t.vertexUV(aabb.min.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_1, texV_2);
-
-	if (tile->getRenderShape() == SHAPE_CACTUS)
-		tile->updateShape(m_pTileSource, pos);
+	renderFace(tile, pos, texture, Facing::SOUTH, color);
 }
 
-void TileRenderer::renderFaceDown(Tile* tile, const Vec3& pos, int texture)
+void TileRenderer::renderNorth(Tile* tile, const Vec3& pos, int texture, const Color& color)
 {
-	if (tile->getRenderShape() == SHAPE_CACTUS)
-		tile->setShape(0, 0, 0, 1, 1, 1);
-	
-	static constexpr float C_RATIO = 1.0f / 256.0f;
+	renderFace(tile, pos, texture, Facing::NORTH, color);
+}
 
+void TileRenderer::renderDown(Tile* tile, const Vec3& pos, int texture, const Color& color)
+{
+	renderFace(tile, pos, texture, Facing::DOWN, color);
+}
+
+void TileRenderer::renderUp(Tile* tile, const Vec3& pos, int texture, const Color& color)
+{
+	renderFace(tile, pos, texture, Facing::UP, color);
+}
+
+void TileRenderer::renderPistonFace(const AABB& aabb, float bright, float offY, Facing::Name dir)
+{
+	int tex = TEXTURE_PISTON_FACE;
 	if (m_fixedTexture >= 0)
-		texture = m_fixedTexture;
+		tex = m_fixedTexture;
 
-	float texX = float(16 * (texture % 16));
-	float texY = float(16 * (texture / 16));
-
-	float texU_1, texU_2, texV_1, texV_2;
-
-	AABB& aabb = tile->m_aabb;
-
-	if (aabb.min.x >= 0.0f && aabb.max.x <= 1.0f)
+	int texX = (tex & 15) << 4;
+	int texY = tex & 240;
+	Tesselator& t = Tesselator::instance;
+	float u1 = texX / 256.0f;
+	float u2 = texY / 256.0f;
+	float v1 = (texX + offY - 0.01f) / 256.0f;
+	float v2 = ((texY + 4.0f) - 0.01f) / 256.0f;
+	t.color(bright, bright, bright);
+	switch (dir)
 	{
-		texU_1 = C_RATIO * (texX + 16.0f * aabb.min.x);
-		texU_2 = C_RATIO * (texX + 16.0f * aabb.max.x - 0.01f);
+	case Facing::UP: case Facing::DOWN:
+		t.vertexUV(aabb.min.x, aabb.max.x, aabb.max.y, v1, u2);
+		t.vertexUV(aabb.min.x, aabb.min.z, aabb.max.y, u1, u2);
+		t.vertexUV(aabb.min.y, aabb.min.z, aabb.max.z, u1, v2);
+		t.vertexUV(aabb.min.y, aabb.max.x, aabb.max.z, v1, v2);
+		break;
+	case Facing::NORTH: case Facing::SOUTH:
+		t.vertexUV(aabb.min.x, aabb.min.z, aabb.max.z, v1, u2);
+		t.vertexUV(aabb.min.x, aabb.min.z, aabb.max.y, u1, u2);
+		t.vertexUV(aabb.min.y, aabb.max.x, aabb.max.y, u1, v2);
+		t.vertexUV(aabb.min.y, aabb.max.x, aabb.max.z, v1, v2);
+		break;
+	case Facing::WEST: case Facing::EAST:
+		t.vertexUV(aabb.min.y, aabb.min.z, aabb.max.y, v1, u2);
+		t.vertexUV(aabb.min.x, aabb.min.z, aabb.max.y, u1, u2);
+		t.vertexUV(aabb.min.x, aabb.max.x, aabb.max.z, u1, v2);
+		t.vertexUV(aabb.min.y, aabb.max.x, aabb.max.z, v1, v2);
 	}
-	else
-	{
-		texU_1 = C_RATIO * (texX);
-		texU_2 = C_RATIO * (texX + 15.99f);
-	}
-
-	if (aabb.min.z >= 0.0f && aabb.max.z <= 1.0f)
-	{
-		texV_1 = C_RATIO * (texY + 16.0f * aabb.min.z);
-		texV_2 = C_RATIO * (texY + 16.0f * aabb.max.z - 0.01f);
-	}
-	else
-	{
-		texV_1 = C_RATIO * (texY);
-		texV_2 = C_RATIO * (texY + 15.99f);
-	}
-
-	Tesselator& t = m_tessellator;
-
-	if (m_ambientOcclusion)
-	{
-		t.color(m_vtxRed[0], m_vtxGreen[0], m_vtxBlue[0]);
-		_tex1(m_vtxLightTex[0]);
-		t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_1, texV_2);
-
-		t.color(m_vtxRed[1], m_vtxGreen[1], m_vtxBlue[1]);
-		_tex1(m_vtxLightTex[1]);
-		t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.min.z + pos.z, texU_1, texV_1);
-
-		t.color(m_vtxRed[2], m_vtxGreen[2], m_vtxBlue[2]);
-		_tex1(m_vtxLightTex[2]);
-		t.vertexUV(aabb.max.x + pos.x, aabb.min.y + pos.y, aabb.min.z + pos.z, texU_2, texV_1);
-
-		t.color(m_vtxRed[3], m_vtxGreen[3], m_vtxBlue[3]);
-		_tex1(m_vtxLightTex[3]);
-		t.vertexUV(aabb.max.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_2, texV_2);
-
-		return;
-	}
-
-	t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_1, texV_2);
-	t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.min.z + pos.z, texU_1, texV_1);
-	t.vertexUV(aabb.max.x + pos.x, aabb.min.y + pos.y, aabb.min.z + pos.z, texU_2, texV_1);
-	t.vertexUV(aabb.max.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_2, texV_2);
-
-	if (tile->getRenderShape() == SHAPE_CACTUS)
-		tile->updateShape(m_pTileSource, pos);
 }
 
 void TileRenderer::tesselateCrossTexture(const FullTile& tile, const Vec3& pos, bool simple)
@@ -756,114 +468,57 @@ void TileRenderer::tesselateRowTexture(Tile* tile, int data, const Vec3& pos)
 	t.vertexUV(x1, pos.y + 1.0, z1, u1, v0);
 }
 
-bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, float r, float g, float b)
+bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, const Color& color)
 {
-	float topR = r, topG = g, topB = b;
-
-	if (tile == Tile::grass)
-		r = g = b = 1.0f;
-
-	Tesselator& t = m_tessellator;
-
 	float fLightHere = tile->getBrightness(m_pTileSource, pos);
 	bool bDrewAnything = false;
 
-	if (m_bNoCulling || tile->shouldRenderFace(m_pTileSource, pos.below(), Facing::DOWN))
+	for (int dir = Facing::DOWN; dir <= Facing::EAST; dir++)
 	{
+		Facing::Name face = (Facing::Name)dir;
+		TilePos neighborPos = pos.relative(face);
+
+		if (!m_bNoCulling && !tile->shouldRenderFace(m_pTileSource, neighborPos, face))
+			continue;
+
 		bDrewAnything = true;
 
-		float fLight = tile->getBrightness(m_pTileSource, pos.below());
-		t.color(r * 0.5f * fLight, g * 0.5f * fLight, b * 0.5f * fLight);
+		float light = tile->getBrightness(m_pTileSource, neighborPos);
 
-		renderFaceDown(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::DOWN));
-	}
-
-	if (m_bNoCulling || tile->shouldRenderFace(m_pTileSource, pos.above(), Facing::UP))
-	{
-		bDrewAnything = true;
-
-		float fLight = tile->getBrightness(m_pTileSource, pos.above());
-		if (tile->m_aabb.max.y != 1.0f && !tile->m_pMaterial->isLiquid())
-			fLight = fLightHere;
-
-		t.color(topR * fLight, topG * fLight, topB * fLight);
-
-		renderFaceUp(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::UP));
-	}
-
-	if (m_bNoCulling || tile->shouldRenderFace(m_pTileSource, pos.north(), Facing::NORTH))
-	{
-		bDrewAnything = true;
-
-		float fLight = tile->getBrightness(m_pTileSource, pos.north());
-		if (tile->m_aabb.min.z > 0.0f)
-			fLight = fLightHere;
-
-		t.color(r * 0.8f * fLight, g * 0.8f * fLight, b * 0.8f * fLight);
-		int texture = tile->getTexture(m_pTileSource, pos, Facing::NORTH);
-		renderNorth(tile, pos, texture);
-
-		if (m_bFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
+		switch (face)
 		{
-			t.color(topR * 0.8f * fLight, topG * 0.8f * fLight, topB * 0.8f * fLight);
-			renderNorth(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
+		case Facing::UP:
+			if (tile->m_aabb.max.y != 1.0f && !tile->m_pMaterial->isLiquid())
+				light = fLightHere;
+			break;
+		case Facing::NORTH:
+			if (tile->m_aabb.min.z > 0.0f)
+				light = fLightHere;
+			break;
+		case Facing::SOUTH:
+			if (tile->m_aabb.max.z < 1.0f)
+				light = fLightHere;
+			break;
+		case Facing::WEST:
+			if (tile->m_aabb.min.x > 0.0f)
+				light = fLightHere;
+			break;
+		case Facing::EAST:
+			if (tile->m_aabb.max.x < 1.0f)
+				light = fLightHere;
+			break;
+		default:
+			break;
 		}
-	}
 
-	if (m_bNoCulling || tile->shouldRenderFace(m_pTileSource, pos.south(), Facing::SOUTH))
-	{
-		bDrewAnything = true;
+		int texture = tile->getTexture(m_pTileSource, pos, face);
+		Color faceColor = Color(tile != Tile::grass || face == Facing::UP ? color : Color::WHITE);
 
-		float fLight = tile->getBrightness(m_pTileSource, pos.south());
-		if (tile->m_aabb.max.z < 1.0f)
-			fLight = fLightHere;
+		renderFace(tile, pos, texture, face, faceColor.mulRGB(Facing::LIGHT[face] * light));
 
-		t.color(r * 0.8f * fLight, g * 0.8f * fLight, b * 0.8f * fLight);
-		int texture = tile->getTexture(m_pTileSource, pos, Facing::SOUTH);
-		renderSouth(tile, pos, texture);
-
-		if (m_bFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
+		if (m_bFancyGrass && m_fixedTexture < 0 && texture == TEXTURE_GRASS_SIDE && Facing::isHorizontal(face))
 		{
-			t.color(topR * 0.8f * fLight, topG * 0.8f * fLight, topB * 0.8f * fLight);
-			renderSouth(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
-		}
-	}
-
-	if (m_bNoCulling || tile->shouldRenderFace(m_pTileSource, pos.west(), Facing::WEST))
-	{
-		bDrewAnything = true;
-
-		float fLight = tile->getBrightness(m_pTileSource, pos.west());
-		if (tile->m_aabb.min.x > 0.0f)
-			fLight = fLightHere;
-
-		t.color(r * 0.6f * fLight, g * 0.6f * fLight, b * 0.6f * fLight);
-		int texture = tile->getTexture(m_pTileSource, pos, Facing::WEST);
-		renderWest(tile, pos, texture);
-
-		if (m_bFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
-		{
-			t.color(topR * 0.6f * fLight, topG * 0.6f * fLight, topB * 0.6f * fLight);
-			renderWest(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
-		}
-	}
-
-	if (m_bNoCulling || tile->shouldRenderFace(m_pTileSource, pos.east(), Facing::EAST))
-	{
-		bDrewAnything = true;
-
-		float fLight = tile->getBrightness(m_pTileSource, pos.east());
-		if (tile->m_aabb.max.x < 1.0f)
-			fLight = fLightHere;
-
-		t.color(r * 0.6f * fLight, g * 0.6f * fLight, b * 0.6f * fLight);
-		int texture = tile->getTexture(m_pTileSource, pos, Facing::EAST);
-		renderEast(tile, pos, texture);
-
-		if (m_bFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
-		{
-			t.color(topR * 0.6f * fLight, topG * 0.6f * fLight, topB * 0.6f * fLight);
-			renderEast(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
+			renderFace(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY, face, Color(color).mulRGB(Facing::LIGHT[face] * light));
 		}
 	}
 
@@ -872,25 +527,21 @@ bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, float r
 
 bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos)
 {
-	int color = getTileColor(tile, pos);
-
-	float r = float(GET_RED  (color)) / 255.0f;
-	float g = float(GET_GREEN(color)) / 255.0f;
-	float b = float(GET_BLUE (color)) / 255.0f;
+	Color color = Color(getTileColor(tile, pos), 1.0f);
 
 	if (useAmbientOcclusion())
 	{
 		if (Tile::lightEmission[tile->m_ID] == 0 /*&& Tile::translucency[tile->m_ID] < 0.9*/)
 		{
 #ifdef ENH_USE_OWN_AO
-			return tesselateBlockInWorldWithAmbienceOcclusionV2(tile, pos, r, g, b);
+			return tesselateBlockInWorldWithAmbienceOcclusionV2(tile, pos, color);
 #else
-			return tesselateBlockInWorldWithAmbienceOcclusion(tile, pos, r, g, b);
+			return tesselateBlockInWorldWithAmbienceOcclusion(tile, pos, color.r, color.g, color.b);
 #endif
 		}
 	}
 
-	return tesselateBlockInWorld(tile, pos, r, g, b);
+	return tesselateBlockInWorld(tile, pos, color);
 }
 
 bool TileRenderer::tesselateCrossInWorld(Tile* tile, const TilePos& pos)
@@ -1030,7 +681,7 @@ bool TileRenderer::tesselateWaterInWorld(Tile* tile1, const TilePos& pos)
 	label_7:
 		float bright = tile->getBrightness(m_pTileSource, pos.below());
 		t.color(bright * 0.5f, bright * 0.5f, bright * 0.5f);
-		renderFaceDown(tile1, pos, tile->getTexture(Facing::DOWN));
+		renderDown(tile1, pos, tile->getTexture(Facing::DOWN));
 		bFlag1 = true;
 	}
 
@@ -1387,13 +1038,13 @@ bool TileRenderer::tesselateDoorInWorld(Tile* tile, const TilePos& pos)
 	if (tile->m_aabb.min.y > 0.0f)       fBright = fBrightHere;
 	if (Tile::lightEmission[tile->m_ID]) fBright = 1.0f;
 	t.color(fBright * 0.5f, fBright * 0.5f, fBright * 0.5f);
-	renderFaceDown(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::DOWN));
+	renderDown(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::DOWN));
 
 	fBright = tile->getBrightness(m_pTileSource, pos.above());
 	if (tile->m_aabb.max.y < 1.0f)       fBright = fBrightHere;
 	if (Tile::lightEmission[tile->m_ID]) fBright = 1.0f;
 	t.color(fBright, fBright, fBright);
-	renderFaceUp(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::UP));
+	renderUp(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::UP));
 
 	fBright = tile->getBrightness(m_pTileSource, pos.north());
 	if (tile->m_aabb.min.z > 0.0f)       fBright = fBrightHere;
@@ -1555,6 +1206,88 @@ bool TileRenderer::tesselateTorchInWorld(Tile* tile, const TilePos& pos)
 			break;
 	}
 
+	return true;
+}
+
+bool TileRenderer::tesselateRailInWorld(Tile* tile, const TilePos& pos)
+{
+	Tesselator& t = Tesselator::instance;
+	TileData data = m_pTileSource->getData(pos);
+	int tex = tile->getTexture(Facing::DOWN, data);
+	if (m_fixedTexture >= 0)
+		tex = m_fixedTexture;
+
+	if (RailTile::isPowered(tile))
+		data &= 7;
+
+	float br = tile->getBrightness(m_pTileSource, pos);
+	t.color(br, br, br);
+	int xt = (tex & 15) << 4;
+	int yt = tex & 240;
+	float u0 = xt / 256.0f;
+	float u1 = (xt + 15.99f) / 256.0f;
+	float v0 = yt / 256.0f;
+	float v1 = (yt + 15.99f) / 256.0f;
+	constexpr float r = 0.0625f;
+	float x0 = (float)(pos.x + 1);
+	float x1 = (float)(pos.x + 1);
+	float x2 = (float)(pos.x + 0);
+	float x3 = (float)(pos.x + 0);
+	float z0 = (float)(pos.z + 0);
+	float z1 = (float)(pos.z + 1);
+	float z2 = (float)(pos.z + 1);
+	float z3 = (float)(pos.z + 0);
+	float y0 = (float)pos.y + r;
+	float y1 = (float)pos.y + r;
+	float y2 = (float)pos.y + r;
+	float y3 = (float)pos.y + r;
+	if (data != 1 && data != 2 && data != 3 && data != 7)
+	{
+		if (data == 8)
+		{
+			x0 = x1 = (float)(pos.x + 0);
+			x2 = x3 = (float)(pos.x + 1);
+			z0 = z3 = (float)(pos.z + 1);
+			z1 = z2 = (float)(pos.z + 0);
+		}
+		else if (data == 9)
+		{
+			x0 = x3 = (float)(pos.x + 0);
+			x1 = x2 = (float)(pos.x + 1);
+			z0 = z1 = (float)(pos.z + 0);
+			z2 = z3 = (float)(pos.z + 1);
+		}
+	}
+	else
+	{
+		x0 = x3 = (float)(pos.x + 1);
+		x1 = x2 = (float)(pos.x + 0);
+		z0 = z1 = (float)(pos.z + 1);
+		z2 = z3 = (float)(pos.z + 0);
+	}
+
+	if (data != 2 && data != 4)
+	{
+		if (data == 3 || data == 5)
+		{
+			++y1;
+			++y2;
+		}
+	}
+	else
+	{
+		++y0;
+		++y3;
+	}
+
+	t.vertexUV(x0, y0, z0, u1, v0);
+	t.vertexUV(x1, y1, z1, u1, v1);
+	t.vertexUV(x2, y2, z2, u0, v1);
+	t.vertexUV(x3, y3, z3, u0, v0);
+	t.vertexUV(x3, y3, z3, u0, v0);
+	t.vertexUV(x2, y2, z2, u0, v1);
+	t.vertexUV(x1, y1, z1, u1, v1);
+	t.vertexUV(x0, y0, z0, u1, v0);
 	return true;
 }
 
@@ -2263,6 +1996,197 @@ bool TileRenderer::tesselateDustInWorld(Tile* tile, const TilePos& pos)
 	return true;
 }
 
+void TileRenderer::tesselatePistonInWorldNoCulling(Tile* tile, const TilePos& pos)
+{
+	m_bNoCulling = true;
+	tesselatePistonInWorld(tile, pos, true);
+	m_bNoCulling = false;
+}
+
+bool TileRenderer::tesselatePistonInWorld(Tile* tile, const TilePos& pos, bool head)
+{
+	int var6 = m_pTileSource->getData(pos);
+	bool withShape = head || (var6 & 8) != 0;
+	int facing = PistonBaseTile::getFacing(var6);
+	if (withShape)
+	{
+		switch (facing) {
+		case Facing::DOWN:
+			for (int i = 0; i < 4; ++i)
+				m_faceRotation[Facing::HORIZONTAL[i]] = 3;
+			tile->setShape(0.0f, 0.25f, 0.0f, 1.0f, 1.0f, 1.0f);
+			break;
+		case Facing::UP:
+			tile->setShape(0.0f, 0.0f, 0.0f, 1.0f, 12.0f / 16.0f, 1.0f);
+			break;
+		case Facing::NORTH:
+			m_faceRotation[Facing::EAST] = 1;
+			m_faceRotation[Facing::WEST] = 2;
+			tile->setShape(0.0f, 0.0f, 0.25f, 1.0f, 1.0f, 1.0f);
+			break;
+		case Facing::SOUTH:
+			m_faceRotation[Facing::EAST] = 2;
+			m_faceRotation[Facing::WEST] = 1;
+			m_faceRotation[Facing::UP] = 3;
+			m_faceRotation[Facing::DOWN] = 3;
+			tile->setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 12.0f / 16.0f);
+			break;
+		case Facing::WEST:
+			m_faceRotation[Facing::NORTH] = 1;
+			m_faceRotation[Facing::SOUTH] = 2;
+			m_faceRotation[Facing::UP] = 2;
+			m_faceRotation[Facing::DOWN] = 1;
+			tile->setShape(0.25f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+			break;
+		case Facing::EAST:
+			m_faceRotation[Facing::NORTH] = 2;
+			m_faceRotation[Facing::SOUTH] = 1;
+			m_faceRotation[Facing::UP] = 1;
+			m_faceRotation[Facing::DOWN] = 2;
+			tile->setShape(0.0f, 0.0f, 0.0f, 12.0f / 16.0f, 1.0f, 1.0f);
+		}
+
+		tesselateBlockInWorld(tile, pos);
+
+		for (int i = 0; i < 6; ++i)
+			m_faceRotation[i] = 0;
+
+		tile->setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	}
+	else
+	{
+		switch (facing)
+		{
+		case Facing::DOWN:
+		{
+			for (int i = 0; i < 4; ++i)
+				m_faceRotation[Facing::HORIZONTAL[i]] = 3;
+			break;
+		}
+		case Facing::UP:
+		default:
+			break;
+		case Facing::NORTH:
+			m_faceRotation[Facing::EAST] = 1;
+			m_faceRotation[Facing::WEST] = 2;
+			break;
+		case Facing::SOUTH:
+			m_faceRotation[Facing::EAST] = 2;
+			m_faceRotation[Facing::WEST] = 1;
+			m_faceRotation[Facing::UP] = 3;
+			m_faceRotation[Facing::DOWN] = 3;
+			break;
+		case Facing::WEST:
+			m_faceRotation[Facing::NORTH] = 1;
+			m_faceRotation[Facing::SOUTH] = 2;
+			m_faceRotation[Facing::UP] = 2;
+			m_faceRotation[Facing::DOWN] = 1;
+			break;
+		case Facing::EAST:
+			m_faceRotation[Facing::NORTH] = 2;
+			m_faceRotation[Facing::SOUTH] = 1;
+			m_faceRotation[Facing::UP] = 1;
+			m_faceRotation[Facing::DOWN] = 2;
+		}
+
+		tesselateBlockInWorld(tile, pos);
+
+		for (int i = 0; i < 6; ++i)
+			m_faceRotation[i] = 0;
+	}
+
+	return true;
+}
+
+void TileRenderer::tesselateHeadPistonInWorldNoCulling(Tile* tile, const TilePos& pos, bool extended)
+{
+	m_bNoCulling = true;
+	tesselateHeadPistonInWorld(tile, pos, extended);
+	m_bNoCulling = false;
+}
+
+bool TileRenderer::tesselateHeadPistonInWorld(Tile* tile, const TilePos& tp, bool extended)
+{
+	TileID data = m_pTileSource->getData(tp);
+	int dir = PistonHeadTile::getDirection(data);
+	float bright = tile->getBrightness(m_pTileSource, tp);
+	float headDepth = extended ? 1.0f : 0.5f;
+	Vec3 pos = tp;
+	float offY = extended ? 16.0 : 8.0;
+	switch (dir)
+	{
+	case Facing::DOWN:
+		for (int i = 0; i < 4; ++i)
+			m_faceRotation[Facing::HORIZONTAL[i]] = 3;
+		tile->setShape(0.0f, 0.0f, 0.0f, 1.0f, 0.25f, 1.0f);
+		tesselateBlockInWorld(tile, tp);
+		renderPistonFace(AABB((pos.x + 6.0f / 16.0f), (pos.x + 10.0f / 16.0f), (pos.y + 0.25f), (pos.y + 0.25 + headDepth), (pos.z + 10.0 / 16.0f), (pos.z + 10.0f / 16.0f)), bright * 0.8f, offY, Facing::DOWN);
+		renderPistonFace(AABB((pos.x + 10.0f / 16.0f), (pos.x + 6.0f / 16.0f), (pos.y + 0.25f), (pos.y + 0.25 + headDepth), (pos.z + 6.0 / 16.0f), (pos.z + 6.0f / 16.0f)), bright * 0.8f, offY, Facing::DOWN);
+		renderPistonFace(AABB((pos.x + 6.0f / 16.0f), (pos.x + 6.0f / 16.0f), (pos.y + 0.25f), (pos.y + 0.25 + headDepth), (pos.z + 6.0 / 16.0f), (pos.z + 10.0f / 16.0f)), bright * 0.6f, offY, Facing::DOWN);
+		renderPistonFace(AABB((pos.x + 10.0f / 16.0f), (pos.x + 10.0f / 16.0f), (pos.y + 0.25f), (pos.y + 0.25 + headDepth), (pos.z + 10.0 / 16.0f), (pos.z + 6.0f / 16.0f)), bright * 0.6f, offY, Facing::DOWN);
+		break;
+	case Facing::UP:
+		tile->setShape(0.0f, 12.0f / 16.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+		tesselateBlockInWorld(tile, tp);
+		renderPistonFace(AABB((pos.x + 6.0f / 16.0f), (pos.x + 10.0f / 16.0f), (pos.y - 0.25f + 1.0f - headDepth), (pos.y - 0.25f + 1.0f), (pos.z + 10.0f / 16.0f), (pos.z + 10.0f / 16.0f)), bright * 0.8f, offY, Facing::UP);
+		renderPistonFace(AABB((pos.x + 10.0f / 16.0f), (pos.x + 6.0f / 16.0f), (pos.y - 0.25f + 1.0f - headDepth), (pos.y - 0.25f + 1.0f), (pos.z + 6.0f / 16.0f), (pos.z + 6.0f / 16.0f)), bright * 0.8f, offY, Facing::UP);
+		renderPistonFace(AABB((pos.x + 6.0f / 16.0f), (pos.x + 6.0f / 16.0f), (pos.y - 0.25f + 1.0f - headDepth), (pos.y - 0.25f + 1.0f), (pos.z + 6.0f / 16.0f), (pos.z + 10.0f / 16.0f)), bright * 0.6f, offY, Facing::UP);
+		renderPistonFace(AABB((pos.x + 10.0f / 16.0f), (pos.x + 10.0f / 16.0f), (pos.y - 0.25f + 1.0f - headDepth), (pos.y - 0.25f + 1.0f), (pos.z + 10.0f / 16.0f), (pos.z + 6.0f / 16.0f)), bright * 0.6f, offY, Facing::UP);
+		break;
+	case Facing::NORTH:
+		m_faceRotation[Facing::EAST] = 1;
+		m_faceRotation[Facing::WEST] = 2;
+		tile->setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.25f);
+		tesselateBlockInWorld(tile, tp);
+		renderPistonFace(AABB((pos.x + 6.0f / 16.0f), (pos.x + 6.0f / 16.0f), (pos.y + 10.0f / 16.0f), (pos.y + 6.0f / 16.0f), (pos.z + 0.25f), (pos.z + 0.25f + headDepth)), bright * 0.6f, offY, Facing::NORTH);
+		renderPistonFace(AABB((pos.x + 10.0f / 16.0f), (pos.x + 10.0f / 16.0f), (pos.y + 6.0f / 16.0f), (pos.y + 10.0f / 16.0f), (pos.z + 0.25f), (pos.z + 0.25f + headDepth)), bright * 0.6f, offY, Facing::NORTH);
+		renderPistonFace(AABB((pos.x + 6.0f / 16.0f), (pos.x + 10.0f / 16.0f), (pos.y + 6.0f / 16.0f), (pos.y + 6.0f / 16.0f), (pos.z + 0.25f), (pos.z + 0.25f + headDepth)), bright * 0.5f, offY, Facing::NORTH);
+		renderPistonFace(AABB((pos.x + 10.0f / 16.0f), (pos.x + 6.0f / 16.0f), (pos.y + 10.0f / 16.0f), (pos.y + 10.0f / 16.0f), (pos.z + 0.25f), (pos.z + 0.25f + headDepth)), bright, offY, Facing::NORTH);
+		break;
+	case Facing::SOUTH:
+		m_faceRotation[Facing::EAST] = 2;
+		m_faceRotation[Facing::WEST] = 1;
+		m_faceRotation[Facing::UP] = 3;
+		m_faceRotation[Facing::DOWN] = 3;
+		tile->setShape(0.0f, 0.0f, 12.0f / 16.0f, 1.0f, 1.0f, 1.0f);
+		tesselateBlockInWorld(tile, tp);
+		renderPistonFace(AABB((pos.x + 6.0f / 16.0f), (pos.x + 6.0f / 16.0f), (pos.y + 10.0f / 16.0f), (pos.y + 6.0f / 16.0f), (pos.z - 0.25f + 1.0f - headDepth), (pos.z - 0.25f + 1.0f)), bright * 0.6f, offY, Facing::SOUTH);
+		renderPistonFace(AABB((pos.x + 10.0f / 16.0f), (pos.x + 10.0f / 16.0f), (pos.y + 6.0f / 16.0f), (pos.y + 10.0f / 16.0f), (pos.z - 0.25f + 1.0f - headDepth), (pos.z - 0.25f + 1.0f)), bright * 0.6f, offY, Facing::SOUTH);
+		renderPistonFace(AABB((pos.x + 6.0f / 16.0f), (pos.x + 10.0f / 16.0f), (pos.y + 6.0f / 16.0f), (pos.y + 6.0f / 16.0f), (pos.z - 0.25f + 1.0f - headDepth), (pos.z - 0.25f + 1.0f)), bright * 0.5f, offY, Facing::SOUTH);
+		renderPistonFace(AABB((pos.x + 10.0f / 16.0f), (pos.x + 6.0f / 16.0f), (pos.y + 10.0f / 16.0f), (pos.y + 10.0f / 16.0f), (pos.z - 0.25f + 1.0f - headDepth), (pos.z - 0.25f + 1.0f)), bright, offY, Facing::SOUTH);
+		break;
+	case Facing::WEST:
+		m_faceRotation[Facing::NORTH] = 1;
+		m_faceRotation[Facing::SOUTH] = 2;
+		m_faceRotation[Facing::UP] = 2;
+		m_faceRotation[Facing::DOWN] = 1;
+		tile->setShape(0.0f, 0.0f, 0.0f, 0.25f, 1.0f, 1.0f);
+		tesselateBlockInWorld(tile, tp);
+		renderPistonFace(AABB((pos.x + 0.25f), (pos.x + 0.25f + headDepth), (pos.y + 6.0f / 16.0f), (pos.y + 6.0f / 16.0f), (pos.z + 10.0f / 16.0f), (pos.z + 6.0f / 16.0f)), bright * 0.5f, offY, Facing::WEST);
+		renderPistonFace(AABB((pos.x + 0.25f), (pos.x + 0.25f + headDepth), (pos.y + 10.0f / 16.0f), (pos.y + 10.0f / 16.0f), (pos.z + 6.0f / 16.0f), (pos.z + 10.0f / 16.0f)), bright, offY, Facing::WEST);
+		renderPistonFace(AABB((pos.x + 0.25f), (pos.x + 0.25f + headDepth), (pos.y + 6.0f / 16.0f), (pos.y + 10.0f / 16.0f), (pos.z + 6.0f / 16.0f), (pos.z + 6.0f / 16.0f)), bright * 0.6f, offY, Facing::WEST);
+		renderPistonFace(AABB((pos.x + 0.25f), (pos.x + 0.25f + headDepth), (pos.y + 10.0f / 16.0f), (pos.y + 6.0f / 16.0f), (pos.z + 10.0f / 16.0f), (pos.z + 10.0f / 16.0f)), bright * 0.6f, offY, Facing::WEST);
+		break;
+	case Facing::EAST:
+		m_faceRotation[Facing::NORTH] = 2;
+		m_faceRotation[Facing::SOUTH] = 1;
+		m_faceRotation[Facing::UP] = 1;
+		m_faceRotation[Facing::DOWN] = 2;
+		tile->setShape(12.0f / 16.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+		tesselateBlockInWorld(tile, tp);
+		renderPistonFace(AABB((pos.x - 0.25f + 1.0f - headDepth), (pos.x - 0.25f + 1.0f), (pos.y + 6.0f / 16.0f), (pos.y + 6.0f / 16.0f), (pos.z + 10.0f / 16.0f), (pos.z + 6.0f / 16.0f)), bright * 0.5f, offY, Facing::EAST);
+		renderPistonFace(AABB((pos.x - 0.25f + 1.0f - headDepth), (pos.x - 0.25f + 1.0f), (pos.y + 10.0f / 16.0f), (pos.y + 10.0f / 16.0f), (pos.z + 6.0f / 16.0f), (pos.z + 10.0f / 16.0f)), bright, offY, Facing::EAST);
+		renderPistonFace(AABB((pos.x - 0.25f + 1.0f - headDepth), (pos.x - 0.25f + 1.0f), (pos.y + 6.0f / 16.0f), (pos.y + 10.0f / 16.0f), (pos.z + 6.0f / 16.0f), (pos.z + 6.0f / 16.0f)), bright * 0.6f, offY, Facing::EAST);
+		renderPistonFace(AABB((pos.x - 0.25f + 1.0f - headDepth), (pos.x - 0.25f + 1.0f), (pos.y + 10.0f / 16.0f), (pos.y + 6.0f / 16.0f), (pos.z + 10.0f / 16.0f), (pos.z + 10.0f / 16.0f)), bright * 0.6f, offY, Facing::EAST);
+	}
+
+	for (int i = 0; i < 6; ++i)
+		m_faceRotation[i] = 0;
+
+	tile->setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+	return true;
+}
+
 bool TileRenderer::tesselateInWorld(Tile* tile, const TilePos& pos)
 {
 	int shape = tile->getRenderShape();
@@ -2302,6 +2226,8 @@ bool TileRenderer::tesselateInWorld(Tile* tile, const TilePos& pos)
 			return tesselateStairsInWorld(tile, pos);
 		case SHAPE_FENCE:
 			return tesselateFenceInWorld(tile, pos);
+		case SHAPE_RAIL:
+			return tesselateRailInWorld(tile, pos);
 		case SHAPE_LEVER:
 			return tesselateLeverInWorld(tile, pos);
 		case SHAPE_DIODE:
@@ -2310,6 +2236,10 @@ bool TileRenderer::tesselateInWorld(Tile* tile, const TilePos& pos)
 			return tesselateFenceGateInWorld(tile, pos);
 		case SHAPE_CACTUS:
 			return tesselateBlockInWorld(tile, pos);
+		case SHAPE_PISTON:
+			return tesselatePistonInWorld(tile, pos, false);
+		case SHAPE_PISTON_HEAD:
+			return tesselateHeadPistonInWorld(tile, pos, true);
 	}
 
 	return false;
@@ -2545,7 +2475,7 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusion(Tile* a2, const Ti
 	int v221; // [sp+28h] [bp-40h]
 	int v222; // [sp+2Ch] [bp-3Ch]
 
-	this->m_ambientOcclusion = true;
+	this->m_bAmbientOcclusion = true;
 	v12 = a2->getBrightness(this->m_pTileSource, pos);
 	v13 = this->m_pTileSource;
 	this->field_C = v12;
@@ -2723,7 +2653,7 @@ LABEL_19:
 	this->m_vtxRed[3] = v62 * v65;
 	this->m_vtxBlue[3] = v62 * v67;
 	v70 = a2->getTexture(v68, pos, Facing::DOWN);
-	renderFaceDown(a2, pos, v70);
+	renderDown(a2, pos, v70);
 LABEL_20:
 	if (this->m_bNoCulling || a2->shouldRenderFace(this->m_pTileSource, TilePos(pos.x, v216, pos.z), Facing::UP))
 	{
@@ -2806,7 +2736,7 @@ LABEL_20:
 				this->m_vtxGreen[3] = v87 * g;
 				this->m_vtxBlue[3] = v87 * b;
 				v91 = a2->getTexture(v90, pos, Facing::UP);
-				renderFaceUp(a2, pos, v91);
+				renderUp(a2, pos, v91);
 				goto LABEL_37;
 			}
 		LABEL_141:
@@ -3318,7 +3248,7 @@ LABEL_101:
 	renderEast(a2, pos, v193);
 LABEL_102:
 	result = v69;
-	this->m_ambientOcclusion = false;
+	this->m_bAmbientOcclusion = false;
 	return result;
 }
 
@@ -3347,31 +3277,22 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 		case SHAPE_SOLID:
 		default:
 		{
-			// N.B. If caller passes 255, they only want the face-down face.
-			// This is a hack to accomodate the start menu screen procedurally generated title logo.
 #define IF_NEEDED(x) do { if (tile.data != 255) { (x); } } while (0)
 
 			tileType->updateDefaultShape(); // otherwise pressure plates and buttons in the inventory would look all wonky
 			t.addOffset(-0.5f, -0.5f, -0.5f);
 			t.begin(24); // 4 to 24
-			t.color(color * getTileFaceColor(tile, Facing::UP));
-			t.normal(0.0f, 1.0f, 0.0f);
-			renderFaceUp(tileType, Vec3::ZERO, tileType->getTexture(Facing::UP, tile.data));
-			t.color(color * getTileFaceColor(tile, Facing::DOWN, 0.5f, preshade));
-			t.normal(0.0f, -1.0f, 0.0f);
-			IF_NEEDED(renderFaceDown(tileType, Vec3::ZERO, tileType->getTexture(Facing::DOWN, tile.data)));
-			t.color(color * getTileFaceColor(tile, Facing::NORTH, 0.8f, preshade));
-			t.normal(0.0f, 0.0f, -1.0f);
-			IF_NEEDED(renderNorth(tileType, Vec3::ZERO, tileType->getTexture(Facing::NORTH, tile.data)));
-			t.color(color * getTileFaceColor(tile, Facing::SOUTH, 0.8f, preshade));
-			t.normal(0.0f, 0.0f, 1.0f);
-			IF_NEEDED(renderSouth(tileType, Vec3::ZERO, tileType->getTexture(Facing::SOUTH, tile.data)));
-			t.color(color * getTileFaceColor(tile, Facing::WEST, 0.6f, preshade));
-			t.normal(-1.0f, 0.0f, 0.0f);
-			IF_NEEDED(renderWest (tileType, Vec3::ZERO, tileType->getTexture(Facing::WEST, tile.data)));
-			t.normal(1.0f, 0.0f, 0.0f);
-			t.color(color * getTileFaceColor(tile, Facing::EAST, 0.6f, preshade));
-			IF_NEEDED(renderEast (tileType, Vec3::ZERO, tileType->getTexture(Facing::EAST, tile.data)));
+			for (int i = Facing::DOWN; i <= Facing::EAST; ++i)
+			{
+				Facing::Name dir = (Facing::Name)i;
+				// N.B. If caller passes 255, they only want the face-up face.
+				// This is a hack to accomodate the start menu screen procedurally generated title logo.
+				if (tile.data == 255 && dir != Facing::UP)
+					continue;
+				const int* normal = Facing::NORMALS[dir];
+				t.normal(normal[0], normal[1], normal[2]);
+				renderFace(tile.getType(), Vec3::ZERO, tile.getType()->getTexture(dir, tile.data), dir, color * getTileFaceColor(tile, dir, Facing::LIGHT[dir], preshade));
+			}
 			t.draw(material);
 			t.addOffset(0.5f, 0.5f, 0.5f);
 			break;
@@ -3399,24 +3320,13 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 
 
 				t.begin(24);
-				t.color(color * getTileFaceColor(tile, Facing::DOWN, 0.5f, preshade));
-				t.normal(0.0f, -1.0f, 0.0f);
-				renderFaceDown  (tileType, Vec3::ZERO, tileType->getTexture(Facing::DOWN, tile.data));
-				t.color(color * getTileFaceColor(tile, Facing::UP));
-				t.normal(0.0f, 1.0f, 0.0f);
-				renderFaceUp(tileType, Vec3::ZERO, tileType->getTexture(Facing::UP, tile.data));
-				t.color(color * getTileFaceColor(tile, Facing::NORTH, 0.6f, preshade));
-				t.normal(0.0f, 0.0f, -1.0f);
-				renderNorth   (tileType, Vec3::ZERO, tileType->getTexture(Facing::NORTH, tile.data));
-				t.color(color * getTileFaceColor(tile, Facing::SOUTH, 0.6f, preshade));
-				t.normal(0.0f, 0.0f, 1.0f);
-				renderSouth   (tileType, Vec3::ZERO, tileType->getTexture(Facing::SOUTH, tile.data));
-				t.color(color * getTileFaceColor(tile, Facing::WEST, 0.8f, preshade));
-				t.normal(-1.0f, 0.0f, 0.0f);
-				renderWest    (tileType, Vec3::ZERO, tileType->getTexture(Facing::WEST, tile.data));
-				t.color(color * getTileFaceColor(tile, Facing::EAST, 0.8f, preshade));
-				t.normal(1.0f, 0.0f, 0.0f);
-				renderEast    (tileType, Vec3::ZERO, tileType->getTexture(Facing::EAST, tile.data));
+				for (int i = Facing::DOWN; i <= Facing::EAST; ++i)
+				{
+					Facing::Name dir = (Facing::Name)i;
+					const int* normal = Facing::NORMALS[dir];
+					t.normal(normal[0], normal[1], normal[2]);
+					renderFace(tile.getType(), Vec3::ZERO, tile.getType()->getTexture(dir, tile.data), dir, color * getTileFaceColor(tile, dir, Facing::LIGHT[dir], preshade));
+				}
 				t.draw(material);
 			}
 			t.addOffset(0.5f, 0.5f, 0.5f);
@@ -3438,24 +3348,13 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 				}
 
 				t.begin(24);
-				t.color(color * getTileFaceColor(tile, Facing::UP));
-				t.normal(0.0f, 1.0f, 0.0f);
-				renderFaceUp(tileType, Vec3::ZERO, tileType->getTexture(Facing::UP, tile.data));
-				t.color(color * getTileFaceColor(tile, Facing::DOWN, 0.5f, preshade));
-				t.normal(0.0f, -1.0f, 0.0f);
-				renderFaceDown(tileType, Vec3::ZERO, tileType->getTexture(Facing::DOWN, tile.data));
-				t.color(color * getTileFaceColor(tile, Facing::NORTH, 0.8f, preshade));
-				t.normal(0.0f, 0.0f, -1.0f);
-				renderNorth(tileType, Vec3::ZERO, tileType->getTexture(Facing::NORTH, tile.data));
-				t.color(color * getTileFaceColor(tile, Facing::SOUTH, 0.8f, preshade));
-				t.normal(0.0f, 0.0f, 1.0f);
-				renderSouth(tileType, Vec3::ZERO, tileType->getTexture(Facing::SOUTH, tile.data));
-				t.color(color* getTileFaceColor(tile, Facing::WEST, 0.6f, preshade));
-				t.normal(-1.0f, 0.0f, 0.0f);
-				renderWest(tileType, Vec3::ZERO, tileType->getTexture(Facing::WEST, tile.data));
-				t.color(color* getTileFaceColor(tile, Facing::WEST, 0.6f, preshade));
-				t.normal(1.0f, 0.0f, 0.0f);
-				renderEast(tileType, Vec3::ZERO, tileType->getTexture(Facing::EAST, tile.data));
+				for (int i = Facing::DOWN; i <= Facing::EAST; ++i)
+				{
+					Facing::Name dir = (Facing::Name)i;
+					const int* normal = Facing::NORMALS[dir];
+					t.normal(normal[0], normal[1], normal[2]);
+					renderFace(tile.getType(), Vec3::ZERO, tile.getType()->getTexture(dir, tile.data), dir, color * getTileFaceColor(tile, dir, Facing::LIGHT[dir], preshade));
+				}
 				t.draw(material);
 			}
 			t.addOffset(0.5f, 0.5f, 0.5f);
@@ -3464,7 +3363,8 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 		}
 		case SHAPE_FENCE_GATE:
 			t.addOffset(-0.5f, -0.5f, -0.5f);
-			for (int o = 0; o < 3; o++) {
+			for (int o = 0; o < 3; o++)
+			{
 				constexpr float r = 0.0625f;
 				if (o == 0) {
 					tileType->setShape(0.5f - r, 0.3f, 0.0f, 0.5f + r, 1.0f, r * 2.0f);
@@ -3479,24 +3379,13 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 				}
 
 				t.begin(24);
-				t.color(color* getTileFaceColor(tile, Facing::UP, 1.0f, preshade));
-				t.normal(0.0f, 1.0f, 0.0f);
-				renderFaceUp(tileType, Vec3::ZERO, tileType->getTexture(Facing::UP, tile.data));
-				t.color(color* getTileFaceColor(tile, Facing::DOWN, 1.0f, preshade));
-				t.normal(0.0f, -1.0f, 0.0f);
-				renderFaceDown(tileType, Vec3::ZERO, tileType->getTexture(Facing::DOWN, tile.data));
-				t.color(color* getTileFaceColor(tile, Facing::NORTH, 0.8f, preshade));
-				t.normal(0.0f, 0.0f, -1.0f);
-				renderNorth(tileType, Vec3::ZERO, tileType->getTexture(Facing::NORTH, tile.data));
-				t.color(color* getTileFaceColor(tile, Facing::SOUTH, 0.8f, preshade));
-				t.normal(0.0f, 0.0f, 1.0f);
-				renderSouth(tileType, Vec3::ZERO, tileType->getTexture(Facing::SOUTH, tile.data));
-				t.color(color* getTileFaceColor(tile, Facing::WEST, 0.6f, preshade));
-				t.normal(-1.0f, 0.0f, 0.0f);
-				renderWest(tileType, Vec3::ZERO, tileType->getTexture(Facing::WEST, tile.data));
-				t.color(color* getTileFaceColor(tile, Facing::EAST, 0.6f, preshade));
-				t.normal(1.0f, 0.0f, 0.0f);
-				renderEast(tileType, Vec3::ZERO, tileType->getTexture(Facing::EAST, tile.data));
+				for (int i = Facing::DOWN; i <= Facing::EAST; ++i)
+				{
+					Facing::Name dir = (Facing::Name)i;
+					const int* normal = Facing::NORMALS[dir];
+					t.normal(normal[0], normal[1], normal[2]);
+					renderFace(tile.getType(), Vec3::ZERO, tile.getType()->getTexture(dir, tile.data), dir, color * getTileFaceColor(tile, dir, Facing::LIGHT[dir], preshade));
+				}
 				t.draw(material);
 			}
 			t.addOffset(0.5f, 0.5f, 0.5f);
@@ -3506,7 +3395,7 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 }
 
 #ifdef ENH_USE_OWN_AO
-bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, const TilePos& pos, float r, float g, float b)
+bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, const TilePos& pos, const Color& color)
 {
 	// START OF AUXILIARY DATA FOR AO
 
@@ -3571,9 +3460,6 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 		ETILE_FACE_DE, ETILE_FACE_SE, ETILE_FACE_DSE,   ETILE_FACE_DE, ETILE_FACE_NE, ETILE_FACE_DNE,   ETILE_FACE_UE, ETILE_FACE_NE, ETILE_FACE_UNE,   ETILE_FACE_UE, ETILE_FACE_SE, ETILE_FACE_USE,
 	};
 
-	// Depending on the face, add a multiplier to our lighting value. This is the same as in regular block rendering without AO.
-	static const float lightingMult[] = { 0.5f, 1.0f, 0.8f, 0.8f, 0.6f, 0.6f };
-
 	// END OF AUXILIARY DATA FOR AO
 
 	bool bBother = false;
@@ -3595,11 +3481,6 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 	if (!bBother)
 		return false;
 
-	float topR = r, topG = g, topB = b;
-
-	if (tile == Tile::grass)
-		r = g = b = 1.0f;
-
 	//Tesselator& t = m_tessellator;
 
 	//float fLightHere = tile->getBrightness(m_pTileSource, pos);
@@ -3617,19 +3498,18 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 	// Render all the faces.
 	for (int dir = Facing::DOWN; dir <= Facing::EAST; dir++)
 	{
+		Facing::Name face = (Facing::Name)dir;
 		TilePos tp(pos.x + diffX[dir],
 			pos.y + diffY[dir],
 			pos.z + diffZ[dir]);
 
 		// check if we should bother in the first place
-		if (!m_bNoCulling && !tile->shouldRenderFace(m_pTileSource, tp, (Facing::Name)dir))
+		if (!m_bNoCulling && !tile->shouldRenderFace(m_pTileSource, tp, face))
 		{
 			continue;
 		}
 
-		float fR = r, fG = g, fB = b;
-		if (dir == Facing::UP)
-			fR = topR, fG = topG, fB = topB;
+		Color faceColor = tile != Tile::grass || face == Facing::UP ? color : Color::WHITE;
 
 		for (int i = 0; i < 4; i++)
 			m_vtxRed[i] = m_vtxGreen[i] = m_vtxBlue[i] = 1.0f;
@@ -3655,38 +3535,11 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 			m_vtxLightTex[i] = br;
 		}
 
-		for (int i = 0; i < 4; i++)
-		{
-			m_vtxRed  [i] *= fR * lightingMult[dir];
-			m_vtxGreen[i] *= fG * lightingMult[dir];
-			m_vtxBlue [i] *= fB * lightingMult[dir];
-		}
+		m_bAmbientOcclusion = true;
 
-		m_ambientOcclusion = true;
+		renderFace(tile, pos, tile->getTexture(m_pTileSource, pos, face), face, faceColor.mulRGB(Facing::LIGHT[dir]));
 
-		switch (dir) 
-		{
-			case Facing::DOWN:
-				renderFaceDown  (tile, pos, tile->getTexture(m_pTileSource, pos, Facing::DOWN));
-				break;
-			case Facing::UP:
-				renderFaceUp(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::UP));
-				break;
-			case Facing::NORTH:
-				renderNorth   (tile, pos, tile->getTexture(m_pTileSource, pos, Facing::NORTH));
-				break;
-			case Facing::SOUTH:
-				renderSouth   (tile, pos, tile->getTexture(m_pTileSource, pos, Facing::SOUTH));
-				break;
-			case Facing::WEST:
-				renderWest    (tile, pos, tile->getTexture(m_pTileSource, pos, Facing::WEST));
-				break;
-			case Facing::EAST:
-				renderEast    (tile, pos, tile->getTexture(m_pTileSource, pos, Facing::EAST));
-				break;
-		}
-
-		if (TileRenderer::m_bFancyGrass && tile->getTexture(m_pTileSource, pos, (Facing::Name)dir) == TEXTURE_GRASS_SIDE && (dir == Facing::WEST || dir == Facing::EAST || dir == Facing::NORTH || dir == Facing::SOUTH))
+		if (TileRenderer::m_bFancyGrass && tile->getTexture(m_pTileSource, pos, face) == TEXTURE_GRASS_SIDE && Facing::isHorizontal(face))
 		{
 			for (int i = 0; i < 4; i++)
 				m_vtxRed[i] = m_vtxGreen[i] = m_vtxBlue[i] = 1.0f;
@@ -3706,37 +3559,10 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 				m_vtxBlue[i] = br;
 			}
 
-			for (int i = 0; i < 4; i++)
-			{
-				m_vtxRed[i] *= topR * lightingMult[dir];
-				m_vtxGreen[i] *= topG * lightingMult[dir];
-				m_vtxBlue[i] *= topB * lightingMult[dir];
-			}
-
-			switch (dir) 
-			{
-				case Facing::DOWN:
-					renderFaceDown(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
-					break;
-				case Facing::UP:
-					renderFaceUp(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
-					break;
-				case Facing::NORTH:
-					renderNorth(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
-					break;
-				case Facing::SOUTH:
-					renderSouth(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
-					break;
-				case Facing::WEST:
-					renderWest(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
-					break;
-				case Facing::EAST:
-					renderEast(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
-					break;
-			}
+			renderFace(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY, face, Color(color).mulRGB(Facing::LIGHT[dir]));
 		}
 
-		m_ambientOcclusion = false;
+		m_bAmbientOcclusion = false;
 	}
 
 	return true;
@@ -3753,7 +3579,7 @@ int TileRenderer::getTileColor(Tile* tile, const TilePos& pos)
 	if ((tile == Tile::grass || tile == Tile::tallGrass) && GrassColor::isAvailable() && m_bBiomeColors)
 	{
 		m_pTileSource->getBiomeSource()->getBiomeBlock(pos, 1, 1);
-		return GrassColor::get(m_pTileSource->getBiomeSource()->field_4[0], m_pTileSource->getBiomeSource()->field_8[0]);
+		return GrassColor::get(m_pTileSource->getBiomeSource()->m_temperatures[0], m_pTileSource->getBiomeSource()->m_downfalls[0]);
 	}
 	if (tile == Tile::leaves && FoliageColor::isAvailable() && m_bBiomeColors)
 	{
@@ -3769,7 +3595,7 @@ int TileRenderer::getTileColor(Tile* tile, const TilePos& pos)
 		}
 
 		m_pTileSource->getBiomeSource()->getBiomeBlock(pos, 1, 1);
-		return FoliageColor::get(m_pTileSource->getBiomeSource()->field_4[0], m_pTileSource->getBiomeSource()->field_8[0]);
+		return FoliageColor::get(m_pTileSource->getBiomeSource()->m_temperatures[0], m_pTileSource->getBiomeSource()->m_downfalls[0]);
 	}
 
 	return tile->getColor(m_pTileSource, pos);
@@ -3778,4 +3604,9 @@ int TileRenderer::getTileColor(Tile* tile, const TilePos& pos)
 bool TileRenderer::useAmbientOcclusion() const
 {
 	return Minecraft::useAmbientOcclusion;
+}
+
+void TileRenderer::setTileSource(LevelSource* tileSource)
+{
+	m_pTileSource = tileSource;
 }

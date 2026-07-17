@@ -590,11 +590,11 @@ void Mob::travel(const Vec2& pos)
 {
 	float x2, dragFactor;
 	float oldYPos = m_pos.y;
-	if (isSlowedByLiquids() && (wasInWater() || isInLava()))
+	if (isSlowedByLiquids() && (isInWater() || isInLava()))
 	{
 		moveRelative(Vec3(pos.x, 0.02f, pos.y));
 		move(m_vel);
-		const float x1 = (wasInWater() ? 0.8f : 0.5f);
+		const float x1 = (isInWater() ? 0.8f : 0.5f);
 		m_vel.y = m_vel.y * x1 - 0.02f;
 		m_vel.x *= x1;
 		m_vel.z *= x1;
@@ -730,7 +730,7 @@ void Mob::aiStep()
 		updateAi();
 	}
 
-	bool bIsInWater = wasInWater(), bIsInLava = isInLava();
+	bool bIsInWater = isInWater(), bIsInLava = isInLava();
 	if (m_bJumping)
 	{
 		if (bIsInWater || bIsInLava)
@@ -746,7 +746,7 @@ void Mob::aiStep()
 	travel(m_moveVelocity);
 
 	AABB aabb = m_hitbox;
-	aabb.grow(0.2f, 0.2f, 0.2f);
+	aabb.grow(0.2f, 0.0f, 0.2f);
 
 	EntityVector ents = m_pLevel->getEntities(this, aabb);
 	for (EntityVector::iterator it = ents.begin(); it != ents.end(); it++)
@@ -868,7 +868,7 @@ void Mob::updateAi()
 		m_rot.pitch = m_defaultLookAngle;
 	}
 
-	if (wasInWater() || isInLava())
+	if (isInWater() || isInLava())
 	{
 		m_bJumping = m_random.nextFloat() < 0.8f;
 	}

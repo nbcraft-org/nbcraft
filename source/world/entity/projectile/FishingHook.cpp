@@ -1,9 +1,7 @@
 #include "FishingHook.hpp"
-#include "Mob.hpp"
+#include "world/entity/Mob.hpp"
 #include "nbt/CompoundTag.hpp"
 #include "world/level/Level.hpp"
-
-const unsigned int FishingHook::ARROW_BASE_DAMAGE = 0;
 
 void FishingHook::_init()
 {
@@ -68,9 +66,9 @@ void FishingHook::shoot(Vec3 vel, float speed, float r)
 {
     float len = vel.length();
     vel /= len;
-    vel.x += sharedRandom.nextGaussian() * 0.0075f * r;
-    vel.y += sharedRandom.nextGaussian() * 0.0075f * r;
-    vel.z += sharedRandom.nextGaussian() * 0.0075f * r;
+    vel.x += m_random.nextGaussian() * 0.0075f * r;
+    vel.y += m_random.nextGaussian() * 0.0075f * r;
+    vel.z += m_random.nextGaussian() * 0.0075f * r;
     vel *= speed;
 
     m_vel = vel;
@@ -180,9 +178,9 @@ void FishingHook::tick()
             }
 
             m_bInGround = false;
-            m_vel.x *= sharedRandom.nextFloat() * 0.2f;
-            m_vel.y *= sharedRandom.nextFloat() * 0.2f;
-            m_vel.z *= sharedRandom.nextFloat() * 0.2f;
+            m_vel.x *= m_random.nextFloat() * 0.2f;
+            m_vel.y *= m_random.nextFloat() * 0.2f;
+            m_vel.z *= m_random.nextFloat() * 0.2f;
             m_life = 0;
             m_flightTime = 0;
         }
@@ -235,7 +233,7 @@ void FishingHook::tick()
 
         if (hit_result.isHit())
         {
-            if (hit_result.m_pEnt != nullptr && hit_result.m_pEnt->hurt(m_owner, ARROW_BASE_DAMAGE))
+            if (hit_result.m_pEnt != nullptr && hit_result.m_pEnt->hurt(m_owner, 0))
             {
                 m_hookedIn = hit_result.m_pEnt;
             }
@@ -295,11 +293,11 @@ void FishingHook::tick()
                 {
                     --m_nibble;
                 }
-                else if (sharedRandom.nextInt(500) == 0)
+                else if (m_random.nextInt(500) == 0)
                 {
-                    m_nibble = sharedRandom.nextInt(30) + 10;
+                    m_nibble = m_random.nextInt(30) + 10;
                     m_vel.y -= 0.2f;
-                    m_pLevel->playSound(this, "random.splash", 0.25f, 1.0f + (sharedRandom.nextFloat() - sharedRandom.nextFloat()) * 0.4f);
+                    m_pLevel->playSound(this, "random.splash", 0.25f, 1.0f + (m_random.nextFloat() - m_random.nextFloat()) * 0.4f);
                     float var29 = float(Mth::floor(m_hitbox.min.y));
 
                     float var15;
@@ -307,15 +305,15 @@ void FishingHook::tick()
                     float var31;
                     for (var30 = 0; float(var30) < 1.0f + m_bbWidth * 20.0f; ++var30)
                     {
-                        var15 = (sharedRandom.nextFloat() * 2.0f - 1.0f) * m_bbWidth;
-                        var31 = (sharedRandom.nextFloat() * 2.0f - 1.0f) * m_bbWidth;
-                        m_pLevel->addParticle("bubble", Vec3(m_pos.x + var15, var29 + 1.0f, m_pos.z + var31), Vec3(m_vel.x, m_vel.y - (sharedRandom.nextFloat() * 0.2f), m_vel.z));
+                        var15 = (m_random.nextFloat() * 2.0f - 1.0f) * m_bbWidth;
+                        var31 = (m_random.nextFloat() * 2.0f - 1.0f) * m_bbWidth;
+                        m_pLevel->addParticle("bubble", Vec3(m_pos.x + var15, var29 + 1.0f, m_pos.z + var31), Vec3(m_vel.x, m_vel.y - (m_random.nextFloat() * 0.2f), m_vel.z));
                     }
 
                     for (var30 = 0; float(var30) < 1.0f + m_bbWidth * 20.0f; ++var30)
                     {
-                        var15 = (sharedRandom.nextFloat() * 2.0f - 1.0f) * m_bbWidth;
-                        var31 = (sharedRandom.nextFloat() * 2.0f - 1.0f) * m_bbWidth;
+                        var15 = (m_random.nextFloat() * 2.0f - 1.0f) * m_bbWidth;
+                        var31 = (m_random.nextFloat() * 2.0f - 1.0f) * m_bbWidth;
                         m_pLevel->addParticle("splash", Vec3(m_pos.x + var15, var29 + 1.0f, m_pos.z + var31), m_vel);
                     }
                 }
@@ -323,7 +321,7 @@ void FishingHook::tick()
 
             if (m_nibble > 0)
             {
-                m_vel.y -= (sharedRandom.nextFloat() * sharedRandom.nextFloat() * sharedRandom.nextFloat()) * 0.2f;
+                m_vel.y -= (m_random.nextFloat() * m_random.nextFloat() * m_random.nextFloat()) * 0.2f;
             }
 
             distance = var27 * 2.0f - 1.0f;
@@ -369,28 +367,23 @@ int FishingHook::retrieve()
     int dmg = 0; // var1
     if (m_hookedIn)
     {
-        float var2 = m_owner->m_pos.x - m_pos.x;
-        float var4 = m_owner->m_pos.y - m_pos.y;
-        float var6 = m_owner->m_pos.z - m_pos.z;
-        float var8 = Mth::sqrt(var2 * var2 + var4 * var4 + var6 * var6);
-        float var10 = 0.1f;
-        m_hookedIn->m_vel.x += var2 * var10;
-        m_hookedIn->m_vel.y += var4 * var10 + Mth::sqrt(var8) * 0.08f;
-        m_hookedIn->m_vel.z += var6 * var10;
+        Vec3 diff = m_owner->m_pos - m_pos;
+        constexpr float v = 0.1f;
+        m_hookedIn->m_vel.x += diff.x * v;
+        m_hookedIn->m_vel.y += diff.y * v + Mth::sqrt(diff.length()) * 0.08f;
+        m_hookedIn->m_vel.z += diff.z * v;
         dmg = 3;
     }
     else if (m_nibble > 0)
     {
-        ItemEntity* var13 = new ItemEntity(m_pLevel, m_pos, ItemStack(Item::fish_raw));
-        float var3 = m_owner->m_pos.x - m_pos.x;
-        float var5 = m_owner->m_pos.y - m_pos.y;
-        float var7 = m_owner->m_pos.z - m_pos.z;
-        float var9 = Mth::sqrt(var3 * var3 + var5 * var5 + var7 * var7);
-        float var11 = 0.1f;
-        var13->m_vel.x = var3 * var11;
-        var13->m_vel.y = var5 * var11 + Mth::sqrt(var9) * 0.08f;
-        var13->m_vel.z = var7 * var11;
-        m_pLevel->addEntity(var13);
+        ItemEntity* item = new ItemEntity(m_pLevel, m_pos, ItemStack(Item::fish_raw));
+
+        Vec3 diff = m_owner->m_pos - m_pos;
+        constexpr float v = 0.1f;
+        item->m_vel.x = diff.x * v;
+        item->m_vel.y = diff.y * v + Mth::sqrt(diff.length()) * 0.08f;
+        item->m_vel.z = diff.z * v;
+        m_pLevel->addEntity(item);
         dmg = 1;
     }
 

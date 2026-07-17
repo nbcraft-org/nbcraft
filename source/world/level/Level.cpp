@@ -33,7 +33,8 @@ Level::Level(LevelStorage* pStor, const std::string& name, const LevelSettings& 
 	m_bIsClientSide = false;
 	m_bPostProcessing = false;
 	m_skyDarken = 0;
-	field_30 = 0;
+	m_skyFlashTime = 0;
+	m_bNoNeighborUpdate = 0;
 	m_pDimension = nullptr;
     m_difficulty = 2; // Java has no actual default, it just always pulls from Options. Putting 2 here just so there's no chance of mobs getting despawned accidentally.
 	m_pRakNetInstance = nullptr;
@@ -67,6 +68,12 @@ Level::Level(LevelStorage* pStor, const std::string& name, const LevelSettings& 
 
 	m_pDimension->init(this);
 
+	m_saveInterval = 6000;
+	m_delayUntilNextMoodSound = m_random.nextInt(12000);
+	m_oThunderLevel = 0;
+	m_thunderLevel = 0;
+	m_oRainLevel = 0;
+	m_rainLevel = 0;
 	m_pPathFinder = new PathFinder();
 	m_pMobSpawner = new MobSpawner();
 
@@ -348,6 +355,64 @@ bool Level::isSolidTile(const TilePos& pos) const
 	return pTile->isSolidRender();
 }
 
+bool Level::isSolidBlockingTile(const TilePos& pos) const
+{
+	Tile* pTile = Tile::tiles[getTile(pos)];
+	if (!pTile) return false;
+
+	return pTile->m_pMaterial->blocksMotion() && pTile->isCubeShaped();
+}
+
+void Level::toggleRain()
+{
+	m_pLevelData->setRaining(!isRaining());
+}
+
+float Level::getThunderLevel(float f) const
+{
+	return (m_oThunderLevel + (m_thunderLevel - m_oThunderLevel) * f) * getRainLevel(f);
+}
+
+void Level::setThunderLevel(float level)
+{
+	m_oThunderLevel = m_thunderLevel = Mth::clamp(level, 0.0f, 1.0f);
+}
+
+float Level::getRainLevel(float f) const
+{
+	return m_oRainLevel + (m_rainLevel - m_oRainLevel) * f;
+}
+
+void Level::setRainLevel(float level)
+{
+	m_oRainLevel = m_rainLevel = Mth::clamp(level, 0.0f, 1.0f);
+}
+
+bool Level::isThundering() const
+{
+	return getThunderLevel(1.0f) > 0.9f;
+}
+
+bool Level::isRaining() const
+{
+	return getRainLevel(1.0f) > 0.2f;
+}
+
+bool Level::isRainingAt(const TilePos& pos) const
+{
+	if (!isRaining())
+		return false;
+	else if (!canSeeSky(pos))
+		return false;
+	else if (getHeightmap(pos) > pos.y)
+		return false;
+	else
+	{
+		Biome* biome = getBiomeSource()->getBiomeAt(pos);
+		return biome->m_bHasSnow ? false : biome->m_bHasRain;
+	}
+}
+
 Material* Level::getMaterial(const TilePos& pos) const
 {
 	Tile* pTile = Tile::tiles[getTile(pos)];
@@ -413,6 +478,59 @@ EntityVector Level::getEntities(Entity* pEntExclude, const AABB& aabb) const
 	}
 
 	return entities;
+}
+
+EntityVector Level::getEntitiesOfCategory(EntityCategories::CategoriesMask category, const AABB& aabb) const
+{
+	EntityVector entities = EntityVector();
+
+	long lowerXBound = floor((aabb.min.x - 2.0f) / 16);
+	long lowerZBound = floor((aabb.min.z - 2.0f) / 16);
+	long upperXBound = floor((aabb.max.x + 2.0f) / 16);
+	long upperZBound = floor((aabb.max.z + 2.0f) / 16);
+
+	for (long z = lowerZBound; z <= upperZBound; z++)
+	{
+		for (long x = lowerXBound; x <= upperXBound; x++)
+		{
+			if (!hasChunk(ChunkPos(x, z))) continue;
+
+			LevelChunk* pChunk = getChunk(ChunkPos(x, z));
+			pChunk->getEntitiesOfCategory(category, aabb, entities);
+		}
+	}
+
+	return entities;
+}
+
+EntityVector Level::getEntitiesOfType(EntityType type, const AABB& aabb) const
+{
+	EntityVector entities = EntityVector();
+
+	long lowerXBound = floor((aabb.min.x - 2.0f) / 16);
+	long lowerZBound = floor((aabb.min.z - 2.0f) / 16);
+	long upperXBound = floor((aabb.max.x + 2.0f) / 16);
+	long upperZBound = floor((aabb.max.z + 2.0f) / 16);
+
+	for (long z = lowerZBound; z <= upperZBound; z++)
+	{
+		for (long x = lowerXBound; x <= upperXBound; x++)
+		{
+			if (!hasChunk(ChunkPos(x, z))) continue;
+
+			LevelChunk* pChunk = getChunk(ChunkPos(x, z));
+			pChunk->getEntitiesOfType(type, aabb, entities);
+		}
+	}
+
+	return entities;
+}
+
+Player* Level::getPlayer(const std::string& name) const
+{
+	for (std::vector<Player*>::const_iterator it = m_players.begin(); it != m_players.end(); ++it)
+		if ((*it)->m_name == name) return *it;
+	return nullptr;
 }
 
 void Level::setUpdateLights(bool b)
@@ -656,7 +774,7 @@ bool Level::setTileAndDataNoUpdate(const TilePos& pos, TileID tile, TileData dat
 	return setTileAndData(pos, tile, data, TileChange::UPDATE_LISTENERS);
 }
 
-int Level::getHeightmap(const TilePos& pos)
+int Level::getHeightmap(const TilePos& pos) const
 {
 	//@BUG: checking x >= C_MAX_X, but not z >= C_MAX_Z.
 	if (pos.x < C_MIN_X || pos.z < C_MIN_Z || pos.x >= C_MAX_X || pos.z > C_MAX_Z)
@@ -715,7 +833,7 @@ void Level::sendTileUpdated(const TilePos& pos)
 
 void Level::neighborChanged(const TilePos& pos, TileID tile)
 {
-	if (field_30 || m_bIsClientSide) return;
+	if (m_bNoNeighborUpdate || m_bIsClientSide) return;
 
 	Tile* pTile = Tile::tiles[getTile(pos)];
 	if (pTile)
@@ -1328,7 +1446,7 @@ bool Level::addEntity(Entity* pEnt)
 		m_players.push_back((Player*)pEnt);
 	}
 
-	m_entities.insert(std::make_pair(pEnt->hashCode(), pEnt));
+	m_entities.insert(pEnt->hashCode(), pEnt);
 
 	entityAdded(pEnt);
 
@@ -1488,24 +1606,58 @@ bool Level::canSeeSky(const TilePos& pos) const
 
 Vec3 Level::getSkyColor(const Entity& entity, float f) const
 {
-	Vec3 result;
+	float var4 = Mth::cos(getSunAngle(f)) * 2.0f + 0.5f;
+	if (var4 < 0.0f) {
+		var4 = 0.0f;
+	}
 
-	float fTODCosAng = Mth::cos(getSunAngle(f));
+	if (var4 > 1.0f) {
+		var4 = 1.0f;
+	}
 
-	result.z = 2 * fTODCosAng + 0.5f;
-	if (result.z < 0.0f)
-		result.z = 0.0f;
-	if (result.z > 1.0f)
-		result.z = 1.0f;
+	int var5 = Mth::floor(entity.m_pos.x);
+	int var6 = Mth::floor(entity.m_pos.z);
+	float var7 = getBiomeSource()->getTemperature(var5, var6);
+	int var8 = getBiomeSource()->getBiomeAt(TilePos(var5, 0, var6))->getSkyColor(var7);
+	Vec3 sky((var8 >> 16 & 255) / 255.0f, (var8 >> 8 & 255) / 255.0f, (var8 & 255) / 255.0f);
+	sky.x *= var4;
+	sky.y *= var4;
+	sky.z *= var4;
 
-	// @NOTE: Unused result. In JE, it tries to get the biome that the player is standing in.
-	//Mth::floor(entity.m_pos.x);
-	//Mth::floor(entity.m_pos.z);
+	float rain = getRainLevel(f);
 
-	result.x = result.z * 0.6f;
-	result.y = result.x;
+	if (rain > 0)
+	{
+		float m = (sky.x * 0.3f + sky.y * 0.59f + sky.z * 0.11f) * 0.6f;
+		float light = 1.0f - rain * (12.0f / 16.0f);
+		sky.x = sky.x * light + m * (1.0f - light);
+		sky.y = sky.y * light + m * (1.0f - light);
+		sky.z = sky.z * light + m * (1.0f - light);
+	}
 
-	return result;
+	float thunder = getThunderLevel(f);
+
+	if (thunder > 0)
+	{
+		float m = (sky.x * 0.3f + sky.y * 0.59f + sky.z * 0.11f) * 0.2f;
+		float light = 1.0f - thunder * (12.0f / 16.0f);
+		sky.x = sky.x * light + m * (1.0f - light);
+		sky.y = sky.y * light + m * (1.0f - light);
+		sky.z = sky.z * light + m * (1.0f - light);
+	}
+
+	if (m_skyFlashTime > 0)
+	{
+		float flash = m_skyFlashTime - f;
+		if (flash > 1.0f)
+			flash = 1.0f;
+
+		flash *= 0.45f;
+		sky.x = sky.x * (1.0f - flash) + 0.8f * flash;
+		sky.y = sky.y * (1.0f - flash) + 0.8f * flash;
+		sky.z = sky.z * (1.0f - flash) + 1.0f * flash;
+	}
+	return sky;
 }
 
 Vec3 Level::getFogColor(float f) const
@@ -1706,6 +1858,76 @@ void Level::tickTiles()
 	}
 }
 
+void Level::tickWeather()
+{
+	if (m_skyFlashTime > 0)
+		--m_skyFlashTime;
+
+	if (!m_bIsClientSide && !m_pDimension->m_bHasCeiling)
+	{
+		LevelData& data = *m_pLevelData;
+		bool wasRaining = isRaining();
+		int thunder = data.getThunderTime();
+		if (thunder <= 0)
+		{
+			if (data.isThundering())
+				data.setThunderTime(m_random.nextInt(12000) + 3600);
+			else
+				data.setThunderTime(m_random.nextInt(168000) + 12000);
+		}
+		else
+		{
+			--thunder;
+			data.setThunderTime(thunder);
+			if (thunder <= 0)
+				data.setThundering(!data.isThundering());
+		}
+
+		int rain = data.getRainTime();
+		if (rain <= 0)
+		{
+			if (data.isRaining())
+				data.setRainTime(m_random.nextInt(12000) + 12000);
+			else
+				data.setRainTime(m_random.nextInt(168000) + 12000);
+		}
+		else {
+			--rain;
+			data.setRainTime(rain);
+			if (rain <= 0)
+				data.setRaining(!data.isRaining());
+		}
+
+		m_oRainLevel = m_rainLevel;
+		if (data.isRaining())
+			m_rainLevel += 0.01f;
+		else
+			m_rainLevel -= 0.01f;
+
+		m_rainLevel = Mth::clamp(m_rainLevel, 0.0f, 1.0f);
+
+		m_oThunderLevel = m_thunderLevel;
+		if (data.isThundering())
+			m_thunderLevel += 0.1f;
+		else
+			m_thunderLevel -= 0.1f;
+
+		m_thunderLevel = Mth::clamp(m_thunderLevel, 0.0f, 1.0f);
+
+		if (wasRaining != isRaining())
+			levelEvent(LevelEvent(isRaining() ? LevelEvent::START_RAIN : LevelEvent::STOP_RAIN, TilePos::ZERO));
+	}
+}
+
+void Level::_resetWeatherCycle()
+{
+	LevelData& data = *m_pLevelData;
+	data.setRainTime(0);
+	data.setRaining(false);
+	data.setThunderTime(0);
+	data.setThundering(false);
+}
+
 void Level::tick(Entity* pEnt, bool shouldTick)
 {
 	TilePos tilePos(pEnt->m_pos);
@@ -1797,6 +2019,8 @@ void Level::tick()
 {
 	m_pMobSpawner->tick(*this, m_difficulty > 0, true);
 	m_pChunkSource->tick();
+
+	tickWeather();
 
 #ifdef ENH_RUN_DAY_NIGHT_CYCLE
 	updateSkyDarken();
@@ -2138,7 +2362,7 @@ void Level::addEntities(const EntityVector& entities)
 			continue;
 		}
 
-		m_entities.insert(std::make_pair(pEnt->hashCode(), pEnt));
+		m_entities.insert(pEnt->hashCode(), pEnt);
 		entityAdded(pEnt);
 	}
 }
@@ -2157,7 +2381,7 @@ void Level::ensureAdded(Entity* entity)
 
 	EntityMap::iterator result = m_entities.find(entity->hashCode());
 	if (result == m_entities.end())
-		m_entities.insert(std::make_pair(entity->hashCode(), entity));
+		m_entities.insert(entity->hashCode(), entity);
 }
 
 bool Level::extinguishFire(Player* player, const TilePos& pos, Facing::Name face)

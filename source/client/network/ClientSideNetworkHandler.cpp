@@ -331,7 +331,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, TakeIte
 			if (m_pMinecraft->m_pLocalPlayer->m_pInventory->add(pItemEntity->m_itemStack))
 			{
 				m_pLevel->playSound(pItemEntity, "random.pop", 0.3f,
-					((Entity::sharedRandom.nextFloat() - Entity::sharedRandom.nextFloat()) * 0.7f + 1.0f) * 2.0f);
+					((m_random.nextFloat() - m_random.nextFloat()) * 0.7f + 1.0f) * 2.0f);
 			}
 			else
 			{
@@ -438,9 +438,9 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, RemoveB
 
 	const TilePos& pos = pRemoveBlockPkt->m_pos;
 	Tile* pTile = Tile::tiles[m_pLevel->getTile(pos)];
-	int auxValue = m_pLevel->getData(pos);
+	TileData auxValue = m_pLevel->getData(pos);
 
-	m_pMinecraft->m_pParticleEngine->destroyEffect(pos);
+	m_pMinecraft->m_pParticleEngine->destroyEffect(pos, pTile->m_ID, auxValue);
 
 	bool setTileResult = m_pLevel->setTile(pos, TILE_AIR);
 	if (pTile && setTileResult)

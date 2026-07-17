@@ -389,20 +389,11 @@ void ItemInHandRenderer::tick()
 
 	ItemStack& item = m_pMinecraft->m_pLocalPlayer->m_pInventory->getSelectedItem();
 
-	bool bSameItem = m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedStackId == m_lastSlot && m_selectedItem == item;
-
-	if (item.isEmpty() && m_selectedItem.isEmpty())
-		bSameItem = true;
-
-    // This isn't really needed anymore
-    //if (!item.isEmpty() && !m_selectedItem.isEmpty())
-    //{
-    //    if (&item != &m_selectedItem && item.getId() == m_selectedItem.getId() && item.getAuxValue() == m_selectedItem.getAuxValue())
-    //    {
-    //        bSameItem = true;
-    //        m_selectedItem = ItemStack(item);
-    //    }
-    //}
+    bool bSameItem = (m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedStackId == m_lastSlot &&
+                      item.getId() == m_selectedItem.getId() && 
+                      item.getAuxValue() == m_selectedItem.getAuxValue() && 
+                     !item.isEmpty() && !m_selectedItem.isEmpty()) ||
+                     (item.isEmpty() && m_selectedItem.isEmpty());
 
 	float b = bSameItem ? 1.0f : 0.0f;
 
@@ -416,7 +407,7 @@ void ItemInHandRenderer::tick()
 
 	if (m_height < 0.1f)
 	{
-		m_selectedItem = ItemStack(item);
+		m_selectedItem = item;
 		m_lastSlot = m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedStackId;
 	}
 }

@@ -82,6 +82,7 @@ protected:
 		mce::MaterialPtr skyplane;
 		mce::MaterialPtr sun_moon;
 		mce::MaterialPtr sunrise;
+		mce::MaterialPtr snow_rain;
 		mce::MaterialPtr selection_overlay;
 		mce::MaterialPtr selection_overlay_opaque;
 		mce::MaterialPtr selection_overlay_double_sided;
@@ -172,7 +173,6 @@ public:
 
 protected:
 	Vec3 m_viewPos;
-	Materials m_materials;
 	double m_initTime;
 	mce::FogStateDescription m_lastFogState;
 	Vec2 m_fogControl;
@@ -215,6 +215,7 @@ public:
 	int m_ticksSinceStart;
 	float m_fogBrO;
 	float m_fogBr;
+	Materials m_materials;
 	//...
 	//mce::Mesh m_shadowVolumeMesh;
 	//mce::Mesh m_shadowOverlayMesh;

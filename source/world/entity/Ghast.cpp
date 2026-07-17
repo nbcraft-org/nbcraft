@@ -1,6 +1,6 @@
 #include "Ghast.hpp"
 #include "world/level/Level.hpp"
-#include "world/entity/Fireball.hpp"
+#include "world/entity/projectile/Fireball.hpp"
 
 Ghast::Ghast(Level* pLevel) : FlyingMob(pLevel)
 {
@@ -67,10 +67,9 @@ void Ghast::updateAi()
 	float var9 = 64.0f;
 	if (m_target && m_target->distanceToSqr(this) < var9 * var9)
 	{
-		float var11 = m_target->m_pos.x - m_pos.x;
-		float var13 = m_target->m_hitbox.min.y + float(m_target->m_bbHeight / 2.0f) - (m_pos.y + float(m_bbHeight / 2.0f));
-		float var15 = m_target->m_pos.z - m_pos.z;
-		m_yBodyRot = m_rot.yaw = -(float(Mth::atan2(var11, var15))) * 180.0f / float(M_PI);
+		Vec3 fireballPos = m_target->m_pos - m_pos;
+		fireballPos.y = m_target->m_hitbox.min.y + float(m_target->m_bbHeight / 2.0f) - (m_pos.y + float(m_bbHeight / 2.0f));
+		m_yBodyRot = m_rot.yaw = -(float(Mth::atan2(fireballPos.x, fireballPos.z))) * 180.0f / float(M_PI);
 		if (canSee(m_target))
 		{
 			if (m_charge == 10)
@@ -82,7 +81,7 @@ void Ghast::updateAi()
 			if (m_charge == 20)
 			{
 				m_pLevel->playSound(this, "mob.ghast.fireball", getSoundVolume(), (m_random.nextFloat() - m_random.nextFloat()) * 0.2f + 1.0f);
-				Fireball* entity = new Fireball(m_pLevel, this, Vec3(var11, var13, var15)); // var17
+				Fireball* entity = new Fireball(m_pLevel, this, fireballPos); // var17
 				float var18 = 4.0f;
 				Vec3 var20 = getViewVector(1.0f);
 				entity->m_pos.x = m_pos.x + var20.x * var18;

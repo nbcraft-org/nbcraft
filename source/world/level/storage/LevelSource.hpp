@@ -23,6 +23,7 @@ public:
 	virtual TileData getData(const TilePos& pos) const = 0;
 	virtual Material* getMaterial(const TilePos& pos) const = 0;
 	virtual bool isSolidTile(const TilePos& pos) const = 0;
+	virtual bool isSolidBlockingTile(const TilePos& pos) const = 0;
 	virtual BiomeSource* getBiomeSource() const = 0;
 	virtual TileEntity* getTileEntity(const TilePos& pos) const = 0;
 };

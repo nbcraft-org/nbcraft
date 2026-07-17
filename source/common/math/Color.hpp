@@ -69,13 +69,24 @@ public:
         _init(GET_RED(c), GET_GREEN(c), GET_BLUE(c), alpha);
     }
 
-    void fromHSB(float h, float s, float b);
+    static Color getHSBColor(float h, float s, float b);
 
     Color& mulRGB(float mul)
     {
         r *= mul;
         g *= mul;
         b *= mul;
+        return *this;
+    }
+
+    Color& withAlpha(int alpha)
+    {
+        return withAlpha(alpha / 255.0f);
+    }
+
+    Color& withAlpha(float alpha)
+    {
+        a = alpha;
         return *this;
     }
 
@@ -106,6 +117,16 @@ public:
         b *= f;
 
         return *this;
+    }
+
+    operator int() const
+    {
+        // Xbox 360 for some reason expects the colors as little-endian
+#if MC_ENDIANNESS_BIG && !defined(_XBOX)
+        return (int(a * 255) | (int(r * 255) << 8) | (int(g * 255) << 16) | (int(b * 255) << 24));
+#else // MC_ENDIANNESS_LITTLE
+        return ((int(a * 255) << 24) | (int(r * 255) << 16) | (int(g * 255) << 8) | int(b * 255));
+#endif
     }
 
     bool operator==(const Color& other) const

@@ -43,7 +43,7 @@ public:
 	void openContainer(Container* container) override;
 	void closeContainer() override;
 	void openTrap(DispenserTileEntity* tileEntity) override;
-	//void openTextEdit(SignTileEntity* tileEntity) override;
+	void openTextEdit(SignTileEntity* tileEntity) override;
 	void take(Entity* pEnt, int count) override;
 
 	virtual void hurtTo(int newHealth);

@@ -47,26 +47,28 @@ void MobSpawner::tick(Level& level, bool allowHostile, bool allowFriendly)
         {
             const ChunkPos& pos = *it;
 
-            const std::map<EntityType::ID, int>& spawnList = MobFactory::GetMobListOfCategory(baseType);
+            const MobFactory::SpawnDataMap& spawnList = MobFactory::GetMobListOfCategory(baseType);
                                 
             if (spawnList.empty())
                 continue;
 
             EntityType::ID entityID = spawnList.begin()->first;
+            MobFactory::SpawnData* spawnData = spawnList.begin()->second;
 
             int spawnWeight = 1; // make sure it starts with 1 so arithmetic exception doesn't occur
 
-            for (std::map<EntityType::ID, int>::const_iterator it = spawnList.begin(); it != spawnList.end(); ++it)
-                spawnWeight += it->second;
+            for (MobFactory::SpawnDataMap::const_iterator it = spawnList.begin(); it != spawnList.end(); ++it)
+                spawnWeight += it->second->weight;
 
             int randomRate = level.m_random.nextInt(spawnWeight);
 
-            for (std::map<EntityType::ID, int>::const_iterator it = spawnList.begin(); it != spawnList.end(); ++it)
+            for (MobFactory::SpawnDataMap::const_iterator it = spawnList.begin(); it != spawnList.end(); ++it)
             {
-                randomRate -= it->second;
+                randomRate -= it->second->weight;
                 if (randomRate < 0) 
                 {
                     entityID = it->first;
+                    spawnData = it->second;
                     break;
                 }
             }
@@ -90,7 +92,7 @@ void MobSpawner::tick(Level& level, bool allowHostile, bool allowFriendly)
                     tp.y += level.m_random.nextInt(1) - level.m_random.nextInt(1);
                     tp.z += level.m_random.nextInt(6) - level.m_random.nextInt(6);
 
-                    if (!IsSpawnPositionOk(category, level, tp)) 
+                    if (!IsSpawnPositionOk(category, level, tp) || !spawnData->canSpawn(level, entityID, tp)) 
                         continue;
 
                     int lightLevel = level.getRawBrightness(tp);

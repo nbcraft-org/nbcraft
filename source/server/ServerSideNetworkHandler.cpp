@@ -11,6 +11,7 @@
 #include "GameMods.hpp"
 #include "network/MinecraftPackets.hpp"
 #include "world/entity/MobFactory.hpp"
+#include "world/entity/EntityFactory.hpp"
 #include "ServerPlayer.hpp"
 
 // How frequently SetTimePackets are sent, in seconds.
@@ -551,9 +552,9 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, RemoveBloc
 
 	TilePos pos = packet->m_pos;
 	Tile* pTile = Tile::tiles[m_pLevel->getTile(pos)];
-	int auxValue = m_pLevel->getData(pos);
+	TileData auxValue = m_pLevel->getData(pos);
 
-	m_pMinecraft->m_pParticleEngine->destroyEffect(pos);
+	m_pMinecraft->m_pParticleEngine->destroyEffect(pos, pTile->m_ID, auxValue);
 
 	bool setTileResult = m_pLevel->setTile(pos, TILE_AIR);
 	if (pTile && setTileResult)
@@ -1037,6 +1038,7 @@ void ServerSideNetworkHandler::setupCommands()
 	m_commands["gamemode"] = &ServerSideNetworkHandler::commandGamemode;
 	m_commands["give"]     = &ServerSideNetworkHandler::commandGive;
 	m_commands["clear"]    = &ServerSideNetworkHandler::commandClear;
+	m_commands["toggledownfall"] = &ServerSideNetworkHandler::commandToggledownfall;
 }
 
 bool ServerSideNetworkHandler::_checkPermissions(OnlinePlayer* player)
@@ -1246,14 +1248,18 @@ void ServerSideNetworkHandler::commandSummon(OnlinePlayer* player, const std::ve
 
 			for (int i = 0; i++ < amount;)
 			{
-				Mob* mob = MobFactory::CreateMob(descriptor->getEntityType().getId(), m_pLevel);
-				if (mob == nullptr)
+				Entity* entity = MobFactory::CreateMob(descriptor->getEntityType().getId(), m_pLevel);
+
+				if (entity == nullptr)
+					entity = EntityFactory::CreateEntity(descriptor->getEntityType().getId(), m_pLevel);
+
+				if (entity == nullptr)
 				{
 					ss << "Unable to summon object";
 					break;
 				}
-				mob->setPos(pos);
-				m_pLevel->addEntity(mob);
+				entity->setPos(pos);
+				m_pLevel->addEntity(entity);
 				if (!success) success = true;
 			}
 
@@ -1374,4 +1380,12 @@ void ServerSideNetworkHandler::commandClear(OnlinePlayer* player, const std::vec
 
 	sendMessage(player, "Your inventory has been cleared.");
 	return;
+}
+
+void ServerSideNetworkHandler::commandToggledownfall(OnlinePlayer* player, const std::vector<std::string>&)
+{
+	player->m_pPlayer->m_pLevel->toggleRain();
+	std::stringstream ss;
+	ss << "Toggling rain and snow, hold on...";
+	sendMessage(player, ss.str());
 }

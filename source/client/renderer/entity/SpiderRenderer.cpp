@@ -12,17 +12,17 @@ SpiderRenderer::~SpiderRenderer()
 {
 }
 
-int SpiderRenderer::prepareArmor(const Mob& spider, int layer, float a)
+bool SpiderRenderer::prepareArmor(const Mob& spider, int layer, float a)
 {
 	if (layer != 0)
-		return 0;
+		return false;
 
 	if (!bindTexture("mob/spider_eyes.png", false))
-		return 0;
+		return false;
 
 	float br = (1.0f - spider.getBrightness(1.0f)) * 0.5f;
 	currentShaderColor = Color::WHITE;
 	currentShaderDarkColor = Color(1.0f, 1.0f, 1.0f, br);
 
-	return 1;
+	return true;
 }

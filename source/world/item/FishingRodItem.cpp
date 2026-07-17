@@ -1,7 +1,7 @@
 #include "FishingRodItem.hpp"
 #include "world/level/Level.hpp"
 #include "world/entity/Player.hpp"
-#include "world/entity/FishingHook.hpp"
+#include "world/entity/projectile/FishingHook.hpp"
 
 FishingRodItem::FishingRodItem(int id) : Item(id)
 {

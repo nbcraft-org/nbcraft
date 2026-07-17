@@ -1654,6 +1654,85 @@
 		9DA5C64D2F2845F80039B697 /* Resource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DA5C63E2F2845F80039B697 /* Resource.cpp */; };
 		9DA5C64E2F2845F80039B697 /* ResourceLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DA5C6402F2845F80039B697 /* ResourceLoader.cpp */; };
 		9DA5C64F2F2845F80039B697 /* ResourcePackManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DA5C6442F2845F80039B697 /* ResourcePackManager.cpp */; };
+		84ED50000000000001000001 /* LightningBolt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000001 /* LightningBolt.cpp */; };
+		84ED50000000000001000002 /* LightningBolt.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000002 /* LightningBolt.hpp */; };
+		84ED50000000000001000003 /* Painting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000003 /* Painting.cpp */; };
+		84ED50000000000001000004 /* Painting.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000004 /* Painting.hpp */; };
+		84ED50000000000001000005 /* PaintingType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000005 /* PaintingType.cpp */; };
+		84ED50000000000001000006 /* PaintingType.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000006 /* PaintingType.hpp */; };
+		84ED50000000000001000007 /* Wolf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000007 /* Wolf.cpp */; };
+		84ED50000000000001000008 /* Wolf.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000008 /* Wolf.hpp */; };
+		84ED50000000000001000009 /* Boat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000009 /* Boat.cpp */; };
+		84ED50000000000001000010 /* Boat.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000010 /* Boat.hpp */; };
+		84ED50000000000001000011 /* Minecart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000011 /* Minecart.cpp */; };
+		84ED50000000000001000012 /* Minecart.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000012 /* Minecart.hpp */; };
+		84ED50000000000001000013 /* DetectorRailTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000013 /* DetectorRailTile.cpp */; };
+		84ED50000000000001000014 /* DetectorRailTile.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000014 /* DetectorRailTile.hpp */; };
+		84ED50000000000001000015 /* MobSpawnerTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000015 /* MobSpawnerTile.cpp */; };
+		84ED50000000000001000016 /* MobSpawnerTile.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000016 /* MobSpawnerTile.hpp */; };
+		84ED50000000000001000017 /* MovingPistonTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000017 /* MovingPistonTile.cpp */; };
+		84ED50000000000001000018 /* MovingPistonTile.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000018 /* MovingPistonTile.hpp */; };
+		84ED50000000000001000019 /* Mushroom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000019 /* Mushroom.cpp */; };
+		84ED50000000000001000020 /* Mushroom.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000020 /* Mushroom.hpp */; };
+		84ED50000000000001000021 /* PistonBaseTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000021 /* PistonBaseTile.cpp */; };
+		84ED50000000000001000022 /* PistonBaseTile.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000022 /* PistonBaseTile.hpp */; };
+		84ED50000000000001000023 /* PistonHeadTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000023 /* PistonHeadTile.cpp */; };
+		84ED50000000000001000024 /* PistonHeadTile.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000024 /* PistonHeadTile.hpp */; };
+		84ED50000000000001000025 /* PortalTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000025 /* PortalTile.cpp */; };
+		84ED50000000000001000026 /* PortalTile.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000026 /* PortalTile.hpp */; };
+		84ED50000000000001000027 /* Rail.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000027 /* Rail.cpp */; };
+		84ED50000000000001000028 /* Rail.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000028 /* Rail.hpp */; };
+		84ED50000000000001000029 /* RailTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000029 /* RailTile.cpp */; };
+		84ED50000000000001000030 /* RailTile.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000030 /* RailTile.hpp */; };
+		84ED50000000000001000031 /* SignTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000031 /* SignTile.cpp */; };
+		84ED50000000000001000032 /* SignTile.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000032 /* SignTile.hpp */; };
+		84ED50000000000001000033 /* MobSpawnerTileEntity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000033 /* MobSpawnerTileEntity.cpp */; };
+		84ED50000000000001000034 /* MobSpawnerTileEntity.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000034 /* MobSpawnerTileEntity.hpp */; };
+		84ED50000000000001000035 /* PistonMovingTileEntity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000035 /* PistonMovingTileEntity.cpp */; };
+		84ED50000000000001000036 /* PistonMovingTileEntity.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000036 /* PistonMovingTileEntity.hpp */; };
+		84ED50000000000001000037 /* RecordPlayerTileEntity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000037 /* RecordPlayerTileEntity.cpp */; };
+		84ED50000000000001000038 /* RecordPlayerTileEntity.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000038 /* RecordPlayerTileEntity.hpp */; };
+		84ED50000000000001000039 /* SignTileEntity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000039 /* SignTileEntity.cpp */; };
+		84ED50000000000001000040 /* SignTileEntity.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000040 /* SignTileEntity.hpp */; };
+		84ED50000000000001000041 /* PortalParticle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000041 /* PortalParticle.cpp */; };
+		84ED50000000000001000042 /* SplashParticle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000042 /* SplashParticle.cpp */; };
+		84ED50000000000001000043 /* WaterDropParticle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000043 /* WaterDropParticle.cpp */; };
+		84ED50000000000001000044 /* BoatItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000044 /* BoatItem.cpp */; };
+		84ED50000000000001000045 /* BoatItem.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000045 /* BoatItem.hpp */; };
+		84ED50000000000001000046 /* MinecartItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000046 /* MinecartItem.cpp */; };
+		84ED50000000000001000047 /* MinecartItem.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000047 /* MinecartItem.hpp */; };
+		84ED50000000000001000048 /* PaintingItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000048 /* PaintingItem.cpp */; };
+		84ED50000000000001000049 /* PaintingItem.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000049 /* PaintingItem.hpp */; };
+		84ED50000000000001000050 /* PistonItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000050 /* PistonItem.cpp */; };
+		84ED50000000000001000051 /* PistonItem.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000051 /* PistonItem.hpp */; };
+		84ED50000000000001000052 /* SaddleItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000052 /* SaddleItem.cpp */; };
+		84ED50000000000001000053 /* SaddleItem.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000053 /* SaddleItem.hpp */; };
+		84ED50000000000001000054 /* SignItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000054 /* SignItem.cpp */; };
+		84ED50000000000001000055 /* SignItem.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000055 /* SignItem.hpp */; };
+		84ED50000000000001000056 /* MapColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000056 /* MapColor.cpp */; };
+		84ED50000000000001000057 /* MapColor.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000057 /* MapColor.hpp */; };
+		84ED50000000000001000058 /* BoatRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000058 /* BoatRenderer.cpp */; };
+		84ED50000000000001000059 /* BoatRenderer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000059 /* BoatRenderer.hpp */; };
+		84ED50000000000001000060 /* LightningBoltRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000060 /* LightningBoltRenderer.cpp */; };
+		84ED50000000000001000061 /* LightningBoltRenderer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000061 /* LightningBoltRenderer.hpp */; };
+		84ED50000000000001000062 /* MinecartRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000062 /* MinecartRenderer.cpp */; };
+		84ED50000000000001000063 /* MinecartRenderer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000063 /* MinecartRenderer.hpp */; };
+		84ED50000000000001000064 /* PaintingRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000064 /* PaintingRenderer.cpp */; };
+		84ED50000000000001000065 /* PaintingRenderer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000065 /* PaintingRenderer.hpp */; };
+		84ED50000000000001000066 /* WolfRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000066 /* WolfRenderer.cpp */; };
+		84ED50000000000001000067 /* WolfRenderer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000067 /* WolfRenderer.hpp */; };
+		84ED50000000000001000068 /* BoatModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000068 /* BoatModel.cpp */; };
+		84ED50000000000001000069 /* BoatModel.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000069 /* BoatModel.hpp */; };
+		84ED50000000000001000070 /* MinecartModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000070 /* MinecartModel.cpp */; };
+		84ED50000000000001000071 /* MinecartModel.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000071 /* MinecartModel.hpp */; };
+		84ED50000000000001000072 /* SignModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000072 /* SignModel.cpp */; };
+		84ED50000000000001000073 /* SignModel.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000073 /* SignModel.hpp */; };
+		84ED50000000000001000074 /* WolfModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000074 /* WolfModel.cpp */; };
+		84ED50000000000001000075 /* WolfModel.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000075 /* WolfModel.hpp */; };
+		84ED50000000000001000076 /* TextEditScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000076 /* TextEditScreen.cpp */; };
+		84ED50000000000001000077 /* TextEditScreen.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000077 /* TextEditScreen.hpp */; };
+		84ED50000000000001000078 /* TileEntityRenderDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000078 /* TileEntityRenderDispatcher.cpp */; };
+		84ED50000000000001000079 /* TileEntityRenderDispatcher.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000079 /* TileEntityRenderDispatcher.hpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -3488,6 +3567,85 @@
 		9DA5C6422F2845F80039B697 /* ResourceLocation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLocation.cpp; sourceTree = "<group>"; };
 		9DA5C6432F2845F80039B697 /* ResourcePackManager.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ResourcePackManager.hpp; sourceTree = "<group>"; };
 		9DA5C6442F2845F80039B697 /* ResourcePackManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ResourcePackManager.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000001 /* LightningBolt.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LightningBolt.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000002 /* LightningBolt.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = LightningBolt.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000003 /* Painting.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Painting.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000004 /* Painting.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Painting.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000005 /* PaintingType.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PaintingType.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000006 /* PaintingType.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PaintingType.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000007 /* Wolf.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Wolf.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000008 /* Wolf.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Wolf.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000009 /* Boat.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Boat.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000010 /* Boat.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Boat.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000011 /* Minecart.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Minecart.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000012 /* Minecart.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Minecart.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000013 /* DetectorRailTile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DetectorRailTile.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000014 /* DetectorRailTile.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DetectorRailTile.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000015 /* MobSpawnerTile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MobSpawnerTile.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000016 /* MobSpawnerTile.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MobSpawnerTile.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000017 /* MovingPistonTile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MovingPistonTile.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000018 /* MovingPistonTile.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MovingPistonTile.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000019 /* Mushroom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Mushroom.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000020 /* Mushroom.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Mushroom.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000021 /* PistonBaseTile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PistonBaseTile.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000022 /* PistonBaseTile.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PistonBaseTile.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000023 /* PistonHeadTile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PistonHeadTile.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000024 /* PistonHeadTile.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PistonHeadTile.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000025 /* PortalTile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PortalTile.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000026 /* PortalTile.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PortalTile.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000027 /* Rail.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Rail.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000028 /* Rail.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Rail.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000029 /* RailTile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RailTile.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000030 /* RailTile.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = RailTile.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000031 /* SignTile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SignTile.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000032 /* SignTile.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SignTile.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000033 /* MobSpawnerTileEntity.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MobSpawnerTileEntity.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000034 /* MobSpawnerTileEntity.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MobSpawnerTileEntity.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000035 /* PistonMovingTileEntity.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PistonMovingTileEntity.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000036 /* PistonMovingTileEntity.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PistonMovingTileEntity.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000037 /* RecordPlayerTileEntity.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RecordPlayerTileEntity.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000038 /* RecordPlayerTileEntity.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = RecordPlayerTileEntity.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000039 /* SignTileEntity.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SignTileEntity.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000040 /* SignTileEntity.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SignTileEntity.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000041 /* PortalParticle.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PortalParticle.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000042 /* SplashParticle.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SplashParticle.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000043 /* WaterDropParticle.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WaterDropParticle.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000044 /* BoatItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BoatItem.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000045 /* BoatItem.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BoatItem.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000046 /* MinecartItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MinecartItem.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000047 /* MinecartItem.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MinecartItem.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000048 /* PaintingItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PaintingItem.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000049 /* PaintingItem.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PaintingItem.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000050 /* PistonItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PistonItem.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000051 /* PistonItem.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PistonItem.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000052 /* SaddleItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SaddleItem.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000053 /* SaddleItem.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SaddleItem.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000054 /* SignItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SignItem.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000055 /* SignItem.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SignItem.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000056 /* MapColor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MapColor.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000057 /* MapColor.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MapColor.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000058 /* BoatRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BoatRenderer.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000059 /* BoatRenderer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BoatRenderer.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000060 /* LightningBoltRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LightningBoltRenderer.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000061 /* LightningBoltRenderer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = LightningBoltRenderer.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000062 /* MinecartRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MinecartRenderer.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000063 /* MinecartRenderer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MinecartRenderer.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000064 /* PaintingRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PaintingRenderer.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000065 /* PaintingRenderer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PaintingRenderer.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000066 /* WolfRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WolfRenderer.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000067 /* WolfRenderer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = WolfRenderer.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000068 /* BoatModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BoatModel.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000069 /* BoatModel.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BoatModel.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000070 /* MinecartModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MinecartModel.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000071 /* MinecartModel.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MinecartModel.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000072 /* SignModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SignModel.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000073 /* SignModel.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SignModel.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000074 /* WolfModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WolfModel.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000075 /* WolfModel.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = WolfModel.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000076 /* TextEditScreen.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextEditScreen.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000077 /* TextEditScreen.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TextEditScreen.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000078 /* TileEntityRenderDispatcher.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TileEntityRenderDispatcher.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000079 /* TileEntityRenderDispatcher.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TileEntityRenderDispatcher.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -3833,6 +3991,9 @@
 			children = (
 				84EB09A02EE2CC86008FB007 /* geom */,
 				84EB09A82EE2CC86008FB007 /* models */,
+				84ED50000000000000000076 /* TextEditScreen.cpp */,
+				84ED50000000000000000077 /* TextEditScreen.hpp */,
+
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -3842,6 +4003,15 @@
 			children = (
 				840DD5C72AC810620006A435 /* ClientSideNetworkHandler.cpp */,
 				840DD5C82AC810620006A435 /* ClientSideNetworkHandler.hpp */,
+				84ED50000000000000000068 /* BoatModel.cpp */,
+				84ED50000000000000000069 /* BoatModel.hpp */,
+				84ED50000000000000000070 /* MinecartModel.cpp */,
+				84ED50000000000000000071 /* MinecartModel.hpp */,
+				84ED50000000000000000072 /* SignModel.cpp */,
+				84ED50000000000000000073 /* SignModel.hpp */,
+				84ED50000000000000000074 /* WolfModel.cpp */,
+				84ED50000000000000000075 /* WolfModel.hpp */,
+
 			);
 			path = network;
 			sourceTree = "<group>";
@@ -4182,8 +4352,6 @@
 			children = (
 				84AA8B582B32F3B5003F5B82 /* Animal.cpp */,
 				84AA8B592B32F3B5003F5B82 /* Animal.hpp */,
-				84B1E0312E04FD7900ED000A /* Arrow.cpp */,
-				84B1E0322E04FD7900ED000A /* Arrow.hpp */,
 				84AA8B5A2B32F3B5003F5B82 /* Chicken.cpp */,
 				84AA8B5B2B32F3B5003F5B82 /* Chicken.hpp */,
 				84AA8B5C2B32F3B5003F5B82 /* Cow.cpp */,
@@ -4202,10 +4370,6 @@
 				8445E7992D769329008DC834 /* EntityTypeDescriptor.hpp */,
 				840DD65A2AC810620006A435 /* FallingTile.cpp */,
 				840DD65B2AC810620006A435 /* FallingTile.hpp */,
-				84E8F9EA2FEF611800D0669F /* Fireball.cpp */,
-				84E8F9EB2FEF611800D0669F /* Fireball.hpp */,
-				84E8F9EC2FEF611800D0669F /* FishingHook.cpp */,
-				84E8F9ED2FEF611800D0669F /* FishingHook.hpp */,
 				84E8F9EE2FEF611800D0669F /* FlyingMob.cpp */,
 				84E8F9EF2FEF611800D0669F /* FlyingMob.hpp */,
 				84E8F9F02FEF611800D0669F /* Ghast.cpp */,
@@ -4234,6 +4398,8 @@
 				840DD6632AC810620006A435 /* Player.hpp */,
 				840DD6642AC810620006A435 /* PrimedTnt.cpp */,
 				840DD6652AC810620006A435 /* PrimedTnt.hpp */,
+				84ED41502FC3EC730038BAC4 /* projectile */,
+				84ED50A12FC3EC730038BAC4 /* vehicle */,
 				84E78C792B58B3E000D515EF /* Rocket.cpp */,
 				84E78C7A2B58B3E000D515EF /* Rocket.hpp */,
 				8445E79C2D769329008DC834 /* Sheep.cpp */,
@@ -4242,24 +4408,87 @@
 				84B1E0342E04FD7900ED000A /* Skeleton.hpp */,
 				84E8F9F62FEF611800D0669F /* Slime.cpp */,
 				84E8F9F72FEF611800D0669F /* Slime.hpp */,
-				84ED41432FC3EC730038BAC4 /* Snowball.cpp */,
-				84ED41442FC3EC730038BAC4 /* Snowball.hpp */,
 				84B1E0352E04FD7900ED000A /* Spider.cpp */,
 				84B1E0362E04FD7900ED000A /* Spider.hpp */,
 				84E8F9F82FEF611800D0669F /* Squid.cpp */,
 				84E8F9F92FEF611800D0669F /* Squid.hpp */,
 				8445E79E2D769329008DC834 /* SynchedEntityData.cpp */,
 				8445E79F2D769329008DC834 /* SynchedEntityData.hpp */,
-				84ED41452FC3EC730038BAC4 /* ThrownEgg.cpp */,
-				84ED41462FC3EC730038BAC4 /* ThrownEgg.hpp */,
 				840DD6662AC810620006A435 /* TripodCamera.cpp */,
 				840DD6672AC810620006A435 /* TripodCamera.hpp */,
 				84AA8B762B32F3B5003F5B82 /* WaterAnimal.cpp */,
 				84AA8B772B32F3B5003F5B82 /* WaterAnimal.hpp */,
 				84B1E0372E04FD7900ED000A /* Zombie.cpp */,
 				84B1E0382E04FD7900ED000A /* Zombie.hpp */,
+				84ED50000000000000000001 /* LightningBolt.cpp */,
+				84ED50000000000000000002 /* LightningBolt.hpp */,
+				84ED50000000000000000003 /* Painting.cpp */,
+				84ED50000000000000000004 /* Painting.hpp */,
+				84ED50000000000000000005 /* PaintingType.cpp */,
+				84ED50000000000000000006 /* PaintingType.hpp */,
+				84ED50000000000000000007 /* Wolf.cpp */,
+				84ED50000000000000000008 /* Wolf.hpp */,
+
+				84ED50000000000000000013 /* DetectorRailTile.cpp */,
+				84ED50000000000000000014 /* DetectorRailTile.hpp */,
+				84ED50000000000000000015 /* MobSpawnerTile.cpp */,
+				84ED50000000000000000016 /* MobSpawnerTile.hpp */,
+				84ED50000000000000000017 /* MovingPistonTile.cpp */,
+				84ED50000000000000000018 /* MovingPistonTile.hpp */,
+				84ED50000000000000000019 /* Mushroom.cpp */,
+				84ED50000000000000000020 /* Mushroom.hpp */,
+				84ED50000000000000000021 /* PistonBaseTile.cpp */,
+				84ED50000000000000000022 /* PistonBaseTile.hpp */,
+				84ED50000000000000000023 /* PistonHeadTile.cpp */,
+				84ED50000000000000000024 /* PistonHeadTile.hpp */,
+				84ED50000000000000000025 /* PortalTile.cpp */,
+				84ED50000000000000000026 /* PortalTile.hpp */,
+				84ED50000000000000000027 /* Rail.cpp */,
+				84ED50000000000000000028 /* Rail.hpp */,
+				84ED50000000000000000029 /* RailTile.cpp */,
+				84ED50000000000000000030 /* RailTile.hpp */,
+				84ED50000000000000000031 /* SignTile.cpp */,
+				84ED50000000000000000032 /* SignTile.hpp */,
+
+				84ED50000000000000000041 /* PortalParticle.cpp */,
+				84ED50000000000000000042 /* SplashParticle.cpp */,
+				84ED50000000000000000043 /* WaterDropParticle.cpp */,
+
+				84ED50000000000000000044 /* BoatItem.cpp */,
+				84ED50000000000000000045 /* BoatItem.hpp */,
+				84ED50000000000000000046 /* MinecartItem.cpp */,
+				84ED50000000000000000047 /* MinecartItem.hpp */,
+				84ED50000000000000000048 /* PaintingItem.cpp */,
+				84ED50000000000000000049 /* PaintingItem.hpp */,
+				84ED50000000000000000050 /* PistonItem.cpp */,
+				84ED50000000000000000051 /* PistonItem.hpp */,
+				84ED50000000000000000052 /* SaddleItem.cpp */,
+				84ED50000000000000000053 /* SaddleItem.hpp */,
+				84ED50000000000000000054 /* SignItem.cpp */,
+				84ED50000000000000000055 /* SignItem.hpp */,
+
+				84ED50000000000000000056 /* MapColor.cpp */,
+				84ED50000000000000000057 /* MapColor.hpp */,
+
 			);
 			path = entity;
+			sourceTree = "<group>";
+		};
+		84ED41502FC3EC730038BAC4 /* projectile */ = {
+			isa = PBXGroup;
+			children = (
+				84B1E0312E04FD7900ED000A /* Arrow.cpp */,
+				84B1E0322E04FD7900ED000A /* Arrow.hpp */,
+				84E8F9EA2FEF611800D0669F /* Fireball.cpp */,
+				84E8F9EB2FEF611800D0669F /* Fireball.hpp */,
+				84E8F9EC2FEF611800D0669F /* FishingHook.cpp */,
+				84E8F9ED2FEF611800D0669F /* FishingHook.hpp */,
+				84ED41432FC3EC730038BAC4 /* Snowball.cpp */,
+				84ED41442FC3EC730038BAC4 /* Snowball.hpp */,
+				84ED41452FC3EC730038BAC4 /* ThrownEgg.cpp */,
+				84ED41462FC3EC730038BAC4 /* ThrownEgg.hpp */,
+			);
+			path = projectile;
 			sourceTree = "<group>";
 		};
 		840DD6682AC810620006A435 /* gamemode */ = {
@@ -4671,6 +4900,15 @@
 				840DD8472AC810630006A435 /* SDL */,
 				84AA8C802B32FB32003F5B82 /* stb_image */,
 				840DD84D2AC810630006A435 /* zlib */,
+				84ED50000000000000000033 /* MobSpawnerTileEntity.cpp */,
+				84ED50000000000000000034 /* MobSpawnerTileEntity.hpp */,
+				84ED50000000000000000035 /* PistonMovingTileEntity.cpp */,
+				84ED50000000000000000036 /* PistonMovingTileEntity.hpp */,
+				84ED50000000000000000037 /* RecordPlayerTileEntity.cpp */,
+				84ED50000000000000000038 /* RecordPlayerTileEntity.hpp */,
+				84ED50000000000000000039 /* SignTileEntity.cpp */,
+				84ED50000000000000000040 /* SignTileEntity.hpp */,
+
 			);
 			name = thirdparty;
 			path = ../../thirdparty;
@@ -5230,6 +5468,7 @@
 				84AA8B9E2B32F3F3003F5B82 /* DynamicTexture.hpp */,
 				84AA8B9F2B32F3F3003F5B82 /* entity */,
 				84AA8BC42B32F3F3003F5B82 /* FireTexture.cpp */,
+				84ED50A22FC3EC730038BAC4 /* tileentity */,
 				84EB09E02EE2CCA8008FB007 /* Fog.cpp */,
 				84EB09E12EE2CCA8008FB007 /* Fog.hpp */,
 				84AA8BC52B32F3F3003F5B82 /* FoliageColor.cpp */,
@@ -5332,6 +5571,17 @@
 				84AA8BBF2B32F3F3003F5B82 /* TntRenderer.hpp */,
 				84AA8BC02B32F3F3003F5B82 /* TripodCameraRenderer.cpp */,
 				84AA8BC12B32F3F3003F5B82 /* TripodCameraRenderer.hpp */,
+				84ED50000000000000000058 /* BoatRenderer.cpp */,
+				84ED50000000000000000059 /* BoatRenderer.hpp */,
+				84ED50000000000000000060 /* LightningBoltRenderer.cpp */,
+				84ED50000000000000000061 /* LightningBoltRenderer.hpp */,
+				84ED50000000000000000062 /* MinecartRenderer.cpp */,
+				84ED50000000000000000063 /* MinecartRenderer.hpp */,
+				84ED50000000000000000064 /* PaintingRenderer.cpp */,
+				84ED50000000000000000065 /* PaintingRenderer.hpp */,
+				84ED50000000000000000066 /* WolfRenderer.cpp */,
+				84ED50000000000000000067 /* WolfRenderer.hpp */,
+
 			);
 			path = entity;
 			sourceTree = "<group>";
@@ -6019,6 +6269,26 @@
 			path = resources;
 			sourceTree = "<group>";
 		};
+		84ED50A12FC3EC730038BAC4 /* vehicle */ = {
+			isa = PBXGroup;
+			children = (
+				84ED50000000000000000009 /* Boat.cpp */,
+				84ED50000000000000000010 /* Boat.hpp */,
+				84ED50000000000000000011 /* Minecart.cpp */,
+				84ED50000000000000000012 /* Minecart.hpp */,
+			);
+			path = vehicle;
+			sourceTree = "<group>";
+		};
+		84ED50A22FC3EC730038BAC4 /* tileentity */ = {
+			isa = PBXGroup;
+			children = (
+				84ED50000000000000000078 /* TileEntityRenderDispatcher.cpp */,
+				84ED50000000000000000079 /* TileEntityRenderDispatcher.hpp */,
+			);
+			path = tileentity;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -6449,6 +6719,18 @@
 				84F948262F2F5CB700217B16 /* ResourcePack.hpp in Headers */,
 				8470AF412BE9B80900BCA54E /* DisconnectionScreen.hpp in Headers */,
 				848793522FE371BB007B6D40 /* InputMethod.hpp in Headers */,
+				84ED50000000000001000059 /* BoatRenderer.hpp in Headers */,
+				84ED50000000000001000061 /* LightningBoltRenderer.hpp in Headers */,
+				84ED50000000000001000063 /* MinecartRenderer.hpp in Headers */,
+				84ED50000000000001000065 /* PaintingRenderer.hpp in Headers */,
+				84ED50000000000001000067 /* WolfRenderer.hpp in Headers */,
+				84ED50000000000001000069 /* BoatModel.hpp in Headers */,
+				84ED50000000000001000071 /* MinecartModel.hpp in Headers */,
+				84ED50000000000001000073 /* SignModel.hpp in Headers */,
+				84ED50000000000001000075 /* WolfModel.hpp in Headers */,
+				84ED50000000000001000077 /* TextEditScreen.hpp in Headers */,
+				84ED50000000000001000079 /* TileEntityRenderDispatcher.hpp in Headers */,
+
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6680,6 +6962,34 @@
 				8470AF3D2BE9B6FA00BCA54E /* FireworkParticle.hpp in Headers */,
 				84E7BF302F286A20002D3936 /* CompoundContainer.hpp in Headers */,
 				84E8FA132FEF614C00D0669F /* RecordingItem.hpp in Headers */,
+				84ED50000000000001000002 /* LightningBolt.hpp in Headers */,
+				84ED50000000000001000004 /* Painting.hpp in Headers */,
+				84ED50000000000001000006 /* PaintingType.hpp in Headers */,
+				84ED50000000000001000008 /* Wolf.hpp in Headers */,
+				84ED50000000000001000010 /* Boat.hpp in Headers */,
+				84ED50000000000001000012 /* Minecart.hpp in Headers */,
+				84ED50000000000001000014 /* DetectorRailTile.hpp in Headers */,
+				84ED50000000000001000016 /* MobSpawnerTile.hpp in Headers */,
+				84ED50000000000001000018 /* MovingPistonTile.hpp in Headers */,
+				84ED50000000000001000020 /* Mushroom.hpp in Headers */,
+				84ED50000000000001000022 /* PistonBaseTile.hpp in Headers */,
+				84ED50000000000001000024 /* PistonHeadTile.hpp in Headers */,
+				84ED50000000000001000026 /* PortalTile.hpp in Headers */,
+				84ED50000000000001000028 /* Rail.hpp in Headers */,
+				84ED50000000000001000030 /* RailTile.hpp in Headers */,
+				84ED50000000000001000032 /* SignTile.hpp in Headers */,
+				84ED50000000000001000034 /* MobSpawnerTileEntity.hpp in Headers */,
+				84ED50000000000001000036 /* PistonMovingTileEntity.hpp in Headers */,
+				84ED50000000000001000038 /* RecordPlayerTileEntity.hpp in Headers */,
+				84ED50000000000001000040 /* SignTileEntity.hpp in Headers */,
+				84ED50000000000001000045 /* BoatItem.hpp in Headers */,
+				84ED50000000000001000047 /* MinecartItem.hpp in Headers */,
+				84ED50000000000001000049 /* PaintingItem.hpp in Headers */,
+				84ED50000000000001000051 /* PistonItem.hpp in Headers */,
+				84ED50000000000001000053 /* SaddleItem.hpp in Headers */,
+				84ED50000000000001000055 /* SignItem.hpp in Headers */,
+				84ED50000000000001000057 /* MapColor.hpp in Headers */,
+
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7190,6 +7500,49 @@
 				849371312EE51DCD00081C5A /* MainWindow.xib in Resources */,
 				849371332EE51DE800081C5A /* NBCViewController.xib in Resources */,
 				842B21892F5414660006C1FA /* Default-667h@2x.png in Resources */,
+				84ED50000000000001000001 /* LightningBolt.cpp in Sources */,
+				84ED50000000000001000003 /* Painting.cpp in Sources */,
+				84ED50000000000001000005 /* PaintingType.cpp in Sources */,
+				84ED50000000000001000007 /* Wolf.cpp in Sources */,
+				84ED50000000000001000009 /* Boat.cpp in Sources */,
+				84ED50000000000001000011 /* Minecart.cpp in Sources */,
+				84ED50000000000001000013 /* DetectorRailTile.cpp in Sources */,
+				84ED50000000000001000015 /* MobSpawnerTile.cpp in Sources */,
+				84ED50000000000001000017 /* MovingPistonTile.cpp in Sources */,
+				84ED50000000000001000019 /* Mushroom.cpp in Sources */,
+				84ED50000000000001000021 /* PistonBaseTile.cpp in Sources */,
+				84ED50000000000001000023 /* PistonHeadTile.cpp in Sources */,
+				84ED50000000000001000025 /* PortalTile.cpp in Sources */,
+				84ED50000000000001000027 /* Rail.cpp in Sources */,
+				84ED50000000000001000029 /* RailTile.cpp in Sources */,
+				84ED50000000000001000031 /* SignTile.cpp in Sources */,
+				84ED50000000000001000033 /* MobSpawnerTileEntity.cpp in Sources */,
+				84ED50000000000001000035 /* PistonMovingTileEntity.cpp in Sources */,
+				84ED50000000000001000037 /* RecordPlayerTileEntity.cpp in Sources */,
+				84ED50000000000001000039 /* SignTileEntity.cpp in Sources */,
+				84ED50000000000001000041 /* PortalParticle.cpp in Sources */,
+				84ED50000000000001000042 /* SplashParticle.cpp in Sources */,
+				84ED50000000000001000043 /* WaterDropParticle.cpp in Sources */,
+				84ED50000000000001000044 /* BoatItem.cpp in Sources */,
+				84ED50000000000001000046 /* MinecartItem.cpp in Sources */,
+				84ED50000000000001000048 /* PaintingItem.cpp in Sources */,
+				84ED50000000000001000050 /* PistonItem.cpp in Sources */,
+				84ED50000000000001000052 /* SaddleItem.cpp in Sources */,
+				84ED50000000000001000054 /* SignItem.cpp in Sources */,
+				84ED50000000000001000056 /* MapColor.cpp in Sources */,
+
+				84ED50000000000001000058 /* BoatRenderer.cpp in Sources */,
+				84ED50000000000001000060 /* LightningBoltRenderer.cpp in Sources */,
+				84ED50000000000001000062 /* MinecartRenderer.cpp in Sources */,
+				84ED50000000000001000064 /* PaintingRenderer.cpp in Sources */,
+				84ED50000000000001000066 /* WolfRenderer.cpp in Sources */,
+				84ED50000000000001000068 /* BoatModel.cpp in Sources */,
+				84ED50000000000001000070 /* MinecartModel.cpp in Sources */,
+				84ED50000000000001000072 /* SignModel.cpp in Sources */,
+				84ED50000000000001000074 /* WolfModel.cpp in Sources */,
+				84ED50000000000001000076 /* TextEditScreen.cpp in Sources */,
+				84ED50000000000001000078 /* TileEntityRenderDispatcher.cpp in Sources */,
+
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

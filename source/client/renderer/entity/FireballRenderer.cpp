@@ -1,6 +1,6 @@
 #include "FireballRenderer.hpp"
 #include "EntityRenderDispatcher.hpp"
-#include "world/entity/Fireball.hpp"
+#include "world/entity/projectile/Fireball.hpp"
 
 FireballRenderer::FireballRenderer()
 {

@@ -24,19 +24,13 @@ RandomLevelSource::RandomLevelSource(Level* level, int32_t seed, int version) :
 	m_perlinNoise3(&m_random, 8),
 	m_perlinNoise4(&m_random, 4),
 	m_perlinNoise5(&m_random, 4),
-	m_perlinNoise6(&m_random, 10),
-	m_perlinNoise7(&m_random, 16),
+	m_scaleNoise(&m_random, 10),
+	m_depthNoise(&m_random, 16),
 	m_perlinNoise8(&m_random, 8),
 	m_pLevel(level)
 {
 	field_4 = false;
 	field_19F0 = 1.0f;
-	field_7280 = nullptr;
-	field_7E84 = nullptr;
-	field_7E88 = nullptr;
-	field_7E8C = nullptr;
-	field_7E90 = nullptr;
-	field_7E94 = nullptr;
 
 	LOG_I("Generating world with seed: %d", seed);
 
@@ -48,7 +42,9 @@ RandomLevelSource::RandomLevelSource(Level* level, int32_t seed, int version) :
 		}
 	}
 
-	field_7280 = new float[1024];
+	m_sandBuffer.reserve(256);
+	m_gravelBuffer.reserve(256);
+	m_depthBuffer.reserve(256);
 
 	Random random = m_random;
 	LOG_I("random.get : %d", random.genrand_int32() >> 1);
@@ -82,8 +78,8 @@ LevelChunk* RandomLevelSource::getChunk(const ChunkPos& pos)
 	LevelChunk* pChunk = new LevelChunk(m_pLevel, pLevelData, pos);
 	m_chunks.insert(std::pair<int, LevelChunk*>(hashCode, pChunk));
 
-	Biome** pBiomeBlock = m_pLevel->getBiomeSource()->getBiomeBlock(TilePos(pos, 0), 16, 16);
-	prepareHeights(pos, pLevelData, nullptr, m_pLevel->getBiomeSource()->field_4);
+	const std::vector<Biome*>& pBiomeBlock = m_pLevel->getBiomeSource()->getBiomeBlock(TilePos(pos, 0), 16, 16);
+	prepareHeights(pos, pLevelData, nullptr, m_pLevel->getBiomeSource()->m_temperatures);
 	buildSurfaces(pos, pLevelData, pBiomeBlock);
 	pChunk->recalcHeightmap();
 
@@ -113,23 +109,20 @@ LevelChunk* RandomLevelSource::getChunkDontCreate(const ChunkPos& pos)
 	return pChunk;
 }
 
-float* RandomLevelSource::getHeights(float* fptr, int a3, int a4, int a5, int a6, int a7, int a8)
+const std::vector<float>& RandomLevelSource::getHeights(std::vector<float>& fptr, int a3, int a4, int a5, int a6, int a7, int a8)
 {
-	if (fptr == nullptr)
-	{
-		fptr = new float[a6 * a7 * a8];
-	}
+	fptr.resize(a6 * a7 * a8);
 
-	float* bsf4 = m_pLevel->getBiomeSource()->field_4;
-	float* bsf8 = m_pLevel->getBiomeSource()->field_8;
+	std::vector<float>& bsf4 = m_pLevel->getBiomeSource()->m_temperatures;
+	std::vector<float>& bsf8 = m_pLevel->getBiomeSource()->m_downfalls;
 
 	constexpr float C_MAGIC_1 = 684.412f;
 
-	field_7E90 = m_perlinNoise6.getRegion(field_7E90, a3, a5, a6, a8, 1.121f, 1.121f, 0.5f);
-	field_7E94 = m_perlinNoise7.getRegion(field_7E94, a3, a5, a6, a8, 200.0f, 200.0f, 0.5f);
-	field_7E84 = m_perlinNoise3.getRegion(field_7E84, float(a3), float(a4), float(a5), a6, a7, a8, 8.5552f,   4.2776f,   8.5552f);
-	field_7E88 = m_perlinNoise1.getRegion(field_7E88, float(a3), float(a4), float(a5), a6, a7, a8, C_MAGIC_1, C_MAGIC_1, C_MAGIC_1);
-	field_7E8C = m_perlinNoise2.getRegion(field_7E8C, float(a3), float(a4), float(a5), a6, a7, a8, C_MAGIC_1, C_MAGIC_1, C_MAGIC_1);
+	m_sr = m_scaleNoise.getRegion(m_sr, a3, a5, a6, a8, 1.121f, 1.121f, 0.5f);
+	m_dr = m_depthNoise.getRegion(m_dr, a3, a5, a6, a8, 200.0f, 200.0f, 0.5f);
+	m_pnr = m_perlinNoise3.getRegion(m_pnr, float(a3), float(a4), float(a5), a6, a7, a8, 8.5552f,   4.2776f,   8.5552f);
+	m_ar = m_perlinNoise1.getRegion(m_ar, float(a3), float(a4), float(a5), a6, a7, a8, C_MAGIC_1, C_MAGIC_1, C_MAGIC_1);
+	m_br = m_perlinNoise2.getRegion(m_br, float(a3), float(a4), float(a5), a6, a7, a8, C_MAGIC_1, C_MAGIC_1, C_MAGIC_1);
 
 	int k1 = 0;
 	int l1 = 0;
@@ -146,11 +139,11 @@ float* RandomLevelSource::getHeights(float* fptr, int a3, int a4, int a5, int a6
 			d4 *= d4;
 			d4 *= d4;
 			d4 = 1.0f - d4;
-			float d5 = (field_7E90[l1] + 256.0f) / 512.0f;
+			float d5 = (m_sr[l1] + 256.0f) / 512.0f;
 			d5 *= d4;
 			if (d5 > 1.0f)
 				d5 = 1.0f;
-			float d6 = field_7E94[l1] / 8000.0f;
+			float d6 = m_dr[l1] / 8000.0f;
 			if (d6 < 0.0f)
 			{
 				d6 = -d6 * 0.3f;
@@ -185,9 +178,9 @@ float* RandomLevelSource::getHeights(float* fptr, int a3, int a4, int a5, int a6
 				{
 					d9 *= 4.0f;
 				}
-				float d10 = field_7E88[k1] / 512.0f;
-				float d11 = field_7E8C[k1] / 512.0f;
-				float d12 = (field_7E84[k1] / 10.0f + 1.0f) / 2.0f;
+				float d10 = m_ar[k1] / 512.0f;
+				float d11 = m_br[k1] / 512.0f;
+				float d12 = (m_pnr[k1] / 10.0f + 1.0f) / 2.0f;
 				if (d12 < 0.0f)
 					d8 = d10;
 				else if (d12 > 1.0f)
@@ -211,9 +204,9 @@ float* RandomLevelSource::getHeights(float* fptr, int a3, int a4, int a5, int a6
 	return fptr;
 }
 
-void RandomLevelSource::prepareHeights(const ChunkPos& pos, TileID* tiles, void* huh, float* fptr)
+void RandomLevelSource::prepareHeights(const ChunkPos& pos, TileID* tiles, void* huh, std::vector<float>& fptr)
 {
-	field_7280 = getHeights(field_7280, pos.x * 4, 0, pos.z * 4, 5, 17, 5);
+	getHeights(m_buffer, pos.x * 4, 0, pos.z * 4, 5, 17, 5);
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -221,14 +214,14 @@ void RandomLevelSource::prepareHeights(const ChunkPos& pos, TileID* tiles, void*
 		{
 			for (int k = 0; k < 16; k++)
 			{
-				float v24 = field_7280[85 * i + 17 * j + k];
-				float v23 = field_7280[85 * i + 17 + 17 * j + k];
-				float v22 = field_7280[85 * i + 85 + 17 * j + k];
-				float v21 = field_7280[85 * i + 102 + 17 * j + k];
-				float v20 = (field_7280[85 * i + 1 + 17 * j + k] - v24) * 0.125f;
-				float v19 = (field_7280[85 * i + 18 + 17 * j + k] - v23) * 0.125f;
-				float v18 = (field_7280[85 * i + 86 + 17 * j + k] - v22) * 0.125f;
-				float v17 = (field_7280[85 * i + 103 + 17 * j + k] - v21) * 0.125f;
+				float v24 = m_buffer[85 * i + 17 * j + k];
+				float v23 = m_buffer[85 * i + 17 + 17 * j + k];
+				float v22 = m_buffer[85 * i + 85 + 17 * j + k];
+				float v21 = m_buffer[85 * i + 102 + 17 * j + k];
+				float v20 = (m_buffer[85 * i + 1 + 17 * j + k] - v24) * 0.125f;
+				float v19 = (m_buffer[85 * i + 18 + 17 * j + k] - v23) * 0.125f;
+				float v18 = (m_buffer[85 * i + 86 + 17 * j + k] - v22) * 0.125f;
+				float v17 = (m_buffer[85 * i + 103 + 17 * j + k] - v21) * 0.125f;
 				for (int l = 0; l < 8; l++)
 				{
 					float v15 = v24;
@@ -267,12 +260,12 @@ void RandomLevelSource::prepareHeights(const ChunkPos& pos, TileID* tiles, void*
 	}
 }
 
-void RandomLevelSource::buildSurfaces(const ChunkPos& pos, TileID* tiles, Biome** biomes)
+void RandomLevelSource::buildSurfaces(const ChunkPos& pos, TileID* tiles, const std::vector<Biome*>& biomes)
 {
 	//return;
-	m_perlinNoise4.getRegion(field_7284, float(pos.x) * 16.0f, float(pos.z) * 16.0f, 0.0f,    16, 16, 1, 1.0f / 32.0f, 1.0f / 32.0f, 1.0f);
-	m_perlinNoise4.getRegion(field_7684, float(pos.x) * 16.0f, 109.01f, float(pos.z) * 16.0f, 16, 1, 16, 1.0f / 32.0f, 1.0f,         1.0f / 32.0f);
-	m_perlinNoise5.getRegion(field_7A84, float(pos.x) * 16.0f, float(pos.z) * 16.0f, 0.0f,    16, 16, 1, 1.0f / 16.0f, 1.0f / 16.0f, 1.0f / 16.0f);
+	m_perlinNoise4.getRegion(m_sandBuffer, float(pos.x) * 16.0f, float(pos.z) * 16.0f, 0.0f,    16, 16, 1, 1.0f / 32.0f, 1.0f / 32.0f, 1.0f);
+	m_perlinNoise4.getRegion(m_gravelBuffer, float(pos.x) * 16.0f, 109.01f, float(pos.z) * 16.0f, 16, 1, 16, 1.0f / 32.0f, 1.0f,         1.0f / 32.0f);
+	m_perlinNoise5.getRegion(m_depthBuffer, float(pos.x) * 16.0f, float(pos.z) * 16.0f, 0.0f,    16, 16, 1, 1.0f / 16.0f, 1.0f / 16.0f, 1.0f / 16.0f);
 
 	// @NOTE: Again, extracted from Java Beta 1.6. Probably accurate
 	constexpr int byte0 = 64;
@@ -282,13 +275,13 @@ void RandomLevelSource::buildSurfaces(const ChunkPos& pos, TileID* tiles, Biome*
 		for (int l = 0; l < 16; l++)
 		{
 			Biome* pBiome = biomes[k + l * 16];
-			bool flag = field_7284[k + l * 16] + m_random.nextFloat() * 0.2f > 0.0f;
-			bool flag1 = field_7684[k + l * 16] + m_random.nextFloat() * 0.2f > 3.0f;
-			int i1 = (int)(field_7A84[k + l * 16] / 3.0f + 3.0f + m_random.nextFloat() * 0.25f);
+			bool flag = m_sandBuffer[k + l * 16] + m_random.nextFloat() * 0.2f > 0.0f;
+			bool flag1 = m_gravelBuffer[k + l * 16] + m_random.nextFloat() * 0.2f > 3.0f;
+			int i1 = (int)(m_depthBuffer[k + l * 16] / 3.0f + 3.0f + m_random.nextFloat() * 0.25f);
 			int j1 = -1;
 
-			TileID byte1 = pBiome->field_20;
-			TileID byte2 = pBiome->field_21;
+			TileID byte1 = pBiome->m_topTile;
+			TileID byte2 = pBiome->m_fillerTile;
 
 			for (int k1 = 127; k1 >= 0; k1--)
 			{
@@ -318,8 +311,8 @@ void RandomLevelSource::buildSurfaces(const ChunkPos& pos, TileID* tiles, Biome*
 					}
 					else if (k1 >= byte0 - 4 && k1 <= byte0 + 1)
 					{
-						byte1 = pBiome->field_20;
-						byte2 = pBiome->field_21;
+						byte1 = pBiome->m_topTile;
+						byte2 = pBiome->m_fillerTile;
 						if (flag1)
 						{
 							byte1 = 0;
@@ -369,7 +362,7 @@ void RandomLevelSource::postProcess(ChunkSource* src, const ChunkPos& pos)
 	TilePos tp = TilePos(pos, 0);
 
 	//LOG_I("Post-Processing %d, %d", pos.x, pos.z);
-	Biome* pBiome = m_pLevel->getBiomeSource()->getBiome(tp + 16);
+	Biome* pBiome = m_pLevel->getBiomeSource()->getBiomeAt(tp + 16);
 	int32_t seed = m_pLevel->getSeed();
 
 	m_random.setSeed(seed);
@@ -615,7 +608,7 @@ void RandomLevelSource::postProcess(ChunkSource* src, const ChunkPos& pos)
 		VegetationFeature(Tile::deadBush->id, 0, 4).place(m_pLevel, &m_random, TilePos(tp.x + 8 + xo, yo, tp.z + 8 + zo));
 	}
 #endif
-	float* tempBlock = m_pLevel->getBiomeSource()->getTemperatureBlock(tp.x + 8, tp.z + 8, 16, 16);
+	const std::vector<float>& tempBlock = m_pLevel->getBiomeSource()->getTemperatureBlock(tp.x + 8, tp.z + 8, 16, 16);
 	for (int j19 = tp.x + 8; j19 < tp.x + 8 + 16; j19++)
 	{
 		for (int j22 = tp.z + 8; j22 < tp.z + 8 + 16; j22++)

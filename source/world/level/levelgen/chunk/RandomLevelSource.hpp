@@ -32,9 +32,9 @@ public:
 	std::string gatherStats() override;
 	void postProcess(ChunkSource*, const ChunkPos& pos) override;
 
-	float* getHeights(float*, int, int, int, int, int, int);
-	void prepareHeights(const ChunkPos& pos, TileID*, void*, float*);
-	void buildSurfaces (const ChunkPos& pos, TileID*, Biome**);
+	const std::vector<float>& getHeights(std::vector<float>&, int, int, int, int, int, int);
+	void prepareHeights(const ChunkPos& pos, TileID*, void*, std::vector<float>&);
+	void buildSurfaces (const ChunkPos& pos, TileID*, const std::vector<Biome*>&);
 	
 
 public:
@@ -49,20 +49,20 @@ public:
 	PerlinNoise m_perlinNoise3;
 	PerlinNoise m_perlinNoise4;
 	PerlinNoise m_perlinNoise5;
-	PerlinNoise m_perlinNoise6;
-	PerlinNoise m_perlinNoise7;
+	PerlinNoise m_scaleNoise;
+	PerlinNoise m_depthNoise;
 	PerlinNoise m_perlinNoise8;
 	Level* m_pLevel;
-	float* field_7280;
-	float field_7284[256];
-	float field_7684[256];
-	float field_7A84[256];
+	std::vector<float> m_buffer;
+	std::vector<float> m_sandBuffer;
+	std::vector<float> m_gravelBuffer;
+	std::vector<float> m_depthBuffer;
 	// @TODO
-	float* field_7E84;
-	float* field_7E88;
-	float* field_7E8C;
-	float* field_7E90;
-	float* field_7E94;
+	std::vector<float> m_pnr;
+	std::vector<float> m_ar;
+	std::vector<float> m_br;
+	std::vector<float> m_sr;
+	std::vector<float> m_dr;
 	// @TODO
 
 

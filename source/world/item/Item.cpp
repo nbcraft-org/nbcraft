@@ -37,6 +37,11 @@
 #include "FishingRodItem.hpp"
 #include "RecordingItem.hpp"
 #include "BucketItem.hpp"
+#include "MinecartItem.hpp"
+#include "BoatItem.hpp"
+#include "SaddleItem.hpp"
+#include "PaintingItem.hpp"
+#include "SignItem.hpp"
 
 #define ITEM(x) ((x) - 256)
 
@@ -126,6 +131,26 @@ Item::EquipmentSlot Item::getEquipmentSlot() const
 int Item::getDefense() const
 {
 	return 0;
+}
+
+const std::string& Item::getStreamingMusic() const
+{
+	return Util::EMPTY_STRING;
+}
+
+bool Item::isFood() const
+{
+	return false;
+}
+
+bool Item::isWolfFood() const
+{
+	return false;
+}
+
+bool Item::isComplex() const
+{
+	return false;
 }
 
 const std::string& Item::getArmorTexture() const
@@ -414,11 +439,11 @@ void Item::initItems()
 		->setIcon(6, 0)
 		->setDescriptionId("flint");
 
-	Item::porkChop_raw = NEW_X_ITEM(FoodItem, ITEM_PORKCHOP_RAW, 3)
+	Item::porkChop_raw = (new FoodItem(ITEM(ITEM_PORKCHOP_RAW), 3, true))
 		->setIcon(7, 5)
 		->setDescriptionId("porkchopRaw");
 
-	Item::porkChop_cooked = NEW_X_ITEM(FoodItem, ITEM_PORKCHOP_COOKED, 8)
+	Item::porkChop_cooked = (new FoodItem(ITEM(ITEM_PORKCHOP_COOKED), 8, true))
 		->setIcon(8, 5)
 		->setDescriptionId("porkchopCooked");
 
@@ -448,19 +473,19 @@ void Item::initItems()
 		->setDescriptionId("bucketLava")
 		->setCraftingRemainingItem(bucket_empty);
 
-	Item::minecart = NEW_ITEM(ITEM_MINECART)
+	Item::minecart = NEW_X_ITEM(MinecartItem, ITEM_MINECART, Minecart::TYPE_DEFAULT)
 		->setIcon(7, 8)
 		->setDescriptionId("minecart");
 
-	Item::minecart_chest = NEW_ITEM(ITEM_MINECART_CHEST)
+	Item::minecart_chest = NEW_X_ITEM(MinecartItem, ITEM_MINECART_CHEST, Minecart::TYPE_CHEST)
 		->setIcon(7, 9)
 		->setDescriptionId("minecartChest");
 
-	Item::minecart_furnace = NEW_ITEM(ITEM_MINECART_FURNACE)
+	Item::minecart_furnace = NEW_X_ITEM(MinecartItem, ITEM_MINECART_FURNACE, Minecart::TYPE_FURNACE)
 		->setIcon(7, 10)
 		->setDescriptionId("minecartFurnace");
 
-	Item::boat = NEW_ITEM(ITEM_BOAT)
+	Item::boat = NEW_X_ITEMN(BoatItem, ITEM_BOAT)
 		->setIcon(8, 8)
 		->setDescriptionId("boat");
 
@@ -476,7 +501,7 @@ void Item::initItems()
 		->setIcon(14, 0)
 		->setDescriptionId("snowball");
 
-	Item::saddle = NEW_ITEM(ITEM_SADDLE)
+	Item::saddle = NEW_X_ITEMN(SaddleItem, ITEM_SADDLE)
 		->setIcon(8, 6)
 		->setDescriptionId("saddle");
 
@@ -570,11 +595,11 @@ void Item::initItems()
 		->setIcon(12, 5)
 		->setDescriptionId("cookie");
 
-	Item::sign = NEW_ITEM(ITEM_SIGN)
+	Item::sign = NEW_X_ITEMN(SignItem, ITEM_SIGN)
 		->setIcon(10, 2)
 		->setDescriptionId("sign");
 
-	Item::painting = NEW_ITEM(ITEM_PAINTING)
+	Item::painting = NEW_X_ITEMN(PaintingItem, ITEM_PAINTING)
 		->setIcon(10, 1)
 		->setDescriptionId("painting");
 
@@ -663,14 +688,14 @@ int Item::getMaxDamage() const
 	return m_maxDamage;
 }
 
-void Item::hurtEnemy(ItemStack* instance, Mob* mob) const
+bool Item::hurtEnemy(ItemStack* instance, Mob* mob, Mob* attacker) const
 {
-
+	return false;
 }
 
-void Item::mineBlock(ItemStack* instance, const TilePos& pos, Facing::Name face, Mob* mob) const
+bool Item::mineBlock(ItemStack* instance, const TilePos& pos, Facing::Name face, Mob* mob) const
 {
-
+	return false;
 }
 
 int Item::getAttackDamage(Entity* ent) const

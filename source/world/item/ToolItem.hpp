@@ -36,8 +36,8 @@ protected:
 
 public:
 	float getDestroySpeed(ItemStack* instance, const Tile* tile) const override;
-	void hurtEnemy(ItemStack* instance, Mob* mob) const override;
-	void mineBlock(ItemStack*, const TilePos& pos, Facing::Name face, Mob* mob) const override;
+	bool hurtEnemy(ItemStack* instance, Mob* mob, Mob* attacker) const override;
+	bool mineBlock(ItemStack*, const TilePos& pos, Facing::Name face, Mob* mob) const override;
 	int getAttackDamage(Entity* entity) const override;
 	bool isHandEquipped() const override;
 	bool canDestroySpecial(const Tile* tile) const override;

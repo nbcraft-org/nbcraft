@@ -24,7 +24,7 @@ HumanoidMobRenderer::HumanoidMobRenderer(HumanoidModel* pModel, float f) : MobRe
 	m_armorLeggings->m_pMaterial = &m_armorLeggings->m_materials.entity_alphatest;
 }
 
-int HumanoidMobRenderer::prepareArmor(const Mob& mob, int layer, float a)
+bool HumanoidMobRenderer::prepareArmor(const Mob& mob, int layer, float a)
 {
 	// If other humanoid mobs get armor/inventories, this can be changed
 	// .wearsArmor()?

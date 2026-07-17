@@ -167,12 +167,12 @@ void Font::drawWordWrap(const std::vector<std::string>& lines, int x, int y, con
 	}
 }
 
-void Font::draw(const std::string& str, int x, int y, const Color& color, bool bShadow)
+void Font::draw(const std::string& str, int x, int y, const Color& color, bool bShadow, mce::MaterialPtr* material)
 {
-	drawSlow(str, x, y, color, bShadow);
+	drawSlow(str, x, y, color, bShadow, material);
 }
 
-void Font::drawSlow(const std::string& str, int x, int y, const Color& color, bool bShadow)
+void Font::drawSlow(const std::string& str, int x, int y, const Color& color, bool bShadow, mce::MaterialPtr* material)
 {
 	if (str.empty()) return;
 
@@ -222,7 +222,7 @@ void Font::drawSlow(const std::string& str, int x, int y, const Color& color, bo
 		cXPos += m_charWidthFloat[x];
 	}
 
-	t.draw(m_materials.ui_text);
+	t.draw(material ? *material : m_materials.ui_text);
 }
 
 void Font::onGraphicsReset()

@@ -8,6 +8,7 @@
 #include "Pig.hpp"
 #include "Player.hpp"
 #include "world/level/Level.hpp"
+#include "nbt/CompoundTag.hpp"
 
 Pig::Pig(Level* pLevel) : Animal(pLevel)
 {
@@ -15,7 +16,13 @@ Pig::Pig(Level* pLevel) : Animal(pLevel)
 	m_renderType = RENDER_PIG;
 	m_texture = "mob/pig.png";
 	setSize(0.9f, 0.9f);
-	// some dataitem stuff
+	
+	_defineEntityData();
+}
+
+void Pig::_defineEntityData()
+{
+	m_entityData.define<int8_t>(DATA_SADDLE, 0);
 }
 
 int Pig::getDeathLoot() const
@@ -27,19 +34,9 @@ int Pig::getDeathLoot() const
 
 bool Pig::interact(Player* pPlayer)
 {
-	return false;
-	// @TODO: add saddles
-	/*
-    if (m_pLevel->m_bIsClientSide)
-	{
+	if (m_pLevel->m_bIsClientSide || !hasSaddle())
 		return false;
-	}
 
-	if (!m_bSaddled)
-	{
-		return false;
-	}
-	
 	Entity* rider = getRider();
 
 	// already being ridden by someone else
@@ -50,10 +47,26 @@ bool Pig::interact(Player* pPlayer)
 
 	pPlayer->ride(this);
 	return true;
-	*/
+}
+
+void Pig::addAdditionalSaveData(CompoundTag& tag) const
+{
+	Animal::addAdditionalSaveData(tag);
+	tag.putBoolean("Saddle", hasSaddle());
+}
+
+void Pig::readAdditionalSaveData(const CompoundTag& tag)
+{
+	Animal::readAdditionalSaveData(tag);
+	setSaddle(tag.getBoolean("Saddle"));
+}
+
+bool Pig::hasSaddle() const
+{
+	return m_entityData.get<int8_t>(DATA_SADDLE) & 1;
 }
 
 void Pig::setSaddle(bool b)
 {
-	// @TODO: this
+	m_entityData.set<int8_t>(DATA_SADDLE, b);
 }

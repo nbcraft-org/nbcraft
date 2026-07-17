@@ -18,7 +18,6 @@
 #define DATA_SHARED_FLAGS_ID (0)
 
 int Entity::entityCounter;
-Random Entity::sharedRandom;
 
 void Entity::_init()
 {
@@ -50,7 +49,7 @@ void Entity::_init()
 	m_ySlideOffset = 0.0f;
 	m_footSize = 0.0f;
 	m_bNoPhysics = false;
-	m_pushthrough = 0.0f;
+	m_pushThrough = 0.0f;
     m_tickCount = 0;
 	m_invulnerableTime = 0;
 	m_airCapacity = TOTAL_AIR_SUPPLY;
@@ -241,7 +240,7 @@ void Entity::move(const Vec3& pos)
 		if (!m_bSlide && cPosZ != newPos.z)
 			newPos = Vec3::ZERO;
 
-		if (m_footSize > 0.0f && lastsOnGround && m_ySlideOffset < 0.05F && (cPosX != newPos.x || cPosZ != newPos.z))
+		if (m_footSize > 0.0f && lastsOnGround && m_ySlideOffset < 0.05f && (cPosX != newPos.x || cPosZ != newPos.z))
 		{
 			Vec3 oldPos = newPos;
 			newPos.x = cPosX;
@@ -357,7 +356,7 @@ void Entity::move(const Vec3& pos)
 
 		if (bIsInWater && m_fireTicks > 0)
 		{
-			m_pLevel->playSound(this, "random.fizz", 0.7f, 1.6f + (sharedRandom.nextFloat() - sharedRandom.nextFloat()) * 0.4f);
+			m_pLevel->playSound(this, "random.fizz", 0.7f, 1.6f + (m_random.nextFloat() - m_random.nextFloat()) * 0.4f);
 			m_fireTicks = -m_flameTime;
 		}
 
@@ -498,7 +497,7 @@ void Entity::baseTick()
 	m_oPos = m_pos;
     m_tickCount++;
 	m_oRot = m_rot;
-	if (isInWater())
+	if (checkInWater())
 	{
 		if (!m_bWasInWater && !m_bFirstTick)
 		{
@@ -506,7 +505,7 @@ void Entity::baseTick()
 			if (dist > 1.0f)
 				dist = 1.0f;
 
-			m_pLevel->playSound(this, "random.splash", dist, 1.0f + 0.4f * (sharedRandom.nextFloat() - sharedRandom.nextFloat()));
+			m_pLevel->playSound(this, "random.splash", dist, 1.0f + 0.4f * (m_random.nextFloat() - m_random.nextFloat()));
 
 			float f1 = floorf(m_hitbox.min.y);
 
@@ -515,13 +514,13 @@ void Entity::baseTick()
 				m_pLevel->addParticle(
 					"bubble",
 					Vec3(
-						m_pos.x + m_bbWidth * (sharedRandom.nextFloat() * 2.0f - 1.0f),
+						m_pos.x + m_bbWidth * (m_random.nextFloat() * 2.0f - 1.0f),
 						f1 + 1.0f,
-						m_pos.z + m_bbWidth * (sharedRandom.nextFloat() * 2.0f - 1.0f)
+						m_pos.z + m_bbWidth * (m_random.nextFloat() * 2.0f - 1.0f)
 					),
 					Vec3(
 						m_vel.x,
-						m_vel.y - 0.2f * sharedRandom.nextFloat(),
+						m_vel.y - 0.2f * m_random.nextFloat(),
 						m_vel.z
 					)
 				);
@@ -532,13 +531,13 @@ void Entity::baseTick()
 				m_pLevel->addParticle(
 					"splash",
 					Vec3(
-						m_pos.x + m_bbWidth * (sharedRandom.nextFloat() * 2.0f - 1.0f),
+						m_pos.x + m_bbWidth * (m_random.nextFloat() * 2.0f - 1.0f),
 						f1 + 1.0f,
-						m_pos.z + m_bbWidth * (sharedRandom.nextFloat() * 2.0f - 1.0f)
+						m_pos.z + m_bbWidth * (m_random.nextFloat() * 2.0f - 1.0f)
 					),
 					Vec3(
 						m_vel.x,
-						m_vel.y - 0.2f * sharedRandom.nextFloat(),
+						m_vel.y - 0.2f * m_random.nextFloat(),
 						m_vel.z
 					)
 				);
@@ -638,6 +637,16 @@ bool Entity::isInWall() const
 
 bool Entity::isInWater()
 {
+	return m_bWasInWater;
+}
+
+bool Entity::isInWaterOrRain()
+{
+	return m_bWasInWater/* || m_pLevel->isRainingAt(m_pos)*/;
+}
+
+bool Entity::checkInWater()
+{
 	AABB aabb = m_hitbox;
 	aabb.grow(0, -0.4f, 0);
 	return m_pLevel->checkAndHandleWater(aabb, Material::water, this);
@@ -701,19 +710,17 @@ Rot2 Entity::getRot(float f) const
 
 Vec3 Entity::getViewVector(float f) const
 {
-	constexpr float C_PI = 3.1416f; // @HUH: Why not just use M_PI here?
-
 	if (f == 1.0)
 	{
-		Vec3 x(Mth::cos(-(m_rot.yaw * MTH_DEG_TO_RAD) - C_PI),
-			Mth::sin(-(m_rot.yaw * MTH_DEG_TO_RAD) - C_PI),
+		Vec3 x(Mth::cos(-(m_rot.yaw * MTH_DEG_TO_RAD) - M_PI),
+			Mth::sin(-(m_rot.yaw * MTH_DEG_TO_RAD) - M_PI),
 			-Mth::cos(-(m_rot.pitch * MTH_DEG_TO_RAD)));
 
-		return Vec3(x.x * x.z, Mth::sin(-(m_rot.pitch * MTH_DEG_TO_RAD)), x.y * x.z);
+		return Vec3(x.y * x.z, Mth::sin(-(m_rot.pitch * MTH_DEG_TO_RAD)), x.x * x.z);
 	}
 
 	float x1 = m_oRot.pitch + (m_rot.pitch - m_oRot.pitch) * f;
-	float x2 = -((m_oRot.yaw + (m_rot.yaw - m_oRot.yaw) * f) * MTH_DEG_TO_RAD) - C_PI;
+	float x2 = -((m_oRot.yaw + (m_rot.yaw - m_oRot.yaw) * f) * MTH_DEG_TO_RAD) - M_PI;
 	float x3 = Mth::cos(x2);
 	float x4 = Mth::sin(x2);
 	float x5 = -(x1 * MTH_DEG_TO_RAD);
@@ -782,7 +789,7 @@ void Entity::push(Entity* bud)
 	float x2 = 1.0f / x1;
 	if (x2 > 1.0f)
 		x2 = 1.0f;
-	float x3 = 1.0f - m_pushthrough;
+	float x3 = 1.0f - m_pushThrough;
 	float x4 = x3 * diffX / x1 * x2 * 0.05f;
 	float x5 = x3 * diffZ / x1 * x2 * 0.05f;
 
@@ -1109,6 +1116,9 @@ void Entity::setRider(Entity* rider)
 {
 	m_riderId = (rider) ? rider->m_EntityID : 0;
 }
+
+void Entity::thunderHit(LightningBolt*)
+{}
 
 void Entity::setRiding(Entity* riding)
 {

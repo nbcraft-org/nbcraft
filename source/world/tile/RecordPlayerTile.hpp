@@ -1,15 +1,17 @@
 #pragma once
 
-#include "Tile.hpp"
+#include "EntityTile.hpp"
 
-class RecordPlayerTile : public Tile
+class RecordPlayerTile : public EntityTile
 {
 public:
 	RecordPlayerTile(TileID id, int texture);
 
-public:
 	int getTexture(Facing::Name face) const override;
-	bool use(Level*, const TilePos& pos, Player*) override;
-	void dropRecording(Level*, const TilePos& pos, TileData data);
-	void spawnResources(Level*, const TilePos& pos, TileData data, float) override;
+	bool use(Level* level, const TilePos& pos, Player* player) override;
+	void spawnResources(Level*, const TilePos& pos, TileID, float) override;
+	void onRemove(Level* level, const TilePos& pos) override;
+	static void playRecord(Level* level, const TilePos& pos, int);
+	static void ejectRecord(Level* level, const TilePos& pos);
+	TileEntity* newTileEntity() override;
 };

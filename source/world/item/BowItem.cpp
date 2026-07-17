@@ -1,7 +1,7 @@
 #include "BowItem.hpp"
 #include "world/entity/Player.hpp"
 #include "world/level/Level.hpp"
-#include "world/entity/Arrow.hpp"
+#include "world/entity/projectile/Arrow.hpp"
 
 BowItem::BowItem(int id) : Item(id)
 {

@@ -8,6 +8,7 @@ SlimeModel::SlimeModel(int vOffs) :
 	m_mouth(32, 8)
 {
 	m_vOffs = vOffs;
+	m_pMaterial = &m_materials.entity_alphablend;
 
 	if (vOffs > 0)
 	{
@@ -32,7 +33,7 @@ SlimeModel::~SlimeModel()
 void SlimeModel::render(float a, float b, float c, float d, float e, float f)
 {
 	setupAnim(a, b, c, d, e, f);
-	m_cube.render(f, &m_materials.entity_alphablend);
+	m_cube.render(f);
 	if (m_vOffs > 0)
 	{
 		m_eye0.render(f);

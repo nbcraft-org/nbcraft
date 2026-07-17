@@ -15,6 +15,7 @@
 #include "renderer/GlobalConstantBuffers.hpp"
 #include "renderer/ShaderConstants.hpp"
 #include "renderer/RenderContextImmediate.hpp"
+#include "tileentity/TileEntityRenderDispatcher.hpp"
 
 #if MCE_GFX_API_OGL
 #include "thirdparty/GL/GL.hpp"
@@ -45,6 +46,7 @@ LevelRenderer::Materials::Materials()
 	MATERIAL_PTR(common, stars);
 	MATERIAL_PTR(common, skyplane);
 	MATERIAL_PTR(common, sun_moon);
+	MATERIAL_PTR(common, snow_rain);
 	MATERIAL_PTR(common, sunrise);
 	MATERIAL_PTR(common, selection_overlay);
 	MATERIAL_PTR(common, selection_overlay_opaque);
@@ -1438,6 +1440,11 @@ void LevelRenderer::addParticle(const std::string& name, const Vec3& pos, const 
 		pe->add(new NoteParticle(m_pLevel, pos, dir));
 		return;
 	}
+	if (name == "portal")
+	{
+		pe->add(new PortalParticle(m_pLevel, pos, dir));
+		return;
+	}
 	if (name == "explode")
 	{
 		pe->add(new ExplodeParticle(m_pLevel, pos, dir));
@@ -1464,6 +1471,11 @@ void LevelRenderer::addParticle(const std::string& name, const Vec3& pos, const 
 		FlameParticle* pFlamePart = new FlameParticle(m_pLevel, pos, dir);
 		pFlamePart->scale(4.0f);
 		pe->add(pFlamePart);
+		return;
+	}
+	if (name == "splash")
+	{
+		pe->add(new SplashParticle(m_pLevel, pos, dir));
 		return;
 	}
 	if (name == "lava")
@@ -1537,6 +1549,7 @@ void LevelRenderer::renderLevel(const Entity& camera, FrustumCuller& culler, flo
 	ParticleEngine& particleEngine = *m_pMinecraft->m_pParticleEngine;
 	Textures& textures = *m_pMinecraft->m_pTextures;
 	mce::RenderContext& renderContext = mce::RenderContextImmediate::get();
+	GameRenderer& gameRenderer = *m_pMinecraft->m_pGameRenderer;
 
 	_updateViewArea(camera);
 	_startFrame(culler, renderDistance, f);
@@ -1573,7 +1586,7 @@ void LevelRenderer::renderLevel(const Entity& camera, FrustumCuller& culler, flo
 
 	if (camera.isUnderLiquid(Material::water))
 	{
-		//renderWeather(f);
+		gameRenderer.renderSnowAndRain(f);
 		RenderChunk::SetUnderwater(true);
 	}
 	else
@@ -1590,7 +1603,7 @@ void LevelRenderer::renderLevel(const Entity& camera, FrustumCuller& culler, flo
 
 	if (!camera.isUnderLiquid(Material::water))
 	{
-		//renderWeather(f);
+		gameRenderer.renderSnowAndRain(f);
 	}
 
 	// Was after renderCracks in GameRenderer
@@ -1607,13 +1620,14 @@ void LevelRenderer::renderEntities(Vec3 pos, Culler* culler, float f)
 
 	const Mob* camera = m_pMinecraft->m_pCameraEntity;
 
+	TileEntityRenderDispatcher::getInstance()->prepare(m_pLevel, m_pMinecraft->m_pTextures, m_pMinecraft->m_pFont, camera, f);
 	EntityRenderDispatcher::getInstance()->prepare(m_pLevel, m_pMinecraft->m_pTextures, m_pMinecraft->m_pFont, camera, m_pMinecraft->getOptions(), f);
 
 	m_totalEntities = 0;
 	m_renderedEntities = 0;
 	m_culledEntities = 0;
 
-	EntityRenderDispatcher::off = camera->m_posPrev + (camera->m_pos - camera->m_posPrev) * f;
+	EntityRenderDispatcher::off = TileEntityRenderDispatcher::off = camera->m_posPrev + (camera->m_pos - camera->m_posPrev) * f;
 
 	const EntityMap* pVec = m_pLevel->getAllEntities();
 	m_totalEntities = int(pVec->size());
@@ -1637,15 +1651,12 @@ void LevelRenderer::renderEntities(Vec3 pos, Culler* culler, float f)
 		}
 	}
 
-	/*
-	// @TODO: TileEntityRenderDispatcher
 	for (TileEntityVector::const_iterator it = m_renderableTileEntities.begin();
 		it != m_renderableTileEntities.end(); ++it)
 	{
 		TileEntity* tileEntity = *it;
 		TileEntityRenderDispatcher::getInstance()->render(tileEntity, f);
 	}
-	*/
 }
 
 void LevelRenderer::renderShadow(const Entity& entity, const Vec3& pos, float r, float pow, float a)
@@ -1851,7 +1862,7 @@ void LevelRenderer::renderAdvancedClouds(float alpha)
 	float zo = (m_pMinecraft->m_pCameraEntity->m_oPos.z + (m_pMinecraft->m_pCameraEntity->m_pos.z - m_pMinecraft->m_pCameraEntity->m_oPos.z) * alpha) / ss + 0.33f;
 
 	float yy = ((float)C_MAX_Y - yOffs) + 0.33f; // 108.0f on b1.2_02, see below
-    //float yy = 108.0f - yOffs + 0.33F;
+    //float yy = 108.0f - yOffs + 0.33f;
 
 	int xOffs = Mth::floor(xo / 2048);
 	int zOffs = Mth::floor(zo / 2048);
@@ -2032,16 +2043,66 @@ void LevelRenderer::skyColorChanged()
 
 void LevelRenderer::levelEvent(const LevelEvent& event)
 {
+	Random& random = m_pLevel->m_random;
 	switch (event.id)
 	{
+	case LevelEvent::SOUND_CLICK:
+		m_pLevel->playSound(event.pos, "random.click");
+		break;
+	case LevelEvent::SOUND_CLICK_FAIL:
+		m_pLevel->playSound(event.pos, "random.click", 1.0f, 1.2f);
+		break;
+	case LevelEvent::SOUND_SHOOT:
+		m_pLevel->playSound(event.pos, "random.bow", 1.0f, 1.2f);
+		break;
 	case LevelEvent::SOUND_DOOR:
+	{
 		std::string snd;
 		if (Mth::random() < 0.5f)
 			snd = "random.door_open";
 		else
 			snd = "random.door_close";
 
-		m_pLevel->playSound(Vec3(event.pos) + 0.5f, snd, 1.0f, 0.9f + 0.1f * m_pLevel->m_random.nextFloat());
+		m_pLevel->playSound(Vec3(event.pos) + 0.5f, snd, 1.0f, 0.9f + 0.1f * random.nextFloat());
 		break;
+	}
+	case LevelEvent::SOUND_FIZZ:
+		m_pLevel->playSound(Vec3(event.pos) + 0.5f, "random.fizz", 0.5f, 2.6f + (random.nextFloat() - random.nextFloat()) * 0.8f);
+		break;
+	case LevelEvent::SOUND_PLAY_RECORD:
+		m_pLevel->playStreamingMusic(event.data ? Item::items[event.data]->getStreamingMusic() : Util::EMPTY_STRING, Vec3(event.pos));
+		break;
+	case LevelEvent::PARTICLE_SHOOT:
+	{
+		int var8 = event.data % 3 - 1;
+		int var9 = event.data / 3 % 3 - 1;
+		float var10 = event.pos.x + var8 * 0.6 + 0.5;
+		float var12 = event.pos.y + 0.5;
+		float var14 = event.pos.z + var9 * 0.6 + 0.5;
+
+		for (int i = 0; i < 10; ++i)
+		{
+			float var31 = random.nextFloat() * 0.2 + 0.01;
+			float var19 = var10 + var8 * 0.01 + (random.nextFloat() - 0.5) * var9 * 0.5;
+			float var21 = var12 + (random.nextFloat() - 0.5) * 0.5;
+			float var23 = var14 + var9 * 0.01 + (random.nextFloat() - 0.5) * var8 * 0.5;
+			float var25 = var8 * var31 + random.nextGaussian() * 0.01;
+			float var27 = -0.03 + random.nextGaussian() * 0.01;
+			float var29 = var9 * var31 + random.nextGaussian() * 0.01;
+			addParticle("smoke", Vec3(var19, var21, var23), Vec3(var25, var27, var29));
+		}
+		break;
+	}
+	case LevelEvent::PARTICLE_DESTROY:
+	{
+		TileID tileID = event.data & 255;
+		if (tileID > 0)
+		{
+			const Tile::SoundType* sound = Tile::tiles[tileID]->m_pSound;
+			m_pMinecraft->m_pSoundEngine->play(sound->name, Vec3(event.pos) + 0.5f, (sound->volume + 1.0f) / 2.0f, sound->pitch * 0.8f);
+		}
+		m_pMinecraft->m_pParticleEngine->destroyEffect(event.pos, tileID, (event.data >> 8 & 255));
+		break;
+	}
 	}
 }

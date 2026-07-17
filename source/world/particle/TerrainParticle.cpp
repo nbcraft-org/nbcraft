@@ -30,13 +30,13 @@ TerrainParticle::TerrainParticle(Level* level, const Vec3& pos, const Vec3& dir,
 	_init(tile);
 }
 
-TerrainParticle* TerrainParticle::init(const TilePos& tilePos, Facing::Name face)
+TerrainParticle* TerrainParticle::init(const TilePos& tilePos, TileData data, Facing::Name face)
 {
 #ifndef ENH_FACED_TERRAIN_PARTICLES
 	face = Facing::DOWN;
 #endif
 
-	m_tex = m_pTile->getTexture(m_pLevel, tilePos, face);
+	m_tex = m_pTile->getTexture(face, data);
 
 	if (m_pTile == Tile::grass && face != Facing::UP)
 		return this;
@@ -52,6 +52,11 @@ TerrainParticle* TerrainParticle::init(const TilePos& tilePos, Facing::Name face
 int TerrainParticle::getParticleTexture()
 {
 	return PT_TERRAIN;
+}
+
+TerrainParticle* TerrainParticle::init(const TilePos& tilePos, Facing::Name face)
+{
+	return init(tilePos, m_pLevel->getData(tilePos), face);
 }
 
 void TerrainParticle::render(Tesselator& t, float f, float a4, float a5, float a6, float a7, float a8)
@@ -80,6 +85,6 @@ void TerrainParticle::render(Tesselator& t, float f, float a4, float a5, float a
 	t.color(m_rCol * fBright, m_gCol * fBright, m_bCol * fBright);
 	t.vertexUV(posX - sizeX - siz2X, posY - sizeY, posZ - sizeZ - siz2Z, texU_1 + C_MAGIC_1, texV_1 + C_MAGIC_1);
 	t.vertexUV(posX - sizeX + siz2X, posY + sizeY, posZ - sizeZ + siz2Z, texU_1 + C_MAGIC_1, texV_1);
-	t.vertexUV(posX + sizeX + siz2X, posY + sizeY, posZ + sizeZ + siz2Z, texU_1, texV_1);
-	t.vertexUV(posX + sizeX - siz2X, posY - sizeY, posZ + sizeZ - siz2Z, texU_1, texV_1 + C_MAGIC_1);
+	t.vertexUV(posX + sizeX + siz2X, posY + sizeY, posZ + sizeZ + siz2Z, texU_1,             texV_1);
+	t.vertexUV(posX + sizeX - siz2X, posY - sizeY, posZ + sizeZ - siz2Z, texU_1,             texV_1 + C_MAGIC_1);
 }

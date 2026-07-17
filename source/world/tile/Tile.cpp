@@ -13,7 +13,7 @@
 #include "world/item/AuxTileItem.hpp"
 #include "world/item/ClothItem.hpp"
 #include "world/item/SlabItem.hpp"
-//#include "world/item/PistonItem.hpp"
+#include "world/item/PistonItem.hpp"
 
 // Include tile definitions here
 #include "SandStoneTile.hpp"
@@ -71,22 +71,25 @@
 #include "CropsTile.hpp"
 #include "Web.hpp"
 #include "SnowTile.hpp"
-//#include "SignTile.hpp"
+#include "SignTile.hpp"
 #include "LeverTile.hpp"
 #include "PressurePlateTile.hpp"
-//#include "RailTile.hpp"
-//#include "DetectorRailTile.hpp"
+#include "RailTile.hpp"
+#include "DetectorRailTile.hpp"
 #include "ButtonTile.hpp"
-//#include "MobSpawnerTile.hpp"
+#include "MobSpawnerTile.hpp"
 #include "NotGateTile.hpp"
 #include "CakeTile.hpp"
 #include "DispenserTile.hpp"
 #include "MusicTile.hpp"
 #include "RecordPlayerTile.hpp"
 #include "TrapDoorTile.hpp"
-//#include "PortalTile.hpp"
+#include "PortalTile.hpp"
 #include "DiodeTile.hpp"
-//#include "Mushroom.hpp"
+#include "Mushroom.hpp"
+#include "PistonBaseTile.hpp"
+#include "PistonHeadTile.hpp"
+#include "MovingPistonTile.hpp"
 
 std::string Tile::TILE_DESCRIPTION_PREFIX = "tile.";
 
@@ -97,6 +100,7 @@ bool  Tile::shouldTick   [C_MAX_TILES];
 bool  Tile::solid        [C_MAX_TILES];
 bool  Tile::translucent  [C_MAX_TILES];
 bool  Tile::isEntityTile [C_MAX_TILES];
+bool  Tile::blockUpdate  [C_MAX_TILES];
 
 
 void Tile::_init()
@@ -109,6 +113,7 @@ void Tile::_init()
 	m_blastResistance = 0.0f;
 	m_descriptionID = "";
 	m_renderLayer = RENDER_LAYER_OPAQUE;
+	m_bTrackStat = true;
 }
 
 void Tile::_init(TileID ID, Material* pMaterial, int texture)
@@ -188,6 +193,18 @@ Tile* Tile::setLightEmission(float x)
 Tile* Tile::setTicking(bool bTick)
 {
 	shouldTick[m_ID] = bTick;
+	return this;
+}
+
+Tile* Tile::setBlockUpdate()
+{
+	blockUpdate[m_ID] = true;
+	return this;
+}
+
+Tile* Tile::untrackStat()
+{
+	m_bTrackStat = false;
 	return this;
 }
 
@@ -302,6 +319,16 @@ Tile* Tile::setToolTypesAndLevel(unsigned int toolMask, int toolLevel)
 	setToolTypes(toolMask);
 	setToolLevel(toolLevel);
 	return this;
+}
+
+PushReaction::Type Tile::getPistonPushReaction() const
+{
+	return m_pMaterial->m_pushReaction;
+}
+
+bool Tile::shouldTrack() const
+{
+	return m_bTrackStat;
 }
 
 void Tile::initTiles()
@@ -466,14 +493,14 @@ void Tile::initTiles()
 		->setSoundType(Tile::SOUND_GRASS)
 		->setDescriptionId("rose");
 
-	Tile::mushroom1 = (new Bush(TILE_MUSHROOM_1, TEXTURE_MUSHROOM_BROWN))
+	Tile::mushroom1 = (new Mushroom(TILE_MUSHROOM_1, TEXTURE_MUSHROOM_BROWN))
 		->init()
 		->setDestroyTime(0.0f)
 		->setSoundType(Tile::SOUND_GRASS)
 		->setLightEmission(0.125f)
 		->setDescriptionId("mushroom");
 
-	Tile::mushroom2 = (new Bush(TILE_MUSHROOM_2, TEXTURE_MUSHROOM_RED))
+	Tile::mushroom2 = (new Mushroom(TILE_MUSHROOM_2, TEXTURE_MUSHROOM_RED))
 		->init()
 		->setDestroyTime(0.0f)
 		->setSoundType(Tile::SOUND_GRASS)
@@ -897,6 +924,74 @@ void Tile::initTiles()
 		->setSoundType(Tile::SOUND_STONE)
 		->setDescriptionId("jukebox");
 
+	Tile::rail = (new RailTile(TILE_RAIL, TEXTURE_RAIL, false))
+		->init()
+		->setDestroyTime(0.7f)
+		->setSoundType(Tile::SOUND_METAL)
+		->setDescriptionId("rail")
+		->setBlockUpdate();
+
+	Tile::poweredRail = (new RailTile(TILE_RAIL_POWERED, TEXTURE_POWERED_RAIL, true))
+		->init()
+		->setDestroyTime(0.7f)
+		->setSoundType(Tile::SOUND_METAL)
+		->setDescriptionId("goldenRail")
+		->setBlockUpdate();
+
+	Tile::detectorRail = (new DetectorRailTile(TILE_RAIL_ACTIVATOR, TEXTURE_DETECTOR_RAIL))
+		->init()
+		->setDestroyTime(0.7f)
+		->setSoundType(Tile::SOUND_METAL)
+		->setDescriptionId("detectorRail")
+		->setBlockUpdate();
+
+	Tile::sign = (new SignTile(TILE_SIGN, false))
+		->init()
+		->setDestroyTime(1.0f)
+		->setSoundType(Tile::SOUND_WOOD)
+		->setDescriptionId("sign")
+		->setBlockUpdate()
+		->untrackStat();
+
+	Tile::wallSign = (new SignTile(TILE_SIGN_WALL, true))
+		->init()
+		->setDestroyTime(1.0f)
+		->setSoundType(Tile::SOUND_WOOD)
+		->setDescriptionId("sign")
+		->setBlockUpdate()
+		->untrackStat();
+
+	Tile::mobSpawner = (new MobSpawnerTile(TILE_SPAWNER, TEXTURE_SPAWNER))
+		->init()
+		->setDestroyTime(5.0f)
+		->setSoundType(Tile::SOUND_METAL)
+		->setDescriptionId("mobSpawner")
+		->untrackStat();
+
+	Tile::piston = (new PistonBaseTile(TILE_PISTON, TEXTURE_PISTON, false))
+		->init()
+		->setDescriptionId("pistonBase")
+		->setBlockUpdate();
+
+	Tile::stickyPiston = (new PistonBaseTile(TILE_PISTON_STICKY, TEXTURE_STICKY_PISTON, true))
+		->init()
+		->setDescriptionId("pistonStickyBase")
+		->setBlockUpdate();
+
+	Tile::pistonHead = (new PistonHeadTile(TILE_PISTON_HEAD, TEXTURE_PISTON))
+		->init()
+		->setBlockUpdate();
+
+	Tile::movingPiston = (new MovingPistonTile(TILE_PISTON_MOVING))
+		->init();
+
+	Tile::portal = (new PortalTile(TILE_PORTAL, TEXTURE_PORTAL))
+		->init()
+		->setDestroyTime(-1.0f)
+		->setSoundType(Tile::SOUND_GLASS)
+		->setLightEmission(0.75f)
+		->setDescriptionId("portal");
+
 	// Great
 	Item::items[Tile::cloth->m_ID] = (new ClothItem(Tile::cloth->m_ID - C_MAX_TILES))
 		->setDescriptionId("cloth");
@@ -916,9 +1011,9 @@ void Tile::initTiles()
 	Item::items[Tile::tallGrass->m_ID] = (new AuxTileItem(Tile::tallGrass->m_ID - C_MAX_TILES))
 		->setDescriptionId("tallGrass");
 
-	//Item::items[Tile::piston->id] = (new PistonItem(Tile::piston->id - C_MAX_TILES));
+	Item::items[Tile::piston->m_ID] = (new PistonItem(Tile::piston->m_ID - C_MAX_TILES));
 
-	//Item::items[Tile::stickyPiston->id] = (new PistonItem(Tile::stickyPiston->id - C_MAX_TILES));
+	Item::items[Tile::stickyPiston->m_ID] = (new PistonItem(Tile::stickyPiston->m_ID - C_MAX_TILES));
 
 	for (int i = 0; i < C_MAX_TILES; i++)
 	{
@@ -1414,4 +1509,15 @@ Tile
 	*Tile::dispenser,
 	*Tile::recordPlayer,
 	*Tile::cake,
-	*Tile::trapDoor;
+	*Tile::trapDoor,
+	*Tile::rail,
+	*Tile::poweredRail,
+	*Tile::detectorRail,
+	*Tile::mobSpawner,
+	*Tile::sign,
+	*Tile::wallSign,
+	*Tile::piston,
+	*Tile::stickyPiston,
+	*Tile::pistonHead,
+	*Tile::movingPiston,
+	*Tile::portal;

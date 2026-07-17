@@ -80,7 +80,7 @@ public:
 	virtual int getMaxHeadXRot() const { return 10; }
 	virtual int getMaxHealth() const { return 10; }
 	virtual float getSoundVolume() const { return 1.0f; }
-	virtual std::string getAmbientSound() const { return ""; }
+	virtual std::string getAmbientSound() { return ""; }
 	virtual std::string getHurtSound() const { return "random.hurt"; }
 	virtual std::string getDeathSound() const { return "random.hurt"; }
 	virtual float getWalkingSpeedModifier() const { return 0.7f; }
@@ -119,7 +119,6 @@ public:
 	float m_walkAnimSpeedO;
 	float m_walkAnimSpeed;
 	float m_walkAnimPos;
-	Random m_random;
 	int m_noActionTime;
 	Vec2 m_moveVelocity;
 	float m_yRotA;

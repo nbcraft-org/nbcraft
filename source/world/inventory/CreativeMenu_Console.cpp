@@ -93,8 +93,8 @@ void CreativeMenu_Console::initCreativeItems()
     _addTile(REDSTONE_AND_TRANSPORT, Tile::dispenser);
     _addTile(REDSTONE_AND_TRANSPORT, Tile::musicBlock);
 #if MC_VERSION >= MC_VER_BETA(1, 7, 0)
-    //_addTile(REDSTONE_AND_TRANSPORT, Tile::piston);
-    //_addTile(REDSTONE_AND_TRANSPORT, Tile::stickyPiston);
+    _addTile(REDSTONE_AND_TRANSPORT, Tile::piston);
+    _addTile(REDSTONE_AND_TRANSPORT, Tile::stickyPiston);
 #endif
     _addTile(REDSTONE_AND_TRANSPORT, Tile::tnt);
     _addTile(REDSTONE_AND_TRANSPORT, Tile::lever);
@@ -104,9 +104,9 @@ void CreativeMenu_Console::initCreativeItems()
     _addItem(REDSTONE_AND_TRANSPORT, Item::redStone);
     _addTile(REDSTONE_AND_TRANSPORT, Tile::notGate_on);
     _addItem(REDSTONE_AND_TRANSPORT, Item::diode);
-    //_addTile(REDSTONE_AND_TRANSPORT, Tile::rail);
-    //_addTile(REDSTONE_AND_TRANSPORT, Tile::poweredRail);
-    //_addTile(REDSTONE_AND_TRANSPORT, Tile::detectorRail);
+    _addTile(REDSTONE_AND_TRANSPORT, Tile::rail);
+    _addTile(REDSTONE_AND_TRANSPORT, Tile::poweredRail);
+    _addTile(REDSTONE_AND_TRANSPORT, Tile::detectorRail);
     _addItem(REDSTONE_AND_TRANSPORT, Item::minecart);
     _addItem(REDSTONE_AND_TRANSPORT, Item::minecart_chest);
     _addItem(REDSTONE_AND_TRANSPORT, Item::minecart_furnace);
