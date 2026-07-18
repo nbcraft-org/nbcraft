@@ -32,9 +32,8 @@ int TallGrass::getColor(Facing::Name face, TileData data) const
 	return data == 0 ? 0xFFFFFF : FoliageColor::getDefaultColor();
 }
 
-int TallGrass::getTexture(TileSource& source, const TilePos& pos, Facing::Name face) const
+int TallGrass::getTexture(Facing::Name face, TileData data) const
 {
-	TileData data = source.getData(pos);
 	return data == 1 ? m_TextureFrame : (data == 2 ? m_TextureFrame + 16 + 1 : (data == 1 ? m_TextureFrame : m_TextureFrame + 16));
 }
 

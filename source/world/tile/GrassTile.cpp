@@ -17,7 +17,7 @@ const Color GrassTile::DEFAULT_COLOR = Color(0.25f, 0.60f, 0.25f);
 GrassTile::GrassTile(TileID id, Material* c) : Tile(id, c)
 {
 	m_TextureFrame = TEXTURE_GRASS_SIDE;
-	m_renderLayer = RENDER_LAYER_ALPHATEST;
+	m_renderLayer = RENDER_LAYER_ALPHATEST; // @TODO: toggle this depending on the "Fancy Grass" option
 	setTicking(true);
 }
 
