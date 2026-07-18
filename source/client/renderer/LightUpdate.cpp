@@ -161,30 +161,26 @@ void LightUpdate::updateFast()
 
 bool LightUpdate::expandIfCloseEnough(const TilePos& lowerPos, const TilePos& upperPos)
 {
-	if (m_min <= lowerPos && m_max >= upperPos)
+	if (lowerPos >= m_min && upperPos <= m_max)
 		return true;
-    
-	if (m_min - 1 <= lowerPos && m_max + 1 >= upperPos)
-	{
-		TilePos lp(lowerPos), up(upperPos);
-		if (lp.y >= m_min.y) lp.y = m_min.y;
-		if (lp.x >= m_min.x) lp.x = m_min.x;
-		if (up.y < m_max.y)  up.y = m_max.y;
-		if (lp.z >= m_min.z) lp.z = m_min.z;
-		if (up.x < m_max.x)  up.x = m_max.x;
-		if (up.z < m_max.z)  up.z = m_max.z;
 
-		// If trying to add more than 2 tiles, we can't do that
-		if ((up.z - lp.z) * (up.x - lp.x) * (up.y - lp.y) - (m_max.z - m_min.z) * (m_max.x - m_min.x) * (m_max.y - m_min.y) <= 2)
-		{
-			m_min = lp;
-			m_max = up;
+	if (lowerPos < (m_min - 1) || upperPos > (m_max + 1))
+		return false;
 
-			return true;
-		}
-	}
+	TilePos newMin = m_min.min(lowerPos);
+	TilePos newMax = m_max.max(upperPos);
+
+    // @TODO: this logic is just completely busted and results in way too many LightingUpdates
+	//if (Mth::abs((upperPos - lowerPos).volume() - (newMax - newMin).volume()) > 2)
+	//	return false;
     
-	return false;
+    // If trying to add more than 2 tiles, we can't do that
+    if ((upperPos.z - lowerPos.z) * (upperPos.x - lowerPos.x) * (upperPos.y - lowerPos.y) - (m_max.z - m_min.z) * (m_max.x - m_min.x) * (m_max.y - m_min.y) > 2)
+        return false;
+
+	m_min = newMin;
+	m_max = newMax;
+	return true;
 }
 
 void LightUpdate::expandToContain(const TilePos& pos)
