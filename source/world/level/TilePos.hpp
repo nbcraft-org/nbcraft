@@ -74,30 +74,22 @@ public:
 
 	bool operator<(const TilePos& b) const
 	{
-		/*if (x != b.x)
+		if (x != b.x)
 			return x < b.x;
 		if (y != b.y)
 			return y < b.y;
 
-		return z < b.z;*/
-
-		return x < b.x &&
-			   y < b.y &&
-			   z < b.z;
+		return z < b.z;
 	}
 
 	bool operator>(const TilePos& b) const
 	{
-		/*if (x != b.x)
+		if (x != b.x)
 			return x > b.x;
 		if (y != b.y)
 			return y > b.y;
 
-		return z > b.z;*/
-
-		return x > b.x &&
-			   y > b.y &&
-			   z > b.z;
+		return z > b.z;
 	}
 
 	bool operator<=(const TilePos& b) const
