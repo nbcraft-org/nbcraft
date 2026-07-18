@@ -239,7 +239,7 @@ int Tile::getTexture(Facing::Name face, TileData data) const
 
 int Tile::getTexture(TileSource& source, const TilePos& pos, Facing::Name face) const
 {
-	return getTexture(face);
+	return getTexture(face, source.getData(pos));
 }
 
 int Tile::getTickDelay() const

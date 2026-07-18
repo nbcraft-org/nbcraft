@@ -9,6 +9,7 @@
 #include "LeafTile.hpp"
 #include "world/level/Level.hpp"
 #include "world/level/TileSource.hpp"
+#include "world/level/levelgen/biome/BiomeSource.hpp"
 #include "client/renderer/PatchManager.hpp"
 #include "client/renderer/FoliageColor.hpp"
 
@@ -24,6 +25,7 @@ const Color LeafTile::DEFAULT_COLOR = Color(0.35f, 0.65f, 0.25f);
 LeafTile::LeafTile(TileID id) : TransparentTile(id, TEXTURE_LEAVES_TRANSPARENT, Material::leaves, false)
 {
 	m_checkBuffer = nullptr;
+	m_bBiomeColors = false;
 
 	m_TextureFrame = TEXTURE_LEAVES_TRANSPARENT;
 	field_74 = TEXTURE_LEAVES_TRANSPARENT;
@@ -190,6 +192,25 @@ void LeafTile::_tickDecay(TileSource& source, const TilePos& pos)
 
 int LeafTile::getColor(TileSource& source, const TilePos& pos) const
 {
+	if (FoliageColor::isAvailable() && m_bBiomeColors)
+	{
+		TileData data = source.getData(pos);
+
+		if ((data & 1) == C_EVERGREEN_LEAF)
+		{
+			return FoliageColor::getEvergreenColor();
+		}
+		if ((data & 2) == C_BIRCH_LEAF)
+		{
+			return FoliageColor::getBirchColor();
+		}
+
+		BiomeSource& biomeSource = *source.getBiomeSource();
+
+		biomeSource.getBiomeBlock(pos, 1, 1);
+		return FoliageColor::get(biomeSource.field_4[0], biomeSource.field_8[0]);
+	}
+
 	if (GetPatchManager()->IsGrassTinted())
 	{
 		return 0x339933;
@@ -200,20 +221,21 @@ int LeafTile::getColor(TileSource& source, const TilePos& pos) const
 
 int LeafTile::getColor(Facing::Name face, TileData data) const
 {
-	if ((data & 1) == 1)
+	if ((data & 1) == C_EVERGREEN_LEAF)
 	{
 		return FoliageColor::getEvergreenColor();
 	}
-	if ((data & 2) == 2)
+	if ((data & 2) == C_BIRCH_LEAF)
 	{
 		return FoliageColor::getBirchColor();
 	}
+
 	return FoliageColor::getDefaultColor();
 }
 
 int LeafTile::getTexture(Facing::Name face, TileData data) const
 {
-	if ((data & C_LEAF_TYPE_MASK) == 1)
+	if ((data & C_LEAF_TYPE_MASK) == C_EVERGREEN_LEAF)
 		return m_TextureFrame + 80;
 
 	return m_TextureFrame;

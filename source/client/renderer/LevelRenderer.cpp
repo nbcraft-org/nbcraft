@@ -23,6 +23,7 @@
 
 #include "world/tile/LeafTile.hpp"
 #include "world/tile/GrassTile.hpp"
+#include "world/tile/TallGrass.hpp"
 
 #include "Fog.hpp"
 #include "Lighting.hpp"
@@ -603,13 +604,22 @@ void LevelRenderer::allChanged()
 {
 	deleteChunks();
 
+	bool hasFancyGraphics = m_pMinecraft->getOptions()->m_fancyGraphics.get();
+	bool hasFancyGrass = m_pMinecraft->getOptions()->m_fancyGrass.get();
+	bool hasBiomeColors = m_pMinecraft->getOptions()->m_biomeColors.get();
+
 	LeafTile* pLeaves = (LeafTile*)Tile::leaves;
 
-	pLeaves->m_bTransparent = m_pMinecraft->getOptions()->m_fancyGraphics.get();
+	pLeaves->m_bTransparent = hasFancyGraphics;
 	pLeaves->m_TextureFrame = !pLeaves->m_bTransparent + pLeaves->field_74;
+	pLeaves->m_bBiomeColors = hasBiomeColors;
 
-	TileRenderer::m_bFancyGrass = m_pMinecraft->getOptions()->m_fancyGrass.get();
-	TileRenderer::m_bBiomeColors = m_pMinecraft->getOptions()->m_biomeColors.get();
+	GrassTile* pGrass = (GrassTile*)Tile::grass;
+	pGrass->m_bFancyGrass = hasFancyGrass;
+	pGrass->m_bBiomeColors = hasBiomeColors;
+
+	TallGrass* pTallGrass = (TallGrass*)Tile::tallGrass;
+	pTallGrass->m_bBiomeColors = hasBiomeColors;
 
 	m_lastViewDistance = m_pMinecraft->getOptions()->m_viewDistance.get();
 

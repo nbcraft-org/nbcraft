@@ -30,9 +30,6 @@ TileRenderer::Materials::Materials()
 	MATERIAL_PTR(common, ui_item);
 }
 
-bool TileRenderer::m_bFancyGrass = false;
-bool TileRenderer::m_bBiomeColors = false;
-
 void TileRenderer::_init()
 {
 	m_fixedTexture = -1;
@@ -760,9 +757,13 @@ void TileRenderer::tesselateRowTexture(Tile* tile, int data, const Vec3& pos)
 bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, float r, float g, float b)
 {
 	float topR = r, topG = g, topB = b;
+	bool hasFancyGrass = false;
 
 	if (tile == Tile::grass)
+	{
 		r = g = b = 1.0f;
+		hasFancyGrass = ((GrassTile*)tile)->m_bFancyGrass;
+	}
 
 	Tesselator& t = m_tessellator;
 
@@ -804,7 +805,7 @@ bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, float r
 		int texture = tile->getTexture(*m_pTileSource, pos, Facing::NORTH);
 		renderNorth(tile, pos, texture);
 
-		if (m_bFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
+		if (hasFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
 		{
 			t.color(topR * 0.8f * fLight, topG * 0.8f * fLight, topB * 0.8f * fLight);
 			renderNorth(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
@@ -823,7 +824,7 @@ bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, float r
 		int texture = tile->getTexture(*m_pTileSource, pos, Facing::SOUTH);
 		renderSouth(tile, pos, texture);
 
-		if (m_bFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
+		if (hasFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
 		{
 			t.color(topR * 0.8f * fLight, topG * 0.8f * fLight, topB * 0.8f * fLight);
 			renderSouth(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
@@ -842,7 +843,7 @@ bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, float r
 		int texture = tile->getTexture(*m_pTileSource, pos, Facing::WEST);
 		renderWest(tile, pos, texture);
 
-		if (m_bFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
+		if (hasFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
 		{
 			t.color(topR * 0.6f * fLight, topG * 0.6f * fLight, topB * 0.6f * fLight);
 			renderWest(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
@@ -861,7 +862,7 @@ bool TileRenderer::tesselateBlockInWorld(Tile* tile, const TilePos& pos, float r
 		int texture = tile->getTexture(*m_pTileSource, pos, Facing::EAST);
 		renderEast(tile, pos, texture);
 
-		if (m_bFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
+		if (hasFancyGrass && texture == TEXTURE_GRASS_SIDE && this->m_fixedTexture < 0)
 		{
 			t.color(topR * 0.6f * fLight, topG * 0.6f * fLight, topB * 0.6f * fLight);
 			renderEast(tile, pos, TEXTURE_GRASS_SIDE_OVERLAY);
@@ -2684,7 +2685,7 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 				break;
 		}
 
-		if (TileRenderer::m_bFancyGrass && tile->getTexture(*m_pTileSource, pos, (Facing::Name)dir) == TEXTURE_GRASS_SIDE && (dir == Facing::WEST || dir == Facing::EAST || dir == Facing::NORTH || dir == Facing::SOUTH))
+		if (((GrassTile*)tile)->m_bFancyGrass && tile->getTexture(*m_pTileSource, pos, (Facing::Name)dir) == TEXTURE_GRASS_SIDE && (dir == Facing::WEST || dir == Facing::EAST || dir == Facing::NORTH || dir == Facing::SOUTH))
 		{
 			for (int i = 0; i < 4; i++)
 				m_vtxRed[i] = m_vtxGreen[i] = m_vtxBlue[i] = 1.0f;

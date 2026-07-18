@@ -79,9 +79,6 @@ protected:
 public:
 	static bool canRender(int renderShape);
 
-	static bool m_bFancyGrass;
-	static bool m_bBiomeColors;
-
 private:
 	TileSource* m_pTileSource;
 	int m_fixedTexture;

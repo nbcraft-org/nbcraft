@@ -14,4 +14,7 @@ public:
 	int getColor(Facing::Name face, TileData data) const override;
 	int getTexture(Facing::Name face, TileData data) const override;
 	eRenderShape getRenderShape() const override;
+
+public:
+	bool m_bBiomeColors;
 };

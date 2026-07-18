@@ -25,4 +25,8 @@ public:
 	int getTexture(Facing::Name face) const override;
 	int getTexture(TileSource&, const TilePos& pos, Facing::Name face) const override;
 	void tick(TileSource&, const TilePos& pos, Random*) override;
+
+public:
+	bool m_bFancyGrass;
+	bool m_bBiomeColors;
 };
