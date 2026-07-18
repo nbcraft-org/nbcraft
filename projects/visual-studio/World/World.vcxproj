@@ -284,7 +284,8 @@
     <ClCompile Include="$(MC_ROOT)\source\world\item\BucketItem.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\phys\Rot2.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\TileSource.cpp" />
-    <ClCompile Include="..\..\..\source\world\level\TileTickingQueue.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\level\Brightness.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\level\TileTickingQueue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Entity.hpp" />
@@ -507,7 +508,7 @@
     <ClInclude Include="$(MC_ROOT)\source\world\level\LevelConstants.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\level\levelgen\chunk\ChunkConstants.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\level\Tick.hpp" />
-    <ClInclude Include="..\..\..\source\world\level\TileTickingQueue.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\level\TileTickingQueue.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NBT\NBT.vcxproj">

@@ -80,6 +80,7 @@ public:
 	uint8_t getHeightmap(const TilePos& pos) const override;
 	bool isDay() const;
 	bool canSeeSky(const TilePos& pos) const override;
+	bool isSkyLit(const TilePos& pos) const override;
 	bool isEmptyTile(const TilePos& pos) const override;
 	bool hasChunkAt(const TilePos& pos) const override;
 	bool hasChunk(const ChunkPos& pos) const override;

@@ -60,6 +60,7 @@ public:
 	DimensionId getDimensionId() const override { throw std::bad_cast(); } // unk type
 	TileID getTopSolidBlock(const TilePos&, bool b = false) const override { throw std::bad_cast(); } // @TODO: check the default value on the bool
 	bool canSeeSky(const TilePos&) const override { throw std::bad_cast(); }
+	bool isSkyLit(const TilePos&) const override { throw std::bad_cast(); }
 	uint8_t getHeightmap(const TilePos&) const override { throw std::bad_cast(); }
 	const TileEntity::Vector& getAllTileEntities() const override { throw std::bad_cast(); }
 	void setTileEntity(const TilePos& pos, TileEntity* tileEntity) override { throw std::bad_cast(); }

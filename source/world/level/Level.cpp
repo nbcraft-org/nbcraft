@@ -689,8 +689,8 @@ void Level::updateLightIfOtherThan(const LightLayer& ll, const TilePos& tilePos,
 
 	if (&ll == &LightLayer::Sky)
 	{
-		if (canSeeSky(tilePos))
-			bright = 15;
+		if (isSkyLit(tilePos))
+			bright = Brightness::MAX;
 	}
 	else if (&ll == &LightLayer::Block)
 	{
@@ -699,7 +699,7 @@ void Level::updateLightIfOtherThan(const LightLayer& ll, const TilePos& tilePos,
 			bright = Tile::lightEmission[tile];
 	}
 
-	int oldbr = getBrightness(ll, tilePos);
+	Brightness_t oldbr = getBrightness(ll, tilePos);
 	if (bright != oldbr)
 	{
 		updateLight(ll, tilePos, tilePos);
@@ -708,9 +708,20 @@ void Level::updateLightIfOtherThan(const LightLayer& ll, const TilePos& tilePos,
 
 bool Level::canSeeSky(const TilePos& pos) const
 {
-    // @TODO: do we need this logic?
+    // @TODO: what is the difference between this and isSkyLit??
+    
+    LevelChunk* pChunk = getChunk(pos);
+    if (!pChunk)
+        return true;
+    
+    return pChunk->isSkyLit(pos);
+}
+
+// only used in Level::updateLightIfOtherThan()
+bool Level::isSkyLit(const TilePos& pos) const
+{
 	//@BUG: checking x >= C_MAX_X, but not z >= C_MAX_Z.
-	/*if (pos.x < C_MIN_X || pos.z < C_MIN_Z || pos.x >= C_MAX_X || pos.z > C_MAX_Z || pos.y < C_MIN_Y)
+	if (pos.x < C_MIN_X || pos.z < C_MIN_Z || pos.x >= C_MAX_X || pos.z > C_MAX_Z || pos.y < C_MIN_Y)
 		// there's nothing out there!
 		return false;
 
@@ -720,13 +731,7 @@ bool Level::canSeeSky(const TilePos& pos) const
 	if (!hasChunk(pos))
 		return false;
 
-	return getChunk(pos)->isSkyLit(pos);*/
-    
-    LevelChunk* pChunk = getChunk(pos);
-    if (!pChunk)
-        return true;
-    
-    return pChunk->isSkyLit(pos);
+	return getChunk(pos)->isSkyLit(pos);
 }
 
 bool Level::setTileAndDataNoUpdate(const TilePos& pos, const FullTile& tile)

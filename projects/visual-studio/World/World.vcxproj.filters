@@ -830,7 +830,10 @@
     <ClCompile Include="$(MC_ROOT)\source\world\level\TileSource.cpp">
       <Filter>Source Files\Level</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\world\level\TileTickingQueue.cpp">
+    <ClCompile Include="$(MC_ROOT)\source\world\level\TileTickingQueue.cpp">
+      <Filter>Source Files\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\level\Brightness.cpp">
       <Filter>Source Files\Level</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1495,7 +1498,7 @@
     <ClInclude Include="$(MC_ROOT)\source\world\level\Tick.hpp">
       <Filter>Header Files\Level</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\world\level\TileTickingQueue.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\world\level\TileTickingQueue.hpp">
       <Filter>Header Files\Level</Filter>
     </ClInclude>
   </ItemGroup>

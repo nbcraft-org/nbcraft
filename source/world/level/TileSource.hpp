@@ -85,6 +85,7 @@ public:
 	//virtual TileData getExtraData(const TilePos&) = 0; // unk type
 	virtual TileID getTopSolidBlock(const TilePos&, bool b = false) const = 0; // @TODO: check the default value on the bool
 	virtual bool canSeeSky(const TilePos&) const = 0;
+	virtual bool isSkyLit(const TilePos&) const = 0;
 	virtual uint8_t getHeightmap(const TilePos&) const = 0;
 	//virtual void getHeightmapPos(const TilePos&) const = 0; // unk type
 	virtual TileEntity* getTileEntity(const TilePos& pos) const = 0;
