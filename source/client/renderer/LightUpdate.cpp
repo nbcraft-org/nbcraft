@@ -9,7 +9,7 @@ void LightUpdate::update()
     if (!m_pSource)
         return;
 
-	LOG_I("min: (%d, %d, %d) max: (%d, %d, %d)", m_min.x, m_min.y, m_min.z, m_max.x, m_max.y, m_max.z);
+	//LOG_I("min: (%d, %d, %d) max: (%d, %d, %d)", m_min.x, m_min.y, m_min.z, m_max.x, m_max.y, m_max.z);
     
 	int newBr, oldBr, newBrN, x, z, x7, x14, x13, x10, v24, x21, x17_1, v27, x9, x10_1, x8, x7_1, x3, x4, x1, x20;
 	int x19, x18, x17, x16, x5, x1_1;

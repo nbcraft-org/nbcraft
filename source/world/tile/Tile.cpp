@@ -175,7 +175,7 @@ Tile* Tile::setExplodeable(float power)
 	return this;
 }
 
-Tile* Tile::setLightBlock(int x)
+Tile* Tile::setLightBlock(Brightness_t x)
 {
 	lightBlock[m_ID] = x;
 	return this;
@@ -207,7 +207,7 @@ Tile* Tile::init()
 	tiles[m_ID] = this;
 
 	solid[m_ID] = isSolidRender();
-	lightBlock[m_ID] = isSolidRender() ? 255 : 0;
+	lightBlock[m_ID] = isSolidRender() ? Brightness::MAX : Brightness::MIN;
 	translucent[m_ID] = m_pMaterial->blocksLight();
 	isEntityTile[m_ID] = hasTileEntity();
 
@@ -374,14 +374,14 @@ void Tile::initTiles()
 		->init()
 		->setDestroyTime(0.0f)
 		->setLightEmission(1.0f)
-		->setLightBlock(255)
+		->setLightBlock(Brightness::MAX)
 		->setDescriptionId("lava");
 
 	Tile::calmLava = (new LiquidTileStatic(TILE_LAVA_CALM, Material::lava))
 		->init()
 		->setDestroyTime(100.0f)
 		->setLightEmission(1.0f)
-		->setLightBlock(255)
+		->setLightBlock(Brightness::MAX)
 		->setDescriptionId("lava");
 
 	Tile::sand = (new SandTile(TILE_SAND, TEXTURE_SAND, Material::sand))
@@ -428,7 +428,7 @@ void Tile::initTiles()
 	Tile::leaves = (new LeafTile(TILE_LEAVES))
 		->init()
 		->setDestroyTime(0.2f)
-		->setLightBlock(true)
+		->setLightBlock(1) // was "true"???
 		->setSoundType(Tile::SOUND_GRASS)
 		->setDescriptionId("leaves");
 
@@ -699,7 +699,7 @@ void Tile::initTiles()
 	Tile::leaves_carried = (new LeafTile(TILE_LEAVES_CARRIED))
 		->init()
 		->setDestroyTime(0.2f)
-		->setLightBlock(true)
+		->setLightBlock(1) // was "true"???
 		->setSoundType(Tile::SOUND_GRASS)
 		->setDescriptionId("leaves");
 

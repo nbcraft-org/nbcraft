@@ -121,7 +121,7 @@ public: // virtual functions
 	virtual Tile* setDescriptionId(std::string const&);
 	virtual void triggerEvent(TileSource&, const TileEvent& event);
 	virtual Tile* setSoundType(Tile::SoundType const&);
-	virtual Tile* setLightBlock(int);
+	virtual Tile* setLightBlock(Brightness_t);
 	virtual Tile* setLightEmission(float);
 	virtual Tile* setExplodeable(float);
 	virtual Tile* setDestroyTime(float);

@@ -1,8 +1,7 @@
 #pragma once
 #include <stdint.h>
 
-// int8 to prevent overflow issues
-typedef int8_t Brightness_t;
+typedef uint8_t Brightness_t;
 
 class Brightness
 {
