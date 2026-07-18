@@ -583,7 +583,7 @@ void LevelChunk::getEntities(const EntityType& type, const AABB& aabb, Entity::V
 		for (Entity::Vector::const_iterator it = m_entities[b].begin(); it != m_entities[b].end(); it++)
 		{
 			Entity* ent = *it;
-			if (ent->getDescriptor().isType(type))
+			if (!ent->getDescriptor().isType(type))
 				continue;
 
 			if (!aabb.intersect(ent->m_hitbox)) // this maybe wasn't called, not sure
