@@ -175,7 +175,7 @@ bool LightUpdate::expandIfCloseEnough(const TilePos& lowerPos, const TilePos& up
 		if (up.z < m_max.z)  up.z = m_max.z;
 
 		// If trying to add more than 2 tiles, we can't do that
-		if ((up.z - lp.z) * (up.x - lp.x) * (up.y - lp.y) - (m_max.z - m_min.z) * (m_max.x - m_min.x) * (m_max.y - m_min.y) > 2)
+		if ((up.z - lp.z) * (up.x - lp.x) * (up.y - lp.y) - (m_max.z - m_min.z) * (m_max.x - m_min.x) * (m_max.y - m_min.y) <= 2)
 		{
 			m_min = lp;
 			m_max = up;
