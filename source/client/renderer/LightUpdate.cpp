@@ -163,7 +163,7 @@ bool LightUpdate::expandIfCloseEnough(const TilePos& lowerPos, const TilePos& up
 {
 	if (m_min <= lowerPos && m_max >= upperPos)
 		return true;
-    
+
 	if (lowerPos < m_min - 1) return false;
 	if (upperPos > m_max + 1) return false;
     

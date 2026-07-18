@@ -10,12 +10,15 @@ class TileTickingQueue
 {
 private:
 	Tick_t m_currentTick;
-	MovePriorityQueue<TickNextTickData> m_tickData;
+	MovePriorityQueue<TickNextTickData, std::greater<TickNextTickData>> m_tickData;
 	bool m_instaTick;
 	Random m_random;
 
 public:
 	TileTickingQueue();
+
+private:
+	void _tick(TileSource& region, const TilePos& pos, TileID tileID);
 
 public:
 	void add(TileSource& region, const TilePos& pos, TileID tileID, int tickDelay);
@@ -26,7 +29,4 @@ public:
 
 	void save(CompoundTag& tag);
 	void load(const CompoundTag& tag);
-
-private:
-	void _tick(TileSource& region, const TilePos& pos, TileID tileID);
 };

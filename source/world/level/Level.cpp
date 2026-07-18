@@ -1958,6 +1958,7 @@ HitResult Level::clip(const Vec3& a, const Vec3& b, bool includeLiquid, bool inc
 	return HitResult();
 }
 
+// @MATT: remove, unused
 void Level::addToTickNextTick(const TilePos& tilePos, TileID tileId, int delay)
 {
 	TickNextTickData tntd(tilePos, tileId, delay);
