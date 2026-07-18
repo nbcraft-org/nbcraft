@@ -9,7 +9,7 @@ void LightUpdate::update()
     if (!m_pSource)
         return;
 
-	//LOG_I("min: (%d, %d, %d) max: (%d, %d, %d)", m_min.x, m_min.y, m_min.z, m_max.x, m_max.y, m_max.z);
+	LOG_I("min: (%d, %d, %d) max: (%d, %d, %d)", m_min.x, m_min.y, m_min.z, m_max.x, m_max.y, m_max.z);
     
 	int newBr, oldBr, newBrN, x, z, x7, x14, x13, x10, v24, x21, x17_1, v27, x9, x10_1, x8, x7_1, x3, x4, x1, x20;
 	int x19, x18, x17, x16, x5, x1_1;
@@ -172,13 +172,9 @@ bool LightUpdate::expandIfCloseEnough(const TilePos& lowerPos, const TilePos& up
 	TilePos newMin = m_min.min(lowerPos);
 	TilePos newMax = m_max.max(upperPos);
 
-    // @TODO: this logic is just completely busted and results in way too many LightingUpdates
-	//if (Mth::abs((upperPos - lowerPos).volume() - (newMax - newMin).volume()) > 2)
-	//	return false;
-    
     // If trying to add more than 2 tiles, we can't do that
-    if ((upperPos.z - lowerPos.z) * (upperPos.x - lowerPos.x) * (upperPos.y - lowerPos.y) - (m_max.z - m_min.z) * (m_max.x - m_min.x) * (m_max.y - m_min.y) > 2)
-        return false;
+	if (Mth::abs((newMax - newMin).volume() - (m_max - m_min).volume()) > 2)
+		return false;
 
 	m_min = newMin;
 	m_max = newMax;
