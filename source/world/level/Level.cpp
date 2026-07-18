@@ -1635,7 +1635,10 @@ void Level::tickPendingTicks(bool b)
 	Tick_t maxTicks = 1000; // Java b1.2_02
 #endif
 
-	pendingTicks.tickPendingTicks(*this, maxTicks, false);
+	if (b)
+		pendingTicks.tickPendingTicks(*this, maxTicks, false);
+	else
+		pendingTicks.tickPendingTicks(*this, m_pLevelData->getTime(), maxTicks, false);
 }
 
 void Level::tickTiles()
