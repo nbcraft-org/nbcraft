@@ -65,7 +65,7 @@ void TreeTile::onRemove(TileSource& source, const TilePos& pos)
 				if (data & 4)
 					continue;
 
-				source.setTileAndDataNoUpdate(pos + tp, FullTile(m_ID, data | 8));
+				source.setTileAndDataNoUpdate(pos + tp, FullTile(tid, data | 8));
 			}
 		}
 	}
