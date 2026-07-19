@@ -1626,8 +1626,12 @@ AABB _getEntityRenderBounds(const Mob& camera)
 	ChunkPos entityRenderMax(camera.m_chunkPos);
 	entityRenderMax += C_ENTITY_RENDER_DISTANCE;
 
+	AABB renderBounds((TilePos)entityRenderMin, (TilePos)entityRenderMax);
+	// renderBounds.min.y = 0;
+	renderBounds.max.y = 256;
+
 	// @TODO: make sure this actually works
-	return AABB((TilePos)entityRenderMin, (TilePos)entityRenderMax);
+	return renderBounds;
 }
 
 void LevelRenderer::renderEntities(Vec3 pos, Culler* culler, float f)
@@ -1651,7 +1655,8 @@ void LevelRenderer::renderEntities(Vec3 pos, Culler* culler, float f)
 
 	EntityRenderDispatcher::off = camera.m_posPrev + (camera.m_pos - camera.m_posPrev) * f;
 
-	const Entity::Vector& entities = tileSource.getEntities((Entity*)&camera, _getEntityRenderBounds(camera));;
+	Entity* pExclude = options.m_thirdPerson.get() == TPM_FIRST ? (Entity*)&camera : nullptr;
+	const Entity::Vector& entities = tileSource.getEntities(pExclude, _getEntityRenderBounds(camera));;
 	m_totalEntities = int(entities.size());
 
 	for (Entity::Vector::const_iterator it = entities.begin(); it != entities.end(); ++it)
@@ -1661,9 +1666,6 @@ void LevelRenderer::renderEntities(Vec3 pos, Culler* culler, float f)
 			continue;
 
 		if (!culler->isVisible(entity->m_hitbox))
-			continue;
-
-		if (mc.m_pCameraEntity == entity && options.m_thirdPerson.get() == TPM_FIRST)
 			continue;
 
 		if (tileSource.hasChunkAt(entity->m_pos))

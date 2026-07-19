@@ -335,6 +335,15 @@ bool Level::isSolidBlockingTile(const TilePos& pos) const
 	Tile* pTile = Tile::tiles[getTile(pos)];
 	if (!pTile) return false;
 
+	// @TODO: this
+	return pTile->isSolidRender();
+}
+
+bool Level::isSolidRenderTile(const TilePos& pos) const
+{
+	Tile* pTile = Tile::tiles[getTile(pos)];
+	if (!pTile) return false;
+
 	return pTile->isSolidRender();
 }
 
@@ -407,6 +416,17 @@ Entity::Vector Level::getEntities(Entity* pEntExclude, const AABB& aabb) const
 
 void Level::getEntities(DimensionId dimensionId, const EntityType& type, const AABB& aabb, std::vector<Entity*>& output) const
 {
+	if (type == EntityType::PLAYER)
+	{
+		for (std::vector<Player*>::const_iterator iter = m_players.begin(); iter != m_players.end(); iter++)
+		{
+			Player* player = *iter;
+			if (player->m_hitbox.intersect(aabb))
+				output.push_back(player);
+		}
+		return;
+	}
+
 	long lowerXBound = floor((aabb.min.x - 2.0f) / 16);
 	long lowerZBound = floor((aabb.min.z - 2.0f) / 16);
 	long upperXBound = floor((aabb.max.x + 2.0f) / 16);
@@ -421,16 +441,6 @@ void Level::getEntities(DimensionId dimensionId, const EntityType& type, const A
 			LevelChunk* chunk = chunkSource->getChunkDontCreate(ChunkPos(x, z));
 			if (chunk)
 				chunk->getEntities(type, aabb, output);
-		}
-	}
-
-	if (type == EntityType::PLAYER)
-	{
-		for (std::vector<Player*>::const_iterator iter = m_players.begin(); iter != m_players.end(); iter++)
-		{
-			Player* player = *iter;
-			if (player->m_hitbox.intersect(aabb))
-				output.push_back(player);
 		}
 	}
 }
@@ -503,7 +513,7 @@ bool Level::updateLights()
 		return false;
 	}
     
-    LOG_I("LightUpdates: %d", m_lightUpdates.size());
+    //LOG_I("LightUpdates: %d", m_lightUpdates.size());
 
 	for (int i = 499; i; i--)
 	{

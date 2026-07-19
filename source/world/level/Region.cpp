@@ -151,6 +151,17 @@ bool Region::isSolidBlockingTile(const TilePos& pos) const
 	if (!pTile)
 		return false;
 
+	// @TODO: this
+	return pTile->isSolidRender();
+}
+
+bool Region::isSolidRenderTile(const TilePos& pos) const
+{
+	Tile* pTile = Tile::tiles[getTile(pos)];
+
+	if (!pTile)
+		return false;
+
 	return pTile->isSolidRender();
 }
 

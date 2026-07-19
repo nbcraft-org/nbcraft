@@ -244,8 +244,7 @@ void Player::aiStep()
 	AABB scanAABB = m_hitbox;
 	scanAABB.grow(1, 1, 1);
 
-	std::vector<Entity*> ents;
-	m_pLevel->getEntities(this->getDimensionId(), this->getDescriptor().getEntityType(), scanAABB, ents);
+	std::vector<Entity*> ents = m_pTileSource->getEntities(this, scanAABB);
 
 	for (std::vector<Entity*>::iterator it = ents.begin(); it != ents.end(); it++)
 	{

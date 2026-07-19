@@ -894,6 +894,10 @@ bool TileRenderer::tesselateCrossInWorld(Tile* tile, const TilePos& pos)
 
 	Color color = _getTileColor(pos, tile);
 	color.a = 1.0f;
+
+	float bright = tile->getBrightness(*m_pTileSource, pos);
+	color.mulRGB(bright);
+
 	t.color(color);
 
 	tesselateCrossTexture(FullTile(tile, m_pTileSource->getData(pos)), pos);
@@ -2666,10 +2670,10 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 		switch (dir) 
 		{
 			case Facing::DOWN:
-				renderFaceDown  (tile, pos, tile->getTexture(*m_pTileSource, pos, Facing::DOWN));
+				renderFaceDown(tile, pos, tile->getTexture(*m_pTileSource, pos, Facing::DOWN));
 				break;
 			case Facing::UP:
-				renderFaceUp(tile, pos, tile->getTexture(*m_pTileSource, pos, Facing::UP));
+				renderFaceUp  (tile, pos, tile->getTexture(*m_pTileSource, pos, Facing::UP));
 				break;
 			case Facing::NORTH:
 				renderNorth   (tile, pos, tile->getTexture(*m_pTileSource, pos, Facing::NORTH));

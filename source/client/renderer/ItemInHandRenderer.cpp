@@ -110,7 +110,7 @@ void ItemInHandRenderer::render(float a)
             matrix->rotate(180.0f, Vec3::UNIT_Y);
         }
 
-        renderItem(player, pItem, a);
+        renderItem(player, *pItem, a);
 	}
 	else
 	{

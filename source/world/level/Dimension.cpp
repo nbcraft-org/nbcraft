@@ -269,7 +269,7 @@ bool Dimension::isValidSpawn(const TilePos& pos) const
 		return false;
 
 #ifndef ORIGINAL_CODE
-	if (tile == 0)
+	if (tile == TILE_AIR)
 		return false;
 #endif
 	

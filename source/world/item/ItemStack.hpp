@@ -36,7 +36,7 @@ private:
 public:
 	ItemStack();
 	ItemStack(const ItemStack& other);
-	ItemStack(bool isValid);
+	explicit ItemStack(bool isValid); // we don't want to be passing an ItemStack* to an ItemStack&, and have this get called instead
 	ItemStack(Item*);
 	ItemStack(Item*, int count);
 	ItemStack(Item*, int count, int auxValue);
@@ -95,7 +95,6 @@ public:
 	Item* getItem() const { return m_pItem; }
 	Tile* getTile() const { return m_pTile; }
 	bool isValid() const { return m_bValid; }
-	ItemStack* copy() const;
 
 	// v0.2.0
 	int getAttackDamage(Entity &entity) const;

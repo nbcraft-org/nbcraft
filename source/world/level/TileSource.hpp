@@ -99,7 +99,7 @@ public:
 	//virtual Tile* getTilePtr(const TilePos& pos) const = 0;
 	virtual TileData getData(const TilePos& pos) const = 0;
 	virtual bool isSolidBlockingTile(const TilePos&) const = 0;
-	//virtual void isSolidRenderTile(const TilePos&) const = 0; // unk type
+	virtual bool isSolidRenderTile(const TilePos&) const = 0;
 	virtual bool containsMaterial(const AABB&, const Material*) const = 0;
 	virtual void tileEvent(const TileEvent& event) = 0; // unk type
 	virtual bool containsAnyLiquid(const AABB&) const = 0;

@@ -209,11 +209,6 @@ bool ItemStack::hasSameUserData(const ItemStack& other) const
 	return this->getUserData() == other.getUserData();
 }
 
-ItemStack* ItemStack::copy() const
-{
-	return new ItemStack(*this);
-}
-
 void ItemStack::set(int inCount)
 {
 	assert(inCount >= 0);

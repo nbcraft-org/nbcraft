@@ -60,6 +60,7 @@ public:
 	TileData getData(const TilePos& pos) const override;
 	Material* getMaterial(const TilePos& pos) const override;
 	bool isSolidBlockingTile(const TilePos& pos) const override;
+	bool isSolidRenderTile(const TilePos&) const override;
 
 	ChunkSource& getChunkSource() const override;
 	virtual ChunkSource* createChunkSource();
