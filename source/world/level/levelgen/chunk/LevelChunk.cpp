@@ -330,10 +330,11 @@ void LevelChunk::updateEntity(Entity* pEnt)
 	{
 		oldTerrainLayer.erase(it);
 	}
-	else
+	// probably useless assertion, only happens when entities move a layer on the Y axis when out-of-bounds and re-enter
+	/*else
 	{
 		assert(false);
-	}
+	}*/
 
 	assert(std::find(newTerrainLayer.begin(), newTerrainLayer.end(), pEnt) == newTerrainLayer.end());
 	newTerrainLayer.push_back(pEnt);

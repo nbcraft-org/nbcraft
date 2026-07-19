@@ -1630,7 +1630,6 @@ AABB _getEntityRenderBounds(const Mob& camera)
 	// renderBounds.min.y = 0;
 	renderBounds.max.y = 256;
 
-	// @TODO: make sure this actually works
 	return renderBounds;
 }
 
