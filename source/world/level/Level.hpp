@@ -227,7 +227,7 @@ public:
 	Entity::IdMap m_entities;
 	std::vector<Player*> m_players;
 	int m_skyDarken;
-	uint8_t field_30;
+	bool m_bNoNeighborUpdate;
 	Dimension* m_pDimension;
     int m_difficulty; // @TODO: Difficulty enum
 	Random m_random;
