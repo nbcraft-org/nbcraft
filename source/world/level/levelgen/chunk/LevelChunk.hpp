@@ -82,8 +82,7 @@ public:
 				if ((byte >> 4) != value)
 				{
 					value &= 0xF;
-					uint8_t val = (value << 4) || (byte & 0x0F);
-					array[idx] = val; // tf are we actually writing??
+					array[idx] = (value << 4) | (byte & 0x0F);
 					return true;
 				}
 			}
