@@ -32,7 +32,7 @@ public:
 
 	bool blocksLight() const;
 	int getDir(TileData data) const;
-	void setOpen(TileSource&, const TilePos& pos, bool bOpen);
+	void setOpen(TileSource&, const TilePos& pos, bool bOpen, Player* pPlayer = nullptr);
 	
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"

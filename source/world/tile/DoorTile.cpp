@@ -30,7 +30,7 @@ bool DoorTile::use(const TilePos& pos, Player& player)
 
 	TileSource& source = player.getTileSource();
 
-	setOpen(source, pos, !isOpen(source.getData(pos)));
+	setOpen(source, pos, !isOpen(source.getData(pos)), &player);
 
 	return true;
 }
@@ -154,13 +154,13 @@ void DoorTile::updateShape(const TileSource& source, const TilePos& pos)
 	setShape(getDir(source.getData(pos)));
 }
 
-void DoorTile::setOpen(TileSource& source, const TilePos& pos, bool bOpen)
+void DoorTile::setOpen(TileSource& source, const TilePos& pos, bool bOpen, Player* pPlayer)
 {
 	TileData data = source.getData(pos);
 	if (isTop(data))
 	{
 		if (source.getTile(pos.below()) == m_ID)
-			setOpen(source, pos.below(), bOpen);
+			setOpen(source, pos.below(), bOpen, pPlayer);
 		return;
 	}
 
@@ -176,8 +176,9 @@ void DoorTile::setOpen(TileSource& source, const TilePos& pos, bool bOpen)
 		// @BUG: marking the wrong tiles as dirty? No problem because setData sends an update immediately anyways
 		//source.fireTilesDirty(pos.below(), pos);
 
-		// @Matt
-		//level->levelEvent(LevelEvent(LevelEvent::SOUND_DOOR, pos, 0, player));
+		Level& level = source.getLevel();
+
+		level.levelEvent(LevelEvent(LevelEvent::SOUND_DOOR, pos, 0, pPlayer));
 	}
 }
 

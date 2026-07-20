@@ -26,7 +26,6 @@
 
 Level::Level(LevelStorage* pStor, const std::string& name, const LevelSettings& settings, int storageVersion, Dimension *pDimension)
 {
-	m_bInstantTicking = false;
 	m_bIsClientSide = false;
 	m_bPostProcessing = false;
 	m_skyDarken = 0;
@@ -1969,26 +1968,6 @@ HitResult Level::clip(const Vec3& a, const Vec3& b, bool includeLiquid, bool inc
 	}
 
 	return HitResult();
-}
-
-// @MATT: remove, unused
-void Level::addToTickNextTick(const TilePos& tilePos, TileID tileId, int delay)
-{
-	TickNextTickData tntd(tilePos, tileId, delay);
-	
-	if (m_bInstantTicking)
-	{
-		if (!hasChunksAt(tilePos, 8))
-			return;
-
-		TileID tile = getTile(tntd.pos);
-		if (tile > 0 && tile == tntd.tileId)
-			Tile::tiles[tntd.tileId]->tick(*this, tntd.pos, &m_random);
-	}
-	else
-	{
-		m_tileTickingQueue.add(*this, tntd.pos, tntd.tileId, delay);
-	}
 }
 
 void Level::takePicture(TripodCamera* pCamera, Entity* pOwner)

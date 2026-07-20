@@ -222,7 +222,6 @@ protected:
 
 public:
 	AABBVector m_aabbs;
-	bool m_bInstantTicking;
 	bool m_bIsClientSide; // if the level is controlled externally by a server.
 	bool m_bPostProcessing;
 	Entity::IdMap m_entities;
