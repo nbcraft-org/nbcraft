@@ -128,8 +128,8 @@ public:
 	//virtual bool shouldThaw(const TilePos&, bool) = 0;
 	//virtual bool isSnowTemperature(const TilePos&) = 0;
 	//virtual bool isHumidAt(const TilePos&) = 0;
-	virtual bool setTileAndData(const TilePos&, const FullTile&, TileChange updateFlags = TileChange::UPDATE_NONE) = 0;
-	virtual bool setTile(const TilePos&, TileID, TileChange updateFlags = TileChange::UPDATE_NONE) = 0;
+	virtual bool setTileAndData(const TilePos&, const FullTile&, TileChange updateFlags = TileChange::UPDATE_ALL) = 0;
+	virtual bool setTile(const TilePos&, TileID, TileChange updateFlags = TileChange::UPDATE_ALL) = 0;
 	virtual bool setTileAndDataNoUpdate(const TilePos&, const FullTile&) = 0;
 	virtual bool setTileNoUpdate(const TilePos&, TileID) = 0;
 	//virtual void removeTile(const TilePos&) = 0;

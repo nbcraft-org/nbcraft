@@ -16,15 +16,15 @@ public:
 	ChunkTilePos(uint8_t _x, uint8_t _y, uint8_t _z) { _init(_x, _y, _z); }
 	ChunkTilePos(const TilePos& pos) { _init(pos.x & (ChunkConstants::XZ_SIZE - 1), pos.y, pos.z & (ChunkConstants::XZ_SIZE - 1)); }
 
-	ChunkTilePos operator+(const ChunkTilePos& other) const
+	ChunkTilePos operator+(const TilePos& other) const
 	{
 		return ChunkTilePos(x + other.x, y + other.y, z + other.z);
 	}
 
-	TilePos operator+(const TilePos& other) const
+	/*TilePos operator+(const TilePos& other) const
 	{
 		return TilePos(x + other.x, y + other.y, z + other.z);
-	}
+	}*/
 
 	bool operator<(const ChunkTilePos& other) const
 	{

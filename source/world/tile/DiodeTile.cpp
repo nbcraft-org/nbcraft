@@ -1,4 +1,5 @@
 #include "DiodeTile.hpp"
+#include "common/Logger.hpp"
 #include "world/entity/Player.hpp"
 #include "world/level/TileSource.hpp"
 #include "world/level/TileTickingQueue.hpp"
@@ -12,6 +13,21 @@ DiodeTile::DiodeTile(TileID ID, bool on) : Tile(ID, TEXTURE_PUMPKIN_TOP, Materia
 	m_renderLayer = RENDER_LAYER_ALPHATEST;
 	m_bOn = on;
 	setShape(0.0f, 0.0f, 0.0f, 1.0f, 2.0f / 16.0f, 1.0f);
+}
+
+static Facing::Name _getFacingFromData(TileData data)
+{
+	int val = data & 3;
+	switch (val)
+	{
+	case 0: return Facing::SOUTH;
+	case 1: return Facing::WEST;
+	case 2: return Facing::NORTH;
+	case 3: return Facing::EAST;
+	default:
+		LOG_E("Unsupported data value in DiodeTile: %d", val);
+		throw std::bad_cast();
+	}
 }
 
 bool DiodeTile::isCubeShaped() const
@@ -77,14 +93,11 @@ int DiodeTile::getDirectSignal(const TileSource& source, const TilePos& pos, Fac
 int DiodeTile::getSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const
 {
 	if (!m_bOn)
-	{
 		return false;
-	}
-	else
-	{
-		TileData data = source.getData(pos) & 3;
-		return data == 0 && face == Facing::SOUTH ? true : (data == 1 && face == Facing::WEST ? true : (data == 2 && face == Facing::NORTH ? true : data == 3 && face == Facing::EAST));
-	}
+
+	TileData data = source.getData(pos);
+	Facing::Name facing = _getFacingFromData(data);
+	return facing == face;
 }
 
 void DiodeTile::neighborChanged(TileSource& source, const TilePos& pos, TileID tile)
@@ -100,34 +113,17 @@ void DiodeTile::neighborChanged(TileSource& source, const TilePos& pos, TileID t
 		bool bShouldTurnOn = shouldTurnOn(source, pos, data);
 		int var8 = (data & 12) >> 2;
 		TileTickingQueue* pQueue = source.getTickQueue(pos);
-		if (m_bOn && !bShouldTurnOn)
+		if (m_bOn != bShouldTurnOn)
 		{
 			pQueue->add(source, pos, m_ID, unk_b[var8] * 2);
 		}
-		else if (!m_bOn && bShouldTurnOn) 
-		{
-			pQueue->add(source, pos, m_ID, unk_b[var8] * 2);
-		}
-
 	}
 }
 
 bool DiodeTile::shouldTurnOn(TileSource& source, const TilePos& pos, TileData data)
 {
-	int var6 = data & 3;
-	switch (var6)
-	{
-	case 0:
-		return source.getSignal(pos.south(), Facing::SOUTH);
-	case 1:
-		return source.getSignal(pos.west(), Facing::WEST);
-	case 2:
-		return source.getSignal(pos.north(), Facing::NORTH);
-	case 3:
-		return source.getSignal(pos.east(), Facing::EAST);
-	default:
-		return false;
-	}
+	Facing::Name facing = _getFacingFromData(data);
+	return source.getSignal(pos.relative(facing), facing);
 }
 
 bool DiodeTile::use(const TilePos& pos, Player& player)
@@ -191,23 +187,23 @@ void DiodeTile::animateTick(TileSource& source, const TilePos& pos, Random* rand
 		float x = (float(pos.x) + 0.5f) + (random->nextFloat() - 0.5f) * 0.2f; // var7
 		float y = (float(pos.y) + 0.4f) + (random->nextFloat() - 0.5f) * 0.2f; // var9
 		float z = (float(pos.z) + 0.5f) + (random->nextFloat() - 0.5f) * 0.2f; // var11
-		float var13 = 0.0f;
-		float var15 = 0.0f;
+		float xOffs = 0.0f;
+		float zOffs = 0.0f;
 		if (random->nextInt(2) == 0) 
 		{
 			switch (data & 3)
 			{
 			case 0:
-				var15 = -0.3125f;
+				zOffs = -0.3125f;
 				break;
 			case 1:
-				var13 = 0.3125f;
+				xOffs = 0.3125f;
 				break;
 			case 2:
-				var15 = 0.3125f;
+				zOffs = 0.3125f;
 				break;
 			case 3:
-				var13 = -0.3125f;
+				xOffs = -0.3125f;
 			}
 		}
 		else
@@ -215,19 +211,19 @@ void DiodeTile::animateTick(TileSource& source, const TilePos& pos, Random* rand
 			int var17 = (data & 12) >> 2;
 			switch (data & 3) {
 			case 0:
-				var15 = unk_a[var17];
+				zOffs = unk_a[var17];
 				break;
 			case 1:
-				var13 = -unk_a[var17];
+				xOffs = -unk_a[var17];
 				break;
 			case 2:
-				var15 = -unk_a[var17];
+				zOffs = -unk_a[var17];
 				break;
 			case 3:
-				var13 = unk_a[var17];
+				xOffs = unk_a[var17];
 			}
 		}
 
-		level.addParticle("reddust", Vec3(x + var13, y, z + var15));
+		level.addParticle("reddust", Vec3(x + xOffs, y, z + zOffs));
 	}
 }
