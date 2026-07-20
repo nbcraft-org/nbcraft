@@ -265,7 +265,6 @@ const TileEntity::Vector& Level::getAllTileEntities() const
 
 void Level::setTileEntity(const TilePos& pos, TileEntity* tileEntity)
 {
-
 	if (tileEntity->isRemoved())
 		return;
 
@@ -276,7 +275,11 @@ void Level::setTileEntity(const TilePos& pos, TileEntity* tileEntity)
 		return;
 	}
 
+	// flag it for removal right out of the gate. if a LevelChunk adopts it, it will be unflagged for removal
+	tileEntity->setRemoved();
+
 	m_tileEntities.push_back(tileEntity);
+
 	LevelChunk* pChunk = getChunk(pos);
 	if (pChunk)
 		pChunk->setTileEntity(pos, tileEntity);
@@ -292,19 +295,7 @@ void Level::removeTileEntity(const TilePos& pos)
 		return;
 	}
 
-	// During a tile entity update, just mark it for potential removal
-	if (m_bUpdatingTileEntities)
-	{
-		tileEntity->setRemoved();
-		return;
-	}
-
-	Util::remove(m_tileEntities, tileEntity);
-
-	if (LevelChunk* pChunk = getChunk(pos))
-	{
-		pChunk->removeTileEntity(pos);
-	}
+	tileEntity->setRemoved();
 }
 
 void Level::swap(const TilePos& pos1, const TilePos& pos2)
@@ -501,7 +492,7 @@ void Level::setUpdateLights(bool b)
 bool Level::updateLights()
 {
 	// if more than 49 concurrent updateLights() calls?
-	if (field_B08 > 49)
+	if (field_B08 >= 50)
 		return false;
 
 	field_B08++;

@@ -43,9 +43,10 @@ public:
 
 		uint8_t get(const ChunkTilePos& pos) const
 		{
-			uint8_t byte = array[pos.index() >> 1];
+			int index = pos.index();
+			uint8_t byte = array[index >> 1];
 
-			if ((pos.y & 1) == 0)
+			if ((index & 1) == 0)
 			{
 				// get low bits
 				return byte & 0xF;
@@ -53,21 +54,25 @@ public:
 			else
 			{
 				// get high bits
-				return byte >> 4;
+				return (byte >> 4) & 0xF;
 			}
 		}
 
 		bool set(const ChunkTilePos& pos, uint8_t value)
 		{
-			int index = pos.index() >> 1;
-			uint8_t byte = array[index];
+			assert(value <= 15);
 
-			if ((pos.y & 1) == 0)
+			int index = pos.index();
+			int idx = index >> 1;
+			uint8_t byte = array[idx];
+
+			if ((index & 1) == 0)
 			{
 				// low bits
 				if ((byte & 0xF) != value)
 				{
-					array[index] = (value & 0xF) | (byte & 0xF0);
+					value &= 0xF;
+					array[idx] = (byte & 0xF0) | value;
 					return true;
 				}
 			}
@@ -76,7 +81,9 @@ public:
 				// high bits
 				if ((byte >> 4) != value)
 				{
-					array[index] = (value << 4) | (byte & 0xF);
+					value &= 0xF;
+					uint8_t val = (value << 4) || (byte & 0x0F);
+					array[idx] = val; // tf are we actually writing??
 					return true;
 				}
 			}

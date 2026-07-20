@@ -724,7 +724,9 @@ bool LevelChunk::setTileAndData(const ChunkTilePos& pos, TileID tile, TileData d
 	m_pLevel->updateLight(LightLayer::Block, tilePos, tilePos);
 
 	lightGaps(pos);
-	if (tile)
+
+	// prevent infinite loop by avoiding this call if we're only touching data
+	if (tile && tile != oldTile)
 	{
 		if (!m_pLevel->m_bIsClientSide)
 			Tile::tiles[tile]->onPlace(*m_pLevel, tilePos);
@@ -787,11 +789,12 @@ void LevelChunk::setTileEntity(const ChunkTilePos& pos, TileEntity* tileEntity)
 		{
 			tileEntity->clearRemoved();
 			m_tileEntities[pos] = tileEntity;
-			return;
+		}
+		else
+		{
+			LOG_W("Attempted to place a tile entity at %d, %d, %d where there was no entity tile!", tilePos.x, tilePos.y, tilePos.z);
 		}
 	}
-	
-	LOG_W("Attempted to place a tile entity at %d, %d, %d where there was no entity tile!", tilePos.x, tilePos.y, tilePos.z);
 }
 
 void LevelChunk::removeTileEntity(const ChunkTilePos& pos)
