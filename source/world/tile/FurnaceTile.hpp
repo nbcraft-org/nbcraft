@@ -19,9 +19,10 @@ public:
 	TileEntity* newTileEntity() override;
 	int getResource(TileData, Random*) const override;
 
+	void recalculateLookDirection(TileSource& source, const TilePos& pos);
+
 public:
 	static void SetLit(bool lit, TileSource& source, const TilePos& pos);
-	static void RecalculateLookDirection(TileSource& source, const TilePos& pos);
 
 private:
 	Random m_random;

@@ -73,7 +73,7 @@ int FurnaceTile::getTexture(Facing::Name face) const
 void FurnaceTile::onPlace(TileSource& source, const TilePos& pos)
 {
 	EntityTile::onPlace(source, pos);
-	RecalculateLookDirection(source, pos);
+	recalculateLookDirection(source, pos);
 }
 
 bool FurnaceTile::use(const TilePos& pos, Player& player)
@@ -152,24 +152,6 @@ void FurnaceTile::onRemove(TileSource& source, const TilePos& pos)
 
     EntityTile::onRemove(source, pos);
 }
-
-void FurnaceTile::SetLit(bool lit, TileSource& source, const TilePos& pos)
-{
-    TileEntity* tileEntity = source.getTileEntity(pos);
-    if (!tileEntity)
-        return;
-
-	int data = source.getData(pos);
-
-	keepInventory = true;
-    source.setTile(pos, (lit) ? Tile::furnaceLit->m_ID : Tile::furnace->m_ID);
-	keepInventory = false;
-
-	source.setTileAndData(pos, FullTile(Tile::furnace, data));
-	tileEntity->clearRemoved();
-	source.setTileEntity(pos, tileEntity);
-}
-
 bool FurnaceTile::hasTileEntity() const
 {
 	return true;
@@ -185,7 +167,7 @@ int FurnaceTile::getResource(TileData, Random*) const
 	return Tile::furnace->m_ID;
 }
 
-void FurnaceTile::RecalculateLookDirection(TileSource& source, const TilePos& pos)
+void FurnaceTile::recalculateLookDirection(TileSource& source, const TilePos& pos)
 {
 	TileID n = source.getTile(pos.north());
 	TileID s = source.getTile(pos.south());
@@ -202,5 +184,22 @@ void FurnaceTile::RecalculateLookDirection(TileSource& source, const TilePos& po
     else if (Tile::solid[n] && !Tile::solid[s])
 		lookData = 3;
 
-    source.setTileAndData(pos, FullTile(Tile::furnace, lookData));
+    source.setTileAndData(pos, FullTile(this, lookData));
 }
+
+void FurnaceTile::SetLit(bool lit, TileSource& source, const TilePos& pos)
+{
+    TileEntity* tileEntity = source.getTileEntity(pos);
+    if (!tileEntity)
+        return;
+
+    TileData data = source.getData(pos);
+
+    keepInventory = true;
+    source.setTileAndData(pos, FullTile((lit) ? Tile::furnaceLit : Tile::furnace, data));
+    keepInventory = false;
+
+    tileEntity->clearRemoved();
+    source.setTileEntity(pos, tileEntity);
+}
+
