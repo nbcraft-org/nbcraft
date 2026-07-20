@@ -16,7 +16,10 @@ void LightUpdate::update()
 	bool x11;
     
 	if ((m_max.z - m_min.z + 1) * (m_max.x + 1 - m_min.x + (m_max.y - m_min.y) * (m_max.x + 1 - m_min.x)) > 32768)
+	{
+		LOG_W("Light too large, skipping!");
 		return;
+	}
     
 	if (m_max.x < m_min.x)
 		return;
@@ -172,7 +175,7 @@ bool LightUpdate::expandIfCloseEnough(const TilePos& lowerPos, const TilePos& up
 	TilePos newMin = m_min.min(lowerPos);
 	TilePos newMax = m_max.max(upperPos);
 
-    // If trying to add more than 2 tiles, we can't do that
+    // Prevent the LightUpdate bounds from expanding beyond the 2nd dimension
 	if (Mth::abs((newMax - newMin).volume() - (m_max - m_min).volume()) > 2)
 		return false;
 
