@@ -92,9 +92,58 @@ void LevelChunk::init()
 	memset(m_updateMap, 0, sizeof m_updateMap);
 }
 
-void LevelChunk::unload()
+void LevelChunk::lightGap(const TilePos& pos, uint8_t heightMap)
 {
-	m_bLoaded = false;
+	// @BUG: This is flawed. getHeightmap calls getChunk which creates another chunk and calls this over
+	// and over again, creating a stack overflow. Since the level is limited a stack overflow is only
+	// possible on devices with really tight stacks.
+	uint8_t currHeightMap = m_pLevel->getHeightmap(pos);
+	if (currHeightMap > heightMap)
+	{
+		m_pLevel->updateLight(LightLayer::Sky, TilePos(pos.x, heightMap, pos.z), TilePos(pos.x, currHeightMap, pos.z));
+		return;
+	}
+	if (currHeightMap < heightMap)
+	{
+		m_pLevel->updateLight(LightLayer::Sky, TilePos(pos.x, currHeightMap, pos.z), TilePos(pos.x, heightMap, pos.z));
+		return;
+	}
+}
+
+void LevelChunk::lightGaps(const ChunkTilePos& pos)
+{
+	ChunkTilePos coords = pos + m_chunkPos;
+	CheckPosition(pos);
+	uint8_t heightMap = getHeightmap(pos);
+	coords.y = heightMap;
+
+	// @TODO: coords.direction()
+	lightGap(TilePos(coords.x - 1, coords.y, coords.z), heightMap);
+	lightGap(TilePos(coords.x + 1, coords.y, coords.z), heightMap);
+	lightGap(TilePos(coords.x, coords.y, coords.z - 1), heightMap);
+	lightGap(TilePos(coords.x, coords.y, coords.z + 1), heightMap);
+}
+
+void LevelChunk::deleteBlockData()
+{
+	if (m_pBlockData)
+		delete[] m_pBlockData;
+
+	m_pBlockData = nullptr;
+}
+
+void LevelChunk::clearUpdateMap()
+{
+	memset(m_updateMap, 0, sizeof m_updateMap);
+	m_bUnsaved = 0;
+}
+
+LevelChunk::NibbleTileArray& LevelChunk::getLight(const LightLayer& lightLayer)
+{
+	if (lightLayer == LightLayer::Sky)
+		return m_lightSky;
+	else // if (lightLayer == LightLayer::Block)
+		return m_lightBlk;
 }
 
 bool LevelChunk::isAt(const ChunkPos& pos)
@@ -196,73 +245,22 @@ void LevelChunk::recalcHeightmapOnly()
 	field_228 = x1;
 }
 
-void LevelChunk::lightGaps(const ChunkTilePos& pos)
-{
-	ChunkTilePos coords = pos + m_chunkPos;
-	CheckPosition(pos);
-	uint8_t heightMap = getHeightmap(pos);
-	coords.y = heightMap;
-
-	// @TODO: coords.direction()
-	lightGap(TilePos(coords.x - 1, coords.y, coords.z), heightMap);
-	lightGap(TilePos(coords.x + 1, coords.y, coords.z), heightMap);
-	lightGap(TilePos(coords.x, coords.y, coords.z - 1), heightMap);
-	lightGap(TilePos(coords.x, coords.y, coords.z + 1), heightMap);
-}
-
-void LevelChunk::lightGap(const TilePos& pos, uint8_t heightMap)
-{
-	// @BUG: This is flawed. getHeightmap calls getChunk which creates another chunk and calls this over
-	// and over again, creating a stack overflow. Since the level is limited a stack overflow is only
-	// possible on devices with really tight stacks.
-	uint8_t currHeightMap = m_pLevel->getHeightmap(pos);
-	if (currHeightMap > heightMap)
-	{
-		m_pLevel->updateLight(LightLayer::Sky, TilePos(pos.x, heightMap, pos.z), TilePos(pos.x, currHeightMap, pos.z));
-		return;
-	}
-	if (currHeightMap < heightMap)
-	{
-		m_pLevel->updateLight(LightLayer::Sky, TilePos(pos.x, currHeightMap, pos.z), TilePos(pos.x, heightMap, pos.z));
-		return;
-	}
-}
-
 int LevelChunk::getBrightness(const LightLayer& ll, const ChunkTilePos& pos)
 {
 	CheckPosition(pos);
 
-	// why the hell is it doing it like that.
-	if (&ll == &LightLayer::Sky)
-	{
-		return m_lightSky.get(pos);
-	}
+	NibbleTileArray& light = getLight(ll);
 
-	if (&ll == &LightLayer::Block)
-	{
-		return m_lightBlk.get(pos);
-	}
-
-	return 0;
+	return light.get(pos);
 }
 
 void LevelChunk::setBrightness(const LightLayer& ll, const ChunkTilePos& pos, int brightness)
 {
 	CheckPosition(pos);
-	// why the hell is it doing it like that.
-	if (&ll == &LightLayer::Sky)
-	{
-		m_lightSky.set(pos, brightness);
 
-		return;
-	}
-
-	if (&ll == &LightLayer::Block)
-	{
-		m_lightBlk.set(pos, brightness);
-
-		return;
-	}
+	NibbleTileArray& light = getLight(ll);
+	
+	light.set(pos, brightness);
 }
 
 int LevelChunk::getRawBrightness(const ChunkTilePos& pos, int skySubtract)
@@ -339,20 +337,6 @@ void LevelChunk::updateEntity(Entity* pEnt)
 	assert(std::find(newTerrainLayer.begin(), newTerrainLayer.end(), pEnt) == newTerrainLayer.end());
 	newTerrainLayer.push_back(pEnt);
 	pEnt->m_chunkPosY = newYCoord;
-}
-
-void LevelChunk::clearUpdateMap()
-{
-	memset(m_updateMap, 0, sizeof m_updateMap);
-	m_bUnsaved = 0;
-}
-
-void LevelChunk::deleteBlockData()
-{
-	if (m_pBlockData)
-		delete[] m_pBlockData;
-
-	m_pBlockData = nullptr;
 }
 
 void LevelChunk::removeEntity(Entity* pEnt)
@@ -500,6 +484,11 @@ void LevelChunk::skyBrightnessChanged()
 void LevelChunk::load()
 {
 	m_bLoaded = true;
+}
+
+void LevelChunk::unload()
+{
+	m_bLoaded = false;
 }
 
 bool LevelChunk::shouldSave(bool b)

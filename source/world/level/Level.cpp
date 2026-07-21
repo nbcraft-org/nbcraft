@@ -40,7 +40,7 @@ Level::Level(LevelStorage* pStor, const std::string& name, const LevelSettings& 
 	m_randValue = 42184323;
 	m_addend = 1013904223;
 	m_bUpdateLights = true;
-	field_B08 = 0;
+	m_maxRecurse = 0;
 	field_B0C = 0;
 
 	m_random.setSeed(1); // initialize with a seed of 1
@@ -491,35 +491,34 @@ void Level::setUpdateLights(bool b)
 
 bool Level::updateLights()
 {
-	// if more than 49 concurrent updateLights() calls?
-	if (field_B08 >= 50)
+	if (m_maxRecurse >= 50)
 		return false;
 
-	field_B08++;
+	m_maxRecurse++;
 
 	if (m_lightUpdates.empty())
 	{
-		field_B08--;
+		m_maxRecurse--;
 		return false;
 	}
     
     //LOG_I("LightUpdates: %d", m_lightUpdates.size());
 
-	for (int i = 499; i; i--)
+	for (int i = 499; i > 0; i--)
 	{
-		LightUpdate lu = *(m_lightUpdates.end() - 1);
+		LightUpdate lu = m_lightUpdates.back();
 		m_lightUpdates.pop_back();
 
 		lu.update();
 
 		if (m_lightUpdates.empty())
 		{
-			field_B08--;
+			m_maxRecurse--;
 			return false;
 		}
 	}
 
-	field_B08--;
+	m_maxRecurse--;
 	return true;
 }
 
@@ -625,58 +624,62 @@ LevelChunk* Level::getChunkAt(const TilePos& pos) const
 	return getChunk(pos);
 }
 
-void Level::updateLight(const LightLayer& ll, const TilePos& tilePos1, const TilePos& tilePos2, bool unimportant)
+void Level::updateLight(const LightLayer& ll, const TilePos& lowerPos, const TilePos& upperPos, bool unimportant)
 {
-	static int nUpdateLevels;
+	static int maxLoop;
 
-	if ((m_pDimension->m_bHasCeiling && &ll == &LightLayer::Sky) || !m_bUpdateLights)
+	if (!m_bUpdateLights || (m_pDimension->m_bHasCeiling && ll == LightLayer::Sky))
 		return;
 
-	nUpdateLevels++;
-	if (nUpdateLevels == 50)
+	maxLoop++;
+	if (maxLoop == 50)
 	{
-		nUpdateLevels--;
+		maxLoop--;
 		return;
 	}
 
-	TilePos idkbro((tilePos2.x + tilePos1.x) / 2, (tilePos2.y + tilePos1.y) / 2, (tilePos2.z + tilePos1.z) / 2);
+	TilePos idkbro((upperPos.x + lowerPos.x) / 2, 64, (upperPos.z + lowerPos.z) / 2);
 
-	if (!hasChunkAt(idkbro) || getChunkAt(idkbro)->isEmpty())
+	if (!hasChunkAt(idkbro))
 	{
-		nUpdateLevels--;
+		maxLoop--;
 		return;
 	}
 
-	size_t size = m_lightUpdates.size();
+	if (getChunkAt(idkbro)->isEmpty())
+		return;
+
 	if (unimportant)
 	{
-		size_t count = 5;
-		if (count > size)
-			count = size;
+		size_t size = m_lightUpdates.size();
+		size_t count = Mth::Min(size, 5);
 
 		for (size_t i = 0; i < count; i++)
 		{
 			LightUpdate& update = m_lightUpdates[size - i - 1];
-			if (update.m_pLightLayer == &ll && update.expandIfCloseEnough(tilePos1, tilePos2))
+			if (update.m_pLightLayer == &ll && update.expandIfCloseEnough(lowerPos, upperPos))
 			{
-				nUpdateLevels--;
+				maxLoop--;
 				return;
 			}
 		}
 	}
 
-	m_lightUpdates.push_back(LightUpdate(*this, ll, tilePos1, tilePos2));
+	m_lightUpdates.push_back(LightUpdate(*this, ll, lowerPos, upperPos));
 
-	// huh??
-	if (m_lightUpdates.size() > 1000000)
+	constexpr unsigned int max = 1000000;
+	if (m_lightUpdates.size() > max)
+	{
+		LOG_W("More than %d updates, aborting lighting updates", max);
 		m_lightUpdates.clear();
+	}
 
-	nUpdateLevels--;
+	maxLoop--;
 }
 
-void Level::updateLight(const LightLayer& ll, const TilePos& tilePos1, const TilePos& tilePos2)
+void Level::updateLight(const LightLayer& ll, const TilePos& lowerPos, const TilePos& upperPos)
 {
-	updateLight(ll, tilePos1, tilePos2, true);
+	updateLight(ll, lowerPos, upperPos, true);
 }
 
 void Level::updateLightIfOtherThan(const LightLayer& ll, const TilePos& tilePos, Brightness_t bright)
@@ -948,9 +951,9 @@ AABBVector& Level::fetchAABBs(const AABB& aabb, bool b)
 	return m_aabbs;
 }
 
-std::vector<LightUpdate>* Level::getLightsToUpdate()
+size_t Level::getLightsToUpdate() const
 {
-	return &m_lightUpdates;
+	return m_lightUpdates.size();
 }
 
 Player* Level::_getNearestPlayer(const Vec3& source, float maxDist, bool onlyFindAttackable) const

@@ -93,8 +93,8 @@ public:
 	bool updateSkyBrightness();
 	void setUpdateLights(bool b);
 	bool updateLights();
-	void updateLight(const LightLayer&, const TilePos& tilePos1, const TilePos& tilePos2);
-	void updateLight(const LightLayer&, const TilePos& tilePos1, const TilePos& tilePos2, bool);
+	void updateLight(const LightLayer&, const TilePos& lowerPos, const TilePos& upperPos);
+	void updateLight(const LightLayer&, const TilePos& lowerPos, const TilePos& upperPos, bool);
 	void updateLightIfOtherThan(const LightLayer&, const TilePos& pos, Brightness_t) override;
 	bool setTileAndDataNoUpdate(const TilePos& pos, const FullTile& tile) override;
 	bool setTileNoUpdate(const TilePos& pos, TileID tile) override;
@@ -185,7 +185,7 @@ public:
 	Dimension* getDimension(DimensionId type) const;
 	const LevelData* getLevelData() const { return m_pLevelData; }
 	AABBVector& fetchAABBs(const AABB& aabb, bool b = true) override;
-	std::vector<LightUpdate>* getLightsToUpdate();
+	size_t getLightsToUpdate() const;
 	Player* getNearestPlayer(const Entity&, float) const;
 	Player* getNearestPlayer(const Vec3& pos, float, bool) const;
 	Player* getNearestAttackablePlayer(const Entity&, float) const;
@@ -241,7 +241,7 @@ public:
 	std::set<ChunkPos> m_chunksToUpdate;
 	std::vector<LightUpdate> m_lightUpdates;
 	bool m_bUpdateLights;
-	int field_B08;
+	int m_maxRecurse;
 	uint8_t field_B0C;
 	int field_B10;
 	PathFinder* m_pPathFinder;

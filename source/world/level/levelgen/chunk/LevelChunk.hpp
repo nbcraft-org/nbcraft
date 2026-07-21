@@ -41,9 +41,8 @@ public:
 			delete[] array;
 		}
 
-		uint8_t get(const ChunkTilePos& pos) const
+		uint8_t get(int index) const
 		{
-			int index = pos.index();
 			uint8_t byte = array[index >> 1];
 
 			if ((index & 1) == 0)
@@ -58,11 +57,15 @@ public:
 			}
 		}
 
-		bool set(const ChunkTilePos& pos, uint8_t value)
+		uint8_t get(const ChunkTilePos& pos) const
+		{
+			return get(pos.index());
+		}
+
+		bool set(int index, uint8_t value)
 		{
 			assert(value <= 15);
 
-			int index = pos.index();
 			int idx = index >> 1;
 			uint8_t byte = array[idx];
 
@@ -90,6 +93,11 @@ public:
 			return false;
 		}
 
+		bool set(const ChunkTilePos& pos, uint8_t value)
+		{
+			return set(pos.index(), value);
+		}
+
 		size_t getSize() const { return ChunkConstants::TILE_COUNT / 2; }
 
 		uint8_t* array;
@@ -110,6 +118,8 @@ public:
 	void lightGaps(const ChunkTilePos& pos);
 	void deleteBlockData();
 	void clearUpdateMap();
+
+	NibbleTileArray& getLight(const LightLayer& lightLayer);
 
 	virtual bool isAt(const ChunkPos& pos);
 	virtual int getHeightmap(const ChunkTilePos& pos);

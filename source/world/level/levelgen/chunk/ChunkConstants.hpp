@@ -1,17 +1,18 @@
 #pragma once
 #include "compat/LegacyCPP.hpp"
+#include "common/Utils.hpp"
 
 class ChunkConstants
 {
 public:
 	// The size of a chunk in the X and Z directions
-	static constexpr int XZ_SIZE = 16;
+	static constexpr int XZ_SIZE = C_MAX_CHUNKS_X;
 
 	// The size of a chunk in the Y direction
-	static constexpr int Y_SIZE = 128;
+	static constexpr int Y_SIZE = C_MAX_Y;
 
 	// Number of tiles per row of a chunk
-	static constexpr int TILE_COUNT_PER_ROW = XZ_SIZE * XZ_SIZE;
+	static constexpr int TILE_COUNT_PER_ROW = C_MAX_CHUNKS;
 
 	// Number of tiles in a whole chunk
 	static constexpr int TILE_COUNT = TILE_COUNT_PER_ROW * Y_SIZE;
