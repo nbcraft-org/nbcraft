@@ -145,17 +145,64 @@ void LightUpdate::updateFast()
 
 			// Start fast stuff
 
-			// Only fetch from TileSource if we're on a chunk boundary and will therefore be crossing it
-			LevelChunk* pChunkWest  = ((pos.x & 0xF) == 0)                ? m_pSource->getChunk(pos.west() ) : pChunk;
-			LevelChunk* pChunkEast  = ((pos.x & 0xF) == C_MAX_CHUNKS_X-1) ? m_pSource->getChunk(pos.east() ) : pChunk;
-			LevelChunk* pChunkNorth = ((pos.z & 0xF) == 0)                ? m_pSource->getChunk(pos.north()) : pChunk;
-			LevelChunk* pChunkSouth = ((pos.z & 0xF) == C_MAX_CHUNKS_Z-1) ? m_pSource->getChunk(pos.south()) : pChunk;
+			LevelChunk::NibbleTileArray& light = pChunk->getLight(*m_pLightLayer);
 
-			LevelChunk::NibbleTileArray& light       =                    pChunk->getLight(*m_pLightLayer);
-			LevelChunk::NibbleTileArray* pLightWest  = pChunkWest  ? &pChunkWest->getLight(*m_pLightLayer)  : nullptr;
-			LevelChunk::NibbleTileArray* pLightEast  = pChunkEast  ? &pChunkEast->getLight(*m_pLightLayer)  : nullptr;
-			LevelChunk::NibbleTileArray* pLightNorth = pChunkNorth ? &pChunkNorth->getLight(*m_pLightLayer) : nullptr;
-			LevelChunk::NibbleTileArray* pLightSouth = pChunkSouth ? &pChunkSouth->getLight(*m_pLightLayer) : nullptr;
+			// WEST
+			LevelChunk* pChunkWest;
+			LevelChunk::NibbleTileArray* pLightWest;
+			// Only fetch from TileSource if we're on a chunk boundary and will therefore be crossing it
+			if ((pos.x & 0xF) == 0)
+			{
+				pChunkWest = m_pSource->getChunk(pos.west());
+				pLightWest = pChunkWest ? &pChunkWest->getLight(*m_pLightLayer) : nullptr;
+			}
+			else
+			{
+				pChunkWest = pChunk;
+				pLightWest = &light;
+			}
+
+			// EAST
+			LevelChunk* pChunkEast;
+			LevelChunk::NibbleTileArray* pLightEast;
+			if ((pos.x & 0xF) == C_MAX_CHUNKS_X - 1)
+			{
+				pChunkEast = m_pSource->getChunk(pos.east());
+				pLightEast = pChunkEast ? &pChunkEast->getLight(*m_pLightLayer) : nullptr;
+			}
+			else
+			{
+				pChunkEast = pChunk;
+				pLightEast = &light;
+			}
+
+			// NORTH
+			LevelChunk* pChunkNorth;
+			LevelChunk::NibbleTileArray* pLightNorth;
+			if ((pos.z & 0xF) == 0)
+			{
+				pChunkNorth = m_pSource->getChunk(pos.north());
+				pLightNorth = pChunkNorth ? &pChunkNorth->getLight(*m_pLightLayer) : nullptr;
+			}
+			else
+			{
+				pChunkNorth = pChunk;
+				pLightNorth = &light;
+			}
+
+			// SOUTH
+			LevelChunk* pChunkSouth;
+			LevelChunk::NibbleTileArray* pLightSouth;
+			if ((pos.z & 0xF) == C_MAX_CHUNKS_Z - 1)
+			{
+				pChunkSouth = m_pSource->getChunk(pos.south());
+				pLightSouth = pChunkSouth ? &pChunkSouth->getLight(*m_pLightLayer) : nullptr;
+			}
+			else
+			{
+				pChunkSouth = pChunk;
+				pLightSouth = &light;
+			}
 
 			int idxCenterBase = _indexXY(pos);
 			int idxWestBase   = _indexXY(pos.west());
@@ -165,7 +212,7 @@ void LightUpdate::updateFast()
 
 			for (; pos.y <= m_max.y; pos.y++)
 			{
-				// Assemble 1D offsets for current Y
+				// Assemble indexes for current Y
 				int idx      = idxCenterBase | pos.y;
 				int idxWest  = idxWestBase   | pos.y;
 				int idxEast  = idxEastBase   | pos.y;
