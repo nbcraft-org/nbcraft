@@ -616,12 +616,9 @@ bool LevelChunk::setTile(const ChunkTilePos& pos, TileID tile)
 	CheckPosition(pos);
 
 	int index = MakeBlockDataIndex(pos);
-
 	TileID oldTile = m_pBlockData[index];
 
-	uint8_t height = m_heightMap[MakeHeightMapIndex(pos)];
-
-	if (oldTile == tile)
+	if (tile == oldTile)
 		return false;
 
 	TilePos tilePos(m_chunkPos, pos.y);
@@ -635,6 +632,8 @@ bool LevelChunk::setTile(const ChunkTilePos& pos, TileID tile)
 
 	// clear the data value of the block
 	m_tileData.set(pos, 0);
+
+	uint8_t height = m_heightMap[MakeHeightMapIndex(pos)];
 
 	if (Tile::lightBlock[tile])
 	{
@@ -667,16 +666,19 @@ bool LevelChunk::setTileAndData(const ChunkTilePos& pos, TileID tile, TileData d
 	CheckPosition(pos);
 
 	int index = MakeBlockDataIndex(pos);
-
 	TileID oldTile = m_pBlockData[index];
 
-	uint8_t height = m_heightMap[MakeHeightMapIndex(pos)];
-
-	if (oldTile == tile)
+	if (tile == oldTile)
 	{
 		// make sure we're at least updating the data. If not, simply return false
-		if (getData(pos) == data)
+		if (data == getData(pos))
 			return false;
+
+		// update the data value of the block
+		m_tileData.set(pos, data);
+		m_bUnsaved = true;
+
+		return true;
 	}
 
 	TilePos tilePos(m_chunkPos, pos.y);
@@ -693,39 +695,38 @@ bool LevelChunk::setTileAndData(const ChunkTilePos& pos, TileID tile, TileData d
 	// update the data value of the block
 	m_tileData.set(pos, data);
 
-	if (tile != oldTile)
+	//Brightness_t newEmission = Tile::lightEmission[tile];
+	//Brightness_t oldEmission = oldTile ? Tile::lightEmission[oldTile] : Brightness::MIN;
+	int emissionOffset = 0; // Mth::Max(newEmission, oldEmission);
+	bool expandLightUpdate = true; // emissionOffset == 0;
+
+	//setBrightness(LightLayer::Block, pos, newEmission);
+
+	if (!m_pLevel->m_pDimension->m_bHasCeiling)
 	{
-		//Brightness_t newEmission = Tile::lightEmission[tile];
-		//Brightness_t oldEmission = oldTile ? Tile::lightEmission[oldTile] : Brightness::MIN;
-		int emissionOffset = 0; // Mth::Max(newEmission, oldEmission);
-		bool expandLightUpdate = true; // emissionOffset == 0;
+		uint8_t height = m_heightMap[MakeHeightMapIndex(pos)];
 
-		//setBrightness(LightLayer::Block, pos, newEmission);
-
-		if (!m_pLevel->m_pDimension->m_bHasCeiling)
+		if (Tile::lightBlock[tile])
 		{
-			if (Tile::lightBlock[tile])
-			{
-				if (height <= pos.y)
-					recalcHeight(ChunkTilePos(pos.x, pos.y + 1, pos.z));
-			}
-			else if (height - 1 == pos.y)
-			{
-				recalcHeight(pos);
-			}
-
-			m_pLevel->updateLight(LightLayer::Sky, tilePos, tilePos);
+			if (height <= pos.y)
+				recalcHeight(ChunkTilePos(pos.x, pos.y + 1, pos.z));
+		}
+		else if (height - 1 == pos.y)
+		{
+			recalcHeight(pos);
 		}
 
-		m_pLevel->updateLight(LightLayer::Block, tilePos - emissionOffset, tilePos + emissionOffset, expandLightUpdate);
+		m_pLevel->updateLight(LightLayer::Sky, tilePos, tilePos);
+	}
 
-		lightGaps(pos);
+	m_pLevel->updateLight(LightLayer::Block, tilePos - emissionOffset, tilePos + emissionOffset, expandLightUpdate);
 
-		if (tile != TILE_AIR)
-		{
-			if (!m_pLevel->m_bIsClientSide)
-				Tile::tiles[tile]->onPlace(*m_pLevel, tilePos);
-		}
+	lightGaps(pos);
+
+	if (tile != TILE_AIR)
+	{
+		if (!m_pLevel->m_bIsClientSide)
+			Tile::tiles[tile]->onPlace(*m_pLevel, tilePos);
 	}
 
 	m_bUnsaved = true;
