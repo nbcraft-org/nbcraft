@@ -146,10 +146,10 @@ void LightUpdate::updateFast()
 			// Start fast stuff
 
 			// Only fetch from TileSource if we're on a chunk boundary and will therefore be crossing it
-			LevelChunk* pChunkWest  = ((pos.x & 0xF) == 0)              ? m_pSource->getChunk(pos.west() ) : pChunk;
-			LevelChunk* pChunkEast  = ((pos.x & 0xF) == C_MAX_CHUNKS_X) ? m_pSource->getChunk(pos.east() ) : pChunk;
-			LevelChunk* pChunkNorth = ((pos.z & 0xF) == 0)              ? m_pSource->getChunk(pos.north()) : pChunk;
-			LevelChunk* pChunkSouth = ((pos.z & 0xF) == C_MAX_CHUNKS_Z) ? m_pSource->getChunk(pos.south()) : pChunk;
+			LevelChunk* pChunkWest  = ((pos.x & 0xF) == 0)                ? m_pSource->getChunk(pos.west() ) : pChunk;
+			LevelChunk* pChunkEast  = ((pos.x & 0xF) == C_MAX_CHUNKS_X-1) ? m_pSource->getChunk(pos.east() ) : pChunk;
+			LevelChunk* pChunkNorth = ((pos.z & 0xF) == 0)                ? m_pSource->getChunk(pos.north()) : pChunk;
+			LevelChunk* pChunkSouth = ((pos.z & 0xF) == C_MAX_CHUNKS_Z-1) ? m_pSource->getChunk(pos.south()) : pChunk;
 
 			LevelChunk::NibbleTileArray& light       =                    pChunk->getLight(*m_pLightLayer);
 			LevelChunk::NibbleTileArray* pLightWest  = pChunkWest  ? &pChunkWest->getLight(*m_pLightLayer)  : nullptr;
