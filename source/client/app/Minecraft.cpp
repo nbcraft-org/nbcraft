@@ -63,7 +63,7 @@ const char* Minecraft::progressMessages[] =
 {
 	"Locating server",
 	"Building terrain",
-	"Preparing",
+	"Preparing", // "Simulating world for a bit" on Java
 	"Saving chunks",
 };
 
@@ -1036,15 +1036,14 @@ void Minecraft::update()
 		field_DA8++;
 	}
 
+	m_pSoundEngine->update();
+
 	if (m_pLevel && !m_bPreparingLevel)
 	{
 		m_pLevel->updateLights();
 	}
 
-#ifndef ORIGINAL_CODE
 	tickMouse();
-	m_pSoundEngine->update();
-#endif
 
 	mce::RenderContext& renderContext = mce::RenderContextImmediate::get();
 
@@ -1080,7 +1079,7 @@ void Minecraft::prepareLevel(const std::string& unused)
 
 	if (!pLevel->field_B0C)
 	{
-		pLevel->setUpdateLights(0);
+		pLevel->setUpdateLights(false);
 	}
 
 	for (int i = 8, i2 = 0; i != 8 + C_MAX_CHUNKS_X * 16; i += 16)
@@ -1112,7 +1111,7 @@ void Minecraft::prepareLevel(const std::string& unused)
 	//if (startTime != -1.0f)
 	//	getTimeS();
 
-	pLevel->setUpdateLights(1);
+	pLevel->setUpdateLights(true);
 
 	//startTime = float(getTimeS());
 
