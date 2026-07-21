@@ -8,4 +8,5 @@ class Brightness
 public:
 	static const Brightness_t MIN;
 	static const Brightness_t MAX;
+	static const Brightness_t DECAY;
 };

@@ -46,23 +46,23 @@ void LightUpdate::update()
 				Brightness_t currentBrightness = pChunk->getBrightness(*m_pLightLayer, pos);
 
 				TileID currentTile = pChunk->getTile(pos);
-				Brightness_t lightBlockLevel = std::max(Tile::lightBlock[currentTile], Brightness_t(1));
+				Brightness_t lightBlockLevel = std::max(Tile::lightBlock[currentTile], Brightness::DECAY);
 
-				Brightness_t maxBrightness = Brightness::MIN;
+				Brightness_t minBrightness = Brightness::MIN;
 				if (m_pLightLayer == &LightLayer::Sky)
 				{
 					if (pChunk->isSkyLit(pos))
-						maxBrightness = Brightness::MAX;
+						minBrightness = Brightness::MAX;
 				}
 				else if (m_pLightLayer == &LightLayer::Block)
 				{
-					maxBrightness = Tile::lightEmission[currentTile];
+					minBrightness = Tile::lightEmission[currentTile];
 				}
 
 				Brightness_t newBrightness;
 
 				// If light can pass through, or the block itself emits light
-				if (lightBlockLevel < Brightness::MAX || maxBrightness != Brightness::MIN)
+				if (lightBlockLevel < Brightness::MAX || minBrightness != Brightness::MIN)
 				{
 					Brightness_t brightestNeighbor = Brightness::MIN;
 
@@ -74,7 +74,7 @@ void LightUpdate::update()
 					}
 
 					Brightness_t b = Mth::clamp(brightestNeighbor - lightBlockLevel, (int)Brightness::MIN, (int)Brightness::MAX);
-					newBrightness = std::max(b, maxBrightness);
+					newBrightness = std::max(b, minBrightness);
 				}
 				else
 				{
@@ -86,11 +86,14 @@ void LightUpdate::update()
 					// Don't use pChunk here, we probably need to be firing off events to the LevelListeners
 					m_pSource->setBrightness(*m_pLightLayer, pos, newBrightness);
 
-					Brightness_t spreadBrightness = std::max(newBrightness - 1, (int)Brightness::MIN);
+					Brightness_t spreadBrightness = std::max(newBrightness - Brightness::DECAY, (int)Brightness::MIN);
                     
 					// why dont we check if we're in range here?
-					m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos.west(),  spreadBrightness);
+					// if ((pos.x - 1) <= m_min.x)
+					m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos.west(), spreadBrightness);
+					// if ((pos.y - 1) <= m_min.y)
 					m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos.below(), spreadBrightness);
+					// if ((pos.z - 1) <= m_min.z)
 					m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos.north(), spreadBrightness);
 
 					if ((pos.x + 1) >= m_max.x)
@@ -224,23 +227,23 @@ void LightUpdate::updateFast()
 			// End fast stuff
 					
 				TileID currentTile = pChunk->getTile(pos);
-				Brightness_t lightBlockLevel = std::max(Tile::lightBlock[currentTile], Brightness_t(1));
+				Brightness_t lightBlockLevel = std::max(Tile::lightBlock[currentTile], Brightness::DECAY);
 
-				Brightness_t maxBrightness = Brightness::MIN;
+				Brightness_t minBrightness = Brightness::MIN;
 				if (m_pLightLayer == &LightLayer::Sky)
 				{
 					if (pChunk->isSkyLit(pos))
-						maxBrightness = Brightness::MAX;
+						minBrightness = Brightness::MAX;
 				}
 				else if (m_pLightLayer == &LightLayer::Block)
 				{
-					maxBrightness = Tile::lightEmission[currentTile];
+					minBrightness = Tile::lightEmission[currentTile];
 				}
 
 				Brightness_t newBrightness;
 
 				// If light can pass through, or the block itself emits light
-				if (lightBlockLevel < Brightness::MAX || maxBrightness != Brightness::MIN)
+				if (lightBlockLevel < Brightness::MAX || minBrightness != Brightness::MIN)
 				{
 					Brightness_t brightestNeighbor = Brightness::MIN;
 
@@ -258,7 +261,7 @@ void LightUpdate::updateFast()
 
 					KEEP_GOING:
 					Brightness_t b = brightestNeighbor > lightBlockLevel ? brightestNeighbor - lightBlockLevel : Brightness::MIN;
-					newBrightness = std::max(b, maxBrightness);
+					newBrightness = std::max(b, minBrightness);
 				}
 				else
 				{
@@ -270,13 +273,16 @@ void LightUpdate::updateFast()
 					// Don't use pChunk here, we probably need to be firing off events to the LevelListeners
 					m_pSource->setBrightness(*m_pLightLayer, pos, newBrightness);
 
-					Brightness_t spreadBrightness = std::max(newBrightness - 1, (int)Brightness::MIN);
+					Brightness_t spreadBrightness = std::max(newBrightness - Brightness::DECAY, (int)Brightness::MIN);
 
 					// why dont we check if we're in range here?
+					// if ((pos.x - 1) <= m_min.x)
 					m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos.west(),  spreadBrightness);
+					// if ((pos.y - 1) <= m_min.y)
 					m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos.below(), spreadBrightness);
+					// if ((pos.z - 1) <= m_min.z)
 					m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos.north(), spreadBrightness);
-
+					
 					if ((pos.x + 1) >= m_max.x)
 						m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos.east(),  spreadBrightness);
 					if ((pos.y + 1) >= m_max.y)
@@ -294,6 +300,7 @@ bool LightUpdate::expandIfCloseEnough(const TilePos& lowerPos, const TilePos& up
 	if (lowerPos >= m_min && upperPos <= m_max)
 		return true;
 
+	// Ensure the LightUpdate we're trying to expand is actually touching the other region we're trying to expand into
 	// Must use strict component-wise axis checking, not lexicographical operators.
 	if (lowerPos.x < m_min.x - 1 || lowerPos.y < m_min.y - 1 || lowerPos.z < m_min.z - 1 ||
 		upperPos.x > m_max.x + 1 || upperPos.y > m_max.y + 1 || upperPos.z > m_max.z + 1)

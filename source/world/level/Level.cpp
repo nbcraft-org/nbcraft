@@ -113,9 +113,10 @@ Brightness_t Level::getSkyDarken() const
 	float x = Mth::cos(getSunAngle(1.0f));
 	float y = 1.0f - (x * 2.0f + 0.5f);
 
+	// @PARITY
 	if (y < 0.0f)
 		return 0; // no darken
-	// 0.1.0 logic
+	// 0.1.0 logic (& b1.2_02)
 	/*if (y > 1.0f)
 		return 11; // full dark*/
 	// 0.2.1 logic
@@ -502,7 +503,7 @@ bool Level::updateLights()
 		return false;
 	}
     
-    LOG_I("LightUpdates: %d", m_lightUpdates.size());
+    //LOG_I("LightUpdates: %d", m_lightUpdates.size());
 
 	for (int i = 499; i > 0; i--)
 	{
@@ -624,7 +625,7 @@ LevelChunk* Level::getChunkAt(const TilePos& pos) const
 	return getChunk(pos);
 }
 
-void Level::updateLight(const LightLayer& ll, const TilePos& lowerPos, const TilePos& upperPos, bool unimportant)
+void Level::updateLight(const LightLayer& ll, const TilePos& lowerPos, const TilePos& upperPos, bool expand)
 {
 	static int maxLoop;
 
@@ -638,20 +639,22 @@ void Level::updateLight(const LightLayer& ll, const TilePos& lowerPos, const Til
 		return;
 	}
 
-	TilePos idkbro((upperPos.x + lowerPos.x) / 2, 64, (upperPos.z + lowerPos.z) / 2);
+	// get the center of our region at Y=64
+	TilePos center((upperPos.x + lowerPos.x) / 2, 64, (upperPos.z + lowerPos.z) / 2);
 
 	// b1.2_02 would not decrease maxLoop for isEmpty, which in our case, freezes lighting updates
-	if (!hasChunkAt(idkbro) || getChunkAt(idkbro)->isEmpty())
+	if (!hasChunkAt(center) || getChunkAt(center)->isEmpty())
 	{
 		maxLoop--;
 		return;
 	}
 
-	if (unimportant)
+	if (expand)
 	{
 		size_t size = m_lightUpdates.size();
 		size_t count = Mth::Min(size, 5);
 
+		// iterate backwards over 5 or less LightUpdates
 		for (size_t i = 0; i < count; i++)
 		{
 			LightUpdate& update = m_lightUpdates[size - i - 1];

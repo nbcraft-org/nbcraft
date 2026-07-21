@@ -101,18 +101,18 @@ void LevelChunk::lightGap(const TilePos& pos, uint8_t heightMap)
 	if (currHeightMap > heightMap)
 	{
 		m_pLevel->updateLight(LightLayer::Sky, TilePos(pos.x, heightMap, pos.z), TilePos(pos.x, currHeightMap, pos.z));
-		return;
+		m_bUnsaved = true;
 	}
-	if (currHeightMap < heightMap)
+	else if (currHeightMap < heightMap)
 	{
 		m_pLevel->updateLight(LightLayer::Sky, TilePos(pos.x, currHeightMap, pos.z), TilePos(pos.x, heightMap, pos.z));
-		return;
+		m_bUnsaved = true;
 	}
 }
 
 void LevelChunk::lightGaps(const ChunkTilePos& pos)
 {
-	ChunkTilePos coords = pos + m_chunkPos;
+	ChunkTilePos coords = ChunkTilePos(m_chunkPos) + pos;
 	CheckPosition(pos);
 	uint8_t heightMap = getHeightmap(pos);
 	coords.y = heightMap;
@@ -693,32 +693,39 @@ bool LevelChunk::setTileAndData(const ChunkTilePos& pos, TileID tile, TileData d
 	// update the data value of the block
 	m_tileData.set(pos, data);
 
-	if (m_pLevel->m_pDimension->m_bHasCeiling)
+	if (tile != oldTile)
 	{
-		m_pLevel->updateLight(LightLayer::Block, tilePos, tilePos);
+		//Brightness_t newEmission = Tile::lightEmission[tile];
+		//Brightness_t oldEmission = oldTile ? Tile::lightEmission[oldTile] : Brightness::MIN;
+		int emissionOffset = 0; // Mth::Max(newEmission, oldEmission);
+		bool expandLightUpdate = true; // emissionOffset == 0;
+
+		//setBrightness(LightLayer::Block, pos, newEmission);
+
+		if (!m_pLevel->m_pDimension->m_bHasCeiling)
+		{
+			if (Tile::lightBlock[tile])
+			{
+				if (height <= pos.y)
+					recalcHeight(ChunkTilePos(pos.x, pos.y + 1, pos.z));
+			}
+			else if (height - 1 == pos.y)
+			{
+				recalcHeight(pos);
+			}
+
+			m_pLevel->updateLight(LightLayer::Sky, tilePos, tilePos);
+		}
+
+		m_pLevel->updateLight(LightLayer::Block, tilePos - emissionOffset, tilePos + emissionOffset, expandLightUpdate);
+
 		lightGaps(pos);
-	}
 
-	if (Tile::lightBlock[tile])
-	{
-		if (height <= pos.y)
-			recalcHeight(ChunkTilePos(pos.x, pos.y + 1, pos.z));
-	}
-	else if (height - 1 == pos.y)
-	{
-		recalcHeight(pos);
-	}
-
-	m_pLevel->updateLight(LightLayer::Sky, tilePos, tilePos);
-	m_pLevel->updateLight(LightLayer::Block, tilePos, tilePos);
-
-	lightGaps(pos);
-
-	// prevent infinite loop by avoiding this call if we're only touching data
-	if (tile && tile != oldTile)
-	{
-		if (!m_pLevel->m_bIsClientSide)
-			Tile::tiles[tile]->onPlace(*m_pLevel, tilePos);
+		if (tile != TILE_AIR)
+		{
+			if (!m_pLevel->m_bIsClientSide)
+				Tile::tiles[tile]->onPlace(*m_pLevel, tilePos);
+		}
 	}
 
 	m_bUnsaved = true;
