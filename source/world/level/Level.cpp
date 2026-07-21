@@ -202,7 +202,7 @@ Brightness_t Level::getBrightness(const LightLayer& ll, const TilePos& pos) cons
 
     // @TODO: just do getAvailableChunk or whatever instead and check its return value
 	if (!hasChunk(pos))
-		return 0;
+		return Brightness::MIN;
 
 	LevelChunk* pChunk = getChunk(pos);
 	return pChunk->getBrightness(ll, pos);
@@ -217,7 +217,7 @@ Brightness_t Level::getRawBrightness(const TilePos& pos, bool b) const
 {
 	//@BUG: checking x >= C_MAX_X, but not z >= C_MAX_Z.
 	if (pos.x < C_MIN_X || pos.z < C_MIN_Z || pos.x >= C_MAX_X || pos.z > C_MAX_Z)
-		return 15;
+		return Brightness::MAX;
 
 	// this looks like some kind of hack.
 	if (b && (getTile(pos) == Tile::stoneSlabHalf->m_ID || getTile(pos) == Tile::farmland->m_ID))
@@ -237,13 +237,13 @@ Brightness_t Level::getRawBrightness(const TilePos& pos, bool b) const
 	}
 
 	if (pos.y < C_MIN_Y)
-		return 0;
+		return Brightness::MIN;
 
 	if (pos.y >= C_MAX_Y)
 	{
-		int r = 15 - m_skyDarken;
-		if (r < 0)
-			r = 0;
+		int r = Brightness::MAX - m_skyDarken;
+		if (r < Brightness::MIN)
+			r = Brightness::MIN;
 
 		return r;
 	}
@@ -502,14 +502,14 @@ bool Level::updateLights()
 		return false;
 	}
     
-    //LOG_I("LightUpdates: %d", m_lightUpdates.size());
+    LOG_I("LightUpdates: %d", m_lightUpdates.size());
 
 	for (int i = 499; i > 0; i--)
 	{
 		LightUpdate lu = m_lightUpdates.back();
 		m_lightUpdates.pop_back();
 
-		lu.update();
+		lu.updateFast();
 
 		if (m_lightUpdates.empty())
 		{
@@ -640,14 +640,12 @@ void Level::updateLight(const LightLayer& ll, const TilePos& lowerPos, const Til
 
 	TilePos idkbro((upperPos.x + lowerPos.x) / 2, 64, (upperPos.z + lowerPos.z) / 2);
 
-	if (!hasChunkAt(idkbro))
+	// b1.2_02 would not decrease maxLoop for isEmpty, which in our case, freezes lighting updates
+	if (!hasChunkAt(idkbro) || getChunkAt(idkbro)->isEmpty())
 	{
 		maxLoop--;
 		return;
 	}
-
-	if (getChunkAt(idkbro)->isEmpty())
-		return;
 
 	if (unimportant)
 	{

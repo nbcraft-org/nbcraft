@@ -30,18 +30,18 @@ class LevelChunk
 public:
 	struct NibbleTileArray
 	{
-		NibbleTileArray()
+		inline NibbleTileArray()
 		{
 			array = new uint8_t[getSize()];
             memset(array, 0, getSize());
 		}
 
-		~NibbleTileArray()
+		inline ~NibbleTileArray()
 		{
 			delete[] array;
 		}
 
-		uint8_t get(int index) const
+		inline uint8_t get(int index) const
 		{
 			uint8_t byte = array[index >> 1];
 
@@ -57,12 +57,12 @@ public:
 			}
 		}
 
-		uint8_t get(const ChunkTilePos& pos) const
+		inline uint8_t get(const ChunkTilePos& pos) const
 		{
 			return get(pos.index());
 		}
 
-		bool set(int index, uint8_t value)
+		inline bool set(int index, uint8_t value)
 		{
 			assert(value <= 15);
 
@@ -93,12 +93,12 @@ public:
 			return false;
 		}
 
-		bool set(const ChunkTilePos& pos, uint8_t value)
+		inline bool set(const ChunkTilePos& pos, uint8_t value)
 		{
 			return set(pos.index(), value);
 		}
 
-		size_t getSize() const { return ChunkConstants::TILE_COUNT / 2; }
+		inline size_t getSize() const { return ChunkConstants::TILE_COUNT / 2; }
 
 		uint8_t* array;
 	};
