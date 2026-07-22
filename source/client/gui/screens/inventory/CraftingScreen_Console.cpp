@@ -6,7 +6,7 @@
 #include "client/locale/Language.hpp"
 #include "renderer/ShaderConstants.hpp"
 
-CraftingScreen_Console::CraftingScreen_Console(Inventory* inventory, const TilePos& tilePos, Level* level, bool is2x2) : ContainerScreen(new CraftingMenu(inventory, tilePos, level, is2x2))
+CraftingScreen_Console::CraftingScreen_Console(Inventory* inventory, const TilePos& tilePos, bool is2x2) : ContainerScreen(new CraftingMenu(inventory, tilePos, is2x2))
     , m_tabLayout(this)
     , m_craftLayout(this)
     , m_craftContext(inventory, &m_slotDisplays, is2x2)

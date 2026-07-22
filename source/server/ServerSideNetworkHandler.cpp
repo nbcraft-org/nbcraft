@@ -274,7 +274,7 @@ void ServerSideNetworkHandler::onDisconnect(const RakNet::RakNetGUID& guid)
 #endif
 
 		// remove it from our world
-		m_pLevel->removeEntity((Entity*&)pPlayer);
+		m_pLevel->removeEntity((Entity*)pPlayer);
 	}
 	else if ((pPlayer = getPendingPlayerByGUID(guid)))
 	{

@@ -62,7 +62,7 @@ void ServerPlayer::startCrafting(const TilePos& pos)
 	m_pLevel->m_pRakNetInstance->send(m_guid, new ContainerOpenPacket(m_containerId, Container::CRAFTING, "Crafting", 9));
 #endif
 
-	setContainerMenu(new CraftingMenu(m_pInventory, pos, m_pLevel));
+	setContainerMenu(new CraftingMenu(m_pInventory, pos));
 }
 
 void ServerPlayer::openContainer(Container* container)
