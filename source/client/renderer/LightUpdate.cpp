@@ -252,12 +252,17 @@ void LightUpdate::updateFast()
 					// Start fast stuff
 					#define DONEYET if (brightestNeighbor >= Brightness::MAX) goto KEEP_GOING
 
-					if (pLightWest)  brightestNeighbor = std::max(brightestNeighbor, pLightWest->get(idxWest)); DONEYET;
-					if (pLightEast)  brightestNeighbor = std::max(brightestNeighbor, pLightEast->get(idxEast)); DONEYET;
-					if (pLightNorth) brightestNeighbor = std::max(brightestNeighbor, pLightNorth->get(idxNorth)); DONEYET;
-					if (pLightSouth) brightestNeighbor = std::max(brightestNeighbor, pLightSouth->get(idxSouth)); DONEYET;
+					if (pLightWest)  brightestNeighbor = std::max(brightestNeighbor, pLightWest->get(idxWest));
+					DONEYET;
+					if (pLightEast)  brightestNeighbor = std::max(brightestNeighbor, pLightEast->get(idxEast));
+					DONEYET;
+					if (pLightNorth) brightestNeighbor = std::max(brightestNeighbor, pLightNorth->get(idxNorth));
+					DONEYET;
+					if (pLightSouth) brightestNeighbor = std::max(brightestNeighbor, pLightSouth->get(idxSouth));
+					DONEYET;
 
-					if (pos.y < C_MAX_Y - 1) brightestNeighbor = std::max(brightestNeighbor, light.get(idx + 1)); DONEYET;
+					if (pos.y < C_MAX_Y - 1) brightestNeighbor = std::max(brightestNeighbor, light.get(idx + 1));
+					DONEYET;
 					if (pos.y > C_MIN_Y)     brightestNeighbor = std::max(brightestNeighbor, light.get(idx - 1));
 					// End fast stuff
 
