@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <typeinfo.h>
+#include <typeinfo>
 #include "TileSource.hpp"
 
 class Region : public TileSource
