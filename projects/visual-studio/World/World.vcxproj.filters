@@ -584,9 +584,6 @@
     <ClCompile Include="$(MC_ROOT)\source\world\entity\EntityFactory.cpp">
       <Filter>Source Files\Entity</Filter>
     </ClCompile>
-    <ClCompile Include="$(MC_ROOT)\source\world\level\levelgen\chunk\DataLayer.cpp">
-      <Filter>Source Files\Level\LevelGen\Chunk</Filter>
-    </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\ContainerMenu.cpp">
       <Filter>Source Files\Inventory</Filter>
     </ClCompile>
@@ -1252,9 +1249,6 @@
     <ClInclude Include="$(MC_ROOT)\source\world\level\TileChange.hpp">
       <Filter>Header Files\Level</Filter>
     </ClInclude>
-    <ClInclude Include="$(MC_ROOT)\source\world\level\levelgen\chunk\DataLayer.hpp">
-      <Filter>Header Files\Level\LevelGen\Chunk</Filter>
-    </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\world\level\LevelEvent.hpp">
       <Filter>Header Files\Level</Filter>
     </ClInclude>
@@ -1499,6 +1493,12 @@
       <Filter>Header Files\Level</Filter>
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\world\level\TileTickingQueue.hpp">
+      <Filter>Header Files\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\entity\MobSpawnerData.hpp">
+      <Filter>Header Files\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\level\DimensionId.hpp">
       <Filter>Header Files\Level</Filter>
     </ClInclude>
   </ItemGroup>

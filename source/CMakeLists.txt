@@ -348,6 +348,8 @@ add_library(nbcraft-core STATIC
     world/level/LevelListener.cpp
     world/level/TickNextTickData.cpp
     world/level/TilePos.cpp
+	world/level/TileSource.cpp
+	world/level/TileTickingQueue.cpp
     world/level/Explosion.cpp
     world/level/storage/LevelStorageSource.cpp
     world/level/storage/MemoryLevelStorageSource.cpp
@@ -357,7 +359,6 @@ add_library(nbcraft-core STATIC
     world/level/storage/LevelStorage.cpp
     world/level/storage/MemoryLevelStorage.cpp
     world/level/storage/ChunkStorage.cpp
-    world/level/storage/LevelSource.cpp
     world/level/storage/MemoryChunkStorage.cpp
     world/level/storage/ExternalFileLevelStorageSource.cpp
     world/level/path/Node.cpp
@@ -387,7 +388,6 @@ add_library(nbcraft-core STATIC
     world/level/levelgen/chunk/ChunkCache.cpp
     world/level/levelgen/chunk/ChunkPos.cpp
     world/level/levelgen/chunk/ChunkSource.cpp
-    world/level/levelgen/chunk/DataLayer.cpp
     world/level/levelgen/chunk/EmptyLevelChunk.cpp
     world/level/levelgen/chunk/PerformanceTestChunkSource.cpp
     world/level/levelgen/chunk/TestChunkSource.cpp

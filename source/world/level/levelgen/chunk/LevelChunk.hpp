@@ -17,7 +17,6 @@
 #include "client/renderer/LightLayer.hpp"
 #include "world/level/levelgen/chunk/ChunkPos.hpp"
 #include "world/level/levelgen/chunk/ChunkTilePos.hpp"
-#include "world/level/levelgen/chunk/DataLayer.hpp"
 
 class Level;
 class AABB;
@@ -28,6 +27,7 @@ class TileEntity;
 class LevelChunk
 {
 public:
+	// Previously called "DataLayer"
 	struct NibbleTileArray
 	{
 		inline NibbleTileArray()

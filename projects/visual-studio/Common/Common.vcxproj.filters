@@ -136,7 +136,7 @@
     <ClInclude Include="$(MC_ROOT)\source\common\utility\HashMap.hpp">
       <Filter>Header Files\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\common\MovePriorityQueue.hpp">
+    <ClInclude Include="$(MC_ROOT)\source\common\MovePriorityQueue.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
