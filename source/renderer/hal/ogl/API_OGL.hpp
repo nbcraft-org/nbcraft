@@ -3,7 +3,7 @@
 #include <string>
 
 #include "thirdparty/GL/GL.hpp"
-#include "compat/Unused.hpp"
+#include "compat/Unused.h"
 
 // This file is actually titled "gl_header.h", but I like "API_OGL.hpp" better
 

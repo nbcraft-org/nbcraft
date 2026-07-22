@@ -1,5 +1,5 @@
 #pragma once
-#include <stdint.h>
+#include "compat/Integers.h"
 
 typedef uint64_t Tick_t;
 
