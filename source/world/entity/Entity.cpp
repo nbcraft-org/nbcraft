@@ -623,8 +623,6 @@ bool Entity::isFree(const Vec3& off) const
 	AABB aabb = m_hitbox;
 	aabb.move(off);
 
-	std::vector<AABB>& pCubes = m_pTileSource->fetchAABBs(aabb, true);
-
 	return !m_pTileSource->containsAnyLiquid(aabb);
 }
 
@@ -633,8 +631,6 @@ bool Entity::isFree(const Vec3& off, float expand) const
 	AABB aabb = m_hitbox;
 	aabb.move(off);
 	aabb.grow(expand, expand, expand);
-
-	std::vector<AABB>& pCubes = m_pTileSource->fetchAABBs(aabb, true);
 
 	return !m_pTileSource->containsAnyLiquid(aabb);
 }
