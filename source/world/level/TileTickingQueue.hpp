@@ -10,7 +10,7 @@ class TileTickingQueue
 {
 private:
 	Tick_t m_currentTick;
-	MovePriorityQueue<TickNextTickData, std::greater<TickNextTickData>> m_tickData;
+	MovePriorityQueue<TickNextTickData, std::greater<TickNextTickData> > m_tickData;
 	bool m_instaTick;
 	Random m_random;
 
