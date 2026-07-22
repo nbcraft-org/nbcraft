@@ -47,7 +47,7 @@ public:
 
 private:
 	Player* _getNearestPlayer(const Vec3&, float, bool) const;
-	bool _mayPlace(TileID tile, const TilePos& pos, bool ignoreEntities, Entity* placer) const;
+	bool _mayPlace(TileID tile, const TilePos& pos, bool ignoreEntities, Entity* ignoreEntity) const;
 
 protected:
 	// @NOTE: LevelListeners do NOT get updated here

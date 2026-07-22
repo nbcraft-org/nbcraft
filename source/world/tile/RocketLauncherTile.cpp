@@ -88,13 +88,13 @@ void RocketLauncherTile::neighborChanged(TileSource& source, const TilePos& pos,
 		if (data & (STATE_POWERED | STATE_RECHARGING))
 			return;
 
-		source.setTileAndDataNoUpdate(pos, FullTile(m_ID, data | STATE_POWERED));
+		source.setTileAndDataNoUpdate(pos, FullTile(this, data | STATE_POWERED));
 		_use(source, pos);
 	}
 	else
 	{
 		if (data & STATE_POWERED)
-			source.setTileAndDataNoUpdate(pos, FullTile(m_ID, data & ~STATE_POWERED));
+			source.setTileAndDataNoUpdate(pos, FullTile(this, data & ~STATE_POWERED));
 	}
 }
 

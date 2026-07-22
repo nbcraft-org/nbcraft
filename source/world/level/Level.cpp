@@ -1536,7 +1536,7 @@ bool Level::mayInteract(Entity* entity, const TilePos& pos) const
 	return true;
 }
 
-bool Level::_mayPlace(TileID tile, const TilePos& pos, bool ignoreEntities, Entity* placer) const
+bool Level::_mayPlace(TileID tile, const TilePos& pos, bool ignoreEntities, Entity* ignoreEntity) const
 {
 	TileID oldTile = getTile(pos);
 
@@ -1547,7 +1547,7 @@ bool Level::_mayPlace(TileID tile, const TilePos& pos, bool ignoreEntities, Enti
 
 	AABB* aabb = pTile->getAABB(*this, pos);
 
-	if (!ignoreEntities && aabb && !isUnobstructedByEntities(*aabb, placer))
+	if (!ignoreEntities && aabb && !isUnobstructedByEntities(*aabb, ignoreEntity))
 		return false;
 
 	if (pOldTile == Tile::water ||
@@ -1571,7 +1571,7 @@ bool Level::mayPlace(TileID tile, const TilePos& pos, bool ignoreEntities) const
 
 bool Level::mayPlace(TileID tile, const TilePos& pos, Facing::Name face, Entity& placer, bool ignoreEntities, Entity* ignoreEntity) const
 {
-	return _mayPlace(tile, pos, ignoreEntities, &placer);
+	return _mayPlace(tile, pos, ignoreEntities, ignoreEntity);
 }
 
 void Level::broadcastAll(Packet* packet)

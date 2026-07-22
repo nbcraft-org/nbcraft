@@ -115,7 +115,7 @@ void LeafTile::_tickDecayOld(TileSource& source, const TilePos& pos)
 		if (m_checkBuffer[0x4210] < 0)
 			die(source, pos);
 		else
-			source.setTileAndDataNoUpdate(pos, FullTile(m_ID, data & ~C_UPDATE_LEAF_BIT)); // equates to -5
+			source.setTileAndDataNoUpdate(pos, FullTile(this, data & ~C_UPDATE_LEAF_BIT)); // equates to -5
 	}
 }
 
@@ -187,7 +187,7 @@ void LeafTile::_tickDecay(TileSource& source, const TilePos& pos)
 	if (m_checkBuffer[k1 * j1 + k1 * C_RANGE + k1] < 0)
 		die(source, pos);
 	else
-		source.setTileAndDataNoUpdate(pos, FullTile(m_ID, data & ~C_UPDATE_LEAF_BIT));
+		source.setTileAndDataNoUpdate(pos, FullTile(this, data & ~C_UPDATE_LEAF_BIT));
 }
 
 int LeafTile::getColor(TileSource& source, const TilePos& pos) const
@@ -265,7 +265,7 @@ void LeafTile::onRemove(TileSource& source, const TilePos& pos)
 				TileID tile = source.getTile(pos + o);
 				if (tile != Tile::leaves->m_ID) continue;
 
-				source.setTileAndDataNoUpdate(pos + o, FullTile(m_ID, source.getData(pos + o) | C_UPDATE_LEAF_BIT));
+				source.setTileAndDataNoUpdate(pos + o, FullTile(this, source.getData(pos + o) | C_UPDATE_LEAF_BIT));
 			}
 		}
 	}

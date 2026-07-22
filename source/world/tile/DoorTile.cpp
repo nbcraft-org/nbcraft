@@ -169,9 +169,9 @@ void DoorTile::setOpen(TileSource& source, const TilePos& pos, bool bOpen, Playe
 		data ^= 4;
 
 		if (source.getTile(pos.above()) == m_ID)
-			source.setTileAndData(pos.above(), FullTile(m_ID, data + 8), TileChange::UPDATE_ALL | TileChange::UPDATE_UNK3);
+			source.setTileAndData(pos.above(), FullTile(this, data + 8), TileChange::UPDATE_ALL | TileChange::UPDATE_UNK3);
 
-		source.setTileAndData(pos, FullTile(m_ID, data), TileChange::UPDATE_ALL | TileChange::UPDATE_UNK3);
+		source.setTileAndData(pos, FullTile(this, data), TileChange::UPDATE_ALL | TileChange::UPDATE_UNK3);
 
 		// @BUG: marking the wrong tiles as dirty? No problem because setData sends an update immediately anyways
 		//source.fireTilesDirty(pos.below(), pos);
