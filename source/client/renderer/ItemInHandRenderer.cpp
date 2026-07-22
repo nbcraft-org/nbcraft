@@ -275,7 +275,6 @@ void ItemInHandRenderer::renderScreenEffect(float a)
 {
     Minecraft& mc = *m_pMinecraft;
     Textures& textures = *mc.m_pTextures;
-    Level& level = *mc.m_pLevel;
     Options& options = *mc.getOptions();
     LocalPlayer& player = *mc.m_pLocalPlayer;
     TileSource& tileSource = player.getTileSource();
