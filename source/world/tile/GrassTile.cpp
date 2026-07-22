@@ -29,9 +29,11 @@ int GrassTile::getColor(TileSource& source, const TilePos& pos) const
 {
 	if (GrassColor::isAvailable() && m_bBiomeColors)
 	{
+		/* @MATT
 		BiomeSource& biomeSource = *source.getBiomeSource();
 		biomeSource.getBiomeBlock(pos, 1, 1);
 		return GrassColor::get(biomeSource.field_4[0], biomeSource.field_8[0]);
+		*/
 	}
 
 	if (GetPatchManager()->IsGrassTinted())

@@ -65,7 +65,7 @@ public: // virtual functions
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
 	virtual Tile* setShape(float, float, float, float, float, float);
 #pragma GCC diagnostic pop
-	virtual void updateShape(const TileSource&, const TilePos& pos);
+	virtual void updateShape(TileSource&, const TilePos& pos);
 	virtual void updateDefaultShape();
 	virtual void addLights(TileSource&, const TilePos& pos);
 	virtual float getBrightness(TileSource&, const TilePos& pos) const;
@@ -73,13 +73,13 @@ public: // virtual functions
 	virtual int getTexture(Facing::Name face) const;
 	virtual int getTexture(Facing::Name face, TileData data) const;
 	virtual int getTexture(TileSource&, const TilePos& pos, Facing::Name face) const;
-	virtual AABB* getAABB(const TileSource&, const TilePos& pos);
+	virtual AABB* getAABB(TileSource&, const TilePos& pos);
 	virtual void addAABBs(TileSource&, const TilePos& pos, const AABB*, std::vector<AABB>&);
 	virtual AABB getTileAABB(TileSource&, const TilePos& pos);
 	virtual bool isSolidRender() const;
 	virtual bool mayPick() const;
 	virtual bool mayPick(TileData, bool) const;
-	virtual bool mayPlace(const TileSource&, const TilePos& pos) const;
+	virtual bool mayPlace(TileSource&, const TilePos& pos) const;
 	virtual bool tryToPlace(TileSource&, const TilePos&, TileData);
 	virtual bool hasTileEntity() const;
 	virtual int getTickDelay() const;
@@ -96,7 +96,7 @@ public: // virtual functions
 	virtual void spawnResources(TileSource&, const TilePos& pos, TileData data, float);
 	virtual int spawnBurnResources(TileSource&, float, float, float);
 	virtual float getExplosionResistance(Entity*) const;
-	virtual HitResult clip(const TileSource&, const TilePos& pos, Vec3, Vec3);
+	virtual HitResult clip(TileSource&, const TilePos& pos, Vec3, Vec3);
 	virtual void wasExploded(TileSource&, const TilePos& pos);
 	virtual RenderLayer getRenderLayer(TileSource&, const TilePos&) const;
 	virtual bool use(const TilePos& pos, Player&);
@@ -109,13 +109,13 @@ public: // virtual functions
 	virtual int getColor(TileSource&, const TilePos& pos) const;
 	virtual int getColor(Facing::Name face, TileData) const;
 	virtual bool isSignalSource() const;
-	virtual int getSignal(const TileSource&, const TilePos& pos) const;
-	virtual int getSignal(const TileSource&, const TilePos& pos, Facing::Name face) const;
-	virtual int getDirectSignal(const TileSource&, const TilePos& pos, Facing::Name face) const;
+	virtual int getSignal(TileSource&, const TilePos& pos) const;
+	virtual int getSignal(TileSource&, const TilePos& pos, Facing::Name face) const;
+	virtual int getDirectSignal(TileSource&, const TilePos& pos, Facing::Name face) const;
 	virtual void entityInside(TileSource&, const TilePos& pos, Entity*) const;
 	virtual void playerDestroy(Player&, const TilePos& pos, TileData data);
 	virtual void playerWillDestroy(Player&, const TilePos& pos, TileData data);
-	virtual bool canSurvive(const TileSource&, const TilePos& pos) const;
+	virtual bool canSurvive(TileSource&, const TilePos& pos) const;
 	virtual std::string getName() const;
 	virtual std::string getDescriptionId() const;
 	virtual Tile* setDescriptionId(std::string const&);

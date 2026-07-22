@@ -16,13 +16,13 @@ public:
 	TorchTile(int ID, int texture, Material* pMtl);
 
 public:
-	AABB* getAABB(const TileSource&, const TilePos& pos) override;
+	AABB* getAABB(TileSource&, const TilePos& pos) override;
 	bool isSolidRender() const override;
 	bool isCubeShaped() const override;
 	eRenderShape getRenderShape() const override;
 	void animateTick(TileSource&, const TilePos& pos, Random*) override;
-	HitResult clip(const TileSource&, const TilePos& pos, Vec3 a, Vec3 b) override;
-	bool mayPlace(const TileSource&, const TilePos& pos) const override;
+	HitResult clip(TileSource&, const TilePos& pos, Vec3 a, Vec3 b) override;
+	bool mayPlace(TileSource&, const TilePos& pos) const override;
 	void neighborChanged(TileSource&, const TilePos& pos, TileID tile) override;
 	void onPlace(TileSource&, const TilePos& pos) override;
 	void setPlacedOnFace(TileSource&, const TilePos& pos, Facing::Name face) override;

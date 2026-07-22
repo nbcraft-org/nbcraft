@@ -17,6 +17,7 @@
 #include "renderer/GL/GL.hpp"
 #include "renderer/GlobalConstantBuffers.hpp"
 #include "renderer/RenderContextImmediate.hpp"
+#include "world/level/TileSource.hpp"
 #include "thirdparty/glm/glm.hpp"
 #include "world/level/TileSource.hpp"
 
@@ -778,8 +779,9 @@ void GameRenderer::render(const Timer& timer)
 	{
 		m_lastUpdatedMS = timeMs;
 		m_shownFPS = m_pMinecraft->getFpsIntlCounter();
-		m_shownChunkUpdates = Chunk::updates;
-		Chunk::updates = 0;
+		// @TODO: fix this
+		//m_shownChunkUpdates = Chunk::updates;
+		//Chunk::updates = 0;
 	}
 }
 

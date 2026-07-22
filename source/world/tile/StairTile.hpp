@@ -24,7 +24,7 @@ public:
 	// Just overloads to forward to parent tile.
 	void addLights(TileSource&, const TilePos& pos) override;
 	void animateTick(TileSource&, const TilePos& pos, Random*) override;
-	void updateShape(const TileSource&, const TilePos& pos) override;
+	void updateShape(TileSource&, const TilePos& pos) override;
 	float getBrightness(TileSource&, const TilePos& pos) const override;
 	int getTexture(Facing::Name face) const override;
 	int getTexture(Facing::Name face, TileData data) const override;
@@ -32,7 +32,7 @@ public:
 	AABB getTileAABB(TileSource&, const TilePos& pos) override;
 	bool mayPick() const override;
 	bool mayPick(TileData data, bool includeLiquid) const override;
-	bool mayPlace(const TileSource&, const TilePos& pos) const override;
+	bool mayPlace(TileSource&, const TilePos& pos) const override;
 	int getTickDelay() const override;
 	void tick(TileSource&, const TilePos& pos, Random*) override;
 	void destroy(TileSource&, const TilePos& pos, TileData data) override;

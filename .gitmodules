@@ -10,3 +10,6 @@
 [submodule "thirdparty/OpenAL"]
 	path = thirdparty/OpenAL
 	url = https://github.com/kcat/openal-soft.git
+[submodule "thirdparty/LevelDB"]
+	path = thirdparty/LevelDB
+	url = https://github.com/nbcraft-org/leveldb-nbc.git

@@ -8,7 +8,7 @@ ButtonTile::ButtonTile(TileID id, int texture) : Tile(id, texture, Material::dec
 	setTicking(true);
 }
 
-AABB* ButtonTile::getAABB(const TileSource&, const TilePos& pos)
+AABB* ButtonTile::getAABB(TileSource&, const TilePos& pos)
 {
 	return nullptr;
 }
@@ -28,7 +28,7 @@ bool ButtonTile::isCubeShaped() const
 	return false;
 }
 
-bool ButtonTile::mayPlace(const TileSource& source, const TilePos& pos) const
+bool ButtonTile::mayPlace(TileSource& source, const TilePos& pos) const
 {
 	if (source.isSolidBlockingTile(pos.west())) return true;
 	if (source.isSolidBlockingTile(pos.east())) return true;
@@ -117,7 +117,7 @@ bool ButtonTile::checkCanSurvive(TileSource& source, const TilePos& pos)
 	return false;
 }
 
-void ButtonTile::updateShape(const TileSource& source, const TilePos& pos)
+void ButtonTile::updateShape(TileSource& source, const TilePos& pos)
 {
 	TileData data = source.getData(pos);
 	int var6 = data & 7;
@@ -227,12 +227,12 @@ void ButtonTile::onRemove(TileSource& source, const TilePos& pos)
 	Tile::onRemove(source, pos);
 }
 
-int ButtonTile::getSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const
+int ButtonTile::getSignal(TileSource& source, const TilePos& pos, Facing::Name face) const
 {
 	return (source.getData(pos) & 8) > 0;
 }
 
-int ButtonTile::getDirectSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const
+int ButtonTile::getDirectSignal(TileSource& source, const TilePos& pos, Facing::Name face) const
 {
 	TileData data = source.getData(pos);
 	if ((data & 8) == 0)

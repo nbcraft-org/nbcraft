@@ -32,14 +32,14 @@ bool Bush::isSolidRender() const
 	return false;
 }
 
-bool Bush::mayPlace(const TileSource& source, const TilePos& pos) const
+bool Bush::mayPlace(TileSource& source, const TilePos& pos) const
 {
 	TileID tile = source.getTile(pos.below());
 
 	return tile == Tile::grass->m_ID || tile == Tile::dirt->m_ID || tile == Tile::farmland->m_ID;
 }
 
-bool Bush::canSurvive(const TileSource& source, const TilePos& pos) const
+bool Bush::canSurvive(TileSource& source, const TilePos& pos) const
 {
 	if (source.getRawBrightness(pos) <= 7 && !source.canSeeSky(pos))
 		return false;
@@ -66,7 +66,7 @@ void Bush::tick(TileSource& source, const TilePos& pos, Random* random)
 	checkAlive(source, pos);
 }
 
-AABB* Bush::getAABB(const TileSource& source, const TilePos& pos)
+AABB* Bush::getAABB(TileSource& source, const TilePos& pos)
 {
 	return nullptr;
 }

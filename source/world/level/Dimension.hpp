@@ -8,56 +8,96 @@
 
 #pragma once
 
+#include <string>
+#include <unordered_map>
+#include "world/level/LevelListener.hpp"
 #include "common/math/Color.hpp"
-#include "world/phys/Vec3.hpp"
-#include "DimensionId.hpp"
+#include "world/entity/Entity.hpp"
+#include "world/level/Brightness.hpp"
 
-class Level; // if included from Level.hpp
+class Level;
 class ChunkSource;
-class BiomeSource;
 class TileSource;
-class Entity;
+class BiomeSource;
 
-class Dimension
+enum GeneratorType
 {
-public:
-	Dimension();
-	virtual ~Dimension();
-	static Dimension* createNew(DimensionId type);
-
-	virtual bool isNaturalDimension() const;
-	virtual void init();
-	virtual bool mayRespawn() const;
-    virtual bool isValidSpawn(const TilePos& pos) const;
-
-	DimensionId getId() const { return m_id; }
-	bool isDay() const;
-	bool isFoggy() const { return m_bFoggy; }
-	bool isUltraWarm() const { return m_bUltraWarm; }
-	virtual Color getSkyColor(const Entity& entity, float f) const;
-	virtual Color getFogColor(float f) const;
-	virtual Color getSunriseColor(float, float) const;
-	virtual Color getCloudColor(float f) const;
-	virtual float getSunAngle(float f) const;
-	virtual float getTimeOfDay(int32_t, float) const;
-	virtual float getTimeOfDay(float f) const;
-	virtual float getStarBrightness(float f) const;
-
-	void init(Level* pLevel);
-	void updateLightRamp();
-
-	ChunkSource* createRandomLevelSource();
-
-	ChunkSource* getChunkSource() const;
-	TileSource* getTileSource() const;
-
-public:
-	Level* m_pLevel;
-	BiomeSource* m_pBiomeSource;
-	bool m_bFoggy;
-	bool m_bUltraWarm;
-	bool m_bHasCeiling;
-	float m_brightnessRamp[16];
-	DimensionId m_id;
+	GENERATOR_OVERWORLD_LIMITED,
+	GENERATOR_OVERWORLD,
+	GENERATOR_FLAT,
+	GENERATOR_NETHER,
+	GENERATOR_THE_END
 };
 
+class Dimension : public LevelListener
+{
+public:
+	typedef std::unordered_map<Entity::ID, Entity*> EntityIdMap_t;
+
+protected:
+	Level& m_level;
+	BiomeSource* m_biomeSource;
+	bool m_bFoggy;
+	bool m_bUltraWarm;
+	bool m_hasCeiling;
+	float m_brightnessRamp[15 + 1]; // Brightness::MAX + 1
+	DimensionId m_dimensionId;
+	ChunkSource* m_chunkSource;
+	TileSource* m_pTileSource;
+	EntityIdMap_t m_entityIdMap;
+
+public:
+	Dimension(Level& level, DimensionId dimensionId);
+	virtual ~Dimension();
+
+public:
+	virtual void init();
+	virtual void tick();
+	virtual Color getFogColor(float, float) const;
+	virtual bool isNaturalDimension() const;
+	virtual bool mayRespawn() const;
+	virtual bool isValidSpawn(const TilePos& pos) const;
+	virtual void updateLightRamp();
+	virtual std::string getName() const = 0;
+
+	bool isDay() const { return true; /*m_skyDarken <= 3;*/ } // @TODO: find this var
+	bool isFoggy() const { return m_bFoggy; }
+	Color getFogColor(float f) const;
+	Color getSkyColor(const Entity& entity, float f) const;
+	float getSunAngle(float f) const;
+	Color getSunriseColor(float, float) const;
+	float getTimeOfDay(int32_t, float) const;
+	float getTimeOfDay(float f) const;
+	Color getCloudColor(float f) const;
+	float getStarBrightness(float f) const;
+
+	Entity* getEntity(Entity::ID id) const;
+	bool hasEntity(Entity& entity) const;
+	void addEntity(Entity& entity);
+	bool removeEntity(Entity& entity);
+	EntityIdMap_t& getEntityIdMap();
+	const EntityIdMap_t& getEntityIdMapConst() const;
+
+	DimensionId getId() const { return m_dimensionId; }
+	bool isUltraWarm() const { return m_bUltraWarm; }
+	bool hasCeiling() const { return m_hasCeiling; }
+	float getBrightnessRamp(Brightness_t brightness) const { return m_brightnessRamp[brightness]; }
+	ChunkSource* getChunkSource() { return m_chunkSource; }
+	TileSource* getTileSource() { return m_pTileSource; }
+
+protected:
+	ChunkSource* _getGenerator(GeneratorType type);
+
+public:
+	static Dimension* createNew(DimensionId type, Level& level);
+};
+
+class NormalDimension : public Dimension
+{
+public:
+	NormalDimension(Level& level);
+
+public:
+	void init() override;
+	std::string getName() const override;
+};

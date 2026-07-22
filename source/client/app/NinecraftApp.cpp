@@ -11,6 +11,7 @@
 #include "world/entity/MobCategory.hpp"
 #include "world/entity/MobFactory.hpp"
 #include "world/tile/entity/TileEntityType.hpp"
+#include "world/level/levelgen/biome/Biome.hpp"
 #include "client/player/input/GameControllerHandler.hpp"
 #include "client/player/input/Multitouch.hpp"
 #include "client/gui/screens/StartMenuScreen.hpp"
@@ -202,7 +203,8 @@ void NinecraftApp::_initAll()
 #ifdef DEMO
 	m_pLevelStorageSource = new MemoryLevelStorageSource;
 #else
-	m_pLevelStorageSource = new ExternalFileLevelStorageSource(platform()->m_externalStorageDir);
+	m_pLevelStorageSource = nullptr;
+	//m_pLevelStorageSource = new ExternalFileLevelStorageSource(platform()->m_externalStorageDir);
 #endif
 
 	_initInput();

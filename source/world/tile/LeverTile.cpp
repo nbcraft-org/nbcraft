@@ -7,7 +7,7 @@ LeverTile::LeverTile(TileID id, int texture) : Tile(id, texture, Material::decor
 	m_renderLayer = RENDER_LAYER_ALPHATEST;
 }
 
-AABB* LeverTile::getAABB(const TileSource& source, const TilePos& pos)
+AABB* LeverTile::getAABB(TileSource& source, const TilePos& pos)
 {
 	return nullptr;
 }
@@ -27,7 +27,7 @@ eRenderShape LeverTile::getRenderShape() const
 	return SHAPE_LEVER;
 }
 
-bool LeverTile::mayPlace(const TileSource& source, const TilePos& pos) const
+bool LeverTile::mayPlace(TileSource& source, const TilePos& pos) const
 {
 	if (source.isSolidBlockingTile(pos.west())) return true;
 	if (source.isSolidBlockingTile(pos.east())) return true;
@@ -106,7 +106,7 @@ bool LeverTile::_checkCanSurvive(TileSource& source, const TilePos& pos)
 	return false;
 }
 
-void LeverTile::updateShape(const TileSource& source, const TilePos& pos)
+void LeverTile::updateShape(TileSource& source, const TilePos& pos)
 {
 	TileData data = source.getData(pos) & 7;
 	float var6 = 3.0f / 16.0f;
@@ -204,12 +204,12 @@ void LeverTile::onRemove(TileSource& source, const TilePos& pos)
 	Tile::onRemove(source, pos);
 }
 
-int LeverTile::getSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const
+int LeverTile::getSignal(TileSource& source, const TilePos& pos, Facing::Name face) const
 {
 	return (source.getData(pos) & 8) > 0;
 }
 
-int LeverTile::getDirectSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const
+int LeverTile::getDirectSignal(TileSource& source, const TilePos& pos, Facing::Name face) const
 {
 	TileData data = source.getData(pos);
 	if ((data & 8) == 0) 

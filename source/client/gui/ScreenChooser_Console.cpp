@@ -76,8 +76,3 @@ void ScreenChooser_Console::pushDeathScreen()
 {
 	m_pMinecraft->setScreen(new DeathScreen_Console);
 }
-
-void ScreenChooser_Console::pushSavingScreen(bool bCopyMap)
-{
-	m_pMinecraft->setScreen(new SavingWorldScreen_Console(bCopyMap));
-}

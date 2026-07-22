@@ -55,7 +55,7 @@ bool FireTile::isCubeShaped() const
 	return false;
 }
 
-AABB* FireTile::getAABB(const TileSource& source, const TilePos& pos)
+AABB* FireTile::getAABB(TileSource& source, const TilePos& pos)
 {
 	return nullptr;
 }
@@ -137,7 +137,7 @@ int FireTile::getFireOdds(TileSource& source, const TilePos& pos)
 	return odds;
 }
 
-bool FireTile::isValidFireLocation(const TileSource& source, const TilePos& pos) const
+bool FireTile::isValidFireLocation(TileSource& source, const TilePos& pos) const
 {
 	if (canBurn(source, pos.east())) return true;
 	if (canBurn(source, pos.west())) return true;
@@ -153,7 +153,7 @@ bool FireTile::mayPick() const
 	return false;
 }
 
-bool FireTile::mayPlace(const TileSource& source, const TilePos& pos) const
+bool FireTile::mayPlace(TileSource& source, const TilePos& pos) const
 {
 	// @NOTE: This is useless as you usually don't 'place' fire.
 	if (source.isSolidBlockingTile(pos.below()))
@@ -250,7 +250,7 @@ void FireTile::tick(TileSource& source, const TilePos& pos, Random* random)
 	}
 }
 
-bool FireTile::canBurn(const TileSource& source, const TilePos& pos) const
+bool FireTile::canBurn(TileSource& source, const TilePos& pos) const
 {
 	return m_igniteOdds[source.getTile(pos)] > 0;
 }

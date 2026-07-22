@@ -11,7 +11,7 @@ void SoulSandTile::entityInside(TileSource& source, const TilePos& pos, Entity* 
 	entity->m_vel.z *= 0.4;
 }
 
-AABB* SoulSandTile::getAABB(const TileSource& source, const TilePos& pos)
+AABB* SoulSandTile::getAABB(TileSource& source, const TilePos& pos)
 {
 	AABB* rAABB = Tile::getAABB(source, pos);
 	rAABB->max.y -= 2 / 16.0;

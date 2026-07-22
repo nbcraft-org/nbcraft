@@ -963,7 +963,7 @@ TileID Tile::TransformToValidBlockId(TileID tileId)
 	return TransformToValidBlockId(tileId, TilePos::ZERO);
 }
 
-void Tile::updateShape(const TileSource& source, const TilePos& pos)
+void Tile::updateShape(TileSource& source, const TilePos& pos)
 {
 }
 
@@ -986,7 +986,7 @@ int Tile::getColor(Facing::Name face, TileData) const
 	return 0xFFFFFF;
 }
 
-AABB* Tile::getAABB(const TileSource& source, const TilePos& pos)
+AABB* Tile::getAABB(TileSource& source, const TilePos& pos)
 {
 	Vec3 offset(pos);
 
@@ -1055,13 +1055,13 @@ bool Tile::shouldRenderFace(TileSource& source, const TilePos& pos, Facing::Name
 	return !pTile->isSolidRender();
 }
 
-bool Tile::canSurvive(const TileSource& source, const TilePos& pos) const
+bool Tile::canSurvive(TileSource& source, const TilePos& pos) const
 {
 	return true;
 }
 
 // returns if we can place over the tile
-bool Tile::mayPlace(const TileSource& source, const TilePos& pos) const
+bool Tile::mayPlace(TileSource& source, const TilePos& pos) const
 {
 	TileID tile = source.getTile(pos);
 	if (!tile)
@@ -1130,7 +1130,7 @@ bool Tile::containsZ(const Vec3& v)
 		&& v.y <= m_aabb.max.y;
 }
 
-HitResult Tile::clip(const TileSource& source, const TilePos& pos, Vec3 vec1, Vec3 vec2)
+HitResult Tile::clip(TileSource& source, const TilePos& pos, Vec3 vec1, Vec3 vec2)
 {
 	updateShape(source, pos);
 
@@ -1196,17 +1196,17 @@ HitResult Tile::clip(const TileSource& source, const TilePos& pos, Vec3 vec1, Ve
 	return HitResult(pos, collType, *pVec + pos);
 }
 
-int Tile::getSignal(const TileSource& source, const TilePos& pos) const
+int Tile::getSignal(TileSource& source, const TilePos& pos) const
 {
 	return 0;
 }
 
-int Tile::getSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const
+int Tile::getSignal(TileSource& source, const TilePos& pos, Facing::Name face) const
 {
 	return 0;
 }
 
-int Tile::getDirectSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const
+int Tile::getDirectSignal(TileSource& source, const TilePos& pos, Facing::Name face) const
 {
 	return 0;
 }

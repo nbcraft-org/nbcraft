@@ -5,7 +5,7 @@ DeadBush::DeadBush(int id, int texture) : Bush(id, texture)
 {
 }
 
-bool DeadBush::mayPlace(const TileSource& source, const TilePos& pos) const
+bool DeadBush::mayPlace(TileSource& source, const TilePos& pos) const
 {
 	TileID tile = source.getTile(pos.below());
 	

@@ -20,7 +20,7 @@ private:
 
 public:
 	int getTexture(Facing::Name face, TileData data) const override;
-	AABB* getAABB(const TileSource&, const TilePos& pos) override;
+	AABB* getAABB(TileSource&, const TilePos& pos) override;
 	eRenderShape getRenderShape() const override;
 	bool isCubeShaped() const override;
 	bool isSolidRender() const override;

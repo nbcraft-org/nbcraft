@@ -205,10 +205,12 @@ int LeafTile::getColor(TileSource& source, const TilePos& pos) const
 			return FoliageColor::getBirchColor();
 		}
 
+		/* @MATT
 		BiomeSource& biomeSource = *source.getBiomeSource();
 
 		biomeSource.getBiomeBlock(pos, 1, 1);
 		return FoliageColor::get(biomeSource.field_4[0], biomeSource.field_8[0]);
+		*/
 	}
 
 	if (GetPatchManager()->IsGrassTinted())

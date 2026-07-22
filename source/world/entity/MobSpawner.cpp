@@ -15,7 +15,7 @@ void MobSpawner::tick(TileSource& source, bool allowHostile, bool allowFriendly)
 
     chunksToPoll.clear();
 
-    for (std::vector<Player*>::const_iterator it = level.m_players.begin(); it != level.m_players.end(); ++it)
+    for (std::vector<Player*>::const_iterator it = source.getLevelConst().m_players.begin(); it != source.getLevelConst().m_players.end(); ++it)
     {
         const Player* player = *it;
         int cx = Mth::floor(player->m_pos.x / 16.0f);
@@ -43,9 +43,9 @@ void MobSpawner::tick(TileSource& source, bool allowHostile, bool allowFriendly)
         if ((isFriendly && !allowFriendly) || (!isFriendly && !allowHostile))
             continue;
 
-        // maximum of this mob type
-        if (level.getEntityCount(baseType) > static_cast<unsigned int>(category.getMaxInstancesPerChunk() * static_cast<int>(chunksToPoll.size()) / 256))
-            continue;
+        // TODO
+        //if (level.getEntityCount(baseType) > static_cast<unsigned int>(category.getMaxInstancesPerChunk() * static_cast<int>(chunksToPoll.size()) / 256))
+        //    continue;
 
         for (std::set<ChunkPos>::iterator it = chunksToPoll.begin(); it != chunksToPoll.end(); ++it) 
         {

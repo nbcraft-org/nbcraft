@@ -43,7 +43,7 @@ int RocketLauncherTile::getTexture(Facing::Name face, TileData data) const
 	return (data & STATE_RECHARGING) ? 16*14+3 : 16*14+2;
 }
 
-AABB* RocketLauncherTile::getAABB(const TileSource&, const TilePos& pos)
+AABB* RocketLauncherTile::getAABB(TileSource&, const TilePos& pos)
 {
 	return nullptr;
 }

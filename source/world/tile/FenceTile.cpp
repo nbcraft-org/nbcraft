@@ -13,13 +13,13 @@ FenceTile::FenceTile(int a, int b) : Tile(a, b, Material::wood)
 {
 }
 
-bool FenceTile::mayPlace(const TileSource& source, const TilePos& pos) const
+bool FenceTile::mayPlace(TileSource& source, const TilePos& pos) const
 {
 	TilePos below = pos.below();
 	return source.getTile(below) == m_ID || (Tile::mayPlace(source, pos) && source.getMaterial(below)->isSolid());
 }
 
-AABB* FenceTile::getAABB(const TileSource& source, const TilePos& pos)
+AABB* FenceTile::getAABB(TileSource& source, const TilePos& pos)
 {
 	AABB* rAABB = Tile::getAABB(source, pos);
 	rAABB->max.y += 0.5f;

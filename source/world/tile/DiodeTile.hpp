@@ -11,15 +11,15 @@ public:
 	DiodeTile(TileID id, bool on);
 
 	bool isCubeShaped() const override;
-	bool mayPlace(const TileSource&, const TilePos& pos) const override;
-	bool canSurvive(const TileSource&, const TilePos& pos) const override;
+	bool mayPlace(TileSource&, const TilePos& pos) const override;
+	bool canSurvive(TileSource&, const TilePos& pos) const override;
 	void tick(TileSource&, const TilePos& pos, Random*) override;
 	int getTexture(Facing::Name face, TileData data) const override;
 	bool shouldRenderFace(TileSource&, const TilePos& pos, Facing::Name face) const override;
 	eRenderShape getRenderShape() const override;
 	int getTexture(Facing::Name face) const override;
-	int getDirectSignal(const TileSource&, const TilePos& pos, Facing::Name face) const override;
-	int getSignal(const TileSource&, const TilePos& pos, Facing::Name face) const override;
+	int getDirectSignal(TileSource&, const TilePos& pos, Facing::Name face) const override;
+	int getSignal(TileSource&, const TilePos& pos, Facing::Name face) const override;
 	void neighborChanged(TileSource&, const TilePos& pos, TileID tile) override;
 	bool use(const TilePos& pos, Player&) override;
 	bool isSignalSource() const override;

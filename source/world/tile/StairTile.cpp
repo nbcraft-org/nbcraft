@@ -92,7 +92,7 @@ void StairTile::animateTick(TileSource& source, const TilePos& pos, Random* rand
 	m_pParent->animateTick(source, pos, random);
 }
 
-void StairTile::updateShape(const TileSource& source, const TilePos& pos)
+void StairTile::updateShape(TileSource& source, const TilePos& pos)
 {
 	setShape(0, 0, 0, 1, 1, 1);
 }
@@ -132,7 +132,7 @@ bool StairTile::mayPick(TileData data, bool includeLiquid) const
 	return m_pParent->mayPick(data, includeLiquid);
 }
 
-bool StairTile::mayPlace(const TileSource& source, const TilePos& pos) const
+bool StairTile::mayPlace(TileSource& source, const TilePos& pos) const
 {
 	return m_pParent->mayPlace(source, pos);
 }

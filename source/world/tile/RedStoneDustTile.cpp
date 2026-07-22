@@ -15,7 +15,7 @@ int RedStoneDustTile::getTexture(Facing::Name face, TileData data) const
 	return m_TextureFrame;
 }
 
-AABB* RedStoneDustTile::getAABB(const TileSource& source, const TilePos& pos)
+AABB* RedStoneDustTile::getAABB(TileSource& source, const TilePos& pos)
 {
 	return nullptr;
 }
@@ -35,7 +35,7 @@ eRenderShape RedStoneDustTile::getRenderShape() const
 	return SHAPE_DUST;
 }
 
-bool RedStoneDustTile::mayPlace(const TileSource& source, const TilePos& pos) const
+bool RedStoneDustTile::mayPlace(TileSource& source, const TilePos& pos) const
 {
 	return source.isSolidBlockingTile(pos.below());
 }
@@ -126,10 +126,11 @@ void RedStoneDustTile::updatePowerStrength(TileSource& source, const TilePos& po
 	{
 		Level& level = source.getLevel();
 
-		level.m_bNoNeighborUpdate = true;
+		// @MATT: what do we do here?
+		//level.m_bNoNeighborUpdate = true;
 		source.setTileAndData(pos1, FullTile(this, var9));
 		source.fireTilesDirty(pos1, pos1);
-		level.m_bNoNeighborUpdate = false;
+		//level.m_bNoNeighborUpdate = false;
 
 		for (var11 = 0; var11 < 4; var11++)
 		{
@@ -358,12 +359,12 @@ int RedStoneDustTile::getResource(TileData data, Random* random) const
 	return Item::redStone->m_itemID;
 }
 
-int RedStoneDustTile::getDirectSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const
+int RedStoneDustTile::getDirectSignal(TileSource& source, const TilePos& pos, Facing::Name face) const
 {
 	return !m_bShouldSignal ? 0 : getSignal(source, pos, face);
 }
 
-int RedStoneDustTile::getSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const
+int RedStoneDustTile::getSignal(TileSource& source, const TilePos& pos, Facing::Name face) const
 {
 	if (!m_bShouldSignal)
 	{
@@ -448,7 +449,7 @@ void RedStoneDustTile::animateTick(TileSource& source, const TilePos& pos, Rando
 	}
 }
 
-bool RedStoneDustTile::shouldConnectTo(const TileSource& source, const TilePos& pos)
+bool RedStoneDustTile::shouldConnectTo(TileSource& source, const TilePos& pos)
 {
 	TileID var4 = source.getTile(pos);
 	return var4 == Tile::redStoneDust->m_ID ? true : (var4 == 0 ? false : Tile::tiles[var4]->isSignalSource());

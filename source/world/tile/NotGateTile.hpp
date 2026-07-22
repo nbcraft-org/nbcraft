@@ -21,10 +21,10 @@ public:
 	int getTickDelay() const override;
 	void onPlace(TileSource&, const TilePos& pos) override;
 	void onRemove(TileSource&, const TilePos& pos) override;
-	int getSignal(const TileSource&, const TilePos& pos, Facing::Name face) const override;
+	int getSignal(TileSource&, const TilePos& pos, Facing::Name face) const override;
 	void tick(TileSource&, const TilePos& pos, Random*) override;
 	void neighborChanged(TileSource&, const TilePos& pos, TileID tile) override;
-	int getDirectSignal(const TileSource&, const TilePos& pos, Facing::Name face) const override;
+	int getDirectSignal(TileSource&, const TilePos& pos, Facing::Name face) const override;
 	int getResource(TileData data, Random* random) const override;
 	bool isSignalSource() const override;
 	void animateTick(TileSource&, const TilePos& pos, Random*) override;

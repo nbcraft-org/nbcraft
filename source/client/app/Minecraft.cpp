@@ -12,7 +12,6 @@
 #include "client/gui/screens/PauseScreen.hpp"
 #include "client/gui/screens/StartMenuScreen.hpp"
 #include "client/gui/screens/RenameMPLevelScreen.hpp"
-#include "client/gui/screens/SavingWorldScreen.hpp"
 #include "client/gui/screens/DeathScreen.hpp"
 #include "client/gui/screens/ProgressScreen.hpp"
 #include "client/gui/screens/ConvertWorldScreen.hpp"
@@ -47,6 +46,8 @@
 #include "client/renderer/LogoRenderer.hpp"
 
 Minecraft* Minecraft::_singletonPtr;
+#include "common/threading/BackgroundQueuePool.hpp"
+
 float Minecraft::_renderScaleMultiplier = 1.0f;
 
 int Minecraft::width  = C_DEFAULT_SCREEN_WIDTH;
@@ -114,6 +115,8 @@ Minecraft::Minecraft()
 	m_lastInteractTime = 0;
 
 	_singletonPtr = this;
+
+	BackgroundQueuePool::start(std::thread::hardware_concurrency());
 }
 
 Minecraft::~Minecraft()
@@ -161,7 +164,8 @@ void Minecraft::_levelGenerated()
 
 void Minecraft::_resetPlayer(Player* player)
 {
-	m_pLevel->validateSpawn();
+	// @MATT
+	//m_pLevel->validateSpawn();
 	player->reset();
 
 	TilePos pos = m_pLevel->getSharedSpawnPos();
@@ -861,22 +865,16 @@ void Minecraft::freeResources(bool bCopyMap)
 	m_pCameraEntity = nullptr;
 	m_pLocalPlayer = nullptr;
 
-#ifndef ENH_IMPROVED_SAVING
 	if (bCopyMap)
 		setScreen(new RenameMPLevelScreen("_LastJoinedServer"));
 	else
 		gotoMainMenu();
-#endif
 
 	m_pGameRenderer->setLevel(nullptr, nullptr);
 
 	delete m_pNetEventCallback;
 	m_pNetEventCallback = nullptr;
 
-#ifdef ENH_IMPROVED_SAVING
-	m_bIsGamePaused = true;
-	getScreenChooser()->pushSavingScreen(bCopyMap/*, m_pLocalPlayer*/);
-#else
 	if (m_pLevel)
 	{
 		LevelStorage* pStorage = m_pLevel->getLevelStorage();
@@ -885,7 +883,6 @@ void Minecraft::freeResources(bool bCopyMap)
 
 		m_pLevel = nullptr;
 	}
-#endif
 
 	field_D9C = 0;
 }
@@ -897,7 +894,7 @@ void Minecraft::unloadLevel(bool bCopyMap)
 		if (!m_pLevel->m_bIsClientSide || bCopyMap)
 		{
 			m_progressPercent = 33;
-			m_pLevel->saveUnsavedChunks();
+			//m_pLevel->saveUnsavedChunks(); // @MATT: what do we call here instead?
 
 			m_progressPercent = 66;
 			m_pLevel->saveLevelData();
@@ -994,7 +991,7 @@ void Minecraft::tick()
 
 			if (m_pLocalPlayer)
 			{
-				m_pLevel->animateTick(m_pLocalPlayer->getPos());
+				m_pLevel->animateTick(m_pLocalPlayer);
 			}
 		}
 
@@ -1045,6 +1042,8 @@ void Minecraft::update()
 
 	tickMouse();
 
+	BackgroundQueuePool::getInstance().processCoroutines();
+
 	mce::RenderContext& renderContext = mce::RenderContextImmediate::get();
 
 	renderContext.beginRender();
@@ -1072,12 +1071,14 @@ void Minecraft::init()
 
 void Minecraft::prepareLevel(const std::string& unused)
 {
+	// @TODO: redo this function
 	field_DA0 = 1;
 
 	//float startTime = float(getTimeS());
 	Level* pLevel = m_pLevel;
 
-	if (!pLevel->field_B0C)
+	// @MATT
+	/*if (!pLevel->field_B0C)
 	{
 		pLevel->setUpdateLights(false);
 	}
@@ -1106,16 +1107,18 @@ void Minecraft::prepareLevel(const std::string& unused)
 			//if (time2 != -1.0f)
 			//	getTimeS();
 		}
-	}
+	}*/
 
 	//if (startTime != -1.0f)
 	//	getTimeS();
 
-	pLevel->setUpdateLights(true);
+	// @MATT
+	//pLevel->setUpdateLights(true);
 
 	//startTime = float(getTimeS());
 
-	ChunkPos cp(0, 0);
+	// @MATT
+	/*ChunkPos cp(0, 0);
 	for (cp.x = 0; cp.x < C_MAX_CHUNKS_X; cp.x++)
 	{
 		for (cp.z = 0; cp.z < C_MAX_CHUNKS_Z; cp.z++)
@@ -1130,7 +1133,7 @@ void Minecraft::prepareLevel(const std::string& unused)
 			pChunk->m_bUnsaved = false;
 			pChunk->clearUpdateMap();
 		}
-	}
+	}*/
 
 	//if (startTime != -1.0f)
 	//	getTimeS();
@@ -1139,9 +1142,11 @@ void Minecraft::prepareLevel(const std::string& unused)
 
 	if (pLevel->field_B0C)
 	{
-		pLevel->setInitialSpawn();
+		// @MATT
+		//pLevel->setInitialSpawn();
 		pLevel->saveLevelData();
-		pLevel->getChunkSource().saveAll();
+		// @MATT
+		//pLevel->getChunkSource().saveAll();
 		pLevel->saveGame();
 	}
 	else
@@ -1155,7 +1160,8 @@ void Minecraft::prepareLevel(const std::string& unused)
 
 	//startTime = float(getTimeS());
 
-	pLevel->prepare();
+	// @MATT
+	//pLevel->prepare();
 
 	//if (startTime != -1.0f)
 	//	getTimeS();
@@ -1313,7 +1319,8 @@ void Minecraft::generateLevel(const std::string& unused, Level& level)
 
 	pGameMode->adjustPlayer(pLocalPlayer);
 
-	level.validateSpawn();
+	// @MATT
+	//level.validateSpawn();
 	level.loadPlayer(*pLocalPlayer);
 
 	m_pLocalPlayer = pLocalPlayer;
@@ -1407,9 +1414,8 @@ void Minecraft::selectLevel(const LevelSummary& ls, bool forceConversion)
 void Minecraft::selectLevel(const std::string& levelDir, const std::string& levelName, const LevelSettings& levelSettings, bool forceConversion)
 {
 	LevelStorage* pStor = m_pLevelStorageSource->selectLevel(levelDir, false, forceConversion);
-	Dimension* pDim = Dimension::createNew(DIMENSION_OVERWORLD);
 
-	m_pLevel = new Level(pStor, levelName, levelSettings, LEVEL_STORAGE_VERSION_DEFAULT, pDim);
+	m_pLevel = new Level(pStor, levelName, levelSettings, LEVEL_STORAGE_VERSION_DEFAULT);
 	setLevel(m_pLevel, "Generating level", nullptr);
 
 	field_D9C = 1;

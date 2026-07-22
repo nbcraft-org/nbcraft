@@ -86,8 +86,9 @@ LevelRenderer::LevelRenderer(Minecraft* pMC, Textures* pTexs)
 	m_zMaxChunk = 0;
 	m_pLevel = nullptr;
 	m_pDimension = nullptr;
-	m_chunks = nullptr;
-	m_sortedChunks = nullptr;
+	// @MATT
+	/*m_chunks = nullptr;
+	//m_sortedChunks = nullptr;*/
 	m_chunksLength = 0;
 	m_pTileRenderer = nullptr;
 	m_xChunks = 0;
@@ -562,6 +563,7 @@ void LevelRenderer::onAppSuspended()
 
 void LevelRenderer::deleteChunks()
 {
+	/* @MATT
 	for (int i = 0; i < m_zChunks; i++)
 	{
 		for (int j = 0; j < m_yChunks; j++)
@@ -580,11 +582,12 @@ void LevelRenderer::deleteChunks()
 
 	if (m_sortedChunks)
 		delete[] m_sortedChunks;
-	m_sortedChunks = nullptr;
+	m_sortedChunks = nullptr;*/
 }
 
 void LevelRenderer::cull(Culler* pCuller, float f)
 {
+	/* @MATT
 	for (int i = 0; i < m_chunksLength; i++)
 	{
 		Chunk* pChunk = m_chunks[i];
@@ -595,7 +598,7 @@ void LevelRenderer::cull(Culler* pCuller, float f)
 		{
 			pChunk->cull(pCuller);
 		}
-	}
+	}*/
 
 	m_cullStep++;
 }
@@ -633,14 +636,16 @@ void LevelRenderer::allChanged()
 
 	m_chunksLength = m_yChunks * m_xChunks * m_zChunks;
 	LOG_I("chunksLength: %d", m_chunksLength);
+	/* @MATT
 	m_chunks = new Chunk* [m_chunksLength];
-	m_sortedChunks = new Chunk* [m_chunksLength];
+	m_sortedChunks = new Chunk* [m_chunksLength];*/
 
 	m_xMinChunk = 0;
 	m_yMinChunk = 0;
 	m_zMinChunk = 0;
 
-	m_dirtyChunks.clear();
+	/* @MATT
+	m_dirtyChunks.clear();*/
 	m_renderableTileEntities.clear();
 
 	m_xMaxChunk = m_xChunks;
@@ -649,6 +654,7 @@ void LevelRenderer::allChanged()
 
 	int count = 0, id = 0;
 
+	/* @MATT
 	// These are actually Chunk coordinates that get converted to Tile coordinates
 	TilePos cp(0, 0, 0);
 	for (cp.x = 0; cp.x < m_xChunks; cp.x++)
@@ -690,13 +696,14 @@ void LevelRenderer::allChanged()
 
 			std::sort(&m_sortedChunks[0], &m_sortedChunks[m_chunksLength], DistanceChunkSorter(*pMob));
 		}
-	}
+	}*/
 
 	m_noEntityRenderFrames = 2;
 }
 
 void LevelRenderer::resortChunks(const TilePos& pos)
 {
+	/* @MATT
 	TilePos tp(pos - 8);
 	m_xMinChunk = INT_MIN;
 	m_yMinChunk = INT_MIN;
@@ -750,7 +757,7 @@ void LevelRenderer::resortChunks(const TilePos& pos)
 					m_dirtyChunks.push_back(pChunk);
 			}
 		}
-	}
+	}*/
 }
 
 void LevelRenderer::entityAdded(Entity* pEnt)
@@ -849,6 +856,7 @@ void LevelRenderer::renderSameAsLast(TerrainLayer layer, float alpha, bool fog)
 
 int LevelRenderer::renderChunks(int start, int end, Tile::RenderLayer layer, float alpha, bool fog)
 {
+	/* @MATT
 	field_24.clear();
 
 	int result = 0;
@@ -896,11 +904,14 @@ int LevelRenderer::renderChunks(int start, int end, Tile::RenderLayer layer, flo
 	}
 
 	renderSameAsLast(renderLayerToTerrainLayerMap[layer], alpha, fog);
-	return result;
+	return result;*/
+
+	return 0;
 }
 
 void LevelRenderer::render(const Entity& camera, Tile::RenderLayer layer, float alpha, bool fog)
 {
+	/* @MATT
 	for (int i = 0; i < 10; i++)
 	{
 		field_68 = (field_68 + 1) % m_chunksLength;
@@ -914,7 +925,7 @@ void LevelRenderer::render(const Entity& camera, Tile::RenderLayer layer, float 
 			continue;
 
 		m_dirtyChunks.push_back(pChunk);
-	}
+	}*/
 
 	if (m_pMinecraft->getOptions()->m_viewDistance.get() != m_lastViewDistance)
 		allChanged();
@@ -931,7 +942,8 @@ void LevelRenderer::render(const Entity& camera, Tile::RenderLayer layer, float 
 		m_posPrev = camera.m_pos;
 
 		resortChunks(camera.m_pos);
-		std::sort(&m_sortedChunks[0], &m_sortedChunks[m_chunksLength], DistanceChunkSorter(camera));
+		/* @MATT
+		std::sort(&m_sortedChunks[0], &m_sortedChunks[m_chunksLength], DistanceChunkSorter(camera));*/
 	}
 
 	if (layer == Tile::RENDER_LAYER_BLEND)
@@ -1061,6 +1073,7 @@ const Color& LevelRenderer::setupClearColor(float f)
 
 void LevelRenderer::setLevel(Level* level)
 {
+	// @TODO: @Matt, update this
 	if (m_pLevel == level)
 		return;
 
@@ -1075,7 +1088,8 @@ void LevelRenderer::setLevel(Level* level)
 	m_pLevel = level;
 
 	delete m_pTileRenderer;
-	m_pTileRenderer = new TileRenderer(Tesselator::instance, m_pLevel);
+	// @MATT
+	//m_pTileRenderer = new TileRenderer(Tesselator::instance, m_pLevel);
 
 	if (level)
 	{
@@ -1097,7 +1111,8 @@ void LevelRenderer::setDimension(Dimension* dimension)
 
 void LevelRenderer::setDirty(const TilePos& min, const TilePos& max)
 {
-	int minX = Mth::intFloorDiv(min.x, 16);
+	// @TODO: @Matt, update this to use RenderChunks, obviously check 0.12.1
+	/*int minX = Mth::intFloorDiv(min.x, 16);
 	int minY = Mth::intFloorDiv(min.y, 16);
 	int minZ = Mth::intFloorDiv(min.z, 16);
 	int maxX = Mth::intFloorDiv(max.x, 16);
@@ -1130,7 +1145,7 @@ void LevelRenderer::setDirty(const TilePos& min, const TilePos& max)
 				pChunk->setDirty();
 			}
 		}
-	}
+	}*/
 }
 
 void LevelRenderer::setTilesDirty(const TilePos& min, const TilePos& max)
@@ -1160,12 +1175,11 @@ void LevelRenderer::tick()
 	m_ticksSinceStart++;
 }
 
-typedef std::vector<Chunk*> ChunkVector;
-typedef ChunkVector::iterator ChunkVectorIterator;
-
-bool LevelRenderer::updateDirtyChunks(const Entity& camera, bool force)
+bool LevelRenderer::updateDirtyChunks(const Entity& camera, bool b)
 {
-	constexpr int C_MAX = 3;
+	return true;
+
+	/*constexpr int C_MAX = 3;
 	DirtyChunkSorter dcs(camera);
 	Chunk* pChunks[C_MAX] = { nullptr };
 	ChunkVector* nearChunks = nullptr;
@@ -1269,7 +1283,7 @@ bool LevelRenderer::updateDirtyChunks(const Entity& camera, bool force)
 	if (nr4 > nr3)
 		m_dirtyChunks.erase(m_dirtyChunks.begin() + nr3, m_dirtyChunks.end());
 
-	return pendingChunkRemoved + nr2 == pendingChunkSize;
+	return pendingChunkRemoved + nr2 == pendingChunkSize;*/
 }
 
 void LevelRenderer::renderCracks(const Entity& camera, const HitResult& hr, int mode, const ItemStack* inventoryItem, float a)
@@ -2060,7 +2074,8 @@ void LevelRenderer::renderAdvancedClouds(float alpha)
 
 void LevelRenderer::skyColorChanged()
 {
-	for (int i = 0; i < m_chunksLength; i++)
+	// Probably not needed anymore
+	/*for (int i = 0; i < m_chunksLength; i++)
 	{
 		Chunk* pChunk = m_chunks[i];
 		if (!pChunk->field_54)
@@ -2071,7 +2086,7 @@ void LevelRenderer::skyColorChanged()
 
 		m_dirtyChunks.push_back(pChunk);
 		pChunk->setDirty();
-	}
+	}*/
 }
 
 void LevelRenderer::levelEvent(const LevelEvent& event)

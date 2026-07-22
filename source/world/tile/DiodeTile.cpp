@@ -37,12 +37,12 @@ bool DiodeTile::isCubeShaped() const
 	return false;
 }
 
-bool DiodeTile::mayPlace(const TileSource& source, const TilePos& pos) const
+bool DiodeTile::mayPlace(TileSource& source, const TilePos& pos) const
 {
 	return !source.isSolidBlockingTile(pos.below()) ? false : Tile::mayPlace(source, pos);
 }
 
-bool DiodeTile::canSurvive(const TileSource& source, const TilePos& pos) const
+bool DiodeTile::canSurvive(TileSource& source, const TilePos& pos) const
 {
 	return !source.isSolidBlockingTile(pos.below()) ? false : Tile::canSurvive(source, pos);
 }
@@ -87,12 +87,12 @@ int DiodeTile::getTexture(Facing::Name face) const
 	return getTexture(face, 0);
 }
 
-int DiodeTile::getDirectSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const
+int DiodeTile::getDirectSignal(TileSource& source, const TilePos& pos, Facing::Name face) const
 {
 	return getSignal(source, pos, face);
 }
 
-int DiodeTile::getSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const
+int DiodeTile::getSignal(TileSource& source, const TilePos& pos, Facing::Name face) const
 {
 	if (!m_bOn)
 		return false;

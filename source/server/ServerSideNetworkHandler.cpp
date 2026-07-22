@@ -14,10 +14,6 @@
 #include "world/level/TileSource.hpp"
 #include "ServerPlayer.hpp"
 
-// How frequently SetTimePackets are sent, in seconds.
-// b1.3 sends every second. 0.2.1 seems to send every 12.
-#define NETWORK_TIME_SEND_FREQUENCY 12
-
 // This lets you make the server shut up and not log events in the debug console.
 //#define VERBOSE_SERVER
 
@@ -274,7 +270,7 @@ void ServerSideNetworkHandler::onDisconnect(const RakNet::RakNetGUID& guid)
 #endif
 
 		// remove it from our world
-		m_pLevel->removeEntity((Entity*)pPlayer);
+		m_pLevel->removeEntity(*pPlayer);
 	}
 	else if ((pPlayer = getPendingPlayerByGUID(guid)))
 	{
@@ -320,7 +316,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, LoginPacke
 	}
 #endif
 
-	ServerPlayer* pPlayer = new ServerPlayer(*m_pLevel, m_pLevel->getLevelData()->getGameType());
+	ServerPlayer* pPlayer = new ServerPlayer(*m_pLevel, m_pLevel->getLevelData()->getGameType(), DIMENSION_OVERWORLD);
 	pPlayer->m_guid = guid;
 	pPlayer->m_name = std::string(packet->m_userName.C_String());
 
@@ -329,7 +325,8 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, LoginPacke
 
 #ifdef ENH_SAVE_REMOTE_PLAYERS
 	LevelStorage* pLevelStorage = m_pLevel->getLevelStorage();
-	pLevelStorage->load(*pPlayer);
+	// @MATT
+	//pLevelStorage->load(*pPlayer);
 #endif
 
 	m_pendingPlayers[guid] = pPlayer;
@@ -413,16 +410,21 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ReadyPacke
 
 #if NETWORK_PROTOCOL_VERSION >= 3
 	// send the connecting player info about all entities in the world
-	for (Entity::IdMap::iterator it = m_pLevel->m_entities.begin(); it != m_pLevel->m_entities.end(); ++it)
+	for (Level::DimensionVector::iterator it = m_pLevel->m_dimensions.begin(); it != m_pLevel->m_dimensions.end(); it++)
 	{
-		Entity* entity = it->second;
-		if (canReplicateEntity(entity))
+		Dimension& dimension = **it;
+		const Dimension::EntityIdMap_t& entityIdMap = dimension.getEntityIdMap();
+		for (Dimension::EntityIdMap_t::const_iterator it = entityIdMap.begin(); it != entityIdMap.end(); it++)
 		{
-			Packet* packet = _getPacketForEntity(*entity);
-			if (!packet)
-				continue;
-			bs.Reset();
-			m_pRakNetInstance->send(guid, bs, packet);
+			const Entity* entity = it->second;
+			if (canReplicateEntity(entity))
+			{
+				Packet* packet = _getPacketForEntity(*entity);
+				if (!packet)
+					continue;
+				bs.Reset();
+				m_pRakNetInstance->send(guid, bs, packet);
+			}
 		}
 	}
 #endif
@@ -876,14 +878,6 @@ void ServerSideNetworkHandler::tileChanged(const TilePos& pos)
 	ubp.m_reliability = RELIABLE_ORDERED;
 	ubp.m_channel = CHANNEL_TILE_EVENTS;
 	m_pRakNetInstance->send(ubp);
-}
-
-void ServerSideNetworkHandler::timeChanged(uint32_t time)
-{
-	if ((time % (20 * NETWORK_TIME_SEND_FREQUENCY)) == 0)
-	{
-		m_pRakNetInstance->send(new SetTimePacket(time));
-	}
 }
 
 void ServerSideNetworkHandler::entityAdded(Entity* entity)

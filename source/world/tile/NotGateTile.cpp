@@ -77,7 +77,7 @@ void NotGateTile::onRemove(TileSource& source, const TilePos& pos)
 	}
 }
 
-int NotGateTile::getSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const
+int NotGateTile::getSignal(TileSource& source, const TilePos& pos, Facing::Name face) const
 {
 	if (!m_bOn)
 		return false;
@@ -172,7 +172,7 @@ void NotGateTile::neighborChanged(TileSource& source, const TilePos& pos, TileID
 	pQueue->add(source, pos, m_ID, getTickDelay());
 }
 
-int NotGateTile::getDirectSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const
+int NotGateTile::getDirectSignal(TileSource& source, const TilePos& pos, Facing::Name face) const
 {
 	return face == Facing::DOWN ? getSignal(source, pos, face) : false;
 }

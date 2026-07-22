@@ -38,7 +38,7 @@ void LightUpdate::update()
 				continue;
 
 			LevelChunk* pChunk = m_pSource->getChunk(pos);
-			if (!pChunk || pChunk->isEmpty())
+			if (!pChunk /* || pChunk->isEmpty()*/) // @MATT: is this fine?
 				continue;
 
 			for (; pos.y <= m_max.y; pos.y++)
@@ -145,7 +145,7 @@ void LightUpdate::updateFast()
 				continue;
 
 			LevelChunk* pChunk = m_pSource->getChunk(pos);
-			if (!pChunk || pChunk->isEmpty())
+			if (!pChunk /* || pChunk->isEmpty()*/) // @MATT: is this fine?
 				continue;
 
 			// Start fast stuff
