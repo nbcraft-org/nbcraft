@@ -73,7 +73,7 @@ int FurnaceTile::getTexture(Facing::Name face) const
 void FurnaceTile::onPlace(TileSource& source, const TilePos& pos)
 {
 	EntityTile::onPlace(source, pos);
-	recalculateLookDirection(source, pos);
+	//recalculateLookDirection(source, pos);
 }
 
 bool FurnaceTile::use(const TilePos& pos, Player& player)
