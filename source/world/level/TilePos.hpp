@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <stddef.h>
 #include "world/Facing.hpp"
 #include "world/phys/Vec3.hpp"
 
