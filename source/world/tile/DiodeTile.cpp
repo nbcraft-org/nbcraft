@@ -1,3 +1,5 @@
+#include <typeinfo>
+
 #include "DiodeTile.hpp"
 #include "common/Logger.hpp"
 #include "world/entity/Player.hpp"

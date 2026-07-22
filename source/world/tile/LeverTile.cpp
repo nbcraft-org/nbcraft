@@ -48,8 +48,6 @@ void LeverTile::setPlacedOnFace(TileSource& source, const TilePos& pos, Facing::
 
 	switch (face)
 	{
-	case Facing::DOWN:
-		break;
 	case Facing::UP:
 		if (source.isSolidBlockingTile(pos.below()))
 			data = 5 + level.m_random.nextInt(2);
@@ -70,6 +68,7 @@ void LeverTile::setPlacedOnFace(TileSource& source, const TilePos& pos, Facing::
 		if (source.isSolidBlockingTile(pos.west()))
 			data = 1;
 		break;
+	default: break;
 	}
 
 	source.setTileAndData(pos, FullTile(this, data + var7));
