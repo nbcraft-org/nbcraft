@@ -343,6 +343,7 @@ add_library(nbcraft-core STATIC
     world/entity/FlyingMob.cpp
     world/entity/Ghast.cpp
     world/entity/FishingHook.cpp
+    world/level/Brightness.cpp
     world/level/Dimension.cpp
     world/level/Material.cpp
     world/level/LevelListener.cpp
@@ -531,7 +532,6 @@ add_library(nbcraft-core STATIC
     world/tile/entity/FurnaceTileEntity.cpp
     world/tile/entity/MusicTileEntity.cpp
     world/tile/entity/DispenserTileEntity.cpp
-    world/Brightness.cpp
     world/Facing.cpp
     renderer/GL/GL.cpp
     renderer/Attribute.cpp
