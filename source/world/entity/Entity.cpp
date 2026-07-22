@@ -1115,7 +1115,7 @@ void Entity::setRider(Entity* rider)
 void Entity::setRiding(Entity* riding)
 {
 	m_ridingId = (riding) ? riding->m_EntityID : 0;
-	setSharedFlag(FLAG_RIDING, riding);
+	setSharedFlag(FLAG_RIDING, riding != nullptr);
 }
 
 /*void Entity::thunderHit(LightningBolt* bolt)
