@@ -9,6 +9,7 @@
 #include "LeafTile.hpp"
 #include "world/level/Level.hpp"
 #include "world/level/TileSource.hpp"
+#include "world/level/levelgen/biome/BiomeSource.hpp"
 #include "client/renderer/PatchManager.hpp"
 #include "client/renderer/FoliageColor.hpp"
 
@@ -24,6 +25,7 @@ const Color LeafTile::DEFAULT_COLOR = Color(0.35f, 0.65f, 0.25f);
 LeafTile::LeafTile(TileID id) : TransparentTile(id, TEXTURE_LEAVES_TRANSPARENT, Material::leaves, false)
 {
 	m_checkBuffer = nullptr;
+	m_bBiomeColors = false;
 
 	m_TextureFrame = TEXTURE_LEAVES_TRANSPARENT;
 	field_74 = TEXTURE_LEAVES_TRANSPARENT;
@@ -113,7 +115,7 @@ void LeafTile::_tickDecayOld(TileSource& source, const TilePos& pos)
 		if (m_checkBuffer[0x4210] < 0)
 			die(source, pos);
 		else
-			source.setTileAndDataNoUpdate(pos, FullTile(m_ID, data & ~C_UPDATE_LEAF_BIT)); // equates to -5
+			source.setTileAndDataNoUpdate(pos, FullTile(this, data & ~C_UPDATE_LEAF_BIT)); // equates to -5
 	}
 }
 
@@ -185,11 +187,32 @@ void LeafTile::_tickDecay(TileSource& source, const TilePos& pos)
 	if (m_checkBuffer[k1 * j1 + k1 * C_RANGE + k1] < 0)
 		die(source, pos);
 	else
-		source.setTileAndDataNoUpdate(pos, FullTile(m_ID, data & ~C_UPDATE_LEAF_BIT));
+		source.setTileAndDataNoUpdate(pos, FullTile(this, data & ~C_UPDATE_LEAF_BIT));
 }
 
 int LeafTile::getColor(TileSource& source, const TilePos& pos) const
 {
+	if (FoliageColor::isAvailable() && m_bBiomeColors)
+	{
+		TileData data = source.getData(pos);
+
+		if ((data & 1) == C_EVERGREEN_LEAF)
+		{
+			return FoliageColor::getEvergreenColor();
+		}
+		if ((data & 2) == C_BIRCH_LEAF)
+		{
+			return FoliageColor::getBirchColor();
+		}
+
+		/* @MATT
+		BiomeSource& biomeSource = *source.getBiomeSource();
+
+		biomeSource.getBiomeBlock(pos, 1, 1);
+		return FoliageColor::get(biomeSource.field_4[0], biomeSource.field_8[0]);
+		*/
+	}
+
 	if (GetPatchManager()->IsGrassTinted())
 	{
 		return 0x339933;
@@ -200,20 +223,21 @@ int LeafTile::getColor(TileSource& source, const TilePos& pos) const
 
 int LeafTile::getColor(Facing::Name face, TileData data) const
 {
-	if ((data & 1) == 1)
+	if ((data & 1) == C_EVERGREEN_LEAF)
 	{
 		return FoliageColor::getEvergreenColor();
 	}
-	if ((data & 2) == 2)
+	if ((data & 2) == C_BIRCH_LEAF)
 	{
 		return FoliageColor::getBirchColor();
 	}
+
 	return FoliageColor::getDefaultColor();
 }
 
 int LeafTile::getTexture(Facing::Name face, TileData data) const
 {
-	if ((data & C_LEAF_TYPE_MASK) == 1)
+	if ((data & C_LEAF_TYPE_MASK) == C_EVERGREEN_LEAF)
 		return m_TextureFrame + 80;
 
 	return m_TextureFrame;
@@ -243,7 +267,7 @@ void LeafTile::onRemove(TileSource& source, const TilePos& pos)
 				TileID tile = source.getTile(pos + o);
 				if (tile != Tile::leaves->m_ID) continue;
 
-				source.setTileAndDataNoUpdate(pos + o, FullTile(m_ID, source.getData(pos + o) | C_UPDATE_LEAF_BIT));
+				source.setTileAndDataNoUpdate(pos + o, FullTile(this, source.getData(pos + o) | C_UPDATE_LEAF_BIT));
 			}
 		}
 	}

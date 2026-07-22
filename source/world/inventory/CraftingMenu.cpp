@@ -5,10 +5,9 @@
 #include "world/level/Level.hpp"
 #include "world/level/TileSource.hpp"
 
-CraftingMenu::CraftingMenu(Inventory* inventory, const TilePos& tilePos, Level* level, bool is2x2)
+CraftingMenu::CraftingMenu(Inventory* inventory, const TilePos& tilePos, bool is2x2)
     : ContainerMenu(Container::CRAFTING)
     , m_pos(tilePos)
-    , m_pLevel(level)
 {
     int dim = is2x2 ? 2 : 3;
 

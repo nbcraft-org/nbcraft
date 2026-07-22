@@ -121,7 +121,7 @@ public: // virtual functions
 	virtual Tile* setDescriptionId(std::string const&);
 	virtual void triggerEvent(TileSource&, const TileEvent& event);
 	virtual Tile* setSoundType(Tile::SoundType const&);
-	virtual Tile* setLightBlock(int);
+	virtual Tile* setLightBlock(Brightness_t);
 	virtual Tile* setLightEmission(float);
 	virtual Tile* setExplodeable(float);
 	virtual Tile* setDestroyTime(float);
@@ -339,7 +339,7 @@ public:
 	}
 
 public:
-	TileID getTypeId() const { return _tileType->m_ID; }
+	TileID getTypeId() const { return _tileType ? _tileType->m_ID : TILE_AIR; }
 	Tile* getType() const { return _tileType; }
 
 	bool operator==(const FullTile& other) const

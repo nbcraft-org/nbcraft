@@ -104,14 +104,8 @@ public:
 
 	bool isFormatFixed() const;
 
-	bool isTesselating() const
-	{
-		return m_bTesselating;
-	}
-	size_t getVertices() const
-	{
-		return m_vertices;
-	}
+	bool isTesselating() const { return m_bTesselating; }
+	size_t getVertices() const { return m_vertices; }
 
 private:
 	CurrentVertexPointers m_currentVertex;

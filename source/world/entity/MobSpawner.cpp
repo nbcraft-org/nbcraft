@@ -2,13 +2,16 @@
 #include "world/entity/MobFactory.hpp"
 #include "world/level/TileSource.hpp"
 
-#define MOB_SPAWNER_HOSTILE_BRIGHTNESS   7
-#define MOB_SPAWNER_FRIENDLY_BRIGHTNESS  9
+#define C_HOSTILE_BRIGHTNESS   7
+#define C_FRIENDLY_BRIGHTNESS  9
 
 void MobSpawner::tick(TileSource& source, bool allowHostile, bool allowFriendly) 
 {
     if (!allowHostile && !allowFriendly)
         return;
+
+    Level& level = source.getLevel();
+    const Dimension& dimension = source.getDimensionConst();
 
     chunksToPoll.clear();
 
@@ -27,8 +30,6 @@ void MobSpawner::tick(TileSource& source, bool allowHostile, bool allowFriendly)
         }
     }
 
-    Level& level = source.getLevel();
-
     for (unsigned int i = 0; i < MobCategory::allCount; i++)
     {
         const MobCategory& category = *MobCategory::all[i]; 
@@ -36,7 +37,7 @@ void MobSpawner::tick(TileSource& source, bool allowHostile, bool allowFriendly)
         bool isFriendly = category.isFriendly();
 
         // good mobs don't spawn after dark, otherwise they will crowd around torches like beta
-        if (!source.getDimensionConst().isDay() && isFriendly)
+        if (!dimension.isDay() && isFriendly)
             continue;
 
         if ((isFriendly && !allowFriendly) || (!isFriendly && !allowHostile))
@@ -99,12 +100,12 @@ void MobSpawner::tick(TileSource& source, bool allowHostile, bool allowFriendly)
                     Brightness_t lightLevel = source.getRawBrightness(tp);
                     if (isFriendly)
                     {
-                        if (lightLevel < MOB_SPAWNER_FRIENDLY_BRIGHTNESS)
+                        if (lightLevel < C_FRIENDLY_BRIGHTNESS)
                             continue;
                     }
                     else
                     {
-                        if (lightLevel > MOB_SPAWNER_HOSTILE_BRIGHTNESS)
+                        if (lightLevel > C_HOSTILE_BRIGHTNESS)
                             continue;
                     }
 
@@ -143,9 +144,12 @@ void MobSpawner::tick(TileSource& source, bool allowHostile, bool allowFriendly)
 
 TilePos MobSpawner::getRandomPosWithin(TileSource& source, int chunkX, int chunkZ)
 {
-    int px = source.getLevel().m_random.nextInt(16) + chunkX;
-    int py = source.getLevel().m_random.nextInt(128);
-    int pz = source.getLevel().m_random.nextInt(16) + chunkZ;
+    Level& level = source.getLevel();
+    Random& random = level.m_random;
+
+    int px = random.nextInt(16) + chunkX;
+    int py = random.nextInt(128);
+    int pz = random.nextInt(16) + chunkZ;
     return TilePos(px, py, pz);
 }
 
@@ -181,17 +185,18 @@ void MobSpawner::FinalizeMobSettings(Mob *mob, TileSource& source, const Vec3& p
     MakeBabyMob(mob, source);
 }
 
-
 void MobSpawner::MakeBabyMob(Mob *mob, TileSource& source)
 {
-    source.getLevel().m_random.setSeed(0x5deea8f);
+    Level& level = source.getLevel();
+    Random& random = level.m_random;
+
+    random.setSeed(0x5deea8f);
 
     if (mob->isBaby())
         return;
 
     // 0.6.0+
 }
-
 
 void MobSpawner::PostProcessSpawnMobs(TileSource& source, Biome& biome, const Vec3& pos)
 {

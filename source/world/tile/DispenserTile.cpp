@@ -4,6 +4,7 @@
 #include "world/entity/ThrownEgg.hpp"
 #include "world/tile/entity/DispenserTileEntity.hpp"
 #include "world/level/TileSource.hpp"
+#include "world/level/TileTickingQueue.hpp"
 
 DispenserTile::DispenserTile(int id) : EntityTile(id, TEXTURE_FURNACE_SIDE, Material::stone)
 {

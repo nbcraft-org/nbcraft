@@ -48,8 +48,6 @@ void LeverTile::setPlacedOnFace(TileSource& source, const TilePos& pos, Facing::
 
 	switch (face)
 	{
-	case Facing::DOWN:
-		break;
 	case Facing::UP:
 		if (source.isSolidBlockingTile(pos.below()))
 			data = 5 + level.m_random.nextInt(2);
@@ -70,6 +68,7 @@ void LeverTile::setPlacedOnFace(TileSource& source, const TilePos& pos, Facing::
 		if (source.isSolidBlockingTile(pos.west()))
 			data = 1;
 		break;
+	default: break;
 	}
 
 	source.setTileAndData(pos, FullTile(this, data + var7));
@@ -150,7 +149,7 @@ bool LeverTile::use(const TilePos& pos, Player& player)
 	int var7 = data & 7;
 	int var8 = 8 - (data & 8);
 	source.setTileAndData(pos, FullTile(this, var7 + var8));
-	//source.setTilesDirty(pos, pos);
+	source.fireTilesDirty(pos, pos);
 	level.playSound(pos + 0.5f, "random.click", 0.3f, var8 > 0 ? 0.6f : 0.5f);
 	source.updateNeighborsAt(pos, m_ID);
 	switch (var7)

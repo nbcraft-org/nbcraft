@@ -3,7 +3,7 @@
 #include <vector>
 #include <algorithm>
 
-template<typename T, typename Comparator = std::less<T>>
+template<typename T, typename Comparator = std::less<T> >
 class MovePriorityQueue
 {
 public:
@@ -18,8 +18,7 @@ public:
 	}
 
 public:
-	template<typename Value>
-	void push(const Value& value)
+	void push(const T& value)
 	{
 		m_items.push_back(value);
 		std::push_heap(m_items.begin(), m_items.end(), Comparator());

@@ -67,26 +67,16 @@ void Entity::_init()
 	m_nextStep = 1;
 	m_minBrightness = 0.0f;
 	m_pDescriptor = &EntityTypeDescriptor::unknown;
+	m_pTileSource = nullptr;
 	m_bCanBeDeleted = true;
 }
 
-Entity::Entity(Level& level)
-	: m_pTileSource(nullptr),
-	  m_pLevel(&level)
-{
-	_init();
-
-	m_EntityID = ++entityCounter;
-	setPos(Vec3::ZERO);
-
-	m_entityData.define<SharedFlag>(DATA_SHARED_FLAGS_ID, 0);
-}
-
 Entity::Entity(TileSource& tileSource)
-	: m_pTileSource(&tileSource),
-	  m_pLevel(&tileSource.getLevel())
 {
 	_init();
+
+	m_pTileSource = &tileSource;
+	m_pLevel = &tileSource.getLevel();
 
 	m_EntityID = ++entityCounter;
 	setPos(Vec3::ZERO);
@@ -633,8 +623,6 @@ bool Entity::isFree(const Vec3& off) const
 	AABB aabb = m_hitbox;
 	aabb.move(off);
 
-	std::vector<AABB>& pCubes = m_pTileSource->fetchAABBs(aabb, true);
-
 	return !m_pTileSource->containsAnyLiquid(aabb);
 }
 
@@ -643,8 +631,6 @@ bool Entity::isFree(const Vec3& off, float expand) const
 	AABB aabb = m_hitbox;
 	aabb.move(off);
 	aabb.grow(expand, expand, expand);
-
-	std::vector<AABB>& pCubes = m_pTileSource->fetchAABBs(aabb, true);
 
 	return !m_pTileSource->containsAnyLiquid(aabb);
 }
@@ -1129,7 +1115,7 @@ void Entity::setRider(Entity* rider)
 void Entity::setRiding(Entity* riding)
 {
 	m_ridingId = (riding) ? riding->m_EntityID : 0;
-	setSharedFlag(FLAG_RIDING, riding);
+	setSharedFlag(FLAG_RIDING, riding != nullptr);
 }
 
 /*void Entity::thunderHit(LightningBolt* bolt)

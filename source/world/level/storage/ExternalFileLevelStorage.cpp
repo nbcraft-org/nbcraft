@@ -528,8 +528,8 @@ void ExternalFileLevelStorage::saveEntities(Level* level, LevelChunk* chunk)
 
 	ListTag* tileEntitiesTag = new ListTag();
 
-	const TileEntityVector* tileEntities = level->getAllTileEntities();
-	for (TileEntityVector::const_iterator it = tileEntities->begin(); it != tileEntities->end(); it++)
+	const TileEntity::Vector& tileEntities = level->getAllTileEntities();
+	for (TileEntity::Vector::const_iterator it = tileEntities.begin(); it != tileEntities.end(); it++)
 	{
 		const TileEntity* tileEntity = *it;
 		CompoundTag* tag = new CompoundTag();

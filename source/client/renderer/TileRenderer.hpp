@@ -9,6 +9,9 @@
 #pragma once
 
 #include "client/renderer/renderer/Tesselator.hpp"
+#include "world/tile/Tile.hpp"
+
+class TileSource;
 
 class TileSource;
 
@@ -77,9 +80,6 @@ protected:
 
 public:
 	static bool canRender(int renderShape);
-
-	static bool m_bFancyGrass;
-	static bool m_bBiomeColors;
 
 private:
 	TileSource* m_pTileSource;

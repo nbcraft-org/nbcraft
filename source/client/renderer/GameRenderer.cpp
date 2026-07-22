@@ -19,6 +19,7 @@
 #include "renderer/RenderContextImmediate.hpp"
 #include "world/level/TileSource.hpp"
 #include "thirdparty/glm/glm.hpp"
+#include "world/level/TileSource.hpp"
 
 //#define SHOW_VERTEX_COUNTER_GRAPHIC
 
@@ -411,7 +412,7 @@ void GameRenderer::moveCameraToPlayer(Matrix& matrix, float f)
 	if (!m_pMinecraft->getOptions()->m_bFixedCamera)
 	{
 		matrix.rotate(mob.m_oRot.pitch + f * (mob.m_rot.pitch - mob.m_oRot.pitch), Vec3::UNIT_X);
-		matrix.rotate(mob.m_oRot.yaw   + f * (mob.m_rot.yaw   - mob.m_oRot.yaw) + (thirdPerson == TPM_FRONT ? 0.0f : 180.0f), Vec3::UNIT_Y);
+		matrix.rotate(mob.m_oRot.yaw   + f * (mob.m_rot.yaw   - mob.m_oRot.yaw  ) + (thirdPerson == TPM_FRONT ? 0.0f : 180.0f), Vec3::UNIT_Y);
 	}
 
 	matrix.translate(Vec3::UNIT_Y * headHeightDiff);

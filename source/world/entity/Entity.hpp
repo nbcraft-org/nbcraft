@@ -8,6 +8,9 @@
 
 #pragma once
 
+#include <vector>
+#include <map>
+
 #include "common/math/Color.hpp"
 #include "world/phys/Vec3.hpp"
 #include "world/phys/Vec2.hpp"
@@ -17,6 +20,7 @@
 #include "world/level/levelgen/chunk/ChunkPos.hpp"
 #include "world/tile/Tile.hpp"
 #include "world/item/ItemStack.hpp"
+#include "world/level/DimensionId.hpp"
 #include "SynchedEntityData.hpp"
 #include "EntityTypeDescriptor.hpp"
 
@@ -26,7 +30,6 @@ class ItemStack;
 class ItemEntity;
 class TileSource;
 class Dimension;
-enum DimensionId;
 
 struct EntityPos
 {
@@ -67,6 +70,7 @@ public:
 	typedef int32_t ID;
 	typedef int32_t AuxValue;
 	typedef std::vector<Entity*> Vector;
+	typedef std::map<Entity::ID, Entity*> IdMap;
 public:
 	class EventType
 	{
@@ -128,7 +132,6 @@ private:
 	void _init();
 public:
 	Entity() { _init(); }
-	Entity(Level& level);
 	Entity(TileSource& tileSource);
 	virtual ~Entity();
 

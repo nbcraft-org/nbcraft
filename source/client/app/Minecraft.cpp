@@ -64,7 +64,7 @@ const char* Minecraft::progressMessages[] =
 {
 	"Locating server",
 	"Building terrain",
-	"Preparing",
+	"Preparing", // "Simulating world for a bit" on Java
 	"Saving chunks",
 };
 
@@ -894,7 +894,7 @@ void Minecraft::unloadLevel(bool bCopyMap)
 		if (!m_pLevel->m_bIsClientSide || bCopyMap)
 		{
 			m_progressPercent = 33;
-			m_pLevel->saveUnsavedChunks();
+			//m_pLevel->saveUnsavedChunks(); // @MATT: what do we call here instead?
 
 			m_progressPercent = 66;
 			m_pLevel->saveLevelData();
@@ -1033,15 +1033,14 @@ void Minecraft::update()
 		field_DA8++;
 	}
 
+	m_pSoundEngine->update();
+
 	if (m_pLevel && !m_bPreparingLevel)
 	{
 		m_pLevel->updateLights();
 	}
 
-#ifndef ORIGINAL_CODE
 	tickMouse();
-	m_pSoundEngine->update();
-#endif
 
 	BackgroundQueuePool::getInstance().processCoroutines();
 
@@ -1081,7 +1080,7 @@ void Minecraft::prepareLevel(const std::string& unused)
 	// @MATT
 	/*if (!pLevel->field_B0C)
 	{
-		pLevel->setUpdateLights(0);
+		pLevel->setUpdateLights(false);
 	}
 
 	for (int i = 8, i2 = 0; i != 8 + C_MAX_CHUNKS_X * 16; i += 16)
@@ -1114,7 +1113,7 @@ void Minecraft::prepareLevel(const std::string& unused)
 	//	getTimeS();
 
 	// @MATT
-	//pLevel->setUpdateLights(1);
+	//pLevel->setUpdateLights(true);
 
 	//startTime = float(getTimeS());
 
@@ -1147,7 +1146,7 @@ void Minecraft::prepareLevel(const std::string& unused)
 		//pLevel->setInitialSpawn();
 		pLevel->saveLevelData();
 		// @MATT
-		//pLevel->getChunkSource()->saveAll();
+		//pLevel->getChunkSource().saveAll();
 		pLevel->saveGame();
 	}
 	else

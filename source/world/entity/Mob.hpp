@@ -17,7 +17,6 @@ private:
 
 public:
 	Mob(TileSource& source);
-	Mob(Level& level);
 	virtual ~Mob();
 
 protected:

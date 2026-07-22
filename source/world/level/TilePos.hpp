@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <stddef.h>
 #include "world/Facing.hpp"
 #include "world/phys/Vec3.hpp"
 
@@ -51,7 +52,7 @@ public:
 
 	int volume() const
 	{
-		return x * y * z;
+		return Mth::abs(x * y * z);
 	}
 
 	TilePos min(const TilePos& other) const

@@ -146,17 +146,12 @@ bool TileSource::hasChunksAt(const TilePos& min, const TilePos& max)
 	return hasChunksAt(Bounds(min, max, m_chunkSource.getChunkSide(), false));
 }
 
-bool TileSource::hasChunksAt(int x, int y, int z, int r)
-{
-	TilePos min(x - r, y, z - r);
-	TilePos max(x + r, y, z + r);
-
-	return hasChunksAt(min, max);
-}
-
 bool TileSource::hasChunksAt(const TilePos& pos, int r)
 {
-	return hasChunksAt(pos.x, pos.y, pos.z, r);
+	TilePos min(pos.x - r, pos.y, pos.z - r);
+	TilePos max(pos.x + r, pos.y, pos.z + r);
+
+	return hasChunksAt(min, max);
 }
 
 const std::vector<MobSpawnerData>& TileSource::getMobsAt(EntityType entityType, const TilePos& pos)
@@ -164,7 +159,7 @@ const std::vector<MobSpawnerData>& TileSource::getMobsAt(EntityType entityType, 
 	return m_chunkSource.getMobsAt(*this, entityType, pos);
 }
 
-bool TileSource::hasNeighborSignal(int x, int y, int z)
+bool TileSource::hasNeighborSignal(const TilePos& pos)
 {
 	return false;
 }
@@ -202,19 +197,9 @@ TileID TileSource::getTile(const TilePos& pos)
 	return chunk->getTile(pos);
 }
 
-TileID TileSource::getTile(int x, int y, int z)
-{
-	return getTile(TilePos(x, y, z));
-}
-
 Tile* TileSource::getTilePtr(const TilePos& pos)
 {
 	return Tile::tiles[getTile(pos)];
-}
-
-Tile* TileSource::getTilePtr(int x, int y, int z)
-{
-	return getTilePtr(TilePos(x, y, z));
 }
 
 TileData TileSource::getData(const TilePos& pos)
@@ -228,12 +213,6 @@ TileData TileSource::getData(const TilePos& pos)
 
 	return chunk->getData(pos);
 }
-
-TileData TileSource::getData(int x, int y, int z)
-{
-	return getData(TilePos(x, y, z));
-}
-
 Brightness_t TileSource::getRawBrightness(const TilePos& pos, bool unk)
 {
 	TileID tile = getTile(pos);
@@ -276,11 +255,6 @@ Brightness_t TileSource::getRawBrightness(const TilePos& pos, bool unk)
 	return chunk->getRawBrightness(pos, getSkyDarken());
 }
 
-Brightness_t TileSource::getRawBrightness(int x, int y, int z, bool unk)
-{
-	return getRawBrightness(TilePos(x, y, z), unk);
-}
-
 Brightness_t TileSource::getBrightness(const LightLayer& lightLayer, const TilePos& pos)
 {
 	if (pos.y > (ChunkConstants::Y_SIZE - 1))
@@ -293,19 +267,9 @@ Brightness_t TileSource::getBrightness(const LightLayer& lightLayer, const TileP
 	return chunk->getBrightness(lightLayer, pos);
 }
 
-Brightness_t TileSource::getBrightness(const LightLayer& lightLayer, int x, int y, int z)
-{
-	return getBrightness(lightLayer, TilePos(x, y, z));
-}
-
 float TileSource::getBrightness(const TilePos& pos)
 {
 	return m_dimension.getBrightnessRamp(getRawBrightness(pos, true));
-}
-
-float TileSource::getBrightness(int x, int y, int z)
-{
-	return getBrightness(TilePos(x, y, z));
 }
 
 void TileSource::addListener(TileSourceListener& listener)

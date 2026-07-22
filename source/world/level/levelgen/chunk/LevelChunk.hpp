@@ -78,17 +78,25 @@ public:
 	};
 
 public:
+	// Previously called "DataLayer"
 	struct NibbleTileArray
 	{
-	public:
-		uint8_t m_array[ChunkConstants::TILE_COUNT / 2];
-
-	public:
-		uint8_t get(const ChunkTilePos& pos) const
+		inline NibbleTileArray()
 		{
-			uint8_t byte = m_array[pos.index() >> 1];
+			array = new uint8_t[getSize()];
+            memset(array, 0, getSize());
+		}
 
-			if ((pos.y & 1) == 0)
+		inline ~NibbleTileArray()
+		{
+			delete[] array;
+		}
+
+		inline uint8_t get(int index) const
+		{
+			uint8_t byte = array[index >> 1];
+
+			if ((index & 1) == 0)
 			{
 				// get low bits
 				return byte & 0xF;
@@ -96,21 +104,29 @@ public:
 			else
 			{
 				// get high bits
-				return byte >> 4;
+				return (byte >> 4) & 0xF;
 			}
 		}
 
-		bool set(const ChunkTilePos& pos, uint8_t value)
+		inline uint8_t get(const ChunkTilePos& pos) const
 		{
-			int index = pos.index() >> 1;
-			uint8_t byte = m_array[index];
+			return get(pos.index());
+		}
 
-			if ((pos.y & 1) == 0)
+		inline bool set(int index, uint8_t value)
+		{
+			assert(value <= 15);
+
+			int idx = index >> 1;
+			uint8_t byte = array[idx];
+
+			if ((index & 1) == 0)
 			{
 				// low bits
 				if ((byte & 0xF) != value)
 				{
-					m_array[index] = (value & 0xF) | (byte & 0xF0);
+					value &= 0xF;
+					array[idx] = (byte & 0xF0) | value;
 					return true;
 				}
 			}
@@ -119,7 +135,8 @@ public:
 				// high bits
 				if ((byte >> 4) != value)
 				{
-					m_array[index] = (value << 4) | (byte & 0xF);
+					value &= 0xF;
+					array[idx] = (value << 4) | (byte & 0x0F);
 					return true;
 				}
 			}
@@ -127,7 +144,14 @@ public:
 			return false;
 		}
 
-		size_t getSize() const { return ChunkConstants::TILE_COUNT / 2; }
+		inline bool set(const ChunkTilePos& pos, uint8_t value)
+		{
+			return set(pos.index(), value);
+		}
+
+		inline size_t getSize() const { return ChunkConstants::TILE_COUNT / 2; }
+
+		uint8_t* array;
 	};
 
 public:

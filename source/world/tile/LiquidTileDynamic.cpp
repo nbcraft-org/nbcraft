@@ -192,7 +192,7 @@ void LiquidTileDynamic::trySpreadTo(TileSource& source, const TilePos& pos, Tile
 		}
 	}
 
-	source.setTileAndData(pos, FullTile(m_ID, data));
+	source.setTileAndData(pos, FullTile(this, data));
 }
 
 // @NOTE: This is inlined in PE.
@@ -293,7 +293,7 @@ void LiquidTileDynamic::tick(TileSource& source, const TilePos& pos, Random* ran
 		if (depth < 8)
 			depth += 8;
 
-		source.setTileAndData(pos.below(), FullTile(m_ID, depth));
+		source.setTileAndData(pos.below(), FullTile(this, depth));
 		return;
 	}
 

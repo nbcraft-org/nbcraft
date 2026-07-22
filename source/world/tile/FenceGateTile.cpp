@@ -17,7 +17,7 @@ AABB* FenceGateTile::getAABB(TileSource& source, const TilePos& pos)
     TileData data = source.getData(pos);
     if (isOpen(data))
     {
-        return NULL;
+        return nullptr;
     }
 	AABB* rAABB = Tile::getAABB(source, pos);
 	rAABB->max.y += 0.5f;

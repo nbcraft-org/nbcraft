@@ -77,11 +77,6 @@ Mob::Mob(TileSource& source) : Entity(source)
 	_init();
 }
 
-Mob::Mob(Level& level) : Entity(level)
-{
-	_init();
-}
-
 Mob::~Mob()
 {
 }

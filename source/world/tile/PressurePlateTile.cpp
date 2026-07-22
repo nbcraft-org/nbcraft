@@ -1,6 +1,7 @@
 #include "PressurePlateTile.hpp"
 #include "world/level/Level.hpp"
 #include "world/level/TileSource.hpp"
+#include "world/level/TileTickingQueue.hpp"
 
 PressurePlateTile::PressurePlateTile(TileID id, int texture, Sensitivity sensitivity) : Tile(id, texture, Material::stone)
 {
@@ -120,7 +121,7 @@ void PressurePlateTile::checkPressed(TileSource& source, const TilePos& pos) con
 		source.setTileAndData(pos, FullTile(m_ID, 1));
 		source.updateNeighborsAt(pos, m_ID);
 		source.updateNeighborsAt(pos.below(), m_ID);
-		//source.setTilesDirty(pos, pos);
+		source.fireTilesDirty(pos, pos);
 		level.playSound(Vec3(float(pos.x) + 0.5f, float(pos.y) + 0.1f, float(pos.z) + 0.5f), "random.click", 0.3f, 0.6f);
 	}
 	if (!var6 && var5)
@@ -128,7 +129,7 @@ void PressurePlateTile::checkPressed(TileSource& source, const TilePos& pos) con
 		source.setTileAndData(pos, FullTile(m_ID, 0));
 		source.updateNeighborsAt(pos, m_ID);
 		source.updateNeighborsAt(pos.below(), m_ID);
-		//source.setTilesDirty(pos, pos);
+		source.fireTilesDirty(pos, pos);
 		level.playSound(Vec3(float(pos.x) + 0.5f, float(pos.y) + 0.1f, float(pos.z) + 0.5f), "random.click", 0.3f, 0.5f);
 	}
 

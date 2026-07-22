@@ -9,6 +9,7 @@
 #include "SandTile.hpp"
 #include "world/level/Level.hpp"
 #include "world/level/TileSource.hpp"
+#include "world/level/TileTickingQueue.hpp"
 #include "world/entity/FallingTile.hpp"
 
 //@NOTE: True for now

@@ -1,11 +1,26 @@
-#include "client/renderer/LightUpdate.hpp"
+#include "LightUpdate.hpp"
+#include "common/Logger.hpp"
 #include "world/level/TileSource.hpp"
 #include "world/level/levelgen/chunk/ChunkConstants.hpp"
+#include "world/level/levelgen/chunk/LevelChunk.hpp"
 
 void LightUpdate::update()
 {
-	if (!m_source)
+	if (!m_pSource)
+	{
+		LOG_E("LightUpdate doesn't have TileSource!");
+		assert(false);
 		return;
+	}
+
+	//LOG_I("min: (%d, %d, %d) max: (%d, %d, %d)", m_min.x, m_min.y, m_min.z, m_max.x, m_max.y, m_max.z);
+
+	// From Java/early PE, removed in 0.12.1, useless math imo
+	/*if ((m_max.z - m_min.z + 1) * (m_max.x + 1 - m_min.x + (m_max.y - m_min.y) * (m_max.x + 1 - m_min.x)) > 32768)
+	{
+		LOG_W("Light too large, skipping!");
+		return;
+	}*/
 
 	// clamp y values to 0-127 for min and max
 	if (m_min.y < 0)
@@ -19,40 +34,47 @@ void LightUpdate::update()
 		for (pos.z = m_min.z; pos.z <= m_max.z; pos.z++)
 		{
 			pos.y = m_min.y;
-			if (!m_source->hasChunksAt(pos, 1))
+			if (!m_pSource->hasChunksAt(pos, 1))
+				continue;
+
+			LevelChunk* pChunk = m_pSource->getChunk(pos);
+			if (!pChunk /* || pChunk->isEmpty()*/) // @MATT: is this fine?
 				continue;
 
 			for (; pos.y <= m_max.y; pos.y++)
 			{
-				Brightness_t currentBrightness = m_source->getBrightness(m_lightLayer, pos);
+				Brightness_t currentBrightness = pChunk->getBrightness(*m_pLightLayer, pos);
 
-				TileID currentTile = m_source->getTile(pos);
-				Brightness_t lightBlockLevel = std::min(Tile::lightBlock[currentTile], static_cast<Brightness_t>(1));
+				TileID currentTile = pChunk->getTile(pos);
+				Brightness_t lightBlockLevel = std::max(Tile::lightBlock[currentTile], Brightness::DECAY);
 
-				Brightness_t maxBrightness = Brightness::MIN;
-				if (&m_lightLayer == &LightLayer::Sky)
+				Brightness_t minBrightness = Brightness::MIN;
+				if (m_pLightLayer == &LightLayer::Sky)
 				{
-					if (m_source->canSeeSky(pos))
-						maxBrightness = Brightness::MAX;
+					if (pChunk->isSkyLit(pos))
+						minBrightness = Brightness::MAX;
 				}
-				else if (&m_lightLayer == &LightLayer::Block)
+				else if (m_pLightLayer == &LightLayer::Block)
 				{
-					maxBrightness = Tile::lightEmission[currentTile];
+					minBrightness = Tile::lightEmission[currentTile];
 				}
 
 				Brightness_t newBrightness;
-				if (lightBlockLevel < Brightness::MAX || maxBrightness != Brightness::MIN)
+
+				// If light can pass through, or the block itself emits light
+				if (lightBlockLevel < Brightness::MAX || minBrightness != Brightness::MIN)
 				{
-					Brightness_t brightestNeighbor = 0;
+					Brightness_t brightestNeighbor = Brightness::MIN;
+
 					for (int i = 0; i < Facing::COUNT; i++)
 					{
-						Brightness_t neighborBrightness = m_source->getBrightness(m_lightLayer, pos + Facing::DIRECTION[i]);
-						if (neighborBrightness > brightestNeighbor)
+						Brightness_t neighborBrightness = m_pSource->getBrightness(*m_pLightLayer, pos + Facing::DIRECTION[i]);
+                        if (neighborBrightness > brightestNeighbor)
 							brightestNeighbor = neighborBrightness;
 					}
 
-					Brightness_t b = std::min(static_cast<Brightness_t>(brightestNeighbor - lightBlockLevel), Brightness::MAX);
-					newBrightness = std::min(b, maxBrightness);
+					Brightness_t b = Mth::clamp(brightestNeighbor - lightBlockLevel, (int)Brightness::MIN, (int)Brightness::MAX);
+					newBrightness = std::max(b, minBrightness);
 				}
 				else
 				{
@@ -61,34 +83,223 @@ void LightUpdate::update()
 
 				if (currentBrightness != newBrightness)
 				{
-					m_source->setBrightness(m_lightLayer, pos, newBrightness);
+					// Don't use pChunk here, we probably need to be firing off events to the LevelListeners
+					m_pSource->setBrightness(*m_pLightLayer, pos, newBrightness);
 
-					Brightness_t spreadBrightness = std::max(static_cast<Brightness_t>(newBrightness - 1), Brightness::MIN);
-
+					Brightness_t spreadBrightness = std::max(newBrightness - Brightness::DECAY, (int)Brightness::MIN);
+                    
 					// why dont we check if we're in range here?
-					m_source->updateLightIfOtherThan(m_lightLayer, pos - TilePos(1, 0, 0), spreadBrightness);
-					m_source->updateLightIfOtherThan(m_lightLayer, pos - TilePos(0, 1, 0), spreadBrightness);
-					m_source->updateLightIfOtherThan(m_lightLayer, pos - TilePos(0, 0, 1), spreadBrightness);
+					// if ((pos.x - 1) <= m_min.x)
+					m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos.west(), spreadBrightness);
+					// if ((pos.y - 1) <= m_min.y)
+					m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos.below(), spreadBrightness);
+					// if ((pos.z - 1) <= m_min.z)
+					m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos.north(), spreadBrightness);
 
 					if ((pos.x + 1) >= m_max.x)
-						m_source->updateLightIfOtherThan(m_lightLayer, pos + TilePos(1, 0, 0), spreadBrightness);
+						m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos.east(),  spreadBrightness);
 					if ((pos.y + 1) >= m_max.y)
-						m_source->updateLightIfOtherThan(m_lightLayer, pos + TilePos(0, 1, 0), spreadBrightness);
+						m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos.above(), spreadBrightness);
 					if ((pos.z + 1) >= m_max.z)
-						m_source->updateLightIfOtherThan(m_lightLayer, pos + TilePos(0, 0, 1), spreadBrightness);
+						m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos.south(), spreadBrightness);
 				}
 			}
 		}
 	}
 }
 
+static int _indexXY(const ChunkTilePos& ctp)
+{
+	return (ctp.x << 11) | (ctp.z << 7);
+}
+
+// Everything here is the same as ::update() unless otherwise noted
 void LightUpdate::updateFast()
 {
-	if (!m_source)
+	if (!m_pSource)
+	{
+		LOG_E("LightUpdate doesn't have TileSource!");
+		assert(false);
+		return;
+	}
+
+	// "fast"-specific
+	if (m_min.x > m_max.x || m_min.y >= ChunkConstants::Y_SIZE)
 		return;
 
-	// TODO!!! currently use normal update
-	update();
+	// clamp y values to 0-127 for min and max
+	if (m_min.y < 0)
+		m_min.y = 0;
+	if (m_max.y > (ChunkConstants::Y_SIZE - 1))
+		m_max.y = ChunkConstants::Y_SIZE - 1;
+
+	//LOG_I("min: (%d, %d, %d) max: (%d, %d, %d)", m_min.x, m_min.y, m_min.z, m_max.x, m_max.y, m_max.z);
+
+	TilePos pos;
+	for (pos.x = m_min.x; pos.x <= m_max.x; pos.x++)
+	{
+		for (pos.z = m_min.z; pos.z <= m_max.z; pos.z++)
+		{
+			pos.y = m_min.y;
+			if (!m_pSource->hasChunksAt(pos, 1))
+				continue;
+
+			LevelChunk* pChunk = m_pSource->getChunk(pos);
+			if (!pChunk /* || pChunk->isEmpty()*/) // @MATT: is this fine?
+				continue;
+
+			// Start fast stuff
+
+			LevelChunk::NibbleTileArray& light = pChunk->getLight(*m_pLightLayer);
+
+			// WEST
+			LevelChunk* pChunkWest;
+			LevelChunk::NibbleTileArray* pLightWest;
+			// Only fetch from TileSource if we're on a chunk boundary and will therefore be crossing it
+			if ((pos.x & 0xF) == 0)
+			{
+				pChunkWest = m_pSource->getChunk(pos.west());
+				pLightWest = pChunkWest ? &pChunkWest->getLight(*m_pLightLayer) : nullptr;
+			}
+			else
+			{
+				pChunkWest = pChunk;
+				pLightWest = &light;
+			}
+
+			// EAST
+			LevelChunk* pChunkEast;
+			LevelChunk::NibbleTileArray* pLightEast;
+			if ((pos.x & 0xF) == C_MAX_CHUNKS_X - 1)
+			{
+				pChunkEast = m_pSource->getChunk(pos.east());
+				pLightEast = pChunkEast ? &pChunkEast->getLight(*m_pLightLayer) : nullptr;
+			}
+			else
+			{
+				pChunkEast = pChunk;
+				pLightEast = &light;
+			}
+
+			// NORTH
+			LevelChunk* pChunkNorth;
+			LevelChunk::NibbleTileArray* pLightNorth;
+			if ((pos.z & 0xF) == 0)
+			{
+				pChunkNorth = m_pSource->getChunk(pos.north());
+				pLightNorth = pChunkNorth ? &pChunkNorth->getLight(*m_pLightLayer) : nullptr;
+			}
+			else
+			{
+				pChunkNorth = pChunk;
+				pLightNorth = &light;
+			}
+
+			// SOUTH
+			LevelChunk* pChunkSouth;
+			LevelChunk::NibbleTileArray* pLightSouth;
+			if ((pos.z & 0xF) == C_MAX_CHUNKS_Z - 1)
+			{
+				pChunkSouth = m_pSource->getChunk(pos.south());
+				pLightSouth = pChunkSouth ? &pChunkSouth->getLight(*m_pLightLayer) : nullptr;
+			}
+			else
+			{
+				pChunkSouth = pChunk;
+				pLightSouth = &light;
+			}
+
+			int idxCenterBase = _indexXY(pos);
+			int idxWestBase   = _indexXY(pos.west());
+			int idxEastBase   = _indexXY(pos.east());
+			int idxNorthBase  = _indexXY(pos.north());
+			int idxSouthBase  = _indexXY(pos.south());
+
+			for (; pos.y <= m_max.y; pos.y++)
+			{
+				// Assemble indexes for current Y
+				int idx      = idxCenterBase | pos.y;
+				int idxWest  = idxWestBase   | pos.y;
+				int idxEast  = idxEastBase   | pos.y;
+				int idxNorth = idxNorthBase  | pos.y;
+				int idxSouth = idxSouthBase  | pos.y;
+
+				Brightness_t currentBrightness = light.get(idx);
+
+			// End fast stuff
+					
+				TileID currentTile = pChunk->getTile(pos);
+				Brightness_t lightBlockLevel = std::max(Tile::lightBlock[currentTile], Brightness::DECAY);
+
+				Brightness_t minBrightness = Brightness::MIN;
+				if (m_pLightLayer == &LightLayer::Sky)
+				{
+					if (pChunk->isSkyLit(pos))
+						minBrightness = Brightness::MAX;
+				}
+				else if (m_pLightLayer == &LightLayer::Block)
+				{
+					minBrightness = Tile::lightEmission[currentTile];
+				}
+
+				Brightness_t newBrightness;
+
+				// If light can pass through, or the block itself emits light
+				if (lightBlockLevel < Brightness::MAX || minBrightness != Brightness::MIN)
+				{
+					Brightness_t brightestNeighbor = Brightness::MIN;
+
+					// Start fast stuff
+					#define DONEYET if (brightestNeighbor >= Brightness::MAX) goto KEEP_GOING
+
+					if (pLightWest)  brightestNeighbor = std::max(brightestNeighbor, pLightWest->get(idxWest));
+					DONEYET;
+					if (pLightEast)  brightestNeighbor = std::max(brightestNeighbor, pLightEast->get(idxEast));
+					DONEYET;
+					if (pLightNorth) brightestNeighbor = std::max(brightestNeighbor, pLightNorth->get(idxNorth));
+					DONEYET;
+					if (pLightSouth) brightestNeighbor = std::max(brightestNeighbor, pLightSouth->get(idxSouth));
+					DONEYET;
+
+					if (pos.y < C_MAX_Y - 1) brightestNeighbor = std::max(brightestNeighbor, light.get(idx + 1));
+					DONEYET;
+					if (pos.y > C_MIN_Y)     brightestNeighbor = std::max(brightestNeighbor, light.get(idx - 1));
+					// End fast stuff
+
+					KEEP_GOING:
+					Brightness_t b = brightestNeighbor > lightBlockLevel ? brightestNeighbor - lightBlockLevel : Brightness::MIN;
+					newBrightness = std::max(b, minBrightness);
+				}
+				else
+				{
+					newBrightness = Brightness::MIN;
+				}
+
+				if (currentBrightness != newBrightness)
+				{
+					// Don't use pChunk here, we probably need to be firing off events to the LevelListeners
+					m_pSource->setBrightness(*m_pLightLayer, pos, newBrightness);
+
+					Brightness_t spreadBrightness = std::max(newBrightness - Brightness::DECAY, (int)Brightness::MIN);
+
+					// why dont we check if we're in range here?
+					// if ((pos.x - 1) <= m_min.x)
+					m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos.west(),  spreadBrightness);
+					// if ((pos.y - 1) <= m_min.y)
+					m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos.below(), spreadBrightness);
+					// if ((pos.z - 1) <= m_min.z)
+					m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos.north(), spreadBrightness);
+					
+					if ((pos.x + 1) >= m_max.x)
+						m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos.east(),  spreadBrightness);
+					if ((pos.y + 1) >= m_max.y)
+						m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos.above(), spreadBrightness);
+					if ((pos.z + 1) >= m_max.z)
+						m_pSource->updateLightIfOtherThan(*m_pLightLayer, pos.south(), spreadBrightness);
+				}
+			}
+		}
+	}
 }
 
 bool LightUpdate::expandIfCloseEnough(const TilePos& lowerPos, const TilePos& upperPos)
@@ -96,13 +307,17 @@ bool LightUpdate::expandIfCloseEnough(const TilePos& lowerPos, const TilePos& up
 	if (lowerPos >= m_min && upperPos <= m_max)
 		return true;
 
-	if (lowerPos < (m_min - 1) || upperPos > (m_max + 1))
+	// Ensure the LightUpdate we're trying to expand is actually touching the other region we're trying to expand into
+	// Must use strict component-wise axis checking, not lexicographical operators.
+	if (lowerPos.x < m_min.x - 1 || lowerPos.y < m_min.y - 1 || lowerPos.z < m_min.z - 1 ||
+		upperPos.x > m_max.x + 1 || upperPos.y > m_max.y + 1 || upperPos.z > m_max.z + 1)
 		return false;
 
 	TilePos newMin = m_min.min(lowerPos);
 	TilePos newMax = m_max.max(upperPos);
 
-	if ((newMax - newMin).volume() > 2)
+    // Prevent the LightUpdate bounds from expanding beyond the 2nd dimension
+	if (Mth::abs((newMax - newMin).volume() - (m_max - m_min).volume()) > 2)
 		return false;
 
 	m_min = newMin;

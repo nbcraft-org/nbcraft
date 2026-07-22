@@ -669,18 +669,18 @@ bool RandomLevelSource::postProcess(ChunkViewSource& chunkViewSource)
 			int i24 = j19 - (tp.x + 8);
 			int j25 = j22 - (tp.z + 8);
 
-			int tsb = source.getTopSolidBlock(j19, j22, false);
+			int tsb = source.getTopSolidBlock(TilePos(j19, 0, j22));
 
 			if (SNOW_CUTOFF > (tempBlock[i24 * 16 + j25] - SNOW_SCALE * (float(tsb - 64) / 64.0f)))
 			{
-				if (tsb >= 0 && tsb < C_MAX_Y && source.isEmptyTile(j19, tsb, j22))
+				if (tsb >= 0 && tsb < C_MAX_Y && source.isEmptyTile(TilePos(j19, tsb, j22)))
 				{
 					Material* material = source.getMaterial(TilePos(j19, tsb - 1, j22));
 
 					if (material->blocksMotion() &&
 						material != Material::ice)
 					{
-						source.setTile(j19, tsb, j22, Tile::topSnow->m_ID);
+						source.setTile(TilePos(j19, tsb, j22), Tile::topSnow->m_ID);
 					}
 				}
 			}

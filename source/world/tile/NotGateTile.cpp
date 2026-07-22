@@ -1,5 +1,6 @@
 #include "NotGateTile.hpp"
 #include "world/level/TileSource.hpp"
+#include "world/level/TileTickingQueue.hpp"
 #include "world/level/Level.hpp"
 
 std::vector<NotGateTile::Toggle> NotGateTile::recentToggles;

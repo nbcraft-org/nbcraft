@@ -49,7 +49,7 @@ bool TileItem::useOn(ItemStack& itemStack, Player& player, const TilePos& pos, F
 	if (itemStack.m_count == 0)
 		return false;
 
-	if (!source.mayPlace(m_tile, tp, face, player, false, nullptr))
+	if (!source.mayPlace(m_tile, tp, face, player))
 		return false;
 
 	Tile* pTile = Tile::tiles[m_tile];

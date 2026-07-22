@@ -20,15 +20,6 @@ class ChunkSource;
 class TileSource;
 class BiomeSource;
 
-enum DimensionId
-{
-	DIMENSION_OVERWORLD,
-	DIMENSION_NETHER,
-	DIMENSION_THE_END,
-	DIMENSIONS_COUNT,
-	DIMENSION_UNKNOWN
-};
-
 enum GeneratorType
 {
 	GENERATOR_OVERWORLD_LIMITED,
@@ -49,7 +40,7 @@ protected:
 	bool m_bFoggy;
 	bool m_bUltraWarm;
 	bool m_hasCeiling;
-	float m_brightnessRamp[Brightness::MAX + 1];
+	float m_brightnessRamp[15 + 1]; // Brightness::MAX + 1
 	DimensionId m_dimensionId;
 	ChunkSource* m_chunkSource;
 	TileSource* m_pTileSource;

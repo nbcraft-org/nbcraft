@@ -282,8 +282,9 @@
     <ClCompile Include="..\..\..\source\world\level\levelgen\chunk\PostprocessingManager.cpp" />
     <ClCompile Include="..\..\..\source\world\level\levelgen\chunk\WorldLimitChunkSource.cpp" />
     <ClCompile Include="..\..\..\source\world\level\storage\DBStorage.cpp" />
-    <ClCompile Include="..\..\..\source\world\level\TileSource.cpp" />
-    <ClCompile Include="..\..\..\source\world\level\TileTickingQueue.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\level\TileSource.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\level\Brightness.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\level\TileTickingQueue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Entity.hpp" />
@@ -507,6 +508,8 @@
     <ClInclude Include="..\..\..\source\world\level\levelgen\chunk\PostprocessingManager.hpp" />
     <ClInclude Include="..\..\..\source\world\level\levelgen\chunk\WorldLimitChunkSource.hpp" />
     <ClInclude Include="..\..\..\source\world\level\storage\DBStorage.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\level\Brightness.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\level\DimensionId.hpp" />
     <ClInclude Include="..\..\..\source\world\level\Tick.hpp" />
     <ClInclude Include="..\..\..\source\world\level\TileSource.hpp" />
     <ClInclude Include="..\..\..\source\world\level\TileSourceListener.hpp" />

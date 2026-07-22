@@ -38,57 +38,47 @@ public:
 	const Level& getLevelConst() const;
 	Dimension& getDimension() const;
 	const Dimension& getDimensionConst() const;
-	ChunkSource& getChunkSource()
-	{
-		return m_chunkSource;
-	}
+	ChunkSource& getChunkSource() const;
 	void setTickingQueue(TileTickingQueue& queue);
 	TileTickingQueue* getTickQueue(const TilePos& pos);
 	LevelChunk* getChunk(const ChunkPos& pos);
-	LevelChunk* getChunk(int x, int z) { return getChunk(ChunkPos(x, z)); }
 	LevelChunk* getWritableChunk(const ChunkPos& pos);
 	bool shouldFireEvents(LevelChunk& chunk) const;
-	bool hasChunkAt(const TilePos& pos) { return getChunk(pos) != nullptr; }
+	bool hasChunk(const ChunkPos& pos); // from Level
+	bool hasChunkAt(const TilePos& pos);
 	bool hasChunksAt(const Bounds& bounds);
 	bool hasChunksAt(const AABB& aabb);
 	bool hasChunksAt(const TilePos& min, const TilePos& max);
 	bool hasChunksAt(const TilePos& pos, int r);
-	bool hasChunksAt(int x, int y, int z, int r);
 	Brightness_t getSkyDarken() const;
 	const std::vector<MobSpawnerData>& getMobsAt(EntityType entityType, const TilePos& pos);
-	int getSignal(const TilePos& pos, Facing::Name face) const;
-	int getDirectSignal(const TilePos& pos, Facing::Name face) const;
-	bool hasDirectSignal(const TilePos& pos) const;
-	bool hasNeighborSignal(const TilePos& pos); // custom
-	bool hasNeighborSignal(int x, int y, int z);
+	int getSignal(const TilePos& pos, Facing::Name face);
+	int getDirectSignal(const TilePos& pos, Facing::Name face);
+	bool hasDirectSignal(const TilePos& pos);
+	bool hasNeighborSignal(const TilePos& pos);
 	void runLightUpdates(const LightLayer&, const TilePos&, const TilePos&); // unk type
 	bool isTopSolidBlocking(Tile*, uint8_t);
 	void onChunkDiscarded(LevelChunk& chunk);
 	void clearCachedLastChunk(); // unk type
 	void fireAreaChanged(const TilePos&, const TilePos&); // unk type
-	void fireTilesDirty(int, int, int, int, int, int); // unk type
-	void fireTileChanged(const TilePos&, FullTile, FullTile, TileChange);
+	void fireTilesDirty(const TilePos&, const TilePos&); // unk type
+	void fireTileChanged(const TilePos&, const FullTile&, const FullTile&, TileChange);
 	void fireBrightnessChanged(const TilePos&); // unk type
 	void fireTileEntityRemoved(std::unique_ptr<TileEntity>&); // unk type
 	void fireTileEvent(int, int, int, int, int); // unk type
 	LevelChunk* getChunkAt(const TilePos&);
 	void hasTile(const TilePos&); // unk type
 	void fireTileEntityChanged(TileEntity&); // unk type
-	void getChunkAt(int, int, int); // unk type
-	void hasTile(int, int, int); // unk type
 	bool isOwnerThread() const;
-	void getDimensionId(); // unk type
+	DimensionId getDimensionId() const;
 	TileData setExtraData(const TilePos&, uint16_t); // unk type
 	TileData getExtraData(const TilePos&); // unk type
-	TileID getTopSolidBlock(const TilePos&, bool);
-	TileID getTopSolidBlock(int, int, bool);
-	bool canSeeSky(const TilePos&);
-	bool canSeeSky(int, int, int);
-	uint8_t getHeightmap(const TilePos&);
-	void getHeightmapPos(const TilePos&); // unk type
-	uint8_t getHeightmap(int, int);
-	TileEntity* getTileEntity(const TilePos&); // unk type
-	TileEntity* getTileEntity(int, int, int); // unk type
+	TileID getTopSolidBlock(const TilePos&, bool b = false); // @TODO: check the default value on the bool
+	bool canSeeSky(const TilePos&) const;
+	bool isSkyLit(const TilePos&) const;
+	uint8_t getHeightmap(const TilePos&) const;
+	void getHeightmapPos(const TilePos&) const; // unk type
+	TileEntity* getTileEntity(const TilePos& pos) const;
 	const std::vector<TileEntity*>& getAllTileEntities() const;
 	void setTileEntity(const TilePos& pos, TileEntity* tileEntity);
 	void removeTileEntity(const TilePos& pos);
@@ -96,71 +86,55 @@ public:
 	void getTopRainTilePos(const TilePos&); // unk type
 	void checkIsTopRainTilePos(const TilePos&); // unk type
 	TileID getTile(const TilePos& pos);
-	TileID getTile(int x, int y, int z);
 	Tile* getTilePtr(const TilePos& pos);
-	Tile* getTilePtr(int x, int y, int z);
 	TileData getData(const TilePos& pos);
-	TileData getData(int x, int y, int z);
-	bool isSolidBlockingTile(int, int, int);
 	bool isSolidBlockingTile(const TilePos&);
-	void isSolidRenderTile(int, int, int); // unk type
-	void isSolidRenderTile(const TilePos&); // unk type
-	bool containsMaterial(const AABB&, const Material*);
-	void tileEvent(int, int, int, int, int); // unk type
-	void tileEvent(const TilePos&, int, int); // unk type
-	bool containsAnyLiquid(const AABB&);
-	bool containsFireTile(const AABB&);
-	Material* getMaterial(const TilePos&);
-	Material* getMaterial(int, int, int);
-	void isWaterAt(const TilePos&); // unk type
-	void isIceAt(const TilePos&); // unk type
+	bool isSolidRenderTile(const TilePos&);
+	bool containsMaterial(const AABB&, const Material*) const;
+	void tileEvent(const TileEvent& event); // unk type
+	bool containsAnyLiquid(const AABB&) const;
+	bool containsFireTile(const AABB&) const;
+	Material* getMaterial(const TilePos&) const;
+	void isWaterAt(const TilePos&) const; // unk type
+	void isIceAt(const TilePos&) const; // unk type
 	void updateNeighborsAt(const TilePos&, TileID); // unk type
-	bool isEmptyTile(const TilePos&);
-	bool isEmptyTile(int, int, int);
+	bool isEmptyTile(const TilePos&) const;
 	void findNextTopSolidTileUnder(TilePos&); // unk type
 	void containsAny(const TilePos&, const TilePos&); // unk type
-	Brightness_t getRawBrightness(const TilePos& pos, bool unk = true);
-	Brightness_t getRawBrightness(int x, int y, int z, bool unk = true);
+	Brightness_t getRawBrightness(const TilePos& pos, bool b);
+	Brightness_t getRawBrightness(const TilePos& pos) { return getRawBrightness(pos, true); }
 	Brightness_t getBrightness(const LightLayer& lightLayer, const TilePos& pos);
-	Brightness_t getBrightness(const LightLayer& lightLayer, int x, int y, int z);
 	float getBrightness(const TilePos& pos);
-	float getBrightness(int x, int y, int z);
 	void updateLightIfOtherThan(const LightLayer&, const TilePos&, Brightness_t); // unk type
-	bool containsLiquid(const AABB&, const Material*);
-	void getTileAndData(const TilePos&); // unk type
-	bool isTopSolidBlocking(const TilePos&);
-	bool isTopSolidBlocking(int, int, int);
-	void getTileAndData(int, int, int); // unk type
-	HitResult clip(const Vec3& A, const Vec3& B, bool liquid = false, bool solidOnly = false);
-	float getSeenPercent(const Vec3&, const AABB&);
-	void getLightColor(const TilePos&, int); // unk type
-	Biome& getBiome(const TilePos&);
+	bool containsLiquid(const AABB&, const Material*) const;
+	FullTile getTileAndData(const TilePos&) const; // unk type
+	bool isTopSolidBlocking(const TilePos&) const;
+	HitResult clip(const Vec3& A, const Vec3& B, bool liquid = false, bool solidOnly = false) const;
+	float getSeenPercent(const Vec3&, const AABB&) const;
+	void getLightColor(const TilePos&, int) const; // unk type
+	Biome& getBiome(const TilePos&) const;
 	bool shouldFreeze(const TilePos&, bool);
 	bool shouldFreezeIgnoreNeighbors(const TilePos&);
 	bool shouldThaw(const TilePos&, bool);
 	bool isSnowTemperature(const TilePos&);
 	bool isHumidAt(const TilePos&);
-	bool setTileAndData(const TilePos&, FullTile, TileChange updateFlags = TileChange::UPDATE_NONE);
-	bool setTileAndData(int, int, int, FullTile, TileChange updateFlags = TileChange::UPDATE_NONE);
-	bool setTile(const TilePos&, TileID, TileChange updateFlags = TileChange::UPDATE_NONE); // custom
-	bool setTile(int, int, int, TileID, TileChange updateFlags = TileChange::UPDATE_NONE);
-	bool setTileAndDataNoUpdate(const TilePos&, FullTile); // custom
-	bool setTileAndDataNoUpdate(int, int, int, FullTile);
-	bool setTileNoUpdate(const TilePos&, TileID); // custom
-	bool setTileNoUpdate(int, int, int, TileID);
-	void removeTile(int, int, int); // unk type
-	void setBrightness(const LightLayer&, const TilePos&, Brightness_t); // unk type
-	void setBrightness(const LightLayer&, int, int, int, Brightness_t); // unk type
+	bool setTileAndData(const TilePos&, const FullTile&, TileChange updateFlags = TileChange::UPDATE_ALL);
+	bool setTile(const TilePos&, TileID, TileChange updateFlags = TileChange::UPDATE_ALL);
+	bool setTileAndDataNoUpdate(const TilePos&, const FullTile&);
+	bool setTileNoUpdate(const TilePos&, TileID);
+	void removeTile(const TilePos&);
+	void setBrightness(const LightLayer&, const TilePos&, Brightness_t);
 	void setGrassColor(int, const TilePos&, int); // unk type
 	void fetchCollisionShapes(Entity*, const AABB&, float*, bool); // unk type
 	std::vector<AABB>& fetchAABBs(const AABB&, bool b = true); // unk type
-	void getEntities(EntityType, const AABB&, Entity*); // unk type
-	void getNearestEntityOfType(Entity*, const AABB&, EntityType); // unk type
-	void getNearestEntityOfType(Entity*, const Vec3&, float, EntityType); // unk type
-	const std::vector<Entity*>& getEntities(Entity* except, const AABB& bb);
-	bool isUnobstructedByEntities(const AABB&, Entity*);
-	bool mayInteract(Entity* entity, const TilePos& pos) const { return true; }
-	bool mayPlace(TileID tileId, const TilePos& pos, Facing::Name face, Entity& placer, bool ignoreEntities = false, Entity* ignoreEntity = nullptr) { throw std::bad_cast(); } // @TODO: implement this
+	std::vector<Entity*> getEntities(const EntityType&, const AABB&, Entity*) const; // unk type
+	void getNearestEntityOfType(Entity*, const AABB&, const EntityType&) const; // unk type
+	void getNearestEntityOfType(Entity*, const Vec3&, float, const EntityType&) const; // unk type
+	const std::vector<Entity*>& getEntities(Entity* except, const AABB& bb) const;
+	bool isUnobstructedByEntities(const AABB&, Entity*) const;
+	bool mayInteract(Entity* entity, const TilePos& pos) const;
+	bool mayPlace(TileID tileId, const TilePos& pos, bool ignoreEntities = false) const;
+	bool mayPlace(TileID tileId, const TilePos& pos, Facing::Name face, Entity& placer, bool ignoreEntities = false, Entity* ignoreEntity = nullptr) const;
 	void addListener(TileSourceListener& listener);
 	void removeListener(TileSourceListener& listener);
 

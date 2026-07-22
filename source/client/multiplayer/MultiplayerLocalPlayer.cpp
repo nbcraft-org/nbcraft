@@ -4,7 +4,7 @@
 #include "world/level/Level.hpp"
 
 MultiplayerLocalPlayer::MultiplayerLocalPlayer(Minecraft* pMinecraft, Level& level, User* pUser, GameType gameType, DimensionId dimensionId)
-    : LocalPlayer(pMinecraft, level, pUser, gameType, dimensionId)
+	: LocalPlayer(pMinecraft, level, pUser, gameType, dimensionId)
 {
 	m_flashOnSetHealth = false;
 

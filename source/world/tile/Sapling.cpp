@@ -31,7 +31,7 @@ void Sapling::tick(TileSource& source, const TilePos& pos, Random* random)
 		if (data & 8)
 			growTree(source, pos, random);
 		else
-			source.setTileAndDataNoUpdate(pos, FullTile(m_ID, data | 8));
+			source.setTileAndDataNoUpdate(pos, FullTile(this, data | 8));
 	}
 }
 

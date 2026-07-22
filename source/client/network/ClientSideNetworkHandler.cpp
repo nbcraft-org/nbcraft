@@ -149,7 +149,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, StartGa
 	m_pLevel->m_bIsClientSide = true;
 
 	DimensionId dimensionId = DIMENSION_OVERWORLD;
-	MultiplayerLocalPlayer *pLocalPlayer = new MultiplayerLocalPlayer(m_pMinecraft, *m_pLevel, m_pMinecraft->m_pUser, settings.m_gameType, dimensionId);
+	MultiplayerLocalPlayer* pLocalPlayer = new MultiplayerLocalPlayer(m_pMinecraft, *m_pLevel, m_pMinecraft->m_pUser, settings.m_gameType, dimensionId);
 	pLocalPlayer->m_guid = ((RakNet::RakPeer*)m_pServerPeer)->GetMyGUID();
 	pLocalPlayer->m_EntityID = pStartGamePkt->m_entityId;
 	
@@ -176,7 +176,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, AddPlay
 
 	if (!m_pLevel) return;
 
-	Player* pPlayer = new Player(*m_pLevel, m_pLevel->getDefaultGameType());
+	Player* pPlayer = new Player(*m_pLevel, m_pLevel->getDefaultGameType(), DIMENSION_OVERWORLD);
 	pPlayer->m_EntityID = pAddPlayerPkt->m_id;
 	m_pLevel->addEntity(pPlayer);
 
@@ -220,6 +220,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, AddMobP
 
 	Dimension& dimension = *m_pLevel->getDimension(DIMENSION_OVERWORLD);
 	TileSource& tileSource = *dimension.getTileSource();
+
 	Entity* entity = MobFactory::CreateMob(entityTypeId, tileSource);
 	// Mojang, in all of their infinite wisdon, does not have this check here in 0.2.1,
 	// so the game will just crash if you replicate a mob it can't create.
@@ -453,7 +454,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, RemoveB
 
 	const TilePos& pos = pRemoveBlockPkt->m_pos;
 	Tile* pTile = Tile::tiles[tileSource.getTile(pos)];
-	int auxValue = tileSource.getData(pos);
+	TileData data = tileSource.getData(pos);
 
 	m_pMinecraft->m_pParticleEngine->destroyEffect(*pPlayer, pos);
 
@@ -463,7 +464,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, RemoveB
 		const Tile::SoundType* pSound = pTile->m_pSound;
 		m_pLevel->playSound(pos + 0.5f, "step." + pSound->name, 0.5f * (1.0f + pSound->volume), 0.8f * pSound->pitch);
 
-		pTile->destroy(tileSource, pos, auxValue);
+		pTile->destroy(tileSource, pos, data);
 	}
 }
 
@@ -598,7 +599,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, ChunkDa
 	}
 
 	if (updated)
-		m_pLevel->setTilesDirty(TilePos(minX + x16, minY, minZ), TilePos(maxX + x16, maxY, maxZ + z16));
+		tileSource.fireTilesDirty(TilePos(minX + x16, minY, minZ), TilePos(maxX + x16, maxY, maxZ + z16));
 
 	// @MATT
 	//pChunk->m_bUnsaved = true;

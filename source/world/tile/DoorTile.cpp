@@ -30,7 +30,7 @@ bool DoorTile::use(const TilePos& pos, Player& player)
 
 	TileSource& source = player.getTileSource();
 
-	setOpen(source, pos, !isOpen(source.getData(pos)));
+	setOpen(source, pos, !isOpen(source.getData(pos)), &player);
 
 	return true;
 }
@@ -154,13 +154,13 @@ void DoorTile::updateShape(TileSource& source, const TilePos& pos)
 	setShape(getDir(source.getData(pos)));
 }
 
-void DoorTile::setOpen(TileSource& source, const TilePos& pos, bool bOpen)
+void DoorTile::setOpen(TileSource& source, const TilePos& pos, bool bOpen, Player* pPlayer)
 {
 	TileData data = source.getData(pos);
 	if (isTop(data))
 	{
 		if (source.getTile(pos.below()) == m_ID)
-			setOpen(source, pos.below(), bOpen);
+			setOpen(source, pos.below(), bOpen, pPlayer);
 		return;
 	}
 
@@ -169,12 +169,16 @@ void DoorTile::setOpen(TileSource& source, const TilePos& pos, bool bOpen)
 		data ^= 4;
 
 		if (source.getTile(pos.above()) == m_ID)
-			source.setTileAndData(pos.above(), FullTile(m_ID, data + 8), TileChange::UPDATE_ALL | TileChange::UPDATE_UNK3);
+			source.setTileAndData(pos.above(), FullTile(this, data + 8), TileChange::UPDATE_ALL | TileChange::UPDATE_UNK3);
 
-		source.setTileAndData(pos, FullTile(m_ID, data), TileChange::UPDATE_ALL | TileChange::UPDATE_UNK3);
+		source.setTileAndData(pos, FullTile(this, data), TileChange::UPDATE_ALL | TileChange::UPDATE_UNK3);
 
-		// @Matt
-		//level->levelEvent(LevelEvent(LevelEvent::SOUND_DOOR, pos, 0, player));
+		// @BUG: marking the wrong tiles as dirty? No problem because setData sends an update immediately anyways
+		//source.fireTilesDirty(pos.below(), pos);
+
+		Level& level = source.getLevel();
+
+		level.levelEvent(LevelEvent(LevelEvent::SOUND_DOOR, pos, 0, pPlayer));
 	}
 }
 

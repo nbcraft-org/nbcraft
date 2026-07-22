@@ -41,4 +41,5 @@ public:
 public:
 	int* m_checkBuffer;
 	int field_74;
+	bool m_bBiomeColors;
 };

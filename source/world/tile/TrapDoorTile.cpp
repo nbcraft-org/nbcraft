@@ -28,7 +28,7 @@ AABB TrapdoorTile::getTileAABB(TileSource& source, const TilePos& pos)
 
 void TrapdoorTile::updateShape(TileSource& source, const TilePos& pos)
 {
-	TileData metadata = source.getExtraData(pos);
+	TileData metadata = source.getData(pos);
 	constexpr float f = 0.1875f;
 	setShape(0.0f, 0.0f, 0.0f, 1.0f, f, 1.0f);
 	if (isOpen(metadata)) {

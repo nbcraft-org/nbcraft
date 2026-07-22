@@ -8,6 +8,7 @@
 
 #include "Player.hpp"
 #include "world/level/Level.hpp"
+#include "world/level/TileSource.hpp"
 #include "nbt/CompoundTag.hpp"
 
 void Player::_init()
@@ -28,13 +29,15 @@ void Player::_init()
 	m_abilities.bInvulnerable = false;
 }
 
-Player::Player(Level& level, GameType playerGameType) : Mob(level)
+Player::Player(Level& level, GameType playerGameType, DimensionId dimensionId)
+	: Mob(*level.getDimension(dimensionId)->getTileSource())
 {
 	_init();
 	m_pDescriptor = &EntityTypeDescriptor::player;
 	m_pInventory = nullptr;
 	m_userType = 0;
 	m_name = "";
+	m_dimension = dimensionId;
 	m_bHasRespawnPos = false;
 
 	m_renderType = RENDER_HUMANOID;
@@ -59,7 +62,6 @@ Player::Player(Level& level, GameType playerGameType) : Mob(level)
 
 	m_flameTime = 20;
 	m_rotOffs = 180.0f;
-
 }
 
 Player::~Player()
@@ -245,8 +247,7 @@ void Player::aiStep()
 	AABB scanAABB = m_hitbox;
 	scanAABB.grow(1, 1, 1);
 
-	std::vector<Entity*> ents;
-	m_pLevel->getEntities(this->getDimensionId(), this->getDescriptor().getEntityType(), scanAABB, ents);
+	std::vector<Entity*> ents = m_pTileSource->getEntities(this, scanAABB);
 
 	for (std::vector<Entity*>::iterator it = ents.begin(); it != ents.end(); it++)
 	{

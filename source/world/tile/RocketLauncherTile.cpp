@@ -30,7 +30,7 @@ bool RocketLauncherTile::_use(TileSource& source, const TilePos& pos)
 
 	// spawn a rocket
 	Level& level = source.getLevel();
-	level.addEntity(std::make_unique<Rocket>(source, Vec3(pos) + 0.5f));
+	level.addEntity(new Rocket(source, Vec3(pos) + 0.5f));
 
 	// add a tick so that the rocket launcher will reset
 	source.getTickQueue(pos)->add(source, pos, m_ID, getTickDelay());
@@ -63,6 +63,12 @@ bool RocketLauncherTile::isSolidRender() const
 	return false;
 }
 
+bool RocketLauncherTile::isSignalSource() const
+{
+	// Not really a signal _source_ per se, but it receives signals
+	return true;
+}
+
 bool RocketLauncherTile::use(const TilePos& pos, Player& player)
 {
 	TileSource& source = player.getTileSource();
@@ -75,20 +81,20 @@ void RocketLauncherTile::neighborChanged(TileSource& source, const TilePos& pos,
 	if (newTile <= 0 || !Tile::tiles[newTile]->isSignalSource())
 		return;
 
-	int data = source.getExtraData(pos);
+	TileData data = source.getData(pos);
 
 	if (source.hasNeighborSignal(pos))
 	{
 		if (data & (STATE_POWERED | STATE_RECHARGING))
 			return;
 
-		source.setTileAndDataNoUpdate(pos, FullTile(m_ID, data | STATE_POWERED));
+		source.setTileAndDataNoUpdate(pos, FullTile(this, data | STATE_POWERED));
 		_use(source, pos);
 	}
 	else
 	{
 		if (data & STATE_POWERED)
-			source.setTileAndDataNoUpdate(pos, FullTile(m_ID, data & ~STATE_POWERED));
+			source.setTileAndDataNoUpdate(pos, FullTile(this, data & ~STATE_POWERED));
 	}
 }
 

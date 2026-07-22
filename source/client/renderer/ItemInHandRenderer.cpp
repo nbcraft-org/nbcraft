@@ -110,7 +110,7 @@ void ItemInHandRenderer::render(float a)
             matrix->rotate(180.0f, Vec3::UNIT_Y);
         }
 
-        renderItem(player, pItem, a);
+        renderItem(player, *pItem, a);
 	}
 	else
 	{
@@ -275,7 +275,6 @@ void ItemInHandRenderer::renderScreenEffect(float a)
 {
     Minecraft& mc = *m_pMinecraft;
     Textures& textures = *mc.m_pTextures;
-    Level& level = *mc.m_pLevel;
     Options& options = *mc.getOptions();
     LocalPlayer& player = *mc.m_pLocalPlayer;
     TileSource& tileSource = player.getTileSource();
@@ -429,4 +428,3 @@ void ItemInHandRenderer::tick()
 void ItemInHandRenderer::turn(const Rot2& rot)
 {
 }
-

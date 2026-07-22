@@ -1,30 +1,36 @@
-#include "world/level/TileTickingQueue.hpp"
+#include "TileTickingQueue.hpp"
 #include "world/level/TileSource.hpp"
 #include "nbt/CompoundTag.hpp"
 #include "nbt/ListTag.hpp"
 
-void TileTickingQueue::_tick(TileSource& region, const TilePos& pos, TileID tileID)
+TileTickingQueue::TileTickingQueue()
 {
-	if (tileID == 0)
-		return;
-
-	TileID expectedTileID = region.getTile(pos);
-	if (tileID == expectedTileID)
-		Tile::tiles[tileID]->tick(region, pos, &m_random);
+	m_currentTick = 0;
+	m_instaTick = false;
 }
 
-void TileTickingQueue::add(TileSource& region, const TilePos& pos, TileID tileID, int tickDelay)
+void TileTickingQueue::_tick(TileSource& region, const TilePos& pos, TileID tileId)
 {
-	if (!region.hasChunksAt(pos - 8, pos + 8))
+	if (tileId == 0)
+		return;
+
+	TileID expectedTileId = region.getTile(pos);
+	if (tileId == expectedTileId)
+		Tile::tiles[tileId]->tick(region, pos, &m_random);
+}
+
+void TileTickingQueue::add(TileSource& region, const TilePos& pos, TileID tileId, int tickDelay)
+{
+	if (!region.hasChunksAt(pos, 8))
 		return;
 
 	if (tickDelay < 0)
 	{
-		_tick(region, pos, tileID);
+		_tick(region, pos, tileId);
 	}
 	else
 	{
-		m_tickData.push(TickNextTickData(pos, tileID, m_currentTick + tickDelay));
+		m_tickData.push(TickNextTickData(pos, tileId, m_currentTick + tickDelay));
 	}
 }
 
@@ -32,19 +38,53 @@ bool TileTickingQueue::tickPendingTicks(TileSource& region, Tick_t until, int ma
 {
 	m_instaTick = instaTick;
 
+	int tickLimit = Mth::Min(m_tickData.size(), max);
+	int ticksProcessed = 0;
+
 	bool hasTicked = false;
-	while (!m_tickData.empty() && m_tickData.top().m_tick <= until)
+	while (!m_tickData.empty() && m_tickData.top().tick <= until && ticksProcessed < tickLimit)
 	{
 		TickNextTickData data;
 		m_tickData.popInto(data);
 
-		if (region.hasChunksAt(data.m_pos - 8, data.m_pos + 8))
-			_tick(region, data.m_pos, data.m_tileID);
+		m_currentTick = data.tick;
+		ticksProcessed++;
+
+		if (region.hasChunksAt(data.pos - 8, data.pos + 8))
+			_tick(region, data.pos, data.tileId);
 
 		hasTicked = true;
 	}
 
 	m_currentTick = until;
+	m_instaTick = false;
+
+	return hasTicked;
+}
+
+// copy-paste of the function above, done for Level, remove in the future
+bool TileTickingQueue::tickPendingTicks(TileSource& region, int max, bool instaTick)
+{
+	m_instaTick = instaTick;
+
+	int tickLimit = Mth::Min(m_tickData.size(), max);
+	int ticksProcessed = 0;
+
+	bool hasTicked = false;
+	while (!m_tickData.empty() && ticksProcessed < tickLimit)
+	{
+		TickNextTickData data;
+		m_tickData.popInto(data);
+
+		m_currentTick = data.tick;
+		ticksProcessed++;
+
+		if (region.hasChunksAt(data.pos - 8, data.pos + 8))
+			_tick(region, data.pos, data.tileId);
+
+		hasTicked = true;
+	}
+
 	m_instaTick = false;
 
 	return hasTicked;
@@ -67,11 +107,11 @@ void TileTickingQueue::save(CompoundTag& tag)
 		const TickNextTickData& data = *iter;
 
 		CompoundTag* childTag = new CompoundTag();
-		childTag->putInt32("x", data.m_pos.x);
-		childTag->putInt32("y", data.m_pos.y);
-		childTag->putInt32("z", data.m_pos.z);
-		childTag->putInt8("tileID", static_cast<int8_t>(data.m_tileID));
-		childTag->putInt64("time", static_cast<int64_t>(data.m_tick));
+		childTag->putInt32("x", data.pos.x);
+		childTag->putInt32("y", data.pos.y);
+		childTag->putInt32("z", data.pos.z);
+		childTag->putInt8("tileID", static_cast<int8_t>(data.tileId));
+		childTag->putInt64("time", static_cast<int64_t>(data.tick));
 		list->add(childTag);
 	}
 

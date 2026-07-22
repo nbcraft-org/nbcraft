@@ -46,7 +46,7 @@ void ScreenChooser_Console::pushPlayerCraftingScreen(Player* player)
 	if (m_pMinecraft->getOptions()->m_classicCrafting.get())
 		ScreenChooser::pushPlayerCraftingScreen(player);
 	else
-		m_pMinecraft->setScreen(new CraftingScreen_Console(player->m_pInventory, player->m_pos, player->m_pLevel, true));
+		m_pMinecraft->setScreen(new CraftingScreen_Console(player->m_pInventory, player->m_pos, true));
 }
 
 void ScreenChooser_Console::pushCreativeScreen(Player* player)
@@ -62,9 +62,9 @@ void ScreenChooser_Console::pushCreateWorldScreen(Screen* parent)
 void ScreenChooser_Console::pushCraftingScreen(Player* player, const TilePos& pos)
 {
 	if (m_pMinecraft->getOptions()->m_classicCrafting.get())
-		m_pMinecraft->setScreen(new ClassicCraftingScreen_Console(player->m_pInventory, pos, player->m_pLevel));
+		m_pMinecraft->setScreen(new ClassicCraftingScreen_Console(player->m_pInventory, pos));
 	else
-		m_pMinecraft->setScreen(new CraftingScreen_Console(player->m_pInventory, pos, player->m_pLevel, false));
+		m_pMinecraft->setScreen(new CraftingScreen_Console(player->m_pInventory, pos, false));
 }
 
 void ScreenChooser_Console::pushTrapScreen(Player* player, DispenserTileEntity* dispenser)
@@ -75,9 +75,4 @@ void ScreenChooser_Console::pushTrapScreen(Player* player, DispenserTileEntity* 
 void ScreenChooser_Console::pushDeathScreen()
 {
 	m_pMinecraft->setScreen(new DeathScreen_Console);
-}
-
-void ScreenChooser_Console::pushSavingScreen(bool bCopyMap)
-{
-	m_pMinecraft->setScreen(new SavingWorldScreen_Console(bCopyMap));
 }

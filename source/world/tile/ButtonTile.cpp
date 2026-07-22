@@ -1,6 +1,7 @@
 #include "ButtonTile.hpp"
 #include "world/level/Level.hpp"
 #include "world/level/TileSource.hpp"
+#include "world/level/TileTickingQueue.hpp"
 
 ButtonTile::ButtonTile(TileID id, int texture) : Tile(id, texture, Material::decoration)
 {
@@ -167,7 +168,7 @@ bool ButtonTile::use(const TilePos& pos, Player& player)
 	else
 	{
 		source.setTileAndData(pos, FullTile(this, var7 + var8));
-		//source.setTilesDirty(pos, pos);
+		source.fireTilesDirty(pos, pos);
 		level.playSound(pos + 0.5f, "random.click", 0.3f, 0.6f);
 		source.updateNeighborsAt(pos, m_ID);
 		switch (var7)
@@ -297,7 +298,7 @@ void ButtonTile::tick(TileSource& source, const TilePos& pos, Random* random)
 			}
 
 			level.playSound(pos + 0.5f, "random.click", 0.3f, 0.5f);
-			//source.setTilesDirty(pos, pos);
+			source.fireTilesDirty(pos, pos);
 		}
 	}
 }

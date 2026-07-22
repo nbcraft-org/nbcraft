@@ -175,7 +175,7 @@ Tile* Tile::setExplodeable(float power)
 	return this;
 }
 
-Tile* Tile::setLightBlock(int x)
+Tile* Tile::setLightBlock(Brightness_t x)
 {
 	lightBlock[m_ID] = x;
 	return this;
@@ -207,7 +207,7 @@ Tile* Tile::init()
 	tiles[m_ID] = this;
 
 	solid[m_ID] = isSolidRender();
-	lightBlock[m_ID] = isSolidRender() ? 255 : 0;
+	lightBlock[m_ID] = isSolidRender() ? Brightness::MAX : Brightness::MIN;
 	translucent[m_ID] = m_pMaterial->blocksLight();
 	isEntityTile[m_ID] = hasTileEntity();
 
@@ -237,6 +237,11 @@ int Tile::getTexture(Facing::Name face, TileData data) const
 	return getTexture(face);
 }
 
+int Tile::getTexture(TileSource& source, const TilePos& pos, Facing::Name face) const
+{
+	return getTexture(face, source.getData(pos));
+}
+
 int Tile::getTickDelay() const
 {
 	return 10;
@@ -247,7 +252,7 @@ bool Tile::isSignalSource() const
 	return false;
 }
 
-Tile::RenderLayer Tile::getRenderLayer(TileSource&, const TilePos&) const
+Tile::RenderLayer Tile::getRenderLayer(TileSource& source, const TilePos& pos) const
 {
 	return m_renderLayer;
 }
@@ -285,6 +290,11 @@ int Tile::getResourceCount(Random* pRandom) const
 int Tile::getSpawnResourcesAuxValue(int x) const
 {
 	return 0;
+}
+
+bool Tile::isSeasonTinted() const
+{
+	return false;
 }
 
 Tile* Tile::setToolTypes(unsigned int toolMask)
@@ -364,14 +374,14 @@ void Tile::initTiles()
 		->init()
 		->setDestroyTime(0.0f)
 		->setLightEmission(1.0f)
-		->setLightBlock(255)
+		->setLightBlock(Brightness::MAX)
 		->setDescriptionId("lava");
 
 	Tile::calmLava = (new LiquidTileStatic(TILE_LAVA_CALM, Material::lava))
 		->init()
 		->setDestroyTime(100.0f)
 		->setLightEmission(1.0f)
-		->setLightBlock(255)
+		->setLightBlock(Brightness::MAX)
 		->setDescriptionId("lava");
 
 	Tile::sand = (new SandTile(TILE_SAND, TEXTURE_SAND, Material::sand))
@@ -418,7 +428,7 @@ void Tile::initTiles()
 	Tile::leaves = (new LeafTile(TILE_LEAVES))
 		->init()
 		->setDestroyTime(0.2f)
-		->setLightBlock(true)
+		->setLightBlock(1) // was "true"???
 		->setSoundType(Tile::SOUND_GRASS)
 		->setDescriptionId("leaves");
 
@@ -689,7 +699,7 @@ void Tile::initTiles()
 	Tile::leaves_carried = (new LeafTile(TILE_LEAVES_CARRIED))
 		->init()
 		->setDestroyTime(0.2f)
-		->setLightBlock(true)
+		->setLightBlock(1) // was "true"???
 		->setSoundType(Tile::SOUND_GRASS)
 		->setDescriptionId("leaves");
 
@@ -1060,6 +1070,14 @@ bool Tile::mayPlace(TileSource& source, const TilePos& pos) const
 	return Tile::tiles[tile]->m_pMaterial->isLiquid();
 }
 
+bool Tile::tryToPlace(TileSource& source, const TilePos& pos, TileData data)
+{
+	if (!source.mayPlace(m_ID, pos, true))
+		return false;
+
+	return source.setTile(pos, m_ID);
+}
+
 void Tile::tick(TileSource& source, const TilePos& pos, Random* random)
 {
 
@@ -1249,10 +1267,10 @@ void Tile::spawnResources(TileSource& source, const TilePos& pos, TileData data,
 
 		ItemStack item(id, 1, getSpawnResourcesAuxValue(data));
 
-		std::unique_ptr<ItemEntity> entity(new ItemEntity(source, Vec3(pos) + o, item));
+		ItemEntity* entity = new ItemEntity(source, Vec3(pos) + o, item);
 		entity->m_throwTime = 10;
 
-		level.addEntity(std::move(entity));
+		level.addEntity(entity);
 	}
 }
 

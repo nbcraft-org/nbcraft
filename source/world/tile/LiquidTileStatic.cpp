@@ -32,7 +32,7 @@ void LiquidTileStatic::neighborChanged(TileSource& source, const TilePos& pos, T
 void LiquidTileStatic::setDynamic(TileSource& source, const TilePos& pos)
 {
 	source.setTileAndDataNoUpdate(pos, FullTile(m_ID - 1, source.getData(pos)));
-	//level->setTilesDirty(pos, pos);
+	source.fireTilesDirty(pos, pos);
 	source.getTickQueue(pos)->add(source, pos, m_ID - 1, getTickDelay());
 }
 

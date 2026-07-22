@@ -9,6 +9,7 @@
 #include "GrassTile.hpp"
 #include "world/level/Level.hpp"
 #include "world/level/TileSource.hpp"
+#include "world/level/levelgen/biome/BiomeSource.hpp"
 #include "client/renderer/PatchManager.hpp"
 #include "client/renderer/GrassColor.hpp"
 
@@ -17,12 +18,24 @@ const Color GrassTile::DEFAULT_COLOR = Color(0.25f, 0.60f, 0.25f);
 GrassTile::GrassTile(TileID id, Material* c) : Tile(id, c)
 {
 	m_TextureFrame = TEXTURE_GRASS_SIDE;
-	m_renderLayer = RENDER_LAYER_ALPHATEST;
+	m_renderLayer = RENDER_LAYER_ALPHATEST; // @TODO: toggle this depending on the "Fancy Grass" option
 	setTicking(true);
+
+	m_bFancyGrass = false;
+	m_bBiomeColors = false;
 }
 
 int GrassTile::getColor(TileSource& source, const TilePos& pos) const
 {
+	if (GrassColor::isAvailable() && m_bBiomeColors)
+	{
+		/* @MATT
+		BiomeSource& biomeSource = *source.getBiomeSource();
+		biomeSource.getBiomeBlock(pos, 1, 1);
+		return GrassColor::get(biomeSource.field_4[0], biomeSource.field_8[0]);
+		*/
+	}
+
 	if (GetPatchManager()->IsGrassTinted())
 	{
 		return 0x339933;

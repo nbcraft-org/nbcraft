@@ -39,7 +39,7 @@ FishingHook::FishingHook(TileSource& source, const Vec3& pos)
 }
 
 FishingHook::FishingHook(Player& owner)
-    : Entity(owner)
+    : Entity(owner.getTileSource())
 {
     _init();
 

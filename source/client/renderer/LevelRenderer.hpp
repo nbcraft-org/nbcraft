@@ -15,6 +15,7 @@
 #include "renderer/hal/interface/FogState.hpp"
 #include "world/level/LevelListener.hpp"
 #include "world/level/Dimension.hpp"
+#include "world/tile/entity/TileEntity.hpp"
 #include "Textures.hpp"
 #include "RenderList.hpp"
 #include "TileRenderer.hpp"
@@ -173,5 +174,5 @@ public:
 	mce::Mesh m_darkMesh;
 	//...
 	Textures* m_pTextures;
-	std::vector<TileEntity*> m_renderableTileEntities;
+	TileEntity::Vector m_renderableTileEntities;
 };

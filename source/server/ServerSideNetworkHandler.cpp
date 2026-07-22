@@ -270,7 +270,7 @@ void ServerSideNetworkHandler::onDisconnect(const RakNet::RakNetGUID& guid)
 #endif
 
 		// remove it from our world
-		m_pLevel->removeEntity((Entity*&)pPlayer);
+		m_pLevel->removeEntity(*pPlayer);
 	}
 	else if ((pPlayer = getPendingPlayerByGUID(guid)))
 	{
@@ -316,7 +316,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, LoginPacke
 	}
 #endif
 
-	ServerPlayer* pPlayer = new ServerPlayer(*m_pLevel, m_pLevel->getLevelData()->getGameType());
+	ServerPlayer* pPlayer = new ServerPlayer(*m_pLevel, m_pLevel->getLevelData()->getGameType(), DIMENSION_OVERWORLD);
 	pPlayer->m_guid = guid;
 	pPlayer->m_name = std::string(packet->m_userName.C_String());
 
@@ -535,7 +535,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, PlaceBlock
 	if (!tileSource.mayPlace(tileId, pos, face, player, true))
 		return;
 
-	if (tileSource.setTile(pos, tileId, data))
+	if (tileSource.setTileAndData(pos, FullTile(tileId, data)))
 	{
 		Tile* pTile = Tile::tiles[tileId];
 		pTile->setPlacedOnFace(tileSource, pos, face);
@@ -577,7 +577,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, RemoveBloc
 			ItemStack tileItem(pTile, 1, auxValue);
 			if (pTile == Tile::grass || !player.m_pInventory->hasUnlimitedResource(tileItem))
 			{
-				pTile->spawnResources(&source, pos, auxValue);
+				pTile->spawnResources(source, pos, auxValue);
 			}
 #else
 			pTile->spawnResources(source, pos, auxValue);
