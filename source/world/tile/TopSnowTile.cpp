@@ -7,7 +7,9 @@
  ********************************************************************/
 
 #include "TopSnowTile.hpp"
+#include "world/entity/Player.hpp"
 #include "world/level/Level.hpp"
+#include "world/level/TileSource.hpp"
 
 TopSnowTile::TopSnowTile(TileID id, int b, Material* c) : Tile(id, b, c)
 {
@@ -15,7 +17,7 @@ TopSnowTile::TopSnowTile(TileID id, int b, Material* c) : Tile(id, b, c)
 	setTicking(true);
 }
 
-AABB* TopSnowTile::getAABB(const Level*, const TilePos& pos)
+AABB* TopSnowTile::getAABB(const TileSource& source, const TilePos& pos)
 {
 	return nullptr;
 }
@@ -40,61 +42,64 @@ int TopSnowTile::getResourceCount(Random* random) const
 	return 0;
 }
 
-bool TopSnowTile::mayPlace(const Level* level, const TilePos& pos) const
+bool TopSnowTile::mayPlace(const TileSource& source, const TilePos& pos) const
 {
-	TileID tile = level->getTile(pos.below());
+	TileID tile = source.getTile(pos.below());
 
 	if (!tile || !Tile::tiles[tile]->isSolidRender())
 		return false;
 
-	return level->getMaterial(pos.below())->blocksMotion();
+	return source.getMaterial(pos.below())->blocksMotion();
 }
 
-bool TopSnowTile::checkCanSurvive(Level* level, const TilePos& pos)
+bool TopSnowTile::checkCanSurvive(TileSource& source, const TilePos& pos)
 {
-	if (mayPlace(level, pos))
+	if (mayPlace(source, pos))
 		return true;
 
-	spawnResources(level, pos, level->getData(pos));
-	level->setTile(pos, TILE_AIR);
+	spawnResources(source, pos, source.getData(pos));
+	source.setTile(pos, TILE_AIR);
 	return false;
 }
 
-void TopSnowTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
+void TopSnowTile::neighborChanged(TileSource& source, const TilePos& pos, TileID tile)
 {
-	checkCanSurvive(level, pos);
+	checkCanSurvive(source, pos);
 }
 
-bool TopSnowTile::shouldRenderFace(const LevelSource* level, const TilePos& pos, Facing::Name face) const
+bool TopSnowTile::shouldRenderFace(TileSource& source, const TilePos& pos, Facing::Name face) const
 {
 	if (face == Facing::UP)
 		return true;
 
-	if (level->getMaterial(pos) == m_pMaterial)
+	if (source.getMaterial(pos) == m_pMaterial)
 		return false;
 
-	return Tile::shouldRenderFace(level, pos, face);
+	return Tile::shouldRenderFace(source, pos, face);
 }
 
-void TopSnowTile::tick(Level* level, const TilePos& pos, Random* random)
+void TopSnowTile::tick(TileSource& source, const TilePos& pos, Random* random)
 {
-	if (level->getBrightness(LightLayer::Block, pos) > 11)
+	if (source.getBrightness(LightLayer::Block, pos) > 11)
 	{
-		spawnResources(level, pos, level->getData(pos));
-		level->setTile(pos, TILE_AIR);
+		spawnResources(source, pos, source.getData(pos));
+		source.setTile(pos, TILE_AIR);
 	}
 }
 
-void TopSnowTile::playerDestroy(Level* level, Player* player, const TilePos& pos, TileData data)
+void TopSnowTile::playerDestroy(Player& player, const TilePos& pos, TileData data)
 {
+	Level& level = player.getLevel();
+	TileSource& tileSource = player.getTileSource();
+
 	constexpr float dispersion = 0.7f;
 
-	Vec3 offset(level->m_random.nextFloat(), level->m_random.nextFloat(), level->m_random.nextFloat());
+	Vec3 offset(level.m_random.nextFloat(), level.m_random.nextFloat(), level.m_random.nextFloat());
 	offset *= dispersion;
 	offset += (1.0f - dispersion) * 0.5f;
 
-	ItemEntity* pItemEntity = new ItemEntity(level, Vec3(pos) + offset, ItemStack(getResource(data, &level->m_random), 1, 0));
+	ItemEntity* pItemEntity = new ItemEntity(tileSource, Vec3(pos) + offset, ItemStack(getResource(data, &level.m_random), 1, 0));
 	pItemEntity->m_throwTime = 10;
-	level->addEntity(pItemEntity);
-	level->setTile(pos, TILE_AIR);
+	level.addEntity(pItemEntity);
+	tileSource.setTile(pos, TILE_AIR);
 }

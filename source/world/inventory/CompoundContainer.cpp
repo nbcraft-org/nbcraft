@@ -90,7 +90,7 @@ void CompoundContainer::setContainerChanged(StackID stackId)
     }
 }
 
-bool CompoundContainer::stillValid(Player* player) const
+bool CompoundContainer::stillValid(Player& player) const
 {
     return m_pLeftContainer->stillValid(player) && m_pRightContainer->stillValid(player);
 }

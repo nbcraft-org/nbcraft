@@ -35,10 +35,10 @@ protected:
 	bool _canDestroyMaterial(const Material*) const;
 
 public:
-	float getDestroySpeed(ItemStack* instance, const Tile* tile) const override;
-	void hurtEnemy(ItemStack* instance, Mob* mob) const override;
-	void mineBlock(ItemStack*, const TilePos& pos, Facing::Name face, Mob* mob) const override;
-	int getAttackDamage(Entity* entity) const override;
+	float getDestroySpeed(ItemStack& itemStack, const Tile* tile) const override;
+	void hurtEnemy(ItemStack& itemStack, Mob& mob) const override;
+	void mineBlock(ItemStack&, const TilePos& pos, Facing::Name face, Mob& mob) const override;
+	int getAttackDamage(Entity& entity) const override;
 	bool isHandEquipped() const override;
 	bool canDestroySpecial(const Tile* tile) const override;
 

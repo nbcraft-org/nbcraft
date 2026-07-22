@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "TileEntityType.hpp"
 #include "world/level/TilePos.hpp"
 #include "world/phys/Vec3.hpp"
@@ -8,9 +10,13 @@
 class Tile;
 class Level;
 class Packet;
+class TileSource;
 
 class TileEntity
 {
+public:
+    typedef std::vector<TileEntity*> Vector;
+
 public:
     TileEntity();
     virtual ~TileEntity();
@@ -44,6 +50,6 @@ protected:
     bool m_bRemove;
 
 public:
-    Level* m_pLevel;
+    TileSource* m_pTileSource;
     TilePos m_pos;
 };

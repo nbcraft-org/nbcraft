@@ -18,7 +18,7 @@ void Player::_init()
 	m_oBob = 0.0f;
 	m_bob = 0.0f;
 	m_dmgSpill = 0;
-	m_dimension = 0;
+	m_dimension = DIMENSION_OVERWORLD;
 	m_bFlying = false;
 	m_jumpTriggerTime = 0;
 	m_destroyingBlock = false;
@@ -28,7 +28,7 @@ void Player::_init()
 	m_abilities.bInvulnerable = false;
 }
 
-Player::Player(Level* pLevel, GameType playerGameType) : Mob(pLevel)
+Player::Player(Level& level, GameType playerGameType) : Mob(level)
 {
 	_init();
 	m_pDescriptor = &EntityTypeDescriptor::player;
@@ -59,7 +59,6 @@ Player::Player(Level* pLevel, GameType playerGameType) : Mob(pLevel)
 
 	m_flameTime = 20;
 	m_rotOffs = 180.0f;
-
 }
 
 Player::~Player()
@@ -87,9 +86,9 @@ void Player::remove()
 {
 	m_bIsInvisible = true;
 	Mob::remove();
-	m_pInventoryMenu->removed(this);
+	m_pInventoryMenu->removed(*this);
 	if (m_pContainerMenu)
-		m_pContainerMenu->removed(this);
+		m_pContainerMenu->removed(*this);
 }
 
 bool Player::hurt(Entity* pEnt, int damage)
@@ -245,15 +244,15 @@ void Player::aiStep()
 	AABB scanAABB = m_hitbox;
 	scanAABB.grow(1, 1, 1);
 
-	EntityVector ents = m_pLevel->getEntities(this, scanAABB);
+	std::vector<Entity*> ents = m_pTileSource->getEntities(this, scanAABB);
 
-	for (EntityVector::iterator it = ents.begin(); it != ents.end(); it++)
+	for (std::vector<Entity*>::iterator it = ents.begin(); it != ents.end(); it++)
 	{
 		Entity* pEnt = *it;
 		if (pEnt->m_bRemoved)
 			continue;
 
-		touch(pEnt);
+		touch(*pEnt);
 	}
 
 	// only needed for non-local players for some reason
@@ -266,7 +265,7 @@ void Player::tick()
 
 	if (!m_pLevel->m_bIsClientSide)
 	{
-		if (m_pContainerMenu && !m_pContainerMenu->stillValid(this))
+		if (m_pContainerMenu && !m_pContainerMenu->stillValid(*this))
 			closeContainer();
 	}
 }
@@ -329,7 +328,7 @@ void Player::readAdditionalSaveData(const CompoundTag& tag)
 	if (tag.contains("Inventory"))
 		m_pInventory->load(*tag.getList("Inventory"));
 
-	m_dimension = tag.getInt32("Dimension");
+	m_dimension = (DimensionId)tag.getInt32("Dimension");
 	//m_sleepTimer = tag.getInt32("SleepTimer");
 
 	if (tag.contains("SpawnX") && tag.contains("SpawnY") && tag.contains("SpawnZ"))
@@ -382,34 +381,34 @@ void Player::animateRespawn(Player*, Level*)
 
 }
 
-void Player::attack(Entity* pEnt)
+void Player::attack(Entity& entity)
 {
-	int atkDmg = m_pInventory->getAttackDamage(pEnt);
+	int atkDmg = m_pInventory->getAttackDamage(entity);
 	if (atkDmg <= 0)
 		return;
 
 	if (m_vel.y < 0.0f)
 		atkDmg++;
 
-	pEnt->hurt(this, atkDmg);
+	entity.hurt(this, atkDmg);
 	
 	ItemStack& item = getSelectedItem();
-	bool isMob = pEnt->getDescriptor().hasCategory(EntityCategories::MOB);
+	bool isMob = entity.getDescriptor().hasCategory(EntityCategories::MOB);
 	if (!item.isEmpty() && isMob)
 	{
-		item.hurtEnemy((Mob*)pEnt, this);
+		item.hurtEnemy((Mob&)entity, *this);
 		if (item.m_count <= 0)
 		{
-			item.snap(this);
+			item.snap(*this);
 			removeSelectedItem();
 		}
 	}
 
 	// Needs to be uncommented if/when wolves are implemented
 	/*
-	if (isMob && pEnt->isAlive())
+	if (isMob && entity.isAlive())
 	{
-		alertWolves(static_cast<Mob*>(pEnt), true);
+		alertWolves(static_cast<Mob&>(entity), true);
 	}
 	*/
 }
@@ -489,11 +488,6 @@ int Player::getInventorySlot(int x) const
 	return 0;
 }
 
-Dimension* Player::getDimension() const
-{
-	return m_pLevel->getDimension(getDimensionId());
-}
-
 void Player::prepareCustomTextures()
 {
 
@@ -539,7 +533,7 @@ void Player::drop(const ItemStack& item, bool randomly)
 	if (item.isEmpty())
 		return;
 
-	ItemEntity* pItemEntity = new ItemEntity(m_pLevel, Vec3(m_pos.x, m_pos.y - 0.3f + getHeadHeight(), m_pos.z), item);
+	ItemEntity* pItemEntity = new ItemEntity(*m_pTileSource, Vec3(m_pos.x, m_pos.y - 0.3f + getHeadHeight(), m_pos.z), item);
 	pItemEntity->m_throwTime = 40;
 
 	if (randomly)
@@ -607,27 +601,27 @@ void Player::openTrap(DispenserTileEntity* tileEntity)
 	_handleOpenedContainerMenu();
 }
 
-void Player::touch(Entity* pEnt)
+void Player::touch(Entity& entity)
 {
-	pEnt->playerTouch(this);
+	entity.playerTouch(this);
 }
 
-void Player::interact(Entity* pEnt)
+void Player::interact(Entity& entity)
 {
-	if (pEnt->interact(this))
+	if (entity.interact(this))
 		return;
 
-	bool isMob = pEnt->getDescriptor().hasCategory(EntityCategories::MOB);
+	bool isMob = entity.getDescriptor().hasCategory(EntityCategories::MOB);
 	if (!isMob)
 		return;
 
 	ItemStack& item = getSelectedItem();
 	if (!item.isEmpty())
 	{
-		item.interactEnemy(static_cast<Mob*>(pEnt));
+		item.interactEnemy(static_cast<Mob&>(entity));
 		if (item.m_count <= 0)
 		{
-			item.snap(this);
+			item.snap(*this);
 			removeSelectedItem();
 		} 
 	} 

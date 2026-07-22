@@ -22,7 +22,7 @@ FurnaceMenu::FurnaceMenu(Inventory* inventory, FurnaceTileEntity* furnace)
     }
 }
 
-bool FurnaceMenu::stillValid(Player* player) const
+bool FurnaceMenu::stillValid(Player& player) const
 {
     return m_furnace->stillValid(player);
 }
@@ -82,7 +82,7 @@ ItemStack FurnaceMenu::quickMoveStack(Container::SlotID slotId)
     if (slot && slot->hasItem())
     {
         ItemStack& slotItem = slot->getItem();
-        item = slotItem.copy();
+        item = slotItem;
         if (slotId == 2)
             moveItemStackTo(slotItem, 3, 39, true);
         else if (slotId >= 3 && slotId < 30)

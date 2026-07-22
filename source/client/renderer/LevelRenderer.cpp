@@ -15,6 +15,7 @@
 #include "renderer/GlobalConstantBuffers.hpp"
 #include "renderer/ShaderConstants.hpp"
 #include "renderer/RenderContextImmediate.hpp"
+#include "world/level/TileSource.hpp"
 
 #if MCE_GFX_API_OGL
 #include "thirdparty/GL/GL.hpp"
@@ -22,9 +23,13 @@
 
 #include "world/tile/LeafTile.hpp"
 #include "world/tile/GrassTile.hpp"
+#include "world/tile/TallGrass.hpp"
 
 #include "Fog.hpp"
 #include "Lighting.hpp"
+
+ // in chunks
+#define C_ENTITY_RENDER_DISTANCE 4
 
 TerrainLayer renderLayerToTerrainLayerMap[Tile::RENDER_LAYERS_COUNT] = {
 	/*RENDER_LAYER_DOUBLE_SIDED*/               TERRAIN_LAYER_DOUBLE_SIDED,
@@ -292,13 +297,14 @@ void LevelRenderer::_initResources()
 void LevelRenderer::_renderSunrise(float alpha)
 {
 	Tesselator& t = Tesselator::instance;
+	const Dimension& dimension = *m_pDimension;
 
-	const float* c = m_pLevel->m_pDimension->getSunriseColor(m_pLevel->getTimeOfDay(alpha), alpha);
-	if (c != nullptr && arePlanetsAvailable())
+	Color c = dimension.getSunriseColor(dimension.getTimeOfDay(alpha), alpha);
+	if (c != Color::NIL && arePlanetsAvailable())
 	{
 		MatrixStack::Ref matrix = MatrixStack::World.push();
 		matrix->rotate(90.0f, Vec3::UNIT_X);
-		matrix->rotate(m_pLevel->getTimeOfDay(alpha) > 0.5f ? 180 : 0, Vec3::UNIT_Z);
+		matrix->rotate(dimension.getTimeOfDay(alpha) > 0.5f ? 180 : 0, Vec3::UNIT_Z);
 
 		mce::RenderContext& rc = mce::RenderContextImmediate::get();
 		mce::ShadeMode prevShade = rc.m_currentState.m_shadeMode;
@@ -314,11 +320,11 @@ void LevelRenderer::_renderSunrise(float alpha)
 			float sin = Mth::sin(a);
 			float cos = Mth::cos(a);
 
-			t.color(c[0], c[1], c[2], c[3]);
+			t.color(c);
 			t.vertex(0.0f, 100.0f, 0.0f);
 
-			t.color(c[0], c[1], c[2], 0.0f);
-			t.vertex((sin * 120.0f), (cos * 120.0f), (-cos * 40.0f * c[3]));
+			t.color(c.r, c.g, c.b, 0.0f);
+			t.vertex((sin * 120.0f), (cos * 120.0f), (-cos * 40.0f * c.a));
 		}
 
 		// @HAL: sky.vertex shader will not work here, it ignores the vertex colors
@@ -339,6 +345,7 @@ void LevelRenderer::_renderSolarSystem(float alpha)
 void LevelRenderer::_renderSunAndMoon(float alpha)
 {
 	Tesselator& t = Tesselator::instance;
+	const Dimension& dimension = *m_pDimension;
 
 	Matrix& matrix = MatrixStack::World.getTop();
 
@@ -349,7 +356,7 @@ void LevelRenderer::_renderSunAndMoon(float alpha)
 
 	matrix.translate(p);
 	matrix.rotate(0.0f, Vec3::UNIT_Z);
-	matrix.rotate(m_pLevel->getTimeOfDay(alpha) * 360.0f, Vec3::UNIT_X);
+	matrix.rotate(dimension.getTimeOfDay(alpha) * 360.0f, Vec3::UNIT_X);
 
 	if (arePlanetsAvailable())
 	{
@@ -357,17 +364,17 @@ void LevelRenderer::_renderSunAndMoon(float alpha)
 		m_pTextures->loadAndBindTexture("terrain/sun.png");
 		t.begin(4);
 		t.vertexUV(-ss, 100.0f, -ss, 0.0f, 0.0f);
-		t.vertexUV(ss, 100.0f, -ss, 1.0f, 0.0f);
-		t.vertexUV(ss, 100.0f, ss, 1.0f, 1.0f);
-		t.vertexUV(-ss, 100.0f, ss, 0.0f, 1.0f);
+		t.vertexUV( ss, 100.0f, -ss, 1.0f, 0.0f);
+		t.vertexUV( ss, 100.0f,  ss, 1.0f, 1.0f);
+		t.vertexUV(-ss, 100.0f,  ss, 0.0f, 1.0f);
 		t.draw(m_materials.sun_moon);
 
 		ss = 20.0f;
 		m_pTextures->loadAndBindTexture("terrain/moon.png");
 		t.begin(4);
-		t.vertexUV(-ss, -100.0f, ss, 1.0f, 1.0f);
-		t.vertexUV(ss, -100.0f, ss, 0.0f, 1.0f);
-		t.vertexUV(ss, -100.0f, -ss, 0.0f, 0.0f);
+		t.vertexUV(-ss, -100.0f,  ss, 1.0f, 1.0f);
+		t.vertexUV( ss, -100.0f,  ss, 0.0f, 1.0f);
+		t.vertexUV( ss, -100.0f, -ss, 0.0f, 0.0f);
 		t.vertexUV(-ss, -100.0f, -ss, 1.0f, 0.0f);
 		t.draw(m_materials.sun_moon);
 	}
@@ -375,7 +382,7 @@ void LevelRenderer::_renderSunAndMoon(float alpha)
 
 void LevelRenderer::_renderStars(float alpha)
 {
-	float a = m_pLevel->getStarBrightness(alpha);
+	float a = m_pDimension->getStarBrightness(alpha);
 	if (a > 0.0f)
 	{
 		currentShaderColor = Color(a, a, a);
@@ -383,12 +390,12 @@ void LevelRenderer::_renderStars(float alpha)
 	}
 }
 
-void LevelRenderer::_renderTileShadow(Tile* tt, const Vec3& pos, TilePos& tilePos, float pow, float r, const Vec3& oPos)
+void LevelRenderer::_renderTileShadow(TileSource& tileSource, Tile* tt, const Vec3& pos, TilePos& tilePos, float pow, float r, const Vec3& oPos)
 {
 	Tesselator& t = Tesselator::instance;
 	if (!tt->isCubeShaped()) return;
 
-	float a = (pow - (pos.y - ((float)tilePos.y + oPos.y)) / 2.0f) * 0.5f * m_pLevel->getBrightness(tilePos);
+	float a = (pow - (pos.y - ((float)tilePos.y + oPos.y)) / 2.0f) * 0.5f * tileSource.getBrightness(tilePos);
 	if (a < 0.0f)
 		return;
 	if (a > 1.0f) a = 1.0f;
@@ -422,7 +429,9 @@ void LevelRenderer::_setupFog(const Entity& camera, int i)
 #endif
 
 	mce::FogStateDescription& desc = Fog::nextState;
-	GameRenderer& gameRenderer = *m_pMinecraft->m_pGameRenderer;
+	Minecraft& mc = *m_pMinecraft;
+	GameRenderer& gameRenderer = *mc.m_pGameRenderer;
+	Dimension& dimension = camera.getDimension();
 	float renderDistance = gameRenderer.m_renderDistance;
 
 	if (camera.isUnderLiquid(Material::water))
@@ -448,7 +457,7 @@ void LevelRenderer::_setupFog(const Entity& camera, int i)
 			m_fogControl = Vec2(0.25f, 1.0f);
 		}
 
-		if (m_pMinecraft->m_pLevel->m_pDimension->m_bFoggy)
+		if (dimension.isFoggy())
 		{
 			m_fogControl.x = 0.0f;
 		}
@@ -483,7 +492,7 @@ void LevelRenderer::_updateViewArea(const Entity& camera)
 void LevelRenderer::_startFrame(FrustumCuller& culler, float renderDistance, float f)
 {
 	const Entity& camera = *m_pMinecraft->m_pCameraEntity;
-	m_viewPos = camera.getPos(f);
+	m_viewPos = camera.getInterpolatedPosition(f);
 
 	_setupFog(camera, 1);
 
@@ -595,13 +604,22 @@ void LevelRenderer::allChanged()
 {
 	deleteChunks();
 
+	bool hasFancyGraphics = m_pMinecraft->getOptions()->m_fancyGraphics.get();
+	bool hasFancyGrass = m_pMinecraft->getOptions()->m_fancyGrass.get();
+	bool hasBiomeColors = m_pMinecraft->getOptions()->m_biomeColors.get();
+
 	LeafTile* pLeaves = (LeafTile*)Tile::leaves;
 
-	pLeaves->m_bTransparent = m_pMinecraft->getOptions()->m_fancyGraphics.get();
+	pLeaves->m_bTransparent = hasFancyGraphics;
 	pLeaves->m_TextureFrame = !pLeaves->m_bTransparent + pLeaves->field_74;
+	pLeaves->m_bBiomeColors = hasBiomeColors;
 
-	TileRenderer::m_bFancyGrass = m_pMinecraft->getOptions()->m_fancyGrass.get();
-	TileRenderer::m_bBiomeColors = m_pMinecraft->getOptions()->m_biomeColors.get();
+	GrassTile* pGrass = (GrassTile*)Tile::grass;
+	pGrass->m_bFancyGrass = hasFancyGrass;
+	pGrass->m_bBiomeColors = hasBiomeColors;
+
+	TallGrass* pTallGrass = (TallGrass*)Tile::tallGrass;
+	pTallGrass->m_bBiomeColors = hasBiomeColors;
 
 	m_lastViewDistance = m_pMinecraft->getOptions()->m_viewDistance.get();
 
@@ -1006,19 +1024,17 @@ const Color& LevelRenderer::setupClearColor(float f)
 {
 	Minecraft& mc = *m_pMinecraft;
 	const Options& options = *mc.getOptions();
-	Level& level = *mc.m_pLevel;
 	const Entity& camera = *mc.m_pCameraEntity;
+	const Dimension& dimension = camera.getDimension();
 
 	float x1 = 1.0f - powf(1.0f / (1 + options.m_viewDistance.get()), 0.25f);
 
-	Vec3 skyColor = level.getSkyColor(camera, f), fogColorVec = level.getFogColor(f);
+	Color skyColor = dimension.getSkyColor(camera, f);
 
 	Color& fogColor = Fog::nextState.fogColor;
+	fogColor = dimension.getFogColor(f);
 
-	fogColor.r = fogColorVec.x + (skyColor.x - fogColorVec.x) * x1;
-	fogColor.g = fogColorVec.y + (skyColor.y - fogColorVec.y) * x1;
-	fogColor.b = fogColorVec.z + (skyColor.z - fogColorVec.z) * x1;
-	fogColor.a = 1.0f;
+	fogColor += (skyColor - fogColor) * x1;
 
 	if (camera.isUnderLiquid(Material::water))
 	{
@@ -1129,12 +1145,12 @@ void LevelRenderer::tick()
 		return;
 
 	const Entity& camera = *pCamera;
-	const Level& level = *m_pMinecraft->m_pLevel;
+	TileSource& tileSource = camera.getTileSource();
 	const Options& options = *m_pMinecraft->getOptions();
 
 	m_fogBrO = m_fogBr;
 
-	float bright = level.getBrightness(camera.m_pos);
+	float bright = tileSource.getBrightness(camera.m_pos);
 	float viewDistance = options.m_viewDistance.get();
 	float x4 = viewDistance / 3.0f;
 	float x5 = (x4 + bright * (1.0f - x4) - m_fogBr) * 0.1f;
@@ -1258,6 +1274,8 @@ bool LevelRenderer::updateDirtyChunks(const Entity& camera, bool force)
 
 void LevelRenderer::renderCracks(const Entity& camera, const HitResult& hr, int mode, const ItemStack* inventoryItem, float a)
 {
+	TileSource& tileSource = camera.getTileSource();
+
 	// @BUG: possible leftover from Minecraft Classic? This is overridden anyways
 	//currentShaderColor = Color(1.0f, 1.0f, 1.0f, (Mth::sin(float(getTimeMs()) / 100.0f) * 0.2f + 0.4f) * 0.5f);
 
@@ -1272,7 +1290,7 @@ void LevelRenderer::renderCracks(const Entity& camera, const HitResult& hr, int 
 			MatrixStack::Ref matrix = MatrixStack::World.push();
 
 			Tile* pTile = nullptr;
-			TileID tile = m_pLevel->getTile(hr.m_tilePos);
+			TileID tile = tileSource.getTile(hr.m_tilePos);
 			if (tile > 0)
 				pTile = Tile::tiles[tile];
 
@@ -1307,10 +1325,12 @@ void LevelRenderer::renderHitSelect(const Entity& camera, const HitResult& hr, i
 {
 	if (mode != 0) return;
 
+	TileSource& tileSource = camera.getTileSource();
+
 	m_pMinecraft->m_pTextures->loadAndBindTexture(C_TERRAIN_NAME);
 
 	Tile* pTile = nullptr;
-	TileID tileID = m_pLevel->getTile(hr.m_tilePos);
+	TileID tileID = tileSource.getTile(hr.m_tilePos);
 	if (tileID > 0)
 		pTile = Tile::tiles[tileID];
 
@@ -1332,7 +1352,7 @@ void LevelRenderer::renderHitSelect(const Entity& camera, const HitResult& hr, i
 
 	m_pTileRenderer->tesselateInWorld(pTile, hr.m_tilePos);
 
-	Tile::RenderLayer renderLayer = pTile->getRenderLayer();
+	Tile::RenderLayer renderLayer = pTile->getRenderLayer(tileSource, hr.m_tilePos);
 	const mce::MaterialPtr& material = _chooseOverlayMaterial(renderLayer);
 
 	t.draw(material);
@@ -1344,22 +1364,24 @@ void LevelRenderer::renderHitOutline(const Entity& camera, const HitResult& hr, 
 	if (mode != 0 || hr.m_hitType != 0)
 		return;
 
+	TileSource& tileSource = camera.getTileSource();
+
 	currentShaderColor = Color(0.0f, 0.0f, 0.0f, 0.4f);
 	currentShaderDarkColor = Color::WHITE;
 
 	constexpr float distance = 0.002f;
 	float lineWidth = 2.0f * Minecraft::GetRenderScaleMultiplier();
 
-	TileID tile = m_pLevel->getTile(hr.m_tilePos);
+	TileID tile = tileSource.getTile(hr.m_tilePos);
 	if (tile > 0)
 	{
 		Tile::tiles[tile]->updateShape(
-			m_pLevel,
+			tileSource,
 			hr.m_tilePos);
 		float posX = camera.m_posPrev.x + ((camera.m_pos.x - camera.m_posPrev.x) * a);
 		float posY = camera.m_posPrev.y + ((camera.m_pos.y - camera.m_posPrev.y) * a);
 		float posZ = camera.m_posPrev.z + ((camera.m_pos.z - camera.m_posPrev.z) * a);
-		AABB aabb, tileAABB = Tile::tiles[tile]->getTileAABB(m_pLevel, hr.m_tilePos);
+		AABB aabb, tileAABB = Tile::tiles[tile]->getTileAABB(tileSource, hr.m_tilePos);
 		aabb.min.y = tileAABB.min.y - distance - posY;
 		aabb.max.y = tileAABB.max.y + distance - posY;
 		aabb.min.z = tileAABB.min.z - distance - posZ;
@@ -1402,93 +1424,93 @@ void LevelRenderer::takePicture(TripodCamera* pCamera, Entity* pOwner)
 	m_pMinecraft->m_pGameRenderer->m_keepPic = -1;
 
 	static char str[256];
-	// @HUH: This has the potential to overwrite a file
-#ifdef ORIGINAL_CODE
-	sprintf(str, "%s" C_HOME_PATH "img_%.4d.jpg", m_pMinecraft->platform()->m_externalStorageDir.c_str(), getTimeMs());
-#else
 	sprintf(str, "img_%.4d.png", getTimeMs());
-#endif
 
 	m_pMinecraft->platform()->saveScreenshot(std::string(str), Minecraft::width, Minecraft::height);
 }
 
 void LevelRenderer::addParticle(const std::string& name, const Vec3& pos, const Vec3& dir)
 {
+	Minecraft& mc = *m_pMinecraft;
+	const Entity& camera = *mc.m_pCameraEntity;
+
 	// TODO: Who's the genius who decided it'd be better to check a name string rather than an enum?
 	float maxDist = 256.0f;
 	if (name == "explodeColor")
 		maxDist = 16384.0f;
 
-	if (m_pMinecraft->m_pCameraEntity->distanceToSqr_inline(pos) > maxDist)
+	if (camera.distanceToSqr_inline(pos) > maxDist)
 		return;
 
-	ParticleEngine* pe = m_pMinecraft->m_pParticleEngine;
+	ParticleEngine& pe = *mc.m_pParticleEngine;
+	TileSource& tileSource = camera.getTileSource();
+
 	if (name == "bubble")
 	{
-		pe->add(new BubbleParticle(m_pLevel, pos, dir));
+		pe.add(new BubbleParticle(tileSource, pos, dir));
 		return;
 	}
 	if (name == "smoke")
 	{
-		pe->add(new SmokeParticle(m_pLevel, pos, dir, 1.0f));
+		pe.add(new SmokeParticle(tileSource, pos, dir, 1.0f));
 		return;
 	}
 	if (name == "note")
 	{
-		pe->add(new NoteParticle(m_pLevel, pos, dir));
+		pe.add(new NoteParticle(tileSource, pos, dir));
 		return;
 	}
 	if (name == "explode")
 	{
-		pe->add(new ExplodeParticle(m_pLevel, pos, dir));
+		pe.add(new ExplodeParticle(tileSource, pos, dir));
 		return;
 	}
 	if (name == "explodeColor")
 	{
-		ExplodeParticle* pExplPart = new ExplodeParticle(m_pLevel, pos, dir);
+		ExplodeParticle* pExplPart = new ExplodeParticle(tileSource, pos, dir);
 		pExplPart->m_bIsUnlit = true;
 		pExplPart->m_rCol = Mth::random();
 		pExplPart->m_gCol = Mth::random();
 		pExplPart->m_bCol = Mth::random();
 		pExplPart->scale(3.0f);
-		pe->add(pExplPart);
+		pe.add(pExplPart);
 		return;
 	}
 	if (name == "flame")
 	{
-		pe->add(new FlameParticle(m_pLevel, pos, dir));
+		pe.add(new FlameParticle(tileSource, pos, dir));
 		return;
 	}
 	if (name == "flame2")
 	{
-		FlameParticle* pFlamePart = new FlameParticle(m_pLevel, pos, dir);
+		FlameParticle* pFlamePart = new FlameParticle(tileSource, pos, dir);
 		pFlamePart->scale(4.0f);
-		pe->add(pFlamePart);
+		pe.add(pFlamePart);
 		return;
 	}
 	if (name == "lava")
 	{
-		pe->add(new LavaParticle(m_pLevel, pos));
+		pe.add(new LavaParticle(tileSource, pos));
 		return;
 	}
 	if (name == "largesmoke")
 	{
-		pe->add(new SmokeParticle(m_pLevel, pos, dir, 2.5f));
+		pe.add(new SmokeParticle(tileSource, pos, dir, 2.5f));
 		return;
 	}
 	if (name == "reddust")
 	{
-		pe->add(new RedDustParticle(m_pLevel, pos, dir));
+		pe.add(new RedDustParticle(tileSource, pos, dir));
 		return;
 	}
 	if (name == "snowballpoof")
 	{
-		pe->add(new ItemParticle(m_pLevel, pos, Item::snowBall));
+		pe.add(new ItemParticle(tileSource, pos, Item::snowBall));
 		return;
 	}
 	if (name == "slime")
 	{
-		pe->add(new ItemParticle(m_pLevel, pos, Item::slimeBall));
+		pe.add(new ItemParticle(tileSource, pos, Item::slimeBall));
 		return;
 	}
 
@@ -1562,7 +1584,7 @@ void LevelRenderer::renderLevel(const Entity& camera, FrustumCuller& culler, flo
 	render(camera, Tile::RENDER_LAYER_ALPHATEST, f, fog);
 	Lighting::turnOn();
 
-	renderEntities(camera.getPos(f), &culler, f);
+	renderEntities(camera.getInterpolatedPosition(f), &culler, f);
 	particleEngine.renderLit(camera, f);
 	Lighting::turnOff();
 	particleEngine.render(camera, f);
@@ -1597,6 +1619,20 @@ void LevelRenderer::renderLevel(const Entity& camera, FrustumCuller& culler, flo
 	Fog::disable();
 }
 
+AABB _getEntityRenderBounds(const Mob& camera)
+{
+	ChunkPos entityRenderMin(camera.m_chunkPos);
+	entityRenderMin -= C_ENTITY_RENDER_DISTANCE;
+	ChunkPos entityRenderMax(camera.m_chunkPos);
+	entityRenderMax += C_ENTITY_RENDER_DISTANCE;
+
+	AABB renderBounds((TilePos)entityRenderMin, (TilePos)entityRenderMax);
+	// renderBounds.min.y = 0;
+	renderBounds.max.y = 256;
+
+	return renderBounds;
+}
+
 void LevelRenderer::renderEntities(Vec3 pos, Culler* culler, float f)
 {
 	if (m_noEntityRenderFrames > 0)
@@ -1605,32 +1641,33 @@ void LevelRenderer::renderEntities(Vec3 pos, Culler* culler, float f)
 		return;
 	}
 
-	const Mob* camera = m_pMinecraft->m_pCameraEntity;
+	Minecraft& mc = *m_pMinecraft;
+	Options& options = *mc.getOptions();
+	const Mob& camera = *mc.m_pCameraEntity;
+	TileSource& tileSource = camera.getTileSource();
 
-	EntityRenderDispatcher::getInstance()->prepare(m_pLevel, m_pMinecraft->m_pTextures, m_pMinecraft->m_pFont, camera, m_pMinecraft->getOptions(), f);
+	EntityRenderDispatcher::getInstance()->prepare(m_pLevel, mc.m_pTextures, mc.m_pFont, &camera, &options, f);
 
 	m_totalEntities = 0;
 	m_renderedEntities = 0;
 	m_culledEntities = 0;
 
-	EntityRenderDispatcher::off = camera->m_posPrev + (camera->m_pos - camera->m_posPrev) * f;
+	EntityRenderDispatcher::off = camera.m_posPrev + (camera.m_pos - camera.m_posPrev) * f;
 
-	const EntityMap* pVec = m_pLevel->getAllEntities();
-	m_totalEntities = int(pVec->size());
+	Entity* pExclude = options.m_thirdPerson.get() == TPM_FIRST ? (Entity*)&camera : nullptr;
+	const Entity::Vector& entities = tileSource.getEntities(pExclude, _getEntityRenderBounds(camera));;
+	m_totalEntities = int(entities.size());
 
-	for (EntityMap::const_iterator it = pVec->begin(); it != pVec->end(); ++it)
-    {
-		const Entity* entity = it->second;
+	for (Entity::Vector::const_iterator it = entities.begin(); it != entities.end(); ++it)
+	{
+		const Entity* entity = *it;
 		if (!entity->shouldRender(pos))
 			continue;
 
 		if (!culler->isVisible(entity->m_hitbox))
 			continue;
 
-		if (m_pMinecraft->m_pCameraEntity == entity && m_pMinecraft->getOptions()->m_thirdPerson.get() == TPM_FIRST)
-			continue;
-
-		if (m_pLevel->hasChunkAt(entity->m_pos))
+		if (tileSource.hasChunkAt(entity->m_pos))
 		{
 			m_renderedEntities++;
 			EntityRenderDispatcher::getInstance()->render(*entity, f);
@@ -1639,7 +1676,7 @@ void LevelRenderer::renderEntities(Vec3 pos, Culler* culler, float f)
 
 	/*
 	// @TODO: TileEntityRenderDispatcher
-	for (TileEntityVector::const_iterator it = m_renderableTileEntities.begin();
+	for (TileEntity::Vector::const_iterator it = m_renderableTileEntities.begin();
 		it != m_renderableTileEntities.end(); ++it)
 	{
 		TileEntity* tileEntity = *it;
@@ -1651,6 +1688,7 @@ void LevelRenderer::renderEntities(Vec3 pos, Culler* culler, float f)
 void LevelRenderer::renderShadow(const Entity& entity, const Vec3& pos, float r, float pow, float a)
 {
 	Textures& textures = *m_pMinecraft->m_pTextures;
+	TileSource& tileSource = entity.getTileSource();
 
 	textures.setClampToEdge(true);
 	textures.loadAndBindTexture("misc/shadow.png");
@@ -1673,10 +1711,10 @@ void LevelRenderer::renderShadow(const Entity& entity, const Vec3& pos, float r,
 		{
 			for (tp.z = tpMin.z; tp.z <= tpMax.z; tp.z++)
 			{
-				TileID t = m_pLevel->getTile(tp.below());
-				if (t > 0 && m_pLevel->getRawBrightness(tp) > 3)
+				TileID t = tileSource.getTile(tp.below());
+				if (t > 0 && tileSource.getRawBrightness(tp) > 3)
 				{
-					_renderTileShadow(Tile::tiles[t],
+					_renderTileShadow(tileSource, Tile::tiles[t],
 						Vec3(pos.x, pos.y - entity.m_heightOffset + entity.getShadowHeightOffs(), pos.z), tp,
 						pow, r,
 						Vec3(ePosO.x, ePosO.y - entity.m_heightOffset + entity.getShadowHeightOffs(), ePosO.z)
@@ -1690,15 +1728,15 @@ void LevelRenderer::renderShadow(const Entity& entity, const Vec3& pos, float r,
 
 void LevelRenderer::renderSky(const Entity& camera, float alpha)
 {
-	if (m_pMinecraft->m_pLevel->m_pDimension->m_bFoggy)
+	if (m_pDimension->isFoggy())
 		return;
 
-	Vec3 sc = m_pLevel->getSkyColor(camera, alpha);
+	Color sc = m_pDimension->getSkyColor(camera, alpha);
 	if (m_pMinecraft->getOptions()->m_anaglyphs.get())
 	{
-		sc.x = (((sc.x * 30.0f) + (sc.y * 59.0f)) + (sc.z * 11.0f)) / 100.0f;
-		sc.y = ((sc.x * 30.0f) + (sc.y * 70.0f)) / 100.0f;
-		sc.z = ((sc.x * 30.0f) + (sc.z * 70.0f)) / 100.0f;
+		sc.r = (((sc.r * 30.0f) + (sc.g * 59.0f)) + (sc.b * 11.0f)) / 100.0f;
+		sc.g = ( (sc.r * 30.0f) + (sc.g * 70.0f)                  ) / 100.0f;
+		sc.b = ( (sc.r * 30.0f) + (sc.b * 70.0f)                  ) / 100.0f;
 	}
 
 	// called again a few lines down, no min in Java, why is it here?
@@ -1712,7 +1750,7 @@ void LevelRenderer::renderSky(const Entity& camera, float alpha)
 		//MatrixStack::Ref matrix = MatrixStack::World.push();
 		//matrix->scale(Vec3(fogStart, 0.0f, fogStart));
 
-		currentShaderColor = Color(sc.x, sc.y, sc.z);
+		currentShaderColor = sc;
 		m_skyMesh.render(m_materials.skyplane);
 
 		Fog::disable();
@@ -1725,7 +1763,7 @@ void LevelRenderer::renderSky(const Entity& camera, float alpha)
 
 	if (m_darkMesh.isValid())
 	{
-		currentShaderColor = Color(sc.x * 0.2f + 0.04f, sc.y * 0.2f + 0.04f, sc.z * 0.6f + 0.1f);
+		currentShaderColor = Color(sc.r * 0.2f + 0.04f, sc.g * 0.2f + 0.04f, sc.b * 0.6f + 0.1f);
 		m_darkMesh.render(m_materials.skyplane);
 	}
 }
@@ -1772,12 +1810,16 @@ void LevelRenderer::renderClouds(const Entity& camera, float alpha)
 	if (!areCloudsAvailable())
 		return;
 
-	if (m_pMinecraft->getOptions()->m_fancyGraphics.get())
+	Minecraft& mc = *m_pMinecraft;
+	Options& options = *mc.getOptions();
+
+	if (options.m_fancyGraphics.get())
 	{
 		renderAdvancedClouds(alpha);
 		return;
 	}
 
+	Dimension& dimension = camera.getDimension();
 	mce::RenderContext& renderContext = mce::RenderContextImmediate::get();
 
 	float yPos = Mth::Lerp(camera.m_posPrev.y, camera.m_pos.y, alpha); // not certain if this old pos Y is used
@@ -1790,7 +1832,8 @@ void LevelRenderer::renderClouds(const Entity& camera, float alpha)
 
 	m_pTextures->loadAndBindTexture("environment/clouds.png");
 
-	Vec3 cloudColor = m_pLevel->getCloudColor(alpha);
+	Color cloudColor = dimension.getCloudColor(alpha);
+	cloudColor.a = 0.8f;
 
 	float offX = Mth::Lerp(camera.m_oPos.x, camera.m_pos.x, alpha) + (float(m_ticksSinceStart) + alpha) * 0.03f;
 	float offZ = Mth::Lerp(camera.m_oPos.z, camera.m_pos.z, alpha);
@@ -1807,7 +1850,7 @@ void LevelRenderer::renderClouds(const Entity& camera, float alpha)
 	offX /= 2048.0f;
 	offZ /= 2048.0f;
 	t.begin(1024);
-	t.color(cloudColor.x, cloudColor.y, cloudColor.z, 0.8f);
+	t.color(cloudColor);
 
 	constexpr int incr = 16 * 2;
 	constexpr int maxX = C_MAX_CHUNKS_X * 16;
@@ -1837,21 +1880,25 @@ void LevelRenderer::renderClouds(const Entity& camera, float alpha)
 
 void LevelRenderer::renderAdvancedClouds(float alpha)
 {
+	Minecraft& mc = *m_pMinecraft;
+	Options& options = *mc.getOptions();
+	const Entity& camera = *mc.m_pCameraEntity;
+	Dimension& dimension = camera.getDimension();
 	mce::RenderContext& renderContext = mce::RenderContextImmediate::get();
 
-	float yOffs = //Mth::Lerp(m_pMinecraft->m_pCameraEntity->m_posPrev.y, m_pMinecraft->m_pCameraEntity->m_pos.y, alpha);
-    m_pMinecraft->m_pCameraEntity->m_posPrev.y + (m_pMinecraft->m_pCameraEntity->m_pos.y - m_pMinecraft->m_pCameraEntity->m_posPrev.y) * alpha;
+	float yOffs = //Mth::Lerp(camera.m_posPrev.y, camera.m_pos.y, alpha);
+    camera.m_posPrev.y + (camera.m_pos.y - camera.m_posPrev.y) * alpha;
 
 	Tesselator& t = Tesselator::instance;
 	constexpr float ss = 12.0f;
 	constexpr float h = 4.0f;
 
 	// @NOTE: Using Mth::Lerp will use incorrect logic
-	float xo = (m_pMinecraft->m_pCameraEntity->m_oPos.x + (m_pMinecraft->m_pCameraEntity->m_pos.x - m_pMinecraft->m_pCameraEntity->m_oPos.x) * alpha + ((float(m_ticksSinceStart) + alpha) * 0.03f)) / ss;
-	float zo = (m_pMinecraft->m_pCameraEntity->m_oPos.z + (m_pMinecraft->m_pCameraEntity->m_pos.z - m_pMinecraft->m_pCameraEntity->m_oPos.z) * alpha) / ss + 0.33f;
+	float xo = (camera.m_oPos.x + (camera.m_pos.x - camera.m_oPos.x) * alpha + ((float(m_ticksSinceStart) + alpha) * 0.03f)) / ss;
+	float zo = (camera.m_oPos.z + (camera.m_pos.z - camera.m_oPos.z) * alpha) / ss + 0.33f;
 
 	float yy = ((float)C_MAX_Y - yOffs) + 0.33f; // 108.0f on b1.2_02, see below
-    //float yy = 108.0f - yOffs + 0.33F;
+    //float yy = 108.0f - yOffs + 0.33f;
 
 	int xOffs = Mth::floor(xo / 2048);
 	int zOffs = Mth::floor(zo / 2048);
@@ -1866,22 +1913,19 @@ void LevelRenderer::renderAdvancedClouds(float alpha)
 
 	m_pTextures->loadAndBindTexture("environment/clouds.png");
 
-	Vec3 cc = m_pLevel->getCloudColor(alpha);
-	float cr = cc.x;
-	float cg = cc.y;
-	float cb = cc.z;
+	Color cc = dimension.getCloudColor(alpha);
     float uo;
     float vo;
     float scale;
     
-	if (m_pMinecraft->getOptions()->m_anaglyphs.get())
+	if (options.m_anaglyphs.get())
 	{
-        uo = (cr * 30.0f + cg * 59.0f + cb * 11.0f) / 100.0f;
-        vo = (cr * 30.0f + cg * 70.0f) / 100.0f;
-        scale = (cr * 30.0f + cb * 70.0f) / 100.0f;
-        cr = uo;
-        cg = vo;
-        cb = scale;
+		uo =    (cc.r * 30.0f + cc.g * 59.0f + cc.b * 11.0f) / 100.0f;
+		vo =    (cc.r * 30.0f + cc.g * 70.0f               ) / 100.0f;
+		scale = (cc.r * 30.0f + cc.b * 70.0f               ) / 100.0f;
+		cc.r = uo;
+		cc.g = vo;
+		cc.b = scale;
 	}
     
     uo = (float)(xo * 0.0);
@@ -1931,7 +1975,7 @@ void LevelRenderer::renderAdvancedClouds(float alpha)
 
 				if (yy > -h - 1.0f)
 				{
-					t.color(cr * 0.7f, cg * 0.7f, cb * 0.7f, 0.8f);
+					t.color(cc.r * 0.7f, cc.g * 0.7f, cc.b * 0.7f, 0.8f);
 					t.vertexUV((xp + 0.0f), (yy + 0.0f), (zp + D), ((xx + 0.0f) * scale + uo), ((zz + D) * scale + vo));
 					t.vertexUV((xp + D), (yy + 0.0f), (zp + D), ((xx + D) * scale + uo), ((zz + D) * scale + vo));
 					t.vertexUV((xp + D), (yy + 0.0f), (zp + 0.0f), ((xx + D) * scale + uo), ((zz + 0.0f) * scale + vo));
@@ -1940,7 +1984,7 @@ void LevelRenderer::renderAdvancedClouds(float alpha)
 
 				if (yy <= h + 1.0f)
 				{
-					t.color(cr, cg, cb, 0.8f);
+					t.color(cc.r, cc.g, cc.b, 0.8f);
 					t.normal(0.0f, 1.0f, 0.0f);
 					t.vertexUV((xp + 0.0f), (yy + h - e), (zp + D), ((xx + 0.0f) * scale + uo), ((zz + D) * scale + vo));
 					t.vertexUV((xp + D), (yy + h - e), (zp + D), ((xx + D) * scale + uo), ((zz + D) * scale + vo));
@@ -1948,7 +1992,7 @@ void LevelRenderer::renderAdvancedClouds(float alpha)
 					t.vertexUV((xp + 0.0f), (yy + h - e), (zp + 0.0f), ((xx + 0.0f) * scale + uo), ((zz + 0.0f) * scale + vo));
 				}
 
-				t.color(cr * 0.9f, cg * 0.9f, cb * 0.9f, 0.8f);
+				t.color(cc.r * 0.9f, cc.g * 0.9f, cc.b * 0.9f, 0.8f);
 
 				if (xPos > -1)
 				{
@@ -1976,7 +2020,7 @@ void LevelRenderer::renderAdvancedClouds(float alpha)
 					}
 				}
 
-				t.color(cr * 0.8f, cg * 0.8f, cb * 0.8f, 0.8f);
+				t.color(cc.r * 0.8f, cc.g * 0.8f, cc.b * 0.8f, 0.8f);
 				if (zPos > -1)
 				{
 					t.normal(Vec3::NEG_UNIT_Z);

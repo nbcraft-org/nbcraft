@@ -13,6 +13,9 @@
 #include "client/app/AppPlatformListener.hpp"
 #include "renderer/hal/interface/FogState.hpp"
 #include "world/level/LevelListener.hpp"
+#include "world/level/Dimension.hpp"
+#include "world/tile/entity/TileEntity.hpp"
+#include "Chunk.hpp"
 #include "Textures.hpp"
 #include "RenderList.hpp"
 #include "TileRenderer.hpp"
@@ -116,7 +119,7 @@ protected:
 	void _renderSolarSystem(float alpha);
 	void _renderSunAndMoon(float alpha);
 	void _renderStars(float alpha);
-	void _renderTileShadow(Tile* tt, const Vec3& pos, TilePos& tilePos, float pow, float r, const Vec3& oPos);
+	void _renderTileShadow(TileSource& tileSource, Tile* tt, const Vec3& pos, TilePos& tilePos, float pow, float r, const Vec3& oPos);
 	void _recreateTessellators();
 	void _setupFog(const Entity& camera, int i);
 	const Color& _getFogColor() const;
@@ -224,5 +227,5 @@ public:
 	mce::Mesh m_darkMesh;
 	//...
 	Textures* m_pTextures;
-	TileEntityVector m_renderableTileEntities;
+	TileEntity::Vector m_renderableTileEntities;
 };

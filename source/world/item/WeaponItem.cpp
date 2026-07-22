@@ -6,22 +6,22 @@ WeaponItem::WeaponItem(int id, Tier& tier) : ToolItem(id, Tool::SWORD, tier), m_
 {
 }
 
-float WeaponItem::getDestroySpeed(ItemStack* instance, const Tile* tile) const
+float WeaponItem::getDestroySpeed(ItemStack& itemStack, const Tile* tile) const
 {
 	return (_canDestroyTile(tile) || _canDestroyMaterial(tile->m_pMaterial)) ? 15.0f : 1.5f;
 }
 
-void WeaponItem::hurtEnemy(ItemStack* instance, Mob* mob) const
+void WeaponItem::hurtEnemy(ItemStack& itemStack, Mob& mob) const
 {
-	instance->hurtAndBreak(1, mob);
+	itemStack.hurtAndBreak(1, mob);
 }
 
-void WeaponItem::mineBlock(ItemStack* instance, const TilePos& pos, Facing::Name face, Mob* mob) const
+void WeaponItem::mineBlock(ItemStack& itemStack, const TilePos& pos, Facing::Name face, Mob& mob) const
 {
-	instance->hurtAndBreak(2, mob);
+	itemStack.hurtAndBreak(2, mob);
 }
 
-int WeaponItem::getAttackDamage(Entity* entity) const
+int WeaponItem::getAttackDamage(Entity& entity) const
 {
 	return m_attackDamage;
 }

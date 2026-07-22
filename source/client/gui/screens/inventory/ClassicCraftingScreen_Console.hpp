@@ -5,7 +5,7 @@
 class ClassicCraftingScreen_Console : public ContainerScreen
 {
 public:
-    ClassicCraftingScreen_Console(Inventory* inventory, const TilePos& tilePos, Level* level);
+    ClassicCraftingScreen_Console(Inventory* inventory, const TilePos& tilePos);
 
     void renderBackground() override;
 

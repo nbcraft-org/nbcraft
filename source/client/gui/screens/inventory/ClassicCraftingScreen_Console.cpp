@@ -2,8 +2,8 @@
 #include "world/inventory/CraftingMenu.hpp"
 #include "renderer/ShaderConstants.hpp"
 
-ClassicCraftingScreen_Console::ClassicCraftingScreen_Console(Inventory* inventory, const TilePos& tilePos, Level* level) :
-    ContainerScreen(new CraftingMenu(inventory, tilePos, level))
+ClassicCraftingScreen_Console::ClassicCraftingScreen_Console(Inventory* inventory, const TilePos& tilePos) :
+    ContainerScreen(new CraftingMenu(inventory, tilePos))
 {
     m_uiTheme = UI_CONSOLE;
     m_imageWidth = 428;

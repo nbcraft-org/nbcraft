@@ -8,6 +8,8 @@
 
 #include "GrassTile.hpp"
 #include "world/level/Level.hpp"
+#include "world/level/TileSource.hpp"
+#include "world/level/levelgen/biome/BiomeSource.hpp"
 #include "client/renderer/PatchManager.hpp"
 #include "client/renderer/GrassColor.hpp"
 
@@ -16,12 +18,22 @@ const Color GrassTile::DEFAULT_COLOR = Color(0.25f, 0.60f, 0.25f);
 GrassTile::GrassTile(TileID id, Material* c) : Tile(id, c)
 {
 	m_TextureFrame = TEXTURE_GRASS_SIDE;
-	m_renderLayer = RENDER_LAYER_ALPHATEST;
+	m_renderLayer = RENDER_LAYER_ALPHATEST; // @TODO: toggle this depending on the "Fancy Grass" option
 	setTicking(true);
+
+	m_bFancyGrass = false;
+	m_bBiomeColors = false;
 }
 
-int GrassTile::getColor(const LevelSource* levelSource, const TilePos& pos) const
+int GrassTile::getColor(TileSource& source, const TilePos& pos) const
 {
+	if (GrassColor::isAvailable() && m_bBiomeColors)
+	{
+		BiomeSource& biomeSource = *source.getBiomeSource();
+		biomeSource.getBiomeBlock(pos, 1, 1);
+		return GrassColor::get(biomeSource.field_4[0], biomeSource.field_8[0]);
+	}
+
 	if (GetPatchManager()->IsGrassTinted())
 	{
 		return 0x339933;
@@ -58,7 +70,7 @@ int GrassTile::getTexture(Facing::Name face) const
 	}
 }
 
-int GrassTile::getTexture(const LevelSource* level, const TilePos& pos, Facing::Name face) const
+int GrassTile::getTexture(TileSource& source, const TilePos& pos, Facing::Name face) const
 {
 	switch (face)
 	{
@@ -70,39 +82,39 @@ int GrassTile::getTexture(const LevelSource* level, const TilePos& pos, Facing::
 		break;
 	}
 
-	Material* pMat = level->getMaterial(pos.above());
+	Material* pMat = source.getMaterial(pos.above());
 	if (pMat == Material::topSnow || pMat == Material::snow)
 		return TEXTURE_GRASS_SIDE_SNOW;
 
 	return TEXTURE_GRASS_SIDE;
 }
 
-void GrassTile::tick(Level* level, const TilePos& pos, Random* random)
+void GrassTile::tick(TileSource& source, const TilePos& pos, Random* random)
 {
 	// Controls the spread/death of grass.
 	// It's like a full on automata of sorts. :)
-	if (level->m_bIsClientSide)
+	if (source.getLevelConst().m_bIsClientSide)
 		return;
 
-	if (level->getRawBrightness(pos.above()) <= 3 &&
-		level->getMaterial(pos.above())->blocksLight())
+	if (source.getRawBrightness(pos.above()) <= 3 &&
+		source.getMaterial(pos.above())->blocksLight())
 	{
 		// grass death
 		if (random->genrand_int32() % 4 == 0)
-			level->setTile(pos, Tile::dirt->m_ID);
+			source.setTile(pos, Tile::dirt->m_ID);
 	}
-	else if (level->getRawBrightness(pos.above()) > 8)
+	else if (source.getRawBrightness(pos.above()) > 8)
 	{
 		TilePos tp(pos.x - 1 + random->nextInt(3),
 		           pos.y - 3 + random->nextInt(5),
 		           pos.z - 1 + random->nextInt(3));
 
-		if (level->getTile(tp) == Tile::dirt->m_ID &&
-			level->getRawBrightness(tp.above()) > 3 &&
-			!level->getMaterial(tp.above())->blocksLight())
+		if (source.getTile(tp) == Tile::dirt->m_ID &&
+			source.getRawBrightness(tp.above()) > 3 &&
+			!source.getMaterial(tp.above())->blocksLight())
 		{
-			//@NOTE: not this->id
-			level->setTile(tp, Tile::grass->m_ID);
+			//@NOTE: not this->m_ID
+			source.setTile(tp, Tile::grass->m_ID);
 		}
 	}
 }

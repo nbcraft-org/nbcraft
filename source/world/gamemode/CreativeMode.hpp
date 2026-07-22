@@ -18,10 +18,10 @@ public:
 	//float getBlockReachDistance() const override { return 5.0f; } // 5.0f on Java
 	bool isCreativeType() const override { return true; }
 
-	void initPlayer(Player*) override;
-	bool destroyBlock(Player* player, const TilePos& pos, Facing::Name face) override;
-	bool startDestroyBlock(Player* player, const TilePos& pos, Facing::Name face) override;
-	bool continueDestroyBlock(Player* player, const TilePos& pos, Facing::Name face) override;
+	void initPlayer(Player&) override;
+	bool destroyBlock(Player& player, const TilePos& pos, Facing::Name face) override;
+	bool startDestroyBlock(Player& player, const TilePos& pos, Facing::Name face) override;
+	bool continueDestroyBlock(Player& player, const TilePos& pos, Facing::Name face) override;
 	void stopDestroyBlock() override;
 	void tick() override;
 	void render(float f) override;

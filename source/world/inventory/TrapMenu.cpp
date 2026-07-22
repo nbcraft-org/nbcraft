@@ -22,7 +22,7 @@ TrapMenu::TrapMenu(Inventory* inventory, DispenserTileEntity* trap)
     }
 }
 
-bool TrapMenu::stillValid(Player* player) const
+bool TrapMenu::stillValid(Player& player) const
 {
     return m_pTrap->stillValid(player);
 }

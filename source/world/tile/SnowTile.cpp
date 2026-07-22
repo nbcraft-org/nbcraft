@@ -1,5 +1,5 @@
 #include "SnowTile.hpp"
-#include "world/level/Level.hpp"
+#include "world/level/TileSource.hpp"
 
 SnowTile::SnowTile(TileID id, int texture) : Tile(id, texture, Material::snow)
 {
@@ -16,11 +16,11 @@ int SnowTile::getResourceCount(Random* random) const
 	return 4;
 }
 
-void SnowTile::tick(Level* level, const TilePos& pos, Random* random)
+void SnowTile::tick(TileSource& source, const TilePos& pos, Random* random)
 {
-	if (level->getBrightness(LightLayer::Block, pos) > 11)
+	if (source.getBrightness(LightLayer::Block, pos) > 11)
 	{
-		spawnResources(level, pos, level->getData(pos));
-		level->setTile(pos, TILE_AIR);
+		spawnResources(source, pos, source.getData(pos));
+		source.setTile(pos, TILE_AIR);
 	}
 }

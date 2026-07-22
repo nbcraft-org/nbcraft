@@ -119,6 +119,7 @@
     <ClInclude Include="$(MC_ROOT)\source\common\threading\AsyncTask.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\common\utility\ByteBuffer.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\common\utility\HashMap.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\common\MovePriorityQueue.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

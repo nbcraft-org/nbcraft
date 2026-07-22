@@ -6,7 +6,7 @@ class CraftingScreen : public ContainerScreen
 {
 
 public:
-    CraftingScreen(Inventory* inventory, const TilePos& tilePos, Level* level);
+    CraftingScreen(Inventory* inventory, const TilePos& tilePos);
 
 protected:
     void _renderLabels() override;

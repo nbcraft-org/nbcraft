@@ -9,7 +9,7 @@
 #include "Player.hpp"
 #include "world/level/Level.hpp"
 
-Pig::Pig(Level* pLevel) : Animal(pLevel)
+Pig::Pig(TileSource& source) : Animal(source)
 {
 	m_pDescriptor = &EntityTypeDescriptor::pig;
 	m_renderType = RENDER_PIG;

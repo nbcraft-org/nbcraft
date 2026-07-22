@@ -1,12 +1,13 @@
 #include "LeverTile.hpp"
 #include "world/level/Level.hpp"
+#include "world/level/TileSource.hpp"
 
 LeverTile::LeverTile(TileID id, int texture) : Tile(id, texture, Material::decoration)
 {
 	m_renderLayer = RENDER_LAYER_ALPHATEST;
 }
 
-AABB* LeverTile::getAABB(const Level*, const TilePos& pos)
+AABB* LeverTile::getAABB(const TileSource& source, const TilePos& pos)
 {
 	return nullptr;
 }
@@ -26,87 +27,88 @@ eRenderShape LeverTile::getRenderShape() const
 	return SHAPE_LEVER;
 }
 
-bool LeverTile::mayPlace(const Level* level, const TilePos& pos) const
+bool LeverTile::mayPlace(const TileSource& source, const TilePos& pos) const
 {
-	if (level->isSolidTile(pos.west())) return true;
-	if (level->isSolidTile(pos.east())) return true;
-	if (level->isSolidTile(pos.north())) return true;
-	if (level->isSolidTile(pos.south())) return true;
-	if (level->isSolidTile(pos.below())) return true;
+	if (source.isSolidBlockingTile(pos.west())) return true;
+	if (source.isSolidBlockingTile(pos.east())) return true;
+	if (source.isSolidBlockingTile(pos.north())) return true;
+	if (source.isSolidBlockingTile(pos.south())) return true;
+	if (source.isSolidBlockingTile(pos.below())) return true;
 
 	return false;
 }
 
-void LeverTile::setPlacedOnFace(Level* level, const TilePos& pos, Facing::Name face)
+void LeverTile::setPlacedOnFace(TileSource& source, const TilePos& pos, Facing::Name face)
 {
-	TileData data = level->getData(pos);
+	Level& level = source.getLevel();
+
+	TileData data = source.getData(pos);
 	int var7 = data & 8;
 	data &= 7;
 
 	switch (face)
 	{
-	case Facing::DOWN:
-		break;
 	case Facing::UP:
-		if (level->isSolidTile(pos.below()))
-			data = 5 + level->m_random.nextInt(2);
+		if (source.isSolidBlockingTile(pos.below()))
+			data = 5 + level.m_random.nextInt(2);
 		break;
 	case Facing::NORTH:
-		if (level->isSolidTile(pos.south()))
+		if (source.isSolidBlockingTile(pos.south()))
 			data = 4;
 		break;
 	case Facing::SOUTH:
-		if (level->isSolidTile(pos.north()))
+		if (source.isSolidBlockingTile(pos.north()))
 			data = 3;
 		break;
 	case Facing::WEST:
-		if (level->isSolidTile(pos.east()))
+		if (source.isSolidBlockingTile(pos.east()))
 			data = 2;
 		break;
 	case Facing::EAST:
-		if (level->isSolidTile(pos.west()))
+		if (source.isSolidBlockingTile(pos.west()))
 			data = 1;
 		break;
+	default: break;
 	}
 
-	level->setData(pos, data + var7);
+	source.setTileAndData(pos, FullTile(this, data + var7));
 }
 
-void LeverTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
+void LeverTile::neighborChanged(TileSource& source, const TilePos& pos, TileID tile)
 {
-	if (!_checkCanSurvive(level, pos))
+	if (!_checkCanSurvive(source, pos))
 		return;
 
-	TileData data = level->getData(pos) & 7;
+	TileData data = source.getData(pos) & 7;
 
 	bool flag = false;
-	if (data == 1 && !level->isSolidTile(pos.west())) flag = true;
-	else if (data == 2 && !level->isSolidTile(pos.east())) flag = true;
-	else if (data == 3 && !level->isSolidTile(pos.north())) flag = true;
-	else if (data == 4 && !level->isSolidTile(pos.south())) flag = true;
-	else if (data == 5 && !level->isSolidTile(pos.below())) flag = true;
+	if (data == 1 && !source.isSolidBlockingTile(pos.west())) flag = true;
+	else if (data == 2 && !source.isSolidBlockingTile(pos.east())) flag = true;
+	else if (data == 3 && !source.isSolidBlockingTile(pos.north())) flag = true;
+	else if (data == 4 && !source.isSolidBlockingTile(pos.south())) flag = true;
+	else if (data == 5 && !source.isSolidBlockingTile(pos.below())) flag = true;
 
 	if (!flag)
 		return; // all good
 
-	spawnResources(level, pos, level->getData(pos));
-	level->setTile(pos, TILE_AIR);
+	spawnResources(source, pos, source.getData(pos));
+	source.setTile(pos, TILE_AIR);
 }
 
-bool LeverTile::_checkCanSurvive(Level* level, const TilePos& pos)
+bool LeverTile::_checkCanSurvive(TileSource& source, const TilePos& pos)
 {
-	if (mayPlace(level, pos))
+	if (mayPlace(source, pos))
 		return true;
 
-	spawnResources(level, pos, level->getData(pos));
-	level->setTile(pos, TILE_AIR);
+	spawnResources(source, pos, source.getData(pos));
+	source.setTile(pos, TILE_AIR);
 
 	return false;
 }
 
-void LeverTile::updateShape(const LevelSource* level, const TilePos& pos)
+void LeverTile::updateShape(const TileSource& source, const TilePos& pos)
 {
-	TileData data = level->getData(pos) & 7;
+	TileData data = source.getData(pos) & 7;
 	float var6 = 3.0f / 16.0f;
 
 	switch (data)
@@ -130,83 +132,86 @@ void LeverTile::updateShape(const LevelSource* level, const TilePos& pos)
 	}
 }
 
-void LeverTile::attack(Level* level, const TilePos& pos, Player* player)
+void LeverTile::attack(const TilePos& pos, Player& player)
 {
-	use(level, pos, player);
+	use(pos, player);
 }
 
-bool LeverTile::use(Level* level, const TilePos& pos, Player* player)
+bool LeverTile::use(const TilePos& pos, Player& player)
 {
-	if (level->m_bIsClientSide)
+	Level& level = player.getLevel();
+	TileSource& source = player.getTileSource();
+
+	if (level.m_bIsClientSide)
 		return true;
 	
-	TileData data = level->getData(pos);
+	TileData data = source.getData(pos);
 	int var7 = data & 7;
 	int var8 = 8 - (data & 8);
-	level->setData(pos, var7 + var8);
-	level->setTilesDirty(pos, pos);
-	level->playSound(pos + 0.5f, "random.click", 0.3f, var8 > 0 ? 0.6f : 0.5f);
-	level->updateNeighborsAt(pos, m_ID);
+	source.setTileAndData(pos, FullTile(this, var7 + var8));
+	source.fireTilesDirty(pos, pos);
+	level.playSound(pos + 0.5f, "random.click", 0.3f, var8 > 0 ? 0.6f : 0.5f);
+	source.updateNeighborsAt(pos, m_ID);
 	switch (var7)
 	{
 	case 1:
-		level->updateNeighborsAt(pos.west(), m_ID);
+		source.updateNeighborsAt(pos.west(), m_ID);
 		break;
 	case 2:
-		level->updateNeighborsAt(pos.east(), m_ID);
+		source.updateNeighborsAt(pos.east(), m_ID);
 		break;
 	case 3:
-		level->updateNeighborsAt(pos.north(), m_ID);
+		source.updateNeighborsAt(pos.north(), m_ID);
 		break;
 	case 4:
-		level->updateNeighborsAt(pos.south(), m_ID);
+		source.updateNeighborsAt(pos.south(), m_ID);
 		break;
 	default:
-		level->updateNeighborsAt(pos.below(), m_ID);
+		source.updateNeighborsAt(pos.below(), m_ID);
 		break;
 	}
 
 	return true;
 }
 
-void LeverTile::onRemove(Level* level, const TilePos& pos)
+void LeverTile::onRemove(TileSource& source, const TilePos& pos)
 {
-	TileData data = level->getData(pos);
+	TileData data = source.getData(pos);
 	if ((data & 8) > 0)
 	{
-		level->updateNeighborsAt(pos, m_ID);
+		source.updateNeighborsAt(pos, m_ID);
 		int var6 = data & 7;
 		switch (var6)
 		{
 		case 1:
-			level->updateNeighborsAt(pos.west(), m_ID);
+			source.updateNeighborsAt(pos.west(), m_ID);
 			break;
 		case 2:
-			level->updateNeighborsAt(pos.east(), m_ID);
+			source.updateNeighborsAt(pos.east(), m_ID);
 			break;
 		case 3:
-			level->updateNeighborsAt(pos.north(), m_ID);
+			source.updateNeighborsAt(pos.north(), m_ID);
 			break;
 		case 4:
-			level->updateNeighborsAt(pos.south(), m_ID);
+			source.updateNeighborsAt(pos.south(), m_ID);
 			break;
 		default:
-			level->updateNeighborsAt(pos.below(), m_ID);
+			source.updateNeighborsAt(pos.below(), m_ID);
 			break;
 		}
 	}
 
-	Tile::onRemove(level, pos);
+	Tile::onRemove(source, pos);
 }
 
-int LeverTile::getSignal(const LevelSource* level, const TilePos& pos, Facing::Name face) const
+int LeverTile::getSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const
 {
-	return (level->getData(pos) & 8) > 0;
+	return (source.getData(pos) & 8) > 0;
 }
 
-int LeverTile::getDirectSignal(const Level* level, const TilePos& pos, Facing::Name face) const
+int LeverTile::getDirectSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const
 {
-	TileData data = level->getData(pos);
+	TileData data = source.getData(pos);
 	if ((data & 8) == 0) 
 	{
 		return false;

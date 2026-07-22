@@ -9,7 +9,7 @@ class ChestMenu : public ContainerMenu
 public:
     ChestMenu(Container* inventory, Container* container);
 
-    bool stillValid(Player* player) const override;
+    bool stillValid(Player& player) const override;
     ItemStack quickMoveStack(Container::SlotID slotId) override;
 
 private:

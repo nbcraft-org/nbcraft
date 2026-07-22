@@ -15,6 +15,7 @@
 #include "world/level/levelgen/chunk/ChunkSource.hpp"
 #include "Level.hpp"
 
+// @PARITY-PE: time scale is different between PE and JAVA
 #define C_TIMEOFDAY_SCALE_JAVA 24000
 #define C_TIMEOFDAY_SCALE_POCKET 14400
 #define C_TIMEOFDAY_SCALE C_TIMEOFDAY_SCALE_JAVA
@@ -32,34 +33,59 @@ Dimension* Dimension::createNew(DimensionId type)
 	}
 }
 
-Vec3 Dimension::getFogColor(float a, float b) const
+Color Dimension::getSkyColor(const Entity& entity, float f) const
 {
-	float x1 = cosf(a * M_PI * 2.0f);
+	Color color;
+	color.a = 1.0f;
+
+	float fTODCosAng = Mth::cos(getSunAngle(f));
+
+	color.b = 2 * fTODCosAng + 0.5f;
+	if (color.b < 0.0f)
+		color.b = 0.0f;
+	if (color.b > 1.0f)
+		color.b = 1.0f;
+
+	// @NOTE: Unused result. In JE, it tries to get the biome that the player is standing in.
+	//Mth::floor(entity.m_pos.x);
+	//Mth::floor(entity.m_pos.z);
+
+	color.r = color.b * 0.6f;
+	color.g = color.r;
+
+	return color;
+}
+
+Color Dimension::getFogColor(float a) const
+{
+    float time = getTimeOfDay(a);
+	float x1 = cosf(time * M_PI * 2.0f);
 	float x2 = x1 * 2 + 0.5f;
 
 	if (x2 < 0.0f)
-		return Vec3(0.045176f, 0.050824f, 0.09f);
+		return Color(0.045176f, 0.050824f, 0.09f);
 
-	Vec3 v;
-	v.z = 1;
+	Color c;
+    c.a = 1.0f;
+	c.b = 1.0f;
 
 	if (x2 <= 1.0f)
 	{
 		float p = (x2 * 0.94f) + 0.06f;
-		v.x = p * 0.75294f;
-		v.y = p * 0.84706f;
-		v.z = (x2 * 0.91f) + 0.09f;
+		c.r = p * 0.75294f;
+		c.g = p * 0.84706f;
+		c.b = (x2 * 0.91f) + 0.09f;
 	}
 	else
 	{
-		v.x = 0.75294f;
-		v.y = 0.84706f;
+		c.r = 0.75294f;
+		c.g = 0.84706f;
 	}
 
-	return v;
+	return c;
 }
 
-const float* Dimension::getSunriseColor(float a, float b)
+Color Dimension::getSunriseColor(float a, float b) const
 {
 	float radial = 0.4f;
 	float dot = Mth::cos(a * M_PI * 2.0f);
@@ -70,14 +96,15 @@ const float* Dimension::getSunriseColor(float a, float b)
 		float norm = (dot - center) / radial * 0.5f + 0.5f;
 		float alpha = 1.0f - (1.0f - Mth::sin(norm * M_PI)) * 0.99f;
 		
-		m_sunriseColor[0] = norm * 0.3f + 0.7f;
-		m_sunriseColor[1] = norm * norm * 0.7f + 0.2f;
-		m_sunriseColor[2] = 0.2f;
-		m_sunriseColor[3] = alpha * alpha;
+		Color sunriseColor;
+		sunriseColor.r = norm * 0.3f + 0.7f;
+		sunriseColor.g = norm * norm * 0.7f + 0.2f;
+		sunriseColor.b = 0.2f;
+		sunriseColor.a = alpha * alpha;
 
-		return m_sunriseColor;
+		return sunriseColor;
 	}
-	return nullptr;
+	return Color::NIL;
 /*
 	
 	float x1 = Mth::cos(a * M_PI * 2.0f); //@BUG: Meant to use Mth::cos?
@@ -94,6 +121,30 @@ const float* Dimension::getSunriseColor(float a, float b)
 
 	return m_sunriseColor;
 	*/
+}
+
+Color Dimension::getCloudColor(float f) const
+{
+	Color color = Color::WHITE;
+
+	float fTODCosAng = Mth::cos(getSunAngle(f));
+
+	float mult = 2 * fTODCosAng + 0.5f;
+	if (mult < 0.0f)
+		mult = 0.0f;
+	if (mult > 1.0f)
+		mult = 1.0f;
+
+	color.r = mult * 0.9f + 0.1f;
+	color.g = color.r;
+	color.b = mult * 0.85f + 0.15f;
+
+	return color;
+}
+
+float Dimension::getSunAngle(float f) const
+{
+	return 2 * float(M_PI) * getTimeOfDay(f);
 }
 
 float Dimension::getTimeOfDay(int32_t l, float f) const
@@ -119,6 +170,30 @@ float Dimension::getTimeOfDay(int32_t l, float f) const
 	f1 = 1.0f - (cosf(float(M_PI) * f1) + 1.0f) / 2.f;
 	f1 = f2 + (f1 - f2) / 3.0f;
 	return f1;
+}
+
+float Dimension::getTimeOfDay(float f) const
+{
+	return getTimeOfDay(m_pLevel->getTime(), f);
+}
+
+float Dimension::getStarBrightness(float f) const
+{
+	float ca = Mth::cos(getSunAngle(f));
+	float cb = 1.0f - (0.75f + 2 * ca);
+
+	if (cb < 0.0f)
+		cb = 0.0f;
+	if (cb > 1.0f)
+		cb = 1.0f;
+
+	return cb * cb * 0.5f;
+}
+
+
+bool Dimension::isDay() const
+{
+	return m_pLevel->isDay();
 }
 
 void Dimension::updateLightRamp()
@@ -164,7 +239,7 @@ Dimension::Dimension()
 	m_bFoggy = false;
 	m_bUltraWarm = false;
 	m_bHasCeiling = false;
-	m_id = 0;
+	m_id = DIMENSION_OVERWORLD;
 }
 
 Dimension::~Dimension()
@@ -194,11 +269,21 @@ bool Dimension::isValidSpawn(const TilePos& pos) const
 		return false;
 
 #ifndef ORIGINAL_CODE
-	if (tile == 0)
+	if (tile == TILE_AIR)
 		return false;
 #endif
 	
 	return Tile::tiles[tile]->isSolidRender();
+}
+
+ChunkSource* Dimension::getChunkSource() const
+{
+	return m_pLevel ? &m_pLevel->getChunkSource() : nullptr;
+}
+
+TileSource* Dimension::getTileSource() const
+{
+	return m_pLevel;
 }
 
 bool Dimension::isNaturalDimension() const
