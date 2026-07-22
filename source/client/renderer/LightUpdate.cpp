@@ -133,6 +133,8 @@ void LightUpdate::updateFast()
 	if (m_max.y > (ChunkConstants::Y_SIZE - 1))
 		m_max.y = ChunkConstants::Y_SIZE - 1;
 
+	//LOG_I("min: (%d, %d, %d) max: (%d, %d, %d)", m_min.x, m_min.y, m_min.z, m_max.x, m_max.y, m_max.z);
+
 	TilePos pos;
 	for (pos.x = m_min.x; pos.x <= m_max.x; pos.x++)
 	{

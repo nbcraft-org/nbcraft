@@ -525,10 +525,10 @@ bool Level::updateLights()
 
 bool Level::hasChunksAt(const TilePos& min, const TilePos& max) const
 {
-	if (min.y >= C_MAX_Y || max.y < 0)
+	if (min.y >= C_MAX_Y || max.y < C_MIN_Y)
 		return false;
 
-	ChunkPos cpMin(min), cpMax(max), cp = ChunkPos();
+	ChunkPos cpMin(min), cpMax(max), cp;
 	for (cp.x = cpMin.x; cp.x <= cpMax.x; cp.x++)
 	{
 		for (cp.z = cpMin.z; cp.z <= cpMax.z; cp.z++)
