@@ -1,7 +1,6 @@
 #pragma once
 
-#define __STDC_LIMIT_MACROS
-#include <stdint.h>
+#include "compat/LimitMacros.h"
 
 typedef uint64_t Tick_t;
 
