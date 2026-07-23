@@ -1,4 +1,5 @@
 #include "TileTickingQueue.hpp"
+#include "compat/LimitMacros.h"
 #include "world/level/TileSource.hpp"
 #include "nbt/CompoundTag.hpp"
 #include "nbt/ListTag.hpp"
