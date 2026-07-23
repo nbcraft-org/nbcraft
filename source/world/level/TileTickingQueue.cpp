@@ -62,6 +62,34 @@ bool TileTickingQueue::tickPendingTicks(TileSource& region, Tick_t until, int ma
 	return hasTicked;
 }
 
+// copy-paste of the function above, done for Level, remove in the future
+bool TileTickingQueue::tickPendingTicks(TileSource& region, int max, bool instaTick)
+{
+	m_instaTick = instaTick;
+
+	int tickLimit = Mth::Min(m_tickData.size(), max);
+	int ticksProcessed = 0;
+
+	bool hasTicked = false;
+	while (!m_tickData.empty() && ticksProcessed < tickLimit)
+	{
+		TickNextTickData data;
+		m_tickData.popInto(data);
+
+		m_currentTick = data.tick;
+		ticksProcessed++;
+
+		if (region.hasChunksAt(data.pos - 8, data.pos + 8))
+			_tick(region, data.pos, data.tileId);
+
+		hasTicked = true;
+	}
+
+	m_instaTick = false;
+
+	return hasTicked;
+}
+
 void TileTickingQueue::tickAllPendingTicks(TileSource& region)
 {
 	while (!m_tickData.empty())

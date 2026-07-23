@@ -24,6 +24,7 @@ public:
 	void add(TileSource& region, const TilePos& pos, TileID tileID, int tickDelay);
 
 	bool tickPendingTicks(TileSource& region, Tick_t until, int max, bool instaTick);
+	bool tickPendingTicks(TileSource& region, int max, bool instaTick);
 	void tickAllPendingTicks(TileSource& region);
 
 	void save(CompoundTag& tag);
