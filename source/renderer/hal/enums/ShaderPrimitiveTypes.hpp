@@ -1,6 +1,6 @@
 #pragma once
 
-#include "compat/Unused.hpp"
+#include "compat/Unused.h"
 
 namespace mce
 {
