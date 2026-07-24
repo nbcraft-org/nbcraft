@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #ifndef INT32_MAX
-#define INT32_MAX 2147483647i32
+#define INT32_MAX 2147483647
 #endif
 
 #ifndef UINT64_MAX
