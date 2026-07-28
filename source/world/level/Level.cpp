@@ -1871,6 +1871,32 @@ HitResult Level::clip(const Vec3& a, const Vec3& b, bool includeLiquid, bool inc
 {
 	Vec3 v1(a), v2(b);
 	TilePos tp1(v1), tp2(v2);
+
+	TileID   tile = getTile(tp1);
+	TileData data = getData(tp1);
+	Tile*    pTile = Tile::tiles[tile];
+
+	if (pTile)
+	{
+		/*bool canClip = true;
+		if (checkShape)
+		{
+			if (pTile->getAABB(*this, tp1) != nullptr)
+				canClip = false;
+		}
+
+		if (canClip)*/
+		{
+			bool mayPick = (includeInvisible && tile == Tile::invisible_bedrock->m_ID) || pTile->mayPick(data, includeLiquid);
+			if (mayPick)
+			{
+				HitResult hr = pTile->clip(*this, tp1, v1, v2);
+				if (hr.isHit())
+					return hr;
+			}
+		}
+	}
+
 	int counter = 200;
 	while (counter-- >= 0)
 	{
@@ -1924,35 +1950,27 @@ HitResult Level::clip(const Vec3& a, const Vec3& b, bool includeLiquid, bool inc
 		Vec3 hitVec(v1);
 
 		// Correct the hit positions for each vector
-		hitVec.x = (float)Mth::floor(v1.x);
-		tp1.x = (int)hitVec.x;
-		if (hitSide == Facing::EAST)
+		hitVec.x = Mth::floor(v1.x);
+		hitVec.y = Mth::floor(v1.y);
+		hitVec.z = Mth::floor(v1.z);
+		tp1 = hitVec;
+
+		switch (hitSide)
 		{
-			tp1.x--;
-			hitVec.x += 1.0;
+		case Facing::EAST:
+			tp1.x--; hitVec.x++;
+			break;
+		case Facing::UP:
+			tp1.y--; hitVec.y++;
+			break;
+		case Facing::SOUTH:
+			tp1.z--; hitVec.z++;
+			break;
 		}
 
-
-		hitVec.y = (float)Mth::floor(v1.y);
-		tp1.y = (int)hitVec.y;
-		if (hitSide == Facing::UP)
-		{
-			tp1.y--;
-			hitVec.y += 1.0;
-		}
-
-
-		hitVec.z = (float)Mth::floor(v1.z);
-		tp1.z = (int)hitVec.z;
-		if (hitSide == Facing::SOUTH)
-		{
-			tp1.z--;
-			hitVec.z += 1.0;
-		}
-
-		TileID tile = getTile(tp1);
-		int    data = getData(tp1);
-		Tile* pTile = Tile::tiles[tile];
+		tile = getTile(tp1);
+		data = getData(tp1);
+		pTile = Tile::tiles[tile];
 
 		if (tile > 0 && ((includeInvisible && tile == Tile::invisible_bedrock->m_ID) || pTile->mayPick(data, includeLiquid)))
 		{
