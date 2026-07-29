@@ -388,7 +388,7 @@ void ContainerMenu::setItem(Container::SlotID slotId, const ItemStack& item)
 
 bool ContainerMenu::trySetItem(Container::SlotID slotId, const ItemStack& item)
 {
-    if (slotId < 0 || slotId >= m_slots.size())
+    if (slotId < 0 || slotId >= (int)m_slots.size())
         return false;
 
     setItem(slotId, item);
