@@ -33,7 +33,7 @@ export PATH="$PWD/toolchain-$arch/bin:$PATH"
 
 # Increase this if we ever make a change to the toolchain, for example
 # using a newer GCC version, and we need to invalidate the cache.
-toolchainver=3
+toolchainver=4
 if [ "$(cat "toolchain-$arch/toolchainver" 2>/dev/null)" != "$toolchainver" ]; then
     # adapted from https://github.com/DiscordMessenger/dm/blob/master/doc/pentium-toolchain/README.md
 
@@ -42,7 +42,7 @@ if [ "$(cat "toolchain-$arch/toolchainver" 2>/dev/null)" != "$toolchainver" ]; t
             winnt=0x0400 # Windows NT 4.0
         ;;
         (x86_64)
-            winnt=0x0501 # Windows XP
+            winnt=0x0502 # Windows XP x64 edition / Server 2003
         ;;
         (arm64|aarch64)
             printf 'aarch64 builds are currently unsupported.\n'
@@ -58,26 +58,15 @@ if [ "$(cat "toolchain-$arch/toolchainver" 2>/dev/null)" != "$toolchainver" ]; t
     rm -rf "toolchain-$arch"
     printf '\nBuilding %s toolchain...\n\n' "$arch"
 
-    binutils_version='2.46.0'
+    binutils_version='2.47'
     rm -rf binutils-*
     wget -O- "https://ftp.gnu.org/gnu/binutils/binutils-$binutils_version.tar.xz" | tar -xJ
-
-    # The '-Wno-discarded-qualifiers' flag is unsupported on clang but required on gcc 15 to build binutils.
-    # This will probably be fixed when binutils is updated.
-    if command -v gcc >/dev/null; then
-        cc=gcc
-    else
-        cc=cc
-    fi
-    printf 'int nothing;\n' | "$cc" -xc - -c -o /dev/null -Wno-discarded-qualifiers &&
-        warn='-Wno-discarded-qualifiers'
 
     cd "binutils-$binutils_version"
     ./configure \
         --prefix="$workdir/toolchain-$arch" \
         --target="$target" \
-        --disable-multilib \
-        CFLAGS="-O2 $warn"
+        --disable-multilib
     make -j"$ncpus"
     make -j"$ncpus" install-strip
     cd ..
@@ -96,7 +85,7 @@ if [ "$(cat "toolchain-$arch/toolchainver" 2>/dev/null)" != "$toolchainver" ]; t
     make -j"$ncpus" install
     cd ../..
 
-    gcc_version='16.1.0'
+    gcc_version='16.2.0'
     rm -rf gcc-*
     wget -O- "https://ftp.gnu.org/gnu/gcc/gcc-$gcc_version/gcc-$gcc_version.tar.xz" | tar -xJ
 
