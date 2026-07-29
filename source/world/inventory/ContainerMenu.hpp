@@ -41,7 +41,8 @@ public:
     virtual ItemStack quickMoveStack(Container::SlotID slotId);
     virtual void moveItemStackTo(ItemStack& item, Container::SlotID slotFrom, Container::SlotID slotTo, bool take);
 
-    void setItem(Container::SlotID slotId, ItemStack item);
+    void setItem(Container::SlotID slotId, const ItemStack& item);
+    bool trySetItem(Container::SlotID slotId, const ItemStack& item);
     void setAll(const std::vector<ItemStack>& items);
     virtual void setData(int id, int value);
 

@@ -377,13 +377,23 @@ ItemStack ContainerMenu::clicked(Container::SlotID slotId, MouseButtonType mouse
     return result;
 }
 
-void ContainerMenu::setItem(Container::SlotID slotId, ItemStack item)
+void ContainerMenu::setItem(Container::SlotID slotId, const ItemStack& item)
 {
     m_slots[slotId]->set(item);
     if (!m_bBroadcastChanges && slotId >= 0 && slotId < (int)m_lastSlots.size())
     {
         m_lastSlots[slotId] = ItemStack(m_slots[slotId]->getItem());
     }
+}
+
+bool ContainerMenu::trySetItem(Container::SlotID slotId, const ItemStack& item)
+{
+    if (slotId < 0 || slotId >= m_slots.size())
+        return false;
+
+    setItem(slotId, item);
+
+    return true;
 }
 
 void ContainerMenu::setAll(const std::vector<ItemStack>& items)
