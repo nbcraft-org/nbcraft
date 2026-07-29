@@ -164,6 +164,7 @@ std::string getPlayerFilename(const std::string& basePath, const std::string& pl
 	std::string fileName = playerName;
 	std::transform<std::string::iterator, std::string::iterator, int(int)>
     (fileName.begin(), fileName.end(), fileName.begin(), std::tolower);
+	fileName = Util::urlEncode(fileName);
 	return basePath + "/players/" + fileName + ".dat";
 }
 

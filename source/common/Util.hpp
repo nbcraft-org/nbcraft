@@ -27,6 +27,8 @@ public:
 	static std::string vformat(const char* fmt, va_list argPtr);
 	static std::string format(const char* fmt, ...);
 
+	static std::string urlEncode(const std::string& str);
+
 	static bool isValidPath(const std::string& path);
 	// Returns the name of a file, without its extension
 	static std::string getFileName(const std::string& path);
