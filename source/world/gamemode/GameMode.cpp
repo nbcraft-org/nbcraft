@@ -14,7 +14,7 @@
 GameMode::GameMode(Minecraft* pMinecraft, Level& level) :
 	_level(level),
 	m_pMinecraft(pMinecraft),
-	m_bInstaBuild(0)
+	m_bInstaBuild(false)
 {
 }
 
@@ -83,6 +83,7 @@ void GameMode::render(float f)
 
 float GameMode::getBlockReachDistance() const
 {
+	// @PARITY
 	/* Logic from Pocket Edition 0.12.1
 	if ( *inputMode == 1 )
 		return 5.7f;

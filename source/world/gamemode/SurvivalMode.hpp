@@ -15,6 +15,10 @@ class SurvivalMode : public GameMode
 public:
 	SurvivalMode(Minecraft*, Level&);
 
+private:
+	void _resetDestruction();
+
+public:
 	bool startDestroyBlock(Player& player, const TilePos& pos, Facing::Name face) override;
 	bool destroyBlock(Player& player, const TilePos& pos, Facing::Name face) override;
 	bool continueDestroyBlock(Player& player, const TilePos& pos, Facing::Name face) override;
@@ -28,7 +32,7 @@ public:
 	bool isSurvivalType() const override { return true; }
 	void initPlayer(Player&) override;
 	bool canHurtPlayer() override;
-	float getDestroyModifier() const override { return 1.0; }
+	float getDestroyModifier() const override { return 1.0f; }
 
 public:
 	TilePos m_destroyingPos;

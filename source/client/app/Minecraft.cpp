@@ -1054,13 +1054,6 @@ void Minecraft::update()
 
 	renderContext.beginRender();
 
-	if (!m_bPreparingLevel)
-	{
-		GameMode* pGameMode = getLocalPlayerGameMode();
-		if (pGameMode)
-			pGameMode->render(m_timer.m_renderTicks);
-	}
-
 	m_pGameRenderer->render(m_timer);
 
 	renderContext.endRender();

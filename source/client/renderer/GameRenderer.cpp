@@ -540,8 +540,13 @@ void GameRenderer::renderLevel(float f)
 		}
 	}
 
-	if (!m_pMinecraft->m_bIsGamePaused)
+	if (!m_pMinecraft->isGamePaused())
 		pick(f);
+
+	// render the GameMode stuff (tile destruction) after the new Tile has been picked
+	GameMode* pGameMode = m_pMinecraft->getLocalPlayerGameMode();
+	if (pGameMode)
+		pGameMode->render(f);
 
 	const Entity& camera = *pCamera;
 	Vec3 camPos = camera.m_posPrev + (camera.m_pos - camera.m_posPrev) * f;
@@ -589,23 +594,9 @@ void GameRenderer::renderLevel(float f)
 
 void GameRenderer::renderFramedItems(const Vec3& camPos, LevelRenderer& levelRenderer, const Entity& camera, float f, ParticleEngine& particleEngine, float i)
 {
-	/*
-	if (m_pMinecraft->getOptions()->m_viewDistance <= 1)
-	{
-#ifndef ORIGINAL_CODE
-			// @NOTE: For whatever reason, Minecraft doesn't enable GL_FOG right away.
-			// It appears to work in bluestacks for whatever reason though...
-			Fog::enable();
-#endif
-			setupFog(-1);
-			pLR->renderSky(f);
-		}
-		*/
-
-	mce::RenderContext& renderContext = mce::RenderContextImmediate::get();
-
 	if (m_pMinecraft->getOptions()->m_ambientOcclusion.get())
 	{
+		mce::RenderContext& renderContext = mce::RenderContextImmediate::get();
 		renderContext.setShadeMode(mce::SHADE_MODE_SMOOTH);
 	}
 
@@ -620,14 +611,16 @@ void GameRenderer::renderFramedItems(const Vec3& camPos, LevelRenderer& levelRen
 
 	if (m_zoom == 1.0f)
 	{
-		if (camera.isPlayer() && m_pMinecraft->m_hitResult.m_hitType != HitResult::NONE)
+		const HitResult& hr = m_pMinecraft->m_hitResult;
+
+		if (camera.isPlayer() && hr.isHit())
 		{
-			levelRenderer.renderCracks(camera, m_pMinecraft->m_hitResult, 0, nullptr, f);
+			levelRenderer.renderCracks(camera, hr, 0, nullptr, f);
 
 			if (m_pMinecraft->getOptions()->m_blockOutlines.get())
-				levelRenderer.renderHitOutline(camera, m_pMinecraft->m_hitResult, 0, nullptr, f);
+				levelRenderer.renderHitOutline(camera, hr, 0, nullptr, f);
 			else
-				levelRenderer.renderHitSelect(camera, m_pMinecraft->m_hitResult, 0, nullptr, f);
+				levelRenderer.renderHitSelect(camera, hr, 0, nullptr, f);
 		}
 
 		_renderItemInHand(f, i);
@@ -731,15 +724,17 @@ void GameRenderer::render(const Timer& timer)
 		if (m_keepPic < 0)
 		{
 			renderLevel(timer.m_renderTicks);
+
 			currentShaderColor = Color::WHITE;
 			currentShaderDarkColor = Color::WHITE;
+
 			if (m_pMinecraft->getOptions()->m_hideGui.get())
 			{
 				if (!m_pMinecraft->m_pScreen)
 					return;
 			}
 
-			m_pMinecraft->m_pGui->render(timer.m_renderTicks, m_pMinecraft->m_pScreen != nullptr, mouseX, mouseY);
+			m_pMinecraft->m_pGui->render(timer.m_renderTicks, m_pMinecraft->m_pScreen != nullptr);
 		}
 	}
 	else
@@ -1064,19 +1059,16 @@ void GameRenderer::pick(float f)
 	else
 	{
 		// easy case: pick from the middle of the screen
-		HitResult hrMob = mob.pick(dist, f);
-		mchr = hrMob;
+		mchr = mob.pick(dist, f);
 	}
 
 	Vec3 mobPos = mob.getInterpolatedPosition(f);
 
-	if (mchr.m_hitType != HitResult::NONE)
+	if (mchr.isHit())
 		dist = mchr.m_hitPos.distanceTo(mobPos);
 
 	float maxEntityDist = m_pMinecraft->getLocalPlayerGameMode()->getEntityReachDistance();
-	/*if (m_pMinecraft->m_pGameMode->isCreativeType())
-		dist = 7.0f;
-	else */if (dist > maxEntityDist)
+	if (dist > maxEntityDist)
 		dist = maxEntityDist;
 
 	Vec3 view = mob.getViewVector(f);

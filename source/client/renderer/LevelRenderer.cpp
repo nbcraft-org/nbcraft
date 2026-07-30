@@ -1289,19 +1289,15 @@ void LevelRenderer::renderCracks(const Entity& camera, const HitResult& hr, int 
 
 			MatrixStack::Ref matrix = MatrixStack::World.push();
 
-			Tile* pTile = nullptr;
-			TileID tile = tileSource.getTile(hr.m_tilePos);
-			if (tile > 0)
-				pTile = Tile::tiles[tile];
+			TileID tileId = tileSource.getTile(hr.m_tilePos);
+			Tile* pTile = tileId > 0 ? Tile::tiles[tileId] : nullptr;
 
-			float px = camera.m_posPrev.x + (camera.m_pos.x - camera.m_posPrev.x) * a;
-			float py = camera.m_posPrev.y + (camera.m_pos.y - camera.m_posPrev.y) * a;
-			float pz = camera.m_posPrev.z + (camera.m_pos.z - camera.m_posPrev.z) * a;
+			Vec3 p = camera.m_posPrev + (camera.m_pos - camera.m_posPrev) * a;
 
 			Tesselator& t = Tesselator::instance;
 
 			t.begin(12);
-			t.setOffset(-px, -py, -pz);
+			t.setOffset(-p);
 			t.noColor();
 			if (!pTile)
 				pTile = Tile::rock;
