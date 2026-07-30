@@ -2100,17 +2100,9 @@ bool TileRenderer::tesselateDustInWorld(Tile* tile, const TilePos& pos)
 		texture = m_fixedTexture;
 	}
 
-	float bright = tile->getBrightness(*m_pTileSource, pos); // var8
-	float power = float(data) / 15.0f; // var9
-	float rt = power * 0.6f + 0.4f; // var10
-	if (data == 0)
-		rt = 0.3f;
-	float gt = power * power * 0.7f - 0.5f; // var11
-	float bt = power * power * 0.6f - 0.7f; // var12
-	if (gt < 0.0f) gt = 0.0f;
-	if (bt < 0.0f) bt = 0.0f;
+	Color color = tile->getColor(*m_pTileSource, pos); // var8
+	t.color(color);
 
-	t.color(bright * rt, bright * gt, bright * bt);
 	int xt = (texture & 15) << 4;
 	int yt = texture & 240;
 	float u0 = (float(xt) / 256.0f);
@@ -2328,10 +2320,11 @@ bool TileRenderer::tesselateInWorld(Tile* tile, const TilePos& pos, int a)
 
 Color getTileFaceColor(const FullTile& tile, Facing::Name face, float shading = 1.0f, bool preshade = false)
 {
-	Color color(tile.getType()->getColor(face, tile.data), 1.0f);
+	Color color = tile.getType()->getColor(face, tile.data);
 	if (preshade) color.mulRGB(shading);
 	return color;
 }
+
 void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& material, float bright, bool preshade)
 {
 	renderTile(tile, material, Color(bright, bright, bright), preshade);
@@ -2747,14 +2740,7 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 
 Color TileRenderer::_getTileColor(const TilePos& pos, Tile* tile)
 {
-	uint32_t tileColor = tile->getColor(*m_pTileSource, pos);
-
-	Color color(
-		GET_RED(tileColor) / 255.0f,
-		GET_GREEN(tileColor) / 255.0f,
-		GET_BLUE(tileColor) / 255.0f,
-		1.0f // NOTE: not supported
-	);
+	Color color = tile->getColor(*m_pTileSource, pos);
 
 	if (tile->isSeasonTinted())
 		color.b = 1.0f;

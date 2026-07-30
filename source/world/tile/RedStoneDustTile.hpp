@@ -18,6 +18,7 @@ public:
 	void onRemove(TileSource& source, const TilePos& pos) override;
 	void neighborChanged(TileSource& source, const TilePos& pos, TileID tile) override;
 	int getResource(TileData data, Random* random) const override;
+	Color getColor(TileSource&, const TilePos& pos) const override;
 	int getDirectSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const override;
 	int getSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const override;
 	bool isSignalSource() const override;

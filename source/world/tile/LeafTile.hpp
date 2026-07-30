@@ -24,8 +24,8 @@ private:
 	void _tickDecay(TileSource& source, const TilePos& pos); /// circa b1.7.3
 
 public:
-	int getColor(TileSource&, const TilePos& pos) const override;
-	int getColor(Facing::Name face, TileData data) const override;
+	Color getColor(TileSource&, const TilePos& pos) const override;
+	Color getColor(Facing::Name face, TileData data) const override;
 	int getTexture(Facing::Name face, TileData data) const override;
 	bool isSolidRender() const override;
 	void onRemove(TileSource&, const TilePos& pos) override;

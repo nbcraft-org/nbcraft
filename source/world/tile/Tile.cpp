@@ -976,14 +976,14 @@ float Tile::getBrightness(TileSource& source, const TilePos& pos) const
 	return source.getBrightness(pos);
 }
 
-int Tile::getColor(TileSource& source, const TilePos& pos) const
+Color Tile::getColor(TileSource& source, const TilePos& pos) const
 {
-	return 0xFFFFFF; // White
+	return Color::WHITE;
 }
 
-int Tile::getColor(Facing::Name face, TileData) const
+Color Tile::getColor(Facing::Name face, TileData) const
 {
-	return 0xFFFFFF;
+	return Color::WHITE;
 }
 
 AABB* Tile::getAABB(const TileSource& source, const TilePos& pos)

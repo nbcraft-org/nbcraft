@@ -35,7 +35,7 @@ public:
 
 	void updateLiquid(TileSource&, const TilePos& pos);
 	void fizz(TileSource&, const TilePos& pos);
-	int getColor(TileSource&, const TilePos& pos) const override;
+	Color getColor(TileSource&, const TilePos& pos) const override;
 	int getDepth(TileSource&, const TilePos& pos);
 	int getRenderedDepth(TileSource&, const TilePos& pos) const;
 	Vec3 getFlow(TileSource&, const TilePos& pos) const;

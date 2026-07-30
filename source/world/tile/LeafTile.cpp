@@ -190,7 +190,7 @@ void LeafTile::_tickDecay(TileSource& source, const TilePos& pos)
 		source.setTileAndDataNoUpdate(pos, FullTile(this, data & ~C_UPDATE_LEAF_BIT));
 }
 
-int LeafTile::getColor(TileSource& source, const TilePos& pos) const
+Color LeafTile::getColor(TileSource& source, const TilePos& pos) const
 {
 	if (FoliageColor::isAvailable() && m_bBiomeColors)
 	{
@@ -216,10 +216,10 @@ int LeafTile::getColor(TileSource& source, const TilePos& pos) const
 		return 0x339933;
 	}
 
-	return 0xffffff;
+	return Color::WHITE;
 }
 
-int LeafTile::getColor(Facing::Name face, TileData data) const
+Color LeafTile::getColor(Facing::Name face, TileData data) const
 {
 	if ((data & 1) == C_EVERGREEN_LEAF)
 	{

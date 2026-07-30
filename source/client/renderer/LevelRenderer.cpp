@@ -1465,9 +1465,9 @@ void LevelRenderer::addParticle(const std::string& name, const Vec3& pos, const 
 	{
 		ExplodeParticle* pExplPart = new ExplodeParticle(tileSource, pos, dir);
 		pExplPart->m_bIsUnlit = true;
-		pExplPart->m_rCol = Mth::random();
-		pExplPart->m_gCol = Mth::random();
-		pExplPart->m_bCol = Mth::random();
+		pExplPart->m_color.r = Mth::random();
+		pExplPart->m_color.g = Mth::random();
+		pExplPart->m_color.b = Mth::random();
 		pExplPart->scale(3.0f);
 		pe.add(pExplPart);
 		return;

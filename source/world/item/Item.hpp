@@ -14,6 +14,7 @@
 // needed for TileData and Tile IDs
 #include "common/Utils.hpp"
 #include "common/Random.hpp"
+#include "common/math/Color.hpp"
 
 #include "world/level/Material.hpp"
 #include "world/level/TilePos.hpp"
@@ -85,7 +86,7 @@ public: // Methods
 	virtual void onCraftedBy(ItemStack*, Player*, Level*);
 	virtual void inventoryTick(ItemStack*, Level*, Entity*, int, bool);
 	virtual bool isDamageable() const;
-	virtual int getColor(int data) const;
+	virtual Color getColor(int data) const;
 	virtual int buildIdAux(int16_t auxValue, const CompoundTag* userData = nullptr) const;
 
 	// Armor/defense methods

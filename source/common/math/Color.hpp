@@ -16,7 +16,7 @@ public:
     float a;
 
 private:
-    void _init(float r, float g, float b, float a)
+    void _init(float r, float g, float b, float a = 1.0f)
     {
         this->r = r;
         this->g = g;
@@ -24,7 +24,7 @@ private:
         this->a = a;
     }
 
-    void _init(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+    void _init(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255)
     {
         this->r = float(r) / 255.0f;
         this->g = float(g) / 255.0f;
@@ -34,7 +34,7 @@ private:
 
     void _init(uint8_t r, uint8_t g, uint8_t b, float a)
     {
-        _init(r, g, b, (uint8_t)255);
+        _init(r, g, b);
         this->a = a;
     }
 
@@ -117,6 +117,15 @@ public:
     Color operator/(const Color& c) const
     {
         return Color(r / c.r, g / c.g, b / c.b, a / c.a);
+    }
+
+    Color& operator=(float rgb)
+    {
+        r = rgb;
+        g = rgb;
+        b = rgb;
+        
+        return *this;
     }
 
     Color& operator+=(const Color& c)

@@ -15,7 +15,7 @@ SmokeParticle::SmokeParticle(TileSource& source, const Vec3& pos, const Vec3& di
 
 	m_vel = dir + m_vel * 0.1f;
 
-	m_bCol = m_gCol = m_rCol = Mth::random() * 0.5f;
+	m_color = Mth::random() * 0.5f;
 
 	m_oSize = m_size = m_size * 0.75f * a9;
 

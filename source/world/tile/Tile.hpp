@@ -106,8 +106,8 @@ public: // virtual functions
 	virtual void prepareRender(TileSource&, const TilePos& pos);
 	virtual void attack(const TilePos& pos, Player&);
 	virtual void handleEntityInside(TileSource&, const TilePos& pos, const Entity*, Vec3&);
-	virtual int getColor(TileSource&, const TilePos& pos) const;
-	virtual int getColor(Facing::Name face, TileData) const;
+	virtual Color getColor(TileSource&, const TilePos& pos) const;
+	virtual Color getColor(Facing::Name face, TileData) const;
 	virtual bool isSignalSource() const;
 	virtual int getSignal(const TileSource&, const TilePos& pos) const;
 	virtual int getSignal(const TileSource&, const TilePos& pos, Facing::Name face) const;

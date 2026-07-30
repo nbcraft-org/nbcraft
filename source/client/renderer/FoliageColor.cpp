@@ -11,10 +11,10 @@ void FoliageColor::init()
 	FoliageColor::texture = Resource::loadTexture("misc/foliagecolor.png");
 }
 
-uint32_t FoliageColor::get(double x, double y)
+uint32_t FoliageColor::get(float x, float y)
 {
 	y *= x;
-	uint32_t c = FoliageColor::texture.getData()[(int)((1.0 - y) * 255.0) << 8 | (int)((1.0 - x) * 255.0)];
+	uint32_t c = FoliageColor::texture.getData()[(int)((1.0f - y) * 255.0f) << 8 | (int)((1.0f - x) * 255.0f)];
 	
 	// @TODO: same as in GrassColor::get, should be abstracted
 #if MC_ENDIANNESS_BIG
@@ -27,15 +27,15 @@ uint32_t FoliageColor::get(double x, double y)
 
 uint32_t FoliageColor::getEvergreenColor()
 {
-	return 0x619961;
+	return 0xFF619961;
 }
 
 uint32_t FoliageColor::getBirchColor()
 {
-	return 0x55A780;
+	return 0xFF55A780;
 }
 
 uint32_t FoliageColor::getDefaultColor()
 {
-	return 0x18B548;
+	return 0xFF18B548;
 }

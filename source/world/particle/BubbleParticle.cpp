@@ -13,7 +13,6 @@
 BubbleParticle::BubbleParticle(TileSource& source, const Vec3& pos, const Vec3& dir) :
 	Particle(source, pos, dir)
 {
-	m_rCol = m_gCol = m_bCol = 1.0f;
 	m_tex = PTI_BUBBLE;
 	setSize(0.02f, 0.02f);
 

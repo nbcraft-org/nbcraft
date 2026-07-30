@@ -358,6 +358,24 @@ int RedStoneDustTile::getResource(TileData data, Random* random) const
 	return Item::redStone->m_itemID;
 }
 
+Color RedStoneDustTile::getColor(TileSource& source, const TilePos& pos) const
+{
+	// Copy-pasted logic from TileRenderer::tesselateDustInWorld()
+	TileData data = source.getData(pos);
+	float bright = getBrightness(source, pos); // var8
+
+	float power = float(data) / 15.0f; // var9
+	float rt = power * 0.6f + 0.4f; // var10
+	if (data == 0)
+		rt = 0.3f;
+	float gt = power * power * 0.7f - 0.5f; // var11
+	float bt = power * power * 0.6f - 0.7f; // var12
+	if (gt < 0.0f) gt = 0.0f;
+	if (bt < 0.0f) bt = 0.0f;
+
+	return Color(rt, gt, bt) * bright;
+}
+
 int RedStoneDustTile::getDirectSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const
 {
 	return !m_bShouldSignal ? 0 : getSignal(source, pos, face);

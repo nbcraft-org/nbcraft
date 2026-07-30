@@ -53,9 +53,7 @@ public:
 	int m_lifetime;
 	float m_size;
 	float m_gravity;
-	float m_rCol;
-	float m_gCol;
-	float m_bCol;
+	Color m_color;
 	bool m_bIsUnlit;
 
 	static float xOff, yOff, zOff;

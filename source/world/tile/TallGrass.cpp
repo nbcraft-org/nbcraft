@@ -22,7 +22,7 @@ int TallGrass::getResource(TileData data, Random* random) const
 	return random->nextInt(8) == 0 ? Item::seeds->m_itemID : 0;
 }
 
-int TallGrass::getColor(TileSource& source, const TilePos& pos) const
+Color TallGrass::getColor(TileSource& source, const TilePos& pos) const
 {
 	if (GrassColor::isAvailable() && m_bBiomeColors)
 	{
@@ -36,12 +36,12 @@ int TallGrass::getColor(TileSource& source, const TilePos& pos) const
 		return 0x339933;
 	}
 
-	return 0xFFFFFF;
+	return Color::WHITE;
 }
 
-int TallGrass::getColor(Facing::Name face, TileData data) const
+Color TallGrass::getColor(Facing::Name face, TileData data) const
 {
-	return data == 0 ? 0xFFFFFF : FoliageColor::getDefaultColor();
+	return data == 0 ? Color::WHITE : FoliageColor::getDefaultColor();
 }
 
 int TallGrass::getTexture(Facing::Name face, TileData data) const

@@ -5,7 +5,6 @@ ItemParticle::ItemParticle(TileSource& tileSource, const Vec3& pos, const Item* 
 {
 	m_tex = item->getIcon(0);
     m_gravity = Tile::snow->m_gravity;
-	m_rCol = m_gCol = m_bCol = 1.0f;
 	m_size /= 2.0f;
 }
 
@@ -26,7 +25,7 @@ void ItemParticle::render(Tesselator& t, float f, float a, float b, float c, flo
     float PosY = Mth::Lerp(m_oPos.y, m_pos.y, f) - yOff;
     float PosZ = Mth::Lerp(m_oPos.z, m_pos.z, f) - zOff;
     float fBright = getBrightness(f);
-    t.color(fBright * m_rCol, fBright * m_gCol, fBright * m_bCol);
+    t.color(m_color * fBright);
     t.vertexUV(PosX - a * ja - d * ja, PosY - b * ja, PosZ - c * ja - e * ja, fa, ia);
     t.vertexUV(PosX - a * ja + d * ja, PosY + b * ja, PosZ - c * ja + e * ja, fa, ha);
     t.vertexUV(PosX + a * ja + d * ja, PosY + b * ja, PosZ + c * ja + e * ja, ga, ha);

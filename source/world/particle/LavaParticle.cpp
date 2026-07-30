@@ -16,7 +16,6 @@ LavaParticle::LavaParticle(TileSource& source, const Vec3& pos)
 
 	m_vel *= 0.8f;
 	m_vel.y = sharedRandom.nextFloat() * 0.4f + 0.05f;
-	m_rCol = m_gCol = m_bCol = 1.0f;
 	m_oSize = m_size = m_size * (0.2f + 2 * sharedRandom.nextFloat());
 	m_tex = PTI_LAVA;
 	m_lifetime = int(16.0f / (0.2f + 0.8f * Mth::random()));

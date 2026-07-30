@@ -16,9 +16,9 @@ RedDustParticle::RedDustParticle(TileSource& source, const Vec3& pos, const Vec3
 	m_vel = dir + m_vel * 0.1f;
 
 	float f = Mth::random() * 0.4f + 0.6f;
-	m_rCol  = f * (dir.x != 0.0f ? dir.x : 1.0f) * (Mth::random() * 0.2f + 0.8f);
-	m_gCol  = f * dir.y						   * (Mth::random() * 0.2f + 0.8f);
-	m_bCol = f * dir.z						   * (Mth::random() * 0.2f + 0.8f);
+	m_color.r = f * (dir.x != 0.0f ? dir.x : 1.0f) * (Mth::random() * 0.2f + 0.8f);
+	m_color.g = f * dir.y						   * (Mth::random() * 0.2f + 0.8f);
+	m_color.b = f * dir.z						   * (Mth::random() * 0.2f + 0.8f);
 
 	m_oSize = m_size = m_size * 0.75f;
 

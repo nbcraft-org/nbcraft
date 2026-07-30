@@ -14,7 +14,7 @@ void TerrainParticle::_init(Tile* tile)
 	m_pTile = tile;
 	m_tex = tile->m_TextureFrame;
 	m_gravity = tile->m_gravity;
-	m_rCol = m_gCol = m_bCol = 0.6f;
+	m_color = Color(0.6f, 0.6f, 0.6f);
 	m_size *= 0.5f;
 }
 
@@ -43,10 +43,7 @@ TerrainParticle* TerrainParticle::init(const TilePos& tilePos, Facing::Name face
 	if (m_pTile == Tile::grass && face != Facing::UP)
 		return this;
 
-	int color = m_pTile->getColor(tileSource, tilePos);
-	m_rCol *= float(GET_RED(color)) / 255.0f;
-	m_gCol *= float(GET_GREEN(color)) / 255.0f;
-	m_bCol *= float(GET_BLUE(color)) / 255.0f;
+	m_color = m_pTile->getColor(tileSource, tilePos);
 
 	return this;
 }
@@ -79,7 +76,7 @@ void TerrainParticle::render(Tesselator& t, float f, float a4, float a5, float a
 	float siz2X = a7 * m_size * 0.1f;
 	float siz2Z = a8 * m_size * 0.1f;
 
-	t.color(m_rCol * fBright, m_gCol * fBright, m_bCol * fBright);
+	t.color(m_color * fBright);
 	t.vertexUV(posX - sizeX - siz2X, posY - sizeY, posZ - sizeZ - siz2Z, texU_1 + C_MAGIC_1, texV_1 + C_MAGIC_1);
 	t.vertexUV(posX - sizeX + siz2X, posY + sizeY, posZ - sizeZ + siz2Z, texU_1 + C_MAGIC_1, texV_1);
 	t.vertexUV(posX + sizeX + siz2X, posY + sizeY, posZ + sizeZ + siz2Z, texU_1, texV_1);

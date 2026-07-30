@@ -214,7 +214,7 @@ void ItemInHandRenderer::renderItem(const Entity& entity, const ItemStack& item,
         matrix->rotate(-90.0f, Vec3::UNIT_Y);
         matrix->translate(Vec3(0.0f, 0.0f, -16.0f));*/
         
-        Color color = Color(item.getItem()->getColor(item.getAuxValue()), 1.0f);
+        Color color = item.getItem()->getColor(item.getAuxValue());
 
         t.begin(264);
         SHADE_IF_NEEDED(1.0f);
