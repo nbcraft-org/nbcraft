@@ -360,7 +360,6 @@ int RedStoneDustTile::getResource(TileData data, Random* random) const
 
 Color RedStoneDustTile::getColor(TileSource& source, const TilePos& pos) const
 {
-	// Copy-pasted logic from TileRenderer::tesselateDustInWorld()
 	TileData data = source.getData(pos);
 	float bright = getBrightness(source, pos); // var8
 
