@@ -43,7 +43,7 @@ TerrainParticle* TerrainParticle::init(const TilePos& tilePos, Facing::Name face
 	if (m_pTile == Tile::grass && face != Facing::UP)
 		return this;
 
-	m_color = m_pTile->getColor(tileSource, tilePos);
+	m_color *= m_pTile->getColor(tileSource, tilePos);
 
 	return this;
 }
