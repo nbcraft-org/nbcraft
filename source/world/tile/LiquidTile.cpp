@@ -60,7 +60,7 @@ float LiquidTile::getBrightness(TileSource& source, const TilePos& pos) const
 
 Color LiquidTile::getColor(TileSource& source, const TilePos& pos) const
 {
-	return 0x999999FF;
+	return 0xFF999999;
 }
 
 int LiquidTile::getDepth(TileSource& source, const TilePos& pos)
