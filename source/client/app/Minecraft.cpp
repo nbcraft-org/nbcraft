@@ -610,6 +610,14 @@ void Minecraft::tickInput()
 		if (getTimeMs() - field_2B4 > 200)
 			continue;
 
+		MouseButtonType buttonType = Mouse::getEventButton();
+		bool bPressed = Mouse::getEventButtonState() == true;
+
+#ifdef ENH_ALLOW_SCROLL_WHEEL
+		if (buttonType == MOUSE_BUTTON_SCROLLWHEEL)
+			m_pGui->handleScrollWheel(bPressed);
+#endif
+
 		if (Mouse::isButtonDown(MOUSE_BUTTON_LEFT))
 		{
 			// @HACK: on SDL1, we don't recenter the mouse every tick, meaning the user can
@@ -621,14 +629,6 @@ void Minecraft::tickInput()
 				continue;
 			}
 		}
-
-		MouseButtonType buttonType = Mouse::getEventButton();
-		bool bPressed = Mouse::getEventButtonState() == true;
-
-#ifdef ENH_ALLOW_SCROLL_WHEEL
-		if (buttonType == MOUSE_BUTTON_SCROLLWHEEL)
-			m_pGui->handleScrollWheel(bPressed);
-#endif
 	}
 
 	if (useController())
