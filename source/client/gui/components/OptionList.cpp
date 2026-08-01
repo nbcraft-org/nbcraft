@@ -220,6 +220,8 @@ void OptionList::initControlsMenu()
 	OPTIONS_LIST_CONTROLS_EXPERIMENTAL;
 
 	RESET_BTN(OC_CONTROLS);
+
+	(void)currentIndex; // compiler will warn about an unused variable sometimes if this isn't here
 }
 
 void OptionList::initVideoMenu()
