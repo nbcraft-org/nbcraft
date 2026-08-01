@@ -1,7 +1,6 @@
 #include "MultiplayerLocalPlayer.hpp"
 #include "client/app/Minecraft.hpp"
 #include "network/RakNetInstance.hpp"
-#include "world/inventory/Slot.hpp"
 #include "world/level/Level.hpp"
 
 MultiplayerLocalPlayer::MultiplayerLocalPlayer(Minecraft* pMinecraft, Level& level, User* pUser, GameType gameType, DimensionId dimensionId)
