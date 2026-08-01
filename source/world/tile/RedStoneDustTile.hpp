@@ -19,6 +19,7 @@ public:
 	void neighborChanged(TileSource& source, const TilePos& pos, TileID tile) override;
 	int getResource(TileData data, Random* random) const override;
 	Color getColor(TileSource&, const TilePos& pos) const override;
+	Color getColor(Facing::Name face, TileData) const override;
 	int getDirectSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const override;
 	int getSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const override;
 	bool isSignalSource() const override;

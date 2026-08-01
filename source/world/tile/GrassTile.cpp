@@ -46,7 +46,7 @@ Color GrassTile::getColor(Facing::Name face, TileData) const
 {
 	if (GetPatchManager()->IsGrassTinted() && face == Facing::UP)
 	{
-		return GrassColor::get(1.0f, 0.5f);
+		return GrassColor::get(1.0f, 0.5f); // @PARITY-JAVA: should be 0xFF7CBD6B on b1.8, before that, nothing
 	}
 
 	return Color::WHITE;

@@ -7,7 +7,7 @@
 std::vector<ItemStack> CreativeMenu::creativeItems;
 bool CreativeMenu::initialized = false;
 
-#if !defined(_DEBUG)
+#ifndef _DEBUG
 const TileID creativeTiles[] =
 {
     TILE_STONEBRICK,
@@ -85,19 +85,39 @@ const TileID creativeTiles[] =
 };
 #endif
 
-void _addCreativeTile(std::vector<ItemStack>& items, TileID tileId, Tile* tile)
+static void _addCreativeTile(std::vector<ItemStack>& items, TileID tileId, Tile* tile)
 {
+    int minAux = 0;
     int maxAux = 0;
     switch (tileId)
     {
-        case TILE_CLOTH:          maxAux = 15; break;
-        case TILE_STONESLAB_HALF: maxAux = 3;  break;
-        case TILE_TREE_TRUNK:     maxAux = 2;  break;
-        case TILE_LEAVES:         maxAux = 2;  break;
-        case TILE_SAPLING:        maxAux = 2;  break;
+        case TILE_CLOTH:                      maxAux = 15; break;
+        case TILE_STONESLAB_HALF:             maxAux = 3;  break;
+        case TILE_TREE_TRUNK:                 maxAux = 2;  break;
+        case TILE_LEAVES:                     maxAux = 2;  break;
+        case TILE_SAPLING:                    maxAux = 2;  break;
+#ifdef _DEBUG
+        case TILE_TALL_GRASS:                 maxAux = 3;  break;
+#else
+        case TILE_TALL_GRASS:     minAux = 1; maxAux = 1;  break;
+#endif
     }
-    for (int aux = 0; aux <= maxAux; aux++)
+    for (int aux = minAux; aux <= maxAux; aux++)
         items.push_back(ItemStack(tile, 1, aux));
+}
+
+static void _addCreativeItem(std::vector<ItemStack>& items, int itemId, Item* item)
+{
+    int minAux = 0;
+    int maxAux = 0;
+    switch (itemId)
+    {
+#ifdef _DEBUG
+    case ITEM_COAL:                       maxAux = 1; break;
+#endif
+    }
+    for (int aux = minAux; aux <= maxAux; aux++)
+        items.push_back(ItemStack(item, 1, aux));
 }
 
 void CreativeMenu::initCreativeItems()
@@ -105,7 +125,7 @@ void CreativeMenu::initCreativeItems()
     if (initialized) return;
     initialized = true;
 
-#if defined(_DEBUG)
+#ifdef _DEBUG
     for (int id = 1; id < C_MAX_TILES; id++)
     {
         Tile* tile = Tile::tiles[id];
@@ -126,7 +146,7 @@ void CreativeMenu::initCreativeItems()
     {
         Item* item = Item::items[id];
         if (!item) continue;
-        creativeItems.push_back(ItemStack(item, 1, 0));
+        _addCreativeItem(creativeItems, id, item);
     }
 
     Item* dye = Item::items[ITEM_DYE_POWDER];

@@ -703,7 +703,7 @@ void Tile::initTiles()
 		->setSoundType(Tile::SOUND_GRASS)
 		->setDescriptionId("leaves");
 
-	Tile::info_reserved6 = (new Tile(TEXTURE_LAVA_PLACEHOLDER, Material::dirt))
+	Tile::info_reserved6 = (new Tile(TILE_INFO_RESERVED6, Material::dirt))
 		->init();
 
 	Tile::fire = (new FireTile(TILE_FIRE, TEXTURE_FIRE1))

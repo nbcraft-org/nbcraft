@@ -41,7 +41,7 @@ Color TallGrass::getColor(TileSource& source, const TilePos& pos) const
 
 Color TallGrass::getColor(Facing::Name face, TileData data) const
 {
-	return data == 0 ? Color::WHITE : FoliageColor::getDefaultColor();
+	return data == 0 ? Color::WHITE : GrassColor::get(1.0f, 0.5f); // @PARITY-JAVA: should be 0xFF7CBD6B on b1.8, before that, nothing;
 }
 
 int TallGrass::getTexture(Facing::Name face, TileData data) const
