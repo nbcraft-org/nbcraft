@@ -589,7 +589,7 @@ public:
 	HEADER("Controls");                    \
 		OPTION(m_sensitivity);             \
 		OPTION(m_invertMouse);             \
-	if (!mc.useTouchscreen()) {            \
+	if (mc.useTouchscreen()) {             \
 		OPTION(m_splitControls);           \
 		OPTION(m_swapJumpSneak);           \
 		OPTION(m_dpadSize);                \
