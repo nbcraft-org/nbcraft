@@ -81,19 +81,19 @@ void ImageButton::_renderMessage(Minecraft& mc, bool isPressed)
     Font& font = *mc.m_pFont;
     const std::string& message = getMessage();
 
-    Color color = 0xFFA0A0A0;
+    Color color(160, 160, 160);
     float yOffset = 0.0f;
 
     if (isEnabled())
     {
         if (isPressed || isSelected())
         {
-            color = 0xA0FFFF; // @PARITY-PE: 0xFFFFA0 on PE, which is blue, probably an endianness issue and should be yellow
+            color = Color(255, 255, 160);
             yOffset = 1.0f;
         }
         else
         {
-            color = 0xE0E0E0;
+            color = Color(224, 224, 224);
         }
     }
 

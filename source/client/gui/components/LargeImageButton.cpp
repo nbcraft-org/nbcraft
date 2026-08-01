@@ -79,14 +79,14 @@ void LargeImageButton::_renderMessage(Minecraft& mc, bool isPressed)
     Font& font = *mc.m_pFont;
     const std::string& message = getMessage();
 
-    Color color = 0xFFA0A0A0;
+    Color color(160, 160, 160);
 
     if (isEnabled())
     {
         if (isPressed || isSelected())
-            color = 0xA0FFFF; // @PARITY-PE: 0xFFFFA0 on PE, which is blue, probably an endianness issue and should be yellow
+            color = Color(255, 255, 160);
         else
-            color = 0xE0E0E0;
+            color = Color(224, 224, 224);
     }
 
     drawCenteredString(font, message, m_xPos + (m_width / 2), m_yPos + m_image.yOffset + 11, color);
