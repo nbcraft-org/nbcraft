@@ -91,6 +91,8 @@ ControlsPanelScreen::ControlsPanelScreen(Screen* parent, Minecraft& mc) : PanelS
 	OPTIONS_LIST_CONTROLS_CONTROLS;
 	OPTIONS_LIST_CONTROLS_FEEDBACK;
 	OPTIONS_LIST_CONTROLS_EXPERIMENTAL;
+
+	(void)currentIndex; // compiler will warn about an unused variable sometimes if this isn't here
 }
 
 void ControlsPanelScreen::removed()
