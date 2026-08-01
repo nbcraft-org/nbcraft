@@ -1778,7 +1778,7 @@ int LASTTICKED = 0;
 
 void Level::tick()
 {
-	//m_pMobSpawner->tick(*this, m_difficulty > 0, true);
+	m_pMobSpawner->tick(*this, m_difficulty > 0, true);
 	m_pChunkSource->tick();
 
 #ifdef ENH_RUN_DAY_NIGHT_CYCLE

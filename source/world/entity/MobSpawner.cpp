@@ -32,7 +32,7 @@ void MobSpawner::tick(TileSource& source, bool allowHostile, bool allowFriendly)
 
     for (unsigned int i = 0; i < MobCategory::allCount; i++)
     {
-        const MobCategory& category = *MobCategory::all[i]; 
+        const MobCategory& category = *MobCategory::all[i];
         const EntityCategories& baseType = category.getBaseType();
         bool isFriendly = category.isFriendly();
 
