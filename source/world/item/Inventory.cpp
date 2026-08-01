@@ -161,13 +161,17 @@ bool Inventory::add(ItemStack& item)
 	int freeSlot = getFreeSlot();
 	if (freeSlot >= 0)
 	{
-		m_items[freeSlot] = item;
-		m_items[freeSlot].m_popTime = C_POP_TIME_DURATION;
+		ItemStack& slotItem = m_items[freeSlot];
+		slotItem = item;
+		slotItem.m_popTime = C_POP_TIME_DURATION;
 		item.m_count = 0;
+
+		setContainerChanged(freeSlot);
+
 		return true;
 	}
-	else
-		return false;
+
+	return false;
 }
 
 bool Inventory::contains(const ItemStack& item) const
@@ -187,11 +191,12 @@ bool Inventory::contains(const ItemStack& item) const
 	return false;
 }
 
-int Inventory::getSlotWithRemainingSpace(const ItemStack& item)
+// Returns a StackID or -1
+int Inventory::getSlotWithRemainingSpace(const ItemStack& item) const
 {
 	for (size_t index = 0; index < m_items.size(); ++index)
 	{
-		ItemStack& i = m_items[index];
+		const ItemStack& i = m_items[index];
 		if (!i.isEmpty() && i.getId() == item.getId() && i.isStackable() && i.m_count < i.getMaxStackSize() && i.m_count < getMaxStackSize() && (!i.isStackedByData() || i.getAuxValue() == item.getAuxValue()))
 			return index;
 	}
@@ -199,7 +204,8 @@ int Inventory::getSlotWithRemainingSpace(const ItemStack& item)
 	return -1;
 }
 
-int Inventory::getFreeSlot()
+// Returns a StackID or -1
+int Inventory::getFreeSlot() const
 {
 	for (size_t i = 0; i < m_items.size(); ++i)
 	{
@@ -214,37 +220,43 @@ int Inventory::addResource(const ItemStack& item)
 {
 	int id = item.getId();
 	int count = item.m_count;
-	int slot = getSlotWithRemainingSpace(item);
+	int stackId = getSlotWithRemainingSpace(item);
 
-	if (slot < 0) slot = getFreeSlot();
+	if (stackId < 0)
+		stackId = getFreeSlot();
 
-	if (slot < 0)
+	if (stackId < 0)
 		return count;
-	else
+
+	bool slotChanged = false;
+
+	ItemStack& slotItem = m_items[stackId];
+
+	if (slotItem.isEmpty())
 	{
-		if (m_items[slot].isEmpty())
-			m_items[slot] = ItemStack(id, 0, item.getAuxValue());
-
-		int oldCount = count;
-		if (count > m_items[slot].getMaxStackSize() - m_items[slot].m_count)
-			oldCount = m_items[slot].getMaxStackSize() - m_items[slot].m_count;
-
-
-		if (oldCount > getMaxStackSize() - m_items[slot].m_count)
-			oldCount = getMaxStackSize() - m_items[slot].m_count;
-
-		if (!oldCount)
-		{
-			return count;
-		}
-		else
-		{
-			count -= oldCount;
-			m_items[slot].m_count += oldCount;
-			m_items[slot].m_popTime = C_POP_TIME_DURATION;
-			return count;
-		}
+		slotItem = ItemStack(id, 0, item.getAuxValue());
+		slotChanged = true;
 	}
+
+	int oldCount = count;
+	if (count > slotItem.getMaxStackSize() - slotItem.m_count)
+		oldCount = slotItem.getMaxStackSize() - slotItem.m_count;
+
+	if (oldCount > getMaxStackSize() - slotItem.m_count)
+		oldCount = getMaxStackSize() - slotItem.m_count;
+
+	if (oldCount)
+	{
+		count -= oldCount;
+		slotItem.m_count += oldCount;
+		slotItem.m_popTime = C_POP_TIME_DURATION;
+		slotChanged = true;
+	}
+
+	if (slotChanged)
+		setContainerChanged(stackId);
+
+	return count;
 }
 
 ItemStack Inventory::removeItem(StackID stackId, int count)
@@ -272,11 +284,13 @@ ItemStack Inventory::removeItem(StackID stackId, int count)
 	return ItemStack::EMPTY;
 }
 
-int Inventory::getSlot(int id)
+// Returns a StackID or -1
+int Inventory::getSlot(int id) const
 {
 	for (StackID i = 0; i < m_items.size(); ++i)
 	{
-		if (!m_items[i].isEmpty() && m_items[i].getId() == id)
+		const ItemStack& slotItem = m_items[i];
+		if (!slotItem.isEmpty() && slotItem.getId() == id)
 			return i;
 	}
 
@@ -285,16 +299,16 @@ int Inventory::getSlot(int id)
 
 bool Inventory::removeResource(int id)
 {
-	int slot = getSlot(id);
-	if (slot < 0)
+	int stackId = getSlot(id);
+	if (stackId < 0)
 		return false;
-	else
-	{
-		if (--m_items[slot].m_count <= 0)
-			m_items[slot] = ItemStack::EMPTY;
 
-		return true;
-	}
+	ItemStack& slotItem = m_items[stackId];
+
+	if (--slotItem.m_count <= 0)
+		slotItem = ItemStack::EMPTY;
+
+	return true;
 }
 
 int Inventory::removeIngredient(const ItemStack& ing)
@@ -421,6 +435,8 @@ void Inventory::setItem(StackID stackId, const ItemStack& item)
 	{
 		m_items[stackId] = item;
 	}
+
+	setContainerChanged(stackId);
 }
 
 void Inventory::setSelectedItem(const ItemStack& item)
@@ -452,7 +468,9 @@ void Inventory::pickItem(int itemID, int data, int maxHotBarSlot)
 
 	for (size_t i = 0; i < m_items.size(); i++)
 	{
-		if (m_items[i].getId() != itemID || m_items[i].getAuxValue() != data)
+		const ItemStack& slotItem = m_items[i];
+
+		if (slotItem.getId() != itemID || slotItem.getAuxValue() != data)
 			continue;
 
 		if (i < size_t(maxHotBarSlot))
@@ -478,7 +496,9 @@ void Inventory::selectItem(int itemID, int maxHotBarSlot)
 
 	for (size_t i = 0; i < m_items.size(); i++)
 	{
-		if (!m_items[i] || m_items[i].getId() != itemID)
+		const ItemStack& slotItem = m_items[i];
+
+		if (!slotItem || slotItem.getId() != itemID)
 			continue;
 
 		if (i < size_t(maxHotBarSlot))
@@ -621,13 +641,14 @@ void Inventory::load(const ListTag& tag)
 		{
 			if (slot >= 0 && slot < m_items.size())
 			{
-				m_items[slot] = item;
+				ItemStack& slotItem = m_items[slot];
+				slotItem = item;
 
 #ifdef MOD_POCKET_SURVIVAL
 				// 0.2.1
-				if (m_items[slot].m_count == 0 && hasUnlimitedResource(item))
+				if (slotItem.m_count == 0 && hasUnlimitedResource(item))
 				{
-					m_items[slot].m_count = 1;
+					slotItem.m_count = 1;
 				}
 #endif
 			}

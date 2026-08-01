@@ -94,10 +94,10 @@ public:
 	
 private:
 	GameType _getGameMode() const;
-	int getSlotWithRemainingSpace(const ItemStack& item);
-	int getFreeSlot();
+	int getSlotWithRemainingSpace(const ItemStack& item) const;
+	int getFreeSlot() const;
 	int addResource(const ItemStack& item);
-	int getSlot(int id);
+	int getSlot(int id) const;
 
 public:
 	Player* m_pPlayer;

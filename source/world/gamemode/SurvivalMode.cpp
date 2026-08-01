@@ -12,12 +12,13 @@
 #include "network/packets/RemoveBlockPacket.hpp"
 #include "world/level/TileSource.hpp"
 
-SurvivalMode::SurvivalMode(Minecraft* pMC, Level& level) : GameMode(pMC, level),
-	m_destroyingPos(-1, -1, -1),
-	m_destroyProgress(0.0f),
-	m_lastDestroyProgress(0.0f),
-	m_destroyTicks(0),
-	m_destroyCooldown(0)
+SurvivalMode::SurvivalMode(Minecraft* pMC)
+	: GameMode(pMC)
+	, m_destroyingPos(-1, -1, -1)
+	, m_destroyProgress(0.0f)
+	, m_lastDestroyProgress(0.0f)
+	, m_destroyTicks(0)
+	, m_destroyCooldown(0)
 {
 }
 
@@ -52,11 +53,13 @@ bool SurvivalMode::startDestroyBlock(Player& player, const TilePos& pos, Facing:
 	if (tile <= 0)
 		return false;
 
+	Level& level = player.getLevel();
+
 	// @PARITY: This is in MultiPlayerGameMode on Java, but we aren't equipped to move to that at the moment. Also, is not sent on PE.
 #if NETWORK_PROTOCOL_VERSION >= 6
-	if (m_pMinecraft->isOnlineClient())
+	if (level.m_bIsClientSide)
 	{
-		m_pMinecraft->m_pRakNetInstance->send(new PlayerActionPacket(player.m_EntityID, PlayerActionPacket::START_DESTROY_BLOCK, pos, face));
+		level.m_pRakNetInstance->send(new PlayerActionPacket(player.m_EntityID, PlayerActionPacket::START_DESTROY_BLOCK, pos, face));
 	}
 #endif
 
@@ -137,9 +140,11 @@ bool SurvivalMode::continueDestroyBlock(Player& player, const TilePos& pos, Faci
 	m_destroyProgress += getDestroyModifier() * destroyProgress;
 	m_destroyTicks++;
 
+	Level& level = player.getLevel();
+
 	if ((m_destroyTicks & 3) == 1) // m_destroyTicks % 4.0f == 0.0f
 	{
-		_level.playSound(pos + 0.5f, "step." + pTile->m_pSound->name,
+		level.playSound(pos + 0.5f, "step." + pTile->m_pSound->name,
 			0.125f * (1.0f + pTile->m_pSound->volume), 0.5f * pTile->m_pSound->pitch);
 	}
 
@@ -150,9 +155,9 @@ bool SurvivalMode::continueDestroyBlock(Player& player, const TilePos& pos, Faci
 
 		// @PARITY: This is in MultiPlayerGameMode on Java, but we aren't equipped to move to that at the moment. Also, is not sent on PE.
 #if NETWORK_PROTOCOL_VERSION >= 6
-		if (m_pMinecraft->isOnlineClient())
+		if (level.m_bIsClientSide)
 		{
-			m_pMinecraft->m_pRakNetInstance->send(new PlayerActionPacket(player.m_EntityID, PlayerActionPacket::STOP_DESTROY_BLOCK, pos, face));
+			level.m_pRakNetInstance->send(new PlayerActionPacket(player.m_EntityID, PlayerActionPacket::STOP_DESTROY_BLOCK, pos, face));
 		}
 #endif
 		return destroyBlock(player, m_destroyingPos, face);

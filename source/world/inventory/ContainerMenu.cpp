@@ -43,7 +43,7 @@ void ContainerMenu::addSlot(Slot* slot)
 {
     slot->m_id = m_slots.size();
     m_slots.push_back(slot);
-    m_lastSlots.push_back(ItemStack::EMPTY);
+    m_lastSentItems.push_back(ItemStack::EMPTY);
 
     // @HACK: holy hack
     Container* pContainer = slot->m_pContainer;
@@ -70,11 +70,11 @@ void ContainerMenu::sendData(int id, int value)
 void ContainerMenu::broadcastChanges(Container::SlotID slotId)
 {
     ItemStack& current = m_slots[slotId]->getItem();
-    if (m_lastSlots[slotId] != current)
+    if (m_lastSentItems[slotId] != current)
     {
-        m_lastSlots[slotId] = ItemStack(current);
+        m_lastSentItems[slotId] = ItemStack(current);
         for (ContainerListeners::iterator it = m_listeners.begin(); it != m_listeners.end(); ++it)
-            (*it)->slotChanged(this, slotId, m_slots[slotId], m_lastSlots[slotId], isResultSlot());
+            (*it)->slotChanged(this, slotId, m_slots[slotId], m_lastSentItems[slotId], isResultSlot());
     }
 }
 
@@ -380,9 +380,9 @@ ItemStack ContainerMenu::clicked(Container::SlotID slotId, MouseButtonType mouse
 void ContainerMenu::setItem(Container::SlotID slotId, const ItemStack& item)
 {
     m_slots[slotId]->set(item);
-    if (!m_bBroadcastChanges && slotId >= 0 && slotId < (int)m_lastSlots.size())
+    if (!m_bBroadcastChanges && slotId >= 0 && slotId < (int)m_lastSentItems.size())
     {
-        m_lastSlots[slotId] = ItemStack(m_slots[slotId]->getItem());
+        m_lastSentItems[slotId] = ItemStack(m_slots[slotId]->getItem());
     }
 }
 
@@ -404,7 +404,7 @@ void ContainerMenu::setAll(const std::vector<ItemStack>& items)
         m_slots[i]->set(items[i]);
         if (!m_bBroadcastChanges)
         {
-            m_lastSlots[i] = ItemStack(m_slots[i]->getItem());
+            m_lastSentItems[i] = ItemStack(m_slots[i]->getItem());
         }
     }
 }

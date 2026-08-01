@@ -11,10 +11,9 @@
 #include "network/packets/RemoveBlockPacket.hpp"
 #include "world/level/TileSource.hpp"
 
-GameMode::GameMode(Minecraft* pMinecraft, Level& level) :
-	_level(level),
-	m_pMinecraft(pMinecraft),
-	m_bInstaBuild(false)
+GameMode::GameMode(Minecraft* pMinecraft)
+	: m_pMinecraft(pMinecraft)
+	, m_bInstaBuild(false)
 {
 }
 
@@ -43,20 +42,23 @@ bool GameMode::destroyBlock(Player& player, const TilePos& pos, Facing::Name fac
 	m_pMinecraft->m_pParticleEngine->destroyEffect(player, pos);
 
 	TileData tileData = source.getData(pos);
+
 	oldTile->playerWillDestroy(player, pos, face);
+
 	bool changed = source.setTile(pos, TILE_AIR);
 	if (!changed)
 		return false;
 
+	Level& level = player.getLevel();
 
-	_level.playSound(pos + 0.5f, "step." + oldTile->m_pSound->name,
+	level.playSound(pos + 0.5f, "step." + oldTile->m_pSound->name,
 		(oldTile->m_pSound->volume * 0.5f) + 0.5f, oldTile->m_pSound->pitch * 0.8f);
 
 	oldTile->destroy(source, pos, tileData);
 
-	if (m_pMinecraft->isOnline())
+	if (m_pMinecraft->isOnline() && player.isLocalPlayer())
 	{
-		m_pMinecraft->m_pRakNetInstance->send(new RemoveBlockPacket(player.m_EntityID, pos));
+		level.m_pRakNetInstance->send(new RemoveBlockPacket(player.m_EntityID, pos));
 	}
 
 	return true;
@@ -152,7 +154,7 @@ bool GameMode::useItem(Player& player, ItemStack& item)
 
 	if (level.m_bIsClientSide)
 	{
-		_level.m_pRakNetInstance->send(new UseItemPacket(TilePos::ZERO, 255, player.m_EntityID, item));
+		level.m_pRakNetInstance->send(new UseItemPacket(TilePos::ZERO, 255, player.m_EntityID, item));
 	}
 
 	return result;
@@ -161,10 +163,11 @@ bool GameMode::useItem(Player& player, ItemStack& item)
 bool GameMode::useItemOn(Player& player, ItemStack& item, const TilePos& pos, Facing::Name face)
 {
 	Level& level = player.getLevel();
+
 	// Sending this packet regardless is intentional. PE does this, Java does this.
 	if (level.m_bIsClientSide)
 	{
-		_level.m_pRakNetInstance->send(new UseItemPacket(pos, face, player.m_EntityID, item));
+		level.m_pRakNetInstance->send(new UseItemPacket(pos, face, player.m_EntityID, item));
 	}
 
 	TileSource& source = player.getTileSource();
@@ -189,10 +192,12 @@ bool GameMode::useItemOn(Player& player, ItemStack& item, const TilePos& pos, Fa
 
 void GameMode::releaseUsingItem(Player* player)
 {
+	Level& level = player->getLevel();
+
 #if NETWORK_PROTOCOL_VERSION >= 6
-	if (m_pMinecraft->isOnlineClient())
+	if (level.m_bIsClientSide)
 	{
-		m_pMinecraft->m_pRakNetInstance->send(new PlayerActionPacket(player->m_EntityID, PlayerActionPacket::STOP_USING_ITEM));
+		level.m_pRakNetInstance->send(new PlayerActionPacket(player->m_EntityID, PlayerActionPacket::STOP_USING_ITEM));
 	}
 #endif
 

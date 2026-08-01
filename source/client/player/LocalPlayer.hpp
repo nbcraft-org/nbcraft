@@ -23,6 +23,10 @@ public:
 	LocalPlayer(Minecraft*, Level&, User*, GameType, DimensionId);
 	virtual ~LocalPlayer();
 
+protected:
+	bool _trySendPosition();
+	bool _trySendSelectedItem();
+
 public:
 	void reset() override;
 	void animateRespawn() override;
@@ -50,7 +54,6 @@ public:
 
 	void calculateFlight(const Vec3& pos);
 	void respawn();
-	void sendPosition();
 
 private:
 	// Made these private since they're only accessed by LocalPlayer
@@ -58,6 +61,8 @@ private:
 	Vec3 m_lastSentPos;
 	Rot2 m_lastSentRot;
 	Container::StackID m_lastSelectedStackId;
+	int m_lastSelectedItemId;
+	int m_lastSelectedItemAuxValue;
 	// multiplayer related -- end
 
 public:

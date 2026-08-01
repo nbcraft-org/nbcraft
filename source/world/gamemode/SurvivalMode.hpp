@@ -13,7 +13,7 @@
 class SurvivalMode : public GameMode
 {
 public:
-	SurvivalMode(Minecraft*, Level&);
+	SurvivalMode(Minecraft*);
 
 private:
 	void _resetDestruction();

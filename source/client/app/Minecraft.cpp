@@ -174,25 +174,25 @@ void Minecraft::_resetPlayer(Player* player)
 	player->resetPos();
 }
 
-GameMode* Minecraft::_createGameMode(GameType gameType, Level& level)
+GameMode* Minecraft::_createGameMode(GameType gameType)
 {
 	switch (gameType)
 	{
 	case GAME_TYPE_SURVIVAL:
-		return new SurvivalMode(this, level);
+		return new SurvivalMode(this);
 	case GAME_TYPE_CREATIVE:
-		return new CreativeMode(this, level);
+		return new CreativeMode(this);
 	default:
 		return nullptr;
 	}
 }
 
-void Minecraft::_initGameModes(Level& level)
+void Minecraft::_initGameModes()
 {
 	for (unsigned int gameType = GAME_TYPES_MIN; gameType <= GAME_TYPES_MAX; gameType++)
 	{
 		delete m_gameModes[gameType];
-		m_gameModes[gameType] = _createGameMode((GameType)gameType, level);
+		m_gameModes[gameType] = _createGameMode((GameType)gameType);
 	}
 }
 
@@ -1372,7 +1372,7 @@ void Minecraft::setLevel(Level* pLevel, const std::string& text, LocalPlayer* pL
 		m_bPreparingLevel = true;
 		m_pPrepThread = new CThread(&Minecraft::prepareLevel_tspawn, this);
 
-		_initGameModes(*pLevel);
+		_initGameModes();
 
 		if (m_pLocalPlayer)
 			setGameMode(m_pLocalPlayer->getPlayerGameType());

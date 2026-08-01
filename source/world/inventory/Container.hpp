@@ -46,7 +46,7 @@ public:
 	virtual ItemStack removeItem(StackID stackId, int count) = 0;
 	virtual void setItem(StackID stackId, const ItemStack& item) = 0;
 	virtual std::string getName() const = 0;
-	virtual int getMaxStackSize()
+	virtual int getMaxStackSize() const
 	{
 		return C_MAX_CONTAINER_STACK_SIZE;
 	}

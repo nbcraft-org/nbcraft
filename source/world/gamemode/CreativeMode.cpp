@@ -9,14 +9,18 @@
 #include "CreativeMode.hpp"
 #include "client/app/Minecraft.hpp"
 
-CreativeMode::CreativeMode(Minecraft* pMC, Level& level) : GameMode(pMC, level),
-	m_destroyCooldown(0)
+CreativeMode::CreativeMode(Minecraft* pMC)
+	: GameMode(pMC)
+	, m_destroyCooldown(0)
 {
 }
 
 bool CreativeMode::destroyBlock(Player& player, const TilePos& pos, Facing::Name face)
 {
-	_level.extinguishFire(player.getTileSource(), pos, face);
+	Level& level = player.getLevel();
+	TileSource& tileSource = player.getTileSource();
+
+	level.extinguishFire(tileSource, pos, face);
 	return GameMode::destroyBlock(player, pos, face);
 }
 

@@ -64,6 +64,7 @@ bool ItemEntity::isInWater()
 	return m_pLevel->checkAndHandleWater(m_hitbox, Material::water, this);
 }
 
+// @PARITY
 #if MC_PLATFORM_MOBILE
 #define C_ITEM_POP_VOLUME 0.3f
 #else

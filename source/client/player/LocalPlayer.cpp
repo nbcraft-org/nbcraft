@@ -26,6 +26,8 @@ void LocalPlayer::_init()
 	m_lastSentPos = Vec3::ZERO;
 	m_lastSentRot = Rot2::ZERO;
 	m_lastSelectedStackId = m_pInventory->m_selectedStackId;
+	m_lastSelectedItemId = 0;
+	m_lastSelectedItemAuxValue = 0;
 	// multiplayer related -- end
 
 	m_renderArmRot = Rot2::ZERO;
@@ -58,6 +60,60 @@ LocalPlayer::LocalPlayer(Minecraft* pMinecraft, Level& level, User* pUser, GameT
 
 LocalPlayer::~LocalPlayer()
 {
+}
+
+bool LocalPlayer::_trySendPosition()
+{
+	if (fabsf(m_pos.x - m_lastSentPos.x) > 0.1f ||
+		fabsf(m_pos.y - m_lastSentPos.y) > 0.01f ||
+		fabsf(m_pos.z - m_lastSentPos.z) > 0.1f ||
+		fabsf(m_lastSentRot.pitch - m_rot.pitch) > 1.0f ||
+		fabsf(m_lastSentRot.yaw - m_rot.yaw) > 1.0f)
+	{
+		m_pMinecraft->m_pRakNetInstance->send(new MovePlayerPacket(m_EntityID, Vec3(m_pos.x, m_pos.y - m_heightOffset, m_pos.z), m_rot));
+
+		m_lastSentPos = m_pos;
+		m_lastSentRot = m_rot;
+
+		return true;
+	}
+
+	return false;
+}
+
+bool LocalPlayer::_trySendSelectedItem()
+{
+	// If we're doing server-sided inventories, then we should only be replicating the StackID in the PlayerEquipmentPacket
+#ifdef FEATURE_SERVER_INVENTORIES
+	if (m_lastSelectedStackId == m_pInventory->m_selectedStackId)
+		return false;
+#endif
+
+	const ItemStack* item = &m_pInventory->getSelectedItem();
+
+	// @HACK: send Air for empty items, the server doesn't know how many we have
+	if (item->isEmpty())
+		item = &ItemStack::EMPTY;
+
+	int itemId       = item->getId();
+	int itemAuxValue = item->getAuxValue();
+
+#ifndef FEATURE_SERVER_INVENTORIES
+	// Only send updated PlayerEquipmentPacket if we've updated the item we're holding
+	if (itemId == m_lastSelectedItemId && itemAuxValue == m_lastSelectedItemAuxValue)
+		return false;
+#endif
+
+	m_pMinecraft->m_pRakNetInstance->send(new PlayerEquipmentPacket(m_EntityID, itemId, itemAuxValue));
+
+#ifdef FEATURE_SERVER_INVENTORIES
+	m_lastSelectedStackId = m_pInventory->m_selectedStackId;
+#else
+	m_lastSelectedItemId = itemId;
+	m_lastSelectedItemAuxValue = itemAuxValue;
+#endif
+
+	return true;
 }
 
 void LocalPlayer::die(Entity* pCulprit)
@@ -348,8 +404,10 @@ void LocalPlayer::move(const Vec3& pos)
 				tileOnTop != Tile::stairs_wood->m_ID &&
 				tileOnTop != Tile::stoneSlabHalf->m_ID &&
 				m_pMinecraft->getOptions()->m_autoJump.get())
+			{
 				// Nope, we're walking towards a full block. Trigger an auto jump.
 				m_nAutoJumpFrames = 1;
+			}
 		}
 	}
 }
@@ -360,19 +418,8 @@ void LocalPlayer::tick()
 
 	if (m_pMinecraft->isOnline())
 	{
-		sendPosition();
-
-		if (m_lastSelectedStackId != m_pInventory->m_selectedStackId)
-		{
-			m_lastSelectedStackId = m_pInventory->m_selectedStackId;
-			const ItemStack* item = &m_pInventory->getSelectedItem();
-
-			// @HACK: send Air for empty items, the server doesn't know how many we have
-			if (item->isEmpty())
-				item = &ItemStack::EMPTY;
-
-			m_pMinecraft->m_pRakNetInstance->send(new PlayerEquipmentPacket(m_EntityID, item->getId(), item->getAuxValue()));
-		}
+		_trySendPosition();
+		_trySendSelectedItem();
 	}
 }
 
@@ -406,18 +453,4 @@ void LocalPlayer::readAdditionalSaveData(const CompoundTag& tag)
 	Player::readAdditionalSaveData(tag);
 
 	m_score = tag.getInt32("Score");
-}
-
-void LocalPlayer::sendPosition()
-{
-	if (fabsf(m_pos.x - m_lastSentPos.x) > 0.1f ||
-		fabsf(m_pos.y - m_lastSentPos.y) > 0.01f ||
-		fabsf(m_pos.z - m_lastSentPos.z) > 0.1f ||
-		fabsf(m_lastSentRot.pitch - m_rot.pitch) > 1.0f ||
-		fabsf(m_lastSentRot.yaw - m_rot.yaw) > 1.0f)
-	{
-		m_pMinecraft->m_pRakNetInstance->send(new MovePlayerPacket(m_EntityID, Vec3(m_pos.x, m_pos.y - m_heightOffset, m_pos.z), m_rot));
-		m_lastSentPos = m_pos;
-		m_lastSentRot = m_rot;
-	}
 }

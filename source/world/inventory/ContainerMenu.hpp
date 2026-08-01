@@ -63,7 +63,7 @@ public:
     void containerContentChanged(Container* container, Container::StackID stackId) override;
 
 protected:
-    std::vector<ItemStack> m_lastSlots;
+    std::vector<ItemStack> m_lastSentItems; // lastSlots in Java
     uint16_t m_changeUid;
     ContainerListeners m_listeners;
     std::set<Player*> m_unsynchedPlayers;

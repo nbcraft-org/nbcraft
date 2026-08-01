@@ -6,7 +6,7 @@
 #include "DataIO.hpp"
 
 #define STR16_MAX_LEN INT16_MAX
-#define STR32_MAX_LEN INT32_MAX
+#define STR32_MAX_LEN INT16_MAX // INT32_MAX commenting this out to avoid massive memory allocations
 
 std::string IDataInput::_readString()
 {

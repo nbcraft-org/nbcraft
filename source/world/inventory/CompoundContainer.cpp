@@ -76,7 +76,7 @@ void CompoundContainer::setItem(StackID index, const ItemStack& item)
         m_pLeftContainer->setItem(index, item);
 }
 
-int CompoundContainer::getMaxStackSize()
+int CompoundContainer::getMaxStackSize() const
 {
     return m_pLeftContainer->getMaxStackSize();
 }

@@ -20,7 +20,7 @@ public:
     ItemStack& getItem(StackID index) override;
     ItemStack removeItem(StackID index, int count) override;
     void setItem(StackID index, const ItemStack& item) override;
-    int getMaxStackSize() override;
+    int getMaxStackSize() const override;
     void setContainerChanged(StackID stackId) override;
     bool stillValid(Player& player) const override;
 

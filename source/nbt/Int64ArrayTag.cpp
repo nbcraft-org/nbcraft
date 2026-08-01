@@ -43,7 +43,7 @@ void Int64ArrayTag::load(IDataInput& dis)
 				size = m_data.m_elements + MAX_SIZE;
 				if ((uint32_t)elements < size)
 					size = elements;
-				m_data.alloc<int64_t>(size);
+				buf = m_data.alloc<int64_t>(size);
 			}
 			// @HACK
 			((int64_t*)buf)[i] = dis.readInt64();

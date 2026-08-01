@@ -42,8 +42,8 @@ public:
 private:
 	void _levelGenerated();
 	void _resetPlayer(Player* player);
-	GameMode* _createGameMode(GameType gameType, Level& level);
-	void _initGameModes(Level& level);
+	GameMode* _createGameMode(GameType gameType);
+	void _initGameModes();
 
 public:
 	int getLicenseId();

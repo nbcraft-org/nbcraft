@@ -16,11 +16,8 @@ class Minecraft;
 
 class GameMode
 {
-protected:
-	Level& _level;
-
 public:
-	GameMode(Minecraft* pMinecraft, Level& level);
+	GameMode(Minecraft* pMinecraft);
 	virtual ~GameMode();
 	virtual void initLevel(Level*);
 	//virtual bool isDestroyingBlock() const;

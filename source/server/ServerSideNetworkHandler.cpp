@@ -554,36 +554,9 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, RemoveBloc
 
 	player.swing();
 
-	TileSource& source = player.getTileSource();
-
-	TilePos pos = packet->m_pos;
-	Tile* pTile = Tile::tiles[source.getTile(pos)];
-	TileData auxValue = source.getData(pos);
-
-	m_pMinecraft->m_pParticleEngine->destroyEffect(player, pos);
-
-	bool setTileResult = source.setTile(pos, TILE_AIR);
-	if (pTile && setTileResult)
+	GameMode* pGameMode = m_pMinecraft->getPlayerGameMode(player);
+	if (pGameMode->destroyBlock(player, packet->m_pos, Facing::UP))
 	{
-		const Tile::SoundType* pSound = pTile->m_pSound;
-		m_pLevel->playSound(pos + 0.5f, "step." + pSound->name, 0.5f * (pSound->volume + 1.0f), pSound->pitch * 0.8f);
-
-		if (player.isSurvival())
-		{
-#ifdef MOD_POCKET_SURVIVAL
-			// 0.2.1
-			ItemStack tileItem(pTile, 1, auxValue);
-			if (pTile == Tile::grass || !player.m_pInventory->hasUnlimitedResource(tileItem))
-			{
-				pTile->spawnResources(source, pos, auxValue);
-			}
-#else
-			pTile->spawnResources(source, pos, auxValue);
-#endif
-		}
-
-		pTile->destroy(source, pos, auxValue);
-
 		// redistribute the packet only if needed
 		redistributePacket(packet, guid);
 	}
@@ -669,16 +642,19 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, UseItemPac
 	if (item.isEmpty())
 		return;
 
+	bool success = false;
+
 	if (onTile)
 	{
-		item.useOn(player, packet->m_tilePos, (Facing::Name)packet->m_tileFace);
+		success = item.useOn(player, packet->m_tilePos, (Facing::Name)packet->m_tileFace);
 	}
 	else
 	{
-		item.use(player);
+		success = item.use(player);
 	}
 
-	player.swing();
+	if (success)
+		player.swing();
 }
 
 // added specifically to allow Noteblocks to work, but ideally should just be a part of ServerPlayerGameMode
@@ -725,6 +701,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, PlayerActi
 
 void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, RequestChunkPacket* packet)
 {
+	if (!m_pLevel) return;
 	//puts_ignorable("RequestChunkPacket");
 
 	if (packet->m_chunkPos.x == -9999)
@@ -852,7 +829,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ContainerS
 		{
 		case Container::FURNACE:
 		case Container::CONTAINER:
-			pContainerMenu->setItem(packet->m_slotId, packet->m_item);
+			pContainerMenu->trySetItem(packet->m_slotId, packet->m_item);
 			break;
 		default:
 			break;
