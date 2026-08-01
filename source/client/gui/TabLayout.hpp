@@ -33,7 +33,7 @@ public:
     void startNavigation();
     bool areaNavigation(Minecraft* pMinecraft, AreaNavigation::Direction) override;
     bool areaNavigation(AreaNavigation::Direction, bool cyclic = true);
-    void setSelected(bool);
+    GuiElement* setSelected(bool);
 
     bool isHovered(Minecraft*, const MenuPointer& pointer) override;
     void pressed(Minecraft*, const MenuPointer& pointer) override;

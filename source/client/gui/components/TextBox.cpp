@@ -564,7 +564,7 @@ void TextBox::recalculateScroll()
 	}
 }
 
-void TextBox::setTextboxText(const std::string& text)
+GuiElement* TextBox::setTextboxText(const std::string& text)
 {
 	m_text = text;
 	m_insertHead = int(m_text.size());
@@ -572,6 +572,8 @@ void TextBox::setTextboxText(const std::string& text)
 	recalculateScroll();
 
 	m_pParent->onTextBoxUpdated(getId());
+
+	return GuiElement::setTextboxText(text);
 }
 
 void TextBox::setMaxLength(int max_length)

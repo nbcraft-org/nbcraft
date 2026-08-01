@@ -200,7 +200,7 @@ void VerticalLayout::areaNavigation(AreaNavigation::Direction dir, bool cyclic)
 		selectElementById(m_scrollAmount + id);
 }
 
-void VerticalLayout::setSelected(bool b)
+GuiElement* VerticalLayout::setSelected(bool b)
 {
 	GuiElement::setSelected(b);
 
@@ -209,6 +209,8 @@ void VerticalLayout::setSelected(bool b)
 
 	if (!b)
 		selectElement(nullptr);
+
+	return this;
 }
 
 bool VerticalLayout::handleScroll(bool up)
