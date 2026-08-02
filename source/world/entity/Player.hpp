@@ -39,7 +39,7 @@ private:
 	void _init();
 
 public:
-	Player(Level& level, GameType gameType);
+	Player(Level& level, GameType gameType, DimensionId dimensionId);
 	virtual ~Player();
 
 protected:

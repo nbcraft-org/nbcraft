@@ -176,7 +176,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, AddPlay
 
 	if (!m_pLevel) return;
 
-	Player* pPlayer = new Player(*m_pLevel, m_pLevel->getDefaultGameType());
+	Player* pPlayer = new Player(*m_pLevel, m_pLevel->getDefaultGameType(), DIMENSION_OVERWORLD);
 	pPlayer->m_EntityID = pAddPlayerPkt->m_id;
 	m_pLevel->addEntity(pPlayer);
 
@@ -531,8 +531,9 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, ChunkDa
 	Dimension& dimension = *m_pLevel->getDimension(DIMENSION_OVERWORLD);
 	ChunkSource& chunkSource = *dimension.getChunkSource();
 
-	LevelChunk* pChunk = chunkSource.create(pChunkDataPkt->m_chunkPos);
-	if (!pChunk || pChunk->isEmpty())
+	// @TODO: is this the right method call?
+	LevelChunk* pChunk = chunkSource.getOrLoadChunk(pChunkDataPkt->m_chunkPos, ChunkSource::LOAD_NONE);
+	if (!pChunk /* || pChunk->isEmpty()*/)
 	{
 		LOG_E("Failed to find write-able chunk");
 		// @BUG: Not trying again.
@@ -575,7 +576,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, ChunkDa
 				}
 
 				int idx = ((k & 0xF) << 11) | (((k >> 4) << 7) + yPos);
-				memcpy(&pChunk->m_tileData.array[idx >> 1], datas, sizeof datas);
+				memcpy(&pChunk->getTiles()[idx >> 1], datas, sizeof datas);
 			}
 
 			int ymin = 16 * (1 << j);
@@ -598,9 +599,10 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, ChunkDa
 	}
 
 	if (updated)
-		m_pLevel->fireTilesDirty(TilePos(minX + x16, minY, minZ), TilePos(maxX + x16, maxY, maxZ + z16));
+		tileSource.fireTilesDirty(TilePos(minX + x16, minY, minZ), TilePos(maxX + x16, maxY, maxZ + z16));
 
-	pChunk->m_bUnsaved = true;
+	// @MATT
+	//pChunk->m_bUnsaved = true;
 	m_chunkStates[pChunkDataPkt->m_chunkPos.x][pChunkDataPkt->m_chunkPos.z] = true;
 	if (!m_bUseLevelDataPkt)
 	{

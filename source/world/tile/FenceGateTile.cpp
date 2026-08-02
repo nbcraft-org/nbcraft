@@ -6,13 +6,13 @@ FenceGateTile::FenceGateTile(int a, int b) : Tile(a, b, Material::wood)
 {
 }
 
-bool FenceGateTile::mayPlace(const TileSource& source, const TilePos& pos) const
+bool FenceGateTile::mayPlace(TileSource& source, const TilePos& pos) const
 {
 	TilePos below = pos.below();
 	return source.getTile(below) == m_ID || (Tile::mayPlace(source, pos) && source.getMaterial(below)->isSolid());
 }
 
-AABB* FenceGateTile::getAABB(const TileSource& source, const TilePos& pos)
+AABB* FenceGateTile::getAABB(TileSource& source, const TilePos& pos)
 {
     TileData data = source.getData(pos);
     if (isOpen(data))

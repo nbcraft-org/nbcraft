@@ -8,7 +8,7 @@ public:
 	Web(TileID id, int texture);
 
 public:
-	AABB* getAABB(const TileSource&, const TilePos& pos) override;
+	AABB* getAABB(TileSource&, const TilePos& pos) override;
 	virtual eRenderShape getRenderShape() const override;
 	virtual bool isCubeShaped() const override;
 	virtual bool isSolidRender() const override;

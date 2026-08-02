@@ -34,7 +34,8 @@ void LocalPlayer::_init()
 	m_lastRenderArmRot = Rot2::ZERO;
 }
 
-LocalPlayer::LocalPlayer(Minecraft* pMinecraft, Level& level, User* pUser, GameType playerGameType, DimensionId dimensionId) : Player(level, playerGameType)
+LocalPlayer::LocalPlayer(Minecraft* pMinecraft, Level& level, User* pUser, GameType playerGameType, DimensionId dimensionId)
+	: Player(level, playerGameType, dimensionId)
 {
 	m_lastSelectedStackId = 0;
 
@@ -54,7 +55,6 @@ LocalPlayer::LocalPlayer(Minecraft* pMinecraft, Level& level, User* pUser, GameT
 	m_pMinecraft = pMinecraft;
 	m_name = pUser->m_name;
 
-	m_dimension = dimensionId;
 	_init();
 }
 

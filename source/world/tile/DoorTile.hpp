@@ -18,16 +18,16 @@ public:
 public:
 	void attack(const TilePos& pos, Player&) override;
 	bool use(const TilePos& pos, Player&) override;
-	HitResult clip(const TileSource&, const TilePos& pos, Vec3, Vec3) override;
-	AABB* getAABB(const TileSource&, const TilePos& pos) override;
+	HitResult clip(TileSource&, const TilePos& pos, Vec3, Vec3) override;
+	AABB* getAABB(TileSource&, const TilePos& pos) override;
 	eRenderShape getRenderShape() const override;
 	int getResource(TileData data, Random*) const override;
 	int getTexture(Facing::Name face, TileData data) const override;
 	AABB getTileAABB(TileSource&, const TilePos& pos) override;
 	bool isCubeShaped() const override;
 	bool isSolidRender() const override;
-	bool mayPlace(const TileSource&, const TilePos& pos) const override;
-	void updateShape(const TileSource&, const TilePos& pos) override;
+	bool mayPlace(TileSource&, const TilePos& pos) const override;
+	void updateShape(TileSource&, const TilePos& pos) override;
 	void neighborChanged(TileSource&, const TilePos& pos, TileID newTile) override;
 
 	bool blocksLight() const;

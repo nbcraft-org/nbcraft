@@ -14,7 +14,6 @@
 #include "screens/ProgressScreen.hpp"
 #include "screens/CreditsScreen.hpp"
 #include "screens/DeathScreen.hpp"
-#include "screens/SavingWorldScreen.hpp"
 #include "ScreenChooser_Pocket.hpp"
 #include "ScreenChooser_Console.hpp"
 
@@ -91,11 +90,6 @@ void ScreenChooser::pushCreditsScreen(Screen* parent)
 void ScreenChooser::pushDeathScreen()
 {
 	m_pMinecraft->setScreen(new DeathScreen());
-}
-
-void ScreenChooser::pushSavingScreen(bool bCopyMap)
-{
-	m_pMinecraft->setScreen(new SavingWorldScreen(bCopyMap));
 }
 
 ScreenChooser* ScreenChooser::Create(Minecraft* mc)

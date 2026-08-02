@@ -32,7 +32,7 @@ bool ReedTile::isSolidRender() const
 	return false;
 }
 
-bool ReedTile::mayPlace(const TileSource& source, const TilePos& pos) const
+bool ReedTile::mayPlace(TileSource& source, const TilePos& pos) const
 {
 	TileID tileBelow = source.getTile(pos.below());
 
@@ -49,7 +49,7 @@ bool ReedTile::mayPlace(const TileSource& source, const TilePos& pos) const
 		source.getMaterial(pos.below().south()) == Material::water;
 }
 
-bool ReedTile::canSurvive(const TileSource& source, const TilePos& pos) const
+bool ReedTile::canSurvive(TileSource& source, const TilePos& pos) const
 {
 	return mayPlace(source, pos);
 }
@@ -92,7 +92,7 @@ void ReedTile::tick(TileSource& source, const TilePos& pos, Random* random)
 	}
 }
 
-AABB* ReedTile::getAABB(const TileSource& source, const TilePos& pos)
+AABB* ReedTile::getAABB(TileSource& source, const TilePos& pos)
 {
 	return nullptr;
 }

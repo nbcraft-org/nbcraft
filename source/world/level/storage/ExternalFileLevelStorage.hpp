@@ -13,7 +13,7 @@
 #include "ChunkStorage.hpp"
 #include "RegionFile.hpp"
 
-#ifndef DEMO
+#if false
 
 struct UnsavedLevelChunk
 {

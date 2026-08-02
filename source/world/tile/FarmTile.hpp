@@ -15,7 +15,7 @@ class FarmTile : public Tile
 public:
 	FarmTile(TileID ID, Material*);
 
-	AABB* getAABB(const TileSource&, const TilePos& pos) override;
+	AABB* getAABB(TileSource&, const TilePos& pos) override;
 	int getResource(TileData, Random*) const override;
 	int getTexture(Facing::Name face, TileData data) const override;
 	bool isCubeShaped() const override;

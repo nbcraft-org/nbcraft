@@ -22,11 +22,10 @@ private:
 	};
 
 public:
-	MultiPlayerLevel(LevelStorage* pStor, const std::string& name, const LevelSettings& settings, int storageVersion = LEVEL_STORAGE_VERSION_DEFAULT, Dimension* pDimension = nullptr);
+	MultiPlayerLevel(LevelStorage* pStor, const std::string& name, const LevelSettings& settings, int storageVersion = LEVEL_STORAGE_VERSION_DEFAULT);
 
 public:
 	void tick() override;
-	ChunkSource* createChunkSource() override;
 	void putEntity(int id, Entity* e);
 
 private:

@@ -6,9 +6,9 @@ class CactusTile : public Tile
 {
 public:
 	CactusTile(int id, int texture);
-	AABB* getAABB(const TileSource& source, const TilePos& pos) override;
-	bool mayPlace(const TileSource&, const TilePos& pos) const override;
-	bool canSurvive(const TileSource& source, const TilePos& pos) const override;
+	AABB* getAABB(TileSource& source, const TilePos& pos) override;
+	bool mayPlace(TileSource&, const TilePos& pos) const override;
+	bool canSurvive(TileSource& source, const TilePos& pos) const override;
 	void neighborChanged(TileSource& source, const TilePos& pos, TileID tile) override;
 	bool isSolidRender() const override;
 	bool isCubeShaped() const override;
@@ -16,5 +16,5 @@ public:
 	void tick(TileSource&, const TilePos& pos, Random*) override;
 	void entityInside(TileSource&, const TilePos& pos, Entity*) const override;
 	int getTexture(Facing::Name face) const override;
-	void updateShape(const TileSource& source, const TilePos& pos) override;
+	void updateShape(TileSource& source, const TilePos& pos) override;
 };

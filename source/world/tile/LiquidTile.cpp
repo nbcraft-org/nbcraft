@@ -44,7 +44,7 @@ void LiquidTile::fizz(TileSource& source, const TilePos& pos)
 	}
 }
 
-AABB* LiquidTile::getAABB(const TileSource& source, const TilePos& pos)
+AABB* LiquidTile::getAABB(TileSource& source, const TilePos& pos)
 {
 	return nullptr;
 }

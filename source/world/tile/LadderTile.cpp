@@ -34,7 +34,7 @@ bool LadderTile::isSolidRender() const
 	return false;
 }
 
-AABB* LadderTile::getAABB(const TileSource& source, const TilePos& pos)
+AABB* LadderTile::getAABB(TileSource& source, const TilePos& pos)
 {
 	TileData data = source.getData(pos);
 	switch (data)
@@ -121,7 +121,7 @@ void LadderTile::neighborChanged(TileSource& source, const TilePos& pos, TileID 
 	source.setTile(pos, TILE_AIR);
 }
 
-bool LadderTile::mayPlace(const TileSource& source, const TilePos& pos) const
+bool LadderTile::mayPlace(TileSource& source, const TilePos& pos) const
 {
 	return
 		source.isSolidBlockingTile(pos.west()) ||

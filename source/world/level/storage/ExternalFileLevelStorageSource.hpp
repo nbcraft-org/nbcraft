@@ -12,7 +12,7 @@
 #include <sstream>
 #include "LevelStorageSource.hpp"
 
-#ifndef DEMO
+#if false
 
 class ExternalFileLevelStorageSource : public LevelStorageSource
 {

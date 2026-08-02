@@ -16,7 +16,7 @@ TorchTile::TorchTile(int ID, int texture, Material* pMtl) : Tile(ID, texture, pM
 	setTicking(true);
 }
 
-AABB* TorchTile::getAABB(const TileSource&, const TilePos& pos)
+AABB* TorchTile::getAABB(TileSource&, const TilePos& pos)
 {
 	return nullptr;
 }
@@ -86,7 +86,7 @@ bool TorchTile::checkCanSurvive(TileSource& source, const TilePos& pos)
 	return false;
 }
 
-HitResult TorchTile::clip(const TileSource& source, const TilePos& pos, Vec3 a, Vec3 b)
+HitResult TorchTile::clip(TileSource& source, const TilePos& pos, Vec3 a, Vec3 b)
 {
 	switch (source.getData(pos) & 7)
 	{
@@ -110,7 +110,7 @@ HitResult TorchTile::clip(const TileSource& source, const TilePos& pos, Vec3 a, 
 	return Tile::clip(source, pos, a, b);
 }
 
-bool TorchTile::mayPlace(const TileSource& source, const TilePos& pos) const
+bool TorchTile::mayPlace(TileSource& source, const TilePos& pos) const
 {
 	if (source.isSolidBlockingTile(pos.below())) return true;
 	if (source.isSolidBlockingTile(pos.west())) return true;

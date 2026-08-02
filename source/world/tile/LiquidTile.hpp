@@ -19,7 +19,7 @@ public:
 	void neighborChanged(TileSource&, const TilePos& pos, TileID tile) override;
 	void tick(TileSource&, const TilePos& pos, Random* random) override;
 	void animateTick(TileSource&, const TilePos& pos, Random* random) override;
-	AABB* getAABB(const TileSource&, const TilePos& pos) override;
+	AABB* getAABB(TileSource&, const TilePos& pos) override;
 	float getBrightness(TileSource&, const TilePos& pos) const override;
 	eRenderShape getRenderShape() const override;
 	int getResource(TileData, Random*) const override;

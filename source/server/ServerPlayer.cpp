@@ -18,8 +18,8 @@
 #include "world/inventory/Slot.hpp"
 #include "world/inventory/TrapMenu.hpp"
 
-ServerPlayer::ServerPlayer(Level& level, GameType playerGameType)
-	: Player(level, playerGameType)
+ServerPlayer::ServerPlayer(Level& level, GameType playerGameType, DimensionId dimensionId)
+	: Player(level, playerGameType, dimensionId)
 {
 	m_lastHealth = -999; // -99999999 on Java
 	m_containerId = 0;

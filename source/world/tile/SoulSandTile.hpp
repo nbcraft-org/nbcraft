@@ -9,5 +9,5 @@ public:
 
 public:
 	void entityInside(TileSource& source, const TilePos& pos, Entity* entity) const override;
-	AABB* getAABB(const TileSource& source, const TilePos& pos) override;
+	AABB* getAABB(TileSource& source, const TilePos& pos) override;
 };

@@ -13,6 +13,8 @@
 
 class TileSource;
 
+class TileSource;
+
 class TileRenderer
 {
 protected:

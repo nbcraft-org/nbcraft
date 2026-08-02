@@ -48,14 +48,14 @@ bool DoorTile::blocksLight() const
 	return false;
 }
 
-HitResult DoorTile::clip(const TileSource& source, const TilePos& pos, Vec3 v1, Vec3 v2)
+HitResult DoorTile::clip(TileSource& source, const TilePos& pos, Vec3 v1, Vec3 v2)
 {
 	// @NOTE: Tile::clip calls updateShape too. So this is redundant
 	updateShape(source, pos);
 	return Tile::clip(source, pos, v1, v2);
 }
 
-AABB* DoorTile::getAABB(const TileSource& source, const TilePos& pos)
+AABB* DoorTile::getAABB(TileSource& source, const TilePos& pos)
 {
 	updateShape(source, pos);
 	return Tile::getAABB(source, pos);
@@ -123,7 +123,7 @@ bool DoorTile::isSolidRender() const
 	return false;
 }
 
-bool DoorTile::mayPlace(const TileSource& source, const TilePos& pos) const
+bool DoorTile::mayPlace(TileSource& source, const TilePos& pos) const
 {
 	return pos.y <= 126 && source.isSolidBlockingTile(pos.below()) && Tile::mayPlace(source, pos) && Tile::mayPlace(source, pos.above());
 }
@@ -149,7 +149,7 @@ void DoorTile::setShape(int dir)
 	}
 }
 
-void DoorTile::updateShape(const TileSource& source, const TilePos& pos)
+void DoorTile::updateShape(TileSource& source, const TilePos& pos)
 {
 	setShape(getDir(source.getData(pos)));
 }

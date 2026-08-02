@@ -8,6 +8,7 @@
 
 #include "Player.hpp"
 #include "world/level/Level.hpp"
+#include "world/level/TileSource.hpp"
 #include "nbt/CompoundTag.hpp"
 
 void Player::_init()
@@ -28,13 +29,15 @@ void Player::_init()
 	m_abilities.bInvulnerable = false;
 }
 
-Player::Player(Level& level, GameType playerGameType) : Mob(level)
+Player::Player(Level& level, GameType playerGameType, DimensionId dimensionId)
+	: Mob(*level.getDimension(dimensionId)->getTileSource())
 {
 	_init();
 	m_pDescriptor = &EntityTypeDescriptor::player;
 	m_pInventory = nullptr;
 	m_userType = 0;
 	m_name = "";
+	m_dimension = dimensionId;
 	m_bHasRespawnPos = false;
 
 	m_renderType = RENDER_HUMANOID;

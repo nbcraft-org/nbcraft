@@ -7,19 +7,19 @@ CactusTile::CactusTile(int id, int texture) : Tile(id, texture, Material::cactus
 	setTicking(true);
 }
 
-AABB* CactusTile::getAABB(const TileSource& source, const TilePos& pos)
+AABB* CactusTile::getAABB(TileSource& source, const TilePos& pos)
 {
 	AABB* aabb = Tile::getAABB(source, pos);
 	aabb->max.y -= 1.0f / 16.0f;
 	return aabb;
 }
 
-bool CactusTile::mayPlace(const TileSource& source, const TilePos& pos) const
+bool CactusTile::mayPlace(TileSource& source, const TilePos& pos) const
 {
 	return Tile::mayPlace(source, pos) && canSurvive(source, pos);
 }
 
-bool CactusTile::canSurvive(const TileSource& source, const TilePos& pos) const
+bool CactusTile::canSurvive(TileSource& source, const TilePos& pos) const
 {
 	for (int i = Facing::NORTH; i <= Facing::EAST; ++i)
 	{
@@ -83,7 +83,7 @@ void CactusTile::tick(TileSource& source, const TilePos& pos, Random* random)
 	}
 }
 
-void CactusTile::updateShape(const TileSource& source, const TilePos& pos)
+void CactusTile::updateShape(TileSource& source, const TilePos& pos)
 {
 	setShape(0.0625, 0, 0.0625, 0.9375, 1, 0.9375);
 }

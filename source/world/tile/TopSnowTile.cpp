@@ -17,7 +17,7 @@ TopSnowTile::TopSnowTile(TileID id, int b, Material* c) : Tile(id, b, c)
 	setTicking(true);
 }
 
-AABB* TopSnowTile::getAABB(const TileSource& source, const TilePos& pos)
+AABB* TopSnowTile::getAABB(TileSource& source, const TilePos& pos)
 {
 	return nullptr;
 }
@@ -42,7 +42,7 @@ int TopSnowTile::getResourceCount(Random* random) const
 	return 0;
 }
 
-bool TopSnowTile::mayPlace(const TileSource& source, const TilePos& pos) const
+bool TopSnowTile::mayPlace(TileSource& source, const TilePos& pos) const
 {
 	TileID tile = source.getTile(pos.below());
 

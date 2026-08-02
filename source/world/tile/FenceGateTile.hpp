@@ -13,11 +13,11 @@ public:
 
 public:
 	void setPlacedBy(const TilePos& pos, Mob& mob) override;
-	AABB* getAABB(const TileSource& source, const TilePos& pos) override;
+	AABB* getAABB(TileSource& source, const TilePos& pos) override;
 	eRenderShape getRenderShape() const override;
 
 public:
-	bool mayPlace(const TileSource&, const TilePos& pos) const override;
+	bool mayPlace(TileSource&, const TilePos& pos) const override;
 	bool isSolidRender() const override;
 	bool isCubeShaped() const override;
 	bool use(const TilePos& pos, Player& player) override;

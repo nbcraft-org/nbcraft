@@ -19,7 +19,7 @@ FarmTile::FarmTile(TileID id, Material* c) : Tile(id, c)
 	setLightBlock(255);
 }
 
-AABB* FarmTile::getAABB(const TileSource&, const TilePos& pos)
+AABB* FarmTile::getAABB(TileSource&, const TilePos& pos)
 {
 	// a full block
 	m_aabbReturned = AABB(

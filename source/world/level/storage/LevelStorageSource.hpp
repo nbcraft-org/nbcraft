@@ -60,6 +60,6 @@ public:
 	virtual void renameLevel(const std::string&, const std::string&) = 0;
 	virtual bool isConvertible(const std::string&) = 0;
 	virtual bool requiresConversion(const std::string&) = 0;
-	virtual int convertLevel(const std::string&, ProgressListener*) = 0;
+	virtual int convertLevel(const std::string&) = 0;
 };
 

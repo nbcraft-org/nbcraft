@@ -104,12 +104,12 @@ int ChestTile::getTexture(Facing::Name face) const
 	}
 }
 
-bool ChestTile::mayPlace(const TileSource& source, const TilePos& pos) const
+bool ChestTile::mayPlace(TileSource& source, const TilePos& pos) const
 {
     return !hasNeighbors(source, pos, 1);
 }
 
-bool ChestTile::hasNeighbors(const TileSource& source, const TilePos& pos, int count) const
+bool ChestTile::hasNeighbors(TileSource& source, const TilePos& pos, int count) const
 {
     int neighbors = 0;
     for (int i = 0; i < 4; ++i)

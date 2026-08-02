@@ -1,36 +1,78 @@
-/********************************************************************
-	Minecraft: Pocket Edition - Decompilation Project
-	Copyright (C) 2023 iProgramInCpp
-	
-	The following code is licensed under the BSD 1 clause license.
-	SPDX-License-Identifier: BSD-1-Clause
- ********************************************************************/
-
 #pragma once
 
+#include <string>
 #include "ChunkStorage.hpp"
 #include "LevelData.hpp"
 
-class Dimension;
+class ChunkSource;
 class Player;
 
-typedef void ProgressListener;
+enum StorageVersion
+{
+	STORAGEVERSION_UNKNOWN,
+	STORAGEVERSION_LEGACY_V1,
+	STORAGEVERSION_LEGACY_V2,
+	STORAGEVERSION_LEGACY_V3,
+	STORAGEVERSION_LEVELDB,
+	STORAGEVERSION_LEVELDB_SUBCHUNKS,
+	STORAGEVERSION_LEVELDB_SUBCHUNKS_RAWZIP,
+	STORAGEVERSION_LEVELDB_PALETTED,
+	STORAGEVERSION_LEVELDB_MULTI_TILESTORAGE
+};
 
 class LevelStorage
 {
 public:
-	virtual ~LevelStorage();
-	virtual LevelData* prepareLevel(Level*) = 0;
-	virtual ChunkStorage* createChunkStorage(Dimension*) = 0;
-	virtual void saveLevelData(const std::string& levelPath, LevelData* levelData, const std::vector<Player*>* players) = 0;
-	virtual void saveLevelData(LevelData* levelData, const std::vector<Player*>* players) = 0;
-	virtual void saveLevelData(LevelData* levelData);
-	virtual void savePlayerData(LevelData& levelData, const std::vector<Player*>& players);
-	virtual bool load(Player& player) { return false; }
-	virtual bool save(Player& player) { return false; }
-	virtual void saveGame(Level* level);
-	void loadEntities(Level* level) { loadEntities(level, nullptr); }
-	virtual void loadEntities(Level* level, LevelChunk* chunk);
-	virtual void closeAll() = 0;
-};
+	enum Status
+	{
+		STATUS_OPEN,
+		STATUS_CORRUPTED,
+		STATUS_NOT_FOUND,
+		STATUS_IO_ERROR,
+		STATUS_NOT_SUPPORTED,
+		STATUS_INVALID_ARGUMENTS,
+		STATUS_UNKNOWN
+	};
 
+	class State
+	{
+	public:
+		Status m_status;
+		std::string m_message;
+
+	public:
+		State() : m_status(STATUS_UNKNOWN) {}
+		State(Status status) : m_status(status) {}
+		State(Status status, const std::string& message) : m_status(status), m_message(message) {}
+	};
+
+public:
+	virtual ~LevelStorage() {}
+	virtual std::unique_ptr<ChunkSource> createChunkStorage(std::unique_ptr<ChunkStorage>, StorageVersion) = 0;
+	virtual bool saveLevelData(LevelData*) = 0;
+	virtual const std::string& getFullPath() = 0;
+	virtual void savePlayerData(const std::string&, std::string&&) = 0;
+	virtual void saveData(const std::string&, std::string&&) = 0;
+	virtual bool isCorrupted() = 0;
+	virtual std::string loadData(const std::string&) { return ""; }
+	virtual State getState() = 0;
+	virtual std::unique_ptr<Tag> loadPlayerData(const std::string&) = 0;
+	virtual std::vector<std::string> loadAllPlayerIDs() = 0;
+	virtual void save(Player&) = 0;
+
+public:
+	void savePlayerData(const std::string&, const CompoundTag&)
+	{
+		// TODO
+	}
+
+	void saveData(const std::string&, const CompoundTag&)
+	{
+		// TODO
+	}
+
+	std::unique_ptr<Tag> loadPlayerData(const Player&)
+	{
+		// TODO
+	}
+};

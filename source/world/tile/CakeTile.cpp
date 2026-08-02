@@ -8,7 +8,7 @@ CakeTile::CakeTile(int id, int texture) : Tile(id, texture, Material::cake)
 	setTicking(true);
 }
 
-void CakeTile::updateShape(const TileSource& source, const TilePos& pos)
+void CakeTile::updateShape(TileSource& source, const TilePos& pos)
 {
 	TileData i = source.getData(pos);
 	constexpr float f = 0.0625f;
@@ -34,7 +34,7 @@ AABB CakeTile::getTileAABB(TileSource& source, const TilePos& pos)
 	return m_aabbReturned;
 }
 
-AABB* CakeTile::getAABB(const TileSource& source, const TilePos& pos)
+AABB* CakeTile::getAABB(TileSource& source, const TilePos& pos)
 {
 	TileData i = source.getData(pos);
 	constexpr float f = 0.0625f;
@@ -89,7 +89,7 @@ void CakeTile::eat(const TilePos& pos, Player& player)
 	}
 }
 
-bool CakeTile::mayPlace(const TileSource& source, const TilePos& pos) const
+bool CakeTile::mayPlace(TileSource& source, const TilePos& pos) const
 {
 	return !Tile::mayPlace(source, pos) ? false : canSurvive(source, pos);
 }
@@ -103,7 +103,7 @@ void CakeTile::neighborChanged(TileSource& source, const TilePos& pos, TileID ti
 	}
 }
 
-bool CakeTile::canSurvive(const TileSource& source, const TilePos& pos) const
+bool CakeTile::canSurvive(TileSource& source, const TilePos& pos) const
 {
 	return source.getMaterial(pos.below())->isSolid();
 }

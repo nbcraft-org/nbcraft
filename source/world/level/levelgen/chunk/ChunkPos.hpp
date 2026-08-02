@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <functional>
 #include "world/phys/Vec3.hpp"
 
 #ifndef __TILEPOS_HPP
@@ -149,3 +150,16 @@ public:
 public:
 	static const ChunkPos INVALID;
 };
+
+namespace std
+{
+	template <>
+	class hash<ChunkPos>
+	{
+	public:
+		size_t operator()(const ChunkPos& cp) const
+		{
+			return cp.hashCode();
+		}
+	};
+}

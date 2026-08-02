@@ -11,65 +11,16 @@
 #include <algorithm>
 #include <sstream>
 #include "client/app/AppPlatformListener.hpp"
+#include "client/renderer/FrustumCuller.hpp"
 #include "renderer/hal/interface/FogState.hpp"
 #include "world/level/LevelListener.hpp"
 #include "world/level/Dimension.hpp"
 #include "world/tile/entity/TileEntity.hpp"
-#include "Chunk.hpp"
 #include "Textures.hpp"
 #include "RenderList.hpp"
 #include "TileRenderer.hpp"
 
 class Minecraft;
-
-class DistanceChunkSorter
-{
-	const Entity& m_entity;
-
-public:
-	DistanceChunkSorter(const Entity& entity)
-		: m_entity(entity)
-	{
-	}
-
-	bool operator()(const Chunk* a, const Chunk* b)
-	{
-		float d1 = a->distanceToSqr(m_entity);
-		float d2 = b->distanceToSqr(m_entity);
-
-		if (d1 > 1024.0f && a->m_pos.y <= 63) d1 *= 10.0f;
-		if (d2 > 1024.0f && b->m_pos.y <= 63) d2 *= 10.0f;
-
-		return d1 < d2;
-	}
-};
-
-class DirtyChunkSorter
-{
-	const Entity& m_entity;
-
-public:
-	DirtyChunkSorter(const Entity& entity)
-		: m_entity(entity)
-	{
-	}
-
-	bool operator()(const Chunk* a, const Chunk* b)
-	{
-		if (a->m_bVisible && !b->m_bVisible)
-			return false;
-		if (!a->m_bVisible && b->m_bVisible)
-			return true;
-
-		float d1 = a->distanceToSqr(m_entity);
-		float d2 = b->distanceToSqr(m_entity);
-
-		if (d1 < d2) return false;
-		if (d1 > d2) return true;
-
-		return a->m_id > b->m_id;
-	}
-};
 
 class LevelRenderer : public LevelListener, public AppPlatformListener
 {
@@ -186,7 +137,6 @@ public:
 	int m_totalEntities;
 	int m_renderedEntities;
 	int m_culledEntities;
-	std::vector<Chunk*> field_24;
 	int m_cullStep;
 	RenderList m_renderList;
 	int m_totalChunks;
@@ -203,9 +153,6 @@ public:
 	int m_zMaxChunk;
 	Level* m_pLevel;
 	Dimension* m_pDimension;
-	std::vector<Chunk*> m_dirtyChunks;
-	Chunk** m_chunks;
-	Chunk** m_sortedChunks;
 	int m_chunksLength;
 	TileRenderer* m_pTileRenderer;
 	int m_xChunks;

@@ -16,7 +16,7 @@ int PressurePlateTile::getTickDelay() const
 	return 20;
 }
 
-AABB* PressurePlateTile::getAABB(const TileSource& source, const TilePos& pos)
+AABB* PressurePlateTile::getAABB(TileSource& source, const TilePos& pos)
 {
 	return nullptr;
 }
@@ -31,7 +31,7 @@ bool PressurePlateTile::isCubeShaped() const
 	return false;
 }
 
-bool PressurePlateTile::mayPlace(const TileSource& source, const TilePos& pos) const
+bool PressurePlateTile::mayPlace(TileSource& source, const TilePos& pos) const
 {
 	return source.isSolidBlockingTile(pos.below());
 }
@@ -152,7 +152,7 @@ void PressurePlateTile::onRemove(TileSource& source, const TilePos& pos)
 	Tile::onRemove(source, pos);
 }
 
-void PressurePlateTile::updateShape(const TileSource& source, const TilePos& pos)
+void PressurePlateTile::updateShape(TileSource& source, const TilePos& pos)
 {
 	bool var5 = source.getData(pos) == 1;
 	float var6 = 1.0f / 16.0f;
@@ -164,12 +164,12 @@ void PressurePlateTile::updateShape(const TileSource& source, const TilePos& pos
 	}
 }
 
-int PressurePlateTile::getSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const
+int PressurePlateTile::getSignal(TileSource& source, const TilePos& pos, Facing::Name face) const
 {
 	return source.getData(pos) > 0;
 }
 
-int PressurePlateTile::getDirectSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const
+int PressurePlateTile::getDirectSignal(TileSource& source, const TilePos& pos, Facing::Name face) const
 {
 	return source.getData(pos) == 0 ? false : face == Facing::UP;
 }

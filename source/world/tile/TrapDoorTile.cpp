@@ -14,7 +14,7 @@ TrapdoorTile::TrapdoorTile(int ID, Material* pMtl) : Tile(ID, pMtl)
 	Tile::setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 }
 
-AABB* TrapdoorTile::getAABB(const TileSource& source, const TilePos& pos)
+AABB* TrapdoorTile::getAABB(TileSource& source, const TilePos& pos)
 {
 	updateShape(source, pos);
 	return Tile::getAABB(source, pos);
@@ -26,7 +26,7 @@ AABB TrapdoorTile::getTileAABB(TileSource& source, const TilePos& pos)
 	return Tile::getTileAABB(source, pos);
 }
 
-void TrapdoorTile::updateShape(const TileSource& source, const TilePos& pos)
+void TrapdoorTile::updateShape(TileSource& source, const TilePos& pos)
 {
 	TileData metadata = source.getData(pos);
 	constexpr float f = 0.1875f;
@@ -90,7 +90,7 @@ void TrapdoorTile::neighborChanged(TileSource& source, const TilePos& pos, TileI
 	}
 }
 
-HitResult TrapdoorTile::clip(const TileSource& source, const TilePos& pos, Vec3 v1, Vec3 v2)
+HitResult TrapdoorTile::clip(TileSource& source, const TilePos& pos, Vec3 v1, Vec3 v2)
 {
 	updateShape(source, pos);
 	return Tile::clip(source, pos, v1, v2);
@@ -110,7 +110,7 @@ void TrapdoorTile::setPlacedOnFace(TileSource& source, const TilePos& pos, Facin
 	source.setTileAndData(pos, FullTile(this, updateFlag));
 }
 
-bool TrapdoorTile::mayPlace(const TileSource& source, const TilePos& pos) const // check this
+bool TrapdoorTile::mayPlace(TileSource& source, const TilePos& pos) const // check this
 {
 	if (source.isSolidBlockingTile(pos.west())) return true;
 	if (source.isSolidBlockingTile(pos.east())) return true;
