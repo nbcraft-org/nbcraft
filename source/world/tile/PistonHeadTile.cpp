@@ -2,7 +2,9 @@
 #include "world/level/Level.hpp"
 #include "PistonBaseTile.hpp"
 
-PistonHeadTile::PistonHeadTile(TileID id, int texture) : Tile(id, texture, Material::piston), m_headTex(-1)
+PistonHeadTile::PistonHeadTile(TileID id, int texture)
+	: Tile(id, texture, Material::piston)
+	, m_headTex(-1)
 {
 	setDestroyTime(0.5f);
 }
@@ -10,7 +12,7 @@ PistonHeadTile::PistonHeadTile(TileID id, int texture) : Tile(id, texture, Mater
 void PistonHeadTile::onRemove(Level* level, const TilePos& pos)
 {
 	Tile::onRemove(level, pos);
-	int data = level->getData(pos);
+	TileData data = level->getData(pos);
 	TilePos tp = pos.relative(Facing::OPPOSITE[getDirection(data)]);
 	TileID tile = level->getTile(tp);
 	if (tile == Tile::piston->m_ID || tile == Tile::stickyPiston->m_ID)
@@ -26,7 +28,7 @@ void PistonHeadTile::onRemove(Level* level, const TilePos& pos)
 
 int PistonHeadTile::getTexture(Facing::Name side, TileData meta) const
 {
-	int dir = getDirection(meta);
+	Facing::Name dir = getDirection(meta);
 	return side == dir ? (m_headTex >= 0 ? m_headTex : ((meta & 8) != 0 ? m_TextureFrame - 1 : m_TextureFrame)) : (side == Facing::OPPOSITE[dir] ? 107 : 108);
 }
 
@@ -37,7 +39,7 @@ eRenderShape PistonHeadTile::getRenderShape() const
 
 void PistonHeadTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
 {
-	int data = getDirection(level->getData(pos));
+	Facing::Name data = getDirection(level->getData(pos));
 	TilePos tp = pos.relative(Facing::OPPOSITE[data]);
 	TileID ot = level->getTile(tp);
 	if (ot != Tile::piston->m_ID && ot != Tile::stickyPiston->m_ID)
@@ -48,7 +50,7 @@ void PistonHeadTile::neighborChanged(Level* level, const TilePos& pos, TileID ti
 
 void PistonHeadTile::updateShape(const LevelSource* source, const TilePos& pos)
 {
-	int data = source->getData(pos);
+	TileData data = source->getData(pos);
 	switch (getDirection(data))
 	{
 	case Facing::DOWN:

@@ -15,14 +15,14 @@ PistonBaseTile::PistonBaseTile(TileID id, int texture, bool sticky)
 
 int PistonBaseTile::getTexture(Facing::Name side, TileData meta) const
 {
-	return (side == Facing::UP || getFacing(meta) > 5) ? m_TextureFrame : side == Facing::DOWN ? 109 : 108;
+	return (side == Facing::UP || (int)getFacing(meta) > 5) ? m_TextureFrame : side == Facing::DOWN ? 109 : 108;
 }
 
 int PistonBaseTile::getTexture(const LevelSource* level, const TilePos& pos, Facing::Name side) const
 {
 	TileData meta = level->getData(pos);
-	int facing = getFacing(meta);
-	return facing > 5 ? m_TextureFrame : (side == facing ? (!isExtended(meta) && m_aabb.min.x <= 0.0 && m_aabb.min.y <= 0.0 && m_aabb.min.z <= 0.0 && m_aabb.max.x >= 1.0 && m_aabb.max.y >= 1.0 && m_aabb.max.z >= 1.0 ? m_TextureFrame : 110) : (side == Facing::OPPOSITE[facing] ? 109 : 108));
+	Facing::Name facing = getFacing(meta);
+	return (int)facing > 5 ? m_TextureFrame : (side == facing ? (!isExtended(meta) && m_aabb.min.x <= 0.0 && m_aabb.min.y <= 0.0 && m_aabb.min.z <= 0.0 && m_aabb.max.x >= 1.0 && m_aabb.max.y >= 1.0 && m_aabb.max.z >= 1.0 ? m_TextureFrame : 110) : (side == Facing::OPPOSITE[facing] ? 109 : 108));
 }
 
 eRenderShape PistonBaseTile::getRenderShape() const
@@ -177,13 +177,13 @@ int PistonBaseTile::getFaceTexture() const
 void PistonBaseTile::_checkIfExtend(Level* level, const TilePos& pos)
 {
 	int data = level->getData(pos);
-	int face = getFacing(data);
-	bool signal = _getNeighborSignal(level, pos, (Facing::Name)face);
+	Facing::Name face = getFacing(data);
+	bool signal = _getNeighborSignal(level, pos, face);
 	if (data != 7)
 	{
 		if (signal && !isExtended(data))
 		{
-			if (_canMoveBlocks(level, pos, (Facing::Name)face))
+			if (_canMoveBlocks(level, pos, face))
 			{
 				level->setDataNoUpdate(pos, face | 8);
 				level->tileEvent(TileEvent(pos, 0, face));
@@ -318,12 +318,12 @@ bool PistonBaseTile::_moveBlocks(Level* level, const TilePos& pos, Facing::Name 
 			}
 		}
 
-		while (tp.x != pos.x || tp.y != pos.y || tp.z != pos.z)
+		while (tp != pos)
 		{
 			TilePos newTp = tp.relative(Facing::OPPOSITE[facing]);
 			TileID tile = level->getTile(newTp);
 			int data = level->getData(newTp);
-			if (tile == m_ID && newTp.x == pos.x && newTp.y == pos.y && newTp.z == pos.z)
+			if (tile == m_ID && newTp == pos)
 			{
 				level->setTileAndDataNoUpdate(tp, Tile::movingPiston->m_ID, facing | (m_bIsSticky ? 8 : 0));
 				level->setTileEntity(tp, MovingPistonTile::newMovingTileEntity(Tile::pistonHead->m_ID, facing | (m_bIsSticky ? 8 : 0), facing, true, false));

@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Biome.hpp"
+#include "common/Random.hpp"
 #include "world/level/levelgen/chunk/ChunkPos.hpp"
 #include "world/level/TilePos.hpp"
 
@@ -17,10 +18,10 @@ class BiomeSource
 {
 
 public:
-	BiomeSource() : 
-		m_temperatureMap(0), 
-		m_downfallMap(0), 
-		m_noiseMap(0) 
+	BiomeSource()
+		: m_temperatureMap(0)
+		, m_downfallMap(0)
+		, m_noiseMap(0)
 	{ }
 	BiomeSource(Level*);
 	float getTemperature(int x, int y);
@@ -28,15 +29,18 @@ public:
 
 	virtual Biome* getBiome(const ChunkPos& pos);
 	virtual Biome* getBiomeAt(const TilePos& pos);
-	virtual const std::vector<Biome*>& getBiomeBlock(const TilePos& pos, int, int);
-	virtual const std::vector<Biome*>& getBiomeBlock(std::vector<Biome*>&, const TilePos& pos, int, int);
+	virtual const Biome::Vector& getBiomeBlock(const TilePos& pos, int, int);
+	virtual const Biome::Vector& getBiomeBlock(Biome::Vector&, const TilePos& pos, int, int);
 	virtual const std::vector<float>& getTemperatureBlock(int, int, int, int);
 
 public:
 	std::vector<float> m_temperatures;
 	std::vector<float> m_downfalls;
 	std::vector<float> m_noises;
-	std::vector<Biome*> m_biomes;
+	Biome::Vector m_biomes;
+	Random m_temperatureRandom;
+	Random m_downfallRandom;
+	Random m_noiseRandom;
 	PerlinNoise m_temperatureMap;
 	PerlinNoise m_downfallMap;
 	PerlinNoise m_noiseMap;

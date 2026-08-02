@@ -23,14 +23,14 @@ public:
 
 	const std::vector<float>& getRegion(std::vector<float>& a2, int a3, int a4, int a5, int a6, float a7, float a8, float a9)
 	{
-		return getRegion(a2, float(a3), 10.0, float(a4), a5, 1, a6, a7, 1.0, a8);
+		return getRegion(a2, float(a3), 10.0f, float(a4), a5, 1, a6, a7, 1.0f, a8);
 	}
 
 	const std::vector<float>& getRegion(std::vector<float>&, float, float, float, int, int, int, float, float, float);
 
 	const std::vector<float>& getBiomeRegion(std::vector<float>& pMem, float a3, float a4, int a5, int a6, float a7, float a8, float a9)
 	{
-		return getBiomeRegion(pMem, a3, a4, a5, a6, a7, a8, a9, 0.5);
+		return getBiomeRegion(pMem, a3, a4, a5, a6, a7, a8, a9, 0.5f);
 	}
 
 	const std::vector<float>& getBiomeRegion(std::vector<float>& pMem, float a3, float a4, int a5, int a6, float a7, float a8, float a9, float a10);

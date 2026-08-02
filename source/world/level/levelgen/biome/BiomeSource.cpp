@@ -9,10 +9,13 @@
 #include "BiomeSource.hpp"
 #include "world/level/Level.hpp"
 
-BiomeSource::BiomeSource(Level* pLevel) :
-	m_temperatureMap(new Random(pLevel->getSeed() * 9871L), 4),
-	m_downfallMap(new Random(pLevel->getSeed() * 39811L), 4),
-	m_noiseMap(new Random(pLevel->getSeed() * 543321L), 2)
+BiomeSource::BiomeSource(Level* pLevel)
+	: m_temperatureRandom((int64_t)pLevel->getSeed() * 9871)
+	, m_downfallRandom((int64_t)pLevel->getSeed() * 39811)
+	, m_noiseRandom((int64_t)pLevel->getSeed() * 543321)
+	, m_temperatureMap(&m_temperatureRandom, 4)
+	, m_downfallMap(&m_downfallRandom, 4)
+	, m_noiseMap(&m_noiseRandom, 2)
 {
 }
 
@@ -31,18 +34,20 @@ Biome* BiomeSource::getBiomeAt(const TilePos& pos)
 	return getBiomeBlock(pos, 1, 1)[0];
 }
 
-const std::vector<Biome*>& BiomeSource::getBiomeBlock(const TilePos& pos, int c, int d)
+const Biome::Vector& BiomeSource::getBiomeBlock(const TilePos& pos, int c, int d)
 {
 	return getBiomeBlock(m_biomes, pos, c, d);
 }
 
-const std::vector<Biome*>& BiomeSource::getBiomeBlock(std::vector<Biome*>& biomes, const TilePos& pos, int c, int d)
+const Biome::Vector& BiomeSource::getBiomeBlock(Biome::Vector& biomes, const TilePos& pos, int c, int d)
 {
 	size_t size = c * d;
 	if (biomes.size() < size) biomes.resize(size);
 	m_temperatureMap.getBiomeRegion(m_temperatures, pos.x, pos.z, c, c, 0.025f, 0.025f, 0.25f);
-	m_downfallMap.getBiomeRegion(m_downfalls, pos.x, pos.z, c, c, 0.05f, 0.05f, 1 / 3.0f);
-	m_noiseMap.getBiomeRegion(m_noises, pos.x, pos.z, c, c, 0.25f, 0.25f, 0.5882352941176471f);
+	// @PARITY-JAVA: Java uses (1.0f / 3.0f) here
+	m_downfallMap.getBiomeRegion(m_downfalls, pos.x, pos.z, c, c, 0.05f, 0.05f, 0.3333f);
+	// @PARITY-JAVA: Java uses 0.5882352941176471f here
+	m_noiseMap.getBiomeRegion(m_noises, pos.x, pos.z, c, c, 0.25f, 0.25f, 0.588f);
 
 	int index = 0;
 
@@ -76,7 +81,8 @@ const std::vector<Biome*>& BiomeSource::getBiomeBlock(std::vector<Biome*>& biome
 const std::vector<float>& BiomeSource::getTemperatureBlock(int a, int b, int c, int d)
 {
 	m_temperatureMap.getBiomeRegion(m_temperatures, a, b, c, d, 0.025f, 0.025f, 0.25f);
-	m_noiseMap.getBiomeRegion(m_noises, a, b, c, d, 0.25f, 0.25f, 0.5882352941176471);
+	// @PARITY-JAVA: Java uses 0.5882352941176471f here
+	m_noiseMap.getBiomeRegion(m_noises, a, b, c, d, 0.25f, 0.25f, 0.588f);
 
 	int index = 0;
 

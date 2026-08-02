@@ -63,10 +63,10 @@ const int Facing::UV_AXES[3][4] = {
 };
 
 const int Facing::ROTATED_INDEX[4][4] = {
-	{0, 1, 2, 3}, // 0�
-	{1, 2, 3, 0}, // 90�
-	{3, 0, 1, 2}, // 270�
-	{2, 3, 0, 1}  // 180�
+	{0, 1, 2, 3}, // 0 deg
+	{1, 2, 3, 0}, // 90 deg
+	{3, 0, 1, 2}, // 270 deg
+	{2, 3, 0, 1}  // 180 deg
 };
 
 const float Facing::LIGHT[] = { 0.5f, 1.0f, 0.8f, 0.8f, 0.6f, 0.6f };

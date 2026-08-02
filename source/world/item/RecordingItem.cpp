@@ -16,7 +16,6 @@ bool RecordingItem::useOn(ItemStack* instance, Player* player, Level* level, con
 	if (level->getTile(pos) == Tile::recordPlayer->m_ID && level->getData(pos) == 0)
 	{
 		RecordPlayerTile::playRecord(level, pos, m_itemID);
-		level->levelEvent(LevelEvent(LevelEvent::SOUND_PLAY_RECORD, pos, m_itemID));
 		instance->m_count--;
 		return true;
 	}

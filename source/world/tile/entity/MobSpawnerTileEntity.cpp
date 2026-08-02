@@ -2,7 +2,7 @@
 #include "world/entity/MobFactory.hpp"
 #include "world/level/Level.hpp"
 
-int MobSpawnerTileEntity::MAX_DIST = 16;
+const int MobSpawnerTileEntity::MAX_DIST = 16;
 
 MobSpawnerTileEntity::MobSpawnerTileEntity()
     : m_spawnDelay(20)
@@ -15,7 +15,7 @@ MobSpawnerTileEntity::MobSpawnerTileEntity()
 
 bool MobSpawnerTileEntity::isNearPlayer() const
 {
-    return m_pLevel && m_pLevel->getNearestPlayer(m_pos + 0.5f, 16.0f, false);
+    return m_pLevel && m_pLevel->getNearestPlayer(m_pos + 0.5f, (float)MAX_DIST, false);
 }
 
 void MobSpawnerTileEntity::tick()
@@ -81,8 +81,8 @@ void MobSpawnerTileEntity::tick()
                     m_pos.y + 0.5f + (m_pLevel->m_random.nextFloat() - 0.5f) * 2.0f,
                     m_pos.z + 0.5f + (m_pLevel->m_random.nextFloat() - 0.5f) * 2.0f
                 );
-                m_pLevel->addParticle("smoke", particleSpawn, Vec3(0, 0, 0));
-                m_pLevel->addParticle("flame", particleSpawn, Vec3(0, 0, 0));
+                m_pLevel->addParticle("smoke", particleSpawn, Vec3::ZERO);
+                m_pLevel->addParticle("flame", particleSpawn, Vec3::ZERO);
             }
 
             mob->spawnAnim();

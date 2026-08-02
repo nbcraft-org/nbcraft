@@ -22,9 +22,11 @@ public:
 	bool isCubeShaped() const override;
 	bool isSolidRender() const override;
 	bool mayPlace(const Level*, const TilePos& pos) const override;
-	virtual bool isValidGrowTile(const TileID tile) const;
 	void tick(Level*, const TilePos& pos, Random*) override;
 	void neighborChanged(Level*, const TilePos& pos, TileID tile) override;
+
+public:
+	virtual bool isValidGrowTile(const TileID tile) const;
 
 public:
 	void checkAlive(Level*, const TilePos& pos);

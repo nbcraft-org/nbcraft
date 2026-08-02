@@ -236,8 +236,7 @@ void Gui::render(float f, bool bHaveScreen, int mouseX, int mouseY)
 	{
 		float smoothDuration = m_overlayMessageDuration - f;
 		int fade = (int)(smoothDuration * 256.0f / 20.0f);
-		if (fade > 255)
-			fade = 255;
+		fade = Mth::Min(fade, 255);
 
 		if (fade > 0)
 			m_pMinecraft->m_pFont->draw(m_overlayMessage, - (m_pMinecraft->m_pFont->width(m_overlayMessage)) / 2, -4 - 48, Color::getHSBColor(smoothDuration / 50.0f, 0.7f, 0.6f).withAlpha(fade));

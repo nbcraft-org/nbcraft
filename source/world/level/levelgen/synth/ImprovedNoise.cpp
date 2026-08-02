@@ -8,10 +8,12 @@
 
 #include "ImprovedNoise.hpp"
 
-float ImprovedNoise::field_4294_f = 0.5 * (Mth::sqrt(3.0f) - 1.0f);
-float ImprovedNoise::field_4293_g = (3.0f - Mth::sqrt(3.0f)) / 6.0f;
-
 const int ImprovedNoise::field_4296_d[12][3] = { {1, 1, 0}, {-1, 1, 0}, {1, -1, 0}, {-1, -1, 0}, {1, 0, 1}, {-1, 0, 1}, {1, 0, -1}, {-1, 0, -1}, {0, 1, 1}, {0, -1, 1}, {0, 1, -1}, {0, -1, -1} };
+
+float ImprovedNoise::func_4156_a(const int* var0, float var1, float var3)
+{
+	return (float)var0[0] * var1 + (float)var0[1] * var3;
+}
 
 ImprovedNoise::ImprovedNoise()
 {
@@ -255,7 +257,7 @@ void ImprovedNoise::addBiome(std::vector<float>& var1, float var2, float var4, i
             int var53 = m_permutation[var51 + m_permutation[var52]] % 12;
             int var54 = m_permutation[var51 + var41 + m_permutation[var52 + var42]] % 12;
             int var55 = m_permutation[var51 + 1 + m_permutation[var52 + 1]] % 12;
-            float var56 = 0.5 - var37 * var37 - var39 * var39;
+            float var56 = 0.5f - var37 * var37 - var39 * var39;
             float var21;
             if (var56 < 0.0f)
                 var21 = 0.0f;
@@ -265,7 +267,7 @@ void ImprovedNoise::addBiome(std::vector<float>& var1, float var2, float var4, i
                 var21 = var56 * var56 * func_4156_a(field_4296_d[var53], var37, var39);
             }
 
-            float var58 = 0.5 - var43 * var43 - var45 * var45;
+            float var58 = 0.5f - var43 * var43 - var45 * var45;
             float var23;
             if (var58 < 0.0f)
                 var23 = 0.0f;
@@ -275,7 +277,7 @@ void ImprovedNoise::addBiome(std::vector<float>& var1, float var2, float var4, i
                 var23 = var58 * var58 * func_4156_a(field_4296_d[var54], var43, var45);
             }
 
-            float var60 = 0.5 - var47 * var47 - var49 * var49;
+            float var60 = 0.5f - var47 * var47 - var49 * var49;
             float var25;
             if (var60 < 0.0f)
                 var25 = 0.0f;

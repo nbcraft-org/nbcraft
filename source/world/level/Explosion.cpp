@@ -72,7 +72,7 @@ void Explosion::explode()
 
 	AABB aabb(m_pos - m_power - 1.0f, m_pos + m_power + 1.0f);
 
-	EntityVector ents = m_pLevel->getEntities(m_pEntity ? m_pEntity : nullptr, aabb);
+	EntityVector ents = m_pLevel->getEntities(m_pEntity, aabb);
 	for (size_t i = 0; i < ents.size(); i++)
 	{
 		Entity* entity = ents[i];
@@ -91,7 +91,7 @@ void Explosion::explode()
 		entity->m_vel += delta * normInv * hurtPercent;
 	}
 	
-	m_power = m_power / 2;
+	m_power /= 2;
 
 	std::vector<TilePos> vec;
 	// @NOTE: Could avoid this copy if m_bFiery is false
@@ -122,6 +122,9 @@ void Explosion::addParticles()
 	{
 		TilePos tp = vec[i];
 		TileID tile = m_pLevel->getTile(tp);
+
+		// @PARITY-JAVA: Java spawns a particle for every tile, PE only for every 8th
+		if ((i & 0x7) == 0)
 		{
 			float mult = 0.0f;
 			Vec3 rp(float(tp.x) + m_pLevel->m_random.nextFloat(),

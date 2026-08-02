@@ -550,7 +550,47 @@ int LevelChunk::countEntities()
 	return n;
 }
 
-void LevelChunk::getEntities(Entity* pEntExclude, const AABB& aabb, std::vector<Entity*>& out)
+namespace
+{
+	struct EntityExcludePredicate
+	{
+		Entity* m_pExclude;
+
+		EntityExcludePredicate(Entity* pExclude) : m_pExclude(pExclude) {}
+
+		bool operator()(Entity* ent) const
+		{
+			return ent != m_pExclude;
+		}
+	};
+
+	struct EntityCategoryPredicate
+	{
+		EntityCategories::CategoriesMask m_category;
+
+		EntityCategoryPredicate(EntityCategories::CategoriesMask category) : m_category(category) {}
+
+		bool operator()(Entity* ent) const
+		{
+			return ent->getDescriptor().hasCategory(m_category);
+		}
+	};
+
+	struct EntityTypePredicate
+	{
+		EntityType m_type;
+
+		EntityTypePredicate(EntityType type) : m_type(type) {}
+
+		bool operator()(Entity* ent) const
+		{
+			return ent->getDescriptor().getEntityType() == m_type;
+		}
+	};
+}
+
+template <typename T>
+void LevelChunk::_getEntities(const T& predicate, const AABB& aabb, std::vector<Entity*>& out)
 {
 	int lowerBound = int(floorf((aabb.min.y - 2.0f) / 16.0f));
 	int upperBound = int(floorf((aabb.max.y + 2.0f) / 16.0f));
@@ -563,57 +603,28 @@ void LevelChunk::getEntities(Entity* pEntExclude, const AABB& aabb, std::vector<
 		for (std::vector<Entity*>::iterator it = m_entities[b].begin(); it != m_entities[b].end(); it++)
 		{
 			Entity* ent = *it;
-			if (ent == pEntExclude) continue;
+			if (!predicate(ent)) continue;
 
 			if (!aabb.intersect(ent->m_hitbox)) continue;
 
 			out.push_back(ent);
 		}
 	}
+}
+
+void LevelChunk::getEntities(Entity* pEntExclude, const AABB& aabb, std::vector<Entity*>& out)
+{
+	_getEntities(EntityExcludePredicate(pEntExclude), aabb, out);
 }
 
 void LevelChunk::getEntitiesOfCategory(EntityCategories::CategoriesMask category, const AABB& aabb, std::vector<Entity*>& out)
 {
-	int lowerBound = int(floorf((aabb.min.y - 2.0f) / 16.0f));
-	int upperBound = int(floorf((aabb.max.y + 2.0f) / 16.0f));
-
-	if (lowerBound < 0) lowerBound = 0;
-	if (upperBound > 7) upperBound = 7;
-
-	for (int b = lowerBound; b <= upperBound; b++)
-	{
-		for (std::vector<Entity*>::iterator it = m_entities[b].begin(); it != m_entities[b].end(); it++)
-		{
-			Entity* ent = *it;
-			if (!ent->getDescriptor().hasCategory(category)) continue;
-
-			if (!aabb.intersect(ent->m_hitbox)) continue;
-
-			out.push_back(ent);
-		}
-	}
+	_getEntities(EntityCategoryPredicate(category), aabb, out);
 }
 
 void LevelChunk::getEntitiesOfType(EntityType type, const AABB& aabb, std::vector<Entity*>& out)
 {
-	int lowerBound = int(floorf((aabb.min.y - 2.0f) / 16.0f));
-	int upperBound = int(floorf((aabb.max.y + 2.0f) / 16.0f));
-
-	if (lowerBound < 0) lowerBound = 0;
-	if (upperBound > 7) upperBound = 7;
-
-	for (int b = lowerBound; b <= upperBound; b++)
-	{
-		for (std::vector<Entity*>::iterator it = m_entities[b].begin(); it != m_entities[b].end(); it++)
-		{
-			Entity* ent = *it;
-			if (ent->getDescriptor().getEntityType() != type) continue;
-
-			if (!aabb.intersect(ent->m_hitbox)) continue;
-
-			out.push_back(ent);
-		}
-	}
+	_getEntities(EntityTypePredicate(type), aabb, out);
 }
 
 bool LevelChunk::setTile(const ChunkTilePos& pos, TileID tile)

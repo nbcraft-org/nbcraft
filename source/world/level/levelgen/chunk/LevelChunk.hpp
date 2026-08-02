@@ -30,6 +30,8 @@ class LevelChunk
 {
 private:
 	void _init();
+	template <typename T>
+	void _getEntities(const T& predicate, const AABB& aabb, std::vector<Entity*>& out);
 protected:
 	LevelChunk() { _init(); }
 public:

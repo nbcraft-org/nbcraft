@@ -11,9 +11,9 @@ public:
 
     const std::string& getEntityId() const { return m_pEntityDescriptor->getEntityType().getName(); }
 
-    void setEntityId(const std::string& id)
+    void setEntityId(const std::string& entityTypeName)
     {
-        const EntityTypeDescriptor* descriptor = EntityTypeDescriptor::GetByEntityTypeName(id);
+        const EntityTypeDescriptor* descriptor = EntityTypeDescriptor::GetByEntityTypeName(entityTypeName);
         if (descriptor)
             m_pEntityDescriptor = descriptor;
     }
@@ -23,11 +23,10 @@ public:
     void delay();
 
     void load(const CompoundTag& tag) override;
-
     void save(CompoundTag& tag) const override;
 
 public:
-    static int MAX_DIST;
+    static const int MAX_DIST;
 
     int m_spawnDelay;
     const EntityTypeDescriptor* m_pEntityDescriptor;

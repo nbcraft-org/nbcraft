@@ -7,6 +7,7 @@
  ********************************************************************/
 
 #include "Biome.hpp"
+#include "common/Mth.hpp"
 #include "world/tile/Tile.hpp"
 
 Biome
@@ -76,15 +77,7 @@ float Biome::adjustScale(float f)
 
 int Biome::getSkyColor(float x)
 {
-	x /= 3.0f;
-	if (x < -1.0f) {
-		x = -1.0f;
-	}
-
-	if (x > 1.0f) {
-		x = 1.0f;
-	}
-
+	x = Mth::clamp(x / 3.0f, -1.0f, 1.0f);
 
 	return Color::getHSBColor(0.62222224f - x * 0.05f, 0.5f + x * 0.1f, 1.0f);
 }

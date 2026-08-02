@@ -21,7 +21,7 @@ WolfModel::WolfModel() :
 	m_yBabyHeadOffset = 8.0f;
 	m_zBabyHeadOffset = 4.0f;
 
-	float var1 = 0.0f;
+	constexpr float var1 = 0.0f;
 	constexpr float var2 = 13.5f;
 	m_head.addBox(-3.0f, -3.0f, -2.0f, 6, 6, 4, var1);
 	m_head.setPos(-1.0f, var2, -7.0f);

@@ -114,12 +114,12 @@ void PistonMovingTileEntity::_moveCollidedEntities(float progress, float force)
 
 void PistonMovingTileEntity::finalTick()
 {
-	if (m_progressO < 1.0f)
-	{
-		m_progressO = m_progress = 1.0f;
-		m_pLevel->removeTileEntity(m_pos);
-		setRemoved();
-		if (m_pLevel->getTile(m_pos) == Tile::movingPiston->m_ID)
-			m_pLevel->setTileAndData(m_pos, m_tileId, m_meta);
-	}
+	if (m_progressO >= 1.0f)
+		return;
+
+	m_progressO = m_progress = 1.0f;
+	m_pLevel->removeTileEntity(m_pos);
+	setRemoved();
+	if (m_pLevel->getTile(m_pos) == Tile::movingPiston->m_ID)
+		m_pLevel->setTileAndData(m_pos, m_tileId, m_meta);
 }

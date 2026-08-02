@@ -29,14 +29,14 @@ void MinecartRenderer::render(const Entity& entity, const Vec3& pos, float rot, 
             p1 = p;
 
         cPos.x += p->x - smoothPos.x;
-        cPos.y += (p0->y + p1->y) / 2.0 - smoothPos.y;
+        cPos.y += (p0->y + p1->y) / 2.0f - smoothPos.y;
         cPos.z += p->z - smoothPos.z;
         Vec3 dir = *p1 - *p0;
-        if (dir.length() != 0.0)
+        if (dir.length() != 0.0f)
         {
             dir = dir.normalize();
-            rot = Mth::atan2(dir.z, dir.x) * 180.0 / M_PI;
-            xRot = Mth::atan(dir.y) * 73.0;
+            rot = Mth::atan2(dir.z, dir.x) * 180.0f / M_PI;
+            xRot = Mth::atan(dir.y) * 73.0f;
         }
 
         if (p != p0)

@@ -10,19 +10,22 @@ bool PaintingItem::useOn(ItemStack* instance, Player* player, Level* level, cons
 {
     if (Facing::isVertical(face))
         return false;
-    else
+
+    uint8_t var8 = 0;
+    switch (face)
     {
-        uint8_t var8 = 0;
-        if (face == Facing::WEST)
-            var8 = 1;
+    case Facing::WEST:
+        var8 = 1;
+        break;
+    case Facing::SOUTH:
+        var8 = 2;
+        break;
+    case Facing::EAST:
+        var8 = 3;
+        break;
+    }
 
-        if (face == Facing::SOUTH)
-            var8 = 2;
-
-        if (face == Facing::EAST)
-            var8 = 3;
-
-        Painting* painting = new Painting(level, pos, var8);
+    Painting* painting = new Painting(level, pos, var8);
         if (painting->survives())
         {
             if (!level->m_bIsClientSide)
@@ -30,9 +33,8 @@ bool PaintingItem::useOn(ItemStack* instance, Player* player, Level* level, cons
 
             --instance->m_count;
         }
-        else
-            delete painting;
+    else
+        delete painting;
 
-        return true;
-    }
+    return true;
 }

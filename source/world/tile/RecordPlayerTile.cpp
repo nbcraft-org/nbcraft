@@ -42,6 +42,7 @@ void RecordPlayerTile::playRecord(Level* level, const TilePos& pos, int record)
         player->m_record = record;
         player->setChanged();
         level->setData(pos, 1);
+        level->levelEvent(LevelEvent(LevelEvent::SOUND_PLAY_RECORD, pos, record));
     }
 }
 

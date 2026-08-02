@@ -15,9 +15,7 @@ void BoatRenderer::render(const Entity& entity, const Vec3& pos, float rot, floa
     matrix->translate(pos);
     matrix->rotate(180.0f - rot, Vec3::UNIT_Y);
     float hurt = boat.m_hurtTime - a;
-    float dmg = boat.m_damage - a;
-    if (dmg < 0.0f)
-        dmg = 0.0f;
+    float dmg = Mth::Max(boat.m_damage - a, 0.0f);
 
     if (hurt > 0.0f)
         matrix->rotate(Mth::sin(hurt) * hurt * dmg / 10.0f * boat.m_hurtDir, Vec3::UNIT_X);

@@ -4,6 +4,9 @@
 
 class PistonBaseTile : public Tile
 {
+public:
+	PistonBaseTile(TileID id, int texture, bool sticky);
+
 private:
 	void _checkIfExtend(Level*, const TilePos& pos);
 	bool _getNeighborSignal(Level*, const TilePos& pos, Facing::Name facing);
@@ -13,8 +16,6 @@ private:
 	bool _moveBlocks(Level* level, const TilePos& pos, Facing::Name facing);
 
 public:
-	PistonBaseTile(TileID id, int texture, bool sticky);
-
 	int getTexture(Facing::Name side, TileData meta) const override;
 	int getTexture(const LevelSource*, const TilePos& pos, Facing::Name face) const override;
 	eRenderShape getRenderShape() const override;
@@ -31,16 +32,10 @@ public:
 
 	int getFaceTexture() const;
 
-	static int getFacing(int data)
-	{
-		return data & 7;
-	}
-
-	static bool isExtended(int data)
-	{
-		return (data & 8);
-	}
+	static Facing::Name getFacing(int data) { return (Facing::Name)(data & 7); }
+	static bool isExtended(int data) { return (data & 8) != 0; }
 
 private:
-	bool m_bIsSticky, m_bUpdating;
+	bool m_bIsSticky;
+	bool m_bUpdating;
 };

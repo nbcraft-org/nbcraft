@@ -173,8 +173,8 @@ add_library(nbcraft-core STATIC
     client/gui/components/WorldSelectionList.cpp
     client/gui/components/OptionList.cpp
     client/gui/components/ScrollRenderer_Console.cpp
-	  client/gui/components/ImageButton.cpp
-	  client/gui/components/LargeImageButton.cpp
+    client/gui/components/ImageButton.cpp
+    client/gui/components/LargeImageButton.cpp
     client/gui/components/TabButton.cpp
     client/gui/components/CraftButton_Console.cpp
     client/locale/Language.cpp

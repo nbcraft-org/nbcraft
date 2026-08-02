@@ -23,10 +23,7 @@ public:
 	void setHeadTexture(int texture);
 	void resetHeadTexture();
 
-	static int getDirection(int data)
-	{
-		return data & 7;
-	}
+	static Facing::Name getDirection(int data) { return (Facing::Name)(data & 7); }
 
 private:
 	int m_headTex;
