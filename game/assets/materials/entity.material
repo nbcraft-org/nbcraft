@@ -89,6 +89,10 @@
 		"vertexShader" : "shaders/position.vertex",
 		"fragmentShader" : "shaders/current_color.fragment"
 	},
+	
+	"spider:entity_alphablend": {
+		"depthFunc": "LessEqual"
+	},
 
 	"item_in_hand:entity_alphatest": {
 	},

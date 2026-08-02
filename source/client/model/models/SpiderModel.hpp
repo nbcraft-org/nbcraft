@@ -4,6 +4,15 @@
 
 class SpiderModel : public Model
 {
+protected:
+	class Materials
+	{
+	public:
+		mce::MaterialPtr spider;
+
+		Materials();
+	};
+
 public:
 	SpiderModel();
 	~SpiderModel();
@@ -13,6 +22,8 @@ public:
 	void setupAnim(float time, float r, float bob, float y_rot, float x_rot, float scale) override;
 
 private:
+	Materials m_spiderMaterials;
+
 	ModelPart m_head;
 	ModelPart m_body0;
 	ModelPart m_body1;

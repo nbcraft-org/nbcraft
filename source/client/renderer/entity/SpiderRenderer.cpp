@@ -20,9 +20,6 @@ int SpiderRenderer::prepareArmor(const Mob& spider, int layer, float a)
 	if (!bindTexture("mob/spider_eyes.png", false))
 		return 0;
 
-	glEnable(GL_BLEND);
-	glDepthFunc(GL_LEQUAL);
-
 	float br = (1.0f - spider.getBrightness(1.0f)) * 0.5f;
 	currentShaderColor = Color::WHITE;
 	currentShaderDarkColor = Color(1.0f, 1.0f, 1.0f, br);
