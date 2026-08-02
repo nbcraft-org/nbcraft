@@ -2352,21 +2352,21 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 			t.addOffset(-0.5f, -0.5f, -0.5f);
 			t.begin(24); // 4 to 24
 			t.color(color * getTileFaceColor(tile, Facing::UP));
-			t.normal(0.0f, 1.0f, 0.0f);
+			t.normal(Vec3::UNIT_Y);
 			renderFaceUp(tileType, Vec3::ZERO, tileType->getTexture(Facing::UP, tile.data));
 			t.color(color * getTileFaceColor(tile, Facing::DOWN, 0.5f, preshade));
-			t.normal(0.0f, -1.0f, 0.0f);
+			t.normal(Vec3::NEG_UNIT_Y);
 			IF_NEEDED(renderFaceDown(tileType, Vec3::ZERO, tileType->getTexture(Facing::DOWN, tile.data)));
 			t.color(color * getTileFaceColor(tile, Facing::NORTH, 0.8f, preshade));
-			t.normal(0.0f, 0.0f, -1.0f);
+			t.normal(Vec3::NEG_UNIT_Z);
 			IF_NEEDED(renderNorth(tileType, Vec3::ZERO, tileType->getTexture(Facing::NORTH, tile.data)));
 			t.color(color * getTileFaceColor(tile, Facing::SOUTH, 0.8f, preshade));
-			t.normal(0.0f, 0.0f, 1.0f);
+			t.normal(Vec3::UNIT_Z);
 			IF_NEEDED(renderSouth(tileType, Vec3::ZERO, tileType->getTexture(Facing::SOUTH, tile.data)));
 			t.color(color * getTileFaceColor(tile, Facing::WEST, 0.6f, preshade));
-			t.normal(-1.0f, 0.0f, 0.0f);
+			t.normal(Vec3::NEG_UNIT_X);
 			IF_NEEDED(renderWest (tileType, Vec3::ZERO, tileType->getTexture(Facing::WEST, tile.data)));
-			t.normal(1.0f, 0.0f, 0.0f);
+			t.normal(Vec3::UNIT_X);
 			t.color(color * getTileFaceColor(tile, Facing::EAST, 0.6f, preshade));
 			IF_NEEDED(renderEast (tileType, Vec3::ZERO, tileType->getTexture(Facing::EAST, tile.data)));
 			t.draw(material);
@@ -2378,7 +2378,7 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 			// unused as cross items render like regular items in the hand
 			t.begin(16);
 			t.color(color * getTileFaceColor(tile, Facing::UP));
-			t.normal(Vec3::NEG_UNIT_Y);
+			t.normal(Vec3::UNIT_Y);
 			tesselateCrossTexture(tile, Vec3(-0.5f, -0.5f, -0.5f), true);
 			t.draw(material);
 			break;
@@ -2397,22 +2397,22 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 
 				t.begin(24);
 				t.color(color * getTileFaceColor(tile, Facing::DOWN, 0.5f, preshade));
-				t.normal(0.0f, -1.0f, 0.0f);
+				t.normal(Vec3::NEG_UNIT_Y);
 				renderFaceDown  (tileType, Vec3::ZERO, tileType->getTexture(Facing::DOWN, tile.data));
 				t.color(color * getTileFaceColor(tile, Facing::UP));
-				t.normal(0.0f, 1.0f, 0.0f);
+				t.normal(Vec3::UNIT_Y);
 				renderFaceUp(tileType, Vec3::ZERO, tileType->getTexture(Facing::UP, tile.data));
 				t.color(color * getTileFaceColor(tile, Facing::NORTH, 0.6f, preshade));
-				t.normal(0.0f, 0.0f, -1.0f);
+				t.normal(Vec3::NEG_UNIT_Z);
 				renderNorth   (tileType, Vec3::ZERO, tileType->getTexture(Facing::NORTH, tile.data));
 				t.color(color * getTileFaceColor(tile, Facing::SOUTH, 0.6f, preshade));
-				t.normal(0.0f, 0.0f, 1.0f);
+				t.normal(Vec3::UNIT_Z);
 				renderSouth   (tileType, Vec3::ZERO, tileType->getTexture(Facing::SOUTH, tile.data));
 				t.color(color * getTileFaceColor(tile, Facing::WEST, 0.8f, preshade));
-				t.normal(-1.0f, 0.0f, 0.0f);
+				t.normal(Vec3::NEG_UNIT_X);
 				renderWest    (tileType, Vec3::ZERO, tileType->getTexture(Facing::WEST, tile.data));
 				t.color(color * getTileFaceColor(tile, Facing::EAST, 0.8f, preshade));
-				t.normal(1.0f, 0.0f, 0.0f);
+				t.normal(Vec3::UNIT_X);
 				renderEast    (tileType, Vec3::ZERO, tileType->getTexture(Facing::EAST, tile.data));
 				t.draw(material);
 			}
@@ -2436,22 +2436,22 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 
 				t.begin(24);
 				t.color(color * getTileFaceColor(tile, Facing::UP));
-				t.normal(0.0f, 1.0f, 0.0f);
+				t.normal(Vec3::UNIT_Y);
 				renderFaceUp(tileType, Vec3::ZERO, tileType->getTexture(Facing::UP, tile.data));
 				t.color(color * getTileFaceColor(tile, Facing::DOWN, 0.5f, preshade));
-				t.normal(0.0f, -1.0f, 0.0f);
+				t.normal(Vec3::NEG_UNIT_Y);
 				renderFaceDown(tileType, Vec3::ZERO, tileType->getTexture(Facing::DOWN, tile.data));
 				t.color(color * getTileFaceColor(tile, Facing::NORTH, 0.8f, preshade));
-				t.normal(0.0f, 0.0f, -1.0f);
+				t.normal(Vec3::NEG_UNIT_Z);
 				renderNorth(tileType, Vec3::ZERO, tileType->getTexture(Facing::NORTH, tile.data));
 				t.color(color * getTileFaceColor(tile, Facing::SOUTH, 0.8f, preshade));
-				t.normal(0.0f, 0.0f, 1.0f);
+				t.normal(Vec3::UNIT_Z);
 				renderSouth(tileType, Vec3::ZERO, tileType->getTexture(Facing::SOUTH, tile.data));
 				t.color(color* getTileFaceColor(tile, Facing::WEST, 0.6f, preshade));
-				t.normal(-1.0f, 0.0f, 0.0f);
+				t.normal(Vec3::NEG_UNIT_X);
 				renderWest(tileType, Vec3::ZERO, tileType->getTexture(Facing::WEST, tile.data));
 				t.color(color* getTileFaceColor(tile, Facing::WEST, 0.6f, preshade));
-				t.normal(1.0f, 0.0f, 0.0f);
+				t.normal(Vec3::UNIT_X);
 				renderEast(tileType, Vec3::ZERO, tileType->getTexture(Facing::EAST, tile.data));
 				t.draw(material);
 			}
@@ -2477,22 +2477,22 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 
 				t.begin(24);
 				t.color(color* getTileFaceColor(tile, Facing::UP, 1.0f, preshade));
-				t.normal(0.0f, 1.0f, 0.0f);
+				t.normal(Vec3::UNIT_X);
 				renderFaceUp(tileType, Vec3::ZERO, tileType->getTexture(Facing::UP, tile.data));
 				t.color(color* getTileFaceColor(tile, Facing::DOWN, 1.0f, preshade));
-				t.normal(0.0f, -1.0f, 0.0f);
+				t.normal(Vec3::NEG_UNIT_Y);
 				renderFaceDown(tileType, Vec3::ZERO, tileType->getTexture(Facing::DOWN, tile.data));
 				t.color(color* getTileFaceColor(tile, Facing::NORTH, 0.8f, preshade));
-				t.normal(0.0f, 0.0f, -1.0f);
+				t.normal(Vec3::NEG_UNIT_Z);
 				renderNorth(tileType, Vec3::ZERO, tileType->getTexture(Facing::NORTH, tile.data));
 				t.color(color* getTileFaceColor(tile, Facing::SOUTH, 0.8f, preshade));
-				t.normal(0.0f, 0.0f, 1.0f);
+				t.normal(Vec3::UNIT_Z);
 				renderSouth(tileType, Vec3::ZERO, tileType->getTexture(Facing::SOUTH, tile.data));
 				t.color(color* getTileFaceColor(tile, Facing::WEST, 0.6f, preshade));
-				t.normal(-1.0f, 0.0f, 0.0f);
+				t.normal(Vec3::NEG_UNIT_X);
 				renderWest(tileType, Vec3::ZERO, tileType->getTexture(Facing::WEST, tile.data));
 				t.color(color* getTileFaceColor(tile, Facing::EAST, 0.6f, preshade));
-				t.normal(1.0f, 0.0f, 0.0f);
+				t.normal(Vec3::UNIT_X);
 				renderEast(tileType, Vec3::ZERO, tileType->getTexture(Facing::EAST, tile.data));
 				t.draw(material);
 			}

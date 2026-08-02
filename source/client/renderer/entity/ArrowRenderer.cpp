@@ -88,5 +88,5 @@ void ArrowRenderer::render(const Entity& entity, const Vec3& pos, float rot, flo
 
     //_setupShaderParameters(ent, Color::NIL, a);
 
-    m_mesh.render(m_materials.entity_alphatest);
+    m_mesh.render(m_materials.entity_alphatest_nocull);
 }

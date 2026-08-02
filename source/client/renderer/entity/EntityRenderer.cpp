@@ -17,7 +17,7 @@ EntityRenderer::Materials::Materials()
 {
 	MATERIAL_PTR(switchable, entity_flat_color);
 	MATERIAL_PTR(switchable, entity_alphatest);
-	MATERIAL_PTR(switchable, entity_alphatest_cull);
+	MATERIAL_PTR(switchable, entity_alphatest_nocull);
 	MATERIAL_PTR(switchable, entity_alphatest_glint);
 	MATERIAL_PTR(common, name_tag);
 	MATERIAL_PTR(common, name_tag_depth_tested);
@@ -105,7 +105,7 @@ void EntityRenderer::renderFlame(const Entity& entity, const Vec3& pos, float a)
 		matrix->translate(Vec3(0.0f, 0.0f, -0.04f));
 	}
 
-	t.draw(m_materials.entity_alphatest_cull);
+	t.draw(m_materials.entity_alphatest);
 
 	Lighting::turnOn(false);
 }

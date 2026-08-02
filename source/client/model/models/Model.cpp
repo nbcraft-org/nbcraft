@@ -12,9 +12,11 @@
 Model::Materials::Materials()
 {
 	MATERIAL_PTR(switchable, entity);
+	MATERIAL_PTR(switchable, entity_nocull);
 	MATERIAL_PTR(switchable, entity_alphatest);
-	MATERIAL_PTR(switchable, entity_alphatest_cull);
+	MATERIAL_PTR(switchable, entity_alphatest_nocull);
 	MATERIAL_PTR(switchable, entity_alphablend);
+	MATERIAL_PTR(switchable, entity_alphablend_nocull);
 	MATERIAL_PTR(switchable, entity_static);
 	MATERIAL_PTR(switchable, entity_emissive);
 	MATERIAL_PTR(switchable, entity_emissive_alpha);

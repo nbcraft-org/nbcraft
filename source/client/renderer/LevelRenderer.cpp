@@ -1981,7 +1981,7 @@ void LevelRenderer::renderAdvancedClouds(float alpha)
 				if (yy <= h + 1.0f)
 				{
 					t.color(cc.r, cc.g, cc.b, 0.8f);
-					t.normal(0.0f, 1.0f, 0.0f);
+					t.normal(Vec3::UNIT_Y);
 					t.vertexUV((xp + 0.0f), (yy + h - e), (zp + D), ((xx + 0.0f) * scale + uo), ((zz + D) * scale + vo));
 					t.vertexUV((xp + D), (yy + h - e), (zp + D), ((xx + D) * scale + uo), ((zz + D) * scale + vo));
 					t.vertexUV((xp + D), (yy + h - e), (zp + 0.0f), ((xx + D) * scale + uo), ((zz + 0.0f) * scale + vo));

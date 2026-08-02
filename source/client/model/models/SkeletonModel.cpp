@@ -2,7 +2,7 @@
 
 SkeletonModel::SkeletonModel() : ZombieModel()
 {
-    m_pMaterial = &Model::m_materials.entity_alphatest;
+    m_pMaterial = &Model::m_materials.entity_alphatest_nocull;
 
     m_armRight.clear();
     m_armLeft.clear();

@@ -63,7 +63,7 @@ void TripodCameraRenderer::render(const Entity& entity, const Vec3& pos, float r
 	t.begin(8);
 
 	// Needed for D3D, since the shader expects this
-	t.normal(Vec3::ZERO);
+	t.normal(Vec3::UNIT_Y);
 	t.vertexUV(x1, newY + 1, z1, texU_l, texV_u);
 	t.vertexUV(x1, newY + 0, z1, texU_l, texV_d);
 	t.vertexUV(x2, newY + 0, z2, texU_r, texV_d);
@@ -74,7 +74,7 @@ void TripodCameraRenderer::render(const Entity& entity, const Vec3& pos, float r
 	t.vertexUV(x2, newY + 0, z1, texU_r, texV_d);
 	t.vertexUV(x2, newY + 1, z1, texU_r, texV_u);
 
-	t.draw(m_shaderMaterials.entity_alphatest);
+	t.draw(m_shaderMaterials.entity_alphatest_nocull);
 
 	m_modelPart.setBrightness(brightness);
 	m_modelPart.render(0.0625f);
@@ -125,7 +125,7 @@ void TripodCameraRenderer::render(const Entity& entity, const Vec3& pos, float r
 		t.vertexUV(x1, y, z1, texU_r, texV_u);
 		t.vertexUV(x2, y, z1, texU_r, texV_d);
 		t.vertexUV(x2, y, z2, texU_l, texV_d);
-		t.draw(m_shaderMaterials.entity_alphatest);
+		t.draw(m_shaderMaterials.entity_alphatest_nocull);
 	}
 
 	if (&entity == pHREntity)

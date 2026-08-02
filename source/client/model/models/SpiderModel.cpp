@@ -15,6 +15,8 @@ SpiderModel::SpiderModel() :
 	m_leg6(this, 18, 0),
 	m_leg7(this, 18, 0)
 {
+    m_pMaterial = &m_materials.entity_alphablend;
+
 	constexpr float g = 0.0f;
     constexpr int yo = 15;
 

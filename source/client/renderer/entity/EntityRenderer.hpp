@@ -25,7 +25,7 @@ protected:
 	public:
 		mce::MaterialPtr entity_flat_color;
 		mce::MaterialPtr entity_alphatest;
-		mce::MaterialPtr entity_alphatest_cull;
+		mce::MaterialPtr entity_alphatest_nocull;
 		mce::MaterialPtr entity_alphatest_glint;
 		mce::MaterialPtr name_tag;
 		mce::MaterialPtr name_tag_depth_tested;
