@@ -47,11 +47,13 @@ bool MovingPistonTile::isCubeShaped() const
 
 bool MovingPistonTile::use(Level* level, const TilePos& pos, Player* player)
 {
-    if (!level->m_bIsClientSide || level->getTileEntity(pos))
-        return false;
-
-    level->setTile(pos, TILE_AIR);
-    return true;
+    if (level->m_bIsClientSide && !level->getTileEntity(pos))
+    {
+        level->setTile(pos, TILE_AIR);
+        return true;
+    }
+    
+    return false;
 }
 
 int MovingPistonTile::getResource(TileData, Random*) const
