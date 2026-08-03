@@ -1,14 +1,12 @@
 #pragma once
 
-class MapColor
+struct MapColor
 {
-public:
-	MapColor(int, int);
+	MapColor(int id, int color);
 
 	static void initMapColors();
 	static void teardownMapColors();
 
-public:
 	static MapColor* mapColors[16];
 	static MapColor
 		*air,
@@ -26,6 +24,6 @@ public:
 		*water,
 		*wood;
 
-	const int m_id;
-	const int m_color;
+	const int id;
+	const int color;
 };

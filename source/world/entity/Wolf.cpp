@@ -23,9 +23,9 @@ Wolf::Wolf(Level* pLevel) : Animal(pLevel)
 
 void Wolf::_defineSynchedData()
 {
-	m_entityData.define<int8_t>(16, 0);
-	m_entityData.define<std::string>(17, "");
-	m_entityData.define<int>(18, m_health);
+	m_entityData.define<int8_t>(DATA_WOLF_FLAGS, 0);
+	m_entityData.define<std::string>(DATA_WOLF_OWNER, "");
+	m_entityData.define<int>(DATA_WOLF_HEALTH, m_health);
 }
 
 int Wolf::getDeathLoot() const
@@ -52,60 +52,63 @@ float Wolf::getHeadRollAngle(float f) const
 
 std::string Wolf::getOwner() const
 {
-	return m_entityData.get<std::string>(17);
+	return m_entityData.get<std::string>(DATA_WOLF_OWNER);
 }
 
 void Wolf::setOwner(std::string owner)
 {
-	m_entityData.set<std::string>(17, owner);
+	m_entityData.set<std::string>(DATA_WOLF_OWNER, owner);
 }
 
 bool Wolf::isAngry() const
 {
-	return m_entityData.get<int8_t>(16) & 2;
+	return m_entityData.get<int8_t>(DATA_WOLF_FLAGS) & 2;
 }
 
 void Wolf::setAngry(bool b)
 {
-	int8_t data = m_entityData.get<int8_t>(16);
-	m_entityData.set<int8_t>(16, b ? data | 2 : data & -3);
+	int8_t data = m_entityData.get<int8_t>(DATA_WOLF_FLAGS);
+	m_entityData.set<int8_t>(DATA_WOLF_FLAGS, b ? data | 2 : data & -3);
 }
 
 bool Wolf::isTamed() const
 {
-	return m_entityData.get<int8_t>(16) & 4;
+	return m_entityData.get<int8_t>(DATA_WOLF_FLAGS) & 4;
 }
 
 void Wolf::setTamed(bool b)
 {
-	int8_t data = m_entityData.get<int8_t>(16);
-	m_entityData.set<int8_t>(16, b ? data | 4 : data & -5);
+	int8_t data = m_entityData.get<int8_t>(DATA_WOLF_FLAGS);
+	m_entityData.set<int8_t>(DATA_WOLF_FLAGS, b ? data | 4 : data & -5);
 }
 
 bool Wolf::isOrderedToSit() const
 {
-	return m_entityData.get<int8_t>(16) & 1;
+	return m_entityData.get<int8_t>(DATA_WOLF_FLAGS) & 1;
 }
 
 void Wolf::setOrderedToSit(bool b)
 {
-	int8_t data = m_entityData.get<int8_t>(16);
-	m_entityData.set<int8_t>(16, b ? data | 1 : data & -2);
+	int8_t data = m_entityData.get<int8_t>(DATA_WOLF_FLAGS);
+	m_entityData.set<int8_t>(DATA_WOLF_FLAGS, b ? data | 1 : data & -2);
 }
 
-void Wolf::updateAttackTarget(Entity* ent, float dist)
+void Wolf::_updateAttackTarget(Entity* ent, float dist)
 {
 	if (!m_pLevel->findPath(&m_path, this, ent, 16.0f) && dist > 12.0f)
 	{
 		TilePos base(ent->m_pos.x - 2, ent->m_hitbox.min.y, ent->m_pos.z - 2);
 
 		TilePos tp(base);
-		for (int dx = 0; dx <= 4; ++dx) {
+		for (int dx = 0; dx <= 4; ++dx)
+		{
 			tp.x = base.x + dx;
-			for (int dz = 0; dz <= 4; ++dz) {
+			for (int dz = 0; dz <= 4; ++dz)
+			{
 				tp.z = base.z + dz;
-				if ((dx < 1 || dz < 1 || dx > 3 || dz > 3) && m_pLevel->isSolidBlockingTile(tp.below()) && !m_pLevel->isSolidBlockingTile(tp) && !m_pLevel->isSolidBlockingTile(tp.above())) {
-					moveTo(Vec3(tp.x + 0.5, tp.y, tp.z + 0.5), m_rot);
+				if ((dx < 1 || dz < 1 || dx > 3 || dz > 3) && m_pLevel->isSolidBlockingTile(tp.below()) && !m_pLevel->isSolidBlockingTile(tp) && !m_pLevel->isSolidBlockingTile(tp.above()))
+				{
+					moveTo(Vec3(tp.x + 0.5f, float(tp.y), tp.z + 0.5f), m_rot);
 					return;
 				}
 			}
@@ -113,7 +116,7 @@ void Wolf::updateAttackTarget(Entity* ent, float dist)
 	}
 }
 
-void Wolf::addTamingParticles(bool heart)
+void Wolf::_addTamingParticles(bool heart)
 {
 	const std::string particle = heart ? "heart" : "smoke";
 	
@@ -124,9 +127,9 @@ void Wolf::addTamingParticles(bool heart)
 		pos.x = m_pos.x + (m_random.nextFloat() * m_bbWidth * 2.0f) - m_bbWidth;
 		pos.y = m_pos.y + (m_random.nextFloat() * m_bbHeight * 2.0f) - m_bbHeight;
 		pos.z = m_pos.z + (m_random.nextFloat() * m_bbWidth * 2.0f) - m_bbWidth;
-		vel.x = m_random.nextGaussian() * 0.02;
-		vel.y = m_random.nextGaussian() * 0.02;
-		vel.z = m_random.nextGaussian() * 0.02;
+		vel.x = m_random.nextGaussian() * 0.02f;
+		vel.y = m_random.nextGaussian() * 0.02f;
+		vel.z = m_random.nextGaussian() * 0.02f;
 		m_pLevel->addParticle(particle, pos, vel);
 	}
 }
@@ -168,7 +171,7 @@ void Wolf::updateAi()
 		{
 			float var2 = player->distanceToSqr(this);
 			if (var2 > 5.0f)
-				updateAttackTarget(player, var2);
+				_updateAttackTarget(player, var2);
 		}
 		else if (!isInWater())
 			setOrderedToSit(true);
@@ -176,7 +179,7 @@ void Wolf::updateAi()
 	else if (!m_pAttackTarget && !isPathFinding() && !isTamed() && m_random.nextInt(100) == 0)
 	{
 		AABB hit = AABB(m_pos, m_pos + 1);
-		hit.grow(16.0, 4.0, 16.0);
+		hit.grow(16.0f, 4.0f, 16.0f);
 		EntityVector var1 = m_pLevel->getEntitiesOfType(EntityType::SHEEP, hit);
 		if (!var1.empty())
 			setAttackTarget(var1[m_pLevel->m_random.nextInt(var1.size())]);
@@ -186,7 +189,7 @@ void Wolf::updateAi()
 		setOrderedToSit(false);
 
 	if (!m_pLevel->m_bIsClientSide)
-		m_entityData.set<int>(18, m_health);
+		m_entityData.set<int>(DATA_WOLF_HEALTH, m_health);
 }
 
 void Wolf::aiStep()
@@ -292,8 +295,8 @@ void Wolf::checkHurtTarget(Entity* ent, float dist)
 			float diffX = ent->m_pos.x - m_pos.x;
 			float diffZ = ent->m_pos.z - m_pos.z;
 			float length = Mth::sqrt(diffX * diffX + diffZ * diffZ);
-			m_vel.x = diffX / length * 0.5 * 0.8f + m_vel.x * 0.2f;
-			m_vel.z = diffZ / length * 0.5 * 0.8f + m_vel.z * 0.2f;
+			m_vel.x = diffX / length * 0.5f * 0.8f + m_vel.x * 0.2f;
+			m_vel.z = diffZ / length * 0.5f * 0.8f + m_vel.z * 0.2f;
 			m_vel.y = 0.4f;
 		}
 	}
@@ -318,46 +321,47 @@ bool Wolf::hurt(Entity* ent, int dmg)
 
 	if (!Animal::hurt(ent, dmg))
 		return false;
-	else
+
+	if (!isTamed() && !isAngry())
 	{
-		if (!isTamed() && !isAngry())
+		if (ent && ent->isPlayer())
 		{
-			if (ent && ent->isPlayer())
+			setAngry(true);
+			m_pAttackTarget = ent;
+		}
+
+		if (ent && ent->getDescriptor().getEntityType() == EntityType::ARROW && ((Arrow*)ent)->m_owner)
+			ent = ((Arrow*)ent)->m_owner;
+
+		if (ent && ent->getDescriptor().hasCategory(EntityCategories::MOB))
+		{
+			AABB hit(m_pos, m_pos + 1);
+			hit.grow(16.0f, 4.0f, 16.0f);
+			EntityVector wolfs = m_pLevel->getEntitiesOfType(EntityType::WOLF, hit);
+
+			for (EntityVector::iterator it = wolfs.begin(); it != wolfs.end(); ++it)
 			{
-				setAngry(true);
-				m_pAttackTarget = ent;
-			}
-
-			if (ent && ent->getDescriptor().getEntityType() == EntityType::ARROW && ((Arrow*)ent)->m_owner)
-				ent = ((Arrow*)ent)->m_owner;
-
-			if (ent && ent->getDescriptor().hasCategory(EntityCategories::MOB))
-			{
-				AABB hit(m_pos, m_pos + 1);
-				hit.grow(16.0, 4.0, 16.0);
-				EntityVector wolfs = m_pLevel->getEntitiesOfType(EntityType::WOLF, hit);
-
-				for (EntityVector::iterator it = wolfs.begin(); it != wolfs.end(); ++it)
-				{
-					Wolf* wolf = (Wolf*) *it;
-					if (!wolf->isTamed() && !wolf->m_pAttackTarget) {
-						wolf->m_pAttackTarget = ent;
-						if (ent->isPlayer())
-							wolf->setAngry(true);
-					}
+				Wolf* wolf = (Wolf*) *it;
+				if (!wolf->isTamed() && !wolf->m_pAttackTarget) {
+					wolf->m_pAttackTarget = ent;
+					if (ent->isPlayer())
+						wolf->setAngry(true);
 				}
 			}
-		}
-		else if (ent != this && ent)
-		{
-			if (isTamed() && ent->isPlayer() && ((Player*)ent)->m_name == getOwner())
-				return true;
-
-			m_pAttackTarget = ent;
 		}
 
 		return true;
 	}
+
+	if (ent != this && ent)
+	{
+		if (isTamed() && ent->isPlayer() && ((Player*)ent)->m_name == getOwner())
+			return true;
+
+		m_pAttackTarget = ent;
+	}
+
+	return true;
 }
 
 bool Wolf::interact(Player* player)
@@ -380,12 +384,12 @@ bool Wolf::interact(Player* player)
 					setOrderedToSit(true);
 					m_health = getMaxHealth();
 					setOwner(player->m_name);
-					addTamingParticles(true);
+					_addTamingParticles(true);
 					m_pLevel->broadcastEntityEvent(*this, EventType::TAMING_SUCCEEDED);
 				}
 				else
 				{
-					addTamingParticles(false);
+					_addTamingParticles(false);
 					m_pLevel->broadcastEntityEvent(*this, EventType::TAMING_FAILED);
 				}
 			}
@@ -397,7 +401,7 @@ bool Wolf::interact(Player* player)
 	{
 		if (!selected.isEmpty() && selected.getItem()->isFood())
 		{
-			if (selected.getItem()->isWolfFood() && m_entityData.get<int>(18) < 20)
+			if (selected.getItem()->isWolfFood() && m_entityData.get<int>(DATA_WOLF_HEALTH) < 20)
 			{
 				--selected.m_count;
 				if (selected.m_count <= 0)
@@ -430,7 +434,7 @@ void Wolf::handleEntityEvent(EventType::ID event)
 	{
 	case EventType::TAMING_FAILED:
 	case EventType::TAMING_SUCCEEDED:
-		addTamingParticles(event == EventType::TAMING_SUCCEEDED);
+		_addTamingParticles(event == EventType::TAMING_SUCCEEDED);
 		break;
 	case EventType::SHAKE_WETNESS:
 		m_bIsWet = true;
@@ -448,7 +452,7 @@ float Wolf::getTailAngle() const
 	if (isAngry())
 		return M_PI_2;
 	else
-		return isTamed() ? (0.55f - (getMaxHealth() - m_entityData.get<int>(18)) * 0.02f) * M_PI : (M_PI / 5);
+		return isTamed() ? (0.55f - (getMaxHealth() - m_entityData.get<int>(DATA_WOLF_HEALTH)) * 0.02f) * M_PI : (M_PI / 5);
 }
 
 bool Wolf::isShaking() const

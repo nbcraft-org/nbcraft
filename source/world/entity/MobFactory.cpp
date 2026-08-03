@@ -33,7 +33,6 @@
 
 #define ENT(enumType, classType) case EntityType::enumType: return new classType(level);
 
-// format: ID, spawnrate
 MobFactory::SpawnDataMap nullCreatureList;
 std::map<EntityCategories::CategoriesMask, MobFactory::SpawnDataMap> mobListsByCategory;
 
@@ -50,7 +49,7 @@ Mob* MobFactory::CreateMob(EntityType::ID entityType, Level *level)
 
 void MobFactory::addSpawnData(EntityCategories::CategoriesMask category, EntityType::ID id, int weight)
 {
-    addSpawnData(category, id, new SpawnData(weight));
+    addSpawnData(category, id, new DefaultSpawnData(weight));
 }
 
 void MobFactory::initMobLists() 

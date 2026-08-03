@@ -2,6 +2,12 @@
 
 #include "Tile.hpp"
 
+enum PistonEvent
+{
+	PISTON_EXTEND = 0,
+	PISTON_RETRACT = 1,
+};
+
 class PistonBaseTile : public Tile
 {
 public:

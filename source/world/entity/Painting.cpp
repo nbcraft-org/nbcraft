@@ -73,29 +73,37 @@ void Painting::setDir(int face)
     var4 /= 32.0f;
     Vec3 putPos = m_tilePos + 0.5f;
     const float var8 = 0.5625f;
-    if (face == 0)
+    switch (face)
+    {
+    case 0:
         putPos.z -= var8;
-
-    if (face == 1)
+        break;
+    case 1:
         putPos.x -= var8;
-
-    if (face == 2)
+        break;
+    case 2:
         putPos.z += var8;
-
-    if (face == 3)
+        break;
+    case 3:
         putPos.x += var8;
+        break;
+    }
 
-    if (face == 0)
+    switch (face)
+    {
+    case 0:
         putPos.x -= offs(getPaintingType().m_width);
-
-    if (face == 1)
+        break;
+    case 1:
         putPos.z += offs(getPaintingType().m_width);
-
-    if (face == 2)
+        break;
+    case 2:
         putPos.x += offs(getPaintingType().m_width);
-
-    if (face == 3)
+        break;
+    case 3:
         putPos.z -= offs(getPaintingType().m_width);
+        break;
+    }
 
     putPos.y += offs(getPaintingType().m_height);
     setPos(putPos);

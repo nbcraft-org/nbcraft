@@ -5,7 +5,8 @@ Rail::Rail(Level* level, TilePos pos)
     , m_pos(pos)
 {
     TileData data = level->getData(pos);
-    if (RailTile::isPowered(Tile::tiles[level->getTile(pos)])) {
+    if (RailTile::isPowered(Tile::tiles[level->getTile(pos)]))
+    {
         m_bPowered = true;
         data &= -9;
     }
@@ -19,7 +20,7 @@ void Rail::removeSoftConnections()
 {
     for (size_t i = 0; i < m_connections.size(); ++i)
     {
-        Rail* other = getRail(m_connections[i]);
+        Rail* other = createRail(m_connections[i]);
         if (other && other->connectsTo(*this)) {
             m_connections[i] = other->m_pos;
         }
@@ -31,7 +32,7 @@ void Rail::removeSoftConnections()
     }
 }
 
-Rail* Rail::getRail(const TilePos& p)
+Rail* Rail::createRail(const TilePos& p)
 {
     if (RailTile::hasRail(m_pLevel, p))
         return new Rail(m_pLevel, p);
@@ -133,12 +134,21 @@ void Rail::connectTo(Rail& other)
 
 bool Rail::hasNeighborRail(const TilePos& p)
 {
-    Rail* neighbor = getRail(p);
-    if (!neighbor) return false;
-    neighbor->removeSoftConnections();
-    bool canConnect = neighbor->canConnectTo(*this);
-    delete neighbor;
-    return canConnect;
+    TilePos railPos = p;
+    if (!RailTile::hasRail(m_pLevel, railPos))
+    {
+        railPos = p.above();
+        if (!RailTile::hasRail(m_pLevel, railPos))
+        {
+            railPos = p.below();
+            if (!RailTile::hasRail(m_pLevel, railPos))
+                return false;
+        }
+    }
+
+    Rail neighbor(m_pLevel, railPos);
+    neighbor.removeSoftConnections();
+    return neighbor.canConnectTo(*this);
 }
 
 void Rail::place(bool hasSignal, bool checkNeighbors)
@@ -212,7 +222,7 @@ void Rail::place(bool hasSignal, bool checkNeighbors)
         for (std::vector<TilePos>::iterator it = m_connections.begin(); it != m_connections.end(); ++it)
         {
             const TilePos& conn = *it;
-            Rail* neighbor = getRail(conn);
+            Rail* neighbor = createRail(conn);
             if (neighbor)
             {
                 neighbor->removeSoftConnections();

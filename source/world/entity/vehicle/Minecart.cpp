@@ -3,7 +3,7 @@
 #include "world/level/Level.hpp"
 #include "world/tile/RailTile.hpp"
 
-const int Minecart::EXITS[10][2][3] = { {{0, 0, -1}, {0, 0, 1}}, {{-1, 0, 0}, {1, 0, 0}}, {{-1, -1, 0}, {1, 0, 0}}, {{-1, 0, 0}, {1, -1, 0}}, {{0, 0, -1}, {0, -1, 1}}, {{0, -1, -1}, {0, 0, 1}}, {{0, 0, 1}, {1, 0, 0}}, {{0, 0, 1}, {-1, 0, 0}}, {{0, 0, -1}, {-1, 0, 0}}, {{0, 0, -1}, {1, 0, 0}} };
+const TilePos Minecart::EXITS[10][2] = { {TilePos(0, 0, -1), TilePos(0, 0, 1)}, {TilePos(-1, 0, 0), TilePos(1, 0, 0)}, {TilePos(-1, -1, 0), TilePos(1, 0, 0)}, {TilePos(-1, 0, 0), TilePos(1, -1, 0)}, {TilePos(0, 0, -1), TilePos(0, -1, 1)}, {TilePos(0, -1, -1), TilePos(0, 0, 1)}, {TilePos(0, 0, 1), TilePos(1, 0, 0)}, {TilePos(0, 0, 1), TilePos(-1, 0, 0)}, {TilePos(0, 0, -1), TilePos(-1, 0, 0)}, {TilePos(0, 0, -1), TilePos(1, 0, 0)} };
 
 void Minecart::_init()
 {
@@ -13,8 +13,8 @@ void Minecart::_init()
     m_lRot = Rot2::ZERO;
     m_lPosD = Vec3::ZERO;
     m_lSteps = 0;
-    m_xPush = 0;
-    m_zPush = 0;
+    m_pushX = 0;
+    m_pushZ = 0;
     m_fuel = 0;
     m_type = TYPE_DEFAULT;
     m_damage = 0;
@@ -81,8 +81,8 @@ bool Minecart::interact(Player* player)
             m_fuel += 1200;
         }
 
-        m_xPush = m_pos.x - player->m_pos.x;
-        m_zPush = m_pos.z - player->m_pos.z;
+        m_pushX = m_pos.x - player->m_pos.x;
+        m_pushZ = m_pos.z - player->m_pos.z;
     }
 
     return true;
@@ -164,10 +164,10 @@ void Minecart::tick()
             else if (data == 5)
                 m_vel.z -= var7;
 
-            const int (*exits)[3] = EXITS[data];
+            const TilePos* exits = EXITS[data];
 
-            float var12 = exits[1][0] - exits[0][0];
-            float var14 = exits[1][2] - exits[0][2];
+            float var12 = exits[1].x - exits[0].x;
+            float var14 = exits[1].z - exits[0].z;
             float var16 = Mth::sqrt(var12 * var12 + var14 * var14);
             float var18 = m_vel.x * var12 + m_vel.z * var14;
             if (var18 < 0.0f)
@@ -189,16 +189,16 @@ void Minecart::tick()
                 }
                 else
                 {
-                    m_vel.x *= 0.5;
+                    m_vel.x *= 0.5f;
                     m_vel.y *= 0.0f;
-                    m_vel.z *= 0.5;
+                    m_vel.z *= 0.5f;
                 }
             }
             var22 = 0.0f;
-            float var24 = tp.x + 0.5f + exits[0][0] * 0.5f;
-            float var26 = tp.z + 0.5f + exits[0][2] * 0.5f;
-            float var28 = tp.x + 0.5f + exits[1][0] * 0.5f;
-            float var30 = tp.z + 0.5f + exits[1][2] * 0.5f;
+            float var24 = tp.x + 0.5f + exits[0].x * 0.5f;
+            float var26 = tp.z + 0.5f + exits[0].z * 0.5f;
+            float var28 = tp.x + 0.5f + exits[1].x * 0.5f;
+            float var30 = tp.z + 0.5f + exits[1].z * 0.5f;
             var12 = var28 - var24;
             var14 = var30 - var26;
             float var32;
@@ -206,12 +206,12 @@ void Minecart::tick()
             float var36;
             if (var12 == 0.0f)
             {
-                m_pos.x = tp.x + 0.5;
+                m_pos.x = tp.x + 0.5f;
                 var22 = m_pos.z - tp.z;
             }
             else if (var14 == 0.0f)
             {
-                m_pos.z = tp.z + 0.5;
+                m_pos.z = tp.z + 0.5f;
                 var22 = m_pos.x - tp.x;
             }
             else {
@@ -228,8 +228,8 @@ void Minecart::tick()
             var34 = m_vel.z;
             if (getRider()) 
             {
-                var32 *= 0.75;
-                var34 *= 0.75;
+                var32 *= 0.75f;
+                var34 *= 0.75f;
             }
 
             if (var32 < -var4)
@@ -245,41 +245,41 @@ void Minecart::tick()
                 var34 = var4;
 
             move(Vec3(var32, 0.0f, var34));
-            if (exits[0][1] != 0 && Mth::floor(m_pos.x) - tp.x == exits[0][0] && Mth::floor(m_pos.z) - tp.z == exits[0][2]) {
-                setPos(Vec3(m_pos.x, m_pos.y + exits[0][1], m_pos.z));
+            if (exits[0].y != 0 && Mth::floor(m_pos.x) - tp.x == exits[0].x && Mth::floor(m_pos.z) - tp.z == exits[0].z) {
+                setPos(Vec3(m_pos.x, m_pos.y + exits[0].y, m_pos.z));
             }
-            else if (exits[1][1] != 0 && Mth::floor(m_pos.x) - tp.x == exits[1][0] && Mth::floor(m_pos.z) - tp.z == exits[1][2]) {
-                setPos(Vec3(m_pos.x, m_pos.y + exits[1][1], m_pos.z));
+            else if (exits[1].y != 0 && Mth::floor(m_pos.x) - tp.x == exits[1].x && Mth::floor(m_pos.z) - tp.z == exits[1].z) {
+                setPos(Vec3(m_pos.x, m_pos.y + exits[1].y, m_pos.z));
             }
 
             if (getRider()) 
             {
-                m_vel.x *= 0.997;
+                m_vel.x *= 0.997f;
                 m_vel.y *= 0.0f;
-                m_vel.z *= 0.997;
+                m_vel.z *= 0.997f;
             }
             else 
             {
                 if (m_type == TYPE_FURNACE) 
                 {
-                    var36 = Mth::sqrt(m_xPush * m_xPush + m_zPush * m_zPush);
-                    if (var36 > 0.01) 
+                    var36 = Mth::sqrt(m_pushX * m_pushX + m_pushZ * m_pushZ);
+                    if (var36 > 0.01f) 
                     {
                         canPush = true;
-                        m_xPush /= var36;
-                        m_zPush /= var36;
-                        float var38 = 0.04;
-                        m_vel.x *= 0.8;
+                        m_pushX /= var36;
+                        m_pushZ /= var36;
+                        float var38 = 0.04f;
+                        m_vel.x *= 0.8f;
                         m_vel.y *= 0.0f;
-                        m_vel.z *= 0.8;
-                        m_vel.x += m_xPush * var38;
-                        m_vel.z += m_zPush * var38;
+                        m_vel.z *= 0.8f;
+                        m_vel.x += m_pushX * var38;
+                        m_vel.z += m_pushZ * var38;
                     }
                     else 
                     {
-                        m_vel.x *= 0.9;
+                        m_vel.x *= 0.9f;
                         m_vel.y *= 0.0f;
-                        m_vel.z *= 0.9;
+                        m_vel.z *= 0.9f;
                     }
                 }
 
@@ -291,9 +291,9 @@ void Minecart::tick()
             if (var49) 
             {
                 var36 = Mth::sqrt(m_vel.x * m_vel.x + m_vel.z * m_vel.z);
-                if (var36 > 0.01) 
+                if (var36 > 0.01f) 
                 {
-                    constexpr float var44 = 0.06;
+                    constexpr float var44 = 0.06f;
                     m_vel.x += m_vel.x / var36 * var44;
                     m_vel.z += m_vel.z / var36 * var44;
                 }
@@ -301,22 +301,22 @@ void Minecart::tick()
                 {
                     if (m_pLevel->isSolidBlockingTile(tp.west()))
                     {
-                        m_vel.x = 0.02;
+                        m_vel.x = 0.02f;
                     }
                     else if (m_pLevel->isSolidBlockingTile(tp.east()))
                     {
-                        m_vel.x = -0.02;
+                        m_vel.x = -0.02f;
                     }
                 }
                 else if (data == 0)
                 {
                     if (m_pLevel->isSolidBlockingTile(tp.north()))
                     {
-                        m_vel.z = 0.02;
+                        m_vel.z = 0.02f;
                     }
                     else if (m_pLevel->isSolidBlockingTile(tp.south()))
                     {
-                        m_vel.z = -0.02;
+                        m_vel.z = -0.02f;
                     }
                 }
             }
@@ -324,7 +324,7 @@ void Minecart::tick()
             Vec3* var46 = getOnRailPos(m_pos);
             if (var46 && var9) 
             {
-                float var37 = (var9->y - var46->y) * 0.05;
+                float var37 = (var9->y - var46->y) * 0.05f;
                 var20 = Mth::sqrt(m_vel.x * m_vel.x + m_vel.z * m_vel.z);
                 if (var20 > 0.0f) 
                 {
@@ -349,17 +349,17 @@ void Minecart::tick()
 
             if (m_type == TYPE_FURNACE)
             {
-                float var39 = Mth::sqrt(m_xPush * m_xPush + m_zPush * m_zPush);
-                if (var39 > 0.01 && m_vel.x * m_vel.x + m_vel.z * m_vel.z > 0.001) {
-                    m_xPush /= var39;
-                    m_zPush /= var39;
-                    if (m_xPush * m_vel.x + m_zPush * m_vel.z < 0.0f) {
-                        m_xPush = 0.0f;
-                        m_zPush = 0.0f;
+                float var39 = Mth::sqrt(m_pushX * m_pushX + m_pushZ * m_pushZ);
+                if (var39 > 0.01f && m_vel.x * m_vel.x + m_vel.z * m_vel.z > 0.001f) {
+                    m_pushX /= var39;
+                    m_pushZ /= var39;
+                    if (m_pushX * m_vel.x + m_pushZ * m_vel.z < 0.0f) {
+                        m_pushX = 0.0f;
+                        m_pushZ = 0.0f;
                     }
                     else {
-                        m_xPush = m_vel.x;
-                        m_zPush = m_vel.z;
+                        m_pushX = m_vel.x;
+                        m_pushZ = m_vel.z;
                     }
                 }
             }
@@ -415,7 +415,7 @@ void Minecart::tick()
 
         setRot(m_rot);
         AABB hit = m_hitbox;
-        hit.grow(0.2, 0.0f, 0.2);
+        hit.grow(0.2f, 0.0f, 0.2f);
         EntityVector var15 = m_pLevel->getEntities(this, hit);
         if (var15.size() > 0) 
         {
@@ -434,9 +434,9 @@ void Minecart::tick()
         {
             --m_fuel;
             if (m_fuel < 0)
-                m_xPush = m_zPush = 0.0f;
+                m_pushX = m_pushZ = 0.0f;
 
-            m_pLevel->addParticle("largesmoke", Vec3(m_pos.x, m_pos.y + 0.8, m_pos.z));
+            m_pLevel->addParticle("largesmoke", Vec3(m_pos.x, m_pos.y + 0.8f, m_pos.z));
         }
 
     }
@@ -534,19 +534,19 @@ Vec3* Minecart::getPosOffs(const Vec3& pos, float var7) const
         if (data >= 2 && data <= 5)
             newPos.y = tp.y + 1;
 
-        const int (*exits)[3] = EXITS[data];
+        const TilePos* exits = EXITS[data];
 
-        float var14 = (exits[1][0] - exits[0][0]);
-        float var16 = (exits[1][2] - exits[0][2]);
+        float var14 = (exits[1].x - exits[0].x);
+        float var16 = (exits[1].z - exits[0].z);
         float var18 = Mth::sqrt(var14 * var14 + var16 * var16);
         var14 /= var18;
         var16 /= var18;
         newPos.x += var14 * var7;
         newPos.z += var16 * var7;
-        if (exits[0][1] != 0 && Mth::floor(pos.x) - tp.x == exits[0][0] && Mth::floor(newPos.z) - tp.z == exits[0][2])
-            newPos.y += exits[0][1];
-        else if (exits[1][1] != 0 && Mth::floor(pos.x) - tp.x == exits[1][0] && Mth::floor(newPos.z) - tp.z == exits[1][2])
-            newPos.y += exits[1][1];
+        if (exits[0].y != 0 && Mth::floor(pos.x) - tp.x == exits[0].x && Mth::floor(newPos.z) - tp.z == exits[0].z)
+            newPos.y += exits[0].y;
+        else if (exits[1].y != 0 && Mth::floor(pos.x) - tp.x == exits[1].x && Mth::floor(newPos.z) - tp.z == exits[1].z)
+            newPos.y += exits[1].y;
 
         return getOnRailPos(newPos);
     }
@@ -559,8 +559,8 @@ void Minecart::addAdditionalSaveData(CompoundTag& tag) const
     tag.putInt8("Type", m_type);
     if (m_type == TYPE_FURNACE) 
     {
-        tag.putFloat("PushX", m_xPush);
-        tag.putFloat("PushZ", m_zPush);
+        tag.putFloat("PushX", m_pushX);
+        tag.putFloat("PushZ", m_pushZ);
         tag.putInt16("Fuel", m_fuel);
     } else if (m_type == TYPE_CHEST) 
         SimpleContainer::save(tag);
@@ -571,8 +571,8 @@ void Minecart::readAdditionalSaveData(const CompoundTag& tag)
     m_type = (Type) tag.getInt8("Type");
     if (m_type == TYPE_FURNACE) 
     {
-        m_xPush = tag.getDouble("PushX");
-        m_zPush = tag.getDouble("PushZ");
+        m_pushX = tag.getDouble("PushX");
+        m_pushZ = tag.getDouble("PushZ");
         m_fuel = tag.getInt16("Fuel");
     }
     else if (m_type == TYPE_CHEST)
@@ -611,15 +611,15 @@ Vec3* Minecart::getOnRailPos(const Vec3& vec) const
         if (data >= 2 && data <= 5)
             newPos->y = (tp.y + 1);
 
-        const int (*exits)[3] = EXITS[data];
+        const TilePos* exits = EXITS[data];
 
         float var12 = 0.0f;
-        float var14 = tp.x + 0.5f + exits[0][0] * 0.5f;
-        float var16 = tp.y + 0.5f + exits[0][1] * 0.5f;
-        float var18 = tp.z + 0.5f + exits[0][2] * 0.5f;
-        float var20 = tp.x + 0.5f + exits[1][0] * 0.5f;
-        float var22 = tp.y + 0.5f + exits[1][1] * 0.5f;
-        float var24 = tp.z + 0.5f + exits[1][2] * 0.5f;
+        float var14 = tp.x + 0.5f + exits[0].x * 0.5f;
+        float var16 = tp.y + 0.5f + exits[0].y * 0.5f;
+        float var18 = tp.z + 0.5f + exits[0].z * 0.5f;
+        float var20 = tp.x + 0.5f + exits[1].x * 0.5f;
+        float var22 = tp.y + 0.5f + exits[1].y * 0.5f;
+        float var24 = tp.z + 0.5f + exits[1].z * 0.5f;
         float var26 = var20 - var14;
         float var28 = (var22 - var16) * 2.0f;
         float var30 = var24 - var18;
@@ -677,12 +677,12 @@ void Minecart::push(Entity* ent)
 
         var2 *= var8;
         var4 *= var8;
-        var2 *= 0.1;
-        var4 *= 0.1;
+        var2 *= 0.1f;
+        var4 *= 0.1f;
         var2 *= 1.0f - m_pushThrough;
         var4 *= 1.0f - m_pushThrough;
-        var2 *= 0.5;
-        var4 *= 0.5;
+        var2 *= 0.5f;
+        var4 *= 0.5f;
         if (ent->getDescriptor().hasCategory(EntityCategories::MINECART))
         {
             Minecart* minecart = (Minecart*)ent;
@@ -706,8 +706,8 @@ void Minecart::push(Entity* ent)
             }
             else if (minecart->m_type != TYPE_FURNACE && m_type == TYPE_FURNACE)
             {
-                ent->m_vel.x *= 0.2;
-                ent->m_vel.z *= 0.2;
+                ent->m_vel.x *= 0.2f;
+                ent->m_vel.z *= 0.2f;
                 ent->push(Vec3(m_vel.x + var2, 0.0f, m_vel.z + var4));
                 m_vel.x *= 0.7f;
                 m_vel.z *= 0.7f;

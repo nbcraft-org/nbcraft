@@ -4,9 +4,10 @@
 
 class LightningBolt : public Entity
 {
-
 private:
 	void _init();
+	int m_life;
+	int m_flashes;
 
 public:
 	LightningBolt(Level* level);
@@ -15,11 +16,6 @@ public:
 	void tick() override;
 	virtual bool shouldRender(Vec3& camPos) const override;
 
-public:
 	int32_t m_seed;
-
-private:
-	int m_life;
-	int m_flashes;
 };
 

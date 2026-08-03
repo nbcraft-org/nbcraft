@@ -52,7 +52,7 @@ public:
 	}
 	AABB& shrink(float x, float y, float z) { return shrink(Vec3(x, y, z)); }
 
-	float byIndex(int index)
+	float operator[](int index) const
 	{
 		switch (index)
 		{

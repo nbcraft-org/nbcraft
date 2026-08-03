@@ -50,8 +50,6 @@ public:
 	void renderLevel(float);
 	void renderFramedItems(const Vec3& camPos, LevelRenderer& levelRenderer, const Entity& camera, float f, ParticleEngine& particleEngine, float i);
 	void render(const Timer&);
-	void renderSnowAndRain(float f);
-	void tickRain();
 	void renderPointer(const MenuPointer& pointer);
 	void setLevel(Level* pLevel, Dimension* pDimension);
 	// Range: 0.0 - 1.0
@@ -98,7 +96,6 @@ public:
 
 	float m_renderDistance;
 	int m_ticks;
-	int m_rainSoundTime;
 	Entity* m_pHovered;
 	// protected fields
 
@@ -110,7 +107,6 @@ public:
 	int m_keepPic;
 
 	int m_envTexturePresence;
-	Random m_random;
 
 #ifdef ENH_FOV_MODIFIER
 	float m_fovBase;

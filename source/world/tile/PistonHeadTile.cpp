@@ -76,39 +76,39 @@ void PistonHeadTile::updateShape(const LevelSource* source, const TilePos& pos)
 
 void PistonHeadTile::addAABBs(const Level* level, const TilePos& pos, const AABB* aabb, std::vector<AABB>& out)
 {
-	int var7 = level->getData(pos);
+	TileData var7 = level->getData(pos);
 	switch (getDirection(var7)) {
-	case 0:
+	case Facing::DOWN:
 		setShape(0.0f, 0.0f, 0.0f, 1.0f, 0.25f, 1.0f);
 		Tile::addAABBs(level, pos, aabb, out);
 		setShape(6.0f / 16.0f, 0.25f, 6.0f / 16.0f, 10.0f / 16.0f, 1.0f, 10.0f / 16.0f);
 		Tile::addAABBs(level, pos, aabb, out);
 		break;
-	case 1:
+	case Facing::UP:
 		setShape(0.0f, 12.0f / 16.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 		Tile::addAABBs(level, pos, aabb, out);
 		setShape(6.0f / 16.0f, 0.0f, 6.0f / 16.0f, 10.0f / 16.0f, 12.0f / 16.0f, 10.0f / 16.0f);
 		Tile::addAABBs(level, pos, aabb, out);
 		break;
-	case 2:
+	case Facing::NORTH:
 		setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.25f);
 		Tile::addAABBs(level, pos, aabb, out);
 		setShape(0.25f, 6.0f / 16.0f, 0.25f, 12.0f / 16.0f, 10.0f / 16.0f, 1.0f);
 		Tile::addAABBs(level, pos, aabb, out);
 		break;
-	case 3:
+	case Facing::SOUTH:
 		setShape(0.0f, 0.0f, 12.0f / 16.0f, 1.0f, 1.0f, 1.0f);
 		Tile::addAABBs(level, pos, aabb, out);
 		setShape(0.25f, 6.0f / 16.0f, 0.0f, 12.0f / 16.0f, 10.0f / 16.0f, 12.0f / 16.0f);
 		Tile::addAABBs(level, pos, aabb, out);
 		break;
-	case 4:
+	case Facing::WEST:
 		setShape(0.0f, 0.0f, 0.0f, 0.25f, 1.0f, 1.0f);
 		Tile::addAABBs(level, pos, aabb, out);
 		setShape(6.0f / 16.0f, 0.25f, 0.25f, 10.0f / 16.0f, 12.0f / 16.0f, 1.0f);
 		Tile::addAABBs(level, pos, aabb, out);
 		break;
-	case 5:
+	case Facing::EAST:
 		setShape(12.0f / 16.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 		Tile::addAABBs(level, pos, aabb, out);
 		setShape(0.0f, 6.0f / 16.0f, 0.25f, 12.0f / 16.0f, 10.0f / 16.0f, 12.0f / 16.0f);

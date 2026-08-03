@@ -140,16 +140,14 @@ bool PortalTile::shouldRenderFace(const LevelSource* level, const TilePos& pos, 
 {
     if (level->getTile(pos) == m_ID)
         return false;
-    else
-    {
-        bool w = level->getTile(pos.west()) == m_ID && level->getTile(pos.west(2)) != m_ID;
-        bool e = level->getTile(pos.east()) == m_ID && level->getTile(pos.east(2)) != m_ID;
-        bool n = level->getTile(pos.north()) == m_ID && level->getTile(pos.north(2)) != m_ID;
-        bool s = level->getTile(pos.south()) == m_ID && level->getTile(pos.south(2)) != m_ID;
-        bool we = w || e;
-        bool ns = n || s;
-        return (we && (face == Facing::WEST || face == Facing::EAST)) || (ns && (face == Facing::NORTH || face == Facing::SOUTH));
-    }
+
+    bool w = level->getTile(pos.west()) == m_ID && level->getTile(pos.west(2)) != m_ID;
+    bool e = level->getTile(pos.east()) == m_ID && level->getTile(pos.east(2)) != m_ID;
+    bool n = level->getTile(pos.north()) == m_ID && level->getTile(pos.north(2)) != m_ID;
+    bool s = level->getTile(pos.south()) == m_ID && level->getTile(pos.south(2)) != m_ID;
+    bool we = w || e;
+    bool ns = n || s;
+    return (we && (face == Facing::WEST || face == Facing::EAST)) || (ns && (face == Facing::NORTH || face == Facing::SOUTH));
 }
 
 void PortalTile::animateTick(Level* level, const TilePos& pos, Random* random)
@@ -159,23 +157,21 @@ void PortalTile::animateTick(Level* level, const TilePos& pos, Random* random)
 
     for (int var6 = 0; var6 < 4; ++var6)
     {
-        float var7 = pos.x + random->nextFloat();
-        float var9 = pos.y + random->nextFloat();
-        float var11 = pos.z + random->nextFloat();
+        Vec3 particlePos(pos.x + random->nextFloat(), pos.y + random->nextFloat(), pos.z + random->nextFloat());
         Vec3 vel;
         int var19 = random->nextInt(2) * 2 - 1;
-        vel.x = (random->nextFloat() - 0.5) * 0.5;
-        vel.y = (random->nextFloat() - 0.5) * 0.5;
-        vel.z = (random->nextFloat() - 0.5) * 0.5;
+        vel.x = (random->nextFloat() - 0.5f) * 0.5f;
+        vel.y = (random->nextFloat() - 0.5f) * 0.5f;
+        vel.z = (random->nextFloat() - 0.5f) * 0.5f;
         if (level->getTile(pos.west()) != m_ID && level->getTile(pos.east()) != m_ID) {
-            var7 = pos.x + 0.5 + 0.25 * var19;
+            particlePos.x = pos.x + 0.5f + 0.25f * var19;
             vel.x = (random->nextFloat() * 2.0f * var19);
         }
         else {
-            var11 = pos.z + 0.5 + 0.25 * var19;
+            particlePos.z = pos.z + 0.5f + 0.25f * var19;
             vel.z = (random->nextFloat() * 2.0f * var19);
         }
 
-        level->addParticle("portal", Vec3(var7, var9, var11), vel);
+        level->addParticle("portal", particlePos, vel);
     }
 }

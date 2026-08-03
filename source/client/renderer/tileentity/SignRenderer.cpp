@@ -48,7 +48,7 @@ void SignRenderer::renderTyped(SignTileEntity* sign, const Vec3& pos, float part
     mtx->translate(Vec3(0.0f, 0.5f * size, 0.07f * size));
     mtx->scale(Vec3(rot, -rot, rot));
     //glNormal3f(0.0f, 0.0f, -1.0f * rot);
-    int col = 0;
+    constexpr int col = 0;
 
     constexpr int messagesSize = 4;
 

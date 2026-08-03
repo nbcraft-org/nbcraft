@@ -7,6 +7,13 @@ class RailTile : public Tile
 {
 public:
     RailTile(TileID id, int texture, bool isPowered);
+
+private:
+    void updateDir(Level* level, const TilePos& pos, bool updateNeighbors);
+    bool applyPower(Level* level, const TilePos& pos, TileData data, bool var6, int var7);
+    bool canPower(Level* level, const TilePos& pos, bool var5, int var6, int var7);
+
+public:
     bool mayPlace(const Level*, const TilePos& pos) const override;
     void neighborChanged(Level* level, const TilePos& pos, TileID tile) override;
     bool isSolidRender() const override;
@@ -40,11 +47,6 @@ public:
         return rail && rail->m_bIsPowered;
     }
 
-    bool m_bIsPowered;
-
 private:
-    void updateDir(Level* level, const TilePos& pos, bool updateNeighbors);
-    bool applyPower(Level* level, const TilePos& pos, TileData data, bool var6, int var7);
-    bool canPower(Level* level, const TilePos& pos, bool var5, int var6, int var7);
-
+    bool m_bIsPowered;
 };

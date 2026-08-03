@@ -19,9 +19,3 @@ void SaddleItem::interactEnemy(ItemStack* stack, Mob* mob) const
         }
     }
 }
-
-bool SaddleItem::hurtEnemy(ItemStack* stack, Mob* mob, Mob* attacker) const
-{
-	interactEnemy(stack, mob);
-    return true;
-}

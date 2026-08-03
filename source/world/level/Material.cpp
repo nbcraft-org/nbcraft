@@ -60,7 +60,7 @@ void Material::initMaterials()
 
 	air        = new GasMaterial(MapColor::air);
 
-	grass       = (new Material(MapColor::grass))
+	grass      = (new Material(MapColor::grass))
 		->setToolTypes(Tool::SHOVEL);
 
 	dirt       = (new Material(MapColor::dirt))
@@ -77,26 +77,26 @@ void Material::initMaterials()
 	metal      = (new Material(MapColor::metal))
 		->setNotAlwaysDestroyable();
 
-	water = (new LiquidMaterial(MapColor::water))
+	water      = (new LiquidMaterial(MapColor::water))
 		->destroyOnPush();
 
-	lava = (new LiquidMaterial(MapColor::red))
+	lava       = (new LiquidMaterial(MapColor::red))
 		->destroyOnPush();
 
-	leaves = (new Material(MapColor::foliage))
+	leaves     = (new Material(MapColor::foliage))
 		->setFlammable()
 		->setTranslucent()
 		->destroyOnPush();
 
-	plant = (new DecorationMaterial(MapColor::foliage))
+	plant      = (new DecorationMaterial(MapColor::foliage))
 		->destroyOnPush();
 
-	sponge = new Material(MapColor::cloth);
+	sponge     = new Material(MapColor::cloth);
 
-	cloth = (new Material(MapColor::cloth))
+	cloth      = (new Material(MapColor::cloth))
 		->setFlammable();
 
-	fire = (new GasMaterial(MapColor::air))
+	fire       = (new GasMaterial(MapColor::air))
 		->destroyOnPush();
 
 	sand       = (new Material(MapColor::sand))
@@ -105,17 +105,17 @@ void Material::initMaterials()
 	decoration = (new DecorationMaterial(MapColor::air))
 		->destroyOnPush();
 
-	glass = (new Material(MapColor::air))
+	glass      = (new Material(MapColor::air))
 		->setTranslucent();
 
-	explosive = (new Material(MapColor::red))
+	explosive  = (new Material(MapColor::red))
 		->setFlammable()
 		->setTranslucent();
 
-	coral = (new Material(MapColor::foliage))
+	coral      = (new Material(MapColor::foliage))
 		->destroyOnPush();
 
-	ice = (new Material(MapColor::ice))
+	ice        = (new Material(MapColor::ice))
 		->setTranslucent();
 
 	topSnow    = (new DecorationMaterial(MapColor::snow))
@@ -127,7 +127,7 @@ void Material::initMaterials()
 		->setToolTypes(Tool::SHOVEL)
 		->setNotAlwaysDestroyable();
 
-	cactus	   = (new Material(MapColor::foliage))
+	cactus     = (new Material(MapColor::foliage))
 		->setTranslucent()
 		->destroyOnPush();
 
@@ -139,14 +139,14 @@ void Material::initMaterials()
 
 	portal     = new Material(MapColor::air);
 
-	cake	   = (new Material(MapColor::cloth))
+	cake       = (new Material(MapColor::cloth))
 		->destroyOnPush();
 
 	web        = (new Material(MapColor::stone))
 		->setToolTypes(Tool::SWORD)
 		->setNotAlwaysDestroyable();
 
-	piston	   = (new Material(MapColor::stone))
+	piston     = (new Material(MapColor::stone))
 		->notPushable();
 }
 

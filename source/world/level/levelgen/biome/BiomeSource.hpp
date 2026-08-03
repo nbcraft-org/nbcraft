@@ -29,9 +29,9 @@ public:
 
 	virtual Biome* getBiome(const ChunkPos& pos);
 	virtual Biome* getBiomeAt(const TilePos& pos);
-	virtual const Biome::Vector& getBiomeBlock(const TilePos& pos, int, int);
-	virtual const Biome::Vector& getBiomeBlock(Biome::Vector&, const TilePos& pos, int, int);
-	virtual const std::vector<float>& getTemperatureBlock(int, int, int, int);
+	virtual const Biome::Vector& getBiomeBlock(const TilePos& pos, int c, int d);
+	virtual const Biome::Vector& getBiomeBlock(Biome::Vector& biomes, const TilePos& pos, int c, int d);
+	virtual const std::vector<float>& getTemperatureBlock(int a, int b, int c, int d);
 
 public:
 	std::vector<float> m_temperatures;

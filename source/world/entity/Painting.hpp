@@ -7,6 +7,8 @@ class Painting : public Entity
 {
 private:
 	void _init();
+	float offs(int);
+	int m_checkInterval;
 
 public:
 	Painting(Level*);
@@ -32,14 +34,8 @@ public:
 
 	bool isPickable() const override { return true; }
 
-private:
-	float offs(int);
-
 public:
 	int m_dir;
 	TilePos m_tilePos;
 	int m_paintingType;
-
-private:
-	int m_checkInterval;
 };

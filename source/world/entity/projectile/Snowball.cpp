@@ -226,29 +226,6 @@ void Snowball::onHit()
         m_pLevel->addParticle("snowballpoof", m_pos);
 }
 
-void Snowball::addAdditionalSaveData(CompoundTag& tag) const
-{
-    tag.putInt16("xTile", m_tilePos.x);
-    tag.putInt16("yTile", m_tilePos.y);
-    tag.putInt16("zTile", m_tilePos.z);
-    tag.putInt8("inTile", m_lastTile);
-    tag.putInt8("shake", m_shakeTime);
-    tag.putBoolean("inGround", m_bInGround);
-    //Why are we saving this? No idea, this is useful only for arrows, which don't disappear upon hitting a tile
-    tag.putBoolean("player", m_bIsPlayerOwned);
-}
-
-void Snowball::readAdditionalSaveData(const CompoundTag& tag)
-{
-    m_tilePos.x = tag.getInt16("xTile");
-    m_tilePos.y = tag.getInt16("yTile");
-    m_tilePos.z = tag.getInt16("zTile");
-    m_lastTile = tag.getInt8("inTile") & 255;
-    m_shakeTime = tag.getInt8("shake") & 255;
-    m_bInGround = tag.getBoolean("inGround");
-    m_bIsPlayerOwned = tag.getBoolean("player");
-}
-
 Entity::AuxValue Snowball::getAuxValue() const
 {
     return m_owner ? m_owner->m_EntityID : 0;

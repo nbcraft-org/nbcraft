@@ -172,8 +172,8 @@ void TileRenderer::renderFace(Tile* tile, const Vec3& pos, int texture, Facing::
 	{
 		switch (face)
 		{
-		case Facing::NORTH: case Facing::SOUTH: tile->setShape(0, 0, 0.0625, 1, 1, 0.9375); break;
-		case Facing::WEST: case Facing::EAST: tile->setShape(0.0625, 0, 0, 0.9375, 1, 1); break;
+		case Facing::NORTH: case Facing::SOUTH: tile->setShape(0.0f, 0.0f, 0.0625f, 1.0f, 1.0f, 0.9375f); break;
+		case Facing::WEST: case Facing::EAST: tile->setShape(0.0625f, 0.0f, 0.0f, 0.9375f, 1.0f, 1.0f); break;
 		default: break;
 		}
 	}
@@ -196,10 +196,10 @@ void TileRenderer::renderFace(Tile* tile, const Vec3& pos, int texture, Facing::
 
 	const int* uvAxes = Facing::UV_AXES[face / 2];
 
-	float minU = aabb.byIndex(uvAxes[0]);
-	float maxU = aabb.byIndex(uvAxes[1]);
-	float minV = aabb.byIndex(uvAxes[2]);
-	float maxV = aabb.byIndex(uvAxes[3]);
+	float minU = aabb[uvAxes[0]];
+	float maxU = aabb[uvAxes[1]];
+	float minV = aabb[uvAxes[2]];
+	float maxV = aabb[uvAxes[3]];
 
 	if (rot == 1 || rot == 2)
 	{
@@ -267,7 +267,7 @@ void TileRenderer::renderFace(Tile* tile, const Vec3& pos, int texture, Facing::
 		if (flip) useU2 = !useU2;
 		if (m_bAmbientOcclusion)
 			_tex1(m_vtxLightTex[i]);
-		t.vertexUV(pos.x + aabb.byIndex(vertex[0]), pos.y + aabb.byIndex(vertex[1]), pos.z + aabb.byIndex(vertex[2]), useU2 ? u2 : u1, baseUVs[rotIndex][1] ? v2 : v1);
+		t.vertexUV(pos.x + aabb[vertex[0]], pos.y + aabb[vertex[1]], pos.z + aabb[vertex[2]], useU2 ? u2 : u1, baseUVs[rotIndex][1] ? v2 : v1);
 	}
 
 	if (renderShape == SHAPE_CACTUS && Facing::isHorizontal(face))
@@ -315,13 +315,14 @@ void TileRenderer::renderPistonFace(const AABB& aabb, float bright, float offY, 
 	if (m_fixedTexture >= 0)
 		tex = m_fixedTexture;
 
-	int texX = (tex & 15) << 4;
-	int texY = tex & 240;
+	const int texX = (tex & 15) << 4;
+	const int texY = tex & 240;
 	Tesselator& t = Tesselator::instance;
-	float u1 = texX / 256.0f;
-	float u2 = texY / 256.0f;
-	float v1 = (texX + offY - 0.01f) / 256.0f;
-	float v2 = ((texY + 4.0f) - 0.01f) / 256.0f;
+	static constexpr float C_RATIO = 1.0f / 256.0f;
+	float u1 = texX * C_RATIO;
+	float u2 = texY * C_RATIO;
+	float v1 = (texX + offY - 0.01f) * C_RATIO;
+	float v2 = ((texY + 4.0f) - 0.01f) * C_RATIO;
 	t.color(bright, bright, bright);
 	switch (dir)
 	{
@@ -3289,8 +3290,7 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 				// This is a hack to accomodate the start menu screen procedurally generated title logo.
 				if (tile.data == 255 && dir != Facing::UP)
 					continue;
-				const int* normal = Facing::NORMALS[dir];
-				t.normal(normal[0], normal[1], normal[2]);
+				t.normal(Facing::NORMALS[dir]);
 				renderFace(tile.getType(), Vec3::ZERO, tile.getType()->getTexture(dir, tile.data), dir, color * getTileFaceColor(tile, dir, Facing::LIGHT[dir], preshade));
 			}
 			t.draw(material);
@@ -3323,8 +3323,7 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 				for (int i = Facing::DOWN; i <= Facing::EAST; ++i)
 				{
 					Facing::Name dir = (Facing::Name)i;
-					const int* normal = Facing::NORMALS[dir];
-					t.normal(normal[0], normal[1], normal[2]);
+					t.normal(Facing::NORMALS[dir]);
 					renderFace(tile.getType(), Vec3::ZERO, tile.getType()->getTexture(dir, tile.data), dir, color * getTileFaceColor(tile, dir, Facing::LIGHT[dir], preshade));
 				}
 				t.draw(material);
@@ -3351,8 +3350,7 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 				for (int i = Facing::DOWN; i <= Facing::EAST; ++i)
 				{
 					Facing::Name dir = (Facing::Name)i;
-					const int* normal = Facing::NORMALS[dir];
-					t.normal(normal[0], normal[1], normal[2]);
+					t.normal(Facing::NORMALS[dir]);
 					renderFace(tile.getType(), Vec3::ZERO, tile.getType()->getTexture(dir, tile.data), dir, color * getTileFaceColor(tile, dir, Facing::LIGHT[dir], preshade));
 				}
 				t.draw(material);
@@ -3382,8 +3380,7 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 				for (int i = Facing::DOWN; i <= Facing::EAST; ++i)
 				{
 					Facing::Name dir = (Facing::Name)i;
-					const int* normal = Facing::NORMALS[dir];
-					t.normal(normal[0], normal[1], normal[2]);
+					t.normal(Facing::NORMALS[dir]);
 					renderFace(tile.getType(), Vec3::ZERO, tile.getType()->getTexture(dir, tile.data), dir, color * getTileFaceColor(tile, dir, Facing::LIGHT[dir], preshade));
 				}
 				t.draw(material);

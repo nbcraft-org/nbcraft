@@ -34,7 +34,7 @@ Level::Level(LevelStorage* pStor, const std::string& name, const LevelSettings& 
 	m_bPostProcessing = false;
 	m_skyDarken = 0;
 	m_skyFlashTime = 0;
-	m_bNoNeighborUpdate = 0;
+	m_bNoNeighborUpdate = false;
 	m_pDimension = nullptr;
     m_difficulty = 2; // Java has no actual default, it just always pulls from Options. Putting 2 here just so there's no chance of mobs getting despawned accidentally.
 	m_pRakNetInstance = nullptr;
@@ -1863,60 +1863,60 @@ void Level::tickWeather()
 	if (m_skyFlashTime > 0)
 		--m_skyFlashTime;
 
-	if (!m_bIsClientSide && !m_pDimension->m_bHasCeiling)
+	if (m_bIsClientSide || m_pDimension->m_bHasCeiling)
+		return;
+
+	LevelData& data = *m_pLevelData;
+	bool wasRaining = isRaining();
+	int thunder = data.getThunderTime();
+	if (thunder <= 0)
 	{
-		LevelData& data = *m_pLevelData;
-		bool wasRaining = isRaining();
-		int thunder = data.getThunderTime();
-		if (thunder <= 0)
-		{
-			if (data.isThundering())
-				data.setThunderTime(m_random.nextInt(12000) + 3600);
-			else
-				data.setThunderTime(m_random.nextInt(168000) + 12000);
-		}
-		else
-		{
-			--thunder;
-			data.setThunderTime(thunder);
-			if (thunder <= 0)
-				data.setThundering(!data.isThundering());
-		}
-
-		int rain = data.getRainTime();
-		if (rain <= 0)
-		{
-			if (data.isRaining())
-				data.setRainTime(m_random.nextInt(12000) + 12000);
-			else
-				data.setRainTime(m_random.nextInt(168000) + 12000);
-		}
-		else {
-			--rain;
-			data.setRainTime(rain);
-			if (rain <= 0)
-				data.setRaining(!data.isRaining());
-		}
-
-		m_oRainLevel = m_rainLevel;
-		if (data.isRaining())
-			m_rainLevel += 0.01f;
-		else
-			m_rainLevel -= 0.01f;
-
-		m_rainLevel = Mth::clamp(m_rainLevel, 0.0f, 1.0f);
-
-		m_oThunderLevel = m_thunderLevel;
 		if (data.isThundering())
-			m_thunderLevel += 0.1f;
+			data.setThunderTime(m_random.nextInt(12000) + 3600);
 		else
-			m_thunderLevel -= 0.1f;
-
-		m_thunderLevel = Mth::clamp(m_thunderLevel, 0.0f, 1.0f);
-
-		if (wasRaining != isRaining())
-			levelEvent(LevelEvent(isRaining() ? LevelEvent::START_RAIN : LevelEvent::STOP_RAIN, TilePos::ZERO));
+			data.setThunderTime(m_random.nextInt(168000) + 12000);
 	}
+	else
+	{
+		--thunder;
+		data.setThunderTime(thunder);
+		if (thunder <= 0)
+			data.setThundering(!data.isThundering());
+	}
+
+	int rain = data.getRainTime();
+	if (rain <= 0)
+	{
+		if (data.isRaining())
+			data.setRainTime(m_random.nextInt(12000) + 12000);
+		else
+			data.setRainTime(m_random.nextInt(168000) + 12000);
+	}
+	else {
+		--rain;
+		data.setRainTime(rain);
+		if (rain <= 0)
+			data.setRaining(!data.isRaining());
+	}
+
+	m_oRainLevel = m_rainLevel;
+	if (data.isRaining())
+		m_rainLevel += 0.01f;
+	else
+		m_rainLevel -= 0.01f;
+
+	m_rainLevel = Mth::clamp(m_rainLevel, 0.0f, 1.0f);
+
+	m_oThunderLevel = m_thunderLevel;
+	if (data.isThundering())
+		m_thunderLevel += 0.1f;
+	else
+		m_thunderLevel -= 0.1f;
+
+	m_thunderLevel = Mth::clamp(m_thunderLevel, 0.0f, 1.0f);
+
+	if (wasRaining != isRaining())
+		levelEvent(LevelEvent(isRaining() ? LevelEvent::START_RAIN : LevelEvent::STOP_RAIN, TilePos::ZERO));
 }
 
 void Level::_resetWeatherCycle()

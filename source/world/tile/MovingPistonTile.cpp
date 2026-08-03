@@ -13,7 +13,7 @@ void MovingPistonTile::onPlace(Level*, const TilePos& pos)
 
 void MovingPistonTile::onRemove(Level* level, const TilePos& pos)
 {
-    PistonMovingTileEntity* piston = static_cast<PistonMovingTileEntity*>(level->getTileEntity(pos));
+    PistonMovingTileEntity* piston = dynamic_cast<PistonMovingTileEntity*>(level->getTileEntity(pos));
     if (piston)
         piston->finalTick();
     else
@@ -47,13 +47,11 @@ bool MovingPistonTile::isCubeShaped() const
 
 bool MovingPistonTile::use(Level* level, const TilePos& pos, Player* player)
 {
-    if (level->m_bIsClientSide && !level->getTileEntity(pos))
-    {
-        level->setTile(pos, TILE_AIR);
-        return true;
-    }
-    else
+    if (!level->m_bIsClientSide || level->getTileEntity(pos))
         return false;
+
+    level->setTile(pos, TILE_AIR);
+    return true;
 }
 
 int MovingPistonTile::getResource(TileData, Random*) const
@@ -63,17 +61,17 @@ int MovingPistonTile::getResource(TileData, Random*) const
 
 void MovingPistonTile::spawnResources(Level* level, const TilePos& pos, TileData, float)
 {
-    if (!level->m_bIsClientSide)
-    {
-        PistonMovingTileEntity* piston = static_cast<PistonMovingTileEntity*>(level->getTileEntity(pos));
-        if (piston)
-            Tile::tiles[piston->getTileId()]->spawnResources(level, pos, piston->getData());
-    }
+    if (level->m_bIsClientSide)
+        return;
+
+    PistonMovingTileEntity* piston = dynamic_cast<PistonMovingTileEntity*>(level->getTileEntity(pos));
+    if (piston)
+        Tile::tiles[piston->getTileId()]->spawnResources(level, pos, piston->getData());
 }
 
 AABB* MovingPistonTile::getAABB(const Level* level, const TilePos& pos)
 {
-    PistonMovingTileEntity* piston = static_cast<PistonMovingTileEntity*>(level->getTileEntity(pos));
+    PistonMovingTileEntity* piston = dynamic_cast<PistonMovingTileEntity*>(level->getTileEntity(pos));
     if (piston)
     {
         float progress = piston->getProgress(0.0f);
@@ -87,7 +85,7 @@ AABB* MovingPistonTile::getAABB(const Level* level, const TilePos& pos)
 
 void MovingPistonTile::updateShape(const LevelSource* level, const TilePos& pos)
 {
-    PistonMovingTileEntity* piston = static_cast<PistonMovingTileEntity*>(level->getTileEntity(pos));
+    PistonMovingTileEntity* piston = dynamic_cast<PistonMovingTileEntity*>(level->getTileEntity(pos));
     if (piston) {
         Tile* tile = Tile::tiles[piston->getTileId()];
         if (!tile || tile == this)

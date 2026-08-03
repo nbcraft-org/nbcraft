@@ -99,8 +99,8 @@ float ImprovedNoise::noise(float x, float y, float z)
     z -= Mth::floor(z);
 
     float u = fade(x),
-        v = fade(y),
-        w = fade(z);
+          v = fade(y),
+          w = fade(z);
 
     int* p = m_permutation;
     int A = p[X    ] + Y, AA = p[A] + Z, AB = p[A + 1] + Z,

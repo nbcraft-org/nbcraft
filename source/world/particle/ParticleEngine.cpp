@@ -109,13 +109,13 @@ void ParticleEngine::crack(const TilePos& tilePos, Facing::Name face)
 	add((new TerrainParticle(m_pLevel, pos, pTile))->init(tilePos, face)->setPower(0.2f)->scale(0.6f));
 }
 
-void ParticleEngine::destroyEffect(const TilePos& pos, TileID tileID, TileData data)
+void ParticleEngine::destroyEffect(const TilePos& pos, const FullTile& fullTile)
 {
-	if (!tileID) return;
+	if (!fullTile.getTypeId()) return;
 
 	//float timeS = getTimeS();
 
-	Tile* pTile = Tile::tiles[tileID];
+	Tile* pTile = fullTile.getType();
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -123,13 +123,14 @@ void ParticleEngine::destroyEffect(const TilePos& pos, TileID tileID, TileData d
 		{
 			for (int k = 0; k < 4; k++)
 			{
-				// @BUG: Original code used only the i loop variable for all three axes
+				// @PARITY-PE: PE used only the i loop variable for all three axes
 				// (pos + (i + 0.5f) / 4.0f), causing particles to spawn in a vertical
 				// column pattern instead of filling the 4x4x4 block volume.
+				// Java behavior (i, j, k) is used here.
 				Vec3 vec1(pos.x + (i + 0.5f) / 4.0f, pos.y + (j + 0.5f) / 4.0f, pos.z + (k + 0.5f) / 4.0f);
 				Vec3 vec2 = vec1 - Vec3(pos) - 0.5f;
 
-				add((new TerrainParticle(m_pLevel, vec1, vec2, pTile))->init(pos, data));
+				add((new TerrainParticle(m_pLevel, vec1, vec2, pTile))->init(pos, fullTile.data));
 			}
 		}
 	}

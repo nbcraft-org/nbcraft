@@ -38,13 +38,13 @@ const int Facing::VERTICES[6][4] = {
 	{5, 1, 2, 6}
 };
 
-const int Facing::NORMALS[6][3] = {
-	{0, -1,  0},
-	{0,  1,  0},
-	{0,  0, -1},
-	{0,  0,  1},
-	{-1,  0,  0},
-	{1,  0,  0}
+const Vec3 Facing::NORMALS[6] = {
+	Vec3(0, -1, 0), // DOWN
+	Vec3(0, 1, 0),  // UP
+	Vec3(0, 0, -1), // NORTH
+	Vec3(0, 0, 1),  // SOUTH
+	Vec3(-1, 0, 0), // WEST
+	Vec3(1, 0, 0)   // EAST
 };
 
 const int Facing::UVS[6][4][2] = {

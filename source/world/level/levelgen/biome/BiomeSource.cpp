@@ -55,19 +55,19 @@ const Biome::Vector& BiomeSource::getBiomeBlock(Biome::Vector& biomes, const Til
 	{
 		for (int j = 0; j < d; j++)
 		{
-			float d = m_noises[index] * 1.1 + 0.5;
+			float d = m_noises[index] * 1.1f + 0.5f;
 			float d1 = 0.01f;
 			float d2 = 1.0f - d1;
-			float d3 = (m_temperatures[index] * 0.15 + 0.7) * d2 + d * d1;
-			d1 = 0.002;
-			d2 = 1.0 - d1;
-			float d4 = (m_downfalls[index] * 0.15 + 0.5) * d2 + d * d1;
-			d3 = 1.0 - (1.0 - d3) * (1.0 - d3);
+			float d3 = (m_temperatures[index] * 0.15f + 0.7f) * d2 + d * d1;
+			d1 = 0.002f;
+			d2 = 1.0f - d1;
+			float d4 = (m_downfalls[index] * 0.15f + 0.5f) * d2 + d * d1;
+			d3 = 1.0f - (1.0f - d3) * (1.0f - d3);
 
-			if (d3 < 0.0) d3 = 0.0;
-			if (d4 < 0.0) d4 = 0.0;
-			if (d3 > 1.0) d3 = 1.0;
-			if (d4 > 1.0) d4 = 1.0;
+			if (d3 < 0.0f) d3 = 0.0f;
+			if (d4 < 0.0f) d4 = 0.0f;
+			if (d3 > 1.0f) d3 = 1.0f;
+			if (d4 > 1.0f) d4 = 1.0f;
 
 			m_temperatures[index] = d3;
 			m_downfalls[index] = d4;
@@ -90,15 +90,15 @@ const std::vector<float>& BiomeSource::getTemperatureBlock(int a, int b, int c, 
 	{
 		for (int j = 0; j < d; j++)
 		{
-			float d = m_noises[index] * 1.1 + 0.5;
-			float d1 = 0.01;
-			float d2 = 1.0 - d1;
-			float d3 = (m_temperatures[index] * 0.15 + 0.7) * d2 + d * d1;
-			d3 = 1.0 - (1.0 - d3) * (1.0f - d3);
-			if (d3 < 0.0)
-				d3 = 0.0;
-			if (d3 > 1.0)
-				d3 = 1.0;
+			float d = m_noises[index] * 1.1f + 0.5f;
+			float d1 = 0.01f;
+			float d2 = 1.0f - d1;
+			float d3 = (m_temperatures[index] * 0.15f + 0.7f) * d2 + d * d1;
+			d3 = 1.0f - (1.0f - d3) * (1.0f - d3);
+			if (d3 < 0.0f)
+				d3 = 0.0f;
+			if (d3 > 1.0f)
+				d3 = 1.0f;
 
 			m_temperatures[index] = d3;
 			index++;

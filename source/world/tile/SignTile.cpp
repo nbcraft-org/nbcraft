@@ -84,22 +84,21 @@ void SignTile::updateShape(const LevelSource* level, const TilePos& pos)
 	constexpr float var9 = 1.0f;
 	constexpr float var10 = 2.0f / 16.0f;
 	setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
-	if (tileData == 2) {
+	switch (tileData)
+	{
+	case 2:
 		setShape(var8, var6, 1.0f - var10, var9, var7, 1.0f);
-	}
-
-	if (tileData == 3) {
+		break;
+	case 3:
 		setShape(var8, var6, 0.0f, var9, var7, var10);
-	}
-
-	if (tileData == 4) {
+		break;
+	case 4:
 		setShape(1.0f - var10, var6, var8, 1.0f, var7, var9);
-	}
-
-	if (tileData == 5) {
+		break;
+	case 5:
 		setShape(0.0f, var6, var8, var10, var7, var9);
+		break;
 	}
-
 }
 
 int SignTile::getResource(TileData, Random*) const

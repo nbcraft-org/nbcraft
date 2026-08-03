@@ -554,7 +554,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, RemoveBloc
 	Tile* pTile = Tile::tiles[m_pLevel->getTile(pos)];
 	TileData auxValue = m_pLevel->getData(pos);
 
-	m_pMinecraft->m_pParticleEngine->destroyEffect(pos, pTile->m_ID, auxValue);
+	m_pMinecraft->m_pParticleEngine->destroyEffect(pos, FullTile(pTile->m_ID, auxValue));
 
 	bool setTileResult = m_pLevel->setTile(pos, TILE_AIR);
 	if (pTile && setTileResult)

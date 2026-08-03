@@ -1,5 +1,7 @@
 #pragma once
 
+#include "world/phys/Vec3.hpp"
+
 class Facing
 {
 public:
@@ -16,7 +18,7 @@ public:
 	static const Name HORIZONTAL[4];
 	static const int CORNERS[8][3];
 	static const int VERTICES[6][4];
-	static const int NORMALS[6][3];
+	static const Vec3 NORMALS[6];
 	static const int UVS[6][4][2];
 	static const int UV_AXES[3][4];
 	static const int ROTATED_INDEX[4][4];

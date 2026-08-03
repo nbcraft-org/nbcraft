@@ -16,7 +16,7 @@ int ItemParticle::getParticleTexture()
 
 void ItemParticle::render(Tesselator& t, float f, float a, float b, float c, float d, float e)
 {
-    float MagicValue = 0.015609375f;
+    constexpr float MagicValue = 0.015609375f;
     float fa = (m_tex % 16 + m_uo/ 4.0f) / 16.0f;
     float ga = fa + MagicValue;
     float ha = (m_tex / 16 + m_vo / 4.0f) / 16.0f;

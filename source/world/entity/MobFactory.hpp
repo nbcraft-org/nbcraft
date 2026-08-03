@@ -18,7 +18,17 @@ public:
 		{
 		}
 		
-		virtual bool canSpawn(Level& level, EntityType::ID id, const TilePos&) const { return true; }
+		virtual bool canSpawn(Level& level, EntityType::ID id, const TilePos&) const = 0;
+	};
+
+	struct DefaultSpawnData : public SpawnData
+	{
+		DefaultSpawnData(int weight)
+			: SpawnData(weight)
+		{
+		}
+
+		bool canSpawn(Level& level, EntityType::ID id, const TilePos&) const override { return true; }
 	};
 
 	struct SingleBiomeSpawnData : public SpawnData
@@ -34,6 +44,7 @@ public:
 		bool canSpawn(Level& level, EntityType::ID id, const TilePos& tp) const override;
 	};
 
+	// format: ID, spawnrate
 	typedef HashMap<EntityType::ID, SpawnData*> SpawnDataMap;
 
 	static void initMobLists();

@@ -15,11 +15,9 @@ bool RecordPlayerTile::use(Level* level, const TilePos& pos, Player* player)
 {
     if (level->m_bIsClientSide || !level->getData(pos))
         return false;
-    else
-    {
-        ejectRecord(level, pos);
-        return true;
-    }
+
+    ejectRecord(level, pos);
+    return true;
 }
 
 void RecordPlayerTile::spawnResources(Level* level, const TilePos& pos, TileData data, float chance)
@@ -42,7 +40,7 @@ void RecordPlayerTile::playRecord(Level* level, const TilePos& pos, int record)
         player->m_record = record;
         player->setChanged();
         level->setData(pos, 1);
-        level->levelEvent(LevelEvent(LevelEvent::SOUND_PLAY_RECORD, pos, record));
+        level->levelEvent(LevelEvent(LevelEvent::SOUND_PLAY_RECORDING, pos, record));
     }
 }
 
@@ -54,7 +52,7 @@ void RecordPlayerTile::ejectRecord(Level* level, const TilePos& pos)
         int record = player->m_record;
         if (record != 0)
 		{
-            level->levelEvent(LevelEvent(LevelEvent::SOUND_PLAY_RECORD, pos));
+            level->levelEvent(LevelEvent(LevelEvent::SOUND_PLAY_RECORDING, pos));
             level->playStreamingMusic(Util::EMPTY_STRING, pos);
             player->m_record = 0;
             player->setChanged();

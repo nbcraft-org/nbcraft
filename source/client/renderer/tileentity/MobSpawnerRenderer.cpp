@@ -9,7 +9,7 @@ void MobSpawnerRenderer::renderTyped(MobSpawnerTileEntity* spawner, const Vec3& 
 
     EntityType::ID entityId = spawner->m_pEntityDescriptor->getEntityType().getId();
 
-    HashMap<EntityType::ID, Entity*> ::iterator it = m_models.find(entityId);
+    HashMap<EntityType::ID, Entity*>::iterator it = m_models.find(entityId);
     Entity* e = nullptr;
 
     if (it == m_models.end())

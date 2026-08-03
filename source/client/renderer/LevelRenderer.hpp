@@ -153,6 +153,8 @@ public:
 	void render(const Entity& camera, Tile::RenderLayer layer, float alpha, bool fog = false);
 	void renderLevel(const Entity& camera, FrustumCuller& culler, float a1, float f);
 	void renderEntities(Vec3 pos, Culler*, float f);
+	void renderSnowAndRain(float f);
+	void tickRain();
 	void renderShadow(const Entity& entity, const Vec3& pos, float r, float pow, float a);
 	void renderSky(const Entity& camera, float alpha);
 	void prepareAndRenderClouds(const Entity& camera, float f);
@@ -213,6 +215,8 @@ public:
 	bool m_bOcclusionCheck;
 	int m_lastViewDistance;
 	int m_ticksSinceStart;
+	int m_rainSoundTime;
+	Random m_random;
 	float m_fogBrO;
 	float m_fogBr;
 	Materials m_materials;

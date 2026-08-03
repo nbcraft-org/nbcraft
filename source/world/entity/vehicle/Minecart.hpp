@@ -2,6 +2,7 @@
 
 #include "world/entity/Entity.hpp"
 #include "world/inventory/SimpleContainer.hpp"
+#include "world/level/TilePos.hpp"
 
 class Level;
 class Player;
@@ -44,7 +45,7 @@ public:
 	float getLootContent();
 
 private:
-	static const int EXITS[10][2][3];
+	static const TilePos EXITS[10][2];
 	bool m_bFlipped;
 	int m_lSteps;
 	Vec3 m_lPos;
@@ -57,7 +58,7 @@ public:
 	int m_hurtDir;
 	Type m_type;
 	int m_fuel;
-	float m_xPush;
-	float m_zPush;
+	float m_pushX;
+	float m_pushZ;
 };
 

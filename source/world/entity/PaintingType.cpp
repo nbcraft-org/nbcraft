@@ -2,20 +2,6 @@
 
 std::vector<PaintingType> PaintingType::types;
 
-PaintingType::PaintingType(const std::string& name, int width, int height, int uo, int vo) 
-    : m_name(name)
-    , m_width(width)
-    , m_height(height)
-    , m_uo(uo)
-    , m_vo(vo)
-{
-}
-
-void PaintingType::registerType(const std::string& name, int width, int height, int uo, int vo)
-{
-    types.push_back(PaintingType(name, width, height, uo, vo));
-}
-
 void PaintingType::initTypes()
 {
     registerType("Kebab", 16, 16, 0, 0);

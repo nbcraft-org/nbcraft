@@ -42,10 +42,13 @@ void RedDustParticle::tick()
 {
 	m_oPos = m_pos;
 
-	if (m_age++ >= m_lifetime)
+	m_age++;
+	if (m_age > m_lifetime)
 		remove();
 
 	m_tex = -8 * m_age / m_lifetime + 7;
+
+	m_vel.y += 0.004f;
 
 	move(m_vel);
 

@@ -25,8 +25,6 @@ public:
 	void lerpMotion(const Vec3& vel) override;
 	void tick() override;
 	virtual void onHit();
-	void addAdditionalSaveData(CompoundTag& tag) const override;
-	void readAdditionalSaveData(const CompoundTag& tag) override;
 	float getShadowHeightOffs() const override { return 0.0f; }
 	AuxValue getAuxValue() const override;
 	void setAuxValue(AuxValue value) override;

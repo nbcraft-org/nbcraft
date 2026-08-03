@@ -67,7 +67,7 @@ void Boat::tick()
 
     for (int var4 = 0; var4 < 5; ++var4)
     {
-        float var5 = m_hitbox.min.y + (m_hitbox.max.y - m_hitbox.min.y) * (var4 + 0) / 5 - 0.125;
+        float var5 = m_hitbox.min.y + (m_hitbox.max.y - m_hitbox.min.y) * (var4 + 0) / 5 - 0.125f;
         //float var7 = m_hitbox.min.y + (m_hitbox.max.y - m_hitbox.min.y) * (var4 + 1) / 5 - 0.125;
         AABB var9 = AABB(m_hitbox.min.x, var5, m_hitbox.min.z, m_hitbox.max.x, var5, m_hitbox.max.z);
         if (m_pLevel->containsLiquid(var9, Material::water))
@@ -102,21 +102,21 @@ void Boat::tick()
         {
             setPos(m_pos + m_vel);
             if (m_bOnGround) {
-                m_vel.x *= 0.5;
-                m_vel.y *= 0.5;
-                m_vel.z *= 0.5;
+                m_vel.x *= 0.5f;
+                m_vel.y *= 0.5f;
+                m_vel.z *= 0.5f;
             }
 
-            m_vel.x *= 0.99;
-            m_vel.y *= 0.95;
-            m_vel.z *= 0.99;
+            m_vel.x *= 0.99f;
+            m_vel.y *= 0.95f;
+            m_vel.z *= 0.99f;
         }
 
     }
     else
     {
         var23 = var2 * 2.0f - 1.0f;
-        m_vel.y += 0.04 * var23;
+        m_vel.y += 0.04f * var23;
         if (getRider())
         {
             m_vel.x += getRider()->m_vel.x * 0.2;
@@ -138,7 +138,7 @@ void Boat::tick()
 
         if (m_bOnGround)
         {
-            m_vel *= 0.5;
+            m_vel *= 0.5f;
         }
 
         move(m_vel);
@@ -150,24 +150,24 @@ void Boat::tick()
 
             for (int var14 = 0; var14 < 1.0f + var8 * 60.0f; ++var14) {
                 float var15 = (m_random.nextFloat() * 2.0f - 1.0f);
-                float var17 = (m_random.nextInt(2) * 2 - 1) * 0.7;
+                float var17 = (m_random.nextInt(2) * 2 - 1) * 0.7f;
                 float var19;
                 float var21;
                 if (m_random.nextInt(1))
                 {
-                    var19 = m_pos.x - var10 * var15 * 0.8 + var12 * var17;
-                    var21 = m_pos.z - var12 * var15 * 0.8 - var10 * var17;
-                    m_pLevel->addParticle("splash", Vec3(var19, m_pos.y - 0.125, var21), m_vel);
+                    var19 = m_pos.x - var10 * var15 * 0.8f + var12 * var17;
+                    var21 = m_pos.z - var12 * var15 * 0.8f - var10 * var17;
+                    m_pLevel->addParticle("splash", Vec3(var19, m_pos.y - 0.125f, var21), m_vel);
                 }
                 else {
-                    var19 = m_pos.x + var10 + var12 * var15 * 0.7;
-                    var21 = m_pos.z + var12 - var10 * var15 * 0.7;
-                    m_pLevel->addParticle("splash", Vec3(var19, m_pos.y - 0.125, var21), m_vel);
+                    var19 = m_pos.x + var10 + var12 * var15 * 0.7f;
+                    var21 = m_pos.z + var12 - var10 * var15 * 0.7f;
+                    m_pLevel->addParticle("splash", Vec3(var19, m_pos.y - 0.125f, var21), m_vel);
                 }
             }
         }
 
-        if (m_bHorizontalCollision && var8 > 0.15)
+        if (m_bHorizontalCollision && var8 > 0.15f)
         {
             if (!m_pLevel->m_bIsClientSide)
             {
@@ -211,7 +211,7 @@ void Boat::tick()
         m_rot.yaw = m_rot.yaw + var16;
         setRot(m_rot);
         AABB hit = m_hitbox;
-        hit.grow(0.2, 0.0f, 0.2);
+        hit.grow(0.2f, 0.0f, 0.2f);
         EntityVector var18 = m_pLevel->getEntities(this, hit);
         if (var18.size() > 0)
         {
@@ -237,7 +237,7 @@ void Boat::positionRider()
 {
     if (getRider())
     {
-        getRider()->setPos(Vec3(m_pos.x + Mth::cos(m_rot.yaw * M_PI / 180.0f) * 0.4, m_pos.y + getRideHeight() + getRider()->getRidingHeight(), m_pos.z + Mth::sin(m_rot.yaw * M_PI / 180.0f) * 0.4));
+        getRider()->setPos(Vec3(m_pos.x + Mth::cos(m_rot.yaw * M_PI / 180.0f) * 0.4f, m_pos.y + getRideHeight() + getRider()->getRidingHeight(), m_pos.z + Mth::sin(m_rot.yaw * M_PI / 180.0f) * 0.4f));
     }
 }
 
@@ -263,10 +263,8 @@ bool Boat::hurt(Entity*, int mul)
 
             remove();
         }
-        return true;
     }
-    else
-        return true;
+    return true;
 }
 
 void Boat::animateHurt()

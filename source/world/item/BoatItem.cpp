@@ -7,11 +7,10 @@ BoatItem::BoatItem(int id) : Item(id)
 	m_maxStackSize = 1;
 }
 
-
 bool BoatItem::use(ItemStack& item, Level* level, Mob& user) const
 {
-    Vec3 var13(user.m_pos.x, user.m_pos.y + 1.62 - user.m_heightOffset, user.m_pos.z);
-    constexpr float r = M_PI / 180;
+    Vec3 var13(user.m_pos.x, user.m_pos.y + 1.62f - user.m_heightOffset, user.m_pos.z);
+    constexpr float r = M_PI / 180.0f;
     float var14 = Mth::cos(-user.m_rot.yaw * r - M_PI);
     float var15 = Mth::sin(-user.m_rot.yaw * r - M_PI);
     float var16 = -Mth::cos(-user.m_rot.pitch * r);

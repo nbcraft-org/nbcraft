@@ -13,10 +13,12 @@
 
 class Pig : public Animal
 {
+private:
+	void _defineEntityData();
+
 public:
 	Pig(Level* pLevel);
 
-public:
 	std::string getAmbientSound() override { return "mob.pig"; };
 	std::string getDeathSound() const override { return "mob.pigdeath"; }
 	std::string getHurtSound() const override { return "mob.pig"; }
@@ -29,7 +31,4 @@ public:
 	bool hasSaddle() const;
 	void setSaddle(bool b);
 	Entity* getBreedOffspring(Animal* pOther) { return new Pig(m_pLevel); }
-
-private:
-	void _defineEntityData();
 };

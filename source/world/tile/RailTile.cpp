@@ -1,7 +1,9 @@
 #include "RailTile.hpp"
 #include "Rail.hpp"
 
-RailTile::RailTile(TileID id, int texture, bool isPowered) : Tile(id, texture, Material::decoration), m_bIsPowered(isPowered)
+RailTile::RailTile(TileID id, int texture, bool isPowered)
+	: Tile(id, texture, Material::decoration)
+	, m_bIsPowered(isPowered)
 {
 	setShape(0.0f, 0.0f, 0.0f, 1.0f, 2.0f / 16.0f, 1.0f);
 	m_renderLayer = RENDER_LAYER_ALPHATEST;
@@ -39,6 +41,7 @@ void RailTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
 	{
 		spawnResources(level, pos, level->getData(pos));
 		level->setTile(pos, TILE_AIR);
+		return;
 	}
 	else if (isPoweredRail(this))
 	{
@@ -64,7 +67,11 @@ void RailTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
 			}
 		}
 	}
-	else if (tile > 0 && Tile::tiles[tile]->isSignalSource() && !m_bIsPowered && (Rail(level, pos)).countPotentialConnections() == 3) {
+	else if (tile > 0
+		&& Tile::tiles[tile]->isSignalSource()
+		&& !m_bIsPowered
+		&& (Rail(level, pos)).countPotentialConnections() == 3)
+	{
 		updateDir(level, pos, false);
 	}
 }
@@ -108,27 +115,28 @@ void RailTile::onPlace(Level* level, const TilePos& pos)
 		faceData = data & 7;
 	}
 
-	if (isPoweredRail(this)) {
-		bool var9 = level->hasNeighborSignal(pos) || level->hasNeighborSignal(pos.above());
-		var9 = var9 || applyPower(level, pos, data, true, 0) || applyPower(level, pos, data, false, 0);
-		bool var10 = false;
-		if (var9 && (data & 8) == 0)
-		{
-			level->setData(pos, faceData | 8);
-			var10 = true;
-		}
-		else if (!var9 && (data & 8) != 0)
-		{
-			level->setData(pos, faceData);
-			var10 = true;
-		}
+	if (!isPoweredRail(this))
+		return;
 
-		if (var10)
-		{
-			level->updateNeighborsAt(pos.below(), m_ID);
-			if (faceData == 2 || faceData == 3 || faceData == 4 || faceData == 5)
-				level->updateNeighborsAt(pos.above(), m_ID);
-		}
+	bool var9 = level->hasNeighborSignal(pos) || level->hasNeighborSignal(pos.above());
+	var9 = var9 || applyPower(level, pos, data, true, 0) || applyPower(level, pos, data, false, 0);
+	bool var10 = false;
+	if (var9 && (data & 8) == 0)
+	{
+		level->setData(pos, faceData | 8);
+		var10 = true;
+	}
+	else if (!var9 && (data & 8) != 0)
+	{
+		level->setData(pos, faceData);
+		var10 = true;
+	}
+
+	if (var10)
+	{
+		level->updateNeighborsAt(pos.below(), m_ID);
+		if (faceData == 2 || faceData == 3 || faceData == 4 || faceData == 5)
+			level->updateNeighborsAt(pos.above(), m_ID);
 	}
 }
 
@@ -146,7 +154,10 @@ void RailTile::setPlacedBy(Level* level, const TilePos& pos, Mob* mob)
 
 void RailTile::updateDir(Level* level, const TilePos& pos, bool updateNeighbors)
 {
-	if (!level->m_bIsClientSide) Rail(level, pos).place(level->hasNeighborSignal(pos), updateNeighbors);
+	if (level->m_bIsClientSide)
+		return;
+
+	Rail(level, pos).place(level->hasNeighborSignal(pos), updateNeighbors);
 }
 
 int RailTile::getTexture(Facing::Name face, TileData data) const

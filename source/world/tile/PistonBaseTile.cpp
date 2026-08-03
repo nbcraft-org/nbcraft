@@ -22,7 +22,7 @@ int PistonBaseTile::getTexture(const LevelSource* level, const TilePos& pos, Fac
 {
 	TileData meta = level->getData(pos);
 	Facing::Name facing = getFacing(meta);
-	return (int)facing > 5 ? m_TextureFrame : (side == facing ? (!isExtended(meta) && m_aabb.min.x <= 0.0 && m_aabb.min.y <= 0.0 && m_aabb.min.z <= 0.0 && m_aabb.max.x >= 1.0 && m_aabb.max.y >= 1.0 && m_aabb.max.z >= 1.0 ? m_TextureFrame : 110) : (side == Facing::OPPOSITE[facing] ? 109 : 108));
+	return (int)facing > 5 ? m_TextureFrame : (side == facing ? (!isExtended(meta) && m_aabb.min.x <= 0.0f && m_aabb.min.y <= 0.0f && m_aabb.min.z <= 0.0f && m_aabb.max.x >= 1.0f && m_aabb.max.y >= 1.0f && m_aabb.max.z >= 1.0f ? m_TextureFrame : 110) : (side == Facing::OPPOSITE[facing] ? 109 : 108));
 }
 
 eRenderShape PistonBaseTile::getRenderShape() const
@@ -33,7 +33,7 @@ eRenderShape PistonBaseTile::getRenderShape() const
 void PistonBaseTile::triggerEvent(Level* level, const TileEvent& event)
 {
 	m_bUpdating = true;
-	if (event.b0 == 0)
+	if (event.b0 == PISTON_EXTEND)
 	{
 		if (_moveBlocks(level, event.pos, (Facing::Name) event.b1))
 		{
@@ -41,7 +41,7 @@ void PistonBaseTile::triggerEvent(Level* level, const TileEvent& event)
 			level->playSound(Vec3(event.pos) + 0.5f, "tile.piston.out", 0.5f, level->m_random.nextFloat() * 0.25f + 0.6f);
 		}
 	}
-	else if (event.b0 == 1)
+	else if (event.b0 == PISTON_RETRACT)
 	{
 		TilePos relative = event.pos.relative((Facing::Name)event.b1);
 		PistonMovingTileEntity* piston = static_cast<PistonMovingTileEntity*>(level->getTileEntity(relative));
@@ -186,13 +186,13 @@ void PistonBaseTile::_checkIfExtend(Level* level, const TilePos& pos)
 			if (_canMoveBlocks(level, pos, face))
 			{
 				level->setDataNoUpdate(pos, face | 8);
-				level->tileEvent(TileEvent(pos, 0, face));
+				level->tileEvent(TileEvent(pos, PISTON_EXTEND, face));
 			}
 		}
 		else if (!signal && isExtended(data))
 		{
 			level->setDataNoUpdate(pos, face);
-			level->tileEvent(TileEvent(pos, 1, face));
+			level->tileEvent(TileEvent(pos, PISTON_RETRACT, face));
 		}
 
 	}
@@ -215,15 +215,15 @@ int PistonBaseTile::_getRotationData(Level* level, const TilePos& pos, Player* p
 {
 	if (Mth::abs(player->m_pos.x - pos.x) < 2.0f && Mth::abs(player->m_pos.z - pos.z) < 2.0f)
 	{
-		float var5 = player->m_pos.y + 0.2;
-		if (var5 - pos.y > 2.0)
+		float var5 = player->m_pos.y + 0.2f;
+		if (var5 - pos.y > 2.0f)
 			return 1;
 
-		if (pos.y - var5 > 0.0)
+		if (pos.y - var5 > 0.0f)
 			return 0;
 	}
 
-	int var7 = Mth::floor((player->m_rot.yaw * 4.0f / 360.0f) + 0.5) & 3;
+	int var7 = Mth::floor((player->m_rot.yaw * 4.0f / 360.0f) + 0.5f) & 3;
 	return var7 == 0 ? 2 : (var7 == 1 ? 5 : (var7 == 2 ? 3 : (var7 == 3 ? 4 : 0)));
 }
 
@@ -260,7 +260,7 @@ bool PistonBaseTile::_canMoveBlocks(Level* level, const TilePos& pos, Facing::Na
 	{
 		if (steps < 13)
 		{
-			if (tp.y <= 0 || tp.y >= 127)
+			if (tp.y <= C_MIN_Y || tp.y >= C_MAX_Y - 1)
 				return false;
 
 			TileID tile = level->getTile(tp);
@@ -294,7 +294,7 @@ bool PistonBaseTile::_moveBlocks(Level* level, const TilePos& pos, Facing::Name 
 	{
 		if (steps < 13)
 		{
-			if (tp.y <= 0 || tp.y >= 127)
+			if (tp.y <= C_MIN_Y || tp.y >= C_MAX_Y - 1)
 				return false;
 
 			TileID tile = level->getTile(tp);

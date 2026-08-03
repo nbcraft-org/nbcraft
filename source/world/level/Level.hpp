@@ -173,7 +173,7 @@ public:
 	void tickPendingTicks(bool b);
 	void tickTiles();
 	void tickEntities();
-	virtual void tickWeather();
+	void tickWeather();
 	void addToTickNextTick(const TilePos& tilePos, int, int);
 	void takePicture(TripodCamera* pCamera, Entity* pOwner);
 	void addParticle(const std::string& name, const Vec3& pos, const Vec3& dir = Vec3::ZERO);
@@ -246,7 +246,7 @@ public:
 	std::vector<Player*> m_players;
 	int m_skyDarken;
 	int m_skyFlashTime;
-	uint8_t m_bNoNeighborUpdate;
+	bool m_bNoNeighborUpdate;
 	Dimension* m_pDimension;
     int m_difficulty; // @TODO: Difficulty enum
 	Random m_random;
