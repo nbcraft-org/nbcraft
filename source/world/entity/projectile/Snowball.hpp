@@ -9,9 +9,9 @@ private:
 	void _init();
 
 public:
-	Snowball(Level* pLevel);
-	Snowball(Level* pLevel, Mob* pMob);
-	Snowball(Level* pLevel, const Vec3& pos, bool isPlayerOwned = false);
+	Snowball(TileSource& source);
+	Snowball(TileSource& source, const Vec3& pos, bool isPlayerOwned = false);
+	Snowball(Mob& mob);
 
 private:
 	void _lerpMotion(const Vec3& vel);

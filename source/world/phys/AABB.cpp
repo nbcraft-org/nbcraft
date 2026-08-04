@@ -210,19 +210,19 @@ AABB& AABB::grow(float x)
 
 AABB& AABB::expand(float x, float y, float z)
 {
-	if (x < 0) min.x += x;
-	if (x > 0) max.x += x;
-	if (y < 0) min.y += y;
-	if (y > 0) max.y += y;
-	if (z < 0) min.z += z;
-	if (z > 0) max.z += z;
-
-	return *this;
+	return expand(Vec3(x, y, z));
 }
 
 AABB& AABB::expand(const Vec3& vec)
 {
-	return expand(vec.x, vec.y, vec.z);
+	if (vec.x < 0) min.x += vec.x;
+	if (vec.x > 0) max.x += vec.x;
+	if (vec.y < 0) min.y += vec.y;
+	if (vec.y > 0) max.y += vec.y;
+	if (vec.z < 0) min.z += vec.z;
+	if (vec.z > 0) max.z += vec.z;
+
+	return *this;
 }
 
 bool AABB::contains(const Vec3& v) const

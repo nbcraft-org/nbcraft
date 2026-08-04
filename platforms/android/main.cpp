@@ -406,7 +406,6 @@ void android_main(struct android_app* state) {
     engine.androidApp = state;
 
     engine.ninecraftApp = new NinecraftApp;
-    engine.ninecraftApp->m_pPlatform = &g_AppPlatform;
 
     while (1)
     {

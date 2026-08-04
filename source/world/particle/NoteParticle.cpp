@@ -1,15 +1,15 @@
 #include "Particle.hpp"
 
-NoteParticle::NoteParticle(Level* level, const Vec3& pos, const Vec3& dir, float scale) :
-	Particle(level, pos, Vec3::ZERO)
+NoteParticle::NoteParticle(TileSource& tileSource, const Vec3& pos, const Vec3& dir, float scale)
+	: Particle(tileSource, pos, Vec3::ZERO)
 {
 	m_vel.x *= 0.01f;
 	m_vel.y *= 0.01f;
 	m_vel.z *= 0.01f;
 	m_vel.y += 0.2f;
-	m_rCol = Mth::sin((dir.x + 0.0f) * M_PI * 2.0f) * 0.65f + 0.35f;
-	m_gCol = Mth::sin((dir.x + (1.0f / 3.0f)) * M_PI * 2.0f) * 0.65f + 0.35f;
-	m_bCol = Mth::sin((dir.x + (2.0f / 3.0f)) * M_PI * 2.0f) * 0.65f + 0.35f;
+	m_color.r = Mth::sin((dir.x + 0.0f         ) * M_PI * 2.0f) * 0.65f + 0.35f;
+	m_color.g = Mth::sin((dir.x + (1.0f / 3.0f)) * M_PI * 2.0f) * 0.65f + 0.35f;
+	m_color.b = Mth::sin((dir.x + (2.0f / 3.0f)) * M_PI * 2.0f) * 0.65f + 0.35f;
 	m_size *= 0.75f * scale;
 	m_oSize = m_size;
 	m_lifetime = 6;

@@ -1,60 +1,69 @@
 #include "MusicTile.hpp"
 #include "world/level/Level.hpp"
+#include "world/level/TileSource.hpp"
+#include "world/entity/Player.hpp"
 #include "entity/MusicTileEntity.hpp"
 
 MusicTile::MusicTile(TileID id, int texture) : EntityTile(id, texture, Material::wood)
 {
 }
 
-void MusicTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
+void MusicTile::neighborChanged(TileSource& source, const TilePos& pos, TileID tile)
 {
     if (tile <= TILE_AIR || !Tile::tiles[tile]->isSignalSource())
         return;
 
-    TileEntity* tileEnt = level->getTileEntity(pos);
+    TileEntity* tileEnt = source.getTileEntity(pos);
     if (!tileEnt)
         return;
 
-    bool signalProvided = level->hasDirectSignal(pos);
+    bool signalProvided = source.hasDirectSignal(pos);
     MusicTileEntity* musEnt = static_cast<MusicTileEntity*>(tileEnt);
     if (musEnt->m_bOn == signalProvided)
         return;
 
     if (signalProvided)
-        musEnt->play(level, pos);
+        musEnt->play(source, pos);
 
     musEnt->m_bOn = signalProvided;
 }
 
-bool MusicTile::use(Level* level, const TilePos& pos, Player* player)
+bool MusicTile::use(const TilePos& pos, Player& player)
 {
-	if (player->isSneaking() && !player->getSelectedItem().isEmpty())
+	if (player.isSneaking() && !player.getSelectedItem().isEmpty())
 		return false;
 
-    if (level->m_bIsClientSide)
+    Level& level = player.getLevel();
+    TileSource& source = player.getTileSource();
+
+    if (level.m_bIsClientSide)
         return true;
 
-    TileEntity* tileEnt = level->getTileEntity(pos);
+    TileEntity* tileEnt = source.getTileEntity(pos);
     if (!tileEnt)
         return false;
 
     MusicTileEntity* musEnt = static_cast<MusicTileEntity*>(tileEnt);
 
     musEnt->tune();
-    musEnt->play(level, pos);
+    musEnt->play(source, pos);
     return true;
 }
 
-void MusicTile::attack(Level* level, const TilePos& pos, Player* player)
+void MusicTile::attack(const TilePos& pos, Player& player)
 {
-    if (level->m_bIsClientSide)
+    Level& level = player.getLevel();
+
+    if (level.m_bIsClientSide)
         return;
 
-    TileEntity* tileEnt = level->getTileEntity(pos);
+    TileSource& source = player.getTileSource();
+
+    TileEntity* tileEnt = source.getTileEntity(pos);
     if (!tileEnt)
         return;
 
-    (static_cast<MusicTileEntity*>(tileEnt))->play(level, pos);
+    (static_cast<MusicTileEntity*>(tileEnt))->play(source, pos);
 }
 
 bool MusicTile::hasTileEntity() const
@@ -67,12 +76,11 @@ TileEntity* MusicTile::newTileEntity()
 	return new MusicTileEntity();
 }
 
-void MusicTile::triggerEvent(Level* level, const TileEvent& event)
+void MusicTile::triggerEvent(TileSource& source, const TileEvent& event)
 {
     int instrument = event.b0;
     int note = event.b1;
     
-
     std::string soundType;
     switch (instrument)
     {
@@ -93,6 +101,8 @@ void MusicTile::triggerEvent(Level* level, const TileEvent& event)
         break;
     }
 
-    level->playSound(event.pos + 0.5f, "note." + soundType, 3.0f, std::pow(2.0f, (note - 12) / 12.0f));
-    level->addParticle("note", Vec3(event.pos.x + 0.5f, event.pos.y + 1.2f, event.pos.z + 0.5f), Vec3(note / 24.0f, 0.0f, 0.0f));
+    Level& level = source.getLevel();
+
+    level.playSound(event.pos + 0.5f, "note." + soundType, 3.0f, std::pow(2.0f, (note - 12) / 12.0f));
+    level.addParticle("note", Vec3(event.pos.x + 0.5f, event.pos.y + 1.2f, event.pos.z + 0.5f), Vec3(note / 24.0f, 0.0f, 0.0f));
 }

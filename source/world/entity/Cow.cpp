@@ -8,7 +8,7 @@
 #include "Cow.hpp"
 #include "Player.hpp"
 
-Cow::Cow(Level* pLevel) : Animal(pLevel)
+Cow::Cow(TileSource& source) : Animal(source)
 {
 	m_pDescriptor = &EntityTypeDescriptor::cow;
 	m_renderType = RENDER_COW;

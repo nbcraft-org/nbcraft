@@ -8,8 +8,8 @@ class LargeFeature
 public:
 	LargeFeature();
 	virtual ~LargeFeature();
-	virtual void apply(ChunkSource*, Level*, int, int, TileID*, int);
-	virtual void addFeature(Level*, int, int, int, int, TileID*, int) = 0;
+	virtual void apply(ChunkSource*, TileSource&, int, int, TileID*, int);
+	virtual void addFeature(TileSource&, int, int, int, int, TileID*, int) = 0;
 
 
 public:

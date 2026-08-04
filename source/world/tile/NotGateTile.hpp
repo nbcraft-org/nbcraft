@@ -19,19 +19,19 @@ public:
 
 	int getTexture(Facing::Name face, TileData data) const override;
 	int getTickDelay() const override;
-	void onPlace(Level*, const TilePos& pos) override;
-	void onRemove(Level*, const TilePos& pos) override;
-	int getSignal(const LevelSource*, const TilePos& pos, Facing::Name face) const override;
-	void tick(Level*, const TilePos& pos, Random*) override;
-	void neighborChanged(Level*, const TilePos& pos, TileID tile) override;
-	int getDirectSignal(const Level*, const TilePos& pos, Facing::Name face) const override;
+	void onPlace(TileSource&, const TilePos& pos) override;
+	void onRemove(TileSource&, const TilePos& pos) override;
+	int getSignal(const TileSource&, const TilePos& pos, Facing::Name face) const override;
+	void tick(TileSource&, const TilePos& pos, Random*) override;
+	void neighborChanged(TileSource&, const TilePos& pos, TileID tile) override;
+	int getDirectSignal(const TileSource&, const TilePos& pos, Facing::Name face) const override;
 	int getResource(TileData data, Random* random) const override;
 	bool isSignalSource() const override;
-	void animateTick(Level*, const TilePos& pos, Random*) override;
+	void animateTick(TileSource&, const TilePos& pos, Random*) override;
 
 private:
-	bool isToggledTooFrequently(Level* level, const TilePos& pos, bool add);
-	bool hasNeighborSignal(const Level* level, const TilePos& pos);
+	bool isToggledTooFrequently(TileSource& source, const TilePos& pos, bool add);
+	bool hasNeighborSignal(TileSource& source, const TilePos& pos);
 	bool m_bOn;
 
 };

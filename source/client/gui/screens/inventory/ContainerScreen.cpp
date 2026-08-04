@@ -329,7 +329,7 @@ void ContainerScreen::slotClicked(Slot* slot, Container::SlotID slotId, MouseBut
 
 void ContainerScreen::slotClicked(const MenuPointer& pointer, MouseButtonType button)
 {
-    slotClicked(pointer, button, m_pMinecraft->m_pPlatform->shiftPressed());
+    slotClicked(pointer, button, AppPlatform::singleton()->shiftPressed());
 }
 
 void ContainerScreen::handleUserAction(const ActionInfo& button)

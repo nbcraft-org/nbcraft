@@ -66,7 +66,7 @@ void SimpleContainer::setContainerChanged(StackID stackId)
     }
 }
 
-bool SimpleContainer::stillValid(Player* player) const
+bool SimpleContainer::stillValid(Player& player) const
 {
     return true;
 }

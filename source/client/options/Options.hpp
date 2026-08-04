@@ -574,62 +574,67 @@ public:
 
 #define OPTIONS_LIST_GAMEPLAY_GAME         \
 	HEADER("Game");                        \
-	OPTION(m_difficulty);                  \
-	OPTION(m_thirdPerson);                 \
-	OPTION(m_serverVisibleDefault);        \
-	OPTION(m_classicCrafting);			   \
+		OPTION(m_difficulty);              \
+		OPTION(m_thirdPerson);             \
+		OPTION(m_serverVisibleDefault);    \
+	if (m_uiTheme == UI_CONSOLE)           \
+		OPTION(m_classicCrafting);         \
 
 #define OPTIONS_LIST_GAMEPLAY_AUDIO        \
 	HEADER("Audio");                       \
-	OPTION(m_musicVolume);                 \
-	OPTION(m_masterVolume);                \
+		OPTION(m_musicVolume);             \
+		OPTION(m_masterVolume);            \
 
 #define OPTIONS_LIST_CONTROLS_CONTROLS     \
 	HEADER("Controls");                    \
-	OPTION(m_sensitivity);                 \
-	OPTION(m_invertMouse);                 \
-	OPTION(m_splitControls); idxSplit = currentIndex; \
-	OPTION(m_swapJumpSneak); idxSwapJumpSneak = currentIndex; \
-	OPTION(m_dpadSize); idxDpadSize = currentIndex; \
-	OPTION(m_autoJump);                    \
+		OPTION(m_sensitivity);             \
+		OPTION(m_invertMouse);             \
+	if (mc.useTouchscreen()) {             \
+		OPTION(m_splitControls);           \
+		OPTION(m_swapJumpSneak);           \
+		OPTION(m_dpadSize);                \
+	}                                      \
+		OPTION(m_autoJump);                \
 
 #define OPTIONS_LIST_CONTROLS_FEEDBACK     \
 	/*HEADER("Feedback");*/                \
-	/*OPTION(m_vibrate);*/                 \
+		/*OPTION(m_vibrate);*/             \
 
 #define OPTIONS_LIST_CONTROLS_EXPERIMENTAL \
 	HEADER("Experimental");                \
-	OPTION(m_flightHax);                   \
+		OPTION(m_flightHax);               \
 
 #define OPTIONS_LIST_VIDEO_GRAPHICS        \
 	HEADER("Graphics");                    \
-	/*OPTION(m_brightness);*/              \
-	OPTION(m_viewDistance);                \
-	/*OPTION(m_antiAliasing);*/            \
-	/*OPTION(m_guiScale);*/                \
-	OPTION(m_fov);                         \
-	OPTION(m_gamma);                       \
-	OPTION(m_ambientOcclusion);            \
-	OPTION(m_fancyGraphics);               \
-	OPTION(m_fancySky);                    \
-	/*OPTION(m_animatedTextures);*/        \
-	OPTION(m_viewBobbing);                 \
-	OPTION(m_anaglyphs);                   \
-	OPTION(m_blockOutlines);               \
-	/*OPTION(m_limitFramerate);*/          \
-	OPTION(m_vSync); idxVSync = currentIndex; \
-	OPTION(m_fancyGrass);                  \
-	OPTION(m_biomeColors);                 \
-	/*OPTION(m_bMipmaps);*/                \
-	OPTION(m_dynamicHand);                 \
-	OPTION(m_uiTheme);                     \
-	OPTION(m_logoType);                    \
-	OPTION(m_hudSize);					   \
-	OPTION(m_animatedCharacter);           \
+		/*OPTION(m_brightness);*/          \
+		OPTION(m_viewDistance);            \
+		/*OPTION(m_antiAliasing);*/        \
+		/*OPTION(m_guiScale);*/            \
+		OPTION(m_fov);                     \
+		OPTION(m_gamma); int idxGamma = currentIndex; \
+		OPTION(m_ambientOcclusion);        \
+		OPTION(m_fancyGraphics);           \
+		OPTION(m_fancySky);                \
+		/*OPTION(m_animatedTextures);*/    \
+		OPTION(m_viewBobbing);             \
+		OPTION(m_anaglyphs);               \
+		OPTION(m_blockOutlines);           \
+		/*OPTION(m_limitFramerate);*/      \
+		OPTION(m_vSync); int idxVSync = currentIndex; \
+		OPTION(m_fancyGrass);              \
+		OPTION(m_biomeColors);             \
+		/*OPTION(m_bMipmaps);*/            \
+		OPTION(m_dynamicHand);             \
+		OPTION(m_uiTheme);                 \
+		OPTION(m_logoType);                \
+	if (m_uiTheme == UI_CONSOLE) {         \
+		OPTION(m_hudSize);                 \
+		OPTION(m_animatedCharacter);       \
+	}                                      \
 
 #define OPTIONS_LIST_VIDEO_EXPERIMENTAL    \
 	HEADER("Experimental");                \
-	OPTION(m_hideGui);                     \
-	OPTION(m_debugText);                   \
-	OPTION(m_menuPanorama); idxPano = currentIndex; \
+		OPTION(m_hideGui);                 \
+		OPTION(m_debugText);               \
+		OPTION(m_menuPanorama); int idxPano = currentIndex; \
 

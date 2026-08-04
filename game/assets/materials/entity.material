@@ -40,17 +40,21 @@
 		"states":["DisableCulling"]
 	},
 
-	"entity_alphatest:entity_nocull": {
+	"entity_alphatest:entity": {
 		"states":["EnableAlphaTest"],
 		"defines":["ALPHA_TEST"]
 	},
 	
-	"entity_alphatest_cull:entity": {
+	"entity_alphatest_nocull:entity_nocull": {
 		"states":["EnableAlphaTest"],
 		"defines":["ALPHA_TEST"]
 	},
 
-	"entity_alphablend:entity_nocull": {
+	"entity_alphablend:entity": {
+		"states" : ["Blending"]
+	},
+
+	"entity_alphablend_nocull:entity_nocull": {
 		"states" : ["Blending"]
 	},
 
@@ -73,7 +77,7 @@
 		"blendDst": "Zero"
 	},
 	
-	"item_entity:entity_alphatest_cull": {
+	"item_entity:entity_alphatest": {
 	},
 	
 	"item_entity_item:item_entity": {
@@ -93,8 +97,12 @@
 		"vertexShader" : "shaders/position.vertex",
 		"fragmentShader" : "shaders/current_color.fragment"
 	},
+	
+	"spider:entity_alphablend": {
+		"depthFunc": "LessEqual"
+	},
 
-	"item_in_hand:entity_alphatest_cull": {
+	"item_in_hand:entity_alphatest": {
 	},
 
 	"item_in_hand_color:item_in_hand": {

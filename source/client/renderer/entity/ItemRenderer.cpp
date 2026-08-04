@@ -140,7 +140,7 @@ void ItemRenderer::render(const Entity& entity, const Vec3& pos, float rot, floa
 			Tesselator& t = Tesselator::instance;
 			t.begin(4);
 
-			Color color = Color(itemStack.getItem()->getColor(itemStack.getAuxValue()), 1.0f);
+			Color color = itemStack.getItem()->getColor(itemStack.getAuxValue());
 
 #ifdef ENH_SHADE_HELD_TILES
 			color.mulRGB(itemEntity.getBrightness(1.0f));
@@ -316,6 +316,6 @@ void ItemRenderer::renderGuiItem(Minecraft& mc, const ItemStack& item, int x, in
 		else
 			textures.loadAndBindTexture(C_ITEMS_NAME);
 
-		blit(x, y, 16 * (item.getIcon() % 16), 16 * (item.getIcon() / 16), 16, 16, color * Color(item.getItem()->getColor(item.getAuxValue()), 1.0f));
+		blit(x, y, 16 * (item.getIcon() % 16), 16 * (item.getIcon() / 16), 16, 16, color * item.getItem()->getColor(item.getAuxValue()));
 	}
 }

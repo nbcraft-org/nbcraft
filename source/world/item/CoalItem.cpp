@@ -6,7 +6,7 @@ CoalItem::CoalItem(int id) : Item(id)
 	m_bStackedByData = true;
 }
 
-std::string CoalItem::getDescriptionId(ItemStack* inst) const
+std::string CoalItem::getDescriptionId(ItemStack& inst) const
 {
-	return (inst->getAuxValue() == 1) ? "item.charcoal" : "item.coal";
+	return (inst.getAuxValue() == 1) ? "item.charcoal" : "item.coal";
 }

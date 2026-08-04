@@ -126,47 +126,62 @@ void GuiElement::render(Minecraft* pMinecraft, const MenuPointer& pointer)
 {
 }
 
-void GuiElement::setEnabled(bool value)
+GuiElement* GuiElement::setEnabled(bool value)
 {
 	m_bEnabled = value;
+
+	return this;
 }
 
-void GuiElement::setVisible(bool value)
+GuiElement* GuiElement::setVisible(bool value)
 {
 	m_bVisible = value;
+
+	return this;
 }
 
-void GuiElement::setSelected(bool value)
+GuiElement* GuiElement::setSelected(bool value)
 {
 	bool prev = isSelected();
 	m_bSelected = value;
 	if (prev != value)
 		_onSelectedChanged();
+
+	return this;
 }
 
-void GuiElement::setFocused(bool value)
+GuiElement* GuiElement::setFocused(bool value)
 {
 	bool prev = hasFocus();
 	m_bHasFocus = value;
 	if (prev != value)
 		_onFocusChanged();
+
+	return this;
 }
 
-void GuiElement::setId(ID id)
+GuiElement* GuiElement::setId(ID id)
 {
 	m_ID = id;
+
+	return this;
 }
 
-void GuiElement::setNavigable(bool isNavigable)
+GuiElement* GuiElement::setNavigable(bool isNavigable)
 {
 	m_bNavigable = isNavigable;
+
+	return this;
 }
 
-void GuiElement::setMessage(const std::string& message)
+GuiElement* GuiElement::setMessage(const std::string& message)
 {
 	m_message = message;
+
+	return this;
 }
 
-void GuiElement::setTextboxText(const std::string& text)
+GuiElement* GuiElement::setTextboxText(const std::string& text)
 {
+	return this;
 }

@@ -32,6 +32,6 @@ public:
 private:
 	std::vector<ResetInfo> m_updatesToReset;
 	std::map<int, Entity*> m_entitiesById;
-	EntityVector m_forced;
-	EntityVector m_reEntries;
+	Entity::Vector m_forced;
+	Entity::Vector m_reEntries;
 };

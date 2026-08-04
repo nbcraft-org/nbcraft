@@ -26,7 +26,7 @@ public:
     void setItem(StackID stackId, const ItemStack& item) override;
 
     void setContainerChanged(StackID stackId) override;
-    bool stillValid(Player* player) const override;
+    bool stillValid(Player& player) const override;
 
 private:
     std::vector<ItemStack> m_items;

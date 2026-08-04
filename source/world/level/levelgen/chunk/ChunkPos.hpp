@@ -1,4 +1,5 @@
 #pragma once
+
 #include <cmath>
 #include "world/phys/Vec3.hpp"
 
@@ -22,6 +23,12 @@ public:
 	ChunkPos(int x, int z) : x(x), z(z) {}
 	ChunkPos(const Vec3& pos) { _init(pos); }
 	ChunkPos(const TilePos& pos) { _init(pos); }
+
+	int hashCode() const
+	{
+		// From Java
+		return x << 8 | z;
+	}
 
 	int lengthSqr() const
 	{
@@ -80,9 +87,19 @@ public:
 		z += b.z;
 	}
 
+	void operator+= (int i)
+	{
+		(*this) += ChunkPos(i, i);
+	}
+
 	void operator-=(const ChunkPos& b)
 	{
 		(*this) += -b;
+	}
+
+	void operator-=(int i)
+	{
+		(*this) -= ChunkPos(i, i);
 	}
 
 	void operator*=(int i)
@@ -128,4 +145,7 @@ public:
 	{
 		return int(floorf(value / 16));
 	}
+
+public:
+	static const ChunkPos INVALID;
 };

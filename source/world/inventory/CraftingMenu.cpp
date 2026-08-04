@@ -3,11 +3,11 @@
 #include "ResultSlot.hpp"
 #include "world/item/crafting/Recipes.hpp"
 #include "world/level/Level.hpp"
+#include "world/level/TileSource.hpp"
 
-CraftingMenu::CraftingMenu(Inventory* inventory, const TilePos& tilePos, Level* level, bool is2x2)
+CraftingMenu::CraftingMenu(Inventory* inventory, const TilePos& tilePos, bool is2x2)
     : ContainerMenu(Container::CRAFTING)
     , m_pos(tilePos)
-    , m_pLevel(level)
 {
     int dim = is2x2 ? 2 : 3;
 
@@ -50,7 +50,7 @@ void CraftingMenu::slotsChanged(Container* container)
     m_pResultSlots->setItem(0, Recipes::singleton().getItemFor(m_pCraftSlots));
 }
 
-void CraftingMenu::removed(Player* player) 
+void CraftingMenu::removed(Player& player) 
 {
     ContainerMenu::removed(player);
     for (int i = 0; i < m_pCraftSlots->getContainerSize(); ++i)
@@ -58,20 +58,20 @@ void CraftingMenu::removed(Player* player)
         ItemStack& item = m_pCraftSlots->getItem(i);
         if (!item.isEmpty())
         {
-            player->drop(item);
+            player.drop(item);
             m_pCraftSlots->setItem(i, ItemStack::EMPTY);
         }
     }
 }
 
-bool CraftingMenu::stillValid(Player* player) const 
+bool CraftingMenu::stillValid(Player& player) const 
 {
     if (m_pCraftSlots->getContainerSize() <= 4) return true;
 
-    if (m_pLevel->getTile(m_pos) != Tile::craftingTable->m_ID)
+    if (player.getTileSource().getTile(m_pos) != Tile::craftingTable->m_ID)
         return false;
     else
-        return !(player->distanceToSqr(Vec3(m_pos.x + 0.5f, m_pos.y + 0.5f, m_pos.z + 0.5f)) > 64.0f);
+        return !(player.distanceToSqr(Vec3(m_pos.x + 0.5f, m_pos.y + 0.5f, m_pos.z + 0.5f)) > 64.0f);
 }
 
 ItemStack CraftingMenu::quickMoveStack(Container::SlotID slotId)

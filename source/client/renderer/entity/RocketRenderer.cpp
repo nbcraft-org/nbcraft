@@ -23,7 +23,7 @@ void RocketRenderer::render(const Entity& entity, const Vec3& pos, float rot, fl
 	float brightness = entity.getBrightness(1.0f);
 
 	bindTexture(C_ITEMS_NAME);
-	m_renderer.renderTile(FullTile(&m_tile, 0), m_materials.entity_alphatest, brightness);
+	m_renderer.renderTile(FullTile(&m_tile, 0), m_materials.entity_alphatest_nocull, brightness);
 }
 
 FakeRocketTile::FakeRocketTile() : Tile(0, 16*2+14, Material::plant)

@@ -53,12 +53,12 @@ void Options::_initDefaultValues()
 	loadControls();
 }
 
-static UITheme GetDefaultUiTheme(Minecraft* mc)
+static UITheme GetDefaultUiTheme()
 {
 #if MC_PLATFORM_XBOX360
 	return UI_CONSOLE;
 #else
-	return mc->platform()->isTouchscreen() ? UI_POCKET : UI_JAVA;
+	return AppPlatform::singleton()->isTouchscreen() ? UI_POCKET : UI_JAVA;
 #endif
 }
 
@@ -85,16 +85,16 @@ Options::Options(Minecraft* mc, const std::string& folderPath) :
 	, m_fov("gfx_fov", "options.fov", 70.0f)
 	, m_playerName("mp_username", "options.username", "Steve")
 	, m_serverVisibleDefault("mp_server_visible_default", "options.serverVisibleDefault", true)
-	, m_autoJump("ctrl_autojump", "options.autoJump", mc->platform()->isTouchscreen())
+	, m_autoJump("ctrl_autojump", "options.autoJump", AppPlatform::singleton()->isTouchscreen())
 	, m_debugText("info_debugtext", "options.debugText", false)
-	, m_blockOutlines("gfx_blockoutlines", "options.blockOutlines", !mc->platform()->isTouchscreen())
+	, m_blockOutlines("gfx_blockoutlines", "options.blockOutlines", !AppPlatform::singleton()->isTouchscreen())
 	, m_fancyGrass("gfx_fancygrass", "options.fancyGrass", true)
 	, m_biomeColors("gfx_biomecolors", "options.biomeColors", true)
 	, m_splitControls("ctrl_split", "options.splitControls", false)
 	, m_dynamicHand("gfx_dynamichand", "options.dynamicHand", true)
 	, m_menuPanorama("misc_menupano", "options.menuPanorama", true)
 	, m_lang("gfx_lang", "options.lang", "en_us")
-	, m_uiTheme("gfx_uitheme", "options.uiTheme", GetDefaultUiTheme(m_pMinecraft), ValuesBuilder().add("options.uiTheme.pocket").add("options.uiTheme.java").add("options.uiTheme.console"))
+	, m_uiTheme("gfx_uitheme", "options.uiTheme", GetDefaultUiTheme(), ValuesBuilder().add("options.uiTheme.pocket").add("options.uiTheme.java").add("options.uiTheme.console"))
 	, m_logoType("gfx_logotype", "options.logoType", LOGO_AUTO, ValuesBuilder().add("options.logoType.auto").add("options.logoType.pocket").add("options.logoType.java").add("options.logoType.console").add("options.logoType.xbox360").add("options.logoType.logo3d"))
 	, m_hudSize("gfx_hudsize", "options.hudSize", HUD_SIZE_2)
 	, m_classicCrafting("gfx_classiccrafting", "options.classicCrafting", false)
@@ -685,7 +685,7 @@ void Options::initResourceDependentOptions()
 	if (!Screen::isMenuPanoramaAvailable())
 		m_menuPanorama.set(false);
 
-	if (!m_pMinecraft->platform()->isVSyncSwitchable())
+	if (!AppPlatform::singleton()->isVSyncSwitchable())
 		m_vSync.set(true);
 }
 
@@ -860,7 +860,7 @@ std::string FancyGraphicsOption::getMessage() const
 
 void VsyncOption::apply()
 {
-	m_pMinecraft->platform()->setVSyncEnabled(get());
+	AppPlatform::singleton()->setVSyncEnabled(get());
 }
 
 void LogoTypeOption::apply()

@@ -1,5 +1,8 @@
 #include "FurnaceTileEntity.hpp"
+#include "world/entity/Player.hpp"
 #include "world/item/crafting/FurnaceRecipes.hpp"
+#include "world/level/Level.hpp"
+#include "world/level/TileSource.hpp"
 #include "world/tile/FurnaceTile.hpp"
 
 #define C_BURN_TIME (200)
@@ -61,7 +64,10 @@ void FurnaceTileEntity::_burn()
 
 void FurnaceTileEntity::tick()
 {
-    if (m_pLevel->m_bIsClientSide)
+    TileSource& source = *m_pTileSource;
+    Level& level = source.getLevel();
+
+    if (level.m_bIsClientSide)
         return;
 
     bool wasBurning = m_litTime > 0;
@@ -102,19 +108,21 @@ void FurnaceTileEntity::tick()
     if (isBurning != wasBurning)
     {
         changed = true;
-        FurnaceTile::SetLit(isBurning, m_pLevel, m_pos);
+        FurnaceTile::SetLit(isBurning, source, m_pos);
     }
 
     if (changed)
         setChanged();
 }
 
-bool FurnaceTileEntity::stillValid(Player* player) const
+bool FurnaceTileEntity::stillValid(Player& player) const
 {
-    if (m_pLevel->getTileEntity(m_pos) != this)
+    TileSource& source = player.getTileSource();
+
+    if (source.getTileEntity(m_pos) != this)
         return false;
 
-    return player->distanceToSqr(m_pos + 0.5f) <= 64.0;
+    return player.distanceToSqr(m_pos + 0.5f) <= 64.0;
 }
 
 void FurnaceTileEntity::setContainerChanged(StackID stackId)

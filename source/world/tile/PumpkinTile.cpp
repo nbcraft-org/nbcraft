@@ -1,5 +1,6 @@
 #include "PumpkinTile.hpp"
-#include "world/level/Level.hpp"
+#include "world/entity/Mob.hpp"
+#include "world/level/TileSource.hpp"
 
 PumpkinTile::PumpkinTile(TileID id, bool lantern) : Tile(id, TEXTURE_PUMPKIN_TOP, Material::vegetable), m_bLantern(lantern)
 {
@@ -25,9 +26,10 @@ int PumpkinTile::getTexture(Facing::Name face) const
 	}
 }
 
-void PumpkinTile::setPlacedBy(Level* level, const TilePos& pos, Mob* mob)
+void PumpkinTile::setPlacedBy(const TilePos& pos, Mob& mob)
 {
-	int rot = Mth::floor(0.5f + (mob->m_rot.yaw * 4.0f / 360.0f)) & 3;
+	TileSource& source = mob.getTileSource();
+	int rot = Mth::floor(0.5f + (mob.m_rot.yaw * 4.0f / 360.0f)) & 3;
 
 	TileData data = 0;
 
@@ -39,5 +41,5 @@ void PumpkinTile::setPlacedBy(Level* level, const TilePos& pos, Mob* mob)
 		case 3: data = 1; break;
 	}
 
-	level->setData(pos, data);
+	source.setTileAndData(pos, FullTile(this, data));
 }

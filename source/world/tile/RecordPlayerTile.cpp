@@ -1,4 +1,5 @@
 #include "RecordPlayerTile.hpp"
+#include "world/entity/Player.hpp"
 #include "world/level/Level.hpp"
 #include "entity/RecordPlayerTileEntity.hpp"
 
@@ -11,7 +12,7 @@ int RecordPlayerTile::getTexture(Facing::Name face) const
     return m_TextureFrame + (face == Facing::UP ? 1 : 0);
 }
 
-bool RecordPlayerTile::use(Level* level, const TilePos& pos, Player* player)
+bool RecordPlayerTile::use(const TilePos& pos, Player& player)
 {
     if (level->m_bIsClientSide || !level->getData(pos))
         return false;

@@ -65,7 +65,7 @@ void ScreenChooser::pushPlayerCraftingScreen(Player* player)
 
 void ScreenChooser::pushCraftingScreen(Player* player, const TilePos& pos)
 {
-	m_pMinecraft->setScreen(new CraftingScreen(player->m_pInventory, pos, player->m_pLevel));
+	m_pMinecraft->setScreen(new CraftingScreen(player->m_pInventory, pos));
 }
 
 void ScreenChooser::pushFurnaceScreen(Player* player, FurnaceTileEntity* furnace)

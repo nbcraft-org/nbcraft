@@ -1,15 +1,16 @@
 #include "CakeTile.hpp"
-#include "world/level/Level.hpp"
+#include "world/entity/Player.hpp"
 #include "world/item/Item.hpp"
+#include "world/level/TileSource.hpp"
 
 CakeTile::CakeTile(int id, int texture) : Tile(id, texture, Material::cake)
 {
 	setTicking(true);
 }
 
-void CakeTile::updateShape(const LevelSource* level, const TilePos& pos)
+void CakeTile::updateShape(const TileSource& source, const TilePos& pos)
 {
-	int i = level->getData(pos);
+	TileData i = source.getData(pos);
 	constexpr float f = 0.0625f;
 	float g = (1 + i * 2) / 16.0f;
 	constexpr float h = 0.5f;
@@ -23,9 +24,9 @@ void CakeTile::updateDefaultShape()
 	setShape(f, 0.0f, f, 1.0f - f, g, 1.0f - f);
 }
 
-AABB CakeTile::getTileAABB(const Level* pLevel, const TilePos& pos)
+AABB CakeTile::getTileAABB(TileSource& source, const TilePos& pos)
 {
-	int i = pLevel->getData(pos);
+	TileData i = source.getData(pos);
 	constexpr float f = 0.0625f;
 	float g = (1 + i * 2) / 16.0f;
 	constexpr float h = 0.5f;
@@ -33,9 +34,9 @@ AABB CakeTile::getTileAABB(const Level* pLevel, const TilePos& pos)
 	return m_aabbReturned;
 }
 
-AABB* CakeTile::getAABB(const Level* pLevel, const TilePos& pos)
+AABB* CakeTile::getAABB(const TileSource& source, const TilePos& pos)
 {
-	int i = pLevel->getData(pos);
+	TileData i = source.getData(pos);
 	constexpr float f = 0.0625f;
 	float g = (1 + i * 2) / 16.0f;
 	constexpr float h = 0.5f;
@@ -62,45 +63,47 @@ int CakeTile::getTexture(Facing::Name face) const
 	}
 }
 
-bool CakeTile::use(Level* pLevel, const TilePos& pos, Player* player)
+bool CakeTile::use(const TilePos& pos, Player& player)
 {
-	eat(pLevel, pos, player);
+	eat(pos, player);
 	return true;
 }
 
-void CakeTile::eat(Level* pLevel, const TilePos& pos, Player* player)
+void CakeTile::eat(const TilePos& pos, Player& player)
 {
-	if (player->m_health < 20)
+	if (player.m_health < 20)
 	{
-		player->heal(3);
-		int i = pLevel->getData(pos) + 1;
+		TileSource& source = player.getTileSource();
+
+		player.heal(3);
+		int i = source.getData(pos) + 1;
 		if (i >= 6)
 		{
-			pLevel->setTile(pos, 0);
+			source.setTile(pos, 0);
 		}
 		else
 		{
-			pLevel->setData(pos, i);
-			pLevel->updateNeighborsAt(pos, m_ID);
+			source.setTileAndData(pos, FullTile(this, i));
+			source.updateNeighborsAt(pos, m_ID);
 		}
 	}
 }
 
-bool CakeTile::mayPlace(const Level* level, const TilePos& pos) const
+bool CakeTile::mayPlace(const TileSource& source, const TilePos& pos) const
 {
-	return !Tile::mayPlace(level, pos) ? false : canSurvive(level, pos);
+	return !Tile::mayPlace(source, pos) ? false : canSurvive(source, pos);
 }
 
-void CakeTile::neighborChanged(Level* pLevel, const TilePos& pos, TileID tile)
+void CakeTile::neighborChanged(TileSource& source, const TilePos& pos, TileID tile)
 {
-	if (!canSurvive(pLevel, pos)) 
+	if (!canSurvive(source, pos)) 
 	{
-		spawnResources(pLevel, pos, pLevel->getData(pos));
-		pLevel->setTile(pos, 0);
+		spawnResources(source, pos, source.getData(pos));
+		source.setTile(pos, TILE_AIR);
 	}
 }
 
-bool CakeTile::canSurvive(const Level* pLevel, const TilePos& pos) const
+bool CakeTile::canSurvive(const TileSource& source, const TilePos& pos) const
 {
-	return pLevel->getMaterial(pos.below())->isSolid();
+	return source.getMaterial(pos.below())->isSolid();
 }

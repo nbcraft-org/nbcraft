@@ -22,11 +22,6 @@
 // static initialization rather than just setting to null/0.
 AppPlatform* AppPlatform::m_singleton = NULL;
 
-AppPlatform* AppPlatform::singleton()
-{
-	return m_singleton;
-}
-
 AppPlatform::AppPlatform()
 {
 	m_singleton = this;

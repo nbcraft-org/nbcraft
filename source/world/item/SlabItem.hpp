@@ -8,5 +8,5 @@ public:
 	SlabItem(int id);
 
 public:
-	std::string getDescriptionId(ItemStack* item) const override;
+	std::string getDescriptionId(ItemStack& item) const override;
 };

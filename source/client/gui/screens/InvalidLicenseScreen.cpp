@@ -28,7 +28,7 @@ void InvalidLicenseScreen::_buttonClicked(Button* pButton)
 
 	if (pButton->getId() == m_btnBuy.getId())
 	{
-		m_pMinecraft->platform()->buyGame();
+		AppPlatform::singleton()->buyGame();
 	}
 }
 

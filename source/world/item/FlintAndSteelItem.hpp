@@ -8,5 +8,5 @@ public:
 	FlintAndSteelItem(int);
 
 public:
-	bool useOn(ItemStack* instance, Player* player, Level* level, const TilePos& pos, Facing::Name face) const;
+	bool useOn(ItemStack& itemStack, Player& player, const TilePos& pos, Facing::Name face) const override;
 };

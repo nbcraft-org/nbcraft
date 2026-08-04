@@ -5,7 +5,7 @@
 class Slime : public Mob
 {
 public:
-	Slime(Level* pLevel);
+	Slime(TileSource& source);
 
 	using Mob::setSize; // -Werror was a mistake
 	void setSize(int);

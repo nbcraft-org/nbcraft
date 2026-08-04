@@ -13,25 +13,21 @@
 class CreativeMode : public GameMode
 {
 public:
-	CreativeMode(Minecraft*, Level&);
+	CreativeMode(Minecraft*);
 
 	//float getBlockReachDistance() const override { return 5.0f; } // 5.0f on Java
 	bool isCreativeType() const override { return true; }
 
-	void initPlayer(Player*) override;
-	bool destroyBlock(Player* player, const TilePos& pos, Facing::Name face) override;
-	bool startDestroyBlock(Player* player, const TilePos& pos, Facing::Name face) override;
-	bool continueDestroyBlock(Player* player, const TilePos& pos, Facing::Name face) override;
+	void initPlayer(Player&) override;
+	bool destroyBlock(Player& player, const TilePos& pos, Facing::Name face) override;
+	bool startDestroyBlock(Player& player, const TilePos& pos, Facing::Name face) override;
+	bool continueDestroyBlock(Player& player, const TilePos& pos, Facing::Name face) override;
 	void stopDestroyBlock() override;
 	void tick() override;
 	void render(float f) override;
-	float getDestroyModifier() const override { return 8.0; }
+	float getDestroyModifier() const override { return 8.0f; }
 
 public:
-	TilePos m_destroyingPos;
-	float m_destroyProgress;
-	float m_lastDestroyProgress;
-	int m_destroyTicks;
 	int m_destroyCooldown;
 };
 

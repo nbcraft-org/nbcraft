@@ -58,7 +58,7 @@ public:
 	void addMessage(const std::string& str);
 	void inventoryUpdated();
 	void setNowPlaying(const std::string& str);
-	void render(float f, bool bHaveScreen, int mouseX, int mouseY);
+	void render(float f, bool bHaveScreen);
 	void tick();
 	void renderSlot(int slot, int x, int y, float f);
 	void renderSlotOverlay(int slot, int x, int y, float f);

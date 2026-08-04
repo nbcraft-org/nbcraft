@@ -17,7 +17,7 @@ public:
 	void setItem(StackID index, const ItemStack& item) override;
 	std::string getName() const override;
 	void setContainerChanged(StackID stackId) override;
-	bool stillValid(Player* player) const override;
+	bool stillValid(Player& player) const override;
 	void addContentChangeListener(ContainerContentChangeListener* listener) override;
 	void addSizeChangeListener(ContainerSizeChangeListener* listener) override;
 	void removeContentChangeListener(ContainerContentChangeListener* listener) override;

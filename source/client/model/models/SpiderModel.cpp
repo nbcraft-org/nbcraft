@@ -1,5 +1,11 @@
 #include "SpiderModel.hpp"
 #include "common/Utils.hpp"
+#include "client/renderer/renderer/RenderMaterialGroup.hpp"
+
+SpiderModel::Materials::Materials()
+{
+    MATERIAL_PTR(switchable, spider);
+}
 
 SpiderModel::SpiderModel() : 
 	Model(64, 64),
@@ -15,6 +21,8 @@ SpiderModel::SpiderModel() :
 	m_leg6(this, 18, 0),
 	m_leg7(this, 18, 0)
 {
+    m_pMaterial = &m_spiderMaterials.spider;
+
 	constexpr float g = 0.0f;
     constexpr int yo = 15;
 

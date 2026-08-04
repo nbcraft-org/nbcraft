@@ -18,8 +18,8 @@
 #include "world/inventory/Slot.hpp"
 #include "world/inventory/TrapMenu.hpp"
 
-ServerPlayer::ServerPlayer(Level* pLevel, GameType playerGameType)
-	: Player(pLevel, playerGameType)
+ServerPlayer::ServerPlayer(Level& level, GameType playerGameType)
+	: Player(level, playerGameType)
 {
 	m_lastHealth = -999; // -99999999 on Java
 	m_containerId = 0;
@@ -62,7 +62,7 @@ void ServerPlayer::startCrafting(const TilePos& pos)
 	m_pLevel->m_pRakNetInstance->send(m_guid, new ContainerOpenPacket(m_containerId, Container::CRAFTING, "Crafting", 9));
 #endif
 
-	setContainerMenu(new CraftingMenu(m_pInventory, pos, m_pLevel));
+	setContainerMenu(new CraftingMenu(m_pInventory, pos));
 }
 
 void ServerPlayer::openContainer(Container* container)
@@ -181,7 +181,7 @@ void ServerPlayer::setContainerData(ContainerMenu* menu, int id, int value)
 void ServerPlayer::doCloseContainer()
 {
 	if (m_pContainerMenu)
-		m_pContainerMenu->removed(this);
+		m_pContainerMenu->removed(*this);
 	else
 		LOG_W("Container is missing @ doCloseContainer!");
 

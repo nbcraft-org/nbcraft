@@ -22,9 +22,11 @@ protected:
 	{
 	public:
 		mce::MaterialPtr entity;
+		mce::MaterialPtr entity_nocull;
 		mce::MaterialPtr entity_alphatest;
-		mce::MaterialPtr entity_alphatest_cull;
+		mce::MaterialPtr entity_alphatest_nocull;
 		mce::MaterialPtr entity_alphablend;
+		mce::MaterialPtr entity_alphablend_nocull;
 		mce::MaterialPtr entity_static;
 		mce::MaterialPtr entity_emissive;
 		mce::MaterialPtr entity_emissive_alpha;

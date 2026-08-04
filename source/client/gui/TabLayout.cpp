@@ -152,12 +152,14 @@ bool TabLayout::areaNavigation(AreaNavigation::Direction dir, bool cyclic)
 	return false;
 }
 
-void TabLayout::setSelected(bool b)
+GuiElement* TabLayout::setSelected(bool b)
 {
 	GuiElement::setSelected(b);
 
 	if (b && !m_pSelectedElement && m_pScreen->_useController())
 		startNavigation();
+
+	return this;
 }
 
 bool TabLayout::isHovered(Minecraft* mc, const MenuPointer& pointer)

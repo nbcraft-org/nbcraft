@@ -57,11 +57,13 @@ void NinecraftApp::_initResourceLoaders()
 
 void NinecraftApp::_initOptions()
 {
+	AppPlatform& platform = *AppPlatform::singleton();
+
 	// Must be loaded before options, certain options states are forced based on this
 	_reloadPatchData();
 
-	if (platform()->hasFileSystemAccess())
-		m_pOptions = new Options(this, platform()->m_externalStorageDir);
+	if (platform.hasFileSystemAccess())
+		m_pOptions = new Options(this, platform.m_externalStorageDir);
 	else
 		m_pOptions = new Options(this);
 
@@ -108,7 +110,7 @@ void NinecraftApp::_initRenderMaterials()
 
 void NinecraftApp::_initInput()
 {
-	m_bIsTouchscreen = platform()->isTouchscreen();
+	m_bIsTouchscreen = AppPlatform::singleton()->isTouchscreen();
 
 	resetInputMethod();
 
@@ -205,7 +207,7 @@ void NinecraftApp::_initAll()
 #ifdef DEMO
 	m_pLevelStorageSource = new MemoryLevelStorageSource;
 #else
-	m_pLevelStorageSource = new ExternalFileLevelStorageSource(platform()->m_externalStorageDir);
+	m_pLevelStorageSource = new ExternalFileLevelStorageSource(AppPlatform::singleton()->m_externalStorageDir);
 #endif
 
 	_initInput();
@@ -217,8 +219,8 @@ void NinecraftApp::_initAll()
 	m_pParticleEngine = new ParticleEngine(m_pLevel, m_pTextures);
 	m_pUser = new User(getOptions()->m_playerName.get(), "");
 
-	platform()->initSoundSystem();
-	m_pSoundEngine = new SoundEngine(platform()->getSoundSystem(), SOUND_MAX_DISTANCE);
+	AppPlatform::singleton()->initSoundSystem();
+	m_pSoundEngine = new SoundEngine(AppPlatform::singleton()->getSoundSystem(), SOUND_MAX_DISTANCE);
 	m_pSoundEngine->init(getOptions());
 
 	Language::singleton().init(getOptions());
@@ -354,17 +356,22 @@ void NinecraftApp::setupRenderer()
 
 void NinecraftApp::onGraphicsReset()
 {
-	platform()->_fireAppSuspended();
-	platform()->_fireAppResumed();
+	AppPlatform& platform = *AppPlatform::singleton();
+
+	platform._fireAppSuspended();
+	platform._fireAppResumed();
 }
 
 void NinecraftApp::teardown()
 {
+	AppPlatform& platform = *AppPlatform::singleton();
+	SoundSystem& soundSystem = *platform.getSoundSystem();
+
 	TileEntityFactory::teardownTileEntities();
 	teardownRenderer();
 	Resource::teardownLoaders();
 	// Stop our SoundSystem before we nuke our sound buffers and cause it to implode
-	platform()->getSoundSystem()->stopEngine();
+	soundSystem.stopEngine();
 }
 
 void NinecraftApp::teardownRenderer()
@@ -386,7 +393,7 @@ void NinecraftApp::update()
 
 	Multitouch::commit();
 
-	GameControllerHandler* pControllerHandler = platform()->getGameControllerHandler();
+	GameControllerHandler* pControllerHandler = AppPlatform::singleton()->getGameControllerHandler();
 	if (pControllerHandler)
 	{
 		pControllerHandler->refresh();

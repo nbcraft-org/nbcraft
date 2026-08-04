@@ -54,7 +54,7 @@ void InventoryMenu::slotsChanged(Container* container)
     m_pResultSlots->setItem(0, Recipes::singleton().getItemFor(m_pCraftSlots));
 }
 
-void InventoryMenu::removed(Player* player) 
+void InventoryMenu::removed(Player& player) 
 {
     ContainerMenu::removed(player);
     for (int i = 0; i < 4; ++i)
@@ -62,13 +62,13 @@ void InventoryMenu::removed(Player* player)
         ItemStack& item = m_pCraftSlots->getItem(i);
         if (!item.isEmpty())
         {
-            player->drop(item);
+            player.drop(item);
             m_pCraftSlots->setItem(i, ItemStack::EMPTY);
         }
     }
 }
 
-bool InventoryMenu::stillValid(Player* player) const 
+bool InventoryMenu::stillValid(Player& player) const 
 {
     return true;
 }

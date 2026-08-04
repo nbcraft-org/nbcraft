@@ -143,12 +143,12 @@ void SoundEngine::updateListener(const Mob* player, float elapsedTime)
     {
         if (player != nullptr)
         {
-            Vec3 pos = player->getPos(elapsedTime);
+            Vec3 pos = player->getInterpolatedPosition(elapsedTime);
             pos.y -= player->m_heightOffset;
             m_listenerPosition = pos;
             m_pSoundSystem->setListenerPos(pos);
 
-            Rot2 rot = player->getRot(elapsedTime);
+            Rot2 rot = player->getInterpolatedRotation(elapsedTime);
             m_listenerOrientation = rot;
             m_pSoundSystem->setListenerAngle(rot);
         }

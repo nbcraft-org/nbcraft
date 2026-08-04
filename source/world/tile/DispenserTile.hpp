@@ -10,17 +10,17 @@ public:
 public:
     int getTickDelay() const override { return 4; };
     int getResource(TileData data, Random* random) const override { return Tile::dispenser->m_ID; };
-    void onPlace(Level* level, const TilePos& pos) override;
-    int getTexture(const LevelSource*, const TilePos& pos, Facing::Name face) const override;
+    void onPlace(TileSource& source, const TilePos& pos) override;
+    int getTexture(TileSource&, const TilePos& pos, Facing::Name face) const override;
     int getTexture(Facing::Name face) const override;
-    bool use(Level* level, const TilePos& pos, Player* var5) override;
-    void neighborChanged(Level*, const TilePos& pos, TileID tile) override;
-    void tick(Level*, const TilePos& pos, Random*) override;
+    bool use(const TilePos& pos, Player& player) override;
+    void neighborChanged(TileSource&, const TilePos& pos, TileID tile) override;
+    void tick(TileSource&, const TilePos& pos, Random*) override;
     TileEntity* newTileEntity() override;
-    void setPlacedBy(Level*, const TilePos& pos, Mob*) override;
+    void setPlacedBy(const TilePos& pos, Mob&) override;
     bool hasTileEntity() const override;
 
 private:
-    void recalcLockDir(Level* level, const TilePos& pos);
-    void fireArrow(Level* level, const TilePos& pos, Random* random);
+    void recalcLockDir(TileSource& source, const TilePos& pos);
+    void fireArrow(TileSource& source, const TilePos& pos, Random* random);
 };

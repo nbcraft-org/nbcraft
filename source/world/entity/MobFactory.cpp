@@ -31,12 +31,12 @@
              ENT(SQUID, Squid) \
              ENT(WOLF, Wolf)
 
-#define ENT(enumType, classType) case EntityType::enumType: return new classType(level);
+#define ENT(enumType, classType) case EntityType::enumType: return new classType(source);
 
 MobFactory::SpawnDataMap nullCreatureList;
 std::map<EntityCategories::CategoriesMask, MobFactory::SpawnDataMap> mobListsByCategory;
 
-Mob* MobFactory::CreateMob(EntityType::ID entityType, Level *level)
+Mob* MobFactory::CreateMob(EntityType::ID entityType, TileSource& source)
 {
     switch (entityType)
     {

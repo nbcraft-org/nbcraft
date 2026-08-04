@@ -8,7 +8,7 @@
 
 #include "TickNextTickData.hpp"
 
-int TickNextTickData::C;
+/*int TickNextTickData::C;
 
 TickNextTickData::TickNextTickData(const TilePos& tilePos, TileID tileId)
 	: id(++C) //@NOTE: not C++
@@ -40,4 +40,4 @@ bool TickNextTickData::operator==(const TickNextTickData& other) const
 	return
 		tilePos  == other.tilePos  &&
 		tileId == other.tileId;
-}
+}*/

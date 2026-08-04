@@ -9,6 +9,7 @@
 #include <sstream>
 #include <stdio.h>
 #include <cstdlib>
+#include <iomanip>
 #include "Util.hpp"
 
 const std::string Util::EMPTY_STRING = "";
@@ -67,6 +68,33 @@ std::string Util::format(const char *fmt, ...)
 	va_end(argList);
 
 	return str;
+}
+
+// https://stackoverflow.com/questions/154536/encode-decode-urls-in-c
+std::string Util::urlEncode(const std::string& str)
+{
+	std::ostringstream escaped;
+	escaped.fill('0');
+	escaped << std::hex;
+
+	for (std::string::const_iterator i = str.begin(), n = str.end(); i != n; ++i)
+	{
+		std::string::value_type c = (*i);
+
+		// Keep alphanumeric and other accepted characters intact
+		if (isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~')
+		{
+			escaped << c;
+			continue;
+		}
+
+		// Any other characters are percent-encoded
+		escaped << std::uppercase;
+		escaped << '%' << std::setw(2) << int((unsigned char)c);
+		escaped << std::nouppercase;
+	}
+
+	return escaped.str();
 }
 
 bool Util::isValidPath(const std::string& path)

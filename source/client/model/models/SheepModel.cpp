@@ -34,7 +34,7 @@ SheepModel::SheepModel(bool hasFur) :
         m_head.addBox(-3.0f, -4.0f, -4.0f, 6, 6, 6, 0.6f);
         m_head.setPos(0.0f, 6.0f, -8.0f);
 
-        float g = 0.5f;
+        constexpr float g = 0.5f;
         m_leg1.clear();
         m_leg1.texOffs(0, 16);
         m_leg1.addBox(-2.0f, 0.0f, -2.0f, 4, 6, 4, g);
@@ -51,7 +51,6 @@ SheepModel::SheepModel(bool hasFur) :
         m_leg4.texOffs(0, 16);
         m_leg4.addBox(-2.0f, 0.0f, -2.0f, 4, 6, 4, g);
         m_leg4.setPos(3.0f, 12.0f, -5.0f);
-
     }
     else
     {

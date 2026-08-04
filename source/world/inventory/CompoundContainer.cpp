@@ -76,7 +76,7 @@ void CompoundContainer::setItem(StackID index, const ItemStack& item)
         m_pLeftContainer->setItem(index, item);
 }
 
-int CompoundContainer::getMaxStackSize()
+int CompoundContainer::getMaxStackSize() const
 {
     return m_pLeftContainer->getMaxStackSize();
 }
@@ -90,7 +90,7 @@ void CompoundContainer::setContainerChanged(StackID stackId)
     }
 }
 
-bool CompoundContainer::stillValid(Player* player) const
+bool CompoundContainer::stillValid(Player& player) const
 {
     return m_pLeftContainer->stillValid(player) && m_pRightContainer->stillValid(player);
 }

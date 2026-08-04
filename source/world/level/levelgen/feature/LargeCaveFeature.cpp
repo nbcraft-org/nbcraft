@@ -1,6 +1,6 @@
 #include "LargeCaveFeature.hpp"
 
-void LargeCaveFeature::addFeature(Level* level, int ax, int az, int x, int z, TileID* tiles, int unk)
+void LargeCaveFeature::addFeature(TileSource& source, int ax, int az, int x, int z, TileID* tiles, int unk)
 {
     int x1 = m_random.nextInt(m_random.nextInt(m_random.nextInt(40) + 1) + 1);
 

@@ -8,20 +8,21 @@ public:
 	FurnaceTile(int id, bool active);
 
 public:
-	int getTexture(const LevelSource*, const TilePos& pos, Facing::Name face) const override;
-	void animateTick(Level* level, const TilePos& pos, Random* random) override;
+	int getTexture(TileSource& source, const TilePos& pos, Facing::Name face) const override;
+	void animateTick(TileSource& source, const TilePos& pos, Random* random) override;
 	int getTexture(Facing::Name face) const override;
-	void onPlace(Level* level, const TilePos& pos) override;
-	bool use(Level* level, const TilePos& pos, Player* player) override;
-	void setPlacedBy(Level*, const TilePos& pos, Mob*) override;
-	void onRemove(Level* level, const TilePos& pos) override;
+	void onPlace(TileSource& source, const TilePos& pos) override;
+	bool use(const TilePos& pos, Player& player) override;
+	void setPlacedBy(const TilePos& pos, Mob&) override;
+	void onRemove(TileSource& source, const TilePos& pos) override;
 	bool hasTileEntity() const override;
 	TileEntity* newTileEntity() override;
 	int getResource(TileData, Random*) const override;
 
+	void recalculateLookDirection(TileSource& source, const TilePos& pos);
+
 public:
-	static void SetLit(bool lit, Level* level, const TilePos& pos);
-	static void RecalculateLookDirection(Level* level, const TilePos& pos);
+	static void SetLit(bool lit, TileSource& source, const TilePos& pos);
 
 private:
 	Random m_random;

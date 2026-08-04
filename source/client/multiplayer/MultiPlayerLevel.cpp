@@ -23,7 +23,7 @@ void MultiPlayerLevel::tick()
     {
         if (--it->ticks == 0)
         {
-            setTileAndDataNoUpdate(it->pos, it->tile, it->data);
+            setTileAndDataNoUpdate(it->pos, FullTile(it->tile, it->data));
             sendTileUpdated(it->pos);
             m_updatesToReset.erase(it);
         }

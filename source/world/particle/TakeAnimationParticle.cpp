@@ -1,10 +1,10 @@
 #include "Particle.hpp"
-#include "world/level/Level.hpp"
 #include "client/renderer/entity/EntityRenderDispatcher.hpp"
 #include "renderer/ShaderConstants.hpp"
+#include "world/level/TileSource.hpp"
 
-TakeAnimationParticle::TakeAnimationParticle(Level* level, Entity* throwed, Entity* thrower, float vel) 
-	: Particle(level, throwed->m_pos, throwed->m_vel)
+TakeAnimationParticle::TakeAnimationParticle(TileSource& tileSource, Entity* throwed, Entity* thrower, float vel)
+	: Particle(tileSource, throwed->m_pos, throwed->m_vel)
 	, m_pThrowed(throwed)
 	, m_pThrower(thrower)
 	, m_speed(vel)
@@ -28,7 +28,7 @@ void TakeAnimationParticle::render(Tesselator& t, float f, float a, float b, flo
 		Mth::Lerp(m_pThrower->m_posPrev.z, m_pThrower->m_pos.z, f)
 	);
 	Vec3 pos = m_pos + (tPos - m_pos) * p;
-	float bright = m_pLevel->getBrightness(TilePos(pos.x, pos.y + (m_heightOffset / 2.0f), pos.z));
+	float bright = m_pTileSource->getBrightness(TilePos(pos.x, pos.y + (m_heightOffset / 2.0f), pos.z));
 	currentShaderDarkColor = Color(bright, bright, bright);
 	EntityRenderDispatcher::getInstance()->render(*m_pThrowed, Vec3(pos.x - xOff, pos.y - yOff, pos.z - zOff), m_pThrowed->m_rot.yaw, f);
 }

@@ -11,7 +11,6 @@
 void HitResult::_init()
 {
 	m_hitType = NONE;
-	m_tilePos = TilePos();
 
 	m_hitSide = Facing::DOWN;
 

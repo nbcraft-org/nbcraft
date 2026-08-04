@@ -1,6 +1,6 @@
 #pragma once
 
-#include "compat/Unused.hpp"
+#include "compat/Unused.h"
 
 #ifdef XENON
 #ifdef SHADER_TYPE_VERTEX

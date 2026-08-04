@@ -54,14 +54,14 @@ public:
 	virtual void pressed(Minecraft*, const MenuPointer& pointer);
 	virtual void released(const MenuPointer& pointer);
 	virtual void render(Minecraft* pMinecraft, const MenuPointer& pointer);
-	virtual void setEnabled(bool isEnabled);
-	virtual void setVisible(bool isVisible);
-	virtual void setSelected(bool isSelected);
-	virtual void setFocused(bool hasFocus);
-	virtual void setId(ID);
-	virtual void setNavigable(bool isNavigable);
-	virtual void setMessage(const std::string& message);
-	virtual void setTextboxText(const std::string& text);
+	virtual GuiElement* setEnabled(bool isEnabled);
+	virtual GuiElement* setVisible(bool isVisible);
+	virtual GuiElement* setSelected(bool isSelected);
+	virtual GuiElement* setFocused(bool hasFocus);
+	virtual GuiElement* setId(ID);
+	virtual GuiElement* setNavigable(bool isNavigable);
+	virtual GuiElement* setMessage(const std::string& message);
+	virtual GuiElement* setTextboxText(const std::string& text);
 	virtual Type getType() const { return TYPE_UNKNOWN; }
 	virtual const std::string& getMessage() { return m_message; }
 	virtual ID getId() const { return m_ID; }

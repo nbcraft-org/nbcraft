@@ -8,22 +8,22 @@ public:
 	LeverTile(TileID id, int texture);
 
 private:
-	bool _checkCanSurvive(Level*, const TilePos& pos);
+	bool _checkCanSurvive(TileSource& source, const TilePos& pos);
 
 public:
-	AABB* getAABB(const Level*, const TilePos& pos) override;
+	AABB* getAABB(const TileSource& source, const TilePos& pos) override;
 	bool isSolidRender() const override;
 	bool isCubeShaped() const override;
 	eRenderShape getRenderShape() const override;
-	bool mayPlace(const Level*, const TilePos& pos) const override;
-	void setPlacedOnFace(Level*, const TilePos& pos, Facing::Name face) override;
-	void neighborChanged(Level* level, const TilePos& pos, TileID tile) override;
-	void updateShape(const LevelSource*, const TilePos& pos) override;
-	void attack(Level*, const TilePos& pos, Player*) override;
-	bool use(Level*, const TilePos& pos, Player*) override;
-	void onRemove(Level*, const TilePos& pos) override;
-	int getSignal(const LevelSource*, const TilePos& pos, Facing::Name face) const override;
-	int getDirectSignal(const Level*, const TilePos& pos, Facing::Name face) const override;
+	bool mayPlace(const TileSource& source, const TilePos& pos) const override;
+	void setPlacedOnFace(TileSource& source, const TilePos& pos, Facing::Name face) override;
+	void neighborChanged(TileSource& source, const TilePos& pos, TileID tile) override;
+	void updateShape(const TileSource& source, const TilePos& pos) override;
+	void attack(const TilePos& pos, Player&) override;
+	bool use(const TilePos& pos, Player&) override;
+	void onRemove(TileSource& source, const TilePos& pos) override;
+	int getSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const override;
+	int getDirectSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const override;
 	bool isSignalSource() const override;
 
 };

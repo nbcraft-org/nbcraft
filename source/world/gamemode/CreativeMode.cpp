@@ -9,24 +9,24 @@
 #include "CreativeMode.hpp"
 #include "client/app/Minecraft.hpp"
 
-CreativeMode::CreativeMode(Minecraft* pMC, Level& level) : GameMode(pMC, level),
-	m_destroyingPos(-1, -1, -1),
-	m_destroyProgress(0.0f),
-	m_lastDestroyProgress(0.0f),
-	m_destroyTicks(0),
-	m_destroyCooldown(0)
+CreativeMode::CreativeMode(Minecraft* pMC)
+	: GameMode(pMC)
+	, m_destroyCooldown(0)
 {
 }
 
-bool CreativeMode::destroyBlock(Player* player, const TilePos& pos, Facing::Name face)
+bool CreativeMode::destroyBlock(Player& player, const TilePos& pos, Facing::Name face)
 {
-	_level.extinguishFire(player, pos, face);
+	Level& level = player.getLevel();
+	TileSource& tileSource = player.getTileSource();
+
+	level.extinguishFire(tileSource, pos, face);
 	return GameMode::destroyBlock(player, pos, face);
 }
 
-bool CreativeMode::startDestroyBlock(Player* player, const TilePos& pos, Facing::Name face)
+bool CreativeMode::startDestroyBlock(Player& player, const TilePos& pos, Facing::Name face)
 {
-	ItemStack& item = player->getSelectedItem();
+	ItemStack& item = player.getSelectedItem();
 	if (item && item.getItem() == Item::bow)
 		return true;
 
@@ -34,7 +34,7 @@ bool CreativeMode::startDestroyBlock(Player* player, const TilePos& pos, Facing:
 	return destroyBlock(player, pos, face);
 }
 
-bool CreativeMode::continueDestroyBlock(Player* player, const TilePos& pos, Facing::Name face)
+bool CreativeMode::continueDestroyBlock(Player& player, const TilePos& pos, Facing::Name face)
 {
 	if (m_destroyCooldown - 1 > 0)
 	{
@@ -48,7 +48,6 @@ bool CreativeMode::continueDestroyBlock(Player* player, const TilePos& pos, Faci
 
 void CreativeMode::stopDestroyBlock()
 {
-	m_destroyProgress = 0.0f;
 	m_destroyCooldown = 0;
 }
 
@@ -59,26 +58,10 @@ void CreativeMode::tick()
 
 void CreativeMode::render(float f)
 {
-	if (m_destroyProgress <= 0.0f)
-	{
-		m_pMinecraft->m_pGui->m_progress = 0.0f;
-		m_pMinecraft->m_pGui->m_lastDestroyProgress = 0.0f;
-		m_pMinecraft->m_pGui->m_destroyProgress = 0.0f;
-		m_pMinecraft->m_pLevelRenderer->m_destroyProgress = 0.0f;
-	}
-	else
-	{
-		float x = m_lastDestroyProgress + (m_destroyProgress - m_lastDestroyProgress) * f;
-		m_pMinecraft->m_pGui->m_progress = x;
-		m_pMinecraft->m_pGui->m_lastDestroyProgress = m_lastDestroyProgress;
-		m_pMinecraft->m_pGui->m_destroyProgress = m_destroyProgress;
-		m_pMinecraft->m_pLevelRenderer->m_destroyProgress = x;
-	}
-
-	m_lastDestroyProgress = m_destroyProgress;
+	GameMode::render(f);
 }
 
-void CreativeMode::initPlayer(Player* p)
+void CreativeMode::initPlayer(Player& p)
 {
-	p->m_rot.yaw = -180.0f;
+	p.m_rot.yaw = -180.0f;
 }

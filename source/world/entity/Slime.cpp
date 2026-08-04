@@ -1,8 +1,9 @@
 #include "Slime.hpp"
-#include "world/level/Level.hpp"
 #include "nbt/CompoundTag.hpp"
+#include "world/level/Level.hpp"
+#include "world/level/TileSource.hpp"
 
-Slime::Slime(Level* pLevel) : Mob(pLevel)
+Slime::Slime(TileSource& source) : Mob(source)
 {
 	m_pDescriptor = &EntityTypeDescriptor::slime;
 	m_renderType = RENDER_SLIME;
@@ -104,7 +105,7 @@ void Slime::remove()
 		{
 			float xd = (float(i % 2) - 0.5f) * float(m_size) / 4.0f;
 			float zd = (float(i / 2) - 0.5f) * float(m_size) / 4.0f;
-			Slime* slime = new Slime(m_pLevel);
+			Slime* slime = new Slime(getTileSource());
 			slime->setSize(m_size / 2);
 			slime->moveTo(Vec3(m_pos.x + xd, m_pos.y + 0.5f, m_pos.z + zd), Rot2(m_random.nextFloat() * 360.0f, 0.0f));
 			m_pLevel->addEntity(slime);
@@ -124,6 +125,6 @@ void Slime::playerTouch(Player* player)
 
 bool Slime::canSpawn()
 {
-	LevelChunk* var1 = m_pLevel->getChunkAt(m_pos);
+	LevelChunk* var1 = m_pTileSource->getChunkAt(m_pos);
 	return (m_size == 1 || m_pLevel->m_difficulty > 0) && m_random.nextInt(10) == 0 && var1->getRandom(987234911).nextInt(10) == 0 && m_pos.y < 16.0f;
 }
