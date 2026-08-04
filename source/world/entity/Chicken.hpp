@@ -20,7 +20,7 @@ public:
 	int m_eggTime;
 
 public:
-	Chicken(TileSource& source);
+	Chicken(Level* pLevel);
 
 public:
 	std::string getAmbientSound() override { return "mob.chicken"; }
@@ -33,5 +33,5 @@ public:
 	void addAdditionalSaveData(CompoundTag& tag) const override;
 	void readAdditionalSaveData(const CompoundTag& tag) override;
 
-	Entity* getBreedOffspring(Animal* pOther) { return new Chicken(*m_pTileSource); }
+	Entity* getBreedOffspring(Animal* pOther) { return new Chicken(m_pLevel); }
 };

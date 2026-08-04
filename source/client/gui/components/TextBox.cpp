@@ -40,7 +40,7 @@ TextBox::TextBox(Screen* parent, int x, int y, int width, int height, const std:
 
 TextBox::~TextBox()
 {
-	AppPlatform::singleton()->hideKeyboard(0);
+	m_pParent->m_pMinecraft->platform()->hideKeyboard(0);
 }
 
 void TextBox::_onSelectedChanged()
@@ -72,11 +72,11 @@ void TextBox::_onFocusChanged()
 
 		keyboard.defaultText = m_text;
 
-		AppPlatform::singleton()->showKeyboard(0, keyboard);
+		m_pParent->m_pMinecraft->platform()->showKeyboard(0, keyboard);
 	}
 	else
 	{
-		AppPlatform::singleton()->hideKeyboard(0);
+		m_pParent->m_pMinecraft->platform()->hideKeyboard(0);
 	}
 
 	// don't actually hide the keyboard when unfocusing
@@ -517,7 +517,7 @@ void TextBox::recalculateScroll()
 	}
 }
 
-GuiElement* TextBox::setTextboxText(const std::string& text)
+void TextBox::setTextboxText(const std::string& text)
 {
 	m_text = text;
 	m_insertHead = int(m_text.size());
@@ -525,8 +525,6 @@ GuiElement* TextBox::setTextboxText(const std::string& text)
 	recalculateScroll();
 
 	m_pParent->onTextBoxUpdated(getId());
-
-	return GuiElement::setTextboxText(text);
 }
 
 void TextBox::setMaxLength(int max_length)

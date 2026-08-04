@@ -8,7 +8,6 @@
 
 #include "TntTile.hpp"
 #include "world/level/Level.hpp"
-#include "world/level/TileSource.hpp"
 #include "world/entity/PrimedTnt.hpp"
 
 TntTile::TntTile(int id, int texture) : Tile(id, texture, Material::explosive)
@@ -34,30 +33,27 @@ int TntTile::getTexture(Facing::Name face) const
 	}
 }
 
-void TntTile::destroy(TileSource& source, const TilePos& pos, TileData data)
+void TntTile::destroy(Level* level, const TilePos& pos, TileData data)
 {
 	// prevent players from using this in multiplayer, to prevent a desync of player IDs
-	Level& level = source.getLevel();
-	if (level.m_bIsClientSide) return;
+	if (level->m_bIsClientSide) return;
 
-	level.addEntity(new PrimedTnt(source, Vec3(pos) + 0.5f));
+	level->addEntity(new PrimedTnt(level, Vec3(pos) + 0.5f));
 }
 
-void TntTile::wasExploded(TileSource& source, const TilePos& pos)
+void TntTile::wasExploded(Level* level, const TilePos& pos)
 {
-	Level& level = source.getLevel();
-
-	PrimedTnt* tnt = new PrimedTnt(source, Vec3(pos) + 0.5f);
-	tnt->m_fuseTimer = level.m_random.nextInt(tnt->m_fuseTimer / 4) + tnt->m_fuseTimer / 8;
-	level.addEntity(tnt);
+	PrimedTnt* tnt = new PrimedTnt(level, Vec3(pos) + 0.5f);
+	tnt->m_fuseTimer = level->m_random.nextInt(tnt->m_fuseTimer / 4) + tnt->m_fuseTimer / 8;
+	level->addEntity(tnt);
 }
 
-void TntTile::neighborChanged(TileSource& source, const TilePos& pos, TileID tile)
+void TntTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
 {
 	// @NOTE: Unused redstone
-	if (tile > 0 && Tile::tiles[tile]->isSignalSource() && source.hasNeighborSignal(pos))
+	if (tile > 0 && Tile::tiles[tile]->isSignalSource() && level->hasNeighborSignal(pos))
 	{
-		destroy(source, pos, 0);
-		source.setTile(pos, TILE_AIR);
+		destroy(level, pos, 0);
+		level->setTile(pos, TILE_AIR);
 	}
 }

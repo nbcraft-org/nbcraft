@@ -349,6 +349,35 @@ int RedStoneDustTile::getResource(TileData data, Random* random) const
 	return Item::redStone->m_itemID;
 }
 
+int RedStoneDustTile::getColor(const LevelSource* source, const TilePos& pos) const
+{
+	TileData data = source->getData(pos);
+	float bright = getBrightness(source, pos);
+
+	int color = getColor(Facing::UP, data);
+	int rt = (int)(float(color & 0xFF) * bright);
+	int gt = (int)(float((color >> 8) & 0xFF) * bright);
+	int bt = (int)(float((color >> 16) & 0xFF) * bright);
+
+	return rt | (gt << 8) | (bt << 16);
+}
+
+int RedStoneDustTile::getColor(Facing::Name face, TileData data) const
+{
+	float power = float(data) / 15.0f;
+	float rt = power * 0.6f + 0.4f;
+	if (data == 0)
+		rt = 0.3f;
+	float gt = power * power * 0.7f - 0.5f;
+	float bt = power * power * 0.6f - 0.7f;
+	if (gt < 0.0f)
+		gt = 0.0f;
+	if (bt < 0.0f)
+		bt = 0.0f;
+
+	return int(rt * 255.0f) | (int(gt * 255.0f) << 8) | (int(bt * 255.0f) << 16);
+}
+
 int RedStoneDustTile::getDirectSignal(const Level* level, const TilePos& pos, Facing::Name face) const
 {
 	return !m_bShouldSignal ? 0 : getSignal(level, pos, face);

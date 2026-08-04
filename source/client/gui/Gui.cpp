@@ -161,7 +161,7 @@ void Gui::inventoryUpdated()
 	field_A3C = true;
 }
 
-void Gui::render(float f, bool bHaveScreen)
+void Gui::render(float f, bool bHaveScreen, int mouseX, int mouseY)
 {
 	Minecraft& mc = *m_pMinecraft;
 	GameRenderer& renderer = *mc.m_pGameRenderer;

@@ -8,7 +8,6 @@
 
 #include "GrassTile.hpp"
 #include "world/level/Level.hpp"
-#include "world/level/TileSource.hpp"
 #include "world/level/levelgen/biome/BiomeSource.hpp"
 #include "client/renderer/PatchManager.hpp"
 #include "client/renderer/GrassColor.hpp"
@@ -25,13 +24,13 @@ GrassTile::GrassTile(TileID id, Material* c) : Tile(id, c)
 	m_bBiomeColors = false;
 }
 
-Color GrassTile::getColor(TileSource& source, const TilePos& pos) const
+int GrassTile::getColor(const LevelSource* levelSource, const TilePos& pos) const
 {
 	if (GrassColor::isAvailable() && m_bBiomeColors)
 	{
-		BiomeSource& biomeSource = *source.getBiomeSource();
-		biomeSource.getBiomeBlock(pos, 1, 1);
-		return GrassColor::get(biomeSource.field_4[0], biomeSource.field_8[0]);
+		BiomeSource* biomeSource = levelSource->getBiomeSource();
+		biomeSource->getBiomeBlock(pos, 1, 1);
+		return (int)GrassColor::get(biomeSource->m_temperatures[0], biomeSource->m_downfalls[0]);
 	}
 
 	if (GetPatchManager()->IsGrassTinted())
@@ -39,17 +38,17 @@ Color GrassTile::getColor(TileSource& source, const TilePos& pos) const
 		return 0x339933;
 	}
 
-	return Color::WHITE;
+	return 0xffffff;
 }
 
-Color GrassTile::getColor(Facing::Name face, TileData) const
+int GrassTile::getColor(Facing::Name face, TileData) const
 {
 	if (GetPatchManager()->IsGrassTinted() && face == Facing::UP)
 	{
-		return GrassColor::get(1.0f, 0.5f); // @PARITY-JAVA: should be 0xFF7CBD6B on b1.8, before that, nothing
+		return GrassColor::get(1.0f, 0.5f);
 	}
 
-	return Color::WHITE;
+	return 0xffffff;
 }
 
 int GrassTile::getResource(TileData data, Random* random) const
@@ -70,7 +69,7 @@ int GrassTile::getTexture(Facing::Name face) const
 	}
 }
 
-int GrassTile::getTexture(TileSource& source, const TilePos& pos, Facing::Name face) const
+int GrassTile::getTexture(const LevelSource* level, const TilePos& pos, Facing::Name face) const
 {
 	switch (face)
 	{
@@ -82,39 +81,39 @@ int GrassTile::getTexture(TileSource& source, const TilePos& pos, Facing::Name f
 		break;
 	}
 
-	Material* pMat = source.getMaterial(pos.above());
+	Material* pMat = level->getMaterial(pos.above());
 	if (pMat == Material::topSnow || pMat == Material::snow)
 		return TEXTURE_GRASS_SIDE_SNOW;
 
 	return TEXTURE_GRASS_SIDE;
 }
 
-void GrassTile::tick(TileSource& source, const TilePos& pos, Random* random)
+void GrassTile::tick(Level* level, const TilePos& pos, Random* random)
 {
 	// Controls the spread/death of grass.
 	// It's like a full on automata of sorts. :)
-	if (source.getLevelConst().m_bIsClientSide)
+	if (level->m_bIsClientSide)
 		return;
 
-	if (source.getRawBrightness(pos.above()) <= 3 &&
-		source.getMaterial(pos.above())->blocksLight())
+	if (level->getRawBrightness(pos.above()) <= 3 &&
+		level->getMaterial(pos.above())->blocksLight())
 	{
 		// grass death
 		if (random->genrand_int32() % 4 == 0)
-			source.setTile(pos, Tile::dirt->m_ID);
+			level->setTile(pos, Tile::dirt->m_ID);
 	}
-	else if (source.getRawBrightness(pos.above()) > 8)
+	else if (level->getRawBrightness(pos.above()) > 8)
 	{
 		TilePos tp(pos.x - 1 + random->nextInt(3),
 		           pos.y - 3 + random->nextInt(5),
 		           pos.z - 1 + random->nextInt(3));
 
-		if (source.getTile(tp) == Tile::dirt->m_ID &&
-			source.getRawBrightness(tp.above()) > 3 &&
-			!source.getMaterial(tp.above())->blocksLight())
+		if (level->getTile(tp) == Tile::dirt->m_ID &&
+			level->getRawBrightness(tp.above()) > 3 &&
+			!level->getMaterial(tp.above())->blocksLight())
 		{
-			//@NOTE: not this->m_ID
-			source.setTile(tp, Tile::grass->m_ID);
+			//@NOTE: not this->id
+			level->setTile(tp, Tile::grass->m_ID);
 		}
 	}
 }

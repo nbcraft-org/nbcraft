@@ -1,7 +1,7 @@
 #include "Squid.hpp"
 #include "world/entity/Player.hpp"
 
-Squid::Squid(TileSource& source) : WaterAnimal(source)
+Squid::Squid(Level* pLevel) : WaterAnimal(pLevel)
 {
 	m_pDescriptor = &EntityTypeDescriptor::squid;
 	m_renderType = RENDER_SQUID;
@@ -30,6 +30,7 @@ void Squid::dropDeathLoot()
 	{
 		spawnAtLocation(inkSack, 0.0f);
 	}
+
 }
 
 bool Squid::interact(Player* player)

@@ -260,6 +260,7 @@ NSThread *G_drawFrameThread = nil;
     }
     App *app = self->_app;
     
+    app->m_pPlatform = self->_context->platform;
     app->init();
     
     /*var1 = app->field_10;

@@ -1,7 +1,5 @@
 #include "PressurePlateTile.hpp"
 #include "world/level/Level.hpp"
-#include "world/level/TileSource.hpp"
-#include "world/level/TileTickingQueue.hpp"
 
 PressurePlateTile::PressurePlateTile(TileID id, int texture, Sensitivity sensitivity) : Tile(id, texture, Material::stone)
 {
@@ -16,7 +14,7 @@ int PressurePlateTile::getTickDelay() const
 	return 20;
 }
 
-AABB* PressurePlateTile::getAABB(const TileSource& source, const TilePos& pos)
+AABB* PressurePlateTile::getAABB(const Level*, const TilePos& pos)
 {
 	return nullptr;
 }
@@ -31,60 +29,54 @@ bool PressurePlateTile::isCubeShaped() const
 	return false;
 }
 
-bool PressurePlateTile::mayPlace(const TileSource& source, const TilePos& pos) const
+bool PressurePlateTile::mayPlace(const Level* level, const TilePos& pos) const
 {
-	return source.isSolidBlockingTile(pos.below());
+	return level->isSolidTile(pos.below());
 }
 
-void PressurePlateTile::onPlace(TileSource& source, const TilePos& pos)
+void PressurePlateTile::onPlace(Level*, const TilePos& pos)
 {
 }
 
-void PressurePlateTile::neighborChanged(TileSource& source, const TilePos& pos, TileID tile)
+void PressurePlateTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
 {
-	if (source.isSolidBlockingTile(pos.below()))
+	if (level->isSolidTile(pos.below()))
 		return; // all good
 
-	spawnResources(source, pos, source.getData(pos));
-	source.setTile(pos, TILE_AIR);
+	spawnResources(level, pos, level->getData(pos));
+	level->setTile(pos, TILE_AIR);
 }
 
-void PressurePlateTile::tick(TileSource& source, const TilePos& pos, Random* random)
+void PressurePlateTile::tick(Level* level, const TilePos& pos, Random* random)
 {
-	Level& level = source.getLevel();
-
-	if (!level.m_bIsClientSide)
+	if (!level->m_bIsClientSide)
 	{
-		if (source.getData(pos) != 0)
+		if (level->getData(pos) != 0)
 		{
-			checkPressed(source, pos);
+			checkPressed(level, pos);
 		}
 	}
 }
 
-void PressurePlateTile::entityInside(TileSource& source, const TilePos& pos, Entity* entity) const
+void PressurePlateTile::entityInside(Level* level, const TilePos& pos, Entity* entity) const
 {
-	Level& level = source.getLevel();
-
-	if (!level.m_bIsClientSide)
+	if (!level->m_bIsClientSide)
 	{
-		if (source.getData(pos) != 1)
+		if (level->getData(pos) != 1)
 		{
-			checkPressed(source, pos);
+			checkPressed(level, pos);
 		}
 	}
 }
 
-void PressurePlateTile::checkPressed(TileSource& source, const TilePos& pos) const
+void PressurePlateTile::checkPressed(Level* level, const TilePos& pos) const
 {
-	Level& level = source.getLevel();
-
 	// copied from the redstonev2 branch because there isn't an equivalent of getEntitiesOfClass yet
-	bool var5 = source.getData(pos) == 1;
+	bool var5 = level->getData(pos) == 1;
 	bool var6 = false;
 	float var7 = 0.125f;
 	AABB aabb(float(pos.x) + var7, float(pos.y), float(pos.z) + var7, float(pos.x + 1) - var7, float(pos.y) + 0.25f, float(pos.z + 1) - var7);
-	Entity::Vector var8 = source.getEntities(nullptr, aabb);
+	EntityVector var8 = level->getEntities(nullptr, aabb);
 	switch (m_sensitivity)
 	{
 	case SENSITIVITY_EVERYTHING:
@@ -118,43 +110,42 @@ void PressurePlateTile::checkPressed(TileSource& source, const TilePos& pos) con
 
 	if (var6 && !var5)
 	{
-		source.setTileAndData(pos, FullTile(m_ID, 1));
-		source.updateNeighborsAt(pos, m_ID);
-		source.updateNeighborsAt(pos.below(), m_ID);
-		source.fireTilesDirty(pos, pos);
-		level.playSound(Vec3(float(pos.x) + 0.5f, float(pos.y) + 0.1f, float(pos.z) + 0.5f), "random.click", 0.3f, 0.6f);
+		level->setData(pos, 1);
+		level->updateNeighborsAt(pos, m_ID);
+		level->updateNeighborsAt(pos.below(), m_ID);
+		level->setTilesDirty(pos, pos);
+		level->playSound(Vec3(float(pos.x) + 0.5f, float(pos.y) + 0.1f, float(pos.z) + 0.5f), "random.click", 0.3f, 0.6f);
 	}
 	if (!var6 && var5)
 	{
-		source.setTileAndData(pos, FullTile(m_ID, 0));
-		source.updateNeighborsAt(pos, m_ID);
-		source.updateNeighborsAt(pos.below(), m_ID);
-		source.fireTilesDirty(pos, pos);
-		level.playSound(Vec3(float(pos.x) + 0.5f, float(pos.y) + 0.1f, float(pos.z) + 0.5f), "random.click", 0.3f, 0.5f);
+		level->setData(pos, 0);
+		level->updateNeighborsAt(pos, m_ID);
+		level->updateNeighborsAt(pos.below(), m_ID);
+		level->setTilesDirty(pos, pos);
+		level->playSound(Vec3(float(pos.x) + 0.5f, float(pos.y) + 0.1f, float(pos.z) + 0.5f), "random.click", 0.3f, 0.5f);
 	}
 
 	if (var6)
 	{
-		TileTickingQueue* pQueue = source.getTickQueue(pos);
-		pQueue->add(source, pos, m_ID, getTickDelay());
+		level->addToTickNextTick(pos, m_ID, getTickDelay());
 	}
 }
 
-void PressurePlateTile::onRemove(TileSource& source, const TilePos& pos)
+void PressurePlateTile::onRemove(Level* level, const TilePos& pos)
 {
-	TileData data = source.getData(pos);
+	TileData data = level->getData(pos);
 	if (data > 0)
 	{
-		source.updateNeighborsAt(pos, m_ID);
-		source.updateNeighborsAt(pos.below(), m_ID);
+		level->updateNeighborsAt(pos, m_ID);
+		level->updateNeighborsAt(pos.below(), m_ID);
 	}
 
-	Tile::onRemove(source, pos);
+	Tile::onRemove(level, pos);
 }
 
-void PressurePlateTile::updateShape(const TileSource& source, const TilePos& pos)
+void PressurePlateTile::updateShape(const LevelSource* level, const TilePos& pos)
 {
-	bool var5 = source.getData(pos) == 1;
+	bool var5 = level->getData(pos) == 1;
 	float var6 = 1.0f / 16.0f;
 	if (var5) {
 		setShape(var6, 0.0f, var6, 1.0f - var6, 0.03125f, 1.0f - var6);
@@ -164,14 +155,14 @@ void PressurePlateTile::updateShape(const TileSource& source, const TilePos& pos
 	}
 }
 
-int PressurePlateTile::getSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const
+int PressurePlateTile::getSignal(const LevelSource* level, const TilePos& pos, Facing::Name face) const
 {
-	return source.getData(pos) > 0;
+	return level->getData(pos) > 0;
 }
 
-int PressurePlateTile::getDirectSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const
+int PressurePlateTile::getDirectSignal(const Level* level, const TilePos& pos, Facing::Name face) const
 {
-	return source.getData(pos) == 0 ? false : face == Facing::UP;
+	return level->getData(pos) == 0 ? false : face == Facing::UP;
 }
 
 bool PressurePlateTile::isSignalSource() const

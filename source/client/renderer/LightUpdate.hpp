@@ -1,34 +1,31 @@
+/********************************************************************
+	Minecraft: Pocket Edition - Decompilation Project
+	Copyright (C) 2023 iProgramInCpp
+	
+	The following code is licensed under the BSD 1 clause license.
+	SPDX-License-Identifier: BSD-1-Clause
+ ********************************************************************/
+
 #pragma once
-#include "client/renderer/LightLayer.hpp"
+
+#include "LightLayer.hpp"
 #include "world/level/TilePos.hpp"
 
-class TileSource;
+class Level;
 
-class LightUpdate
+struct LightUpdate
 {
-private:
-	const LightLayer* m_pLightLayer; // non-static reference member can't use copy assignment operator
-	TileSource* m_pSource;
-	TilePos m_min;
-	TilePos m_max;
+	const LightLayer* m_lightLayer;
+	TilePos m_tilePos1, m_tilePos2;
 
-public:
-	LightUpdate(TileSource& source, const LightLayer& lightLayer, const TilePos& min, const TilePos& max)
-		: m_pLightLayer(&lightLayer)
-		, m_pSource(&source)
-		, m_min(min)
-		, m_max(max)
+	LightUpdate(const LightLayer& ll, const TilePos& tilePos1, const TilePos& tilePos2)
 	{
+		m_lightLayer = &ll;
+		m_tilePos1 = tilePos1;
+		m_tilePos2 = tilePos2;
 	}
 
-public:
-	void update();
-	void updateFast();
-
-	bool expandIfCloseEnough(const TilePos& lowerPos, const TilePos& upperPos);
-	void expandToContain(const TilePos& pos);
-	void expandToContain(const TilePos& pos1, const TilePos& pos2);
-
-	// @HACK: for Level::updateLight()
-	friend class Level;
+	void update(Level* pLevel);
+	bool expandToContain(const TilePos& tilePos1, const TilePos& tilePos2);
 };
+

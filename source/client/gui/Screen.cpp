@@ -420,7 +420,7 @@ void Screen::pointerPressed(const MenuPointer& pointer, MouseButtonType btn)
 	// @TODO: old code? why is this only doing this for Android? how does this work on iOS?
 #ifdef USE_NATIVE_ANDROID
 	// if the keyboard is shown:
-	if (AppPlatform::singleton()->getKeyboardUpOffset())
+	if (m_pMinecraft->platform()->getKeyboardUpOffset())
 	{
 		// if there are none focused at the moment:
 		bool areAnyFocused = false;
@@ -430,7 +430,7 @@ void Screen::pointerPressed(const MenuPointer& pointer, MouseButtonType btn)
 			areAnyFocused = true;
 
 		if (!areAnyFocused)
-			AppPlatform::singleton()->hideKeyboard(0);
+			m_pMinecraft->platform()->hideKeyboard(0);
 	}
 #endif
 #endif
@@ -583,7 +583,7 @@ bool Screen::prevTab()
 int Screen::getYOffset()
 {
 #ifdef USE_NATIVE_ANDROID
-	int keybOffset = AppPlatform::singleton()->getKeyboardUpOffset();
+	int keybOffset = m_pMinecraft->platform()->getKeyboardUpOffset();
 	if (!keybOffset)
 		return 0;
 

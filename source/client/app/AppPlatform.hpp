@@ -63,7 +63,7 @@ public:
 private:
 	static AppPlatform* m_singleton;
 public:
-	static AppPlatform* singleton() { return m_singleton; }
+	static AppPlatform* singleton();
 
 public:
 	AppPlatform();

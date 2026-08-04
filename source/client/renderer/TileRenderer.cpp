@@ -3302,7 +3302,7 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 			// unused as cross items render like regular items in the hand
 			t.begin(16);
 			t.color(color * getTileFaceColor(tile, Facing::UP));
-			t.normal(Vec3::NEG_UNIT_Y);
+			t.normal(Vec3::UNIT_Y);
 			tesselateCrossTexture(tile, Vec3(-0.5f, -0.5f, -0.5f), true);
 			t.draw(material);
 			break;

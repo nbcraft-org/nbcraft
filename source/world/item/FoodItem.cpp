@@ -9,7 +9,7 @@ FoodItem::FoodItem(int id, int nutrition, bool wolfFood)
 	m_maxStackSize = 1;
 }
 
-bool FoodItem::use(ItemStack& inst, Mob& user) const
+bool FoodItem::use(ItemStack& inst, Level* level, Mob& user) const
 {
     if (user.m_health < user.getMaxHealth())
     {

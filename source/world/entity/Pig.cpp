@@ -10,7 +10,7 @@
 #include "world/level/Level.hpp"
 #include "nbt/CompoundTag.hpp"
 
-Pig::Pig(TileSource& source) : Animal(source)
+Pig::Pig(Level* pLevel) : Animal(pLevel)
 {
 	m_pDescriptor = &EntityTypeDescriptor::pig;
 	m_renderType = RENDER_PIG;

@@ -8,7 +8,6 @@
 
 #include "TorchTile.hpp"
 #include "world/level/Level.hpp"
-#include "world/level/TileSource.hpp"
 
 TorchTile::TorchTile(int ID, int texture, Material* pMtl) : Tile(ID, texture, pMtl)
 {
@@ -16,7 +15,7 @@ TorchTile::TorchTile(int ID, int texture, Material* pMtl) : Tile(ID, texture, pM
 	setTicking(true);
 }
 
-AABB* TorchTile::getAABB(const TileSource&, const TilePos& pos)
+AABB* TorchTile::getAABB(const Level*, const TilePos& pos)
 {
 	return nullptr;
 }
@@ -36,59 +35,57 @@ bool TorchTile::isSolidRender() const
 	return false;
 }
 
-void TorchTile::animateTick(TileSource& source, const TilePos& pos, Random* random)
+void TorchTile::animateTick(Level* level, const TilePos& pos, Random* random)
 {
 	Vec3 part(pos);
 	part += 0.5f;
 	part.y += 0.2f;
 
 	// @NOTE: Need to use addParticle("smoke") 5 times. Invalid data values don't actually generate a smoke
-	Level& level = source.getLevel();
-
-	switch (source.getData(pos))
+	switch (level->getData(pos))
 	{
 		case 1:
 			part.x -= 0.27f;
 			part.y += 0.22f;
-			level.addParticle("smoke", part);
+			level->addParticle("smoke", part);
 			break;
 		case 2:
 			part.x += 0.27f;
 			part.y += 0.22f;
-			level.addParticle("smoke", part);
+			level->addParticle("smoke", part);
 			break;
 		case 3:
 			part.z -= 0.27f;
 			part.y += 0.22f;
-			level.addParticle("smoke", part);
+			level->addParticle("smoke", part);
 			break;
 		case 4:
 			part.z += 0.27f;
 			part.y += 0.22f;
-			level.addParticle("smoke", part);
+			level->addParticle("smoke", part);
 			break;
 		case 5:
-			level.addParticle("smoke", part);
+			level->addParticle("smoke", part);
 			break;
 	}
 
-	level.addParticle("flame", part);
+	level->addParticle("flame", part);
 }
 
-bool TorchTile::checkCanSurvive(TileSource& source, const TilePos& pos)
+bool TorchTile::checkCanSurvive(Level* level, const TilePos& pos)
 {
-	if (mayPlace(source, pos))
+	if (mayPlace(level, pos))
 		return true;
 
-	spawnResources(source, pos, source.getData(pos));
-	source.setTile(pos, TILE_AIR);
+	spawnResources(level, pos, level->getData(pos));
+	level->setTile(pos, TILE_AIR);
 
 	return false;
 }
 
-HitResult TorchTile::clip(const TileSource& source, const TilePos& pos, Vec3 a, Vec3 b)
+HitResult TorchTile::clip(const Level* level, const TilePos& pos, Vec3 a, Vec3 b)
 {
-	switch (source.getData(pos) & 7)
+	switch (level->getData(pos) &7)
 	{
 		case 1:
 			setShape(0.0f, 0.2f, 0.35f, 0.3f, 0.8f, 0.65f);
@@ -107,95 +104,92 @@ HitResult TorchTile::clip(const TileSource& source, const TilePos& pos, Vec3 a, 
 			break;
 	}
 
-	return Tile::clip(source, pos, a, b);
+	return Tile::clip(level, pos, a, b);
 }
 
-bool TorchTile::mayPlace(const TileSource& source, const TilePos& pos) const
+bool TorchTile::mayPlace(const Level* level, const TilePos& pos) const
 {
-	if (source.isSolidBlockingTile(pos.below())) return true;
-	if (source.isSolidBlockingTile(pos.west())) return true;
-	if (source.isSolidBlockingTile(pos.east())) return true;
-	if (source.isSolidBlockingTile(pos.north())) return true;
-	if (source.isSolidBlockingTile(pos.south())) return true;
+	if (level->isSolidTile(pos.below())) return true;
+	if (level->isSolidTile(pos.west())) return true;
+	if (level->isSolidTile(pos.east())) return true;
+	if (level->isSolidTile(pos.north())) return true;
+	if (level->isSolidTile(pos.south())) return true;
 
 	return false;
 }
 
-void TorchTile::neighborChanged(TileSource& source, const TilePos& pos, TileID tile)
+void TorchTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
 {
-	if (!checkCanSurvive(source, pos))
+	if (!checkCanSurvive(level, pos))
 		return;
 
-	TileData data = source.getData(pos);
+	TileData data = level->getData(pos);
 
 	bool flag = false;
-	if (!source.isSolidBlockingTile(pos.west()) && data == 1) flag = true;
-	if (!source.isSolidBlockingTile(pos.east()) && data == 2) flag = true;
-	if (!source.isSolidBlockingTile(pos.north()) && data == 3) flag = true;
-	if (!source.isSolidBlockingTile(pos.south()) && data == 4) flag = true;
-	if (!source.isSolidBlockingTile(pos.below()) && data == 5) flag = true;
+	if (!level->isSolidTile(pos.west()) && data == 1) flag = true;
+	if (!level->isSolidTile(pos.east()) && data == 2) flag = true;
+	if (!level->isSolidTile(pos.north()) && data == 3) flag = true;
+	if (!level->isSolidTile(pos.south()) && data == 4) flag = true;
+	if (!level->isSolidTile(pos.below()) && data == 5) flag = true;
 
 	if (!flag)
 		return; // all good
 	
-	spawnResources(source, pos, source.getData(pos));
-	source.setTile(pos, TILE_AIR);
+	spawnResources(level, pos, level->getData(pos));
+	level->setTile(pos, TILE_AIR);
 }
 
-void TorchTile::onPlace(TileSource& source, const TilePos& pos)
+void TorchTile::onPlace(Level* level, const TilePos& pos)
 {
-	if (source.isSolidBlockingTile(pos.west()))
-		source.setTileAndData(pos, FullTile(this, 1));
-	else if (source.isSolidBlockingTile(pos.east()))
-		source.setTileAndData(pos, FullTile(this, 2));
-	else if (source.isSolidBlockingTile(pos.north()))
-		source.setTileAndData(pos, FullTile(this, 3));
-	else if (source.isSolidBlockingTile(pos.south()))
-		source.setTileAndData(pos, FullTile(this, 4));
-	else if (source.isSolidBlockingTile(pos.below()))
-		source.setTileAndData(pos, FullTile(this, 5));
+	if (level->isSolidTile(pos.west()))
+		level->setData(pos, 1);
+	else if (level->isSolidTile(pos.east()))
+		level->setData(pos, 2);
+	else if (level->isSolidTile(pos.north()))
+		level->setData(pos, 3);
+	else if (level->isSolidTile(pos.south()))
+		level->setData(pos, 4);
+	else if (level->isSolidTile(pos.below()))
+		level->setData(pos, 5);
 
-	checkCanSurvive(source, pos);
+	checkCanSurvive(level, pos);
 }
 
-void TorchTile::setPlacedOnFace(TileSource& source, const TilePos& pos, Facing::Name face)
+void TorchTile::setPlacedOnFace(Level* level, const TilePos& pos, Facing::Name face)
 {
-	TileData data = source.getData(pos);
+	TileData data = level->getData(pos);
 
 	switch (face)
 	{
 		case Facing::UP:
-			if (source.isSolidBlockingTile(pos.below()))
+			if (level->isSolidTile(pos.below()))
 				data = 5;
 			break;
 		case Facing::NORTH:
-			if (source.isSolidBlockingTile(pos.south()))
+			if (level->isSolidTile(pos.south()))
 				data = 4;
 			break;
 		case Facing::SOUTH:
-			if (source.isSolidBlockingTile(pos.north()))
+			if (level->isSolidTile(pos.north()))
 				data = 3;
 			break;
 		case Facing::WEST:
-			if (source.isSolidBlockingTile(pos.east()))
+			if (level->isSolidTile(pos.east()))
 				data = 2;
 			break;
 		case Facing::EAST:
-			if (source.isSolidBlockingTile(pos.west()))
+			if (level->isSolidTile(pos.west()))
 				data = 1;
 			break;
 		case Facing::DOWN:
 			break;
-		default:
-			assert(false);
-			return;
 	}
 
-	source.setTileAndData(pos, FullTile(this, data));
+	level->setData(pos, data);
 }
 
-void TorchTile::tick(TileSource& source, const TilePos& pos, Random* random)
+void TorchTile::tick(Level* level, const TilePos& pos, Random* random)
 {
-	if (!source.getData(pos))
-		onPlace(source, pos);
+	if (!level->getData(pos))
+		onPlace(level, pos);
 }

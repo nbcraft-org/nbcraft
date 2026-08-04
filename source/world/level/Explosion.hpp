@@ -15,7 +15,7 @@
 class Explosion
 {
 public:
-	Explosion(TileSource&, Entity*, const Vec3& pos, float power);
+	Explosion(Level*, Entity*, const Vec3& pos, float power);
 	void addParticles();
 	void explode();
 
@@ -36,7 +36,7 @@ public:
 	bool m_bIsFiery;
 	Entity* m_pEntity;
 	Random m_random;
-	TileSource& m_tileSource;
+	Level* m_pLevel;
 
 };
 

@@ -2,8 +2,8 @@
 #include "world/inventory/CraftingMenu.hpp"
 #include "renderer/ShaderConstants.hpp"
 
-CraftingScreen::CraftingScreen(Inventory* inventory, const TilePos& tilePos) :
-    ContainerScreen(new CraftingMenu(inventory, tilePos))
+CraftingScreen::CraftingScreen(Inventory* inventory, const TilePos& tilePos, Level* level) :
+    ContainerScreen(new CraftingMenu(inventory, tilePos, level))
 {
     m_uiTheme = UI_JAVA;
 }

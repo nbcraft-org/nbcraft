@@ -7,7 +7,7 @@ class FoodItem : public Item
 public:
 	FoodItem(int id, int nutrition, bool wolfFood = false);
 	
-	bool use(ItemStack&, Mob&) const override;
+	bool use(ItemStack&, Level*, Mob&) const override;
 
 	bool isFood() const override { return true; };
 	bool isWolfFood() const override { return m_bIsWolfFood; }

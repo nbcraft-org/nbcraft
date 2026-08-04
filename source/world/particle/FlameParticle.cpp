@@ -8,14 +8,15 @@
 
 #include "Particle.hpp"
 
-FlameParticle::FlameParticle(TileSource& source, const Vec3& pos, const Vec3& dir)
-	: Particle(source, pos, dir)
+FlameParticle::FlameParticle(Level* level, const Vec3& pos, const Vec3& dir) :
+	Particle(level, pos, dir)
 {
 	m_oSize = 0.0f;
 
 	m_vel = m_vel * 0.01f + dir;
 
 	m_oSize = m_size;
+	m_rCol = m_gCol = m_bCol = 1.0f;
 	m_lifetime = int(8.0f / (0.2f + 0.8f * Mth::random())) + 4;
 	m_bNoPhysics = true;
 	m_tex = PTI_FLAME;

@@ -37,10 +37,10 @@ void OptionsScreen_Console::init()
 {
 	Button* layoutButtons[] = { &m_btnHowToPlay, &m_btnControls, &m_btnSettings, &m_btnCredits, &m_btnResetToDefaults };
 
-	constexpr int buttonsWidth = 450;
-	constexpr int buttonsHeight = 40;
+	int buttonsWidth = 450;
+	int buttonsHeight = 40;
 	int y= m_height / 3 + 10;
-	constexpr int ySpacing = 50;
+	int ySpacing = 50;
 
 	for (size_t i = 0; i < 5; ++i)
 	{
@@ -87,12 +87,18 @@ ControlsPanelScreen::ControlsPanelScreen(Screen* parent, Minecraft& mc) : PanelS
 {
 	Options& options = *mc.getOptions();
 	int currentIndex = -1;
+	int idxSplit = -1, idxSwapJumpSneak = -1, idxDpadSize = -1;
 
 	OPTIONS_LIST_CONTROLS_CONTROLS;
 	OPTIONS_LIST_CONTROLS_FEEDBACK;
 	OPTIONS_LIST_CONTROLS_EXPERIMENTAL;
 
-	(void)currentIndex; // compiler will warn about an unused variable sometimes if this isn't here
+	if (!mc.useTouchscreen())
+	{
+		m_layout.m_elements[idxSplit]->setEnabled(false);
+		m_layout.m_elements[idxSwapJumpSneak]->setEnabled(false);
+		m_layout.m_elements[idxDpadSize]->setEnabled(false);
+	}
 }
 
 void ControlsPanelScreen::removed()
@@ -105,6 +111,7 @@ SettingsPanelScreen::SettingsPanelScreen(Screen* parent, Minecraft& mc) : PanelS
 	m_pMinecraft = &mc;
 
 	int currentIndex = -1;
+	int idxPano = -1, idxVSync = -1;
 
 	Options& options = *mc.getOptions();
 
@@ -118,13 +125,8 @@ SettingsPanelScreen::SettingsPanelScreen(Screen* parent, Minecraft& mc) : PanelS
 		m_layout.m_elements[idxPano]->setEnabled(false);
 #endif
 
-	if (!AppPlatform::singleton()->isVSyncSwitchable())
+	if (!m_pMinecraft->platform()->isVSyncSwitchable())
 		m_layout.m_elements[idxVSync]->setEnabled(false);
-
-	// @HACK: 360 is the only platform that supports gamma for the time being
-#if !MC_PLATFORM_XBOX360
-	m_layout.m_elements[idxGamma]->setEnabled(false);
-#endif
 
 	(void)currentIndex; // compiler will warn about an unused variable sometimes if this isn't here
 }

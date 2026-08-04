@@ -7,8 +7,7 @@
  ********************************************************************/
 
 #include "Sapling.hpp"
-#include "world/level/TileSource.hpp"
-#include "world/level/levelgen/feature/Feature.hpp"
+#include "world/level/Level.hpp"
 
 Sapling::Sapling(TileID id, int texture) : Bush(id, texture)
 {
@@ -20,25 +19,25 @@ int Sapling::getTexture(Facing::Name face, TileData data) const
 	return data == 1 ? 63 : (data == 2 ? 79 : Bush::getTexture(face, data));
 }
 
-void Sapling::tick(TileSource& source, const TilePos& pos, Random* random)
+void Sapling::tick(Level* level, const TilePos& pos, Random* random)
 {
-	Bush::tick(source, pos, random);
+	Bush::tick(level, pos, random);
 
-	if (source.getRawBrightness(pos, true) > 8 && random->nextInt(7) == 0)
+	if (level->getRawBrightness(pos) > 8 && random->nextInt(7) == 0)
 	{
-		TileData data = source.getData(pos);
+		TileData data = level->getData(pos);
 
 		if (data & 8)
-			growTree(source, pos, random);
+			growTree(level, pos, random);
 		else
-			source.setTileAndDataNoUpdate(pos, FullTile(this, data | 8));
+			level->setDataNoUpdate(pos, data | 8);
 	}
 }
 
-void Sapling::growTree(TileSource& source, const TilePos& pos, Random* random)
+void Sapling::growTree(Level* level, const TilePos& pos, Random* random)
 {
-	TileData data = source.getData(pos) & 3;
-	source.setTileNoUpdate(pos, TILE_AIR);
+	TileData data = level->getData(pos) & 3;
+	level->setTileNoUpdate(pos, TILE_AIR);
 
 	TreeFeature treeFeature;
 
@@ -54,8 +53,8 @@ void Sapling::growTree(TileSource& source, const TilePos& pos, Random* random)
 		break;
 	}
 
-	if (!pFeature->place(source, random, pos))
-		source.setTileNoUpdate(pos, m_ID);
+	if (!pFeature->place(level, random, pos))
+		level->setTileNoUpdate(pos, m_ID);
 }
 
 int Sapling::getSpawnResourcesAuxValue(int x) const

@@ -12,7 +12,7 @@
 class Cow : public Animal
 {
 public:
-	Cow(TileSource& source);
+	Cow(Level* pLevel);
 
 public:
 	std::string getAmbientSound() override { return "mob.cow"; };
@@ -25,5 +25,5 @@ public:
 	void readAdditionalSaveData(const CompoundTag& tag) override;
 	bool interact(Player* player) override;
 
-	Entity* getBreedOffspring(Animal* pOther) { return new Cow(*m_pTileSource); }
+	Entity* getBreedOffspring(Animal* pOther) { return new Cow(m_pLevel); }
 };

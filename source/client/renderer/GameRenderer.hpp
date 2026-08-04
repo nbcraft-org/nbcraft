@@ -16,7 +16,6 @@
 class Minecraft;
 class Timer;
 class Entity;
-class Dimension;
 
 class LevelRenderer;
 class ParticleEngine;

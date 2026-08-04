@@ -13,7 +13,6 @@ protected:
 		mce::MaterialPtr entity;
 		mce::MaterialPtr entity_color_overlay;
 		mce::MaterialPtr entity_alphatest;
-		mce::MaterialPtr entity_alphatest_nocull;
 		mce::MaterialPtr entity_static;
 
 		Materials();
@@ -40,7 +39,7 @@ protected:
 		const Vec2& glintUVScale, const Vec2& uvAnim,
 		float a);
 	// For TileEntities
-	void _setupShaderParameters(const TileSource& source,
+	void _setupShaderParameters(const LevelSource& source,
 		const TilePos& pos,
 		float a,
 		const Vec2& uvScale);

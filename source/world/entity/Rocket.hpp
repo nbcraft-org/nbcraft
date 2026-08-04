@@ -16,7 +16,7 @@ class Player;
 class Rocket : public Entity
 {
 public:
-	Rocket(TileSource& source, const Vec3& pos);
+	Rocket(Level*, const Vec3& pos);
 
 public:
 	float getShadowHeightOffs() const override;

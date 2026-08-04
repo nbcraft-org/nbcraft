@@ -58,7 +58,7 @@ void StartMenuScreen::_updateLicense()
 	}
 	else
 	{
-		m_pMinecraft->setScreen(new InvalidLicenseScreen(licenseID, AppPlatform::singleton()->hasBuyButtonWhenInvalidLicense()));
+		m_pMinecraft->setScreen(new InvalidLicenseScreen(licenseID, m_pMinecraft->platform()->hasBuyButtonWhenInvalidLicense()));
 	}
 }
 
@@ -85,7 +85,7 @@ void StartMenuScreen::_buttonClicked(Button* pButton)
 #endif
         
 #ifdef DEMO
-		AppPlatform::singleton()->buyGame();
+        m_pMinecraft->platform()->buyGame();
 #else
 		m_pMinecraft->quit();
 #endif

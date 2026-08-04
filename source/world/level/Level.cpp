@@ -2111,6 +2111,22 @@ void Level::tickEntities()
 HitResult Level::clip(Vec3 v1, Vec3 v2, bool includeLiquid, bool includeInvisible) const
 {
 	TilePos tp1(v1), tp2(v2);
+
+	TileID tile = getTile(tp1);
+	int    data = getData(tp1);
+	Tile*  pTile = Tile::tiles[tile];
+
+	if (pTile)
+	{
+		bool mayPick = (includeInvisible && tile == Tile::invisible_bedrock->m_ID) || pTile->mayPick(data, includeLiquid);
+		if (mayPick)
+		{
+			HitResult hr = pTile->clip(this, tp1, v1, v2);
+			if (hr.isHit())
+				return hr;
+		}
+	}
+
 	int counter = 200;
 	while (counter-- >= 0)
 	{
@@ -2190,9 +2206,9 @@ HitResult Level::clip(Vec3 v1, Vec3 v2, bool includeLiquid, bool includeInvisibl
 			hitVec.z += 1.0;
 		}
 
-		TileID tile = getTile(tp1);
-		int    data = getData(tp1);
-		Tile* pTile = Tile::tiles[tile];
+		tile = getTile(tp1);
+		data = getData(tp1);
+		pTile = Tile::tiles[tile];
 
 		if (tile > 0 && ((includeInvisible && tile == Tile::invisible_bedrock->m_ID) || pTile->mayPick(data, includeLiquid)))
 		{

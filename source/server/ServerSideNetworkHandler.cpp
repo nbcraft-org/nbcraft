@@ -661,16 +661,19 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, UseItemPac
 	if (item.isEmpty())
 		return;
 
+	bool success = false;
+
 	if (onTile)
 	{
-		item.useOn(&player, m_pLevel, packet->m_tilePos, (Facing::Name)packet->m_tileFace);
+		success = item.useOn(&player, m_pLevel, packet->m_tilePos, (Facing::Name)packet->m_tileFace);
 	}
 	else
 	{
-		item.use(m_pLevel, player);
+		success = item.use(m_pLevel, player);
 	}
 
-	player.swing();
+	if (success)
+		player.swing();
 }
 
 // added specifically to allow Noteblocks to work, but ideally should just be a part of ServerPlayerGameMode
@@ -716,6 +719,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, PlayerActi
 
 void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, RequestChunkPacket* packet)
 {
+	if (!m_pLevel) return;
 	//puts_ignorable("RequestChunkPacket");
 
 	if (packet->m_chunkPos.x == -9999)
@@ -840,7 +844,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ContainerS
 		{
 		case Container::FURNACE:
 		case Container::CONTAINER:
-			pContainerMenu->setItem(packet->m_slotId, packet->m_item);
+			pContainerMenu->trySetItem(packet->m_slotId, packet->m_item);
 			break;
 		default:
 			break;

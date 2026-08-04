@@ -29,9 +29,9 @@
              ENT(PAINTING, Painting) \
              ENT(LIGHTNING_BOLT, LightningBolt)
 
-#define ENT(enumType, classType) case EntityType::enumType: return new classType(source);
+#define ENT(enumType, classType) case EntityType::enumType: return new classType(level);
 
-Entity* EntityFactory::CreateEntity(EntityType::ID entityType, TileSource& source)
+Entity* EntityFactory::CreateEntity(EntityType::ID entityType, Level* level)
 {
     switch (entityType)
     {
@@ -42,7 +42,7 @@ Entity* EntityFactory::CreateEntity(EntityType::ID entityType, TileSource& sourc
     }
 }
 
-Entity* EntityFactory::LoadEntity(const CompoundTag& tag, TileSource& source)
+Entity* EntityFactory::LoadEntity(const CompoundTag& tag, Level* level)
 {
     EntityType::ID entityTypeId = (EntityType::ID)tag.getInt32("id");
     if (entityTypeId < 0)
@@ -62,11 +62,11 @@ Entity* EntityFactory::LoadEntity(const CompoundTag& tag, TileSource& source)
 
     if (entityTypeDescriptor->hasCategory(EntityCategories::MOB))
     {
-        entity = MobFactory::CreateMob(entityTypeId, source);
+        entity = MobFactory::CreateMob(entityTypeId, level);
     }
     else
     {
-        entity = EntityFactory::CreateEntity(entityTypeId, source);
+        entity = EntityFactory::CreateEntity(entityTypeId, level);
     }
 
     if (entity)

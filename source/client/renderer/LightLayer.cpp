@@ -8,5 +8,9 @@
 
 #include "LightLayer.hpp"
 
-LightLayer LightLayer::Sky(Brightness::MAX);
-LightLayer LightLayer::Block(Brightness::MIN);
+LightLayer LightLayer::Sky(15), LightLayer::Block(0);
+
+LightLayer::LightLayer(int x)
+{
+	m_x = x;
+}

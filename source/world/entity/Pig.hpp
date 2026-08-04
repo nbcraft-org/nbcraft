@@ -17,7 +17,7 @@ private:
 	void _defineEntityData();
 
 public:
-	Pig(TileSource& source);
+	Pig(Level* pLevel);
 
 	std::string getAmbientSound() override { return "mob.pig"; };
 	std::string getDeathSound() const override { return "mob.pigdeath"; }
@@ -30,5 +30,5 @@ public:
 
 	bool hasSaddle() const;
 	void setSaddle(bool b);
-	Entity* getBreedOffspring(Animal* pOther) { return new Pig(*m_pTileSource); }
+	Entity* getBreedOffspring(Animal* pOther) { return new Pig(m_pLevel); }
 };

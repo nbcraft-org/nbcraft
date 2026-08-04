@@ -11,9 +11,9 @@ private:
 	void _init();
 
 public:
-	Arrow(TileSource& source);
-	Arrow(TileSource& source, const Vec3& pos, bool isPlayerOwned = false);
-	Arrow(Mob& mob);
+	Arrow(Level* pLevel);
+	Arrow(Level* pLevel, const Vec3& pos, bool isPlayerOwned = false);
+	Arrow(Level* pLevel, Mob* pMob);
 
 private:
 	void _lerpMotion(const Vec3& vel);

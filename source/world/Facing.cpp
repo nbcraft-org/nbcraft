@@ -10,6 +10,15 @@ const Facing::Name Facing::DIRECTIONS[COUNT] = {
 	Facing::EAST
 };
 
+const TilePos Facing::DIRECTION[COUNT] = {
+	TilePos(0, -1,  0), // DOWN
+	TilePos(0,  1,  0), // UP
+	TilePos(0,  0, -1), // NORTH
+	TilePos(0,  0,  1), // SOUTH
+	TilePos(-1, 0,  0), // WEST
+	TilePos(1,  0,  0)  // EAST
+};
+
 const Facing::Name Facing::OPPOSITE[6] =
 {
     Facing::UP,    // DOWN -> UP
@@ -18,15 +27,6 @@ const Facing::Name Facing::OPPOSITE[6] =
     Facing::NORTH, // SOUTH -> NORTH
     Facing::EAST,  // WEST -> EAST
     Facing::WEST   // EAST -> WEST
-};
-
-const TilePos Facing::DIRECTION[COUNT] = {
-	TilePos(0, -1,  0), // DOWN
-	TilePos(0,  1,  0), // UP
-	TilePos(0,  0, -1), // NORTH
-	TilePos(0,  0,  1), // SOUTH
-	TilePos(-1, 0,  0), // WEST
-	TilePos(1,  0,  0)  // EAST
 };
 
 const Facing::Name Facing::HORIZONTAL[4] =

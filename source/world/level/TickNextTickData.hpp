@@ -10,42 +10,9 @@
 
 #include <stdint.h>
 #include "common/Utils.hpp"
-#include "world/level/Tick.hpp"
 #include "world/level/TilePos.hpp"
 
 struct TickNextTickData
-{
-public:
-	TilePos pos;
-	TileID tileId;
-	Tick_t tick;
-
-public:
-	TickNextTickData()
-		: pos(), tileId(0), tick(0)
-	{
-	}
-	TickNextTickData(const TilePos& pos, TileID tileId, Tick_t tick)
-		: pos(pos), tileId(tileId), tick(tick)
-	{
-	}
-
-public:
-	bool operator<(const TickNextTickData& other) const
-	{
-		return tick < other.tick;
-	}
-	bool operator>(const TickNextTickData& other) const
-	{
-		return tick > other.tick;
-	}
-	bool operator==(const TickNextTickData& other) const
-	{
-		return pos == other.pos && tileId == other.tileId;
-	}
-};
-
-/*struct TickNextTickData
 {
 	static int C;
 
@@ -59,4 +26,5 @@ public:
 	TilePos tilePos;
 	TileID tileId;
 	int32_t delay;
-};*/
+};
+

@@ -8,7 +8,6 @@
 
 #include "RocketItem.hpp"
 #include "world/level/Level.hpp"
-#include "world/level/TileSource.hpp"
 #include "world/entity/Player.hpp"
 #include "world/entity/Rocket.hpp"
 
@@ -16,23 +15,26 @@ RocketItem::RocketItem(int id) : Item(id)
 {
 }
 
-bool RocketItem::useOn(ItemStack& itemStack, Player& player, const TilePos& pos, Facing::Name face) const
+bool RocketItem::useOn(ItemStack* inst, Player* player, Level* level, const TilePos& pos, Facing::Name face) const
 {
 	TilePos tp(pos);
-	TileSource& tileSource = player.getTileSource();
-	Level& level = player.getLevel();
 
-	if (tileSource.getTile(pos) == Tile::topSnow->m_ID)
+	if (level->getTile(pos) == Tile::topSnow->m_ID)
 	{
 		face = Facing::DOWN;
 	}
-	else
+	else switch (face)
 	{
-		tp = tp.relative(face);
+		case Facing::DOWN: tp.y--; break;
+		case Facing::UP: tp.y++; break;
+		case Facing::NORTH: tp.z--; break;
+		case Facing::SOUTH: tp.z++; break;
+		case Facing::WEST: tp.x--; break;
+		case Facing::EAST: tp.x++; break;
 	}
 
-	level.addEntity(new Rocket(tileSource, tp + 0.5f));
+	level->addEntity(new Rocket(level, tp + 0.5f));
 
-	itemStack.shrink();
+	inst->m_count--;
 	return true;
 }

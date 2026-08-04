@@ -13,7 +13,7 @@
 GameMode::GameMode(Minecraft* pMinecraft, Level& level) :
 	_level(level),
 	m_pMinecraft(pMinecraft),
-	m_bInstaBuild(0)
+	m_bInstaBuild(false)
 {
 }
 
@@ -52,7 +52,7 @@ bool GameMode::destroyBlock(Player* player, const TilePos& pos, Facing::Name fac
 
 	oldTile->destroy(&_level, pos, tileData);
 
-	if (m_pMinecraft->isOnline())
+	if (m_pMinecraft->isOnline() && player->isLocalPlayer())
 	{
 		m_pMinecraft->m_pRakNetInstance->send(new RemoveBlockPacket(player->m_EntityID, pos));
 	}
@@ -81,6 +81,7 @@ void GameMode::render(float f)
 
 float GameMode::getBlockReachDistance() const
 {
+	// @PARITY
 	/* Logic from Pocket Edition 0.12.1
 	if ( *inputMode == 1 )
 		return 5.7f;

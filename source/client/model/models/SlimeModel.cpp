@@ -8,7 +8,7 @@ SlimeModel::SlimeModel(int vOffs) :
 	m_mouth(32, 8)
 {
 	m_vOffs = vOffs;
-	m_pMaterial = &m_materials.entity_alphablend;
+	m_pMaterial = &m_materials.entity_alphablend_nocull;
 
 	if (vOffs > 0)
 	{

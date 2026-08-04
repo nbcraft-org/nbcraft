@@ -62,7 +62,7 @@ public:
 	void swapItems(StackID stackIdA, StackID stackIdB);
 	void selectSlot(StackID stackId);
 
-	int getAttackDamage(Entity&);
+	int getAttackDamage(Entity*);
 
 	int getArmorValue() const;
 
@@ -90,14 +90,14 @@ public:
 	void addContentChangeListener(ContainerContentChangeListener* listener) override;
 	void removeContentChangeListener(ContainerContentChangeListener* listener) override;
 
-	bool stillValid(Player& player) const override { return true; }
+	bool stillValid(Player* player) const override { return true; }
 	
 private:
 	GameType _getGameMode() const;
-	int getSlotWithRemainingSpace(const ItemStack& item) const;
-	int getFreeSlot() const;
+	int getSlotWithRemainingSpace(const ItemStack& item);
+	int getFreeSlot();
 	int addResource(const ItemStack& item);
-	int getSlot(int id) const;
+	int getSlot(int id);
 
 public:
 	Player* m_pPlayer;

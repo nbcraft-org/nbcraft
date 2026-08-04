@@ -2,6 +2,8 @@
 
 #include "world/phys/Vec3.hpp"
 
+struct TilePos;
+
 class Facing
 {
 public:
@@ -12,8 +14,11 @@ public:
 		NORTH, // -Z
 		SOUTH, // +Z
 		WEST,  // -X
-		EAST   // +X
+		EAST,  // +X
+		COUNT
 	};
+	static const Name DIRECTIONS[COUNT];
+	static const TilePos DIRECTION[COUNT];
 	static const Name OPPOSITE[6];
 	static const Name HORIZONTAL[4];
 	static const int CORNERS[8][3];

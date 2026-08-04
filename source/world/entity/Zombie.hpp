@@ -5,7 +5,7 @@
 class Zombie : public Monster
 {
 public:
-	Zombie(TileSource& source);
+	Zombie(Level* pLevel);
 
 public:
 	std::string getAmbientSound() override { return "mob.zombie"; }

@@ -8,11 +8,11 @@
 
 #include "Particle.hpp"
 #include "world/level/Level.hpp"
-#include "world/level/TileSource.hpp"
 
-BubbleParticle::BubbleParticle(TileSource& source, const Vec3& pos, const Vec3& dir) :
-	Particle(source, pos, dir)
+BubbleParticle::BubbleParticle(Level* level, const Vec3& pos, const Vec3& dir) :
+	Particle(level, pos, dir)
 {
+	m_rCol = m_gCol = m_bCol = 1.0f;
 	m_tex = PTI_BUBBLE;
 	setSize(0.02f, 0.02f);
 
@@ -32,7 +32,7 @@ void BubbleParticle::tick()
 
 	m_vel *= 0.85f;
 
-	if (m_pTileSource->getMaterial(m_pos) != Material::water)
+	if (m_pLevel->getMaterial(m_pos) != Material::water)
 		remove();
 
 	m_lifetime--;

@@ -6,7 +6,7 @@
 class MultiplayerLocalPlayer : public LocalPlayer, public ContainerListener
 {
 public:
-	MultiplayerLocalPlayer(Minecraft* pMinecraft, Level& level, User* pUser, GameType gameType, DimensionId dimensionId);
+	MultiplayerLocalPlayer(Minecraft* pMinecraft, Level* pLevel, User* pUser, GameType gameType, int dimensionId);
 
 protected:
 	void reallyDrop(ItemEntity* itemEntity) override;
