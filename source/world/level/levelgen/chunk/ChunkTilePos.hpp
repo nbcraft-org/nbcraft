@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include "world/level/TilePos.hpp"
+#include "world/level/levelgen/chunk/ChunkConstants.hpp"
 
 struct ChunkTilePos
 {
@@ -26,4 +27,14 @@ public:
         if (y != other.y) return y < other.y;
         return z < other.z;
     }
+
+	int index() const
+	{
+		return (x << 11) | (z << 7) | y;
+	}
+
+	int index2D() const
+	{
+		return (z << 4) | x;
+	}
 };

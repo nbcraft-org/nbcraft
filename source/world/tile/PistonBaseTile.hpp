@@ -4,8 +4,8 @@
 
 enum PistonEvent
 {
-	PISTON_EXTEND = 0,
-	PISTON_RETRACT = 1,
+	PISTON_EVENT_EXTEND = 0,
+	PISTON_EVENT_RETRACT = 1,
 };
 
 class PistonBaseTile : public Tile

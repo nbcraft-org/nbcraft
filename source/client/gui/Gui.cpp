@@ -341,15 +341,15 @@ void Gui::renderAnimatedCharacter(int x, int y, float partialTick)
 	float prevXRot = player->m_rot.pitch;
 	float prevYORot = player->m_oRot.yaw;
 
-	constexpr float dx = -40;
-	constexpr float dy = 10;
+	constexpr float dx = -40.0f;
+	constexpr float dy = 10.0f;
 
 	matrix->rotate(135.0f, Vec3(0.0f, 1.0f, 0.0f));
 	Lighting::turnOn(matrix);
 	matrix->rotate(-135.0f, Vec3(0.0f, 1.0f, 0.0f));
 
 	matrix->rotate(-Mth::atan(dy / 40.0f) * 20.0f, Vec3(1.0f, 0.0f, 0.0f));
-	matrix->rotate(player->m_yBodyRot - (Mth::atan(dx / 40.0f) * 20), Vec3(0.0f, 1.0, 0.0f));
+	matrix->rotate(player->m_yBodyRot - (Mth::atan(dx / 40.0f) * 20.0f), Vec3(0.0f, 1.0f, 0.0f));
 	player->m_rot.yaw = player->m_yBodyRot - 15.0f;
 	player->m_oRot.yaw = player->m_rot.yaw;
 	player->m_rot.pitch = -Mth::atan(dy / 40.0f) * 20.0f;

@@ -67,12 +67,12 @@ void Boat::tick()
 
     for (int var4 = 0; var4 < 5; ++var4)
     {
-        float var5 = m_hitbox.min.y + (m_hitbox.max.y - m_hitbox.min.y) * (var4 + 0) / 5 - 0.125f;
+        float var5 = m_hitbox.min.y + (m_hitbox.max.y - m_hitbox.min.y) * (var4 + 0) / 5.0f - 0.125f;
         //float var7 = m_hitbox.min.y + (m_hitbox.max.y - m_hitbox.min.y) * (var4 + 1) / 5 - 0.125;
         AABB var9 = AABB(m_hitbox.min.x, var5, m_hitbox.min.z, m_hitbox.max.x, var5, m_hitbox.max.z);
         if (m_pLevel->containsLiquid(var9, Material::water))
         {
-            var2 += 1.0f / 5;
+            var2 += 1.0f / 5.0f;
         }
     }
 
@@ -119,11 +119,11 @@ void Boat::tick()
         m_vel.y += 0.04f * var23;
         if (getRider())
         {
-            m_vel.x += getRider()->m_vel.x * 0.2;
-            m_vel.z += getRider()->m_vel.z * 0.2;
+            m_vel.x += getRider()->m_vel.x * 0.2f;
+            m_vel.z += getRider()->m_vel.z * 0.2f;
         }
 
-        var6 = 0.4;
+        var6 = 0.4f;
         if (m_vel.x < -var6)
             m_vel.x = -var6;
 
@@ -144,7 +144,7 @@ void Boat::tick()
         move(m_vel);
         var8 = Mth::sqrt(m_vel.x * m_vel.x + m_vel.z * m_vel.z);
         float var12;
-        if (var8 > 0.15) {
+        if (var8 > 0.15f) {
             var10 = Mth::cos(m_rot.yaw * M_PI / 180.0f);
             var12 = Mth::sin(m_rot.pitch * M_PI / 180.0f);
 

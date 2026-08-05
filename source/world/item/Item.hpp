@@ -96,6 +96,7 @@ public: // Methods
 	virtual const std::string& getStreamingMusic() const;
 	virtual bool isFood() const;
 	virtual bool isWolfFood() const;
+	virtual bool isComplex() const;
 
 	static void initItems();
 	

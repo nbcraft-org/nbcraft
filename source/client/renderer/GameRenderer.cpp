@@ -28,6 +28,11 @@
 #define C_MENU_POINTER_WIDTH 16
 #define C_MENU_POINTER_HEIGHT 16
 
+#define C_FOV_BASE 70.0f
+#define C_FOV_UNDERWATER 60.0f
+#define C_NEAR_PLANE 0.05f
+#define C_FAR_PLANE_SCALE 1.2f
+
 static int t_keepHitResult; // that is its address in v0.1.1j
 
 void GameRenderer::_init()
@@ -65,7 +70,7 @@ void GameRenderer::_init()
 	m_envTexturePresence = 0;
 
 #ifdef ENH_FOV_MODIFIER
-	m_fovBase = 70.0f;
+	m_fovBase = C_FOV_BASE;
 	m_fovModPrev = 1.0f;
 	m_fovMod = 1.0f;
 	m_fovModTarget = 1.0f;
@@ -132,7 +137,7 @@ void GameRenderer::_renderItemInHand(float f, int i)
 #ifdef ENH_FOV_MODIFIER
 	MatrixStack::Ref projRef = MatrixStack::Projection.pushIdentity();
 	float fov = getFov(f, false);
-	projRef->setPerspective(fov, float(Minecraft::width) / float(Minecraft::height), 0.05f, m_renderDistance * 1.2f);
+	projRef->setPerspective(fov, float(Minecraft::width) / float(Minecraft::height), C_NEAR_PLANE, m_renderDistance * C_FAR_PLANE_SCALE);
 #endif
 
 	Matrix& viewMtx = MatrixStack::View.getTop();
@@ -307,7 +312,7 @@ void GameRenderer::setupCamera(float f, int i)
 		projMtx.translate(Vec3(float(1 - 2 * i) * 0.07f, 0.0f, 0.0f));
 	}
 
-	if (m_zoom != 1.0)
+	if (m_zoom != 1.0f)
 	{
 		projMtx.translate(Vec3(m_zoomRegion.x, -m_zoomRegion.y, 0.0f));
 		projMtx.scale(Vec3(m_zoom, m_zoom, 1.0f));
@@ -317,7 +322,7 @@ void GameRenderer::setupCamera(float f, int i)
 	// Java
 	//projMtx.setPerspective(fov, float(Minecraft::width) / float(Minecraft::height), 0.05f, m_renderDistance);
 	// PE (0.12.1)
-	projMtx.setPerspective(fov, float(Minecraft::width) / float(Minecraft::height), 0.05f, m_renderDistance * 1.2f);
+	projMtx.setPerspective(fov, float(Minecraft::width) / float(Minecraft::height), C_NEAR_PLANE, m_renderDistance * C_FAR_PLANE_SCALE);
 
 	Matrix& viewMtx = MatrixStack::View.getTop();
 	viewMtx = Matrix::IDENTITY;
@@ -494,11 +499,11 @@ float GameRenderer::getFov(float f, bool applyFovMod)
 #ifdef ENH_FOV_MODIFIER
 	float x1 = m_fovBase;
 #else
-	float x1 = 70.0f;
+	float x1 = C_FOV_BASE;
 #endif
 
 	if (pMob->isUnderLiquid(Material::water))
-		x1 = 60.0f;
+		x1 = C_FOV_UNDERWATER;
 
 	if (pMob->m_health <= 0)
 	{

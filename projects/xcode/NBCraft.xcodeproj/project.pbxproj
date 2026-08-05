@@ -1432,8 +1432,6 @@
 		84EE49F22F387DBD00677881 /* SwitchButton.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84EE49EC2F387DBD00677881 /* SwitchButton.hpp */; };
 		84EE49F32F387DBD00677881 /* SwitchValuesButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84EE49ED2F387DBD00677881 /* SwitchValuesButton.cpp */; };
 		84EE49F42F387DBD00677881 /* SwitchValuesButton.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84EE49EE2F387DBD00677881 /* SwitchValuesButton.hpp */; };
-		84EE51312E8DCC9000D3DCA2 /* DataLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84EE512F2E8DCC9000D3DCA2 /* DataLayer.cpp */; };
-		84EE51322E8DCC9000D3DCA2 /* DataLayer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84EE51302E8DCC9000D3DCA2 /* DataLayer.hpp */; };
 		84EE51342E8DCD4900D3DCA2 /* TileChange.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84EE51332E8DCD4900D3DCA2 /* TileChange.hpp */; };
 		84EEED632F0A01B700F741B6 /* ViewportOrigin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84EEED612F0A01B700F741B6 /* ViewportOrigin.cpp */; };
 		84EEED642F0A01B700F741B6 /* ViewportOrigin.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84EEED622F0A01B700F741B6 /* ViewportOrigin.hpp */; };
@@ -3455,8 +3453,6 @@
 		84EE49EC2F387DBD00677881 /* SwitchButton.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SwitchButton.hpp; sourceTree = "<group>"; };
 		84EE49ED2F387DBD00677881 /* SwitchValuesButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SwitchValuesButton.cpp; sourceTree = "<group>"; };
 		84EE49EE2F387DBD00677881 /* SwitchValuesButton.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SwitchValuesButton.hpp; sourceTree = "<group>"; };
-		84EE512F2E8DCC9000D3DCA2 /* DataLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataLayer.cpp; sourceTree = "<group>"; };
-		84EE51302E8DCC9000D3DCA2 /* DataLayer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = DataLayer.hpp; sourceTree = "<group>"; };
 		84EE51332E8DCD4900D3DCA2 /* TileChange.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TileChange.hpp; sourceTree = "<group>"; };
 		84EEED612F0A01B700F741B6 /* ViewportOrigin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewportOrigin.cpp; sourceTree = "<group>"; };
 		84EEED622F0A01B700F741B6 /* ViewportOrigin.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ViewportOrigin.hpp; sourceTree = "<group>"; };
@@ -4631,8 +4627,6 @@
 				840DD68E2AC810620006A435 /* ChunkSource.cpp */,
 				840DD68F2AC810620006A435 /* ChunkSource.hpp */,
 				8477B3B02C4DC414004E1AC5 /* ChunkTilePos.hpp */,
-				84EE512F2E8DCC9000D3DCA2 /* DataLayer.cpp */,
-				84EE51302E8DCC9000D3DCA2 /* DataLayer.hpp */,
 				8477B3B12C4DC414004E1AC5 /* EmptyLevelChunk.cpp */,
 				8477B3B22C4DC414004E1AC5 /* EmptyLevelChunk.hpp */,
 				840DD6902AC810620006A435 /* LevelChunk.cpp */,
@@ -6813,7 +6807,6 @@
 				84BF639E2AF186C8008A9995 /* Region.hpp in Headers */,
 				84BF639F2AF186C8008A9995 /* ChunkStorage.hpp in Headers */,
 				84BF63A02AF186C8008A9995 /* ExternalFileLevelStorage.hpp in Headers */,
-				84EE51322E8DCC9000D3DCA2 /* DataLayer.hpp in Headers */,
 				84BF63A12AF186C8008A9995 /* ExternalFileLevelStorageSource.hpp in Headers */,
 				84BF63A22AF186C8008A9995 /* LevelData.hpp in Headers */,
 				84E8FA372FEF617F00D0669F /* PressurePlateTile.hpp in Headers */,
@@ -8079,7 +8072,6 @@
 				84BF63242AF18631008A9995 /* ChunkSource.cpp in Sources */,
 				84BF63252AF18631008A9995 /* LevelChunk.cpp in Sources */,
 				84BF63262AF18631008A9995 /* PerformanceTestChunkSource.cpp in Sources */,
-				84EE51312E8DCC9000D3DCA2 /* DataLayer.cpp in Sources */,
 				84BF63272AF18631008A9995 /* RandomLevelSource.cpp in Sources */,
 				84E1C9E72E7FDC72007D2F5D /* ClothItem.cpp in Sources */,
 				84BF63282AF18631008A9995 /* TestChunkSource.cpp in Sources */,

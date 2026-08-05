@@ -148,6 +148,11 @@ bool Item::isWolfFood() const
 	return false;
 }
 
+bool Item::isComplex() const
+{
+	return false;
+}
+
 const std::string& Item::getArmorTexture() const
 {
 	return Util::EMPTY_STRING;

@@ -1,6 +1,6 @@
 #include "PaintingItem.hpp"
 #include "world/level/Level.hpp"
-#include <world/entity/Painting.hpp>
+#include "world/entity/Painting.hpp"
 
 PaintingItem::PaintingItem(int id) : Item(id)
 {
@@ -26,13 +26,13 @@ bool PaintingItem::useOn(ItemStack* instance, Player* player, Level* level, cons
     }
 
     Painting* painting = new Painting(level, pos, var8);
-        if (painting->survives())
-        {
-            if (!level->m_bIsClientSide)
-                level->addEntity(painting);
+    if (painting->survives())
+    {
+        if (!level->m_bIsClientSide)
+            level->addEntity(painting);
 
-            --instance->m_count;
-        }
+        --instance->m_count;
+    }
     else
         delete painting;
 

@@ -3,7 +3,7 @@
 
 RailTile::RailTile(TileID id, int texture, bool isPowered)
 	: Tile(id, texture, Material::decoration)
-	, m_bIsPowered(isPowered)
+	, _m_bIsPowered(isPowered)
 {
 	setShape(0.0f, 0.0f, 0.0f, 1.0f, 2.0f / 16.0f, 1.0f);
 	m_renderLayer = RENDER_LAYER_ALPHATEST;
@@ -21,7 +21,7 @@ void RailTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
 	TileData data = level->getData(pos);
 	int faceData = data;
 
-	if (m_bIsPowered)
+	if (_m_bIsPowered)
 		faceData = faceData & 7;
 
 	bool var7 = false;
@@ -46,7 +46,7 @@ void RailTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
 	else if (isPoweredRail(this))
 	{
 		bool var9 = level->hasNeighborSignal(pos) || level->hasNeighborSignal(pos.above());
-		var9 = var9 || applyPower(level, pos, data, true, 0) || applyPower(level, pos, data, false, 0);
+		var9 = var9 || _applyPower(level, pos, data, true, 0) || _applyPower(level, pos, data, false, 0);
 		bool var10 = false;
 		if (var9 && (data & 8) == 0)
 		{
@@ -69,10 +69,10 @@ void RailTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
 	}
 	else if (tile > 0
 		&& Tile::tiles[tile]->isSignalSource()
-		&& !m_bIsPowered
+		&& !_m_bIsPowered
 		&& (Rail(level, pos)).countPotentialConnections() == 3)
 	{
-		updateDir(level, pos, false);
+		_updateDir(level, pos, false);
 	}
 }
 
@@ -107,11 +107,11 @@ void RailTile::updateShape(const LevelSource* level, const TilePos& pos)
 
 void RailTile::onPlace(Level* level, const TilePos& pos)
 {
-	updateDir(level, pos, true);
+	_updateDir(level, pos, true);
 
 	TileData data = level->getData(pos);
 	int faceData = data;
-	if (m_bIsPowered) {
+	if (_m_bIsPowered) {
 		faceData = data & 7;
 	}
 
@@ -119,7 +119,7 @@ void RailTile::onPlace(Level* level, const TilePos& pos)
 		return;
 
 	bool var9 = level->hasNeighborSignal(pos) || level->hasNeighborSignal(pos.above());
-	var9 = var9 || applyPower(level, pos, data, true, 0) || applyPower(level, pos, data, false, 0);
+	var9 = var9 || _applyPower(level, pos, data, true, 0) || _applyPower(level, pos, data, false, 0);
 	bool var10 = false;
 	if (var9 && (data & 8) == 0)
 	{
@@ -147,12 +147,12 @@ void RailTile::setPlacedBy(Level* level, const TilePos& pos, Mob* mob)
 		level->setData(pos, 1);
 
 	//@NOTE: neighborChanged is called first in the original, but this was causing problems with powered rails being unpowered, certainly it's called for some reason after setPlacedBy
-	updateDir(level, pos, true);
+	_updateDir(level, pos, true);
 	neighborChanged(level, pos, 0);
 
 }
 
-void RailTile::updateDir(Level* level, const TilePos& pos, bool updateNeighbors)
+void RailTile::_updateDir(Level* level, const TilePos& pos, bool updateNeighbors)
 {
 	if (level->m_bIsClientSide)
 		return;
@@ -162,7 +162,7 @@ void RailTile::updateDir(Level* level, const TilePos& pos, bool updateNeighbors)
 
 int RailTile::getTexture(Facing::Name face, TileData data) const
 {
-	if (m_bIsPowered)
+	if (_m_bIsPowered)
 	{
 		if (isPoweredRail(this) && (data & 8) != 0)
 			return m_TextureFrame + 16;
@@ -173,7 +173,7 @@ int RailTile::getTexture(Facing::Name face, TileData data) const
 	return m_TextureFrame;
 }
 
-bool RailTile::applyPower(Level* level, const TilePos& pos, TileData data, bool var6, int var7) {
+bool RailTile::_applyPower(Level* level, const TilePos& pos, TileData data, bool var6, int var7) {
 	if (var7 >= 8)
 		return false;
 
@@ -254,10 +254,10 @@ bool RailTile::applyPower(Level* level, const TilePos& pos, TileData data, bool 
 	}
 	}
 
-	return canPower(level, tp, var6, var7, var8) ? true : var9 && canPower(level, tp.below(), var6, var7, var8);
+	return _canPower(level, tp, var6, var7, var8) ? true : var9 && _canPower(level, tp.below(), var6, var7, var8);
 }
 
-bool RailTile::canPower(Level* level, const TilePos& pos, bool var5, int var6, int var7)
+bool RailTile::_canPower(Level* level, const TilePos& pos, bool var5, int var6, int var7)
 {
 	if (RailTile::isPoweredRail(Tile::tiles[level->getTile(pos)]))
 	{
@@ -272,7 +272,7 @@ bool RailTile::canPower(Level* level, const TilePos& pos, bool var5, int var6, i
 		if ((var9 & 8) != 0)
 		{
 			if (!level->hasNeighborSignal(pos) && !level->hasNeighborSignal(pos.above()))
-				return applyPower(level, pos, var9, var5, var6 + 1);
+				return _applyPower(level, pos, var9, var5, var6 + 1);
 
 			return true;
 		}

@@ -500,7 +500,7 @@ void LevelRenderer::_startFrame(FrustumCuller& culler, float renderDistance, flo
 	float time = getTimeS() - m_initTime;
 	frame.TIME->setData(&time);
 
-	float farChunksDistance = renderDistance - 7.0; // something minus 7, just a guess
+	float farChunksDistance = renderDistance - 7.0f; // something minus 7, just a guess
 	frame.FAR_CHUNKS_DISTANCE->setData(&farChunksDistance);
 
 	frame.FOG_COLOR->setData(&_getFogColor());
@@ -2052,8 +2052,8 @@ void LevelRenderer::renderAdvancedClouds(float alpha)
         cb = scale;
 	}
     
-    uo = (float)(xo * 0.0);
-    vo = (float)(zo * 0.0);
+    uo = (float)(xo * 0.0f);
+    vo = (float)(zo * 0.0f);
 
 	//uo = xo * 0.0f;
 	//vo = zo * 0.0f;
@@ -2233,19 +2233,19 @@ void LevelRenderer::levelEvent(const LevelEvent& event)
 	{
 		int var8 = event.data % 3 - 1;
 		int var9 = event.data / 3 % 3 - 1;
-		float var10 = event.pos.x + var8 * 0.6 + 0.5;
-		float var12 = event.pos.y + 0.5;
-		float var14 = event.pos.z + var9 * 0.6 + 0.5;
+		float var10 = event.pos.x + var8 * 0.6f + 0.5f;
+		float var12 = event.pos.y + 0.5f;
+		float var14 = event.pos.z + var9 * 0.6f + 0.5f;
 
 		for (int i = 0; i < 10; ++i)
 		{
-			float var31 = random.nextFloat() * 0.2 + 0.01;
-			float var19 = var10 + var8 * 0.01 + (random.nextFloat() - 0.5) * var9 * 0.5;
-			float var21 = var12 + (random.nextFloat() - 0.5) * 0.5;
-			float var23 = var14 + var9 * 0.01 + (random.nextFloat() - 0.5) * var8 * 0.5;
-			float var25 = var8 * var31 + random.nextGaussian() * 0.01;
-			float var27 = -0.03 + random.nextGaussian() * 0.01;
-			float var29 = var9 * var31 + random.nextGaussian() * 0.01;
+			float var31 = random.nextFloat() * 0.2f + 0.01f;
+			float var19 = var10 + var8 * 0.01f + (random.nextFloat() - 0.5f) * var9 * 0.5f;
+			float var21 = var12 + (random.nextFloat() - 0.5f) * 0.5f;
+			float var23 = var14 + var9 * 0.01f + (random.nextFloat() - 0.5f) * var8 * 0.5f;
+			float var25 = var8 * var31 + random.nextGaussian() * 0.01f;
+			float var27 = -0.03f + random.nextGaussian() * 0.01f;
+			float var29 = var9 * var31 + random.nextGaussian() * 0.01f;
 			addParticle("smoke", Vec3(var19, var21, var23), Vec3(var25, var27, var29));
 		}
 		break;

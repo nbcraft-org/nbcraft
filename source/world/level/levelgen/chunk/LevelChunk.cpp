@@ -15,9 +15,6 @@ bool LevelChunk::touchedSky = false;
 
 LevelChunk::~LevelChunk()
 {
-	SAFE_DELETE_ARRAY(m_lightBlk.m_data);
-	SAFE_DELETE_ARRAY(m_lightSky.m_data);
-	SAFE_DELETE_ARRAY(m_tileData.m_data);
 }
 
 CONSTEXPR int MakeBlockDataIndex(const ChunkTilePos& pos)
@@ -71,10 +68,10 @@ LevelChunk::LevelChunk(Level* pLevel, TileID* pData, const ChunkPos& pos)
 	/*if (pData)
 	{*/
 	field_4 = 16 * 16 * 128;
-	m_tileData = DataLayer(16 * 16 * 128 / 2);
+	//m_tileData = DataLayer(16 * 16 * 128 / 2);
 	//Space saving measure: Store 2 blocks' light field instead of only one block's, per byte.
-	m_lightSky = DataLayer(16 * 16 * 128 / 2);
-	m_lightBlk = DataLayer(16 * 16 * 128 / 2);
+	//m_lightSky = DataLayer(16 * 16 * 128 / 2);
+	//m_lightBlk = DataLayer(16 * 16 * 128 / 2);
 
 	m_pBlockData = pData;
 	//}
@@ -93,6 +90,14 @@ void LevelChunk::init()
 	field_23C = 0;
 	memset(m_heightMap, 0, sizeof m_heightMap);
 	memset(m_updateMap, 0, sizeof m_updateMap);
+}
+
+LevelChunk::NibbleTileArray& LevelChunk::getLight(const LightLayer& lightLayer)
+{
+	if (&lightLayer == &LightLayer::Sky)
+		return m_lightSky;
+	else // if (&lightLayer == &LightLayer::Block)
+		return m_lightBlk;
 }
 
 void LevelChunk::unload()
@@ -906,7 +911,7 @@ int LevelChunk::setBlocksAndData(uint8_t* pData, int a3, int a4, int a5, int a6,
 
 		for (int x3 = a5; x3 < a8; x3++)
 		{
-			uint8_t* dst = &m_tileData.m_data[MakeBlockDataIndex(ChunkTilePos(x1, a4, x3)) >> 1];
+			uint8_t* dst = &m_tileData.array[MakeBlockDataIndex(ChunkTilePos(x1, a4, x3)) >> 1];
 			memcpy(dst, src, x5);
 			src += x5;
 			a9 += x5;
@@ -922,7 +927,7 @@ int LevelChunk::setBlocksAndData(uint8_t* pData, int a3, int a4, int a5, int a6,
 
 		for (int x3 = a5; x3 < a8; x3++)
 		{
-			uint8_t* dst = &m_lightBlk.m_data[MakeBlockDataIndex(ChunkTilePos(x1, a4, x3)) >> 1];
+			uint8_t* dst = &m_lightBlk.array[MakeBlockDataIndex(ChunkTilePos(x1, a4, x3)) >> 1];
 			memcpy(dst, src, x5);
 			src += x5;
 			a9 += x5;
@@ -938,7 +943,7 @@ int LevelChunk::setBlocksAndData(uint8_t* pData, int a3, int a4, int a5, int a6,
 
 		for (int x3 = a5; x3 < a8; x3++)
 		{
-			uint8_t* dst = &m_lightSky.m_data[MakeBlockDataIndex(ChunkTilePos(x1, a4, x3)) >> 1];
+			uint8_t* dst = &m_lightSky.array[MakeBlockDataIndex(ChunkTilePos(x1, a4, x3)) >> 1];
 			memcpy(dst, src, x5);
 			src += x5;
 			a9 += x5;
@@ -987,7 +992,7 @@ int LevelChunk::getBlocksAndData(uint8_t* pData, int a3, int a4, int a5, int a6,
 
 		for (int x3 = a5; x3 < a8; x3++)
 		{
-			uint8_t* src = &m_tileData.m_data[MakeBlockDataIndex(ChunkTilePos(x1, a4, x3)) >> 1];
+			uint8_t* src = &m_tileData.array[MakeBlockDataIndex(ChunkTilePos(x1, a4, x3)) >> 1];
 			memcpy(dst, src, x5);
 			dst += x5;
 			a9 += x5;
@@ -1003,7 +1008,7 @@ int LevelChunk::getBlocksAndData(uint8_t* pData, int a3, int a4, int a5, int a6,
 
 		for (int x3 = a5; x3 < a8; x3++)
 		{
-			uint8_t* src = &m_lightBlk.m_data[MakeBlockDataIndex(ChunkTilePos(x1, a4, x3)) >> 1];
+			uint8_t* src = &m_lightBlk.array[MakeBlockDataIndex(ChunkTilePos(x1, a4, x3)) >> 1];
 			memcpy(dst, src, x5);
 			dst += x5;
 			a9 += x5;
@@ -1019,7 +1024,7 @@ int LevelChunk::getBlocksAndData(uint8_t* pData, int a3, int a4, int a5, int a6,
 
 		for (int x3 = a5; x3 < a8; x3++)
 		{
-			uint8_t* src = &m_lightSky.m_data[MakeBlockDataIndex(ChunkTilePos(x1, a4, x3)) >> 1];
+			uint8_t* src = &m_lightSky.array[MakeBlockDataIndex(ChunkTilePos(x1, a4, x3)) >> 1];
 			memcpy(dst, src, x5);
 			dst += x5;
 			a9 += x5;

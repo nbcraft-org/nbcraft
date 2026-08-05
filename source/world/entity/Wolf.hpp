@@ -2,13 +2,16 @@
 
 #include "Animal.hpp"
 
-#define DATA_WOLF_FLAGS (16)
-#define DATA_WOLF_OWNER (17)
-#define DATA_WOLF_HEALTH (18)
-
 class Wolf : public Animal
 {
 private:
+	enum
+	{
+		DATA_WOLF_FLAGS = 16,
+		DATA_WOLF_OWNER = 17,
+		DATA_WOLF_HEALTH = 18
+	};
+
 	void _defineSynchedData();
 	void _updateAttackTarget(Entity*, float);
 	void _addTamingParticles(bool);
@@ -25,9 +28,10 @@ public:
 	Wolf(Level* pLevel);
 
 	std::string getTexture() const override { return isTamed() ? "mob/wolf_tame.png" : (isAngry() ? "mob/wolf_angry.png" : Animal::getTexture()); };
-	std::string getAmbientSound() override { return isAngry() ? "mob.wolf.growl" : (m_random.nextInt(3) == 0 ? (isTamed() && m_entityData.get<int>(DATA_WOLF_HEALTH) < 10 ? "mob.wolf.whine" : "mob.wolf.panting") : "mob.wolf.bark"); };
+	std::string getAmbientSound() override { return isAngry() ? "mob.wolf.growl" : (m_random.nextInt(3) == 0 ? (isTamed() && getWolfHealth() < 10 ? "mob.wolf.whine" : "mob.wolf.panting") : "mob.wolf.bark"); };
 	std::string getDeathSound() const override { return "mob.wolf.death"; }
 	std::string getHurtSound() const override { return "mob.wolf.hurt"; }
+	int getWolfHealth() const { return m_entityData.get<int>(DATA_WOLF_HEALTH); }
 	int getDeathLoot() const override;
 	int getMaxHealth() const override { return 20; }
 	int getMaxSpawnClusterSize() const override { return 8; }

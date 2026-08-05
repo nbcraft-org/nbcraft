@@ -209,16 +209,16 @@ void TileRenderer::renderFace(Tile* tile, const Vec3& pos, int texture, Facing::
 		if (face == Facing::UP || face == Facing::NORTH || face == Facing::EAST)
 		{
 			std::swap(minV, maxV);
-			minV = 1.0 - minV;
-			maxV = 1.0 - maxV;
+			minV = 1.0f - minV;
+			maxV = 1.0f - maxV;
 		}
 	}
 
 	if (rot == 3 || rot == 2)
 	{
 		std::swap(minV, maxV);
-		minV = 1.0 - minV;
-		maxV = 1.0 - maxV;
+		minV = 1.0f - minV;
+		maxV = 1.0f - maxV;
 	}
 
 	if (minU < 0.0f || maxU > 1.0f)
@@ -315,7 +315,7 @@ void TileRenderer::renderPistonFace(const AABB& aabb, float bright, float offY, 
 	if (m_fixedTexture >= 0)
 		tex = m_fixedTexture;
 
-	const int texX = (tex & 15) << 4;
+	int texX = (tex & 15) << 4;
 	const int texY = tex & 240;
 	Tesselator& t = Tesselator::instance;
 	static constexpr float C_RATIO = 1.0f / 256.0f;
@@ -577,7 +577,7 @@ bool TileRenderer::tesselateRowInWorld(Tile* tile, const TilePos& pos)
 
 bool TileRenderer::tesselateWaterInWorld(Tile* tile1, const TilePos& pos)
 {
-	constexpr float C_RATIO = 1.0f / 256.0f;
+	static constexpr float C_RATIO = 1.0f / 256.0f;
 
 	LiquidTile* tile = (LiquidTile*)tile1;
 	bool bRenderFaceDown, bRenderFaceUp, bRenderSides[4];
@@ -1088,7 +1088,7 @@ bool TileRenderer::tesselateDoorInWorld(Tile* tile, const TilePos& pos)
 
 void TileRenderer::tesselateTorch(Tile* tile, const Vec3& pos, float a, float b)
 {
-	constexpr float C_RATIO = 1.0f / 256.0f;
+	static constexpr float C_RATIO = 1.0f / 256.0f;
 	constexpr float C_ONE_PIXEL = 1.0f / 16.0f;
 	constexpr float C_HALF_TILE = 1.0f / 2.0f;
 	constexpr float C_TOP_SKEW_RATIO = 0.375f;
@@ -1225,10 +1225,11 @@ bool TileRenderer::tesselateRailInWorld(Tile* tile, const TilePos& pos)
 	t.color(br, br, br);
 	int xt = (tex & 15) << 4;
 	int yt = tex & 240;
-	float u0 = xt / 256.0f;
-	float u1 = (xt + 15.99f) / 256.0f;
-	float v0 = yt / 256.0f;
-	float v1 = (yt + 15.99f) / 256.0f;
+	static constexpr float C_RATIO = 1.0f / 256.0f;
+	float u0 = xt * C_RATIO;
+	float u1 = (xt + 15.99f) * C_RATIO;
+	float v0 = yt * C_RATIO;
+	float v1 = (yt + 15.99f) * C_RATIO;
 	constexpr float r = 0.0625f;
 	float x0 = (float)(pos.x + 1);
 	float x1 = (float)(pos.x + 1);
@@ -1335,10 +1336,11 @@ bool TileRenderer::tesselateDiodeInWorld(Tile* tile, const TilePos& pos)
 	int var20 = tile->getTexture(Facing::UP);
 	int var21 = (var20 & 15) << 4;
 	int var22 = var20 & 240;
-	float var23 = float(var21) / 256.0f;
-	float var25 = (float(var21) + 15.99f) / 256.0f;
-	float var27 = float(var22) / 256.0f;
-	float var29 = (float(var22) + 15.99f) / 256.0f;
+	static constexpr float C_RATIO = 1.0f / 256.0f;
+	float var23 = float(var21) * C_RATIO;
+	float var25 = (float(var21) + 15.99f) * C_RATIO;
+	float var27 = float(var22) * C_RATIO;
+	float var29 = (float(var22) + 15.99f) * C_RATIO;
 	float var31 = 2.0f / 16.0f;
 	/*
 	float var32 = float(pos.x + 1);
@@ -1480,10 +1482,11 @@ bool TileRenderer::tesselateLeverInWorld(Tile* tile, const TilePos& pos)
 
 	int xt = (tex & 15) << 4;
 	int yt = tex & 240;
-	float u0 = (float)xt / 256.0f;
-	float u1 = ((float)xt + 15.99f) / 256.0f;
-	float v0 = (float)yt / 256.0f;
-	float v1 = ((float)yt + 15.99f) / 256.0f;
+	static constexpr float C_RATIO = 1.0f / 256.0f;
+	float u0 = (float)xt * C_RATIO;
+	float u1 = ((float)xt + 15.99f) * C_RATIO;
+	float v0 = (float)yt * C_RATIO;
+	float v1 = ((float)yt + 15.99f) * C_RATIO;
 	float xv = 0.0625f;
 	float zv = 0.0625f;
 	float yv = 0.625f;
@@ -1501,12 +1504,12 @@ bool TileRenderer::tesselateLeverInWorld(Tile* tile, const TilePos& pos)
 	for (int i = 0; i < 8; ++i) {
 		if (flipped)
 		{
-			corners[i].z -= 0.0625;
+			corners[i].z -= 0.0625f;
 			corners[i].xRot(float(M_PI) * 2.0f / 9.0f);
 		}
 		else
 		{
-			corners[i].z += 0.0625;
+			corners[i].z += 0.0625f;
 			corners[i].xRot(float(-M_PI) * 2.0f / 9.0f);
 		}
 
@@ -1517,7 +1520,7 @@ bool TileRenderer::tesselateLeverInWorld(Tile* tile, const TilePos& pos)
 
 		if (dir < 5)
 		{
-			corners[i].y -= 0.375;
+			corners[i].y -= 0.375f;
 			corners[i].xRot(float(M_PI / 2));
 			if (dir == 4)
 			{
@@ -1539,15 +1542,15 @@ bool TileRenderer::tesselateLeverInWorld(Tile* tile, const TilePos& pos)
 				corners[i].yRot(float(-M_PI / 2));
 			}
 
-			corners[i].x += pos.x + 0.5;
+			corners[i].x += pos.x + 0.5f;
 			corners[i].y += pos.y + 0.5f;
-			corners[i].z += pos.z + 0.5;
+			corners[i].z += pos.z + 0.5f;
 		}
 		else
 		{
-			corners[i].x += pos.x + 0.5;
+			corners[i].x += pos.x + 0.5f;
 			corners[i].y += pos.y + 0.125f;
-			corners[i].z += pos.z + 0.5;
+			corners[i].z += pos.z + 0.5f;
 		}
 	}
 
@@ -1560,17 +1563,17 @@ bool TileRenderer::tesselateLeverInWorld(Tile* tile, const TilePos& pos)
 	{
 		if (i == 0)
 		{
-			u0 = float(xt + 7) / 256.0f;
-			u1 = (float(xt + 9) - 0.01f) / 256.0f;
-			v0 = float(yt + 6) / 256.0f;
-			v1 = (float(yt + 8) - 0.01f) / 256.0f;
+			u0 = float(xt + 7) * C_RATIO;
+			u1 = (float(xt + 9) - 0.01f) * C_RATIO;
+			v0 = float(yt + 6) * C_RATIO;
+			v1 = (float(yt + 8) - 0.01f) * C_RATIO;
 		}
 		else if (i == 2)
 		{
-			u0 = float(xt + 7) / 256.0f;
-			u1 = (float(xt + 9) - 0.01f) / 256.0f;
-			v0 = float(yt + 6) / 256.0f;
-			v1 = (float(yt + 16) - 0.01f) / 256.0f;
+			u0 = float(xt + 7) * C_RATIO;
+			u1 = (float(xt + 9) - 0.01f) * C_RATIO;
+			v0 = float(yt + 6) * C_RATIO;
+			v1 = (float(yt + 16) - 0.01f) * C_RATIO;
 		}
 
 		if (i == 0)
@@ -1627,7 +1630,7 @@ bool TileRenderer::tesselateLeverInWorld(Tile* tile, const TilePos& pos)
 
 bool TileRenderer::tesselateLadderInWorld(Tile* tile, const TilePos& pos)
 {
-	constexpr float C_RATIO = 1.0f / 256.0f;
+	static constexpr float C_RATIO = 1.0f / 256.0f;
 
 	Tesselator& t = m_tessellator;
 
@@ -1680,7 +1683,7 @@ bool TileRenderer::tesselateLadderInWorld(Tile* tile, const TilePos& pos)
 
 bool TileRenderer::tesselateFireInWorld(Tile* tile, const TilePos& pos)
 {
-	constexpr float C_RATIO = 1.0f / 256.0f;
+	static constexpr float C_RATIO = 1.0f / 256.0f;
 
 	Tesselator& t = m_tessellator;
 
@@ -1852,10 +1855,11 @@ bool TileRenderer::tesselateDustInWorld(Tile* tile, const TilePos& pos)
 	t.color(bright * rt, bright * gt, bright * bt);
 	int xt = (texture & 15) << 4;
 	int yt = texture & 240;
-	float u0 = (float(xt) / 256.0f);
-	float u1 = ((float(xt) + 15.99f) / 256.0f);
-	float v0 = (float(yt) / 256.0f);
-	float v1 = ((float(yt) + 15.99f) / 256.0f);
+	static constexpr float C_RATIO = 1.0f / 256.0f;
+	float u0 = (float(xt) * C_RATIO);
+	float u1 = ((float(xt) + 15.99f) * C_RATIO);
+	float v0 = (float(yt) * C_RATIO);
+	float v1 = ((float(yt) + 15.99f) * C_RATIO);
 	float o = 0.0f;
 	float r = 0.03125f;
 	bool w = RedStoneDustTile::shouldConnectTo(m_pTileSource, pos.west())
@@ -1899,10 +1903,10 @@ bool TileRenderer::tesselateDustInWorld(Tile* tile, const TilePos& pos)
 	}
 
 	if (pic != 0) {
-		u0 = (float(xt + 16) / 256.0f);
-		u1 = ((float(xt + 16) + 15.99f) / 256.0f);
-		v0 = (float(yt) / 256.0f);
-		v1 = ((float(yt) + 15.99f) / 256.0f);
+		u0 = (float(xt + 16) * C_RATIO);
+		u1 = ((float(xt + 16) + 15.99f) * C_RATIO);
+		v0 = (float(yt) * C_RATIO);
+		v1 = ((float(yt) + 15.99f) * C_RATIO);
 	}
 
 	if (pic == 0) {
@@ -1960,10 +1964,10 @@ bool TileRenderer::tesselateDustInWorld(Tile* tile, const TilePos& pos)
 		t.vertexUV((x0 - o), (float(pos.y) + r), (z1 + o), u1, v0);
 	}
 
-	u0 = (float(xt + 16) / 256.0f);
-	u1 = ((float(xt + 16) + 15.99f) / 256.0f);
-	v0 = (float(yt) / 256.0f);
-	v1 = ((float(yt) + 15.99f) / 256.0f);
+	u0 = (float(xt + 16) * C_RATIO);
+	u1 = ((float(xt + 16) + 15.99f) * C_RATIO);
+	v0 = (float(yt) * C_RATIO);
+	v1 = ((float(yt) + 15.99f) * C_RATIO);
 	if (!m_pTileSource->isSolidTile(pos.above())) {
 		if (m_pTileSource->isSolidTile(pos.west()) && m_pTileSource->getTile(pos.west().above()) == Tile::redStoneDust->m_ID) {
 			t.vertexUV((float(pos.x) + r), (float(pos.y + 1) + o), (float(pos.z + 1) + o), u1, v0);

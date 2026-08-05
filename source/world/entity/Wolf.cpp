@@ -342,7 +342,8 @@ bool Wolf::hurt(Entity* ent, int dmg)
 			for (EntityVector::iterator it = wolfs.begin(); it != wolfs.end(); ++it)
 			{
 				Wolf* wolf = (Wolf*) *it;
-				if (!wolf->isTamed() && !wolf->m_pAttackTarget) {
+				if (!wolf->isTamed() && !wolf->m_pAttackTarget)
+				{
 					wolf->m_pAttackTarget = ent;
 					if (ent->isPlayer())
 						wolf->setAngry(true);

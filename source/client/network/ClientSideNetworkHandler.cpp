@@ -551,7 +551,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, ChunkDa
 				}
 
 				int idx = ((k & 0xF) << 11) | (((k >> 4) << 7) + yPos);
-				memcpy(&pChunk->m_tileData.m_data[idx >> 1], datas, sizeof datas);
+				memcpy(&pChunk->m_tileData.array[idx >> 1], datas, sizeof datas);
 			}
 
 			int ymin = 16 * (1 << j);

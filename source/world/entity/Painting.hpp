@@ -7,7 +7,7 @@ class Painting : public Entity
 {
 private:
 	void _init();
-	float offs(int);
+	float _offs(int);
 	int m_checkInterval;
 
 public:

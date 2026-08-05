@@ -9,16 +9,21 @@
 
 #include "Animal.hpp"
 
-#define DATA_SADDLE (16)
-
 class Pig : public Animal
 {
 private:
-	void _defineEntityData();
+	enum
+	{
+		DATA_SADDLE = 16
+	};
 
 public:
 	Pig(Level* pLevel);
 
+private:
+	void _defineEntityData();
+
+public:
 	std::string getAmbientSound() override { return "mob.pig"; };
 	std::string getDeathSound() const override { return "mob.pigdeath"; }
 	std::string getHurtSound() const override { return "mob.pig"; }

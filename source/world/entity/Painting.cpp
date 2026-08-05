@@ -92,20 +92,20 @@ void Painting::setDir(int face)
     switch (face)
     {
     case 0:
-        putPos.x -= offs(getPaintingType().m_width);
+        putPos.x -= _offs(getPaintingType().m_width);
         break;
     case 1:
-        putPos.z += offs(getPaintingType().m_width);
+        putPos.z += _offs(getPaintingType().m_width);
         break;
     case 2:
-        putPos.x += offs(getPaintingType().m_width);
+        putPos.x += _offs(getPaintingType().m_width);
         break;
     case 3:
-        putPos.z -= offs(getPaintingType().m_width);
+        putPos.z -= _offs(getPaintingType().m_width);
         break;
     }
 
-    putPos.y += offs(getPaintingType().m_height);
+    putPos.y += _offs(getPaintingType().m_height);
     setPos(putPos);
     constexpr float var9 = -0.00625f;
     m_hitbox = AABB((putPos.x - var2 - var9), (putPos.y - var3 - var9), (putPos.z - var4 - var9), (putPos.x + var2 + var9), (putPos.y + var3 + var9), (putPos.z + var4 + var9));
@@ -213,7 +213,7 @@ bool Painting::hurt(Entity*, int)
     return true;
 }
 
-float Painting::offs(int s)
+float Painting::_offs(int s)
 {
     return s == 32 || s == 64 ? 0.5f : 0.0f;
 }

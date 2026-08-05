@@ -9,9 +9,9 @@ public:
     RailTile(TileID id, int texture, bool isPowered);
 
 private:
-    void updateDir(Level* level, const TilePos& pos, bool updateNeighbors);
-    bool applyPower(Level* level, const TilePos& pos, TileData data, bool var6, int var7);
-    bool canPower(Level* level, const TilePos& pos, bool var5, int var6, int var7);
+    void _updateDir(Level* level, const TilePos& pos, bool updateNeighbors);
+    bool _applyPower(Level* level, const TilePos& pos, TileData data, bool var6, int var7);
+    bool _canPower(Level* level, const TilePos& pos, bool var5, int var6, int var7);
 
 public:
     bool mayPlace(const Level*, const TilePos& pos) const override;
@@ -44,9 +44,9 @@ public:
     {
         if (!tile) return false;
         RailTile* rail = (RailTile*)tile;
-        return rail && rail->m_bIsPowered;
+        return rail && rail->_m_bIsPowered;
     }
 
 private:
-    bool m_bIsPowered;
+    bool _m_bIsPowered;
 };

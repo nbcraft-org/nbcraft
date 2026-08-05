@@ -408,7 +408,6 @@ add_library(nbcraft-core STATIC
     world/level/levelgen/chunk/ChunkCache.cpp
     world/level/levelgen/chunk/ChunkPos.cpp
     world/level/levelgen/chunk/ChunkSource.cpp
-    world/level/levelgen/chunk/DataLayer.cpp
     world/level/levelgen/chunk/EmptyLevelChunk.cpp
     world/level/levelgen/chunk/PerformanceTestChunkSource.cpp
     world/level/levelgen/chunk/TestChunkSource.cpp

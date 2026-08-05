@@ -20,16 +20,14 @@ bool BoatItem::use(ItemStack& item, Level* level, Mob& user) const
     HitResult hitResult = level->clip(var13, var13.add(var18 * 5, var17 * 5, var20 * 5), true);
     if (!hitResult.isHit())
         return item;
-    else
+
+    if (hitResult.m_hitType == HitResult::TILE)
     {
-        if (hitResult.m_hitType == HitResult::TILE)
-        {
-            if (!level->m_bIsClientSide)
-                level->addEntity(new Boat(level, TilePos(hitResult.m_tilePos.x + 0.5f, hitResult.m_tilePos.y + 1.5f, hitResult.m_tilePos.z + 0.5f)));
+        if (!level->m_bIsClientSide)
+            level->addEntity(new Boat(level, TilePos(hitResult.m_tilePos.x + 0.5f, hitResult.m_tilePos.y + 1.5f, hitResult.m_tilePos.z + 0.5f)));
 
-            --item.m_count;
-        }
-
-        return item;
+        --item.m_count;
     }
+
+    return item;
 }

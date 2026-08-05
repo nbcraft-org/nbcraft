@@ -111,11 +111,10 @@ void ParticleEngine::crack(const TilePos& tilePos, Facing::Name face)
 
 void ParticleEngine::destroyEffect(const TilePos& pos, const FullTile& fullTile)
 {
-	if (!fullTile.getTypeId()) return;
+	Tile* pTile = fullTile.getType();
+	if (!pTile) return;
 
 	//float timeS = getTimeS();
-
-	Tile* pTile = fullTile.getType();
 
 	for (int i = 0; i < 4; i++)
 	{

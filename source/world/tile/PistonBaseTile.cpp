@@ -33,7 +33,7 @@ eRenderShape PistonBaseTile::getRenderShape() const
 void PistonBaseTile::triggerEvent(Level* level, const TileEvent& event)
 {
 	m_bUpdating = true;
-	if (event.b0 == PISTON_EXTEND)
+	if (event.b0 == PISTON_EVENT_EXTEND)
 	{
 		if (_moveBlocks(level, event.pos, (Facing::Name) event.b1))
 		{
@@ -41,7 +41,7 @@ void PistonBaseTile::triggerEvent(Level* level, const TileEvent& event)
 			level->playSound(Vec3(event.pos) + 0.5f, "tile.piston.out", 0.5f, level->m_random.nextFloat() * 0.25f + 0.6f);
 		}
 	}
-	else if (event.b0 == PISTON_RETRACT)
+	else if (event.b0 == PISTON_EVENT_RETRACT)
 	{
 		TilePos relative = event.pos.relative((Facing::Name)event.b1);
 		PistonMovingTileEntity* piston = static_cast<PistonMovingTileEntity*>(level->getTileEntity(relative));
@@ -186,13 +186,13 @@ void PistonBaseTile::_checkIfExtend(Level* level, const TilePos& pos)
 			if (_canMoveBlocks(level, pos, face))
 			{
 				level->setDataNoUpdate(pos, face | 8);
-				level->tileEvent(TileEvent(pos, PISTON_EXTEND, face));
+				level->tileEvent(TileEvent(pos, PISTON_EVENT_EXTEND, face));
 			}
 		}
 		else if (!signal && isExtended(data))
 		{
 			level->setDataNoUpdate(pos, face);
-			level->tileEvent(TileEvent(pos, PISTON_RETRACT, face));
+			level->tileEvent(TileEvent(pos, PISTON_EVENT_RETRACT, face));
 		}
 
 	}

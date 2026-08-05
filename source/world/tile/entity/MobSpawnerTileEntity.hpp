@@ -4,6 +4,9 @@
 #include "TileEntity.hpp"
 #include "world/entity/EntityTypeDescriptor.hpp"
 
+#define C_SPAWNER_MAX_SPAWN (4)
+#define C_SPAWNER_MAX_MOBS (6)
+
 class MobSpawnerTileEntity : public TileEntity
 {
 public:

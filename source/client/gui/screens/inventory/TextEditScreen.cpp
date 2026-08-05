@@ -33,9 +33,10 @@ void TextEditScreen::render(float partialTicks)
 {
     renderBackground();
     drawCenteredString(*m_pFont, m_title, m_width / 2, 40, Color::WHITE);
+
     MatrixStack::Ref mtx = MatrixStack::World.push();
     mtx->translate(Vec3((float)(m_width / 2), 120.0f, 50.0f));
-    constexpr float ss = 93.75f;
+    static constexpr float ss = 93.75f;
     mtx->scale(-ss);
     mtx->rotate(180.0f, Vec3::UNIT_Y);
     Tile* tile = m_pSign->getTile();
