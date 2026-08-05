@@ -25,8 +25,13 @@
 #include "thirdparty/GL/GL.hpp"
 #endif
 
-#include "thirdparty/stb_image/include/stb_image.h"
-#include "thirdparty/stb_image/include/stb_image_write.h"
+#if NBC_SYSTEM_STB
+    #include <stb_image.h>
+	#include <stb_image_write.h>
+#else
+	#include "thirdparty/stb_image/include/stb_image.h"
+	#include "thirdparty/stb_image/include/stb_image_write.h"
+#endif
 
 // Macros are cursed
 #define _STR(x) #x
