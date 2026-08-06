@@ -70,6 +70,9 @@ void PistonHeadTile::updateShape(const LevelSource* source, const TilePos& pos)
 		break;
 	case Facing::EAST:
 		setShape(12.0f / 16.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+		break;
+	default:
+		break;
 	}
 
 }
@@ -113,6 +116,9 @@ void PistonHeadTile::addAABBs(const Level* level, const TilePos& pos, const AABB
 		Tile::addAABBs(level, pos, aabb, out);
 		setShape(0.0f, 6.0f / 16.0f, 0.25f, 12.0f / 16.0f, 10.0f / 16.0f, 12.0f / 16.0f);
 		Tile::addAABBs(level, pos, aabb, out);
+		break;
+	default:
+		break;
 	}
 
 	setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
