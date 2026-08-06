@@ -10,6 +10,9 @@
 
 const int ImprovedNoise::field_4296_d[12][3] = { {1, 1, 0}, {-1, 1, 0}, {1, -1, 0}, {-1, -1, 0}, {1, 0, 1}, {-1, 0, 1}, {1, 0, -1}, {-1, 0, -1}, {0, 1, 1}, {0, -1, 1}, {0, 1, -1}, {0, -1, -1} };
 
+const float ImprovedNoise::field_4294_f = 0.3660254f;
+const float ImprovedNoise::field_4293_g = 0.2113249f;
+
 float ImprovedNoise::func_4156_a(const int* var0, float var1, float var3)
 {
 	return (float)var0[0] * var1 + (float)var0[1] * var3;
