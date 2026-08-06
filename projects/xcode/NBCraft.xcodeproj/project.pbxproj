@@ -1731,6 +1731,12 @@
 		84ED50000000000001000077 /* TextEditScreen.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000077 /* TextEditScreen.hpp */; };
 		84ED50000000000001000078 /* TileEntityRenderDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000078 /* TileEntityRenderDispatcher.cpp */; };
 		84ED50000000000001000079 /* TileEntityRenderDispatcher.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000079 /* TileEntityRenderDispatcher.hpp */; };
+		84ED50000000000001000080 /* SignRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000080 /* SignRenderer.cpp */; };
+		84ED50000000000001000081 /* SignRenderer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000081 /* SignRenderer.hpp */; };
+		84ED50000000000001000082 /* PistonRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000082 /* PistonRenderer.cpp */; };
+		84ED50000000000001000083 /* PistonRenderer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000083 /* PistonRenderer.hpp */; };
+		84ED50000000000001000084 /* MobSpawnerRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000084 /* MobSpawnerRenderer.cpp */; };
+		84ED50000000000001000085 /* MobSpawnerRenderer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000085 /* MobSpawnerRenderer.hpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -3642,6 +3648,12 @@
 		84ED50000000000000000077 /* TextEditScreen.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TextEditScreen.hpp; sourceTree = "<group>"; };
 		84ED50000000000000000078 /* TileEntityRenderDispatcher.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TileEntityRenderDispatcher.cpp; sourceTree = "<group>"; };
 		84ED50000000000000000079 /* TileEntityRenderDispatcher.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TileEntityRenderDispatcher.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000080 /* SignRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SignRenderer.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000081 /* SignRenderer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SignRenderer.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000082 /* PistonRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PistonRenderer.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000083 /* PistonRenderer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PistonRenderer.hpp; sourceTree = "<group>"; };
+		84ED50000000000000000084 /* MobSpawnerRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MobSpawnerRenderer.cpp; sourceTree = "<group>"; };
+		84ED50000000000000000085 /* MobSpawnerRenderer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MobSpawnerRenderer.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -6271,6 +6283,12 @@
 			children = (
 				84ED50000000000000000078 /* TileEntityRenderDispatcher.cpp */,
 				84ED50000000000000000079 /* TileEntityRenderDispatcher.hpp */,
+				84ED50000000000000000080 /* SignRenderer.cpp */,
+				84ED50000000000000000081 /* SignRenderer.hpp */,
+				84ED50000000000000000082 /* PistonRenderer.cpp */,
+				84ED50000000000000000083 /* PistonRenderer.hpp */,
+				84ED50000000000000000084 /* MobSpawnerRenderer.cpp */,
+				84ED50000000000000000085 /* MobSpawnerRenderer.hpp */,
 			);
 			path = tileentity;
 			sourceTree = "<group>";
@@ -6716,6 +6734,9 @@
 				84ED50000000000001000075 /* WolfModel.hpp in Headers */,
 				84ED50000000000001000077 /* TextEditScreen.hpp in Headers */,
 				84ED50000000000001000079 /* TileEntityRenderDispatcher.hpp in Headers */,
+				84ED50000000000001000081 /* SignRenderer.hpp in Headers */,
+				84ED50000000000001000083 /* PistonRenderer.hpp in Headers */,
+				84ED50000000000001000085 /* MobSpawnerRenderer.hpp in Headers */,
 
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7765,6 +7786,9 @@
 				84ED50000000000001000074 /* WolfModel.cpp in Sources */,
 				84ED50000000000001000076 /* TextEditScreen.cpp in Sources */,
 				84ED50000000000001000078 /* TileEntityRenderDispatcher.cpp in Sources */,
+				84ED50000000000001000080 /* SignRenderer.cpp in Sources */,
+				84ED50000000000001000082 /* PistonRenderer.cpp in Sources */,
+				84ED50000000000001000084 /* MobSpawnerRenderer.cpp in Sources */,
 				84B8AEFB2AF1896F008DE93D /* DirectConnectScreen.cpp in Sources */,
 				845A8D3C2FEBAB3000D26FD2 /* CraftingScreen_Console.cpp in Sources */,
 				84B8AEFC2AF1896F008DE93D /* IngameBlockSelectionScreen.cpp in Sources */,
