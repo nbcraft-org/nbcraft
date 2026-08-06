@@ -19,6 +19,7 @@ bool FlintAndSteelItem::useOn(ItemStack* instance, Player* player, Level* level,
     case Facing::SOUTH:   targetPos.z++; break;
     case Facing::WEST:    targetPos.x--; break;
     case Facing::EAST:    targetPos.x++; break;
+    default: break;
     }
 
     int i = level->getTile(targetPos);

@@ -67,6 +67,8 @@ void LeverTile::setPlacedOnFace(Level* level, const TilePos& pos, Facing::Name f
 		if (level->isSolidTile(pos.west()))
 			data = 1;
 		break;
+	default:
+		break;
 	}
 
 	level->setData(pos, data + var7);

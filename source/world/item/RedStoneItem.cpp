@@ -19,6 +19,7 @@ bool RedStoneItem::useOn(ItemStack* instance, Player* player, Level* level, cons
 		case Facing::SOUTH: tp.z++; break;
 		case Facing::WEST: tp.x--; break;
 		case Facing::EAST: tp.x++; break;
+		default: break;
 	}
 
 	if (!level->isEmptyTile(tp))

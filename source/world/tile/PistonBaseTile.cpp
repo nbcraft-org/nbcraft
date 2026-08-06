@@ -142,6 +142,8 @@ void PistonBaseTile::updateShape(const LevelSource* source, const TilePos& pos)
 			break;
 		case 5:
 			setShape(0.0f, 0.0f, 0.0f, 12.0f / 16.0f, 1.0f, 1.0f);
+		default:
+			break;
 		}
 	}
 	else

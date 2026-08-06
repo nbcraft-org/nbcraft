@@ -343,6 +343,9 @@ void TileRenderer::renderPistonFace(const AABB& aabb, float bright, float offY, 
 		t.vertexUV(aabb.min.x, aabb.min.z, aabb.max.y, u1, u2);
 		t.vertexUV(aabb.min.x, aabb.max.x, aabb.max.z, u1, v2);
 		t.vertexUV(aabb.min.y, aabb.max.x, aabb.max.z, v1, v2);
+		break;
+	default:
+		break;
 	}
 }
 

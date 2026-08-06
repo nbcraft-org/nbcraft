@@ -23,6 +23,8 @@ bool PaintingItem::useOn(ItemStack* instance, Player* player, Level* level, cons
     case Facing::EAST:
         var8 = 3;
         break;
+    default:
+        break;
     }
 
     Painting* painting = new Painting(level, pos, var8);

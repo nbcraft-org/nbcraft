@@ -1123,6 +1123,8 @@ bool Tile::shouldRenderFace(const LevelSource* pSrc, const TilePos& pos, Facing:
 	case Facing::UP:
 		if (m_aabb.max.y < 1.0f) return true;
 		break;
+	default:
+		break;
 	}
 
 	Tile* pTile = Tile::tiles[pSrc->getTile(pos)];
