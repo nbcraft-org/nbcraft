@@ -3987,9 +3987,6 @@
 			children = (
 				84EB09A02EE2CC86008FB007 /* geom */,
 				84EB09A82EE2CC86008FB007 /* models */,
-				84ED50000000000000000076 /* TextEditScreen.cpp */,
-				84ED50000000000000000077 /* TextEditScreen.hpp */,
-
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -3999,15 +3996,6 @@
 			children = (
 				840DD5C72AC810620006A435 /* ClientSideNetworkHandler.cpp */,
 				840DD5C82AC810620006A435 /* ClientSideNetworkHandler.hpp */,
-				84ED50000000000000000068 /* BoatModel.cpp */,
-				84ED50000000000000000069 /* BoatModel.hpp */,
-				84ED50000000000000000070 /* MinecartModel.cpp */,
-				84ED50000000000000000071 /* MinecartModel.hpp */,
-				84ED50000000000000000072 /* SignModel.cpp */,
-				84ED50000000000000000073 /* SignModel.hpp */,
-				84ED50000000000000000074 /* WolfModel.cpp */,
-				84ED50000000000000000075 /* WolfModel.hpp */,
-
 			);
 			path = network;
 			sourceTree = "<group>";
@@ -4424,48 +4412,6 @@
 				84ED50000000000000000006 /* PaintingType.hpp */,
 				84ED50000000000000000007 /* Wolf.cpp */,
 				84ED50000000000000000008 /* Wolf.hpp */,
-
-				84ED50000000000000000013 /* DetectorRailTile.cpp */,
-				84ED50000000000000000014 /* DetectorRailTile.hpp */,
-				84ED50000000000000000015 /* MobSpawnerTile.cpp */,
-				84ED50000000000000000016 /* MobSpawnerTile.hpp */,
-				84ED50000000000000000017 /* MovingPistonTile.cpp */,
-				84ED50000000000000000018 /* MovingPistonTile.hpp */,
-				84ED50000000000000000019 /* Mushroom.cpp */,
-				84ED50000000000000000020 /* Mushroom.hpp */,
-				84ED50000000000000000021 /* PistonBaseTile.cpp */,
-				84ED50000000000000000022 /* PistonBaseTile.hpp */,
-				84ED50000000000000000023 /* PistonHeadTile.cpp */,
-				84ED50000000000000000024 /* PistonHeadTile.hpp */,
-				84ED50000000000000000025 /* PortalTile.cpp */,
-				84ED50000000000000000026 /* PortalTile.hpp */,
-				84ED50000000000000000027 /* Rail.cpp */,
-				84ED50000000000000000028 /* Rail.hpp */,
-				84ED50000000000000000029 /* RailTile.cpp */,
-				84ED50000000000000000030 /* RailTile.hpp */,
-				84ED50000000000000000031 /* SignTile.cpp */,
-				84ED50000000000000000032 /* SignTile.hpp */,
-
-				84ED50000000000000000041 /* PortalParticle.cpp */,
-				84ED50000000000000000042 /* SplashParticle.cpp */,
-				84ED50000000000000000043 /* WaterDropParticle.cpp */,
-
-				84ED50000000000000000044 /* BoatItem.cpp */,
-				84ED50000000000000000045 /* BoatItem.hpp */,
-				84ED50000000000000000046 /* MinecartItem.cpp */,
-				84ED50000000000000000047 /* MinecartItem.hpp */,
-				84ED50000000000000000048 /* PaintingItem.cpp */,
-				84ED50000000000000000049 /* PaintingItem.hpp */,
-				84ED50000000000000000050 /* PistonItem.cpp */,
-				84ED50000000000000000051 /* PistonItem.hpp */,
-				84ED50000000000000000052 /* SaddleItem.cpp */,
-				84ED50000000000000000053 /* SaddleItem.hpp */,
-				84ED50000000000000000054 /* SignItem.cpp */,
-				84ED50000000000000000055 /* SignItem.hpp */,
-
-				84ED50000000000000000056 /* MapColor.cpp */,
-				84ED50000000000000000057 /* MapColor.hpp */,
-
 			);
 			path = entity;
 			sourceTree = "<group>";
@@ -4504,6 +4450,18 @@
 		840DD66F2AC810620006A435 /* item */ = {
 			isa = PBXGroup;
 			children = (
+				84ED50000000000000000044 /* BoatItem.cpp */,
+				84ED50000000000000000045 /* BoatItem.hpp */,
+				84ED50000000000000000046 /* MinecartItem.cpp */,
+				84ED50000000000000000047 /* MinecartItem.hpp */,
+				84ED50000000000000000048 /* PaintingItem.cpp */,
+				84ED50000000000000000049 /* PaintingItem.hpp */,
+				84ED50000000000000000050 /* PistonItem.cpp */,
+				84ED50000000000000000051 /* PistonItem.hpp */,
+				84ED50000000000000000052 /* SaddleItem.cpp */,
+				84ED50000000000000000053 /* SaddleItem.hpp */,
+				84ED50000000000000000054 /* SignItem.cpp */,
+				84ED50000000000000000055 /* SignItem.hpp */,
 				84B9D8972F3BE0A900FD67C4 /* ArmorItem.cpp */,
 				84B9D8962F3BE0A900FD67C4 /* ArmorItem.hpp */,
 				84E1C9DF2E7FDC72007D2F5D /* AuxTileItem.cpp */,
@@ -4569,6 +4527,8 @@
 		840DD67E2AC810620006A435 /* level */ = {
 			isa = PBXGroup;
 			children = (
+				84ED50000000000000000056 /* MapColor.cpp */,
+				84ED50000000000000000057 /* MapColor.hpp */,
 				840DD67F2AC810620006A435 /* Dimension.cpp */,
 				840DD6802AC810620006A435 /* Dimension.hpp */,
 				840DD6812AC810620006A435 /* Explosion.cpp */,
@@ -4711,6 +4671,9 @@
 		840DD6CE2AC810620006A435 /* particle */ = {
 			isa = PBXGroup;
 			children = (
+				84ED50000000000000000041 /* PortalParticle.cpp */,
+				84ED50000000000000000042 /* SplashParticle.cpp */,
+				84ED50000000000000000043 /* WaterDropParticle.cpp */,
 				840DD6CF2AC810620006A435 /* BubbleParticle.cpp */,
 				840DD6D02AC810620006A435 /* ExplodeParticle.cpp */,
 				8470AF3A2BE9B6FA00BCA54E /* FireworkParticle.cpp */,
@@ -4751,6 +4714,26 @@
 		840DD6E12AC810620006A435 /* tile */ = {
 			isa = PBXGroup;
 			children = (
+				84ED50000000000000000013 /* DetectorRailTile.cpp */,
+				84ED50000000000000000014 /* DetectorRailTile.hpp */,
+				84ED50000000000000000015 /* MobSpawnerTile.cpp */,
+				84ED50000000000000000016 /* MobSpawnerTile.hpp */,
+				84ED50000000000000000017 /* MovingPistonTile.cpp */,
+				84ED50000000000000000018 /* MovingPistonTile.hpp */,
+				84ED50000000000000000019 /* Mushroom.cpp */,
+				84ED50000000000000000020 /* Mushroom.hpp */,
+				84ED50000000000000000021 /* PistonBaseTile.cpp */,
+				84ED50000000000000000022 /* PistonBaseTile.hpp */,
+				84ED50000000000000000023 /* PistonHeadTile.cpp */,
+				84ED50000000000000000024 /* PistonHeadTile.hpp */,
+				84ED50000000000000000025 /* PortalTile.cpp */,
+				84ED50000000000000000026 /* PortalTile.hpp */,
+				84ED50000000000000000027 /* Rail.cpp */,
+				84ED50000000000000000028 /* Rail.hpp */,
+				84ED50000000000000000029 /* RailTile.cpp */,
+				84ED50000000000000000030 /* RailTile.hpp */,
+				84ED50000000000000000031 /* SignTile.cpp */,
+				84ED50000000000000000032 /* SignTile.hpp */,
 				840DD6E22AC810620006A435 /* BookshelfTile.cpp */,
 				840DD6E32AC810620006A435 /* BookshelfTile.hpp */,
 				840DD6E42AC810620006A435 /* Bush.cpp */,
@@ -4894,15 +4877,6 @@
 				840DD8472AC810630006A435 /* SDL */,
 				84AA8C802B32FB32003F5B82 /* stb_image */,
 				840DD84D2AC810630006A435 /* zlib */,
-				84ED50000000000000000033 /* MobSpawnerTileEntity.cpp */,
-				84ED50000000000000000034 /* MobSpawnerTileEntity.hpp */,
-				84ED50000000000000000035 /* PistonMovingTileEntity.cpp */,
-				84ED50000000000000000036 /* PistonMovingTileEntity.hpp */,
-				84ED50000000000000000037 /* RecordPlayerTileEntity.cpp */,
-				84ED50000000000000000038 /* RecordPlayerTileEntity.hpp */,
-				84ED50000000000000000039 /* SignTileEntity.cpp */,
-				84ED50000000000000000040 /* SignTileEntity.hpp */,
-
 			);
 			name = thirdparty;
 			path = ../../thirdparty;
@@ -5694,6 +5668,8 @@
 		84E022E82F2A0211003C8FFE /* inventory */ = {
 			isa = PBXGroup;
 			children = (
+				84ED50000000000000000076 /* TextEditScreen.cpp */,
+				84ED50000000000000000077 /* TextEditScreen.hpp */,
 				84E022E92F2A0211003C8FFE /* ChestScreen.cpp */,
 				84E022EA2F2A0211003C8FFE /* ChestScreen.hpp */,
 				844337192F405E1C00EB3115 /* ClassicCraftingScreen_Console.cpp */,
@@ -5754,6 +5730,14 @@
 		84E24C682FC969D9004C4D06 /* entity */ = {
 			isa = PBXGroup;
 			children = (
+				84ED50000000000000000033 /* MobSpawnerTileEntity.cpp */,
+				84ED50000000000000000034 /* MobSpawnerTileEntity.hpp */,
+				84ED50000000000000000035 /* PistonMovingTileEntity.cpp */,
+				84ED50000000000000000036 /* PistonMovingTileEntity.hpp */,
+				84ED50000000000000000037 /* RecordPlayerTileEntity.cpp */,
+				84ED50000000000000000038 /* RecordPlayerTileEntity.hpp */,
+				84ED50000000000000000039 /* SignTileEntity.cpp */,
+				84ED50000000000000000040 /* SignTileEntity.hpp */,
 				84E24C692FC969D9004C4D06 /* ChestTileEntity.cpp */,
 				84E24C6A2FC969D9004C4D06 /* ChestTileEntity.hpp */,
 				84E8FA162FEF616400D0669F /* DispenserTileEntity.cpp */,
@@ -5858,6 +5842,14 @@
 		84EB09A82EE2CC86008FB007 /* models */ = {
 			isa = PBXGroup;
 			children = (
+				84ED50000000000000000068 /* BoatModel.cpp */,
+				84ED50000000000000000069 /* BoatModel.hpp */,
+				84ED50000000000000000070 /* MinecartModel.cpp */,
+				84ED50000000000000000071 /* MinecartModel.hpp */,
+				84ED50000000000000000072 /* SignModel.cpp */,
+				84ED50000000000000000073 /* SignModel.hpp */,
+				84ED50000000000000000074 /* WolfModel.cpp */,
+				84ED50000000000000000075 /* WolfModel.hpp */,
 				84EB09A92EE2CC86008FB007 /* ChickenModel.cpp */,
 				84EB09AA2EE2CC86008FB007 /* ChickenModel.hpp */,
 				84EB09AB2EE2CC86008FB007 /* CowModel.cpp */,
