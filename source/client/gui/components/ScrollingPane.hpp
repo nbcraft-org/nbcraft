@@ -13,7 +13,7 @@ struct ScrollBar
 	{
 		FADE_STOPPED,
 		FADE_DISAPPEARING,
-		FADE_APPEARING,
+		FADE_APPEARING
 	};
 
 	ScrollBar()
