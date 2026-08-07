@@ -49,6 +49,11 @@ public:
 		return sqrtf(f);
 	}
 
+	static inline float lengthSqr2D(float dx, float dz)
+	{
+		return dx * dx + dz * dz;
+	}
+
 	template <typename T>
 	static int signum(T val)
 	{

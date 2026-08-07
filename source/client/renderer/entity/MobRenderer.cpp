@@ -197,7 +197,7 @@ void MobRenderer::renderName(const Mob& mob, const Vec3& pos)
 
 void MobRenderer::renderNameTag(const Mob& mob, const std::string& str, const Vec3& pos, int a)
 {
-	if (mob.distanceToSqr(m_pDispatcher->m_pCamera) > float(a * a))
+	if (Mth::lengthSqr2D(mob.m_pos.x - m_pDispatcher->m_pCamera->m_pos.x, mob.m_pos.z - m_pDispatcher->m_pCamera->m_pos.z) > float(a * a))
 		return;
 
 	Font* font = getFont();

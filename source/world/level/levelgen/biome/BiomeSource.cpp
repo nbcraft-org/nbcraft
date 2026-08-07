@@ -49,21 +49,22 @@ const Biome::Vector& BiomeSource::getBiomeBlock(Biome::Vector& biomes, const Til
 	// @PARITY-JAVA: Java uses 0.5882352941176471f here
 	m_noiseMap.getRegion(m_noises, pos.x, pos.z, c, c, 0.25f, 0.25f, 0.588f);
 
+	constexpr float noiseScale = 1.1f;
+	constexpr float noiseBias = 0.5f;
+	constexpr float temperatureInfluence = 0.01f;
+	constexpr float temperatureInfluenceInverse = 1.0f - temperatureInfluence;
+	constexpr float downfallInfluence = 0.002f;
+	constexpr float downfallInfluenceInverse = 1.0f - downfallInfluence;
+
 	int index = 0;
 
 	for (int i = 0; i < c; i++)
 	{
 		for (int j = 0; j < d; j++)
 		{
-			float d = m_noises[index] * 1.1f + 0.5f;
-			constexpr float temperatureInfluence = 0.01f;
-			constexpr float downfallInfluence = 0.002f;
-			float d1 = temperatureInfluence;
-			float d2 = 1.0f - d1;
-			float d3 = (m_temperatures[index] * 0.15f + 0.7f) * d2 + d * d1;
-			d1 = downfallInfluence;
-			d2 = 1.0f - d1;
-			float d4 = (m_downfalls[index] * 0.15f + 0.5f) * d2 + d * d1;
+			float d = m_noises[index] * noiseScale + noiseBias;
+			float d3 = (m_temperatures[index] * 0.15f + 0.7f) * temperatureInfluenceInverse + d * temperatureInfluence;
+			float d4 = (m_downfalls[index] * 0.15f + 0.5f) * downfallInfluenceInverse + d * downfallInfluence;
 			d3 = 1.0f - (1.0f - d3) * (1.0f - d3);
 
 			d3 = Mth::clamp(d3, 0.0f, 1.0f);
@@ -84,16 +85,19 @@ const std::vector<float>& BiomeSource::getTemperatureBlock(int a, int b, int c, 
 	// @PARITY-JAVA: Java uses 0.5882352941176471f here
 	m_noiseMap.getRegion(m_noises, a, b, c, d, 0.25f, 0.25f, 0.588f);
 
+	constexpr float noiseScale = 1.1f;
+	constexpr float noiseBias = 0.5f;
+	constexpr float temperatureInfluence = 0.01f;
+	constexpr float temperatureInfluenceInverse = 1.0f - temperatureInfluence;
+
 	int index = 0;
 
 	for (int i = 0; i < c; i++)
 	{
 		for (int j = 0; j < d; j++)
 		{
-			float d = m_noises[index] * 1.1f + 0.5f;
-			float d1 = 0.01f;
-			float d2 = 1.0f - d1;
-			float d3 = (m_temperatures[index] * 0.15f + 0.7f) * d2 + d * d1;
+			float d = m_noises[index] * noiseScale + noiseBias;
+			float d3 = (m_temperatures[index] * 0.15f + 0.7f) * temperatureInfluenceInverse + d * temperatureInfluence;
 			d3 = 1.0f - (1.0f - d3) * (1.0f - d3);
 			d3 = Mth::clamp(d3, 0.0f, 1.0f);
 

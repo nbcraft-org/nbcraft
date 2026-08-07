@@ -807,7 +807,7 @@ bool Entity::shouldRender(Vec3& camPos) const
 	if (m_bIsInvisible)
 		return false;
 
-	return shouldRenderAtSqrDistance(distanceToSqr(camPos));
+	return shouldRenderAtSqrDistance(Mth::lengthSqr2D(m_pos.x - camPos.x, m_pos.z - camPos.z));
 }
 
 bool Entity::shouldRenderAtSqrDistance(float distSqr) const

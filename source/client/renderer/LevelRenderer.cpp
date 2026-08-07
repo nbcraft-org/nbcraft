@@ -1585,7 +1585,7 @@ void LevelRenderer::addParticle(const std::string& name, const Vec3& pos, const 
 	if (name == "explodeColor")
 		maxDist = 16384.0f;
 
-	if (m_pMinecraft->m_pCameraEntity->distanceToSqr_inline(pos) > maxDist)
+	if (Mth::lengthSqr2D(m_pMinecraft->m_pCameraEntity->m_pos.x - pos.x, m_pMinecraft->m_pCameraEntity->m_pos.z - pos.z) > maxDist)
 		return;
 
 	ParticleEngine* pe = m_pMinecraft->m_pParticleEngine;
