@@ -31,7 +31,7 @@ void LiquidTileStatic::neighborChanged(Level* level, const TilePos& pos, TileID 
 void LiquidTileStatic::setDynamic(Level* level, const TilePos& pos)
 {
 	level->m_bNoNeighborUpdate = true;
-	level->setTileAndDataNoUpdate(pos, m_ID - 1, level->getData(pos));
+	level->setTileAndDataNoUpdate(pos, FullTile(m_ID - 1, level->getData(pos)));
 	level->setTilesDirty(pos, pos);
 	level->addToTickNextTick(pos, m_ID - 1, getTickDelay());
 	level->m_bNoNeighborUpdate = false;

@@ -115,7 +115,7 @@ bool ButtonTile::checkCanSurvive(Level* level, const TilePos& pos)
 	return false;
 }
 
-void ButtonTile::updateShape(const LevelSource* level, const TilePos& pos)
+void ButtonTile::updateShape(const TileSource* level, const TilePos& pos)
 {
 	TileData data = level->getData(pos);
 	int var6 = data & 7;
@@ -220,7 +220,7 @@ void ButtonTile::onRemove(Level* level, const TilePos& pos)
 	Tile::onRemove(level, pos);
 }
 
-int ButtonTile::getSignal(const LevelSource* level, const TilePos& pos, Facing::Name face) const
+int ButtonTile::getSignal(const TileSource* level, const TilePos& pos, Facing::Name face) const
 {
 	return (level->getData(pos) & 8) > 0;
 }

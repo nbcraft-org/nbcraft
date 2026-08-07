@@ -21,7 +21,7 @@ public:
     AABB* getAABB(const Level*, const TilePos& pos) override;
     eRenderShape getRenderShape() const override;
     int getTexture(Facing::Name face, TileData data) const override;
-    void updateShape(const LevelSource* level, const TilePos& pos) override;
+    void updateShape(const TileSource* level, const TilePos& pos) override;
     void setPlacedBy(Level*, const TilePos& pos, Mob*) override;
     void onPlace(Level*, const TilePos& pos) override;
 

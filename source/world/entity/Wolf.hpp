@@ -31,7 +31,6 @@ public:
 	std::string getAmbientSound() override { return isAngry() ? "mob.wolf.growl" : (m_random.nextInt(3) == 0 ? (isTamed() && getWolfHealth() < 10 ? "mob.wolf.whine" : "mob.wolf.panting") : "mob.wolf.bark"); };
 	std::string getDeathSound() const override { return "mob.wolf.death"; }
 	std::string getHurtSound() const override { return "mob.wolf.hurt"; }
-	int getWolfHealth() const { return m_entityData.get<int>(DATA_WOLF_HEALTH); }
 	int getDeathLoot() const override;
 	int getMaxHealth() const override { return 20; }
 	int getMaxSpawnClusterSize() const override { return 8; }
@@ -55,6 +54,7 @@ public:
 	float getHeadRollAngle(float) const;
 	float getTailAngle() const;
 	bool isShaking() const;
+	int getWolfHealth() const { return m_entityData.get<int>(DATA_WOLF_HEALTH); }
 	std::string getOwner() const;
 	void setOwner(std::string);
 	bool isAngry() const;

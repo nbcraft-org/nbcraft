@@ -20,10 +20,10 @@ public:
 
 public:
 	int getResource(TileData, Random*) const override;
-	int getColor(const LevelSource*, const TilePos& pos) const override;
+	int getColor(const TileSource*, const TilePos& pos) const override;
 	int getColor(Facing::Name face, TileData) const override;
 	int getTexture(Facing::Name face) const override;
-	int getTexture(const LevelSource*, const TilePos& pos, Facing::Name face) const override;
+	int getTexture(const TileSource*, const TilePos& pos, Facing::Name face) const override;
 	void tick(Level*, const TilePos& pos, Random*) override;
 
 public:

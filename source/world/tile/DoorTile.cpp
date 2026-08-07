@@ -146,7 +146,7 @@ void DoorTile::setShape(int dir)
 	}
 }
 
-void DoorTile::updateShape(const LevelSource* level, const TilePos& pos)
+void DoorTile::updateShape(const TileSource* level, const TilePos& pos)
 {
 	setShape(getDir(level->getData(pos)));
 }

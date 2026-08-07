@@ -27,7 +27,7 @@ public:
 	bool isCubeShaped() const override;
 	bool isSolidRender() const override;
 	bool mayPlace(const Level*, const TilePos& pos) const override;
-	void updateShape(const LevelSource*, const TilePos& pos) override;
+	void updateShape(const TileSource*, const TilePos& pos) override;
 	void neighborChanged(Level*, const TilePos& pos, TileID newTile) override;
 
 	bool blocksLight() const;

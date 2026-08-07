@@ -86,11 +86,11 @@ void TileRenderer::_init()
 	field_B7 = false;
 }
 
-TileRenderer::TileRenderer(Tesselator& tessellator, LevelSource* pLevelSource)
+TileRenderer::TileRenderer(Tesselator& tessellator, TileSource* pTileSource)
 	: m_tessellator(tessellator)
 {
 	_init();
-	m_pTileSource = pLevelSource;
+	m_pTileSource = pTileSource;
 }
 
 // tex1 should be mandatory to keep opengl happy as there are no explicit padding available in glsl
@@ -316,7 +316,7 @@ void TileRenderer::renderPistonFace(const AABB& aabb, float bright, float offY, 
 		tex = m_fixedTexture;
 
 	int texX = (tex & 15) << 4;
-	const int texY = tex & 240;
+	int texY = tex & 240;
 	Tesselator& t = Tesselator::instance;
 	static constexpr float C_RATIO = 1.0f / 256.0f;
 	float u1 = texX * C_RATIO;
@@ -2272,46 +2272,46 @@ bool TileRenderer::tesselateInWorld(Tile* tile, const TilePos& pos, int a)
 bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusion(Tile* a2, const TilePos& pos, float r, float g, float b)
 {
 	float v12; // r0
-	LevelSource* v13; // r1
+	TileSource* v13; // r1
 	float v14; // r0
-	LevelSource* v15; // r1
+	TileSource* v15; // r1
 	float v16; // r0
-	LevelSource* v17; // r1
+	TileSource* v17; // r1
 	float v18; // r0
-	LevelSource* v19; // r1
+	TileSource* v19; // r1
 	float v20; // r0
-	LevelSource* v21; // r1
+	TileSource* v21; // r1
 	float v22; // r0
-	LevelSource* v23; // r1
+	TileSource* v23; // r1
 	char v24; // r3
-	LevelSource* v25; // r0
+	TileSource* v25; // r0
 	char v26; // r3
-	LevelSource* v27; // r0
+	TileSource* v27; // r0
 	char v28; // r3
-	LevelSource* v29; // r0
+	TileSource* v29; // r0
 	char v30; // r3
-	LevelSource* v31; // r0
+	TileSource* v31; // r0
 	char v32; // r3
-	LevelSource* v33; // r0
+	TileSource* v33; // r0
 	char v34; // r3
-	LevelSource* v35; // r0
+	TileSource* v35; // r0
 	char v36; // r3
-	LevelSource* v37; // r0
+	TileSource* v37; // r0
 	char v38; // r3
-	LevelSource* v39; // r0
+	TileSource* v39; // r0
 	char v40; // r3
-	LevelSource* v41; // r0
+	TileSource* v41; // r0
 	char v42; // r3
-	LevelSource* v43; // r0
+	TileSource* v43; // r0
 	char v44; // r3
-	LevelSource* v45; // r0
+	TileSource* v45; // r0
 	int v46; // r8
 	float v47; // r0
-	LevelSource* v48; // r1
+	TileSource* v48; // r1
 	float v49; // r0
-	LevelSource* v50; // r1
+	TileSource* v50; // r1
 	float v51; // r0
-	LevelSource* v52; // r1
+	TileSource* v52; // r1
 	float v53; // r0
 	bool v54; // r3
 	float v55; // s12
@@ -2327,15 +2327,15 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusion(Tile* a2, const Ti
 	float v65; // s14
 	float v66; // s15
 	float v67; // s12
-	LevelSource* v68; // r1
+	TileSource* v68; // r1
 	int v69; // r8
 	int v70; // r0
 	float v71; // r0
-	LevelSource* v72; // r1
+	TileSource* v72; // r1
 	float v73; // r0
-	LevelSource* v74; // r1
+	TileSource* v74; // r1
 	float v75; // r0
-	LevelSource* v76; // r1
+	TileSource* v76; // r1
 	float v77; // r0
 	bool v78; // r3
 	float v79; // s13
@@ -2349,14 +2349,14 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusion(Tile* a2, const Ti
 	float v87; // s15
 	float v88; // s13
 	float v89; // s14
-	LevelSource* v90; // r1
+	TileSource* v90; // r1
 	int v91; // r0
 	float v92; // r0
-	LevelSource* v93; // r1
+	TileSource* v93; // r1
 	float v94; // r0
-	LevelSource* v95; // r1
+	TileSource* v95; // r1
 	float v96; // r0
-	LevelSource* v97; // r1
+	TileSource* v97; // r1
 	float v98; // r0
 	bool v99; // r3
 	float v100; // s13
@@ -2374,14 +2374,14 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusion(Tile* a2, const Ti
 	float v112; // s15
 	float v113; // s14
 	float v114; // s12
-	LevelSource* v115; // r1
+	TileSource* v115; // r1
 	int v116; // r0
 	float v117; // r0
-	LevelSource* v118; // r1
+	TileSource* v118; // r1
 	float v119; // r0
-	LevelSource* v120; // r1
+	TileSource* v120; // r1
 	float v121; // r0
-	LevelSource* v122; // r1
+	TileSource* v122; // r1
 	float v123; // r0
 	bool v124; // r3
 	float v125; // s15
@@ -2397,14 +2397,14 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusion(Tile* a2, const Ti
 	float v135; // s15
 	float v136; // s14
 	float v137; // s12
-	LevelSource* v138; // r1
+	TileSource* v138; // r1
 	int v139; // r0
 	float v140; // r0
-	LevelSource* v141; // r1
+	TileSource* v141; // r1
 	float v142; // r0
-	LevelSource* v143; // r1
+	TileSource* v143; // r1
 	float v144; // r0
-	LevelSource* v145; // r1
+	TileSource* v145; // r1
 	float v146; // r0
 	bool v147; // r3
 	float v148; // s12
@@ -2422,14 +2422,14 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusion(Tile* a2, const Ti
 	float v160; // s15
 	float v161; // s14
 	float v162; // s12
-	LevelSource* v163; // r1
+	TileSource* v163; // r1
 	int v164; // r0
 	float v165; // r0
-	LevelSource* v166; // r1
+	TileSource* v166; // r1
 	float v167; // r0
-	LevelSource* v168; // r1
+	TileSource* v168; // r1
 	float v169; // r0
-	LevelSource* v170; // r1
+	TileSource* v170; // r1
 	float v171; // r0
 	bool v172; // r3
 	float v173; // r0
@@ -2451,7 +2451,7 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusion(Tile* a2, const Ti
 	float v189; // s14
 	float v190; // s15
 	float v191; // s12
-	LevelSource* v192; // r1
+	TileSource* v192; // r1
 	int v193; // r0
 	int result; // r0
 	bool v195; // r3
@@ -3610,7 +3610,7 @@ bool TileRenderer::useAmbientOcclusion() const
 	return Minecraft::useAmbientOcclusion;
 }
 
-void TileRenderer::setTileSource(LevelSource* tileSource)
+void TileRenderer::setTileSource(TileSource* tileSource)
 {
 	m_pTileSource = tileSource;
 }

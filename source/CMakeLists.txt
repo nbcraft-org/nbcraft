@@ -367,7 +367,9 @@ add_library(nbcraft-core STATIC
     world/level/Material.cpp
     world/level/MapColor.cpp
     world/level/LevelListener.cpp
-    world/level/TickNextTickData.cpp
+    world/level/TileSource.cpp
+    world/level/TileTickingQueue.cpp
+    world/level/Brightness.cpp
     world/level/TilePos.cpp
     world/level/Explosion.cpp
     world/level/storage/LevelStorageSource.cpp
@@ -378,7 +380,6 @@ add_library(nbcraft-core STATIC
     world/level/storage/LevelStorage.cpp
     world/level/storage/MemoryLevelStorage.cpp
     world/level/storage/ChunkStorage.cpp
-    world/level/storage/LevelSource.cpp
     world/level/storage/MemoryChunkStorage.cpp
     world/level/storage/ExternalFileLevelStorageSource.cpp
     world/level/path/Node.cpp

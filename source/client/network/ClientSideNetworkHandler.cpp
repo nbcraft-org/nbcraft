@@ -471,7 +471,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, Explode
 {
 	if (!m_pLevel) return;
 
-	Explosion explosion(m_pLevel, nullptr, pkt->m_pos, pkt->m_range);
+	Explosion explosion(*m_pLevel, nullptr, pkt->m_pos, pkt->m_range);
 	explosion.addParticles(); // @TODO: have addParticles pick random spots to throw particles
 }
 
@@ -509,7 +509,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, ChunkDa
 		return;
 	}
 
-	LevelChunk* pChunk = m_pLevel->getChunkSource()->create(pChunkDataPkt->m_chunkPos);
+	LevelChunk* pChunk = m_pLevel->getChunkSource().create(pChunkDataPkt->m_chunkPos);
 	if (!pChunk || pChunk->isEmpty())
 	{
 		LOG_E("Failed to find write-able chunk");
@@ -1037,5 +1037,5 @@ void ClientSideNetworkHandler::flushAllBufferedUpdates()
 
 void ClientSideNetworkHandler::handleBlockUpdate(const BlockUpdate& u)
 {
-	m_pLevel->setTileAndData(u.pos, Tile::TransformToValidBlockId(u.tile), u.data);
+	m_pLevel->setTileAndData(u.pos, FullTile(Tile::TransformToValidBlockId(u.tile), u.data));
 }

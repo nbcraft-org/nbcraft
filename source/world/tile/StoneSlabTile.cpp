@@ -85,11 +85,11 @@ void StoneSlabTile::onPlace(Level* level, const TilePos& pos)
 	if (tileHereData == level->getData(pos.below()) && tileBelow == Tile::stoneSlabHalf->m_ID)
 	{
 		level->setTile(pos, TILE_AIR);
-		level->setTileAndData(pos.below(), Tile::stoneSlab->m_ID, tileHereData);
+		level->setTileAndData(pos.below(), FullTile(Tile::stoneSlab->m_ID, tileHereData));
 	}
 }
 
-bool StoneSlabTile::shouldRenderFace(const LevelSource* level, const TilePos& pos, Facing::Name face) const
+bool StoneSlabTile::shouldRenderFace(const TileSource* level, const TilePos& pos, Facing::Name face) const
 {
 	if (this != Tile::stoneSlabHalf)
 		// @BUG: Missing return? In JE this is true too

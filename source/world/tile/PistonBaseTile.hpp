@@ -23,13 +23,13 @@ private:
 
 public:
 	int getTexture(Facing::Name side, TileData meta) const override;
-	int getTexture(const LevelSource*, const TilePos& pos, Facing::Name face) const override;
+	int getTexture(const TileSource*, const TilePos& pos, Facing::Name face) const override;
 	eRenderShape getRenderShape() const override;
 	void triggerEvent(Level*, const TileEvent& event) override;
 	void setPlacedBy(Level*, const TilePos& pos, Mob*) override;
 	void neighborChanged(Level*, const TilePos& pos, TileID tile) override;
 	void onPlace(Level*, const TilePos& pos) override;
-	void updateShape(const LevelSource*, const TilePos&) override;
+	void updateShape(const TileSource*, const TilePos&) override;
 	void updateDefaultShape() override;
 	void addAABBs(const Level* level, const TilePos& pos, const AABB* aabb, std::vector<AABB>& out) override;
 
@@ -38,8 +38,8 @@ public:
 
 	int getFaceTexture() const;
 
-	static Facing::Name getFacing(int data) { return (Facing::Name)(data & 7); }
-	static bool isExtended(int data) { return (data & 8) != 0; }
+	static Facing::Name getFacing(TileData data) { return (Facing::Name)(data & 7); }
+	static bool isExtended(TileData data) { return (data & 8) != 0; }
 
 private:
 	bool m_bIsSticky;

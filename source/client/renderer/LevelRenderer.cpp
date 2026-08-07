@@ -27,6 +27,12 @@
 #include "Fog.hpp"
 #include "Lighting.hpp"
 
+namespace
+{
+	constexpr int C_RAIN_RENDER_DIST_FAST = 8;
+	constexpr int C_RAIN_RENDER_DIST_FANCY = 16;
+}
+
 TerrainLayer renderLayerToTerrainLayerMap[Tile::RENDER_LAYERS_COUNT] = {
 	/*RENDER_LAYER_DOUBLE_SIDED*/               TERRAIN_LAYER_DOUBLE_SIDED,
 	/*RENDER_LAYER_BLEND*/                      TERRAIN_LAYER_BLEND,

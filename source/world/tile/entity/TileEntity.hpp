@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "TileEntityType.hpp"
 #include "world/level/TilePos.hpp"
 #include "world/phys/Vec3.hpp"
@@ -11,6 +13,9 @@ class Packet;
 
 class TileEntity
 {
+public:
+	typedef std::vector<TileEntity*> Vector;
+
 public:
     TileEntity();
     virtual ~TileEntity();

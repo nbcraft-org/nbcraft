@@ -146,7 +146,7 @@ void CropsTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
 }
 
 
-void CropsTile::updateShape(const LevelSource* level, const TilePos& pos)
+void CropsTile::updateShape(const TileSource* level, const TilePos& pos)
 {
 	setShape(0, 0, 0, 1, 0.25f, 1);
 }

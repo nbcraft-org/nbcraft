@@ -390,9 +390,14 @@ void ItemInHandRenderer::tick()
 	ItemStack& item = m_pMinecraft->m_pLocalPlayer->m_pInventory->getSelectedItem();
 
     bool bSameItem = (m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedStackId == m_lastSlot &&
+                      item.isEmpty() == m_selectedItem.isEmpty() &&
                       item.getId() == m_selectedItem.getId() &&
-                      item.getAuxValue() == m_selectedItem.getAuxValue() &&
-                      item.isEmpty() == m_selectedItem.isEmpty());
+                      item.getAuxValue() == m_selectedItem.getAuxValue());
+
+    // Don't swap animation when there's nothing to swap to
+    if (item.isEmpty() && m_selectedItem.isEmpty())
+        bSameItem = true;
+
 	float b = bSameItem ? 1.0f : 0.0f;
 
 	float a = b - m_height;

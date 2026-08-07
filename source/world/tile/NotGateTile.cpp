@@ -75,7 +75,7 @@ void NotGateTile::onRemove(Level* level, const TilePos& pos)
 	}
 }
 
-int NotGateTile::getSignal(const LevelSource* level, const TilePos& pos, Facing::Name face) const
+int NotGateTile::getSignal(const TileSource* level, const TilePos& pos, Facing::Name face) const
 {
 	if (!m_bOn)
 		return false;
@@ -141,7 +141,7 @@ void NotGateTile::tick(Level* level, const TilePos& pos, Random* random)
 	{
 		if (neighborSignal)
 		{
-			level->setTileAndData(pos, Tile::notGate_off->m_ID, level->getData(pos));
+			level->setTileAndData(pos, FullTile(Tile::notGate_off->m_ID, level->getData(pos)));
 			if (isToggledTooFrequently(level, pos, true))
 			{
 				level->playSound(pos + 0.5f, "random.fizz", 0.5f, 2.6f + (level->m_random.nextFloat() - level->m_random.nextFloat()) * 0.8f);
@@ -158,7 +158,7 @@ void NotGateTile::tick(Level* level, const TilePos& pos, Random* random)
 	}
 	else if (!neighborSignal && !isToggledTooFrequently(level, pos, false))
 	{
-		level->setTileAndData(pos, Tile::notGate_on->m_ID, level->getData(pos));
+		level->setTileAndData(pos, FullTile(Tile::notGate_on->m_ID, level->getData(pos)));
 	}
 }
 

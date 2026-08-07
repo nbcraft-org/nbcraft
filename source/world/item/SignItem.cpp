@@ -24,7 +24,7 @@ bool SignItem::useOn(ItemStack* stack, Player* player, Level* level, const TileP
 
     TileID tile = (face == Facing::UP) ? Tile::sign->m_ID : Tile::wallSign->m_ID;
     TileData data = (face == Facing::UP) ? (TileData)(Mth::floor(((player->m_rot.yaw + 180.0f) * 16.0f / 360.0f) + 0.5) & 15) : (TileData)face;
-    level->setTileAndData(tp, tile, data);
+    level->setTileAndData(tp, FullTile(tile, data));
 
     --stack->m_count;
     SignTileEntity* sign = dynamic_cast<SignTileEntity*>(level->getTileEntity(tp));

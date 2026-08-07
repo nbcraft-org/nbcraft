@@ -84,7 +84,7 @@ void CactusTile::tick(Level* level, const TilePos& pos, Random* random)
 	}
 }
 
-void CactusTile::updateShape(const LevelSource* level, const TilePos& pos)
+void CactusTile::updateShape(const TileSource* level, const TilePos& pos)
 {
 	setShape(0.0625, 0, 0.0625, 0.9375, 1, 0.9375);
 }

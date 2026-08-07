@@ -24,7 +24,7 @@ bool VegetationFeature::place(Level* level, Random* random, const TilePos& pos)
 				tp.z = bPos.z + random->nextInt(8) - random->nextInt(8);
 				if (level->isEmptyTile(tp) && Tile::tiles[m_ID]->canSurvive(level, tp))
 				{
-					if (m_data) level->setTileAndDataNoUpdate(tp, m_ID, m_data);
+					if (m_data) level->setTileAndDataNoUpdate(tp, FullTile(m_ID, m_data));
 					else level->setTileNoUpdate(tp, m_ID);
 				}
 			}

@@ -20,7 +20,7 @@ public:
 	int getResource(TileData, Random*) const override;
 	void spawnResources(Level*, const TilePos& pos, TileData, float) override;
 	AABB* getAABB(const Level*, const TilePos& pos) override;
-	void updateShape(const LevelSource*, const TilePos&) override;
+	void updateShape(const TileSource*, const TilePos&) override;
 	TileEntity* newTileEntity() override;
 
 	AABB* moveByPositionAndProgress(const Level*, const TilePos& pos, TileID id, float progress, Facing::Name dir);

@@ -65,7 +65,7 @@ void TopSnowTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
 	checkCanSurvive(level, pos);
 }
 
-bool TopSnowTile::shouldRenderFace(const LevelSource* level, const TilePos& pos, Facing::Name face) const
+bool TopSnowTile::shouldRenderFace(const TileSource* level, const TilePos& pos, Facing::Name face) const
 {
 	if (face == Facing::UP)
 		return true;

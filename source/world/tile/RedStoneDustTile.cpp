@@ -349,7 +349,7 @@ int RedStoneDustTile::getResource(TileData data, Random* random) const
 	return Item::redStone->m_itemID;
 }
 
-int RedStoneDustTile::getColor(const LevelSource* source, const TilePos& pos) const
+int RedStoneDustTile::getColor(const TileSource* source, const TilePos& pos) const
 {
 	TileData data = source->getData(pos);
 	float bright = getBrightness(source, pos);
@@ -383,7 +383,7 @@ int RedStoneDustTile::getDirectSignal(const Level* level, const TilePos& pos, Fa
 	return !m_bShouldSignal ? 0 : getSignal(level, pos, face);
 }
 
-int RedStoneDustTile::getSignal(const LevelSource* level, const TilePos& pos, Facing::Name face) const
+int RedStoneDustTile::getSignal(const TileSource* level, const TilePos& pos, Facing::Name face) const
 {
 	if (!m_bShouldSignal)
 	{
@@ -467,7 +467,7 @@ void RedStoneDustTile::animateTick(Level* level, const TilePos& pos, Random* ran
 	}
 }
 
-bool RedStoneDustTile::shouldConnectTo(const LevelSource* level, const TilePos& pos)
+bool RedStoneDustTile::shouldConnectTo(const TileSource* level, const TilePos& pos)
 {
 	int var4 = level->getTile(pos);
 	return var4 == Tile::redStoneDust->m_ID ? true : (var4 == 0 ? false : Tile::tiles[var4]->isSignalSource());

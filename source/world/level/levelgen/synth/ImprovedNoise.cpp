@@ -8,10 +8,14 @@
 
 #include "ImprovedNoise.hpp"
 
-const int ImprovedNoise::field_4296_d[12][3] = { {1, 1, 0}, {-1, 1, 0}, {1, -1, 0}, {-1, -1, 0}, {1, 0, 1}, {-1, 0, 1}, {1, 0, -1}, {-1, 0, -1}, {0, 1, 1}, {0, -1, 1}, {0, 1, -1}, {0, -1, -1} };
-
-const float ImprovedNoise::field_4294_f = 0.3660254f;
-const float ImprovedNoise::field_4293_g = 0.2113249f;
+namespace
+{
+	// 0.5f * (Mth::sqrt(3.0f) - 1.0f)
+	constexpr float field_4294_f = 0.3660254f;
+	// (3.0f - Mth::sqrt(3.0f)) / 6.0f
+	constexpr float field_4293_g = 0.2113249f;
+	constexpr int field_4296_d[12][3] = { {1, 1, 0}, {-1, 1, 0}, {1, -1, 0}, {-1, -1, 0}, {1, 0, 1}, {-1, 0, 1}, {1, 0, -1}, {-1, 0, -1}, {0, 1, 1}, {0, -1, 1}, {0, 1, -1}, {0, -1, -1} };
+}
 
 float ImprovedNoise::func_4156_a(const int* var0, float var1, float var3)
 {

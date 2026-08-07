@@ -34,7 +34,6 @@ public:
 
 	bool isPickable() const override { return true; }
 
-public:
 	int m_dir;
 	TilePos m_tilePos;
 	int m_paintingType;

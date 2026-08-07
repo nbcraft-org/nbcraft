@@ -129,10 +129,6 @@ constexpr int C_MIN_Y = 0, C_MAX_Y = 128;
 // 9 chunks around a player things will tick
 #define C_TICK_DISTANCE_CHKS (9)
 
-// weather render distance per graphics mode
-#define C_RAIN_RENDER_DIST_FANCY (10)
-#define C_RAIN_RENDER_DIST_FAST (5)
-
 // note: bunch of these are unimplemented.
 enum eTileID
 {

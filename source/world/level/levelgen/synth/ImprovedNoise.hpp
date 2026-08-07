@@ -41,11 +41,6 @@ public:
 	float m_offsetY;
 	float m_offsetZ;
 	int m_permutation[512];
-	// 0.5f * (Mth::sqrt(3.0f) - 1.0f)
-	static const float field_4294_f;
-	// (3.0f - Mth::sqrt(3.0f)) / 6.0f
-	static const float field_4293_g;
-	static const int field_4296_d[12][3];
 	static float func_4156_a(const int* var0, float var1, float var3);
 };
 

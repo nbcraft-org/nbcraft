@@ -8,7 +8,7 @@ public:
 	CakeTile(int id, int texture);
 
 public:
-	void updateShape(const LevelSource*, const TilePos& pos) override;
+	void updateShape(const TileSource*, const TilePos& pos) override;
 	void updateDefaultShape() override;
 	AABB* getAABB(const Level* pLevel, const TilePos& pos) override;
 	AABB getTileAABB(const Level* pLevel, const TilePos& pos) override;

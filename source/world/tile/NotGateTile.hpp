@@ -21,7 +21,7 @@ public:
 	int getTickDelay() const override;
 	void onPlace(Level*, const TilePos& pos) override;
 	void onRemove(Level*, const TilePos& pos) override;
-	int getSignal(const LevelSource*, const TilePos& pos, Facing::Name face) const override;
+	int getSignal(const TileSource*, const TilePos& pos, Facing::Name face) const override;
 	void tick(Level*, const TilePos& pos, Random*) override;
 	void neighborChanged(Level*, const TilePos& pos, TileID tile) override;
 	int getDirectSignal(const Level*, const TilePos& pos, Facing::Name face) const override;
