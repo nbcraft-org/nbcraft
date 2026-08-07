@@ -394,7 +394,7 @@ void ItemInHandRenderer::tick()
                       item.getId() == m_selectedItem.getId() &&
                       item.getAuxValue() == m_selectedItem.getAuxValue());
 
-	// Don't swap animation when there's nothing to swap to
+	// Don't swap when there's nothing to swap to
 	if (item.isEmpty() && m_selectedItem.isEmpty())
 	{
 		bSameItem = true;
