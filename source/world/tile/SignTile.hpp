@@ -12,7 +12,7 @@ public:
 	bool isCubeShaped() const override;
 	virtual AABB* getAABB(const Level*, const TilePos& pos) override;
 	eRenderShape getRenderShape() const override;
-	void updateShape(const LevelSource* level, const TilePos& pos) override;
+	void updateShape(const TileSource* level, const TilePos& pos) override;
 	int getResource(TileData, Random*) const override;
 	bool hasTileEntity() const override;
 	TileEntity* newTileEntity() override;

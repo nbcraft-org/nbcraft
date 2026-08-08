@@ -10,7 +10,7 @@ public:
 public:
 	int getResource(TileData, Random*) const override;
 	bool isValidGrowTile(const TileID tile) const;
-	int getColor(const LevelSource*, const TilePos& pos) const override;
+	int getColor(const TileSource*, const TilePos& pos) const override;
 	int getColor(Facing::Name face, TileData) const override;
 	int getTexture(Facing::Name, TileData data) const override;
 	eRenderShape getRenderShape() const override;

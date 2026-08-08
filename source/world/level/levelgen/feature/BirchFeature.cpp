@@ -88,7 +88,7 @@ bool BirchFeature::place(Level* level, Random* random, const TilePos& pos)
 			{
                 if ((abs(tp.x - pos.x) != c1 || abs(tp.z - pos.z) != c1 || (random->nextInt(2) != 0 && diff != 0)) && !Tile::solid[level->getTile(TilePos(tp.x, i, tp.z))])
 				{
-					level->setTileAndDataNoUpdate(TilePos(tp.x, i, tp.z), Tile::leaves->m_ID, 2);
+					level->setTileAndDataNoUpdate(TilePos(tp.x, i, tp.z), FullTile(Tile::leaves->m_ID, 2));
 				}
 			}
 		}
@@ -101,7 +101,7 @@ bool BirchFeature::place(Level* level, Random* random, const TilePos& pos)
 		if (tile && tile != Tile::leaves->m_ID)
 			continue;
 
-		level->setTileAndDataNoUpdate(TilePos(pos.x, pos.y + i, pos.z), Tile::treeTrunk->m_ID, 2);
+		level->setTileAndDataNoUpdate(TilePos(pos.x, pos.y + i, pos.z), FullTile(Tile::treeTrunk->m_ID, 2));
 	}
 
 	return true;

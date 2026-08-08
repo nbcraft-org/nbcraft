@@ -23,7 +23,7 @@ public:
 	int getResourceCount(Random*) const override;
 	bool mayPlace(const Level*, const TilePos& pos) const override;
 	void neighborChanged(Level*, const TilePos& pos, TileID tile) override;
-	bool shouldRenderFace(const LevelSource*, const TilePos& pos, Facing::Name face) const override;
+	bool shouldRenderFace(const TileSource*, const TilePos& pos, Facing::Name face) const override;
 	void tick(Level*, const TilePos& pos, Random*) override;
 	void playerDestroy(Level*, Player*, const TilePos& pos, TileData data) override;
 

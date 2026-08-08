@@ -13,7 +13,7 @@ public:
 	eRenderShape getRenderShape() const override;
 	void tick(Level*, const TilePos& pos, Random*) override;
 	int getTexture(Facing::Name face, TileData data) const override;
-	void updateShape(const LevelSource* level, const TilePos& pos) override;
+	void updateShape(const TileSource* level, const TilePos& pos) override;
 	void spawnResources(Level*, const TilePos& pos, TileData data) override;
 	void neighborChanged(Level* level, const TilePos& pos, TileID tile);
 

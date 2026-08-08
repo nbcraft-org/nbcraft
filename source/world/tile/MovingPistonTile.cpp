@@ -85,7 +85,7 @@ AABB* MovingPistonTile::getAABB(const Level* level, const TilePos& pos)
     return nullptr;
 }
 
-void MovingPistonTile::updateShape(const LevelSource* level, const TilePos& pos)
+void MovingPistonTile::updateShape(const TileSource* level, const TilePos& pos)
 {
     PistonMovingTileEntity* piston = dynamic_cast<PistonMovingTileEntity*>(level->getTileEntity(pos));
     if (piston) {

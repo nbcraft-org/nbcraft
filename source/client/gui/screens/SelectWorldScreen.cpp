@@ -52,7 +52,7 @@ void SelectWorldScreen::init()
 	SAFE_DELETE(m_pWorldSelectionList);
 
 	m_pWorldSelectionList = new WorldSelectionList(m_pMinecraft, m_width, m_height);
-	loadLevelSource();
+	loadTileSource();
 	m_pWorldSelectionList->commit();
 
 	m_btnDelete.m_yPos   = m_btnBack.m_yPos   = m_btnCreateNew.m_yPos   = m_height - 28;
@@ -270,7 +270,7 @@ std::string SelectWorldScreen::getUniqueLevelName(const std::string& in)
 	return out;
 }
 
-void SelectWorldScreen::loadLevelSource()
+void SelectWorldScreen::loadTileSource()
 {
 	m_pWorldSelectionList->m_items.clear();
 

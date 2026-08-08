@@ -48,7 +48,7 @@ void PistonHeadTile::neighborChanged(Level* level, const TilePos& pos, TileID ti
 		Tile::tiles[ot]->neighborChanged(level, tp, tile);
 }
 
-void PistonHeadTile::updateShape(const LevelSource* source, const TilePos& pos)
+void PistonHeadTile::updateShape(const TileSource* source, const TilePos& pos)
 {
 	TileData data = source->getData(pos);
 	switch (getDirection(data))

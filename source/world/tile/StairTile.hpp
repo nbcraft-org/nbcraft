@@ -24,11 +24,11 @@ public:
 	// Just overloads to forward to parent tile.
 	void addLights(Level*, const TilePos& pos) override;
 	void animateTick(Level*, const TilePos& pos, Random*) override;
-	void updateShape(const LevelSource*, const TilePos& pos) override;
-	float getBrightness(const LevelSource*, const TilePos& pos) const override;
+	void updateShape(const TileSource*, const TilePos& pos) override;
+	float getBrightness(const TileSource*, const TilePos& pos) const override;
 	int getTexture(Facing::Name face) const override;
 	int getTexture(Facing::Name face, TileData data) const override;
-	int getTexture(const LevelSource*, const TilePos& pos, Facing::Name face) const override;
+	int getTexture(const TileSource*, const TilePos& pos, Facing::Name face) const override;
 	AABB getTileAABB(const Level*, const TilePos& pos) override;
 	bool mayPick() const override;
 	bool mayPick(TileData data, bool includeLiquid) const override;

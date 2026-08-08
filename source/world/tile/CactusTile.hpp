@@ -18,5 +18,5 @@ public:
 	void tick(Level*, const TilePos& pos, Random*) override;
 	void entityInside(Level*, const TilePos& pos, Entity*) const override;
 	int getTexture(Facing::Name face) const override;
-	void updateShape(const LevelSource* level, const TilePos& pos) override;
+	void updateShape(const TileSource* level, const TilePos& pos) override;
 };

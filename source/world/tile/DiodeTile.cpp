@@ -32,11 +32,11 @@ void DiodeTile::tick(Level* level, const TilePos& pos, Random* random)
 	bool bShouldTurnOn = shouldTurnOn(level, pos, data);
 	if (m_bOn && !bShouldTurnOn)
 	{
-		level->setTileAndData(pos, Tile::diode_off->m_ID, data);
+		level->setTileAndData(pos, FullTile(Tile::diode_off->m_ID, data));
 	}
 	else if (!m_bOn)
 	{
-		level->setTileAndData(pos, Tile::diode_on->m_ID, data);
+		level->setTileAndData(pos, FullTile(Tile::diode_on->m_ID, data));
 		if (!bShouldTurnOn)
 		{
 			int var8 = (data & 12) >> 2;
@@ -50,7 +50,7 @@ int DiodeTile::getTexture(Facing::Name face, TileData data) const
 	return face == Facing::DOWN ? (m_bOn ? 99 : 115) : (face == Facing::UP ? (m_bOn ? 147 : 131) : 5);
 }
 
-bool DiodeTile::shouldRenderFace(const LevelSource* level, const TilePos& pos, Facing::Name face) const
+bool DiodeTile::shouldRenderFace(const TileSource* level, const TilePos& pos, Facing::Name face) const
 {
 	return face != Facing::DOWN && face != Facing::UP;
 }
@@ -70,7 +70,7 @@ int DiodeTile::getDirectSignal(const Level* level, const TilePos& pos, Facing::N
 	return getSignal(level, pos, face);
 }
 
-int DiodeTile::getSignal(const LevelSource* level, const TilePos& pos, Facing::Name face) const
+int DiodeTile::getSignal(const TileSource* level, const TilePos& pos, Facing::Name face) const
 {
 	if (!m_bOn)
 	{

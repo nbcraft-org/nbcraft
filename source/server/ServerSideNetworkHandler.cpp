@@ -529,7 +529,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, PlaceBlock
 	if (!m_pLevel->mayPlace(tileId, pos, true))
 		return;
 
-	if (m_pLevel->setTileAndData(pos, tileId, data))
+	if (m_pLevel->setTileAndData(pos, FullTile(tileId, data)))
 	{
 		Tile* pTile = Tile::tiles[tileId];
 		pTile->setPlacedOnFace(m_pLevel, pos, face);

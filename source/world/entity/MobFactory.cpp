@@ -1,5 +1,6 @@
 #include "MobFactory.hpp"
 #include "common/Logger.hpp"
+#include "world/level/levelgen/biome/BiomeSource.hpp"
 
 #include "Chicken.hpp"
 #include "Cow.hpp"

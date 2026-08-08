@@ -56,7 +56,7 @@ bool TileItem::useOn(ItemStack* instance, Player* player, Level* level, const Ti
 
 	Tile* pTile = Tile::tiles[m_tile];
 
-	if (!level->setTileAndData(tp, m_tile, getLevelDataForAuxValue(instance->getAuxValue())))
+	if (!level->setTileAndData(tp, FullTile(m_tile, getLevelDataForAuxValue(instance->getAuxValue()))))
 		return true;
 
 	Tile::tiles[m_tile]->setPlacedOnFace(level, tp, face);

@@ -5,6 +5,7 @@
 #include "common/utility/HashMap.hpp"
 
 class MobCategory;
+class Biome;
 
 class MobFactory
 {

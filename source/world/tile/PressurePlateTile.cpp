@@ -143,7 +143,7 @@ void PressurePlateTile::onRemove(Level* level, const TilePos& pos)
 	Tile::onRemove(level, pos);
 }
 
-void PressurePlateTile::updateShape(const LevelSource* level, const TilePos& pos)
+void PressurePlateTile::updateShape(const TileSource* level, const TilePos& pos)
 {
 	bool var5 = level->getData(pos) == 1;
 	float var6 = 1.0f / 16.0f;
@@ -155,7 +155,7 @@ void PressurePlateTile::updateShape(const LevelSource* level, const TilePos& pos
 	}
 }
 
-int PressurePlateTile::getSignal(const LevelSource* level, const TilePos& pos, Facing::Name face) const
+int PressurePlateTile::getSignal(const TileSource* level, const TilePos& pos, Facing::Name face) const
 {
 	return level->getData(pos) > 0;
 }

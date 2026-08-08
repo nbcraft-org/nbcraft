@@ -18,10 +18,10 @@ public:
 	void onRemove(Level*, const TilePos& pos) override;
 	void neighborChanged(Level* level, const TilePos& pos, TileID tile) override;
 	int getResource(TileData data, Random* random) const override;
-	int getColor(const LevelSource*, const TilePos& pos) const override;
+	int getColor(const TileSource*, const TilePos& pos) const override;
 	int getColor(Facing::Name face, TileData) const override;
 	int getDirectSignal(const Level*, const TilePos& pos, Facing::Name face) const override;
-	int getSignal(const LevelSource*, const TilePos& pos, Facing::Name face) const override;
+	int getSignal(const TileSource*, const TilePos& pos, Facing::Name face) const override;
 	bool isSignalSource() const override;
 	void animateTick(Level*, const TilePos& pos, Random*) override;
 
@@ -29,7 +29,7 @@ public:
 	void updatePowerStrength(Level*, const TilePos& pos1, const TilePos& pos2);
 	void checkCornerChangeAt(Level*, const TilePos& pos);
 	int checkTarget(Level*, const TilePos& pos, int);
-	static bool shouldConnectTo(const LevelSource*, const TilePos& pos);
+	static bool shouldConnectTo(const TileSource*, const TilePos& pos);
 
 public:
 	std::set<TilePos> m_toUpdate;

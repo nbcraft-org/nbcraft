@@ -24,7 +24,7 @@ GrassTile::GrassTile(TileID id, Material* c) : Tile(id, c)
 	m_bBiomeColors = false;
 }
 
-int GrassTile::getColor(const LevelSource* levelSource, const TilePos& pos) const
+int GrassTile::getColor(const TileSource* levelSource, const TilePos& pos) const
 {
 	if (GrassColor::isAvailable() && m_bBiomeColors)
 	{
@@ -69,7 +69,7 @@ int GrassTile::getTexture(Facing::Name face) const
 	}
 }
 
-int GrassTile::getTexture(const LevelSource* level, const TilePos& pos, Facing::Name face) const
+int GrassTile::getTexture(const TileSource* level, const TilePos& pos, Facing::Name face) const
 {
 	switch (face)
 	{

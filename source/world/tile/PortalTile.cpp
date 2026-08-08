@@ -11,7 +11,7 @@ AABB* PortalTile::getAABB(const Level*, const TilePos& pos)
 	return nullptr;
 }
 
-void PortalTile::updateShape(const LevelSource* level, const TilePos& pos)
+void PortalTile::updateShape(const TileSource* level, const TilePos& pos)
 {
     float var5;
     float var6;
@@ -77,8 +77,10 @@ bool PortalTile::trySpawnPortal(Level* level, const TilePos& pos)
 
         level->m_bNoNeighborUpdate = true;
 
-        for (var7 = 0; var7 < 2; ++var7) {
-            for (var8 = 0; var8 < 3; ++var8) {
+        for (var7 = 0; var7 < 2; ++var7)
+        {
+            for (var8 = 0; var8 < 3; ++var8)
+            {
                 level->setTile(tp + TilePos(xDiff * var7, var8, zDiff * var7), Tile::portal->m_ID);
             }
         }
@@ -136,7 +138,7 @@ void PortalTile::entityInside(Level* level, const TilePos& pos, Entity* entity) 
         entity->handleInsidePortal();
 }
 
-bool PortalTile::shouldRenderFace(const LevelSource* level, const TilePos& pos, Facing::Name face) const
+bool PortalTile::shouldRenderFace(const TileSource* level, const TilePos& pos, Facing::Name face) const
 {
     if (level->getTile(pos) == m_ID)
         return false;

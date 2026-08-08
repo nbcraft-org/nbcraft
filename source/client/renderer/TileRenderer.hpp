@@ -26,7 +26,7 @@ protected:
 private:
 	void _init();
 public:
-	TileRenderer(Tesselator& tessellator = Tesselator::instance, LevelSource* pLevelSource = nullptr);
+	TileRenderer(Tesselator& tessellator = Tesselator::instance, TileSource* pTileSource = nullptr);
 
 private:
 	void _tex1(const Vec2& uv);
@@ -86,7 +86,7 @@ public:
 	int getTileColor(Tile*, const TilePos& pos);
 	bool useAmbientOcclusion() const;
 
-	void setTileSource(LevelSource*);
+	void setTileSource(TileSource*);
 
 	static bool canRender(int renderShape);
 
@@ -94,7 +94,7 @@ public:
 	static bool m_bBiomeColors;
 
 private:
-	LevelSource* m_pTileSource;
+	TileSource* m_pTileSource;
 	int m_fixedTexture;
 	bool m_bXFlipTexture;
 	bool m_bNoCulling;
