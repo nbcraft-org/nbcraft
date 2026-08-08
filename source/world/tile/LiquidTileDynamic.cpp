@@ -167,7 +167,7 @@ void LiquidTileDynamic::onPlace(Level* level, const TilePos& pos)
 void LiquidTileDynamic::setStatic(Level* level, const TilePos& pos)
 {
 	TileData data = level->getData(pos);
-	level->setTileAndDataNoUpdate(pos, FullTile(m_ID + 1, data));
+	level->setTileAndDataNoUpdate(pos, m_ID + 1, data);
 	level->setTilesDirty(pos, pos);
 	level->sendTileUpdated(pos);
 }
@@ -190,7 +190,7 @@ void LiquidTileDynamic::trySpreadTo(Level* level, const TilePos& pos, TileData d
 		}
 	}
 
-	level->setTileAndData(pos, FullTile(m_ID, data));
+	level->setTileAndData(pos, m_ID, data);
 }
 
 // @NOTE: This is inlined in PE.
@@ -291,7 +291,7 @@ void LiquidTileDynamic::tick(Level* level, const TilePos& pos, Random* random)
 		if (depth < 8)
 			depth += 8;
 
-		level->setTileAndData(pos.below(), FullTile(m_ID, depth));
+		level->setTileAndData(pos.below(), m_ID, depth);
 		return;
 	}
 

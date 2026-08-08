@@ -8,7 +8,7 @@ public:
 	FurnaceTile(int id, bool active);
 
 public:
-	int getTexture(const TileSource*, const TilePos& pos, Facing::Name face) const override;
+	int getTexture(const LevelSource*, const TilePos& pos, Facing::Name face) const override;
 	void animateTick(Level* level, const TilePos& pos, Random* random) override;
 	int getTexture(Facing::Name face) const override;
 	void onPlace(Level* level, const TilePos& pos) override;

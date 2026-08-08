@@ -8,7 +8,7 @@ public:
     ChestTile(int id, int texture);
 
 public:
-    int getTexture(const TileSource*, const TilePos& pos, Facing::Name face) const override;
+    int getTexture(const LevelSource*, const TilePos& pos, Facing::Name face) const override;
     int getTexture(Facing::Name face) const override;
     bool mayPlace(const Level* level, const TilePos& pos) const override;
     bool hasNeighbors(const Level* level, const TilePos& pos, int count) const;

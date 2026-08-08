@@ -41,7 +41,7 @@ eRenderShape FenceTile::getRenderShape() const
 	return SHAPE_FENCE;
 }
 
-bool FenceTile::shouldConnectTo(const TileSource* level, const TilePos& pos) const 
+bool FenceTile::shouldConnectTo(const LevelSource* level, const TilePos& pos) const 
 {
 	int i = level->getTile(pos);
 	return i == m_ID || i == Tile::fenceGate->m_ID;

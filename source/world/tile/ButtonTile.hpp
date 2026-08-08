@@ -14,11 +14,11 @@ public:
 	bool mayPlace(const Level*, const TilePos& pos) const override;
 	void setPlacedOnFace(Level*, const TilePos& pos, Facing::Name face) override;
 	void neighborChanged(Level* level, const TilePos& pos, TileID tile) override;
-	void updateShape(const TileSource*, const TilePos& pos) override;
+	void updateShape(const LevelSource*, const TilePos& pos) override;
 	void attack(Level*, const TilePos& pos, Player*) override;
 	bool use(Level*, const TilePos& pos, Player*) override;
 	void onRemove(Level*, const TilePos& pos) override;
-	int getSignal(const TileSource*, const TilePos& pos, Facing::Name face) const override;
+	int getSignal(const LevelSource*, const TilePos& pos, Facing::Name face) const override;
 	int getDirectSignal(const Level*, const TilePos& pos, Facing::Name face) const override;
 	bool isSignalSource() const override;
 	void tick(Level*, const TilePos& pos, Random*) override;

@@ -7,7 +7,7 @@ CakeTile::CakeTile(int id, int texture) : Tile(id, texture, Material::cake)
 	setTicking(true);
 }
 
-void CakeTile::updateShape(const TileSource* level, const TilePos& pos)
+void CakeTile::updateShape(const LevelSource* level, const TilePos& pos)
 {
 	int i = level->getData(pos);
 	constexpr float f = 0.0625f;

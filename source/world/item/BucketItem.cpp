@@ -67,7 +67,7 @@ bool BucketItem::use(ItemStack& item, Level* level, Mob& user) const
                                 level->addParticle("largesmoke", Vec3(tp.x + Mth::random(), tp.y + Mth::random(), tp.z + Mth::random()));
                         }
                         else
-                            level->setTileAndData(tp, FullTile(m_content, 0));
+                            level->setTileAndData(tp, m_content, 0);
                     }
 
                     if (!player->isCreative())

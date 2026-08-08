@@ -14,6 +14,7 @@
 #include "common/Random.hpp"
 #include "world/item/Tool.hpp"
 #include "world/phys/AABB.hpp"
+#include "world/level/storage/LevelSource.hpp"
 #include "world/level/Material.hpp"
 #include "world/entity/Entity.hpp"
 #include "world/level/levelgen/chunk/LevelChunk.hpp"
@@ -29,7 +30,6 @@ class Mob;
 class Player;
 class LiquidTile;
 class TileEntity;
-class TileSource;
 
 class Tile
 {
@@ -63,14 +63,14 @@ public: // virtual functions
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
 	virtual Tile* setShape(float, float, float, float, float, float);
 #pragma GCC diagnostic pop
-	virtual void updateShape(const TileSource*, const TilePos& pos);
+	virtual void updateShape(const LevelSource*, const TilePos& pos);
 	virtual void updateDefaultShape();
 	virtual void addLights(Level*, const TilePos& pos);
-	virtual float getBrightness(const TileSource*, const TilePos& pos) const;
-	virtual bool shouldRenderFace(const TileSource*, const TilePos& pos, Facing::Name face) const;
+	virtual float getBrightness(const LevelSource*, const TilePos& pos) const;
+	virtual bool shouldRenderFace(const LevelSource*, const TilePos& pos, Facing::Name face) const;
 	virtual int getTexture(Facing::Name face) const;
 	virtual int getTexture(Facing::Name face, TileData data) const;
-	virtual int getTexture(const TileSource*, const TilePos& pos, Facing::Name face) const;
+	virtual int getTexture(const LevelSource*, const TilePos& pos, Facing::Name face) const;
 	virtual AABB* getAABB(const Level*, const TilePos& pos);
 	virtual void addAABBs(const Level*, const TilePos& pos, const AABB*, std::vector<AABB>&);
 	virtual AABB getTileAABB(const Level*, const TilePos& pos);
@@ -103,11 +103,11 @@ public: // virtual functions
 	virtual void prepareRender(Level*, const TilePos& pos);
 	virtual void attack(Level*, const TilePos& pos, Player*);
 	virtual void handleEntityInside(Level*, const TilePos& pos, const Entity*, Vec3&);
-	virtual int getColor(const TileSource*, const TilePos& pos) const;
+	virtual int getColor(const LevelSource*, const TilePos& pos) const;
 	virtual int getColor(Facing::Name face, TileData) const;
 	virtual bool isSignalSource() const;
-	virtual int getSignal(const TileSource*, const TilePos& pos) const;
-	virtual int getSignal(const TileSource*, const TilePos& pos, Facing::Name face) const;
+	virtual int getSignal(const LevelSource*, const TilePos& pos) const;
+	virtual int getSignal(const LevelSource*, const TilePos& pos, Facing::Name face) const;
 	virtual int getDirectSignal(const Level*, const TilePos& pos, Facing::Name face) const;
 	virtual void entityInside(Level*, const TilePos& pos, Entity*) const;
 	virtual void playerDestroy(Level*, Player*, const TilePos& pos, TileData data);
@@ -326,6 +326,6 @@ public:
 	}
 
 public:
-	TileID getTypeId() const { return _tileType ? _tileType->m_ID : TILE_AIR; }
+	TileID getTypeId() const { return _tileType->m_ID; }
 	Tile* getType() const { return _tileType; }
 };

@@ -18,7 +18,7 @@ int PistonBaseTile::getTexture(Facing::Name side, TileData meta) const
 	return (side == Facing::UP || (int)getFacing(meta) > 5) ? m_TextureFrame : side == Facing::DOWN ? 109 : 108;
 }
 
-int PistonBaseTile::getTexture(const TileSource* level, const TilePos& pos, Facing::Name side) const
+int PistonBaseTile::getTexture(const LevelSource* level, const TilePos& pos, Facing::Name side) const
 {
 	TileData meta = level->getData(pos);
 	Facing::Name facing = getFacing(meta);
@@ -48,7 +48,7 @@ void PistonBaseTile::triggerEvent(Level* level, const TileEvent& event)
 		if (piston)
 			piston->finalTick();
 
-		level->setTileAndDataNoUpdate(event.pos, FullTile(Tile::movingPiston->m_ID, event.b1));
+		level->setTileAndDataNoUpdate(event.pos, Tile::movingPiston->m_ID, event.b1);
 		level->setTileEntity(event.pos, MovingPistonTile::newMovingTileEntity(m_ID, event.b1, (Facing::Name)event.b1, false, true));
 		if (m_bIsSticky)
 		{
@@ -82,7 +82,7 @@ void PistonBaseTile::triggerEvent(Level* level, const TileEvent& event)
 				m_bUpdating = false;
 				level->setTile(tp, TILE_AIR);
 				m_bUpdating = true;
-				level->setTileAndDataNoUpdate(relative, FullTile(Tile::movingPiston->m_ID, data));
+				level->setTileAndDataNoUpdate(relative, Tile::movingPiston->m_ID, data);
 				level->setTileEntity(relative, MovingPistonTile::newMovingTileEntity(tile, data, (Facing::Name)event.b1, false, false));
 			}
 		}
@@ -118,7 +118,7 @@ void PistonBaseTile::onPlace(Level* level, const TilePos& pos)
 		_checkIfExtend(level, pos);
 }
 
-void PistonBaseTile::updateShape(const TileSource* source, const TilePos& pos)
+void PistonBaseTile::updateShape(const LevelSource* source, const TilePos& pos)
 {
 	int data = source->getData(pos);
 	if (isExtended(data))
@@ -327,12 +327,12 @@ bool PistonBaseTile::_moveBlocks(Level* level, const TilePos& pos, Facing::Name 
 			int data = level->getData(newTp);
 			if (tile == m_ID && newTp == pos)
 			{
-				level->setTileAndDataNoUpdate(tp, FullTile(Tile::movingPiston->m_ID, facing | (m_bIsSticky ? 8 : 0)));
+				level->setTileAndDataNoUpdate(tp, Tile::movingPiston->m_ID, facing | (m_bIsSticky ? 8 : 0));
 				level->setTileEntity(tp, MovingPistonTile::newMovingTileEntity(Tile::pistonHead->m_ID, facing | (m_bIsSticky ? 8 : 0), facing, true, false));
 			}
 			else
 			{
-				level->setTileAndDataNoUpdate(tp, FullTile(Tile::movingPiston->m_ID, data));
+				level->setTileAndDataNoUpdate(tp, Tile::movingPiston->m_ID, data);
 				level->setTileEntity(tp, MovingPistonTile::newMovingTileEntity(tile, data, facing, true, false));
 			}
 			tp = newTp;

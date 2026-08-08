@@ -3,7 +3,6 @@
 #include "client/renderer/renderer/RenderMaterialGroup.hpp"
 #include "renderer/ShaderConstants.hpp"
 #include "world/entity/projectile/FishingHook.hpp"
-#include "world/entity/Player.hpp"
 
 FishingHookRenderer::FishingHookRenderer()
 {

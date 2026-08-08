@@ -11,7 +11,7 @@ public:
     int getTickDelay() const override { return 4; };
     int getResource(TileData data, Random* random) const override { return Tile::dispenser->m_ID; };
     void onPlace(Level* level, const TilePos& pos) override;
-    int getTexture(const TileSource*, const TilePos& pos, Facing::Name face) const override;
+    int getTexture(const LevelSource*, const TilePos& pos, Facing::Name face) const override;
     int getTexture(Facing::Name face) const override;
     bool use(Level* level, const TilePos& pos, Player* var5) override;
     void neighborChanged(Level*, const TilePos& pos, TileID tile) override;

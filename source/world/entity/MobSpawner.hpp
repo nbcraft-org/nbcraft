@@ -9,6 +9,7 @@
 #include "world/level/levelgen/chunk/LevelChunk.hpp"
 #include "world/level/levelgen/chunk/ChunkSource.hpp"
 #include "world/level/storage/LevelStorageSource.hpp"
+#include "world/level/storage/LevelSource.hpp"
 #include "world/level/storage/LevelData.hpp"
 #include "world/level/path/PathFinder.hpp"
 

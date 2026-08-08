@@ -9,7 +9,6 @@
 #pragma once
 
 #include "Tile.hpp"
-#include "world/level/TileSource.hpp"
 
 class FireTile : public Tile
 {
@@ -35,7 +34,7 @@ public:
 	bool isValidFireLocation(const Level*, const TilePos& pos) const;
 
 	// @NOTE: This is inlined in V0.1.0 but not V0.7.1
-	inline bool canBurn(const TileSource* level, const TilePos& pos) const
+	inline bool canBurn(const LevelSource* level, const TilePos& pos) const
 	{
 		return m_igniteOdds[level->getTile(pos)] > 0;
 	}

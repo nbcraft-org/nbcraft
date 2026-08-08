@@ -18,7 +18,7 @@ public:
 	AABB getTileAABB(const Level*, const TilePos& pos) override;
 	HitResult clip(const Level*, const TilePos& pos, Vec3, Vec3) override;
 public:
-	void updateShape(const TileSource*, const TilePos& pos) override;
+	void updateShape(const LevelSource*, const TilePos& pos) override;
 	void updateDefaultShape() override;
 	void attack(Level*, const TilePos& pos, Player*) override;
 	void neighborChanged(Level*, const TilePos& pos, TileID newTile) override;

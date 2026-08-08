@@ -34,7 +34,7 @@ public:
 public:
 	bool isIndexValid(int);
 	std::string getUniqueLevelName(const std::string& in);
-	void loadTileSource();
+	void loadLevelSource();
 
 public:
 	Button m_btnDelete;

@@ -25,7 +25,7 @@ AABB TrapdoorTile::getTileAABB(const Level* level, const TilePos& pos)
 	return Tile::getTileAABB(level, pos);
 }
 
-void TrapdoorTile::updateShape(const TileSource* level, const TilePos& pos)
+void TrapdoorTile::updateShape(const LevelSource* level, const TilePos& pos)
 {
 	TileData metadata = level->getData(pos);
 	constexpr float f = 0.1875f;

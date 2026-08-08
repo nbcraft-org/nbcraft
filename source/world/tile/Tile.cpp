@@ -1046,7 +1046,7 @@ TileID Tile::TransformToValidBlockId(TileID tileId)
 	return TransformToValidBlockId(tileId, TilePos::ZERO);
 }
 
-void Tile::updateShape(const TileSource* a, const TilePos& pos)
+void Tile::updateShape(const LevelSource* a, const TilePos& pos)
 {
 }
 
@@ -1054,12 +1054,12 @@ void Tile::addLights(Level* p, const TilePos& pos)
 {
 }
 
-float Tile::getBrightness(const TileSource* pSrc, const TilePos& pos) const
+float Tile::getBrightness(const LevelSource* pSrc, const TilePos& pos) const
 {
 	return pSrc->getBrightness(pos);
 }
 
-int Tile::getColor(const TileSource* pSrc, const TilePos& pos) const
+int Tile::getColor(const LevelSource* pSrc, const TilePos& pos) const
 {
 	return 0xFFFFFF; // White
 }
@@ -1093,7 +1093,7 @@ void Tile::addAABBs(const Level* pLevel, const TilePos& pos, const AABB* aabb, s
 	}
 }
 
-bool Tile::shouldRenderFace(const TileSource* pSrc, const TilePos& pos, Facing::Name face)  const
+bool Tile::shouldRenderFace(const LevelSource* pSrc, const TilePos& pos, Facing::Name face)  const
 {
 	//if ((y | x | z) > C_MAX_CHUNKS_Z * 16)
 	//	return false;
@@ -1137,7 +1137,7 @@ bool Tile::shouldRenderFace(const TileSource* pSrc, const TilePos& pos, Facing::
 	return !pTile->isSolidRender();
 }
 
-int Tile::getTexture(const TileSource* pSrc, const TilePos& pos, Facing::Name face) const
+int Tile::getTexture(const LevelSource* pSrc, const TilePos& pos, Facing::Name face) const
 {
 	return getTexture(face, pSrc->getData(pos));
 }
@@ -1275,12 +1275,12 @@ HitResult Tile::clip(const Level* level, const TilePos& pos, Vec3 vec1, Vec3 vec
 	return HitResult(pos, collType, *pVec + pos);
 }
 
-int Tile::getSignal(const TileSource* pLevel, const TilePos& pos) const
+int Tile::getSignal(const LevelSource* pLevel, const TilePos& pos) const
 {
 	return 0;
 }
 
-int Tile::getSignal(const TileSource* pLevel, const TilePos& pos, Facing::Name face) const
+int Tile::getSignal(const LevelSource* pLevel, const TilePos& pos, Facing::Name face) const
 {
 	return 0;
 }

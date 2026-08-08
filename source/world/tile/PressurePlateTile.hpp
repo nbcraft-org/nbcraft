@@ -25,8 +25,8 @@ public:
 	void tick(Level*, const TilePos& pos, Random*) override;
 	void entityInside(Level*, const TilePos& pos, Entity*) const override;
 	void onRemove(Level*, const TilePos& pos) override;
-	void updateShape(const TileSource*, const TilePos& pos) override;
-	int getSignal(const TileSource*, const TilePos& pos, Facing::Name face) const override;
+	void updateShape(const LevelSource*, const TilePos& pos) override;
+	int getSignal(const LevelSource*, const TilePos& pos, Facing::Name face) const override;
 	int getDirectSignal(const Level*, const TilePos& pos, Facing::Name face) const override;
 	bool isSignalSource() const override;
 	void updateDefaultShape() override;

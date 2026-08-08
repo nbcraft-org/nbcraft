@@ -1132,7 +1132,7 @@ void Minecraft::prepareLevel(const std::string& unused)
 	{
 		pLevel->setInitialSpawn();
 		pLevel->saveLevelData();
-		pLevel->getChunkSource().saveAll();
+		pLevel->getChunkSource()->saveAll();
 		pLevel->saveGame();
 	}
 	else

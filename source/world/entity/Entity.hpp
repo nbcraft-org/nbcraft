@@ -8,8 +8,6 @@
 
 #pragma once
 
-#include <vector>
-
 #include "common/math/Color.hpp"
 #include "world/phys/Vec3.hpp"
 #include "world/phys/Vec2.hpp"
@@ -67,7 +65,6 @@ protected:
 public:
 	typedef int32_t ID;
 	typedef int32_t AuxValue;
-	typedef std::vector<Entity*> Vector;
 public:
 	class EventType
 	{

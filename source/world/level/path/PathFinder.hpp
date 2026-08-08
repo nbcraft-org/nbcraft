@@ -13,7 +13,7 @@
 #include "BinaryHeap.hpp"
 #include "world/level/TilePos.hpp"
 
-class TileSource;
+class LevelSource;
 class Entity;
 
 #define MAX_NODE_COUNT (2048)
@@ -36,7 +36,7 @@ public:
 	bool findPath(Path&, Entity*, const Entity*, float);
 	bool findPath(Path&, Entity*, const TilePos& tilePos, float);
 
-	void setLevel(TileSource* pLevel)
+	void setLevel(LevelSource* pLevel)
 	{
 		m_pLevel = pLevel;
 	}
@@ -46,7 +46,7 @@ private:
 	bool reconstructPath(Path& path, Node* node2);
 
 private:
-	TileSource* m_pLevel;
+	LevelSource* m_pLevel;
 	BinaryHeap m_binaryHeap;
 	NodeMap m_nodeMap;
 	Node m_nodeReserve[MAX_NODE_COUNT];

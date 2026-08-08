@@ -13,5 +13,5 @@ public:
 	bool isSolidRender() const override;
 	bool isCubeShaped() const override;
 	eRenderShape getRenderShape() const override;
-	bool shouldConnectTo(const TileSource* level, const TilePos& pos) const;
+	bool shouldConnectTo(const LevelSource* level, const TilePos& pos) const;
 };

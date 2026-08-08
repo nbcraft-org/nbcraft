@@ -8,7 +8,7 @@ ChestTile::ChestTile(int id, int texture) : EntityTile(id, texture, Material::wo
     setTicking(true);
 }
 
-int ChestTile::getTexture(const TileSource* level, const TilePos& pos, Facing::Name face) const
+int ChestTile::getTexture(const LevelSource* level, const TilePos& pos, Facing::Name face) const
 {
     if (face == Facing::UP || face == Facing::DOWN)
         return m_TextureFrame - 1;

@@ -48,7 +48,7 @@ AABB* LiquidTile::getAABB(const Level*, const TilePos& pos)
 	return nullptr;
 }
 
-float LiquidTile::getBrightness(const TileSource* level, const TilePos& pos) const
+float LiquidTile::getBrightness(const LevelSource* level, const TilePos& pos) const
 {
 	float b1 = level->getBrightness(pos);
 	float b2 = level->getBrightness(pos.above());
@@ -57,7 +57,7 @@ float LiquidTile::getBrightness(const TileSource* level, const TilePos& pos) con
 	return b1;
 }
 
-int LiquidTile::getColor(const TileSource* level, const TilePos& pos) const
+int LiquidTile::getColor(const LevelSource* level, const TilePos& pos) const
 {
 	return 0x999999FF;
 }
@@ -70,7 +70,7 @@ int LiquidTile::getDepth(Level* level, const TilePos& pos)
 	return level->getData(pos);
 }
 
-int LiquidTile::getRenderedDepth(const TileSource* level, const TilePos& pos) const
+int LiquidTile::getRenderedDepth(const LevelSource* level, const TilePos& pos) const
 {
 	if (level->getMaterial(pos) != m_pMaterial)
 		return -1;
@@ -82,7 +82,7 @@ int LiquidTile::getRenderedDepth(const TileSource* level, const TilePos& pos) co
 	return res;
 }
 
-Vec3 LiquidTile::getFlow(const TileSource* level, const TilePos& pos) const
+Vec3 LiquidTile::getFlow(const LevelSource* level, const TilePos& pos) const
 {
 	Vec3 result;
 	int depthLocal = getRenderedDepth(level, pos);
@@ -154,7 +154,7 @@ int LiquidTile::getResourceCount(Random* random) const
 	return 0;
 }
 
-float LiquidTile::getSlopeAngle(const TileSource* level, const TilePos& pos, const Material* pMtl)
+float LiquidTile::getSlopeAngle(const LevelSource* level, const TilePos& pos, const Material* pMtl)
 {
 	Vec3 vec;
 	if (pMtl == Material::water)
@@ -222,7 +222,7 @@ void LiquidTile::onPlace(Level* level, const TilePos& pos)
 	updateLiquid(level, pos);
 }
 
-bool LiquidTile::shouldRenderFace(const TileSource* level, const TilePos& pos, Facing::Name face) const
+bool LiquidTile::shouldRenderFace(const LevelSource* level, const TilePos& pos, Facing::Name face) const
 {
 	Material* pMtl = level->getMaterial(pos);
 	if (pMtl == m_pMaterial || pMtl == Material::ice)

@@ -11,7 +11,7 @@ public:
 	eRenderShape getRenderShape() const override;
 	int getTexture(Facing::Name side, TileData meta) const override;
 	void neighborChanged(Level*, const TilePos& pos, TileID tile) override;
-	void updateShape(const TileSource*, const TilePos&) override;
+	void updateShape(const LevelSource*, const TilePos&) override;
 	void addAABBs(const Level* level, const TilePos& pos, const AABB* aabb, std::vector<AABB>& out) override;
 
 	bool isSolidRender() const override;

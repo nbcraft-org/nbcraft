@@ -10,7 +10,7 @@ FurnaceTile::FurnaceTile(int id, bool active) : EntityTile(id, TEXTURE_FURNACE_S
 	m_active = active;
 }
 
-int FurnaceTile::getTexture(const TileSource* level, const TilePos& pos, Facing::Name face) const
+int FurnaceTile::getTexture(const LevelSource* level, const TilePos& pos, Facing::Name face) const
 {
 	switch (face)
     {

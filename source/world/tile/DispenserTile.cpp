@@ -46,7 +46,7 @@ void DispenserTile::recalcLockDir(Level* level, const TilePos& pos)
     level->setData(pos, data);
 }
 
-int DispenserTile::getTexture(const TileSource* level, const TilePos& pos, Facing::Name face) const
+int DispenserTile::getTexture(const LevelSource* level, const TilePos& pos, Facing::Name face) const
 {
     switch (face)
     {

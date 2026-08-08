@@ -10,7 +10,7 @@ int DetectorRailTile::getTickDelay() const
 	return 20;
 }
 
-int DetectorRailTile::getSignal(const TileSource* level, const TilePos& pos, Facing::Name face) const
+int DetectorRailTile::getSignal(const LevelSource* level, const TilePos& pos, Facing::Name face) const
 {
     return isPowered(level->getData(pos));
 }

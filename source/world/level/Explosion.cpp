@@ -7,10 +7,8 @@
  ********************************************************************/
 
 #include "Explosion.hpp"
-#include "world/level/TileSource.hpp"
 
-Explosion::Explosion(TileSource& source, Entity* entity, const Vec3& pos, float power)
-	: m_tileSource(source)
+Explosion::Explosion(Level* level, Entity* entity, const Vec3& pos, float power)
 {
 	field_20 = 0;
 
@@ -19,6 +17,7 @@ Explosion::Explosion(TileSource& source, Entity* entity, const Vec3& pos, float 
 	m_pos = pos;
 	m_power = power;
 	m_pEntity = entity;
+	m_pLevel = level;
 
 	assert(m_power != 0.0f);
 }
@@ -28,8 +27,6 @@ Explosion::Explosion(TileSource& source, Entity* entity, const Vec3& pos, float 
 void Explosion::explode()
 {
 	{
-		Level& level = m_tileSource.getLevel();
-
 		Vec3 vec;
 		for (vec.x = 0; vec.x < 16; vec.x++)
 		{
@@ -43,7 +40,7 @@ void Explosion::explode()
 
 					Vec3 ray = (vec / 15.0f * 2.0f - 1.0f).normalize();
 
-					float mult = m_power * (0.7f + 0.6f * level.m_random.nextFloat());
+					float mult = m_power * (0.7f + 0.6f * m_pLevel->m_random.nextFloat());
 
 					Vec3 pos(m_pos);
 
@@ -52,7 +49,7 @@ void Explosion::explode()
 						if (mult < 0)
 							break;
 
-						TileID tile = m_tileSource.getTile(pos);
+						TileID tile = m_pLevel->getTile(pos);
 						if (tile > 0)
 							mult -= 0.3f * (0.3f + Tile::tiles[tile]->getExplosionResistance(m_pEntity));
 
@@ -75,7 +72,7 @@ void Explosion::explode()
 
 	AABB aabb(m_pos - m_power - 1.0f, m_pos + m_power + 1.0f);
 
-	const std::vector<Entity*>& ents = m_tileSource.getEntities(m_pEntity, aabb);
+	EntityVector ents = m_pLevel->getEntities(m_pEntity, aabb);
 	for (size_t i = 0; i < ents.size(); i++)
 	{
 		Entity* entity = ents[i];
@@ -87,7 +84,7 @@ void Explosion::explode()
 
 		// @NOTE: They used it here, but not when normalizing the 16*16*16=4096 rays shot before...
 		float normInv = Mth::invSqrt(delta.lengthSqr());
-		float hurtPercent = m_tileSource.getSeenPercent(m_pos, entity->m_hitbox) * (1.0f - distPowerRatio);
+		float hurtPercent = m_pLevel->getSeenPercent(m_pos, entity->m_hitbox) * (1.0f - distPowerRatio);
 
 		entity->hurt(m_pEntity, int((hurtPercent * hurtPercent + hurtPercent) / 2.0f * 8.0f * this->m_power + 1.0f));
 
@@ -107,18 +104,16 @@ void Explosion::explode()
 		{
 			TilePos tp = vec[i];
 
-			TileID tile = m_tileSource.getTile(tp), tileBelow = m_tileSource.getTile(tp.below());
+			TileID tile = m_pLevel->getTile(tp), tileBelow = m_pLevel->getTile(tp.below());
 			if (tile == TILE_AIR && Tile::solid[tileBelow] && m_random.nextInt(3) == 0)
-				m_tileSource.setTile(tp, Tile::fire->m_ID);
+				m_pLevel->setTile(tp, Tile::fire->m_ID);
 		}
 	}
 }
 
 void Explosion::addParticles()
 {
-	Level& level = m_tileSource.getLevel();
-
-	level.playSound(m_pos, "random.explode", 4.0f, 0.7f * (1.0f + 0.2f * (level.m_random.nextFloat() - level.m_random.nextFloat())));
+	m_pLevel->playSound(m_pos, "random.explode", 4.0f, 0.7f * (1.0f + 0.2f * (m_pLevel->m_random.nextFloat() - m_pLevel->m_random.nextFloat())));
 
 	std::vector<TilePos> vec;
 	vec.insert(vec.begin(), m_tiles.begin(), m_tiles.end());
@@ -126,14 +121,15 @@ void Explosion::addParticles()
 	for (int i = int(vec.size() - 1); i >= 0; i--)
 	{
 		TilePos tp = vec[i];
-		TileID tile = m_tileSource.getTile(tp);
+		TileID tile = m_pLevel->getTile(tp);
+
 		// @PARITY-JAVA: Java spawns a particle for every tile, PE only for every 8th
 		//if ((i & 0x7) == 0)
 		{
 			float mult = 0.0f;
-			Vec3 rp(float(tp.x) + level.m_random.nextFloat(),
-					float(tp.y) + level.m_random.nextFloat(),
-					float(tp.z) + level.m_random.nextFloat());
+			Vec3 rp(float(tp.x) + m_pLevel->m_random.nextFloat(),
+					float(tp.y) + m_pLevel->m_random.nextFloat(),
+					float(tp.z) + m_pLevel->m_random.nextFloat());
 
 			Vec3 d(rp - m_pos);
 
@@ -141,17 +137,17 @@ void Explosion::addParticles()
 			Vec3 v = d / (dist > 0.0f ? dist : 1.0f);
 
 			mult = (0.5f / (dist / m_power + 0.1f));
-			mult *= (level.m_random.nextFloat() * level.m_random.nextFloat() + 0.3f);
+			mult *= (m_pLevel->m_random.nextFloat() * m_pLevel->m_random.nextFloat() + 0.3f);
 
-			level.addParticle("explode", Vec3((rp.x + m_pos.x) / 2, (rp.y + m_pos.y) / 2, (rp.z + m_pos.z) / 2), v * mult);
-			level.addParticle("smoke", rp, v * mult);
+			m_pLevel->addParticle("explode", Vec3((rp.x + m_pos.x) / 2, (rp.y + m_pos.y) / 2, (rp.z + m_pos.z) / 2), v * mult);
+			m_pLevel->addParticle("smoke", rp, v * mult);
 		}
 
 		if (tile > 0)
 		{
-			Tile::tiles[tile]->spawnResources(&m_tileSource.getLevel(), tp, m_tileSource.getData(tp), 0.3f);
-			m_tileSource.setTile(tp, TILE_AIR);
-			Tile::tiles[tile]->wasExploded(&m_tileSource.getLevel(), tp);
+			Tile::tiles[tile]->spawnResources(m_pLevel, tp, m_pLevel->getData(tp), 0.3f);
+			m_pLevel->setTile(tp, TILE_AIR);
+			Tile::tiles[tile]->wasExploded(m_pLevel, tp);
 		}
 	}
 

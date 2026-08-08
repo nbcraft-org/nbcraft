@@ -59,7 +59,7 @@ void PistonMovingTileEntity::tick()
 		m_pLevel->removeTileEntity(m_pos);
 		setRemoved();
 		if (m_pLevel->getTile(m_pos) == Tile::movingPiston->m_ID)
-			m_pLevel->setTileAndData(m_pos, FullTile(m_tileId, m_meta));
+			m_pLevel->setTileAndData(m_pos, m_tileId, m_meta);
 	}
 	else
 	{
@@ -121,5 +121,5 @@ void PistonMovingTileEntity::finalTick()
 	m_pLevel->removeTileEntity(m_pos);
 	setRemoved();
 	if (m_pLevel->getTile(m_pos) == Tile::movingPiston->m_ID)
-		m_pLevel->setTileAndData(m_pos, FullTile(m_tileId, m_meta));
+		m_pLevel->setTileAndData(m_pos, m_tileId, m_meta);
 }

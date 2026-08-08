@@ -91,12 +91,12 @@ void StairTile::animateTick(Level* level, const TilePos& pos, Random* random)
 	m_pParent->animateTick(level, pos, random);
 }
 
-void StairTile::updateShape(const TileSource* level, const TilePos& pos)
+void StairTile::updateShape(const LevelSource* level, const TilePos& pos)
 {
 	setShape(0, 0, 0, 1, 1, 1);
 }
 
-float StairTile::getBrightness(const TileSource* level, const TilePos& pos) const
+float StairTile::getBrightness(const LevelSource* level, const TilePos& pos) const
 {
 	return m_pParent->getBrightness(level, pos);
 }
@@ -111,7 +111,7 @@ int StairTile::getTexture(Facing::Name face, TileData data) const
 	return m_pParent->getTexture(face, data);
 }
 
-int StairTile::getTexture(const TileSource* level, const TilePos& pos, Facing::Name face) const
+int StairTile::getTexture(const LevelSource* level, const TilePos& pos, Facing::Name face) const
 {
 	return m_pParent->getTexture(level, pos, face);
 }

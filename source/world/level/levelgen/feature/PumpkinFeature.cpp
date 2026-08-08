@@ -11,7 +11,7 @@ bool PumpkinFeature::place(Level* level, Random* random, const TilePos& pos)
 		actual.z = pos.z + random->nextInt(8) - random->nextInt(8);
 		if (level->isEmptyTile(actual) && level->getTile(actual.below()) == Tile::grass->m_ID && Tile::pumpkin->canSurvive(level, actual))
 		{
-			level->setTileAndDataNoUpdate(actual, FullTile(Tile::pumpkin->m_ID, random->nextInt(4)));
+			level->setTileAndDataNoUpdate(actual, Tile::pumpkin->m_ID, random->nextInt(4));
 		}
 	}
 

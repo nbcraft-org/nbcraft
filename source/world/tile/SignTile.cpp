@@ -73,7 +73,7 @@ TileEntity* SignTile::newTileEntity()
 	return new SignTileEntity;
 }
 
-void SignTile::updateShape(const TileSource* level, const TilePos& pos)
+void SignTile::updateShape(const LevelSource* level, const TilePos& pos)
 {
 	if (!m_bIsWall) return;
 

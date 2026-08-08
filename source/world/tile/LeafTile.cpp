@@ -196,7 +196,7 @@ void LeafTile::die(Level* level, const TilePos& pos)
 	level->setTile(pos, TILE_AIR);
 }
 
-int LeafTile::getColor(const TileSource* level, const TilePos& pos) const
+int LeafTile::getColor(const LevelSource* level, const TilePos& pos) const
 {
 	if (FoliageColor::isAvailable() && m_bBiomeColors)
 	{

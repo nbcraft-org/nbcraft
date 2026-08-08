@@ -96,7 +96,7 @@ eRenderShape RailTile::getRenderShape() const
 	return SHAPE_RAIL;
 }
 
-void RailTile::updateShape(const TileSource* level, const TilePos& pos)
+void RailTile::updateShape(const LevelSource* level, const TilePos& pos)
 {
 	TileData var5 = level->getData(pos);
 	if (var5 >= 2 && var5 <= 5)

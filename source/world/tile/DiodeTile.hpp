@@ -15,11 +15,11 @@ public:
 	bool canSurvive(const Level*, const TilePos& pos) const override;
 	void tick(Level*, const TilePos& pos, Random*) override;
 	int getTexture(Facing::Name face, TileData data) const override;
-	bool shouldRenderFace(const TileSource*, const TilePos& pos, Facing::Name face) const override;
+	bool shouldRenderFace(const LevelSource*, const TilePos& pos, Facing::Name face) const override;
 	eRenderShape getRenderShape() const override;
 	int getTexture(Facing::Name face) const override;
 	int getDirectSignal(const Level*, const TilePos& pos, Facing::Name face) const override;
-	int getSignal(const TileSource*, const TilePos& pos, Facing::Name face) const override;
+	int getSignal(const LevelSource*, const TilePos& pos, Facing::Name face) const override;
 	void neighborChanged(Level* level, const TilePos& pos, TileID tile) override;
 	bool use(Level*, const TilePos& pos, Player*) override;
 	bool isSignalSource() const override;

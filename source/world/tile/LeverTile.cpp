@@ -106,7 +106,7 @@ bool LeverTile::_checkCanSurvive(Level* level, const TilePos& pos)
 	return false;
 }
 
-void LeverTile::updateShape(const TileSource* level, const TilePos& pos)
+void LeverTile::updateShape(const LevelSource* level, const TilePos& pos)
 {
 	TileData data = level->getData(pos) & 7;
 	float var6 = 3.0f / 16.0f;
@@ -201,7 +201,7 @@ void LeverTile::onRemove(Level* level, const TilePos& pos)
 	Tile::onRemove(level, pos);
 }
 
-int LeverTile::getSignal(const TileSource* level, const TilePos& pos, Facing::Name face) const
+int LeverTile::getSignal(const LevelSource* level, const TilePos& pos, Facing::Name face) const
 {
 	return (level->getData(pos) & 8) > 0;
 }

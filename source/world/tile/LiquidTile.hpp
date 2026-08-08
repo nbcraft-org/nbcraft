@@ -21,7 +21,7 @@ public:
 	void tick(Level*, const TilePos& pos, Random* random) override;
 	void animateTick(Level*, const TilePos& pos, Random* random) override;
 	AABB* getAABB(const Level*, const TilePos& pos) override;
-	float getBrightness(const TileSource*, const TilePos& pos) const override;
+	float getBrightness(const LevelSource*, const TilePos& pos) const override;
 	eRenderShape getRenderShape() const override;
 	int getResource(TileData, Random*) const override;
 	int getResourceCount(Random*) const override;
@@ -32,17 +32,17 @@ public:
 	bool isCubeShaped() const override;
 	bool isSolidRender() const override;
 	bool mayPick(TileData data, bool b) const override;
-	bool shouldRenderFace(const TileSource*, const TilePos& pos, Facing::Name face) const override;
+	bool shouldRenderFace(const LevelSource*, const TilePos& pos, Facing::Name face) const override;
 
 	void updateLiquid(Level*, const TilePos& pos);
 	void fizz(Level*, const TilePos& pos);
-	int getColor(const TileSource*, const TilePos& pos) const override;
+	int getColor(const LevelSource*, const TilePos& pos) const override;
 	int getDepth(Level*, const TilePos& pos);
-	int getRenderedDepth(const TileSource*, const TilePos& pos) const;
-	Vec3 getFlow(const TileSource*, const TilePos& pos) const;
+	int getRenderedDepth(const LevelSource*, const TilePos& pos) const;
+	Vec3 getFlow(const LevelSource*, const TilePos& pos) const;
 
 public:
-	static float getSlopeAngle(const TileSource*, const TilePos& pos, const Material* pMtl);
+	static float getSlopeAngle(const LevelSource*, const TilePos& pos, const Material* pMtl);
 
 	// @NOTE: This is inlined in minecraftcpp
 	static float getHeight(TileData data)

@@ -86,11 +86,11 @@ void TileRenderer::_init()
 	field_B7 = false;
 }
 
-TileRenderer::TileRenderer(Tesselator& tessellator, TileSource* pTileSource)
+TileRenderer::TileRenderer(Tesselator& tessellator, LevelSource* pLevelSource)
 	: m_tessellator(tessellator)
 {
 	_init();
-	m_pTileSource = pTileSource;
+	m_pTileSource = pLevelSource;
 }
 
 // tex1 should be mandatory to keep opengl happy as there are no explicit padding available in glsl
@@ -1034,57 +1034,37 @@ bool TileRenderer::tesselateFenceGateInWorld(Tile* tile, const TilePos& pos)
 
 bool TileRenderer::tesselateDoorInWorld(Tile* tile, const TilePos& pos)
 {
-	Tesselator& t = m_tessellator;
 	float fBrightHere = tile->getBrightness(m_pTileSource, pos), fBright;
-	int texture;
 
 	fBright = tile->getBrightness(m_pTileSource, pos.below());
 	if (tile->m_aabb.min.y > 0.0f)       fBright = fBrightHere;
 	if (Tile::lightEmission[tile->m_ID]) fBright = 1.0f;
-	t.color(fBright * 0.5f, fBright * 0.5f, fBright * 0.5f);
-	renderDown(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::DOWN));
+	renderDown(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::DOWN), Color(fBright * 0.5f, fBright * 0.5f, fBright * 0.5f));
 
 	fBright = tile->getBrightness(m_pTileSource, pos.above());
 	if (tile->m_aabb.max.y < 1.0f)       fBright = fBrightHere;
 	if (Tile::lightEmission[tile->m_ID]) fBright = 1.0f;
-	t.color(fBright, fBright, fBright);
-	renderUp(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::UP));
+	renderUp(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::UP), Color(fBright, fBright, fBright));
 
 	fBright = tile->getBrightness(m_pTileSource, pos.north());
 	if (tile->m_aabb.min.z > 0.0f)       fBright = fBrightHere;
 	if (Tile::lightEmission[tile->m_ID]) fBright = 1.0f;
-	t.color(fBright * 0.8f, fBright * 0.8f, fBright * 0.8f);
-	texture = tile->getTexture(m_pTileSource, pos, Facing::NORTH);
-	if (texture < 0) texture = -texture, m_bXFlipTexture = true;
-	renderNorth(tile, pos, texture);
-	m_bXFlipTexture = false;
+	renderNorth(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::NORTH), Color(fBright * 0.8f, fBright * 0.8f, fBright * 0.8f));
 
 	fBright = tile->getBrightness(m_pTileSource, pos.south());
 	if (tile->m_aabb.max.z < 1.0f)       fBright = fBrightHere;
 	if (Tile::lightEmission[tile->m_ID]) fBright = 1.0f;
-	t.color(fBright * 0.8f, fBright * 0.8f, fBright * 0.8f);
-	texture = tile->getTexture(m_pTileSource, pos, Facing::SOUTH);
-	if (texture < 0) texture = -texture, m_bXFlipTexture = true;
-	renderSouth(tile, pos, texture);
-	m_bXFlipTexture = false;
+	renderSouth(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::SOUTH), Color(fBright * 0.8f, fBright * 0.8f, fBright * 0.8f));
 
-	fBright = tile->getBrightness(m_pTileSource,pos.west());
+	fBright = tile->getBrightness(m_pTileSource, pos.west());
 	if (tile->m_aabb.min.x > 0.0f)       fBright = fBrightHere;
 	if (Tile::lightEmission[tile->m_ID]) fBright = 1.0f;
-	t.color(fBright * 0.6f, fBright * 0.6f, fBright * 0.6f);
-	texture = tile->getTexture(m_pTileSource, pos, Facing::WEST);
-	if (texture < 0) texture = -texture, m_bXFlipTexture = true;
-	renderWest(tile, pos, texture);
-	m_bXFlipTexture = false;
+	renderWest(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::WEST), Color(fBright * 0.6f, fBright * 0.6f, fBright * 0.6f));
 
 	fBright = tile->getBrightness(m_pTileSource, pos.east());
 	if (tile->m_aabb.max.x < 1.0f)       fBright = fBrightHere;
 	if (Tile::lightEmission[tile->m_ID]) fBright = 1.0f;
-	t.color(fBright * 0.6f, fBright * 0.6f, fBright * 0.6f);
-	texture = tile->getTexture(m_pTileSource, pos, Facing::EAST);
-	if (texture < 0) texture = -texture, m_bXFlipTexture = true;
-	renderEast(tile, pos, texture);
-	m_bXFlipTexture = false;
+	renderEast(tile, pos, tile->getTexture(m_pTileSource, pos, Facing::EAST), Color(fBright * 0.6f, fBright * 0.6f, fBright * 0.6f));
 
 	return true;
 }
@@ -2272,46 +2252,46 @@ bool TileRenderer::tesselateInWorld(Tile* tile, const TilePos& pos, int a)
 bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusion(Tile* a2, const TilePos& pos, float r, float g, float b)
 {
 	float v12; // r0
-	TileSource* v13; // r1
+	LevelSource* v13; // r1
 	float v14; // r0
-	TileSource* v15; // r1
+	LevelSource* v15; // r1
 	float v16; // r0
-	TileSource* v17; // r1
+	LevelSource* v17; // r1
 	float v18; // r0
-	TileSource* v19; // r1
+	LevelSource* v19; // r1
 	float v20; // r0
-	TileSource* v21; // r1
+	LevelSource* v21; // r1
 	float v22; // r0
-	TileSource* v23; // r1
+	LevelSource* v23; // r1
 	char v24; // r3
-	TileSource* v25; // r0
+	LevelSource* v25; // r0
 	char v26; // r3
-	TileSource* v27; // r0
+	LevelSource* v27; // r0
 	char v28; // r3
-	TileSource* v29; // r0
+	LevelSource* v29; // r0
 	char v30; // r3
-	TileSource* v31; // r0
+	LevelSource* v31; // r0
 	char v32; // r3
-	TileSource* v33; // r0
+	LevelSource* v33; // r0
 	char v34; // r3
-	TileSource* v35; // r0
+	LevelSource* v35; // r0
 	char v36; // r3
-	TileSource* v37; // r0
+	LevelSource* v37; // r0
 	char v38; // r3
-	TileSource* v39; // r0
+	LevelSource* v39; // r0
 	char v40; // r3
-	TileSource* v41; // r0
+	LevelSource* v41; // r0
 	char v42; // r3
-	TileSource* v43; // r0
+	LevelSource* v43; // r0
 	char v44; // r3
-	TileSource* v45; // r0
+	LevelSource* v45; // r0
 	int v46; // r8
 	float v47; // r0
-	TileSource* v48; // r1
+	LevelSource* v48; // r1
 	float v49; // r0
-	TileSource* v50; // r1
+	LevelSource* v50; // r1
 	float v51; // r0
-	TileSource* v52; // r1
+	LevelSource* v52; // r1
 	float v53; // r0
 	bool v54; // r3
 	float v55; // s12
@@ -2327,15 +2307,15 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusion(Tile* a2, const Ti
 	float v65; // s14
 	float v66; // s15
 	float v67; // s12
-	TileSource* v68; // r1
+	LevelSource* v68; // r1
 	int v69; // r8
 	int v70; // r0
 	float v71; // r0
-	TileSource* v72; // r1
+	LevelSource* v72; // r1
 	float v73; // r0
-	TileSource* v74; // r1
+	LevelSource* v74; // r1
 	float v75; // r0
-	TileSource* v76; // r1
+	LevelSource* v76; // r1
 	float v77; // r0
 	bool v78; // r3
 	float v79; // s13
@@ -2349,14 +2329,14 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusion(Tile* a2, const Ti
 	float v87; // s15
 	float v88; // s13
 	float v89; // s14
-	TileSource* v90; // r1
+	LevelSource* v90; // r1
 	int v91; // r0
 	float v92; // r0
-	TileSource* v93; // r1
+	LevelSource* v93; // r1
 	float v94; // r0
-	TileSource* v95; // r1
+	LevelSource* v95; // r1
 	float v96; // r0
-	TileSource* v97; // r1
+	LevelSource* v97; // r1
 	float v98; // r0
 	bool v99; // r3
 	float v100; // s13
@@ -2374,14 +2354,14 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusion(Tile* a2, const Ti
 	float v112; // s15
 	float v113; // s14
 	float v114; // s12
-	TileSource* v115; // r1
+	LevelSource* v115; // r1
 	int v116; // r0
 	float v117; // r0
-	TileSource* v118; // r1
+	LevelSource* v118; // r1
 	float v119; // r0
-	TileSource* v120; // r1
+	LevelSource* v120; // r1
 	float v121; // r0
-	TileSource* v122; // r1
+	LevelSource* v122; // r1
 	float v123; // r0
 	bool v124; // r3
 	float v125; // s15
@@ -2397,14 +2377,14 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusion(Tile* a2, const Ti
 	float v135; // s15
 	float v136; // s14
 	float v137; // s12
-	TileSource* v138; // r1
+	LevelSource* v138; // r1
 	int v139; // r0
 	float v140; // r0
-	TileSource* v141; // r1
+	LevelSource* v141; // r1
 	float v142; // r0
-	TileSource* v143; // r1
+	LevelSource* v143; // r1
 	float v144; // r0
-	TileSource* v145; // r1
+	LevelSource* v145; // r1
 	float v146; // r0
 	bool v147; // r3
 	float v148; // s12
@@ -2422,14 +2402,14 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusion(Tile* a2, const Ti
 	float v160; // s15
 	float v161; // s14
 	float v162; // s12
-	TileSource* v163; // r1
+	LevelSource* v163; // r1
 	int v164; // r0
 	float v165; // r0
-	TileSource* v166; // r1
+	LevelSource* v166; // r1
 	float v167; // r0
-	TileSource* v168; // r1
+	LevelSource* v168; // r1
 	float v169; // r0
-	TileSource* v170; // r1
+	LevelSource* v170; // r1
 	float v171; // r0
 	bool v172; // r3
 	float v173; // r0
@@ -2451,7 +2431,7 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusion(Tile* a2, const Ti
 	float v189; // s14
 	float v190; // s15
 	float v191; // s12
-	TileSource* v192; // r1
+	LevelSource* v192; // r1
 	int v193; // r0
 	int result; // r0
 	bool v195; // r3
@@ -3610,7 +3590,7 @@ bool TileRenderer::useAmbientOcclusion() const
 	return Minecraft::useAmbientOcclusion;
 }
 
-void TileRenderer::setTileSource(TileSource* tileSource)
+void TileRenderer::setTileSource(LevelSource* tileSource)
 {
 	m_pTileSource = tileSource;
 }

@@ -24,7 +24,7 @@ private:
 	void _tickDecay(Level* level, const TilePos& pos); /// circa b1.7.3
 
 public:
-	int getColor(const TileSource*, const TilePos& pos) const override;
+	int getColor(const LevelSource*, const TilePos& pos) const override;
 	int getColor(Facing::Name face, TileData) const override;
 	int getTexture(Facing::Name face, TileData data) const override;
 	bool isSolidRender() const override;

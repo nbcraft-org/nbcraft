@@ -22,7 +22,7 @@ int TallGrass::getResource(TileData data, Random* random) const
 	return random->nextInt(8) == 0 ? Item::seeds->m_itemID : 0;
 }
 
-int TallGrass::getColor(const TileSource* levelSource, const TilePos& pos) const
+int TallGrass::getColor(const LevelSource* levelSource, const TilePos& pos) const
 {
 	if (GrassColor::isAvailable() && m_bBiomeColors)
 	{
