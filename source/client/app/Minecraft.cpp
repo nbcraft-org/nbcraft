@@ -66,6 +66,11 @@ const char* Minecraft::progressMessages[] =
 	"Saving chunks",
 };
 
+static AppPlatform* platform()
+{
+	return AppPlatform::singleton();
+}
+
 Minecraft::Minecraft()
 {
 	m_pOptions = nullptr;
@@ -249,7 +254,7 @@ void Minecraft::resetInputMethod()
 int Minecraft::getLicenseId()
 {
 	if (m_licenseID < 0)
-		m_licenseID = m_pPlatform->checkLicense();
+		m_licenseID = platform()->checkLicense();
 
 	return m_licenseID;
 }

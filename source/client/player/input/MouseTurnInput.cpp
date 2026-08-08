@@ -20,8 +20,8 @@ MouseTurnInput::MouseTurnInput(Minecraft* pMC)
 Vec2 MouseTurnInput::getTurnDelta()
 {
 	int deltaX = 0, deltaY = 0;
-	m_pMinecraft->platform()->getMouseDiff(deltaX, deltaY);
-	m_pMinecraft->platform()->clearDiff();
+	AppPlatform::singleton()->getMouseDiff(deltaX, deltaY);
+	AppPlatform::singleton()->clearDiff();
 
 	Vec2 d;
 	d.x = C_SENSITIVITY * deltaX;

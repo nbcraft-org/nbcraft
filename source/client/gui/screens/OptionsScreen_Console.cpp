@@ -125,7 +125,7 @@ SettingsPanelScreen::SettingsPanelScreen(Screen* parent, Minecraft& mc) : PanelS
 		m_layout.m_elements[idxPano]->setEnabled(false);
 #endif
 
-	if (!m_pMinecraft->platform()->isVSyncSwitchable())
+	if (!AppPlatform::singleton()->isVSyncSwitchable())
 		m_layout.m_elements[idxVSync]->setEnabled(false);
 
 	(void)currentIndex; // compiler will warn about an unused variable sometimes if this isn't here

@@ -40,7 +40,7 @@ TextBox::TextBox(Screen* parent, int x, int y, int width, int height, const std:
 
 TextBox::~TextBox()
 {
-	m_pParent->m_pMinecraft->platform()->hideKeyboard(0);
+	AppPlatform::singleton()->hideKeyboard(0);
 }
 
 void TextBox::_onSelectedChanged()
@@ -72,11 +72,11 @@ void TextBox::_onFocusChanged()
 
 		keyboard.defaultText = m_text;
 
-		m_pParent->m_pMinecraft->platform()->showKeyboard(0, keyboard);
+		AppPlatform::singleton()->showKeyboard(0, keyboard);
 	}
 	else
 	{
-		m_pParent->m_pMinecraft->platform()->hideKeyboard(0);
+		AppPlatform::singleton()->hideKeyboard(0);
 	}
 
 	// don't actually hide the keyboard when unfocusing
@@ -104,7 +104,7 @@ bool TextBox::pointerPressed(Minecraft* pMinecraft, const MenuPointer& pointer)
 
 char TextBox::guessCharFromKey(int key)
 {
-	bool bShiftPressed = m_pParent->m_pMinecraft->platform()->shiftPressed();
+	bool bShiftPressed = AppPlatform::singleton()->shiftPressed();
 	char chr = '\0';
 	if (key >= AKEYCODE_A && key <= AKEYCODE_Z)
 	{

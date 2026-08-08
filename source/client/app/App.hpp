@@ -17,7 +17,6 @@ protected:
 	App()
 	{
 		m_bWantToQuit = false;
-		m_pPlatform = nullptr;
 	}
 
 public:
@@ -30,8 +29,6 @@ public:
 	void destroy();
 	void draw();
 	void loadState(void*, int);
-	AppPlatform* platform() { return m_pPlatform; }
-	const AppPlatform* platform() const { return m_pPlatform; }
 	void quit();
 	void saveState(void**, int);
 	bool wantToQuit();
@@ -43,7 +40,5 @@ public:
 	int field_8;
 	int field_C;
 	int field_10;
-
-	AppPlatform* m_pPlatform;
 };
 

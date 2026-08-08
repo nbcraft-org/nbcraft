@@ -43,7 +43,7 @@ void RailTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
 		level->setTile(pos, TILE_AIR);
 		return;
 	}
-	else if (isPoweredRail(this))
+	if (isPoweredRail(this))
 	{
 		bool var9 = level->hasNeighborSignal(pos) || level->hasNeighborSignal(pos.above());
 		var9 = var9 || _applyPower(level, pos, data, true, 0) || _applyPower(level, pos, data, false, 0);

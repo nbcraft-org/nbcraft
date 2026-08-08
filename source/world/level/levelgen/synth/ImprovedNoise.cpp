@@ -8,16 +8,17 @@
 
 #include "ImprovedNoise.hpp"
 
+// 0.5f * (Mth::sqrt(3.0f) - 1.0f)
+#define C_field_4294_f 0.3660254f
+// (3.0f - Mth::sqrt(3.0f)) / 6.0f
+#define C_field_4293_g 0.2113249f
+
 namespace
 {
-	// 0.5f * (Mth::sqrt(3.0f) - 1.0f)
-	constexpr float field_4294_f = 0.3660254f;
-	// (3.0f - Mth::sqrt(3.0f)) / 6.0f
-	constexpr float field_4293_g = 0.2113249f;
-	constexpr int field_4296_d[12][3] = { {1, 1, 0}, {-1, 1, 0}, {1, -1, 0}, {-1, -1, 0}, {1, 0, 1}, {-1, 0, 1}, {1, 0, -1}, {-1, 0, -1}, {0, 1, 1}, {0, -1, 1}, {0, 1, -1}, {0, -1, -1} };
+	static const int field_4296_d[12][3] = { {1, 1, 0}, {-1, 1, 0}, {1, -1, 0}, {-1, -1, 0}, {1, 0, 1}, {-1, 0, 1}, {1, 0, -1}, {-1, 0, -1}, {0, 1, 1}, {0, -1, 1}, {0, 1, -1}, {0, -1, -1} };
 }
 
-float ImprovedNoise::func_4156_a(const int* var0, float var1, float var3)
+static float func_4156_a(const int* var0, float var1, float var3)
 {
 	return (float)var0[0] * var1 + (float)var0[1] * var3;
 }
@@ -234,10 +235,10 @@ void ImprovedNoise::addBiome(std::vector<float>& var1, float var2, float var4, i
         for (int var18 = 0; var18 < var7; ++var18)
         {
             float var19 = (var4 + (float)var18) * var10 + m_offsetY;
-            float var27 = (var16 + var19) * field_4294_f;
+            float var27 = (var16 + var19) * C_field_4294_f;
             int var29 = Mth::floor(var16 + var27);
             int var30 = Mth::floor(var19 + var27);
-            float var31 = (float)(var29 + var30) * field_4293_g;
+            float var31 = (float)(var29 + var30) * C_field_4293_g;
             float var33 = (float)var29 - var31;
             float var35 = (float)var30 - var31;
             float var37 = var16 - var33;
@@ -255,10 +256,10 @@ void ImprovedNoise::addBiome(std::vector<float>& var1, float var2, float var4, i
                 var42 = 1;
             }
 
-            float var43 = var37 - float(var41) + field_4293_g;
-            float var45 = var39 - float(var42) + field_4293_g;
-            float var47 = var37 - 1.0f + 2.0f * field_4293_g;
-            float var49 = var39 - 1.0f + 2.0f * field_4293_g;
+            float var43 = var37 - float(var41) + C_field_4293_g;
+            float var45 = var39 - float(var42) + C_field_4293_g;
+            float var47 = var37 - 1.0f + 2.0f * C_field_4293_g;
+            float var49 = var39 - 1.0f + 2.0f * C_field_4293_g;
             int var51 = var29 & 255;
             int var52 = var30 & 255;
             int var53 = m_permutation[var51 + m_permutation[var52]] % 12;

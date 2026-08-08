@@ -242,7 +242,7 @@ void OptionList::initVideoMenu()
 		m_items[idxPano]->setEnabled(false);
 #endif
 
-	if (!m_pMinecraft->platform()->isVSyncSwitchable())
+	if (!AppPlatform::singleton()->isVSyncSwitchable())
 		m_items[idxVSync]->setEnabled(false);
 
 	RESET_BTN(OC_VIDEO);

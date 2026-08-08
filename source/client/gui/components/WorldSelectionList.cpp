@@ -192,7 +192,7 @@ void WorldSelectionList::commit()
 
 		std::vector<std::string> vs;
 		vs.push_back(item.m_levelName);
-		vs.push_back(m_pMinecraft->platform()->getDateString(item.m_lastPlayed));
+		vs.push_back(AppPlatform::singleton()->getDateString(item.m_lastPlayed));
 		vs.push_back(item.m_fileName);
 		vs.push_back(GameTypeConv::GameTypeToNonLocString(item.m_gameType));
         std::stringstream ss;

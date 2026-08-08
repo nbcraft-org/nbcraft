@@ -41,6 +41,5 @@ public:
 	float m_offsetY;
 	float m_offsetZ;
 	int m_permutation[512];
-	static float func_4156_a(const int* var0, float var1, float var3);
 };
 

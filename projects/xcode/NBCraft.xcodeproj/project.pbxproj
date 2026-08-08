@@ -772,6 +772,7 @@
 		84BF63D42AF186C9008A9995 /* TreeTile.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 840DD72B2AC810620006A435 /* TreeTile.hpp */; };
 		84BF63D52AF186C9008A9995 /* WireTile.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 840DD72D2AC810620006A435 /* WireTile.hpp */; };
 		84C0D8032B15A1D0007E1E76 /* PlatformDefinitions.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C0D8022B15A1D0007E1E76 /* PlatformDefinitions.h */; };
+		84ED000000000001000000A3 /* LimitMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 84ED000000000000000000A3 /* LimitMacros.h */; };
 		84C614282F323602008AC5BE /* BowItem.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84C614242F323602008AC5BE /* BowItem.hpp */; };
 		84C614292F323602008AC5BE /* WeaponItem.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84C614262F323602008AC5BE /* WeaponItem.hpp */; };
 		84C6142A2F323602008AC5BE /* BowItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C614252F323602008AC5BE /* BowItem.cpp */; };
@@ -1411,6 +1412,7 @@
 		84EB0E112EE2D4D4008FB007 /* JsonParser.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84EB0A042EE2CCC0008FB007 /* JsonParser.hpp */; };
 		84EB0E122EE2D4D4008FB007 /* Singleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84EB0A052EE2CCC0008FB007 /* Singleton.cpp */; };
 		84EB0E132EE2D4D4008FB007 /* Singleton.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84EB0A062EE2CCC0008FB007 /* Singleton.hpp */; };
+		84ED000000000001000000A1 /* TypesHelper.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED000000000000000000A1 /* TypesHelper.hpp */; };
 		84ED413B2FC3EC220038BAC4 /* EggItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED41352FC3EC220038BAC4 /* EggItem.cpp */; };
 		84ED413C2FC3EC220038BAC4 /* EggItem.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED41362FC3EC220038BAC4 /* EggItem.hpp */; };
 		84ED413D2FC3EC220038BAC4 /* FlintAndSteelItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED41372FC3EC220038BAC4 /* FlintAndSteelItem.cpp */; };
@@ -1740,6 +1742,7 @@
 		84ED50000000000001000083 /* PistonRenderer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000083 /* PistonRenderer.hpp */; };
 		84ED50000000000001000084 /* MobSpawnerRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000084 /* MobSpawnerRenderer.cpp */; };
 		84ED50000000000001000085 /* MobSpawnerRenderer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED50000000000000000085 /* MobSpawnerRenderer.hpp */; };
+		84ED000000000001000000A2 /* TileEntityRenderer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84ED000000000000000000A2 /* TileEntityRenderer.hpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -3222,6 +3225,7 @@
 		84EB0A042EE2CCC0008FB007 /* JsonParser.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = JsonParser.hpp; sourceTree = "<group>"; };
 		84EB0A052EE2CCC0008FB007 /* Singleton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Singleton.cpp; sourceTree = "<group>"; };
 		84EB0A062EE2CCC0008FB007 /* Singleton.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Singleton.hpp; sourceTree = "<group>"; };
+		84ED000000000000000000A1 /* TypesHelper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TypesHelper.hpp; sourceTree = "<group>"; };
 		84EB0C102EE2D4B2008FB007 /* Attribute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Attribute.cpp; sourceTree = "<group>"; };
 		84EB0C112EE2D4B2008FB007 /* Attribute.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Attribute.hpp; sourceTree = "<group>"; };
 		84EB0C122EE2D4B2008FB007 /* ConstantBufferMetaData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstantBufferMetaData.cpp; sourceTree = "<group>"; };
@@ -3453,6 +3457,7 @@
 		84EDD07A2E76E2B600375AEF /* LegacyCPP.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LegacyCPP.hpp; sourceTree = "<group>"; };
 		84EDD07B2E76E2B600375AEF /* LegacyCPP_Compat.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LegacyCPP_Compat.hpp; sourceTree = "<group>"; };
 		84EDD07C2E76E2B600375AEF /* LegacyCPP_Info.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LegacyCPP_Info.hpp; sourceTree = "<group>"; };
+		84ED000000000000000000A3 /* LimitMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LimitMacros.h; sourceTree = "<group>"; };
 		84EE49E92F387DBD00677881 /* SliderButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SliderButton.cpp; sourceTree = "<group>"; };
 		84EE49EA2F387DBD00677881 /* SliderButton.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SliderButton.hpp; sourceTree = "<group>"; };
 		84EE49EB2F387DBD00677881 /* SwitchButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SwitchButton.cpp; sourceTree = "<group>"; };
@@ -3660,6 +3665,7 @@
 		84ED50000000000000000083 /* PistonRenderer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PistonRenderer.hpp; sourceTree = "<group>"; };
 		84ED50000000000000000084 /* MobSpawnerRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MobSpawnerRenderer.cpp; sourceTree = "<group>"; };
 		84ED50000000000000000085 /* MobSpawnerRenderer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MobSpawnerRenderer.hpp; sourceTree = "<group>"; };
+		84ED000000000000000000A2 /* TileEntityRenderer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TileEntityRenderer.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -3790,6 +3796,7 @@
 				84EDD07A2E76E2B600375AEF /* LegacyCPP.hpp */,
 				84EDD07B2E76E2B600375AEF /* LegacyCPP_Compat.hpp */,
 				84EDD07C2E76E2B600375AEF /* LegacyCPP_Info.hpp */,
+				84ED000000000000000000A3 /* LimitMacros.h */,
 				84C0D8022B15A1D0007E1E76 /* PlatformDefinitions.h */,
 				840DD57A2AC810620006A435 /* SDLKeyCodes.h */,
 				84F66DED2F18CA3B00DE508E /* ToolsetDefinitions.h */,
@@ -5953,6 +5960,7 @@
 				84EB0A042EE2CCC0008FB007 /* JsonParser.hpp */,
 				84EB0A052EE2CCC0008FB007 /* Singleton.cpp */,
 				84EB0A062EE2CCC0008FB007 /* Singleton.hpp */,
+				84ED000000000000000000A1 /* TypesHelper.hpp */,
 			);
 			path = utility;
 			sourceTree = "<group>";
@@ -6298,6 +6306,7 @@
 				84ED50000000000000000083 /* PistonRenderer.hpp */,
 				84ED50000000000000000084 /* MobSpawnerRenderer.cpp */,
 				84ED50000000000000000085 /* MobSpawnerRenderer.hpp */,
+				84ED000000000000000000A2 /* TileEntityRenderer.hpp */,
 			);
 			path = tileentity;
 			sourceTree = "<group>";
@@ -6746,6 +6755,7 @@
 				84ED50000000000001000081 /* SignRenderer.hpp in Headers */,
 				84ED50000000000001000083 /* PistonRenderer.hpp in Headers */,
 				84ED50000000000001000085 /* MobSpawnerRenderer.hpp in Headers */,
+				84ED000000000001000000A2 /* TileEntityRenderer.hpp in Headers */,
 
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7049,11 +7059,13 @@
 				84E058FF2F383E9200F1E829 /* CThread.hpp in Headers */,
 				84E058FD2F383E9200F1E829 /* AsyncTask.hpp in Headers */,
 				84EB0E132EE2D4D4008FB007 /* Singleton.hpp in Headers */,
+				84ED000000000001000000A1 /* TypesHelper.hpp in Headers */,
 				84CCBC402E6183F300E251AF /* DataIO.hpp in Headers */,
 				8406FD3A2AF1823700B09C1D /* Util.hpp in Headers */,
 				8406FD3B2AF1823700B09C1D /* Utils.hpp in Headers */,
 				84E001B92AF3A3CB009B9555 /* SmoothFloat.hpp in Headers */,
 				84C0D8032B15A1D0007E1E76 /* PlatformDefinitions.h in Headers */,
+				84ED000000000001000000A3 /* LimitMacros.h in Headers */,
 				84DEAB552F8CBB0D00BD9701 /* ByteBuffer.hpp in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

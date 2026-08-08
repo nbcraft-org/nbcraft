@@ -22,7 +22,7 @@ void TextEditScreen::init()
     VirtualKeyboard keyboard;
 
     keyboard.rect = IntRectangle(x / Gui::GuiScale, y / Gui::GuiScale, (x + 100) / Gui::GuiScale, (y + 100) / Gui::GuiScale);
-    m_pMinecraft->m_pPlatform->showKeyboard(0, keyboard);
+    AppPlatform::singleton()->showKeyboard(0, keyboard);
 
     m_btnDone.m_xPos = m_width / 2 - 100;
     m_btnDone.m_yPos = m_height / 4 + 120;
@@ -127,5 +127,5 @@ void TextEditScreen::removed()
 {
     if (m_pMinecraft->m_pLevel->m_bIsClientSide)
         m_pMinecraft->m_pRakNetInstance->send(m_pSign->getUpdatePacket());
-    m_pMinecraft->m_pPlatform->hideKeyboard(0);
+    AppPlatform::singleton()->hideKeyboard(0);
 }
