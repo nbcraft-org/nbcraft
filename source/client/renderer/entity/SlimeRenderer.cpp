@@ -10,12 +10,12 @@ SlimeRenderer::~SlimeRenderer()
 {
 }
 
-int SlimeRenderer::prepareArmor(const Mob& mob, int layer, float a)
+bool SlimeRenderer::prepareArmor(const Mob& mob, int layer, float a)
 {
     if (layer == 0)
     {
         setArmor(m_armor);
-        return 1;
+        return true;
     }
     else
     {
@@ -23,7 +23,7 @@ int SlimeRenderer::prepareArmor(const Mob& mob, int layer, float a)
         {
             currentShaderColor = Color::WHITE;
         }
-        return 0;
+        return false;
     }
 }
 

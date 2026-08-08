@@ -8,15 +8,20 @@
 
 #pragma once
 
-#include "common/math/Color.hpp"
 #include "world/phys/Vec3.hpp"
-#include "DimensionId.hpp"
 
 class Level; // if included from Level.hpp
 class ChunkSource;
 class BiomeSource;
-class TileSource;
-class Entity;
+
+enum DimensionId
+{
+	DIMENSION_OVERWORLD,
+	DIMENSION_NETHER,
+	DIMENSION_THE_END,
+	DIMENSIONS_COUNT,
+	DIMENSION_UNKNOWN
+};
 
 class Dimension
 {
@@ -25,31 +30,18 @@ public:
 	virtual ~Dimension();
 	static Dimension* createNew(DimensionId type);
 
+	virtual Vec3 getFogColor(float, float) const;
 	virtual bool isNaturalDimension() const;
 	virtual void init();
 	virtual bool mayRespawn() const;
     virtual bool isValidSpawn(const TilePos& pos) const;
 
-	DimensionId getId() const { return m_id; }
-	bool isDay() const;
-	bool isFoggy() const { return m_bFoggy; }
-	bool isUltraWarm() const { return m_bUltraWarm; }
-	virtual Color getSkyColor(const Entity& entity, float f) const;
-	virtual Color getFogColor(float f) const;
-	virtual Color getSunriseColor(float, float) const;
-	virtual Color getCloudColor(float f) const;
-	virtual float getSunAngle(float f) const;
-	virtual float getTimeOfDay(int32_t, float) const;
-	virtual float getTimeOfDay(float f) const;
-	virtual float getStarBrightness(float f) const;
-
+	const float* getSunriseColor(float, float);
+	float getTimeOfDay(int32_t, float) const;
 	void init(Level* pLevel);
 	void updateLightRamp();
 
 	ChunkSource* createRandomLevelSource();
-
-	ChunkSource* getChunkSource() const;
-	TileSource* getTileSource() const;
 
 public:
 	Level* m_pLevel;
@@ -58,6 +50,7 @@ public:
 	bool m_bUltraWarm;
 	bool m_bHasCeiling;
 	float m_brightnessRamp[16];
-	DimensionId m_id;
+	int m_id;
+	float m_sunriseColor[4];
 };
 

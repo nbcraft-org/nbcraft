@@ -4,7 +4,7 @@
 class ServerPlayer : public Player, public ContainerListener
 {
 public:
-	ServerPlayer(Level& Level, GameType playerGameType);
+	ServerPlayer(Level* pLevel, GameType playerGameType);
 	~ServerPlayer();
 
 protected:

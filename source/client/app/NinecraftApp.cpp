@@ -11,6 +11,7 @@
 #include "world/entity/MobCategory.hpp"
 #include "world/entity/MobFactory.hpp"
 #include "world/tile/entity/TileEntityType.hpp"
+#include "world/entity/PaintingType.hpp"
 #include "client/player/input/GameControllerHandler.hpp"
 #include "client/player/input/Multitouch.hpp"
 #include "client/gui/screens/StartMenuScreen.hpp"
@@ -44,7 +45,7 @@ bool NinecraftApp::_hasInitedStatics;
 void NinecraftApp::_initResourceLoaders()
 {
 	Resource::registerLoader(new AppResourceLoader(ResourceLocation::APP_PACKAGE));
-	//Resource::registerLoader(ResourceLocation::DATA_DIR, new AppResourceLoader(platform()->getDataUrl()));
+	//Resource::registerLoader(ResourceLocation::DATA_DIR, new AppResourceLoader(AppPlatform::singleton()->getDataUrl()));
 	//Resource::registerLoader(ResourceLocation::USER_DIR, new AppResourceLoader(dontevenknow));
 	//Resource::registerLoader(ResourceLocation::SETTINGS_DIR, new AppResourceLoader(dontevenknow));
 	Resource::registerLoader(new AppResourceLoader(ResourceLocation::EXTERNAL_DIR));
@@ -82,6 +83,7 @@ void NinecraftApp::_initTextures()
 	m_pTextures->addDynamicTexture(new LavaSideTexture);
 	m_pTextures->addDynamicTexture(new FireTexture(0));
 	m_pTextures->addDynamicTexture(new FireTexture(1));
+	m_pTextures->addDynamicTexture(new PortalTexture);
 
 	//m_pTextures->loadList("startup.images");
 	//m_pTextures->loadList("background.images");
@@ -187,11 +189,12 @@ void NinecraftApp::_initAll()
 		Material::initMaterials();
 		EntityTypeDescriptor::initDescriptors(); // custom
 		MobCategory::initMobCategories();
-		MobFactory::initMobLists();
 		TileEntityFactory::initTileEntities();
+		PaintingType::initTypes();
 		Tile::initTiles();
 		Item::initItems();
 		Biome::initBiomes();
+		MobFactory::initMobLists();
 	}
 
 	_initOptions();

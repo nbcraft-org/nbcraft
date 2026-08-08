@@ -5,9 +5,9 @@
 class Squid : public WaterAnimal
 {
 public:
-	Squid(TileSource& source);
+	Squid(Level* pLevel);
 
-	std::string getAmbientSound() const override { return ""; }
+	std::string getAmbientSound() override { return ""; }
 	std::string getDeathSound() const override { return ""; }
 	std::string getHurtSound() const override { return ""; }
 	int getDeathLoot() const override { return 0; }

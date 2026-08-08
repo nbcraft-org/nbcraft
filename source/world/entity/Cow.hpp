@@ -12,10 +12,10 @@
 class Cow : public Animal
 {
 public:
-	Cow(TileSource& source);
+	Cow(Level* pLevel);
 
 public:
-	std::string getAmbientSound() const override { return "mob.cow"; };
+	std::string getAmbientSound() override { return "mob.cow"; };
 	std::string getDeathSound() const override { return "mob.cowhurt"; }
 	std::string getHurtSound() const override { return "mob.cowhurt"; }
 	int getDeathLoot() const override { return ITEM_LEATHER; }
@@ -25,5 +25,5 @@ public:
 	void readAdditionalSaveData(const CompoundTag& tag) override;
 	bool interact(Player* player) override;
 
-	Entity* getBreedOffspring(Animal* pOther) { return new Cow(*m_pTileSource); }
+	Entity* getBreedOffspring(Animal* pOther) { return new Cow(m_pLevel); }
 };

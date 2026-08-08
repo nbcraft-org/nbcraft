@@ -9,50 +9,52 @@
 #include "BiomeSource.hpp"
 #include "world/level/Level.hpp"
 
-BiomeSource* BiomeSource::init()
+BiomeSource::BiomeSource(Level* pLevel)
+	: m_temperatureRandom((int64_t)pLevel->getSeed() * 9871)
+	, m_downfallRandom((int64_t)pLevel->getSeed() * 39811)
+	, m_noiseRandom((int64_t)pLevel->getSeed() * 543321)
+	, m_temperatureMap(&m_temperatureRandom, 4)
+	, m_downfallMap(&m_downfallRandom, 4)
+	, m_noiseMap(&m_noiseRandom, 2)
 {
-	field_4 = nullptr;
-	field_8 = nullptr;
-	field_C = nullptr;
-	field_10 = 0;
-	field_14 = 0;
-	field_18 = 0;
-	field_1C = 0;
-	field_20 = new Biome * [256];
-	m_pPerlinNoise[0] = nullptr;
-	m_pPerlinNoise[1] = nullptr;
-	m_pPerlinNoise[2] = nullptr;
-
-	return this;
 }
 
-BiomeSource::BiomeSource(Level* pLevel) :
-	m_Random1((int64_t)pLevel->getSeed() * 9871),
-	m_Random2((int64_t)pLevel->getSeed() * 39811),
-	m_Random3((int64_t)pLevel->getSeed() * 543321)
-{
-	init();
-	m_pPerlinNoise[0] = new PerlinNoise(&m_Random1, 4);
-	m_pPerlinNoise[1] = new PerlinNoise(&m_Random2, 4);
-	m_pPerlinNoise[2] = new PerlinNoise(&m_Random3, 2);
-	field_4 = new float[256];
+float BiomeSource::getTemperature(int x, int y) {
+	m_temperatureMap.getRegion(m_temperatures, x, y, 1, 1, 0.025f, 0.025f, 0.5f);
+	return m_temperatures[0];
 }
 
 Biome* BiomeSource::getBiome(const ChunkPos& pos)
 {
-	return *getBiomeBlock(TilePos(pos, 0), 1, 1);
+	return getBiomeAt(TilePos(pos, 0));
 }
 
-Biome** BiomeSource::getBiomeBlock(const TilePos& pos, int c, int d)
+Biome* BiomeSource::getBiomeAt(const TilePos& pos)
 {
-	return getBiomeBlock(field_20, pos, c, d);
+	return getBiomeBlock(pos, 1, 1)[0];
 }
 
-Biome** BiomeSource::getBiomeBlock(Biome** pBiomes, const TilePos& pos, int c, int d)
+const Biome::Vector& BiomeSource::getBiomeBlock(const TilePos& pos, int c, int d)
 {
-	field_4 = m_pPerlinNoise[0]->getRegion(field_4, pos.x, pos.z, c, c, 0.025f, 0.025f, 0.25f);
-	field_8 = m_pPerlinNoise[1]->getRegion(field_8, pos.x, pos.z, c, c, 0.05f, 0.05f, 0.3333f);
-	field_C = m_pPerlinNoise[2]->getRegion(field_C, pos.x, pos.z, c, c, 0.25f, 0.25f, 0.588f);
+	return getBiomeBlock(m_biomes, pos, c, d);
+}
+
+const Biome::Vector& BiomeSource::getBiomeBlock(Biome::Vector& biomes, const TilePos& pos, int c, int d)
+{
+	size_t size = c * d;
+	if (biomes.size() < size) biomes.resize(size);
+	m_temperatureMap.getRegion(m_temperatures, pos.x, pos.z, c, c, 0.025f, 0.025f, 0.25f);
+	// @PARITY-JAVA: Java uses (1.0f / 3.0f) here
+	m_downfallMap.getRegion(m_downfalls, pos.x, pos.z, c, c, 0.05f, 0.05f, 0.3333f);
+	// @PARITY-JAVA: Java uses 0.5882352941176471f here
+	m_noiseMap.getRegion(m_noises, pos.x, pos.z, c, c, 0.25f, 0.25f, 0.588f);
+
+	constexpr float noiseScale = 1.1f;
+	constexpr float noiseBias = 0.5f;
+	constexpr float temperatureInfluence = 0.01f;
+	constexpr float temperatureInfluenceInverse = 1.0f - temperatureInfluence;
+	constexpr float downfallInfluence = 0.002f;
+	constexpr float downfallInfluenceInverse = 1.0f - downfallInfluence;
 
 	int index = 0;
 
@@ -60,33 +62,33 @@ Biome** BiomeSource::getBiomeBlock(Biome** pBiomes, const TilePos& pos, int c, i
 	{
 		for (int j = 0; j < d; j++)
 		{
-			float d = field_C[index] * 1.1f + 0.5f;
-			float d1 = 0.01f;
-			float d2 = 1.0f - d1;
-			float d3 = (field_4[index] * 0.15f + 0.7f) * d2 + d * d1;
-			d1 = 0.002f;
-			d2 = 1.0f - d1;
-			float d4 = (field_8[index] * 0.15f + 0.5f) * d2 + d * d1;
+			float d = m_noises[index] * noiseScale + noiseBias;
+			float d3 = (m_temperatures[index] * 0.15f + 0.7f) * temperatureInfluenceInverse + d * temperatureInfluence;
+			float d4 = (m_downfalls[index] * 0.15f + 0.5f) * downfallInfluenceInverse + d * downfallInfluence;
 			d3 = 1.0f - (1.0f - d3) * (1.0f - d3);
 
-			if (d3 < 0.0f) d3 = 0.0f;
-			if (d4 < 0.0f) d4 = 0.0f;
-			if (d3 > 1.0f) d3 = 1.0f;
-			if (d4 > 1.0f) d4 = 1.0f;
+			d3 = Mth::clamp(d3, 0.0f, 1.0f);
+			d4 = Mth::clamp(d4, 0.0f, 1.0f);
 
-			field_4[index] = d3;
-			field_8[index] = d4;
-			field_20[index++] = Biome::getBiome(d3, d4);
+			m_temperatures[index] = d3;
+			m_downfalls[index] = d4;
+			biomes[index++] = Biome::getBiome(d3, d4);
 		}
 	}
 
-	return field_20;
+	return biomes;
 }
 
-float* BiomeSource::getTemperatureBlock(int a, int b, int c, int d)
+const std::vector<float>& BiomeSource::getTemperatureBlock(int a, int b, int c, int d)
 {
-	field_4 = m_pPerlinNoise[0]->getRegion(field_4, a, b, c, d, 0.025f, 0.025f, 0.25f);
-	field_C = m_pPerlinNoise[2]->getRegion(field_C, a, b, c, d, 0.25f, 0.25f, 0.588f);
+	m_temperatureMap.getRegion(m_temperatures, a, b, c, d, 0.025f, 0.025f, 0.25f);
+	// @PARITY-JAVA: Java uses 0.5882352941176471f here
+	m_noiseMap.getRegion(m_noises, a, b, c, d, 0.25f, 0.25f, 0.588f);
+
+	constexpr float noiseScale = 1.1f;
+	constexpr float noiseBias = 0.5f;
+	constexpr float temperatureInfluence = 0.01f;
+	constexpr float temperatureInfluenceInverse = 1.0f - temperatureInfluence;
 
 	int index = 0;
 
@@ -94,38 +96,20 @@ float* BiomeSource::getTemperatureBlock(int a, int b, int c, int d)
 	{
 		for (int j = 0; j < d; j++)
 		{
-			float d = field_C[index] * 1.1f + 0.5f;
-			float d1 = 0.01f;
-			float d2 = 1.0f - d1;
-			float d3 = (field_4[index] * 0.15f + 0.7f) * d2 + d * d1;
+			float d = m_noises[index] * noiseScale + noiseBias;
+			float d3 = (m_temperatures[index] * 0.15f + 0.7f) * temperatureInfluenceInverse + d * temperatureInfluence;
 			d3 = 1.0f - (1.0f - d3) * (1.0f - d3);
-			if (d3 < 0.0f)
-				d3 = 0.0f;
-			if (d3 > 1.0f)
-				d3 = 1.0f;
+			d3 = Mth::clamp(d3, 0.0f, 1.0f);
 
-			field_4[index++] = d3;
+			m_temperatures[index] = d3;
+			index++;
 		}
 	}
 
-	return field_4;
+	return m_temperatures;
 }
 
 BiomeSource::~BiomeSource()
 {
-	for (int i = 0; i < 3; i++)
-		if (m_pPerlinNoise[i])
-			delete m_pPerlinNoise[i];
 
-	if (field_4)
-		delete[] field_4;
-
-	if (field_8)
-		delete[] field_8;
-
-	if (field_C)
-		delete[] field_C;
-
-	if (field_20)
-		delete[] field_20;
 }

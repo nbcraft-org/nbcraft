@@ -10,7 +10,7 @@
 #include "Player.hpp"
 #include "world/level/Level.hpp"
 
-Rocket::Rocket(TileSource& source, const Vec3& pos) : Entity(source)
+Rocket::Rocket(Level* level, const Vec3& pos) : Entity(level)
 {
 	m_lifetime = 80;
 	m_renderType = RENDER_ROCKET;
@@ -64,8 +64,8 @@ void Rocket::tick()
 	{
 		for (int i = 0; i < 100; i++)
 		{
-			float yaw = sharedRandom.nextFloat() * float(M_PI) * 2;
-			float pitch = sharedRandom.nextFloat() * float(M_PI) * 2;
+			float yaw = m_random.nextFloat() * float(M_PI) * 2;
+			float pitch = m_random.nextFloat() * float(M_PI) * 2;
 
 			Vec3 o(cosf(yaw), sinf(yaw), sinf(pitch));
 

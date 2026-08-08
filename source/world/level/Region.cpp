@@ -165,6 +165,11 @@ bool Region::isSolidRenderTile(const TilePos& pos) const
 	return pTile->isSolidRender();
 }
 
+bool Region::isSolidTile(const TilePos& pos) const
+{
+	return isSolidBlockingTile(pos);
+}
+
 BiomeSource* Region::getBiomeSource() const
 {
 	return m_pLevel->getBiomeSource();

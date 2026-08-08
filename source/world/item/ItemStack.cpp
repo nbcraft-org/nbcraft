@@ -209,6 +209,11 @@ bool ItemStack::hasSameUserData(const ItemStack& other) const
 	return this->getUserData() == other.getUserData();
 }
 
+ItemStack* ItemStack::copy() const
+{
+	return new ItemStack(*this);
+}
+
 void ItemStack::set(int inCount)
 {
 	assert(inCount >= 0);
@@ -224,7 +229,7 @@ bool ItemStack::canDestroySpecial(const Tile* tile)
 
 std::string ItemStack::getDescriptionId()
 {
-	return getItem()->getDescriptionId(*this);
+	return getItem()->getDescriptionId(this);
 }
 
 std::string ItemStack::getHovertextName()
@@ -237,7 +242,7 @@ std::string ItemStack::getHovertextName()
 
 float ItemStack::getDestroySpeed(const Tile* tile)
 {
-	return getItem()->getDestroySpeed(*this, tile);
+	return getItem()->getDestroySpeed(this, tile);
 }
 
 int ItemStack::getIcon() const
@@ -270,7 +275,7 @@ void ItemStack::hurt(int by)
 	}
 }
 
-void ItemStack::hurtAndBreak(int amount, Entity& ent)
+void ItemStack::hurtAndBreak(int amount, Entity* ent)
 {
 	if (!isDamageableItem())
 	{
@@ -280,9 +285,9 @@ void ItemStack::hurtAndBreak(int amount, Entity& ent)
 	m_auxValue += amount;
 	if (m_auxValue > getMaxDamage())
 	{
-		if (ent.isPlayer())
+		if (ent->isPlayer())
 		{
-			//((Player&)ent).awardStat(Stats::statItemBreak[m_itemID]);
+			//((Player*)ent)->awardStat(Stats::statItemBreak[m_itemID]);
 		}
 
 		--m_count;
@@ -293,14 +298,14 @@ void ItemStack::hurtAndBreak(int amount, Entity& ent)
 	}
 }
 
-void ItemStack::hurtEnemy(Mob& mob, Mob& attacker)
+void ItemStack::hurtEnemy(Mob* mob, Mob* attacker)
 {
-	getItem()->hurtEnemy(*this, mob);
+	getItem()->hurtEnemy(this, mob, attacker);
 }
 
-void ItemStack::interactEnemy(Mob& mob)
+void ItemStack::interactEnemy(Mob* mob)
 {
-	getItem()->interactEnemy(*this, mob);
+	getItem()->interactEnemy(this, mob);
 }
 
 bool ItemStack::isDamageableItem() const
@@ -329,9 +334,9 @@ bool ItemStack::isStackedByData() const
 	return getItem()->isStackedByData();
 }
 
-void ItemStack::mineBlock(const TilePos& pos, Facing::Name face, Mob& mob)
+void ItemStack::mineBlock(const TilePos& pos, Facing::Name face, Mob* mob)
 {
-	return getItem()->mineBlock(*this, pos, face, mob);
+	getItem()->mineBlock(this, pos, face, mob);
 }
 
 void ItemStack::shrink(int count)
@@ -350,7 +355,7 @@ void ItemStack::setDescriptionId(const std::string& str)
 {
 }
 
-void ItemStack::snap(Player&)
+void ItemStack::snap(Player*)
 {
 
 }
@@ -363,9 +368,9 @@ std::string ItemStack::toString() const
 	return ss.str();
 }
 
-bool ItemStack::use(Mob& mob)
+bool ItemStack::use(Level* level, Mob& mob)
 {
-	return getItem()->use(*this, mob);
+	return getItem()->use(*this, level, mob);
 }
 
 void ItemStack::releaseUsing(Level& level, Mob& user, int durationLeft)
@@ -373,9 +378,9 @@ void ItemStack::releaseUsing(Level& level, Mob& user, int durationLeft)
 	return getItem()->releaseUsing(*this, level, user, durationLeft);
 }
 
-bool ItemStack::useOn(Player& player, const TilePos& pos, Facing::Name face)
+bool ItemStack::useOn(Player* player, Level* level, const TilePos& pos, Facing::Name face)
 {
-	return getItem()->useOn(*this, player, pos, face);
+	return getItem()->useOn(this, player, level, pos, face);
 }
 
 void ItemStack::onCraftedBy(Player* player, Level* level)
@@ -390,9 +395,9 @@ void ItemStack::onCraftedBy(Player* player, Level* level, int amount)
 		getItem()->onCraftedBy(this, player, level);
 }
 
-int ItemStack::getAttackDamage(Entity& entity) const
+int ItemStack::getAttackDamage(Entity* pEnt) const
 {
-	return getItem()->getAttackDamage(entity);
+	return getItem()->getAttackDamage(pEnt);
 }
 
 bool ItemStack::isEmpty() const

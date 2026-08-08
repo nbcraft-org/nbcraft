@@ -1,0 +1,74 @@
+#include "DetectorRailTile.hpp"
+
+DetectorRailTile::DetectorRailTile(TileID id, int texture) : RailTile(id, texture, true)
+{
+	setTicking(true);
+}
+
+int DetectorRailTile::getTickDelay() const
+{
+	return 20;
+}
+
+int DetectorRailTile::getSignal(const TileSource* level, const TilePos& pos, Facing::Name face) const
+{
+    return isPowered(level->getData(pos));
+}
+
+int DetectorRailTile::getDirectSignal(const Level* level, const TilePos& pos, Facing::Name face) const
+{
+    return !isPowered(level->getData(pos)) ? false : face == Facing::UP;
+}
+
+bool DetectorRailTile::isSignalSource() const
+{
+    return true;
+}
+
+void DetectorRailTile::entityInside(Level* level, const TilePos& pos, Entity*) const
+{
+	if (level->m_bIsClientSide) return;
+
+	TileData data = level->getData(pos);
+	if (!isPowered(data))
+		_setStateIfMinecartInteractsWithRail(level, pos, data);
+}
+
+void DetectorRailTile::tick(Level* level, const TilePos& pos, Random* random)
+{
+	if (level->m_bIsClientSide) return;
+
+	TileData data = level->getData(pos);
+	if (isPowered(data))
+		_setStateIfMinecartInteractsWithRail(level, pos, data);
+}
+
+void DetectorRailTile::_setStateIfMinecartInteractsWithRail(Level* level, const TilePos& pos, TileData data) const
+{
+	bool var6 = isPowered(data);
+	bool var7 = false;
+	constexpr float var8 = 2.0f / 16.0f;
+	EntityVector var9 = level->getEntitiesOfCategory(EntityCategories::MINECART, AABB(pos.x + var8, pos.y, pos.z + var8, pos.x + 1 - var8, pos.y + 0.25, pos.z + 1 - var8));
+	if (var9.size() > 0) {
+		var7 = true;
+	}
+
+	if (var7 && !var6)
+	{
+		level->setData(pos, data | C_POWERED_BIT);
+		level->updateNeighborsAt(pos, m_ID);
+		level->updateNeighborsAt(pos.below(), m_ID);
+		level->setTilesDirty(pos, pos);
+	}
+
+	if (!var7 && var6)
+	{
+		level->setData(pos, data & 7);
+		level->updateNeighborsAt(pos, m_ID);
+		level->updateNeighborsAt(pos.below(), m_ID);
+		level->setTilesDirty(pos, pos);
+	}
+
+	if (var7)
+		level->addToTickNextTick(pos, m_ID, getTickDelay());
+}

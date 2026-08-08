@@ -9,7 +9,6 @@
 #include <sstream>
 #include "ParticleEngine.hpp"
 #include "client/renderer/renderer/RenderMaterialGroup.hpp"
-#include "world/level/TileSource.hpp"
 
 ParticleEngine::Materials::Materials()
 {
@@ -57,15 +56,13 @@ std::string ParticleEngine::countParticles()
 {
 	// @NOTE: For whatever reason this returns a string??
 	std::stringstream ss;
-	ss << (m_particles[0].size() + m_particles[1].size() + m_particles[2].size() + m_particles[3].size());
+	ss << (m_particles[0].size() + m_particles[1].size() + m_particles[2].size());
 	return ss.str();
 }
 
-void ParticleEngine::crack(Entity& entity, const TilePos& tilePos, Facing::Name face)
+void ParticleEngine::crack(const TilePos& tilePos, Facing::Name face)
 {
-	TileSource& source = entity.getTileSource();
-
-	TileID tileID = source.getTile(tilePos);
+	TileID tileID = m_pLevel->getTile(tilePos);
 	if (!tileID) return;
 
 	Tile* pTile = Tile::tiles[tileID];
@@ -109,40 +106,36 @@ void ParticleEngine::crack(Entity& entity, const TilePos& tilePos, Facing::Name 
 			break;
 	}
 
-	add((new TerrainParticle(source, pos, pTile))->init(tilePos, face)->setPower(0.2f)->scale(0.6f));
+	add((new TerrainParticle(m_pLevel, pos, pTile))->init(tilePos, face)->setPower(0.2f)->scale(0.6f));
 }
 
-void ParticleEngine::destroyEffect(Entity& entity, const TilePos& pos)
+void ParticleEngine::destroyEffect(const TilePos& pos, const FullTile& fullTile)
 {
-	TileSource& source = entity.getTileSource();
-
-	TileID tileID = source.getTile(pos);
-	if (!tileID) return;
+	Tile* pTile = fullTile.getType();
+	if (!pTile) return;
 
 	//float timeS = getTimeS();
 
-	Tile* pTile = Tile::tiles[tileID];
-
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 4; i++)
 	{
-		for (int j = 0; j < 3; j++)
+		for (int j = 0; j < 4; j++)
 		{
-			for (int k = 0; k < 3; k++)
+			for (int k = 0; k < 4; k++)
 			{
-				Vec3 vec1(float(pos.x) + (float(i) + 0.5f) / 3.0f,
-					     float(pos.y) + (float(j) + 0.5f) / 3.0f,
-					     float(pos.z) + (float(k) + 0.5f) / 3.0f);
-				Vec3 vec2(vec1.x - float(pos.x) - 0.5f,
-					      vec1.y - float(pos.y) - 0.5f,
-					      vec1.z - float(pos.z) - 0.5f);
+				// @PARITY-PE: PE used only the i loop variable for all three axes
+				// (pos + (i + 0.5f) / 4.0f), causing particles to spawn in a vertical
+				// column pattern instead of filling the 4x4x4 block volume.
+				// Java behavior (i, j, k) is used here.
+				Vec3 vec1(pos.x + (i + 0.5f) / 4.0f, pos.y + (j + 0.5f) / 4.0f, pos.z + (k + 0.5f) / 4.0f);
+				Vec3 vec2 = vec1 - Vec3(pos) - 0.5f;
 
-				add((new TerrainParticle(source, vec1, vec2, pTile))->init(pos));
+				add((new TerrainParticle(m_pLevel, vec1, vec2, pTile))->init(pos, fullTile.data));
 			}
 		}
 	}
 
-	//if (timeS != -1.0)
-	//	getTimeS();
+	/*if (timeS != -1.0)
+		getTimeS();*/
 
 	// @NOTE: Useless string creation
 #ifdef ORIGINAL_CODE

@@ -1,6 +1,6 @@
 #include "world/entity/Creeper.hpp"
 
-Creeper::Creeper(TileSource& source) : Monster(source)
+Creeper::Creeper(Level* pLevel) : Monster(pLevel)
 {
 	m_pDescriptor = &EntityTypeDescriptor::creeper;
 	m_renderType = RENDER_CREEPER;

@@ -12,7 +12,6 @@
 #include "client/renderer/entity/HumanoidMobRenderer.hpp"
 #include "client/renderer/renderer/RenderMaterialGroup.hpp"
 #include "renderer/ShaderConstants.hpp"
-#include "world/level/TileSource.hpp"
 #include "Lighting.hpp"
 
 ItemStack ItemInHandRenderer::stick;
@@ -51,15 +50,14 @@ void ItemInHandRenderer::itemUsed()
 
 void ItemInHandRenderer::render(float a)
 {
-	LocalPlayer& player = *m_pMinecraft->m_pLocalPlayer;
-    TileSource& tileSource = player.getTileSource();
+	LocalPlayer* pLP = m_pMinecraft->m_pLocalPlayer;
 
 #ifndef FEATURE_GFX_SHADERS
     // Apply lighting
     {
         MatrixStack::Ref matrix = MatrixStack::World.push();
-        matrix->rotate(player.m_oRot.pitch + (player.m_rot.pitch - player.m_oRot.pitch) * a, Vec3::UNIT_X);
-        matrix->rotate(player.m_oRot.yaw   + (player.m_rot.yaw   - player.m_oRot.yaw  ) * a, Vec3::UNIT_Y);
+        matrix->rotate(pLP->m_oRot.pitch + (pLP->m_rot.pitch - pLP->m_oRot.pitch) * a, Vec3::UNIT_X);
+        matrix->rotate(pLP->m_oRot.yaw + (pLP->m_rot.yaw - pLP->m_oRot.yaw) * a, Vec3::UNIT_Y);
 
         Lighting::turnOn(matrix);
     }
@@ -67,31 +65,31 @@ void ItemInHandRenderer::render(float a)
 
     MatrixStack::Ref matrix = MatrixStack::World.push();
 
-	if (m_pMinecraft->getOptions()->m_dynamicHand.get() && m_pMinecraft->m_pCameraEntity == &player)
+	if (m_pMinecraft->getOptions()->m_dynamicHand.get() && m_pMinecraft->m_pCameraEntity == pLP)
 	{
-		float rYaw   = Mth::Lerp(player.m_lastRenderArmRot.yaw,   player.m_renderArmRot.yaw,   a);
-		float rPitch = Mth::Lerp(player.m_lastRenderArmRot.pitch, player.m_renderArmRot.pitch, a);
-		matrix->rotate((player.m_rot.pitch - rPitch) * 0.1f, Vec3::UNIT_X);
-		matrix->rotate((player.m_rot.yaw   - rYaw  ) * 0.1f, Vec3::UNIT_Y);
+		float rYaw   = Mth::Lerp(pLP->m_lastRenderArmRot.yaw, pLP->m_renderArmRot.yaw, a);
+		float rPitch = Mth::Lerp(pLP->m_lastRenderArmRot.pitch, pLP->m_renderArmRot.pitch, a);
+		matrix->rotate((pLP->m_rot.pitch - rPitch) * 0.1f, Vec3::UNIT_X);
+		matrix->rotate((pLP->m_rot.yaw - rYaw  ) * 0.1f, Vec3::UNIT_Y);
 	}
 
-	float fBright = tileSource.getBrightness(player.m_pos);
+	float fBright = m_pMinecraft->m_pLevel->getBrightness(pLP->m_pos);
     currentShaderColor = Color::WHITE;
 	currentShaderDarkColor = Color(fBright, fBright, fBright);
 
 	ItemStack* pItem = &m_selectedItem;
-	if (player.m_pFishing)
+	if (pLP->m_pFishing)
     {
         if (stick.isEmpty()) stick = ItemStack(Item::stick);
 		pItem = &stick;
 	}
     
     float swing2, swing3;
-    float fAnim = player.getAttackAnim(a);
+    float fAnim = pLP->getAttackAnim(a);
     float h = m_oHeight + (m_height - m_oHeight) * a;
     constexpr float d = 0.8f;
     
-	if (!pItem->isEmpty())
+	if (!ItemStack::isEmpty(pItem))
 	{
         matrix->translate(Vec3(-0.4f * Mth::sin(float(M_PI) * Mth::sqrt(fAnim)), 0.2f * Mth::sin(2.0f * float(M_PI) * Mth::sqrt(fAnim)), -0.2f * Mth::sin(float(M_PI) * fAnim)));
         matrix->translate(Vec3(0.7f * d, -0.65f * d - (1.0f - h) * 0.6f, -0.9f * d));
@@ -110,7 +108,7 @@ void ItemInHandRenderer::render(float a)
             matrix->rotate(180.0f, Vec3::UNIT_Y);
         }
 
-        renderItem(player, *pItem, a);
+        renderItem(*pLP, *pItem, a);
 	}
 	else
 	{
@@ -129,10 +127,10 @@ void ItemInHandRenderer::render(float a)
         matrix->scale(1.0f);
         matrix->translate(Vec3(5.6f, 0.0f, 0.0f));
 
-        HumanoidMobRenderer* pRenderer = (HumanoidMobRenderer*)EntityRenderDispatcher::getInstance()->getRenderer(player);
+        HumanoidMobRenderer* pRenderer = (HumanoidMobRenderer*)EntityRenderDispatcher::getInstance()->getRenderer(*pLP);
         swing2 = 1.0f;
         matrix->scale(swing2);
-        pRenderer->renderHand(player, a);
+        pRenderer->renderHand(*pLP, a);
 	}
 
 	Lighting::turnOff();
@@ -214,7 +212,7 @@ void ItemInHandRenderer::renderItem(const Entity& entity, const ItemStack& item,
         matrix->rotate(-90.0f, Vec3::UNIT_Y);
         matrix->translate(Vec3(0.0f, 0.0f, -16.0f));*/
         
-        Color color = item.getItem()->getColor(item.getAuxValue());
+        Color color = Color(item.getItem()->getColor(item.getAuxValue()), 1.0f);
 
         t.begin(264);
         SHADE_IF_NEEDED(1.0f);
@@ -273,23 +271,21 @@ void ItemInHandRenderer::renderItem(const Entity& entity, const ItemStack& item,
 
 void ItemInHandRenderer::renderScreenEffect(float a)
 {
-    Minecraft& mc = *m_pMinecraft;
-    Textures& textures = *mc.m_pTextures;
-    Options& options = *mc.getOptions();
-    LocalPlayer& player = *mc.m_pLocalPlayer;
-    TileSource& tileSource = player.getTileSource();
+    LocalPlayer* player = m_pMinecraft->m_pLocalPlayer;
+    Textures* textures = m_pMinecraft->m_pTextures;
+    Level* level = m_pMinecraft->m_pLevel;
 
-    if (player.isOnFire())
+    if (player->isOnFire())
     {
-        textures.loadAndBindTexture(C_TERRAIN_NAME);
+        textures->loadAndBindTexture(C_TERRAIN_NAME);
         renderFire(a);
     }
 
-    if (player.isInWall() && !options.m_flightHax.get())
+    if (player->isInWall() && !m_pMinecraft->getOptions()->m_flightHax.get())
     {
-        textures.loadAndBindTexture(C_TERRAIN_NAME);
+        textures->loadAndBindTexture(C_TERRAIN_NAME);
 
-        Tile* pTile = Tile::tiles[tileSource.getTile(player.m_pos)];
+        Tile* pTile = Tile::tiles[level->getTile(player->m_pos)];
         if (pTile)
         {
             int texture = pTile->getTexture(Facing::NORTH);
@@ -297,9 +293,9 @@ void ItemInHandRenderer::renderScreenEffect(float a)
         }
     }
 
-    if (player.isUnderLiquid(Material::water))
+    if (player->isUnderLiquid(Material::water))
     {
-        if (textures.loadAndBindTexture("misc/water.png", false))
+        if (textures->loadAndBindTexture("misc/water.png", false))
         {
             renderWater(a);
         }
@@ -393,20 +389,16 @@ void ItemInHandRenderer::tick()
 
 	ItemStack& item = m_pMinecraft->m_pLocalPlayer->m_pInventory->getSelectedItem();
 
-	bool bSameItem = m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedStackId == m_lastSlot && m_selectedItem == item;
+    bool bSameItem = (m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedStackId == m_lastSlot &&
+                      item.isEmpty() == m_selectedItem.isEmpty() &&
+                      item.getId() == m_selectedItem.getId() &&
+                      item.getAuxValue() == m_selectedItem.getAuxValue());
 
+	// Don't swap when there's nothing to swap to
 	if (item.isEmpty() && m_selectedItem.isEmpty())
+	{
 		bSameItem = true;
-
-    // This isn't really needed anymore
-    //if (!item.isEmpty() && !m_selectedItem.isEmpty())
-    //{
-    //    if (&item != &m_selectedItem && item.getId() == m_selectedItem.getId() && item.getAuxValue() == m_selectedItem.getAuxValue())
-    //    {
-    //        bSameItem = true;
-    //        m_selectedItem = ItemStack(item);
-    //    }
-    //}
+	}
 
 	float b = bSameItem ? 1.0f : 0.0f;
 
@@ -420,7 +412,7 @@ void ItemInHandRenderer::tick()
 
 	if (m_height < 0.1f)
 	{
-		m_selectedItem = ItemStack(item);
+		m_selectedItem = item;
 		m_lastSlot = m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedStackId;
 	}
 }
@@ -428,3 +420,4 @@ void ItemInHandRenderer::tick()
 void ItemInHandRenderer::turn(const Rot2& rot)
 {
 }
+

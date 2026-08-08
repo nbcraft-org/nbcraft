@@ -19,12 +19,14 @@ void Particle::_init()
 	m_lifetime = 0;
 	m_size = 0.0f;
 	m_gravity = 0.0f;
-	m_color = Color::WHITE;
+	m_rCol = 1.0f;
+	m_gCol = 1.0f;
+	m_bCol = 1.0f;
 	m_bIsUnlit = false;
 	m_bMakeStepSound = false;
 }
 
-Particle::Particle(TileSource& source, const Vec3& pos, const Vec3& dir) : Entity(source)
+Particle::Particle(Level* level, const Vec3& pos, const Vec3& dir) : Entity(level)
 {
 	_init();
 
@@ -41,10 +43,10 @@ Particle::Particle(TileSource& source, const Vec3& pos, const Vec3& dir) : Entit
 	m_vel.y = m_vel.y * mult + 0.1f;
 	m_vel.z *= mult;
 
-	m_uo = 3.0f * sharedRandom.nextFloat();
-	m_vo = 3.0f * sharedRandom.nextFloat();
-	m_size = 2.0f * (0.5f + 0.5f * sharedRandom.nextFloat());
-	m_lifetime = int(4.0f / (0.1f + 0.9f * sharedRandom.nextFloat()));
+	m_uo = 3.0f * m_random.nextFloat();
+	m_vo = 3.0f * m_random.nextFloat();
+	m_size = 2.0f * (0.5f + 0.5f * m_random.nextFloat());
+	m_lifetime = int(4.0f / (0.1f + 0.9f * m_random.nextFloat()));
 }
 
 int Particle::getParticleTexture()
@@ -90,7 +92,7 @@ void Particle::render(Tesselator& t, float f, float xa, float ya, float za, floa
 	float siz2X = xa2 * m_size * 0.1f;
 	float siz2Z = za2 * m_size * 0.1f;
 
-	t.color(m_color * fBright);
+	t.color(m_rCol * fBright, m_gCol * fBright, m_bCol * fBright);
 	t.vertexUV(posX - sizeX - siz2X, posY - sizeY, posZ - sizeZ - siz2Z, texU_1 + C_MAGIC_1, texV_1 + C_MAGIC_1);
 	t.vertexUV(posX - sizeX + siz2X, posY + sizeY, posZ - sizeZ + siz2Z, texU_1 + C_MAGIC_1, texV_1);
 	t.vertexUV(posX + sizeX + siz2X, posY + sizeY, posZ + sizeZ + siz2Z, texU_1,             texV_1);

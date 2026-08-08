@@ -9,14 +9,15 @@
 #include "Particle.hpp"
 #include "world/level/Level.hpp"
 
-LavaParticle::LavaParticle(TileSource& source, const Vec3& pos)
-	: Particle(source, pos, Vec3::ZERO)
+LavaParticle::LavaParticle(Level* level, const Vec3& pos) :
+	Particle(level, pos, Vec3::ZERO)
 {
 	m_oSize = 0.0f;
 
 	m_vel *= 0.8f;
-	m_vel.y = sharedRandom.nextFloat() * 0.4f + 0.05f;
-	m_oSize = m_size = m_size * (0.2f + 2 * sharedRandom.nextFloat());
+	m_vel.y = m_random.nextFloat() * 0.4f + 0.05f;
+	m_rCol = m_gCol = m_bCol = 1.0f;
+	m_oSize = m_size = m_size * (0.2f + 2 * m_random.nextFloat());
 	m_tex = PTI_LAVA;
 	m_lifetime = int(16.0f / (0.2f + 0.8f * Mth::random()));
 }
@@ -35,7 +36,7 @@ void LavaParticle::tick()
 		remove();
 
 	float a = float(m_age) / float(m_lifetime);
-	float b = sharedRandom.nextFloat();
+	float b = m_random.nextFloat();
 	if (a < b)
 	{
 		m_pLevel->addParticle("smoke", m_pos, m_vel);

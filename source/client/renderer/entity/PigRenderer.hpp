@@ -12,6 +12,7 @@
 class PigRenderer : public MobRenderer
 {
 public:
-	PigRenderer(Model*, float);
+	PigRenderer(Model*, Model*, float);
 	~PigRenderer();
+	bool prepareArmor(const Mob& mob, int a, float b) override;
 };

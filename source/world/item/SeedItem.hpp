@@ -7,7 +7,7 @@ class SeedItem : public Item
 public:
 	SeedItem(int id, int place);
 
-	bool useOn(ItemStack&, Player&, const TilePos& pos, Facing::Name face) const override;
+	virtual bool useOn(ItemStack*, Player*, Level*, const TilePos& pos, Facing::Name face) const;
 public:
 	int m_tile;
 };

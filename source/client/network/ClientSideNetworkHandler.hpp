@@ -90,5 +90,6 @@ private:
 	bool m_chunkStates[C_MAX_CHUNKS_X][C_MAX_CHUNKS_Z];
 	int m_serverProtocolVersion;
 	bool m_bUseLevelDataPkt;
+	Random m_random;
 };
 

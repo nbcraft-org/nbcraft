@@ -157,6 +157,22 @@ void ModelPart::render(float scale, const mce::MaterialPtr* materialOverride)
 	}
 }
 
+void ModelPart::renderRollable(float scale, const mce::MaterialPtr* materialOverride)
+{
+	if (m_bNeverRender)
+		return;
+
+	if (!m_bVisible)
+		return;
+
+	if (!m_bCompiled)
+		compile(scale);
+
+	MatrixStack::Ref mtx = MatrixStack::World.push();
+	translateRotTo(mtx, scale);
+	draw(scale, materialOverride);
+}
+
 void ModelPart::setModel(Model* pModel)
 {
 	m_pModel = pModel;

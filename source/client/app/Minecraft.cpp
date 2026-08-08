@@ -37,7 +37,6 @@
 #include "client/player/input/Multitouch.hpp"
 
 #include "world/tile/SandTile.hpp"
-#include "world/level/TileSource.hpp"
 
 #include "client/renderer/GrassColor.hpp"
 #include "client/renderer/FoliageColor.hpp"
@@ -63,7 +62,7 @@ const char* Minecraft::progressMessages[] =
 {
 	"Locating server",
 	"Building terrain",
-	"Preparing", // "Simulating world for a bit" on Java
+	"Preparing",
 	"Saving chunks",
 };
 
@@ -174,25 +173,25 @@ void Minecraft::_resetPlayer(Player* player)
 	player->resetPos();
 }
 
-GameMode* Minecraft::_createGameMode(GameType gameType)
+GameMode* Minecraft::_createGameMode(GameType gameType, Level& level)
 {
 	switch (gameType)
 	{
 	case GAME_TYPE_SURVIVAL:
-		return new SurvivalMode(this);
+		return new SurvivalMode(this, level);
 	case GAME_TYPE_CREATIVE:
-		return new CreativeMode(this);
+		return new CreativeMode(this, level);
 	default:
 		return nullptr;
 	}
 }
 
-void Minecraft::_initGameModes()
+void Minecraft::_initGameModes(Level& level)
 {
 	for (unsigned int gameType = GAME_TYPES_MIN; gameType <= GAME_TYPES_MAX; gameType++)
 	{
 		delete m_gameModes[gameType];
-		m_gameModes[gameType] = _createGameMode((GameType)gameType);
+		m_gameModes[gameType] = _createGameMode((GameType)gameType, level);
 	}
 }
 
@@ -224,7 +223,7 @@ void Minecraft::reloadInput()
 	{
 		m_pInputHolder = new CustomInputHolder(
 			new KeyboardInput(getOptions()),
-			new MouseTurnInput(),
+			new MouseTurnInput(this),
 			new MouseBuildInput()
 		);
 
@@ -479,7 +478,7 @@ void Minecraft::handleBuildAction(const BuildActionIntention& action)
 				pkt.m_channel = CHANNEL_PLAYER_EVENTS;
 				m_pRakNetInstance->send(pkt);
 
-				pGameMode->attack(*player, *pTarget);
+				pGameMode->attack(player, pTarget);
 				m_lastBlockBreakTime = getTimeMs();
 			}
 			else if (action.isInteract() && canInteract)
@@ -490,16 +489,14 @@ void Minecraft::handleBuildAction(const BuildActionIntention& action)
 				InteractPacket pkt(player->m_EntityID, pTarget->m_EntityID, InteractPacket::INTERACT);
 				m_pRakNetInstance->send(pkt);
 
-				pGameMode->interact(*player, *pTarget);
+				pGameMode->interact(player, pTarget);
 				m_lastInteractTime = getTimeMs();
 			}
 			break;
 		}
 		case HitResult::TILE:
 		{
-			TileSource& source = player->getTileSource();
-
-			Tile* pTile = Tile::tiles[source.getTile(m_hitResult.m_tilePos)];
+			Tile* pTile = Tile::tiles[m_pLevel->getTile(m_hitResult.m_tilePos)];
 
 			if (action.isDestroy())
 			{
@@ -520,14 +517,14 @@ void Minecraft::handleBuildAction(const BuildActionIntention& action)
 					bool destroyed = false;
 					if (action.isDestroyStart())
 					{
-						destroyed = pGameMode->startDestroyBlock(*player, m_hitResult.m_tilePos, m_hitResult.m_hitSide);
+						destroyed = pGameMode->startDestroyBlock(player, m_hitResult.m_tilePos, m_hitResult.m_hitSide);
 						player->startDestroying();
 					}
 
-					bool contDestory = pGameMode->continueDestroyBlock(*player, m_hitResult.m_tilePos, m_hitResult.m_hitSide);
+					bool contDestory = pGameMode->continueDestroyBlock(player, m_hitResult.m_tilePos, m_hitResult.m_hitSide);
 
 					destroyed = destroyed || contDestory;
-					m_pParticleEngine->crack(*player, m_hitResult.m_tilePos, m_hitResult.m_hitSide);
+					m_pParticleEngine->crack(m_hitResult.m_tilePos, m_hitResult.m_hitSide);
 
 					m_lastBlockBreakTime = getTimeMs();
 
@@ -541,13 +538,13 @@ void Minecraft::handleBuildAction(const BuildActionIntention& action)
 			else if (action.isPick())
 			{
 				// Try to pick the tile.
-				TileData auxValue = source.getData(m_hitResult.m_tilePos);
+				int auxValue = m_pLevel->getData(m_hitResult.m_tilePos);
 				player->m_pInventory->pickItem(pTile->m_ID, auxValue, C_MAX_HOTBAR_ITEMS);
 			}
 			else if (action.isPlace() && canInteract)
 			{
 				ItemStack& item = getSelectedItem();
-				if (pGameMode->useItemOn(*player, item, m_hitResult.m_tilePos, m_hitResult.m_hitSide))
+				if (pGameMode->useItemOn(player, m_pLevel, item, m_hitResult.m_tilePos, m_hitResult.m_hitSide))
 				{
 					bInteract = false;
 
@@ -568,7 +565,7 @@ void Minecraft::handleBuildAction(const BuildActionIntention& action)
 		if (!item.isEmpty())
 		{
 			m_lastInteractTime = getTimeMs();
-			if (pGameMode->useItem(*player, item))
+			if (pGameMode->useItem(player, m_pLevel, item))
 				m_pGameRenderer->m_pItemInHandRenderer->itemUsed();
 		}
 	}
@@ -610,14 +607,6 @@ void Minecraft::tickInput()
 		if (getTimeMs() - field_2B4 > 200)
 			continue;
 
-		MouseButtonType buttonType = Mouse::getEventButton();
-		bool bPressed = Mouse::getEventButtonState() == true;
-
-#ifdef ENH_ALLOW_SCROLL_WHEEL
-		if (buttonType == MOUSE_BUTTON_SCROLLWHEEL)
-			m_pGui->handleScrollWheel(bPressed);
-#endif
-
 		if (Mouse::isButtonDown(MOUSE_BUTTON_LEFT))
 		{
 			// @HACK: on SDL1, we don't recenter the mouse every tick, meaning the user can
@@ -629,6 +618,14 @@ void Minecraft::tickInput()
 				continue;
 			}
 		}
+
+		MouseButtonType buttonType = Mouse::getEventButton();
+		bool bPressed = Mouse::getEventButtonState() == true;
+
+#ifdef ENH_ALLOW_SCROLL_WHEEL
+		if (buttonType == MOUSE_BUTTON_SCROLLWHEEL)
+			m_pGui->handleScrollWheel(bPressed);
+#endif
 	}
 
 	if (useController())
@@ -786,7 +783,7 @@ void Minecraft::handleTextPaste(const std::string& text)
 
 void Minecraft::handleTextPaste()
 {
-	std::string text = platform()->getClipboardText();
+	std::string text = AppPlatform::singleton()->getClipboardText();
 	if (!text.empty())
 		handleTextPaste(text);
 }
@@ -999,7 +996,7 @@ void Minecraft::tick()
 
 			if (m_pLocalPlayer)
 			{
-				m_pLevel->animateTick(m_pLocalPlayer->getPos());
+				m_pLevel->animateTick(m_pLocalPlayer->m_pos);
 			}
 		}
 
@@ -1041,14 +1038,15 @@ void Minecraft::update()
 		field_DA8++;
 	}
 
-	m_pSoundEngine->update();
-
 	if (m_pLevel && !m_bPreparingLevel)
 	{
 		m_pLevel->updateLights();
 	}
 
+#ifndef ORIGINAL_CODE
 	tickMouse();
+	m_pSoundEngine->update();
+#endif
 
 	mce::RenderContext& renderContext = mce::RenderContextImmediate::get();
 
@@ -1077,7 +1075,7 @@ void Minecraft::prepareLevel(const std::string& unused)
 
 	if (!pLevel->field_B0C)
 	{
-		pLevel->setUpdateLights(false);
+		pLevel->setUpdateLights(0);
 	}
 
 	for (int i = 8, i2 = 0; i != 8 + C_MAX_CHUNKS_X * 16; i += 16)
@@ -1109,7 +1107,7 @@ void Minecraft::prepareLevel(const std::string& unused)
 	//if (startTime != -1.0f)
 	//	getTimeS();
 
-	pLevel->setUpdateLights(true);
+	pLevel->setUpdateLights(1);
 
 	//startTime = float(getTimeS());
 
@@ -1282,10 +1280,10 @@ void Minecraft::onClientStartedLevel(Level* pLevel, LocalPlayer* pLocalPlayer)
 {
 	// already added in Level::loadPlayer()
 	//pLevel->addEntity(pLocalPlayer); // addPlayer on 0.12.1
-	setupLevelRendering(pLevel, &pLocalPlayer->getDimension(), pLocalPlayer);
+	setupLevelRendering(pLevel, pLocalPlayer->getDimension(), pLocalPlayer);
 }
 
-void Minecraft::generateLevel(const std::string& unused, Level& level)
+void Minecraft::generateLevel(const std::string& unused, Level* pLevel)
 {
 	//float time = float(getTimeS()); //@UNUSED
 
@@ -1301,9 +1299,9 @@ void Minecraft::generateLevel(const std::string& unused, Level& level)
 	LocalPlayer* pLocalPlayer = m_pLocalPlayer;
 	if (!pLocalPlayer)
 	{
-		pLocalPlayer = pGameMode->createPlayer(level);
+		pLocalPlayer = pGameMode->createPlayer(pLevel);
 		pLocalPlayer->resetPos();
-		pGameMode->initPlayer(*pLocalPlayer);
+		pGameMode->initPlayer(pLocalPlayer);
 	}
 
 	if (pLocalPlayer)
@@ -1311,8 +1309,8 @@ void Minecraft::generateLevel(const std::string& unused, Level& level)
 
 	pGameMode->adjustPlayer(pLocalPlayer);
 
-	level.validateSpawn();
-	level.loadPlayer(*pLocalPlayer);
+	pLevel->validateSpawn();
+	pLevel->loadPlayer(*pLocalPlayer);
 
 	m_pLocalPlayer = pLocalPlayer;
 
@@ -1326,7 +1324,7 @@ void* Minecraft::prepareLevel_tspawn(void* ptr)
 {
 	Minecraft* pMinecraft = (Minecraft*)ptr;
 
-	pMinecraft->generateLevel("Currently not used", *pMinecraft->m_pLevel);
+	pMinecraft->generateLevel("Currently not used", pMinecraft->m_pLevel);
 
 	return nullptr;
 }
@@ -1372,7 +1370,7 @@ void Minecraft::setLevel(Level* pLevel, const std::string& text, LocalPlayer* pL
 		m_bPreparingLevel = true;
 		m_pPrepThread = new CThread(&Minecraft::prepareLevel_tspawn, this);
 
-		_initGameModes();
+		_initGameModes(*pLevel);
 
 		if (m_pLocalPlayer)
 			setGameMode(m_pLocalPlayer->getPlayerGameType());

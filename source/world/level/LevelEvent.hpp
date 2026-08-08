@@ -20,6 +20,7 @@ struct LevelEvent
 		SOUND_DOOR                   = 1003,
 		SOUND_FIZZ                   = 1004,
 		SOUND_IGNITE                 = 1005,
+		SOUND_PLAY_RECORDING         = 1006,
 		SOUND_GHAST                  = 1007,
 		SOUND_GHAST_SHOOT            = 1008,
 		SOUND_BLAZE_SHOOT            = 1009,

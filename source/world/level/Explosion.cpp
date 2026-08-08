@@ -73,19 +73,9 @@ void Explosion::explode()
 
 	m_power *= 2;
 
-	// Why are we flooring this? It takes floats.
-	/*AABB aabb(
-		(float)Mth::floor(m_pos.x - m_power - 1.0f),
-		(float)Mth::floor(m_pos.y - m_power - 1.0f),
-		(float)Mth::floor(m_pos.z - m_power - 1.0f),
-		(float)Mth::floor(m_pos.x + m_power + 1.0f),
-		(float)Mth::floor(m_pos.y + m_power + 1.0f),
-		(float)Mth::floor(m_pos.z + m_power + 1.0f)
-	);*/
 	AABB aabb(m_pos - m_power - 1.0f, m_pos + m_power + 1.0f);
 
 	const std::vector<Entity*>& ents = m_tileSource.getEntities(m_pEntity, aabb);
-
 	for (size_t i = 0; i < ents.size(); i++)
 	{
 		Entity* entity = ents[i];
@@ -103,6 +93,8 @@ void Explosion::explode()
 
 		entity->m_vel += delta * normInv * hurtPercent;
 	}
+	
+	m_power /= 2;
 
 	std::vector<TilePos> vec;
 	// @NOTE: Could avoid this copy if m_bFiery is false
@@ -135,26 +127,21 @@ void Explosion::addParticles()
 	{
 		TilePos tp = vec[i];
 		TileID tile = m_tileSource.getTile(tp);
-
-		// Spawn a particle only for every 8th tile. Weird
-		if ((i & 0x7) == 0)
+		// @PARITY-JAVA: Java spawns a particle for every tile, PE only for every 8th
+		//if ((i & 0x7) == 0)
 		{
-			float mult;
+			float mult = 0.0f;
 			Vec3 rp(float(tp.x) + level.m_random.nextFloat(),
 					float(tp.y) + level.m_random.nextFloat(),
 					float(tp.z) + level.m_random.nextFloat());
 
 			Vec3 d(rp - m_pos);
 
-			// @NOTE: Can use Mth::invSqrt
-			// We would use v.normalize() here, but we need dist apparently
 			float dist = d.length();
-			Vec3 v = d / dist;
+			Vec3 v = d / (dist > 0.0f ? dist : 1.0f);
 
-			// @HUH: Dividing by the inverse is the same as multiplying. Thanks, IDA! :)
-			float power1 = m_power / (1.0f / dist) + 0.1f;
-
-			mult = ((level.m_random.nextFloat() * level.m_random.nextFloat()) + 0.3f) * (0.5f / power1);
+			mult = (0.5f / (dist / m_power + 0.1f));
+			mult *= (level.m_random.nextFloat() * level.m_random.nextFloat() + 0.3f);
 
 			level.addParticle("explode", Vec3((rp.x + m_pos.x) / 2, (rp.y + m_pos.y) / 2, (rp.z + m_pos.z) / 2), v * mult);
 			level.addParticle("smoke", rp, v * mult);
@@ -162,9 +149,9 @@ void Explosion::addParticles()
 
 		if (tile > 0)
 		{
-			Tile::tiles[tile]->spawnResources(m_tileSource, tp, m_tileSource.getData(tp), 0.3f);
+			Tile::tiles[tile]->spawnResources(&m_tileSource.getLevel(), tp, m_tileSource.getData(tp), 0.3f);
 			m_tileSource.setTile(tp, TILE_AIR);
-			Tile::tiles[tile]->wasExploded(m_tileSource, tp);
+			Tile::tiles[tile]->wasExploded(&m_tileSource.getLevel(), tp);
 		}
 	}
 

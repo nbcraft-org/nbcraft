@@ -46,13 +46,13 @@ public:
 	virtual ItemStack removeItem(StackID stackId, int count) = 0;
 	virtual void setItem(StackID stackId, const ItemStack& item) = 0;
 	virtual std::string getName() const = 0;
-	virtual int getMaxStackSize() const
+	virtual int getMaxStackSize()
 	{
 		return C_MAX_CONTAINER_STACK_SIZE;
 	}
 	// Was called setChanged in Java
 	virtual void setContainerChanged(StackID stackId) = 0;
-	virtual bool stillValid(Player& player) const = 0;
+	virtual bool stillValid(Player* player) const = 0;
 	virtual std::vector<ItemStack> getSlotCopies();
 
 	virtual void addContentChangeListener(ContainerContentChangeListener* listener) {}

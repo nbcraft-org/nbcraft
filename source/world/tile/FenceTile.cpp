@@ -7,21 +7,21 @@
  ********************************************************************/
 
 #include "FenceTile.hpp"
-#include "world/level/TileSource.hpp"
+#include "world/level/Level.hpp"
 
 FenceTile::FenceTile(int a, int b) : Tile(a, b, Material::wood)
 {
 }
 
-bool FenceTile::mayPlace(const TileSource& source, const TilePos& pos) const
+bool FenceTile::mayPlace(const Level* level, const TilePos& pos) const
 {
 	TilePos below = pos.below();
-	return source.getTile(below) == m_ID || (Tile::mayPlace(source, pos) && source.getMaterial(below)->isSolid());
+	return level->getTile(below) == m_ID || (Tile::mayPlace(level, pos) && level->getMaterial(below)->isSolid());
 }
 
-AABB* FenceTile::getAABB(const TileSource& source, const TilePos& pos)
+AABB* FenceTile::getAABB(const Level* pLevel, const TilePos& pos)
 {
-	AABB* rAABB = Tile::getAABB(source, pos);
+	AABB* rAABB = Tile::getAABB(pLevel, pos);
 	rAABB->max.y += 0.5f;
 	return rAABB;
 }
@@ -41,8 +41,8 @@ eRenderShape FenceTile::getRenderShape() const
 	return SHAPE_FENCE;
 }
 
-bool FenceTile::shouldConnectTo(TileSource& source, const TilePos& pos) const
+bool FenceTile::shouldConnectTo(const TileSource* level, const TilePos& pos) const 
 {
-	TileID i = source.getTile(pos);
+	int i = level->getTile(pos);
 	return i == m_ID || i == Tile::fenceGate->m_ID;
 }

@@ -8,7 +8,7 @@
 class Creeper : public Monster
 {
 public:
-	Creeper(TileSource& source);
+	Creeper(Level* pLevel);
 
 public:
 	void tick() override;

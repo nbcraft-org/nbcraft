@@ -58,7 +58,7 @@ public:
 	void addMessage(const std::string& str);
 	void inventoryUpdated();
 	void setNowPlaying(const std::string& str);
-	void render(float f, bool bHaveScreen);
+	void render(float f, bool bHaveScreen, int mouseX, int mouseY);
 	void tick();
 	void renderSlot(int slot, int x, int y, float f);
 	void renderSlotOverlay(int slot, int x, int y, float f);
@@ -107,9 +107,8 @@ public:
 	Random m_random;
 	Minecraft* m_pMinecraft;
 	int m_ticks;
-	std::string field_A00;
-	int field_A18;
-	bool field_A1C;
+	std::string m_overlayMessage;
+	int m_overlayMessageDuration;
 	float m_tbr;
 	RenderChunk m_renderChunk;
 	bool field_A3C;

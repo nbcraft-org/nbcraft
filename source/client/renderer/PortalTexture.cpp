@@ -1,9 +1,9 @@
 #include "DynamicTexture.hpp"
 #include "common/Utils.hpp"
-//#include "world/tile/PortalTile.hpp"
+#include "world/tile/Tile.hpp"
 
 PortalTexture::PortalTexture()
-    : DynamicTexture(/*Tile::portal->m_TextureFrame*/+0)
+    : DynamicTexture(Tile::portal->m_TextureFrame)
     , m_time(0)
 {
     Random random(100);

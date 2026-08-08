@@ -14,6 +14,6 @@ namespace mce
 		// If this flag is not used, the driver must finish rendering before returning from locking.
 		MAP_WRITE_NO_OVERWRITE,
 
-		MAP_UNKNOWN,
+		MAP_UNKNOWN
 	};
 }

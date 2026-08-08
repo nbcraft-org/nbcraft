@@ -6,10 +6,12 @@ class FenceTile : public Tile
 {
 public:
 	FenceTile(int id, int texture);
-	bool mayPlace(const TileSource&, const TilePos& pos) const override;
-	AABB* getAABB(const TileSource& source, const TilePos& pos) override;
+
+public:
+	bool mayPlace(const Level*, const TilePos& pos) const override;
+	AABB* getAABB(const Level* pLevel, const TilePos& pos) override;
 	bool isSolidRender() const override;
 	bool isCubeShaped() const override;
 	eRenderShape getRenderShape() const override;
-	bool shouldConnectTo(TileSource& source, const TilePos& pos) const;
+	bool shouldConnectTo(const TileSource* level, const TilePos& pos) const;
 };

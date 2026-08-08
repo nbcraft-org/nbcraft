@@ -13,9 +13,6 @@
 #include "client/app/AppPlatformListener.hpp"
 #include "renderer/hal/interface/FogState.hpp"
 #include "world/level/LevelListener.hpp"
-#include "world/level/Dimension.hpp"
-#include "world/tile/entity/TileEntity.hpp"
-#include "Chunk.hpp"
 #include "Textures.hpp"
 #include "RenderList.hpp"
 #include "TileRenderer.hpp"
@@ -85,6 +82,7 @@ protected:
 		mce::MaterialPtr skyplane;
 		mce::MaterialPtr sun_moon;
 		mce::MaterialPtr sunrise;
+		mce::MaterialPtr snow_rain;
 		mce::MaterialPtr selection_overlay;
 		mce::MaterialPtr selection_overlay_opaque;
 		mce::MaterialPtr selection_overlay_double_sided;
@@ -119,7 +117,7 @@ protected:
 	void _renderSolarSystem(float alpha);
 	void _renderSunAndMoon(float alpha);
 	void _renderStars(float alpha);
-	void _renderTileShadow(TileSource& tileSource, Tile* tt, const Vec3& pos, TilePos& tilePos, float pow, float r, const Vec3& oPos);
+	void _renderTileShadow(Tile* tt, const Vec3& pos, TilePos& tilePos, float pow, float r, const Vec3& oPos);
 	void _recreateTessellators();
 	void _setupFog(const Entity& camera, int i);
 	const Color& _getFogColor() const;
@@ -155,6 +153,8 @@ public:
 	void render(const Entity& camera, Tile::RenderLayer layer, float alpha, bool fog = false);
 	void renderLevel(const Entity& camera, FrustumCuller& culler, float a1, float f);
 	void renderEntities(Vec3 pos, Culler*, float f);
+	void renderSnowAndRain(float f);
+	void tickRain();
 	void renderShadow(const Entity& entity, const Vec3& pos, float r, float pow, float a);
 	void renderSky(const Entity& camera, float alpha);
 	void prepareAndRenderClouds(const Entity& camera, float f);
@@ -175,7 +175,6 @@ public:
 
 protected:
 	Vec3 m_viewPos;
-	Materials m_materials;
 	double m_initTime;
 	mce::FogStateDescription m_lastFogState;
 	Vec2 m_fogControl;
@@ -216,8 +215,11 @@ public:
 	bool m_bOcclusionCheck;
 	int m_lastViewDistance;
 	int m_ticksSinceStart;
+	int m_rainSoundTime;
+	Random m_random;
 	float m_fogBrO;
 	float m_fogBr;
+	Materials m_materials;
 	//...
 	//mce::Mesh m_shadowVolumeMesh;
 	//mce::Mesh m_shadowOverlayMesh;
@@ -227,5 +229,5 @@ public:
 	mce::Mesh m_darkMesh;
 	//...
 	Textures* m_pTextures;
-	TileEntity::Vector m_renderableTileEntities;
+	TileEntityVector m_renderableTileEntities;
 };

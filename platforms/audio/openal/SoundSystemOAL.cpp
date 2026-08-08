@@ -294,7 +294,7 @@ void SoundSystemOAL::playAt(const SoundDesc& sound, const Vec3& pos, float volum
 	// Only set constant parameters if source isn't reused
 	if (isNew)
 	{
-		// Not set by Paulscode, we handle it in-engine
+		// Not set by Paulscode
 		/*alSourcef(al_source, AL_MAX_DISTANCE, SOUND_MAX_DISTANCE);
 		AL_ERROR_CHECK();*/
 

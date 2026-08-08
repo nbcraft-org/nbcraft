@@ -9,18 +9,17 @@
 #pragma once
 
 #include <vector>
-#include <map>
 
 #include "common/math/Color.hpp"
 #include "world/phys/Vec3.hpp"
 #include "world/phys/Vec2.hpp"
 #include "world/phys/Rot2.hpp"
 #include "world/phys/AABB.hpp"
+#include "world/level/Dimension.hpp"
 #include "world/level/Material.hpp"
 #include "world/level/levelgen/chunk/ChunkPos.hpp"
 #include "world/tile/Tile.hpp"
 #include "world/item/ItemStack.hpp"
-#include "world/level/DimensionId.hpp"
 #include "SynchedEntityData.hpp"
 #include "EntityTypeDescriptor.hpp"
 
@@ -28,8 +27,7 @@ class Level;
 class Player;
 class ItemStack;
 class ItemEntity;
-class TileSource;
-class Dimension;
+class LightningBolt;
 
 struct EntityPos
 {
@@ -70,7 +68,6 @@ public:
 	typedef int32_t ID;
 	typedef int32_t AuxValue;
 	typedef std::vector<Entity*> Vector;
-	typedef std::map<Entity::ID, Entity*> IdMap;
 public:
 	class EventType
 	{
@@ -83,7 +80,10 @@ public:
 			HURT,
 			DEATH,
 			START_ATTACKING,
-			STOP_ATTACKING
+			STOP_ATTACKING,
+			TAMING_FAILED,
+			TAMING_SUCCEEDED,
+			SHAKE_WETNESS
 		};
 	};
 	// Was called EntityRendererId in PE
@@ -114,7 +114,11 @@ public:
 		RENDER_GHAST,
 		RENDER_FIREBALL,
 		RENDER_SQUID,
-
+		RENDER_WOLF,
+		RENDER_MINECART,
+		RENDER_BOAT,
+		RENDER_PAINTING,
+		RENDER_LIGHTNING_BOLT,
 		// custom
 		RENDER_FALLING_TILE = 50
 	};
@@ -132,7 +136,7 @@ private:
 	void _init();
 public:
 	Entity() { _init(); }
-	Entity(TileSource& tileSource);
+	Entity(Level*);
 	virtual ~Entity();
 
 public:
@@ -144,7 +148,6 @@ public:
 	virtual void reset();
 	virtual void setLevel(Level*);
 	virtual void removed();
-	virtual const Vec3& getPos() const;
 	virtual void setPos(const Vec3& pos);
 	virtual void remove();
 	virtual void move(const Vec3& posIn);
@@ -165,15 +168,16 @@ public:
 	virtual bool isFree(const Vec3& off, float expand) const;
 	virtual bool isInWall() const;
 	virtual bool isInWater();
-	bool wasInWater() const { return m_bWasInWater; }
+	virtual bool isInWaterOrRain();
+	virtual bool checkInWater();
 	virtual bool isInLava() const;
 	virtual bool isUnderLiquid(Material*) const;
 	virtual float getHeadHeight() const { return 0.0f; }
 	virtual float getShadowHeightOffs() const { return m_bbHeight / 2.0f; }
 	virtual float getBrightness(float f) const;
 	virtual DimensionId getDimensionId() const { return m_dimensionId; }
-	virtual Vec3 getInterpolatedPosition(float f) const;
-	virtual Rot2 getInterpolatedRotation(float f) const;
+	virtual Vec3 getPos(float f) const;
+	virtual Rot2 getRot(float f) const;
 	virtual Vec3 getViewVector(float f) const;
 	virtual AuxValue getAuxValue() const;
 	virtual void setAuxValue(AuxValue value);
@@ -228,7 +232,7 @@ public:
 	virtual void rideTick();
 	virtual void handleInsidePortal();
 	virtual void handleEntityEvent(EventType::ID eventId);
-	//virtual void thunderHit(LightningBolt*);
+	virtual void thunderHit(LightningBolt*);
 	virtual void positionRider();
 	virtual void ride(Entity*);
 	virtual float getRideHeight() const { return m_bbHeight * 0.75f; }
@@ -250,9 +254,6 @@ public:
 	const EntityTypeDescriptor& getDescriptor() const { return *m_pDescriptor; }
 	SynchedEntityData& getEntityData() { return m_entityData; }
 	const SynchedEntityData& getEntityData() const { return m_entityData; }
-	Level& getLevel() const { return *m_pLevel; }
-	TileSource& getTileSource() const { return *m_pTileSource; }
-	Dimension& getDimension() const;
 
 	bool operator==(const Entity& other) const;
 
@@ -272,7 +273,6 @@ protected:
 	SynchedEntityData m_entityData;
 	bool m_bMakeStepSound;
 	const EntityTypeDescriptor* m_pDescriptor;
-	TileSource* m_pTileSource;
 
 public:
 	Vec3 m_pos;
@@ -281,6 +281,7 @@ public:
 	int m_chunkPosY;
 	Entity::ID m_EntityID;
 	float m_viewScale;
+	//TileSource* m_pTileSource;
 	DimensionId m_dimensionId;
 	bool m_bRiding;
 	bool m_bBlocksBuilding;
@@ -292,6 +293,7 @@ public:
 	Rot2 m_rideRot;
 	Color m_tintColor;
 	AABB m_hitbox;
+	Random m_random;
 	bool m_bOnGround;
 	bool m_bHorizontalCollision;
 	bool m_bCollision;
@@ -311,7 +313,7 @@ public:
 	float m_ySlideOffset;
 	float m_footSize;
 	bool m_bNoPhysics;
-	float m_pushthrough;
+	float m_pushThrough;
 	int m_tickCount;
 	int m_invulnerableTime;
 	int m_airCapacity;
@@ -329,5 +331,4 @@ public:
 
 public:
 	static Entity::ID entityCounter;
-	static Random sharedRandom;
 };

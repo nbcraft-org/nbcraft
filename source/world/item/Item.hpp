@@ -14,7 +14,6 @@
 // needed for TileData and Tile IDs
 #include "common/Utils.hpp"
 #include "common/Random.hpp"
-#include "common/math/Color.hpp"
 
 #include "world/level/Material.hpp"
 #include "world/level/TilePos.hpp"
@@ -54,20 +53,21 @@ public: // Methods
 	virtual Item* setMaxStackSize(int mss);
 	virtual Item* setIcon(int ix, int iy);
 	virtual int getIcon(const ItemStack*) const;
-	virtual bool useOn(ItemStack&, Player&, const TilePos& pos, Facing::Name face) const;
-	virtual float getDestroySpeed(ItemStack&, const Tile*) const;
-	virtual bool use(ItemStack&, Mob& user) const;
+	virtual bool useOn(ItemStack*, Level*, const TilePos& pos, Facing::Name face) const;
+	virtual bool useOn(ItemStack*, Player*, Level*, const TilePos& pos, Facing::Name face) const;
+	virtual float getDestroySpeed(ItemStack*, const Tile*) const;
+	virtual bool use(ItemStack&, Level*, Mob& user) const;
 	virtual void releaseUsing(ItemStack&, Level&, Mob&, int durationLeft) const;
 	virtual int getMaxStackSize() const;
 	virtual TileData getLevelDataForAuxValue(int x) const;
 	virtual bool isStackedByData() const;
 	virtual int getMaxDamage() const;
 	virtual Item* setMaxDamage(int);
-	virtual void hurtEnemy(ItemStack&, Mob&) const;
-	virtual void mineBlock(ItemStack&, const TilePos& pos, Facing::Name face, Mob& mob) const;
-	virtual int getAttackDamage(Entity&) const;
+	virtual bool hurtEnemy(ItemStack*, Mob*, Mob*) const;
+	virtual bool mineBlock(ItemStack*, const TilePos& pos, Facing::Name face, Mob* mob) const;
+	virtual int getAttackDamage(Entity*) const;
 	virtual bool canDestroySpecial(const Tile*) const;
-	virtual void interactEnemy(ItemStack&, Mob&) const;
+	virtual void interactEnemy(ItemStack*, Mob*) const;
 	virtual Item* handEquipped();
 	virtual bool isHandEquipped() const;
 	virtual bool isMirroredArt() const;
@@ -75,7 +75,7 @@ public: // Methods
 	virtual std::string getDescription() const;
 	virtual std::string getDescription(ItemStack*) const;
 	virtual std::string getDescriptionId() const;
-	virtual std::string getDescriptionId(ItemStack&) const;
+	virtual std::string getDescriptionId(ItemStack*) const;
 	virtual Item* setCraftingRemainingItem(Item*);
 	virtual Item* getCraftingRemainingItem() const;
 	virtual bool hasCraftingRemainingItem() const;
@@ -86,13 +86,17 @@ public: // Methods
 	virtual void onCraftedBy(ItemStack*, Player*, Level*);
 	virtual void inventoryTick(ItemStack*, Level*, Entity*, int, bool);
 	virtual bool isDamageable() const;
-	virtual Color getColor(int data) const;
+	virtual int getColor(int data) const;
 	virtual int buildIdAux(int16_t auxValue, const CompoundTag* userData = nullptr) const;
 
 	// Armor/defense methods
 	virtual EquipmentSlot getEquipmentSlot() const;
 	virtual const std::string& getArmorTexture() const;
 	virtual int getDefense() const;
+	virtual const std::string& getStreamingMusic() const;
+	virtual bool isFood() const;
+	virtual bool isWolfFood() const;
+	virtual bool isComplex() const;
 
 	static void initItems();
 	

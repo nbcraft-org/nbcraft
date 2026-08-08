@@ -8,7 +8,6 @@
 
 #include "DoorTile.hpp"
 #include "world/level/Level.hpp"
-#include "world/level/TileSource.hpp"
 #include "world/item/Item.hpp"
 
 DoorTile::DoorTile(int ID, Material* pMtl) : Tile(ID, pMtl)
@@ -22,22 +21,20 @@ DoorTile::DoorTile(int ID, Material* pMtl) : Tile(ID, pMtl)
 	Tile::setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 }
 
-bool DoorTile::use(const TilePos& pos, Player& player)
+bool DoorTile::use(Level* level, const TilePos& pos, Player* player)
 {
 	// well, you know, iron doors can't be opened by right clicking
 	if (m_pMaterial == Material::metal)
 		return true;
 
-	TileSource& source = player.getTileSource();
-
-	setOpen(source, pos, !isOpen(source.getData(pos)), &player);
+	setOpen(level, pos, !isOpen(level->getData(pos)), player);
 
 	return true;
 }
 
-void DoorTile::attack(const TilePos& pos, Player& player)
+void DoorTile::attack(Level* level, const TilePos& pos, Player* player)
 {
-	use(pos, player);
+	use(level, pos, player);
 }
 
 // @HUH: This function has NO references to itself. Not even in the vtable of the tile.
@@ -48,17 +45,17 @@ bool DoorTile::blocksLight() const
 	return false;
 }
 
-HitResult DoorTile::clip(const TileSource& source, const TilePos& pos, Vec3 v1, Vec3 v2)
+HitResult DoorTile::clip(const Level* level, const TilePos& pos, Vec3 v1, Vec3 v2)
 {
 	// @NOTE: Tile::clip calls updateShape too. So this is redundant
-	updateShape(source, pos);
-	return Tile::clip(source, pos, v1, v2);
+	updateShape(level, pos);
+	return Tile::clip(level, pos, v1, v2);
 }
 
-AABB* DoorTile::getAABB(const TileSource& source, const TilePos& pos)
+AABB* DoorTile::getAABB(const Level* level, const TilePos& pos)
 {
-	updateShape(source, pos);
-	return Tile::getAABB(source, pos);
+	updateShape(level, pos);
+	return Tile::getAABB(level, pos);
 }
 
 int DoorTile::getDir(TileData data) const
@@ -107,10 +104,10 @@ int DoorTile::getTexture(Facing::Name face, TileData data) const
 	return idx;
 }
 
-AABB DoorTile::getTileAABB(TileSource& source, const TilePos& pos)
+AABB DoorTile::getTileAABB(const Level* level, const TilePos& pos)
 {
-	updateShape(source, pos);
-	return Tile::getTileAABB(source, pos);
+	updateShape(level, pos);
+	return Tile::getTileAABB(level, pos);
 }
 
 bool DoorTile::isCubeShaped() const
@@ -123,9 +120,9 @@ bool DoorTile::isSolidRender() const
 	return false;
 }
 
-bool DoorTile::mayPlace(const TileSource& source, const TilePos& pos) const
+bool DoorTile::mayPlace(const Level* level, const TilePos& pos) const
 {
-	return pos.y <= 126 && source.isSolidBlockingTile(pos.below()) && Tile::mayPlace(source, pos) && Tile::mayPlace(source, pos.above());
+	return pos.y <= 126 && level->isSolidTile(pos.below()) && Tile::mayPlace(level, pos) && Tile::mayPlace(level, pos.above());
 }
 
 void DoorTile::setShape(int dir)
@@ -149,81 +146,78 @@ void DoorTile::setShape(int dir)
 	}
 }
 
-void DoorTile::updateShape(const TileSource& source, const TilePos& pos)
+void DoorTile::updateShape(const TileSource* level, const TilePos& pos)
 {
-	setShape(getDir(source.getData(pos)));
+	setShape(getDir(level->getData(pos)));
 }
 
-void DoorTile::setOpen(TileSource& source, const TilePos& pos, bool bOpen, Player* pPlayer)
+void DoorTile::setOpen(Level* level, const TilePos& pos, bool bOpen, Player* player)
 {
-	TileData data = source.getData(pos);
+	TileData data = level->getData(pos);
 	if (isTop(data))
 	{
-		if (source.getTile(pos.below()) == m_ID)
-			setOpen(source, pos.below(), bOpen, pPlayer);
+		if (level->getTile(pos.below()) == m_ID)
+			setOpen(level, pos.below(), bOpen);
 		return;
 	}
 
-	if (isOpen(source.getData(pos)) != bOpen)
+	if (isOpen(level->getData(pos)) != bOpen)
 	{
 		data ^= 4;
 
-		if (source.getTile(pos.above()) == m_ID)
-			source.setTileAndData(pos.above(), FullTile(this, data + 8), TileChange::UPDATE_ALL | TileChange::UPDATE_UNK3);
+		if (level->getTile(pos.above()) == m_ID)
+			level->setData(pos.above(), data + 8);
 
-		source.setTileAndData(pos, FullTile(this, data), TileChange::UPDATE_ALL | TileChange::UPDATE_UNK3);
-
+		level->setData(pos, data);
 		// @BUG: marking the wrong tiles as dirty? No problem because setData sends an update immediately anyways
-		//source.fireTilesDirty(pos.below(), pos);
+		level->setTilesDirty(pos.below(), pos);
 
-		Level& level = source.getLevel();
-
-		level.levelEvent(LevelEvent(LevelEvent::SOUND_DOOR, pos, 0, pPlayer));
+		level->levelEvent(LevelEvent(LevelEvent::SOUND_DOOR, pos, 0, player));
 	}
 }
 
-void DoorTile::neighborChanged(TileSource& source, const TilePos& pos, TileID newTile)
+void DoorTile::neighborChanged(Level* level, const TilePos& pos, TileID newTile)
 {
-	int isTop = source.getData(pos) & 8;
+	int isTop = level->getData(pos) & 8;
 	if (isTop)
 	{
-		if (source.getTile(pos.below()) != m_ID)
+		if (level->getTile(pos.below()) != m_ID)
 		{
-			source.setTile(pos, TILE_AIR);
-			spawnResources(source, pos, source.getData(pos));
+			level->setTile(pos, TILE_AIR);
+			spawnResources(level, pos, level->getData(pos));
 		}
 
 		if (newTile > 0)
 		{
 			if (Tile::tiles[newTile]->isSignalSource())
-				neighborChanged(source, pos.below(), newTile);
+				neighborChanged(level, pos.below(), newTile);
 		}
 
 		return;
 	}
 
-	if (source.getTile(pos.above()) != m_ID)
+	if (level->getTile(pos.above()) != m_ID)
 	{
-		source.setTile(pos, TILE_AIR);
+		level->setTile(pos, TILE_AIR);
 		isTop = 1;
 	}
 
-	if (!source.isSolidBlockingTile(pos.below()))
+	if (!level->isSolidTile(pos.below()))
 	{
-		source.setTile(pos, TILE_AIR);
-		if (source.getTile(pos.above()) == m_ID)
+		level->setTile(pos, TILE_AIR);
+		if (level->getTile(pos.above()) == m_ID)
 		{
-			source.setTile(pos.above(), TILE_AIR);
-			spawnResources(source, pos, source.getData(pos));
+			level->setTile(pos.above(), TILE_AIR);
+			spawnResources(level, pos, level->getData(pos));
 		}
 	}
 
 	if (!isTop && newTile > 0 && Tile::tiles[newTile]->isSignalSource())
 	{
 		bool bOpen = false;
-		if (source.hasNeighborSignal(pos) || source.hasNeighborSignal(pos.above()))
+		if (level->hasNeighborSignal(pos) || level->hasNeighborSignal(pos.above()))
 			bOpen = true;
 
-		setOpen(source, pos, bOpen);
+		setOpen(level, pos, bOpen);
 	}
 }

@@ -3,16 +3,18 @@
 #include "world/entity/EntityType.hpp"
 #include "world/entity/MobSpawnerData.hpp"
 #include "world/level/levelgen/biome/Biome.hpp"
+#include "world/level/levelgen/biome/BiomeSource.hpp"
 #include "world/level/levelgen/chunk/ChunkPos.hpp"
 #include "world/level/Brightness.hpp"
 #include "world/level/TileChange.hpp"
+#include "world/level/Dimension.hpp"
 #include "world/tile/Tile.hpp"
 #include "world/tile/entity/TileEntity.hpp"
 
 class TileTickingQueue;
 class AABB;
 class LevelChunk;
-class TileSourceListener; // TODO
+class LevelListener;
 class TileTickingQueue;
 class Dimension;
 class ChunkSource;
@@ -21,10 +23,10 @@ struct Bounds;
 
 typedef std::vector<AABB> AABBVector;
 
-/*class LevelSource
+/*class TileSource
 {
 public:
-	virtual ~LevelSource() = 0;
+	virtual ~TileSource() = 0;
 	virtual TileID getTile(const TilePos& pos) const = 0;
 	virtual float getBrightness(const TilePos& pos) const = 0;
 	virtual TileData getData(const TilePos& pos) const = 0;
@@ -37,7 +39,7 @@ public:
 class TileSource
 {
 protected:
-	typedef std::vector<TileSourceListener*> Listeners;
+	typedef std::vector<LevelListener*> Listeners;
 
 public:
 	//TileSource(Level& level, Dimension& dimension, ChunkSource& source, bool publicSource, bool allowUnpopulatedChunks);
@@ -146,9 +148,10 @@ public:
 	virtual bool mayInteract(Entity* entity, const TilePos& pos) const = 0;
 	virtual bool mayPlace(TileID tileId, const TilePos& pos, bool ignoreEntities = false) const = 0;
 	virtual bool mayPlace(TileID tileId, const TilePos& pos, Facing::Name face, Entity& placer, bool ignoreEntities = false, Entity* ignoreEntity = nullptr) const = 0;
-	virtual void addListener(TileSourceListener& listener) = 0;
-	virtual void removeListener(TileSourceListener& listener) = 0;
+	virtual void addListener(LevelListener& listener) = 0;
+	virtual void removeListener(LevelListener& listener) = 0;
 
-	// from LevelSource
+	// from TileSource
 	virtual BiomeSource* getBiomeSource() const = 0;
+	virtual bool isSolidTile(const TilePos& pos) const = 0;
 };

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "world/entity/Monster.hpp"
-#include "world/entity/Arrow.hpp"
+#include "world/entity/projectile/Arrow.hpp"
 
 class Skeleton : public Monster
 {
@@ -9,10 +9,10 @@ private:
 	static ItemStack bow;
 
 public:
-	Skeleton(TileSource& source);
+	Skeleton(Level* pLevel);
 
 public:
-	std::string getAmbientSound() const override { return "mob.skeleton"; }
+	std::string getAmbientSound() override { return "mob.skeleton"; }
 	std::string getDeathSound() const override { return "mob.skeletonhurt"; }
 	std::string getHurtSound() const override { return "mob.skeletonhurt"; }
 	

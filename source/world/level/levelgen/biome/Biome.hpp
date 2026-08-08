@@ -9,11 +9,15 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include "world/level/levelgen/synth/PerlinNoise.hpp"
 #include "world/level/levelgen/feature/Feature.hpp"
 
 class Biome
 {
+public:
+	typedef std::vector<Biome*> Vector;
+
 public: // Static Functions
 	static Biome* getBiome(float hum, float temp);
 	static void initBiomes();
@@ -31,6 +35,11 @@ public: // Instance Functions
 	Biome* setLeafColor(int color);
 	Biome* setName(const std::string& name);
 	Biome* setSnowCovered();
+	Biome* setNoRain();
+	bool canOnlyRain() const
+	{
+		return !m_bHasSnow && m_bHasRain;
+	}
 
 public: // Static Variables
 	static Biome
@@ -54,9 +63,11 @@ private: // Private Functions
 public: // Instance Variables
 	std::string m_name;
 	int m_Color;
-	TileID field_20;
-	TileID field_21;
+	TileID m_topTile;
+	TileID m_fillerTile;
 	int m_LeafColor;
+	bool m_bHasSnow;
+	bool m_bHasRain;
 };
 
 class RainforestBiome : public Biome

@@ -7,6 +7,7 @@
  ********************************************************************/
 
 #include "Biome.hpp"
+#include "common/Mth.hpp"
 #include "world/tile/Tile.hpp"
 
 Biome
@@ -76,7 +77,9 @@ float Biome::adjustScale(float f)
 
 int Biome::getSkyColor(float x)
 {
-	return 0x80808080;
+	x = Mth::clamp(x / 3.0f, -1.0f, 1.0f);
+
+	return Color::getHSBColor(0.62222224f - x * 0.05f, 0.5f + x * 0.1f, 1.0f);
 }
 
 Biome* Biome::getBiome(float hum, float temp)
@@ -97,8 +100,8 @@ void Biome::recalc()
 		}
 	}
 
-	desert->field_20 = desert->field_21 = Tile::sand->m_ID;
-	iceDesert->field_20 = iceDesert->field_21 = Tile::sand->m_ID;
+	desert->m_topTile = desert->m_fillerTile = Tile::sand->m_ID;
+	iceDesert->m_topTile = iceDesert->m_fillerTile = Tile::sand->m_ID;
 }
 
 Biome::Biome()
@@ -106,8 +109,10 @@ Biome::Biome()
 	m_name = "";
 	m_Color = 0;
 	m_LeafColor = 0;
-	field_20 = Tile::grass->m_ID;
-	field_21 = Tile::dirt->m_ID;
+	m_topTile = Tile::grass->m_ID;
+	m_fillerTile = Tile::dirt->m_ID;
+	m_bHasRain = true;
+	m_bHasSnow = false;
 }
 
 Biome::~Biome()
@@ -128,6 +133,13 @@ Feature* Biome::getTreeFeature(Random* pRandom)
 
 Biome* Biome::setSnowCovered()
 {
+	m_bHasSnow = true;
+	return this;
+}
+
+Biome* Biome::setNoRain()
+{
+	m_bHasRain = false;
 	return this;
 }
 
@@ -186,7 +198,8 @@ void Biome::initBiomes()
 
 	desert = (new FlatBiome)
 		->setColor(0xFA9418)
-		->setName("Desert");
+		->setName("Desert")
+		->setNoRain();
 
 	plains = (new FlatBiome)
 		->setColor(0xFFD910)

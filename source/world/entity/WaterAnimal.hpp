@@ -6,9 +6,7 @@
 class WaterAnimal : public PathfinderMob
 {
 public:
-	WaterAnimal(TileSource& source);
-
-public:
+	WaterAnimal(Level* pLevel);
 	bool isWaterMob() const override;
 	bool canSpawn() override;
 	int getAmbientSoundInterval() const override;

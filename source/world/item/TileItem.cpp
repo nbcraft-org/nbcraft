@@ -11,7 +11,6 @@
 #include "network/packets/PlaceBlockPacket.hpp"
 #include "world/level/Level.hpp"
 #include "world/tile/Tile.hpp"
-#include "world/level/TileSource.hpp"
 
 TileItem::TileItem(int id) : Item(id)
 {
@@ -25,56 +24,59 @@ std::string TileItem::getDescriptionId() const
 	return Tile::tiles[m_tile]->getDescriptionId();
 }
 
-std::string TileItem::getDescriptionId(ItemStack& itemStack) const
+std::string TileItem::getDescriptionId(ItemStack* instance) const
 {
 	return Tile::tiles[m_tile]->getDescriptionId();
 }
 
-bool TileItem::useOn(ItemStack& itemStack, Player& player, const TilePos& pos, Facing::Name face) const
+bool TileItem::useOn(ItemStack* instance, Player* player, Level* level, const TilePos& pos, Facing::Name face) const
 {
-	TileSource& source = player.getTileSource();
-	Level& level = player.getLevel();
-
 	TilePos tp(pos);
 
-	if (source.getTile(pos) == Tile::topSnow->m_ID)
+	if (level->getTile(pos) == Tile::topSnow->m_ID)
 	{
 		face = Facing::DOWN;
 	}
-	else
+	else switch (face)
 	{
-		tp = tp.relative(face);
+		case Facing::DOWN: tp.y--; break;
+		case Facing::UP: tp.y++; break;
+		case Facing::NORTH: tp.z--; break;
+		case Facing::SOUTH: tp.z++; break;
+		case Facing::WEST: tp.x--; break;
+		case Facing::EAST: tp.x++; break;
+		default: break;
 	}
 
-	if (itemStack.m_count == 0)
+	if (instance->m_count == 0)
 		return false;
 
-	if (!source.mayPlace(m_tile, tp, face, player))
+	if (!level->mayPlace(m_tile, tp, false))
 		return false;
 
 	Tile* pTile = Tile::tiles[m_tile];
 
-	if (!source.setTileAndData(tp, FullTile(m_tile, getLevelDataForAuxValue(itemStack.getAuxValue()))))
+	if (!level->setTileAndData(tp, FullTile(m_tile, getLevelDataForAuxValue(instance->getAuxValue()))))
 		return true;
 
-	pTile->setPlacedOnFace(source, tp, face);
-	pTile->setPlacedBy(tp, player);
+	Tile::tiles[m_tile]->setPlacedOnFace(level, tp, face);
+	Tile::tiles[m_tile]->setPlacedBy(level, tp, player);
 
-	level.playSound(
+	level->playSound(
 		Vec3(tp) + 0.5f,
 		"step." + pTile->m_pSound->name,
 		(pTile->m_pSound->volume + 1.0f) * 0.5f,
 		pTile->m_pSound->pitch * 0.8f
 	);
 
-	if (level.m_pRakNetInstance)
-		level.m_pRakNetInstance->send(new PlaceBlockPacket(player.m_EntityID, tp, (TileID)m_tile, face, itemStack.getAuxValue()));
+	if (level->m_pRakNetInstance)
+		level->m_pRakNetInstance->send(new PlaceBlockPacket(player->m_EntityID, tp, (TileID)m_tile, face, instance->getAuxValue()));
 
-	player.useItem(itemStack);
+	player->useItem(*instance);
 	return true;
 }
 
-Color TileItem::getColor(int data) const
+int TileItem::getColor(int data) const
 {
 	//@NOTE: Used by tiles rendered as 2d items
 	return Tile::tiles[m_tile]->getColor(Facing::UP, data);

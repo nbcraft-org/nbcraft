@@ -16,7 +16,7 @@ class Player;
 class TripodCamera : public Mob
 {
 public:
-	TripodCamera(Entity& owner);
+	TripodCamera(Level*, Player*, const Vec3& pos);
 
 	float getShadowHeightOffs() const override { return 0.0f; }
 	bool interact(Player* player) override;
@@ -27,7 +27,7 @@ public:
 
 public:
 	int m_countdown;
-	Entity& m_owner;
+	Player* m_pPlayer;
 	bool m_bActivated;
 };
 

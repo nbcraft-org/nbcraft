@@ -7,7 +7,7 @@
 std::vector<ItemStack> CreativeMenu::creativeItems;
 bool CreativeMenu::initialized = false;
 
-#ifndef _DEBUG
+#if !defined(_DEBUG)
 const TileID creativeTiles[] =
 {
     TILE_STONEBRICK,
@@ -17,6 +17,7 @@ const TileID creativeTiles[] =
     TILE_ORE_IRON,
     TILE_ORE_COAL,
     TILE_ORE_LAPIS,
+    TILE_ORE_REDSTONE,
     TILE_CLAY,
     TILE_BLOCK_EMERALD,
     TILE_BLOCK_GOLD,
@@ -63,8 +64,8 @@ const TileID creativeTiles[] =
     TILE_DISPENSER,
     TILE_FURNACE,
     TILE_JUKEBOX,
-    //TILE_PISTON_STICKY,
-    //TILE_PISTON,
+    TILE_PISTON_STICKY,
+    TILE_PISTON,
     TILE_FENCE,
     TILE_FENCE_GATE,
     TILE_LADDER,
@@ -125,7 +126,7 @@ void CreativeMenu::initCreativeItems()
     if (initialized) return;
     initialized = true;
 
-#ifdef _DEBUG
+#if defined(_DEBUG)
     for (int id = 1; id < C_MAX_TILES; id++)
     {
         Tile* tile = Tile::tiles[id];
@@ -203,7 +204,7 @@ void CreativeMenu::updateScroll(float scroll)
     }
 }
 
-bool CreativeMenu::stillValid(Player& player) const
+bool CreativeMenu::stillValid(Player* player) const
 {
     return true;
 }

@@ -60,21 +60,31 @@ void TripodCameraRenderer::render(const Entity& entity, const Vec3& pos, float r
 	float x1 = cenX - 0.45f, x2 = cenX + 0.45f;
 	float z1 = cenZ - 0.45f, z2 = cenZ + 0.45f;
 
-	t.begin(8);
+	t.begin(16);
 
 	// Needed for D3D, since the shader expects this
-	t.normal(Vec3::UNIT_Y);
+	t.normal(Vec3::ZERO);
 	t.vertexUV(x1, newY + 1, z1, texU_l, texV_u);
 	t.vertexUV(x1, newY + 0, z1, texU_l, texV_d);
 	t.vertexUV(x2, newY + 0, z2, texU_r, texV_d);
 	t.vertexUV(x2, newY + 1, z2, texU_r, texV_u);
+
+	t.vertexUV(x2, newY + 1, z2, texU_l, texV_u);
+	t.vertexUV(x2, newY + 0, z2, texU_l, texV_d);
+	t.vertexUV(x1, newY + 0, z1, texU_r, texV_d);
+	t.vertexUV(x1, newY + 1, z1, texU_r, texV_u);
 
 	t.vertexUV(x1, newY + 1, z2, texU_l, texV_u);
 	t.vertexUV(x1, newY + 0, z2, texU_l, texV_d);
 	t.vertexUV(x2, newY + 0, z1, texU_r, texV_d);
 	t.vertexUV(x2, newY + 1, z1, texU_r, texV_u);
 
-	t.draw(m_shaderMaterials.entity_alphatest_nocull);
+	t.vertexUV(x2, newY + 1, z1, texU_l, texV_u);
+	t.vertexUV(x2, newY + 0, z1, texU_l, texV_d);
+	t.vertexUV(x1, newY + 0, z2, texU_r, texV_d);
+	t.vertexUV(x1, newY + 1, z2, texU_r, texV_u);
+
+	t.draw(m_shaderMaterials.entity_alphatest);
 
 	m_modelPart.setBrightness(brightness);
 	m_modelPart.render(0.0625f);
@@ -125,7 +135,7 @@ void TripodCameraRenderer::render(const Entity& entity, const Vec3& pos, float r
 		t.vertexUV(x1, y, z1, texU_r, texV_u);
 		t.vertexUV(x2, y, z1, texU_r, texV_d);
 		t.vertexUV(x2, y, z2, texU_l, texV_d);
-		t.draw(m_shaderMaterials.entity_alphatest_nocull);
+		t.draw(m_shaderMaterials.entity_alphatest);
 	}
 
 	if (&entity == pHREntity)

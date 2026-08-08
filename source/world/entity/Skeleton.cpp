@@ -1,7 +1,6 @@
 #include "Skeleton.hpp"
-#include "world/level/TileSource.hpp"
 
-Skeleton::Skeleton(TileSource& source) : Monster(source)
+Skeleton::Skeleton(Level* pLevel) : Monster(pLevel)
 {
 	m_pDescriptor = &EntityTypeDescriptor::skeleton;
 	m_renderType = RENDER_SKELETON;
@@ -10,11 +9,11 @@ Skeleton::Skeleton(TileSource& source) : Monster(source)
 
 void Skeleton::aiStep()
 {
-	if (m_pTileSource->getDimensionConst().isDay())
+	if (m_pLevel->isDay())
 	{
 		float brightness = getBrightness(1.0f);
 		if (brightness > 0.5f
-			&& m_pTileSource->canSeeSky(this->m_pos)
+			&& m_pLevel->canSeeSky(this->m_pos)
 			&& m_random.nextFloat() * 30.0f < (brightness - 0.4f) * 2.0f)
 		{
 			this->m_fireTicks = 300;
@@ -32,7 +31,7 @@ void Skeleton::checkHurtTarget(Entity* ent, float f)
 		float delta_z = ent->m_pos.z - m_pos.z;
 		if (m_attackTime == 0)
 		{
-			Arrow* arrow = new Arrow(*this);
+			Arrow* arrow = new Arrow(m_pLevel, this);
 			arrow->m_pos.y += 1;
 			float var8 = ent->m_pos.y + ent->getHeadHeight() - 0.2f - arrow->m_pos.y;
 			float var10 = Mth::sqrt(delta_x * delta_x + delta_z * delta_z) * 0.2f;

@@ -11,6 +11,7 @@
 #include <cctype>
 
 #include "ExternalFileLevelStorage.hpp"
+#include "common/Util.hpp"
 
 #include "common/Logger.hpp"
 #include "nbt/CompoundTag.hpp"
@@ -440,7 +441,7 @@ void ExternalFileLevelStorage::loadEntities(Level* level, LevelChunk* chunk)
 						if (!betterTag || betterTag->getId() != Tag::TAG_TYPE_COMPOUND)
 							continue;
 
-						Entity* entity = EntityFactory::LoadEntity(*(CompoundTag*)betterTag, *level);
+						Entity* entity = EntityFactory::LoadEntity(*(CompoundTag*)betterTag, level);
 						if (entity)
 							level->addEntity(entity);
 					}
@@ -509,8 +510,8 @@ void ExternalFileLevelStorage::saveEntities(Level* level, LevelChunk* chunk)
 	//getTimeS();
 	ListTag* entitiesTag = new ListTag();
 
-	const Entity::IdMap* entities = level->getAllEntities();
-	for (Entity::IdMap::const_iterator it = entities->begin(); it != entities->end(); it++)
+	const EntityMap* entities = level->getAllEntities();
+	for (EntityMap::const_iterator it = entities->begin(); it != entities->end(); it++)
 	{
 		const Entity* entity = it->second;
 		CompoundTag* tag = new CompoundTag();
@@ -523,8 +524,8 @@ void ExternalFileLevelStorage::saveEntities(Level* level, LevelChunk* chunk)
 
 	ListTag* tileEntitiesTag = new ListTag();
 
-	const TileEntity::Vector& tileEntities = level->getAllTileEntities();
-	for (TileEntity::Vector::const_iterator it = tileEntities.begin(); it != tileEntities.end(); it++)
+	const TileEntityVector& tileEntities = level->getAllTileEntities();
+	for (TileEntityVector::const_iterator it = tileEntities.begin(); it != tileEntities.end(); it++)
 	{
 		const TileEntity* tileEntity = *it;
 		CompoundTag* tag = new CompoundTag();

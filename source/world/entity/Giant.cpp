@@ -1,7 +1,6 @@
 #include "Giant.hpp"
-#include "world/level/TileSource.hpp"
 
-Giant::Giant(TileSource& source) : Monster(source)
+Giant::Giant(Level* pLevel) : Monster(pLevel)
 {
 	m_pDescriptor = &EntityTypeDescriptor::giant;
 	m_renderType = RENDER_GIANT;
@@ -15,5 +14,5 @@ Giant::Giant(TileSource& source) : Monster(source)
 
 float Giant::getWalkTargetValue(const TilePos& pos) const
 {
-	return m_pTileSource->getBrightness(pos) - 0.5f;
+	return m_pLevel->getBrightness(pos) - 0.5f;
 }

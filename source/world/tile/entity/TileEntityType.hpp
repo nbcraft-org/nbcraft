@@ -2,7 +2,7 @@
 
 #include <string>
 #include <vector>
-#include <map>
+#include "common/utility/HashMap.hpp"
 
 class Level;
 class TileEntity;
@@ -11,7 +11,7 @@ class TileEntityType;
 class TileEntityFactory
 {
 private:
-	static std::map<std::string, TileEntityType*> _types;
+	static HashMap<std::string, TileEntityType*> _types;
 
 public:
 	static void initTileEntities();
@@ -30,6 +30,10 @@ public:
 	static TileEntityType* chest;
 	static TileEntityType* noteblock;
 	static TileEntityType* dispenser;
+	static TileEntityType* mobSpawner;
+	static TileEntityType* sign;
+	static TileEntityType* recordPlayer;
+	static TileEntityType* piston;
 
 public:
 	friend class TileEntityFactory;

@@ -1,10 +1,10 @@
 #include "TileEntity.hpp"
 #include "common/Logger.hpp"
-#include "world/level/TileSource.hpp"
+#include "world/level/Level.hpp"
 
 TileEntity::TileEntity()
     : m_bRemove(false)
-    , m_pTileSource(nullptr)
+    , m_pLevel(nullptr)
 {
 }
 
@@ -58,6 +58,11 @@ Packet* TileEntity::getUpdatePacket()
     return nullptr;
 }
 
+const TileEntityType* TileEntity::getType() const
+{
+    return m_pType;
+}
+
 bool TileEntity::isRemoved() const
 {
     return m_bRemove;
@@ -75,12 +80,12 @@ void TileEntity::clearRemoved()
 
 int TileEntity::getData() const
 {
-    return m_pTileSource->getData(m_pos);
+    return m_pLevel->getData(m_pos);
 }
 
 void TileEntity::setData(int data)
 {
-    m_pTileSource->setTileAndData(m_pos, FullTile(getTile(), data));
+    m_pLevel->setData(m_pos, data);
 }
 
 void TileEntity::setChanged()
@@ -99,7 +104,7 @@ float TileEntity::distanceToSqr(const Vec3& vec) const
 
 Tile* TileEntity::getTile() const
 {
-    return Tile::tiles[m_pTileSource->getTile(m_pos)];
+    return Tile::tiles[m_pLevel->getTile(m_pos)];
 }
 
 std::string TileEntity::getId() const

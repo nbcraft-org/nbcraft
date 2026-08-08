@@ -5,8 +5,7 @@
 class Giant : public Monster
 {
 public:
-	Giant(TileSource& source);
+	Giant(Level* pLevel);
 
-public:
 	float getWalkTargetValue(const TilePos& pos) const override;
 };

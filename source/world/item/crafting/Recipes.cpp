@@ -349,18 +349,18 @@ Recipes::Recipes()
         .add('R', Item::redStone), GC_MECHANISM, 5);
 
 #if MC_VERSION >= MC_VER_BETA(1, 7, 0)
-    //add(ShapedRecipeBuilder("###",
-    //                        "XIX",
-    //                        "XRX", ItemStack(Tile::piston))
-    //    .add('#', Tile::wood)
-    //    .add('X', Tile::stoneBrick)
-    //    .add('I', Item::ironIngot)
-    //    .add('R', Item::redStone));
+    add(ShapedRecipeBuilder("###",
+                            "XIX",
+                            "XRX", ItemStack(Tile::piston))
+        .add('#', Tile::wood)
+        .add('X', Tile::stoneBrick)
+        .add('I', Item::ironIngot)
+        .add('R', Item::redStone));
 
-    //add(ShapedRecipeBuilder("X",
-    //                        "#", ItemStack(Tile::stickyPiston))
-    //    .add('X', Item::slimeBall)
-    //    .add('#', Tile::piston));
+    add(ShapedRecipeBuilder("X",
+                            "#", ItemStack(Tile::stickyPiston))
+        .add('X', Item::slimeBall)
+        .add('#', Tile::piston));
 #endif
 
     add(ShapedRecipeBuilder("###",
@@ -369,11 +369,25 @@ Recipes::Recipes()
         .add('#', Tile::wood)
         .add('X', Item::redStone), GC_MECHANISM);
 
-    //add(ShapedRecipeBuilder("X X",
-    //                        "X#X",
-    //                        "X X", ItemStack(Tile::rail, 16))
-    //    .add('X', Item::ironIngot)
-    //    .add('#', Item::stick));
+    add(ShapedRecipeBuilder("X X",
+                            "X#X",
+                            "X X", ItemStack(Tile::rail, 16))
+        .add('X', Item::ironIngot)
+        .add('#', Item::stick), GC_TRANSPORT);
+
+    add(ShapedRecipeBuilder("X X",
+                            "X#X",
+                            "XRX", ItemStack(Tile::poweredRail, 6))
+        .add('X', Item::goldIngot)
+        .add('#', Item::stick)
+        .add('R', Item::redStone), GC_TRANSPORT);
+
+    add(ShapedRecipeBuilder("X X",
+                            "X#X",
+                            "XRX", ItemStack(Tile::detectorRail, 6))
+        .add('X', Item::ironIngot)
+        .add('#', Item::stick)
+        .add('R', Item::redStone), GC_TRANSPORT);
 
     add(ShapedRecipeBuilder("# #",
                             "###", ItemStack(Item::minecart, 1))

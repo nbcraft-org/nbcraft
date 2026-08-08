@@ -1,7 +1,6 @@
 #include "world/entity/Monster.hpp"
-#include "world/level/TileSource.hpp"
 
-Monster::Monster(TileSource& source) : PathfinderMob(source)
+Monster::Monster(Level* pLevel) : PathfinderMob(pLevel)
 {
 	m_health = 20;
 	m_attackDamage = 2;
@@ -67,7 +66,7 @@ void Monster::checkHurtTarget(Entity* pEnt, float f)
 
 float Monster::getWalkTargetValue(const TilePos& pos) const
 {
-	float brightness = m_pTileSource->getBrightness(pos);
+	float brightness = m_pLevel->getBrightness(pos);
 
 	return 0.5f - brightness;
 }
@@ -76,11 +75,11 @@ bool Monster::canSpawn()
 {
 	TilePos pos(m_pos.x, m_hitbox.min.y, m_pos.z);
 
-	if (m_pTileSource->getBrightness(LightLayer::Sky, pos) > m_random.nextInt(30))
+	if (m_pLevel->getBrightness(LightLayer::Sky, pos) > m_random.nextInt(30)) 
 	{
 		return false;
 	}
-	else if (m_pTileSource->getBrightness(pos) <= m_random.nextInt(8))
+	else if (m_pLevel->getBrightness(pos) <= m_random.nextInt(8)) 
 	{
 		return PathfinderMob::canSpawn();
 	}

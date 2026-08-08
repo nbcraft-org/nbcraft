@@ -15,7 +15,7 @@
 #include "client/gui/screens/inventory/ChestScreen.hpp"
 #include "client/gui/screens/inventory/FurnaceScreen.hpp"
 #include "client/gui/screens/inventory/TrapScreen.hpp"
-#include "world/level/TileSource.hpp"
+#include "client/gui/screens/inventory/TextEditScreen.hpp"
 
 int dword_250ADC, dword_250AE0;
 
@@ -34,7 +34,7 @@ void LocalPlayer::_init()
 	m_lastRenderArmRot = Rot2::ZERO;
 }
 
-LocalPlayer::LocalPlayer(Minecraft* pMinecraft, Level& level, User* pUser, GameType playerGameType, DimensionId dimensionId) : Player(level, playerGameType)
+LocalPlayer::LocalPlayer(Minecraft* pMinecraft, Level* pLevel, User* pUser, GameType playerGameType, int dimensionId) : Player(pLevel, playerGameType)
 {
 	m_lastSelectedStackId = 0;
 
@@ -225,7 +225,7 @@ void LocalPlayer::openContainer(Container* container)
 void LocalPlayer::closeContainer()
 {
 	Player::closeContainer();
-	m_pMinecraft->getLocalPlayerGameMode()->handleCloseInventory(m_pContainerMenu->m_containerId, *this);
+	m_pMinecraft->getLocalPlayerGameMode()->handleCloseInventory(m_pContainerMenu->m_containerId, this);
 	m_pMinecraft->setScreen(nullptr);
 }
 
@@ -236,12 +236,12 @@ void LocalPlayer::openTrap(DispenserTileEntity* tileEntity)
 	Player::openTrap(tileEntity);
 }
 
-/*void LocalPlayer::openTextEdit(SignTileEntity* tileEntity)
+void LocalPlayer::openTextEdit(SignTileEntity* tileEntity)
 {
 	m_pMinecraft->setScreen(new TextEditScreen(tileEntity));
 
 	Player::openTextEdit(tileEntity);
-}*/
+}
 
 void LocalPlayer::reset()
 {
@@ -256,8 +256,7 @@ void LocalPlayer::animateRespawn()
 
 void LocalPlayer::take(Entity* pEnt, int count)
 {
-	TileSource& tileSource = pEnt->getTileSource();
-	m_pMinecraft->m_pParticleEngine->add(new TakeAnimationParticle(tileSource, pEnt, this, -0.5f));
+	m_pMinecraft->m_pParticleEngine->add(new TakeAnimationParticle(m_pLevel, pEnt, this, -0.5f));
 }
 
 void LocalPlayer::hurtTo(int newHealth)
@@ -385,18 +384,18 @@ void LocalPlayer::move(const Vec3& pos)
 			int x1 = Mth::floor(pos.x / dist + m_pos.x);
 			int z1 = Mth::floor(pos.z / dist + m_pos.z);
 
-			TileID tileOnTop = m_pTileSource->getTile(TilePos(x1, int(m_pos.y - 1.0f), z1));
+			TileID tileOnTop = m_pLevel->getTile(TilePos(x1, int(m_pos.y - 1.0f), z1));
 
 			// not standing on top of a tile?
-			if (!m_pTileSource->isSolidBlockingTile(TilePos(x1, int(m_pos.y - 1.0f), z1)))
+			if (!m_pLevel->isSolidTile(TilePos(x1, int(m_pos.y - 1.0f), z1)))
 				return;
 
 			// aren't inside of a tile right now
-			if (m_pTileSource->isSolidBlockingTile(TilePos(x1, int(m_pos.y), z1)))
+			if (m_pLevel->isSolidTile(TilePos(x1, int(m_pos.y), z1)))
 				return;
 
 			// don't have anything on top of us
-			if (m_pTileSource->isSolidBlockingTile(TilePos(x1, int(m_pos.y + 1.0f), z1)))
+			if (m_pLevel->isSolidTile(TilePos(x1, int(m_pos.y + 1.0f), z1)))
 				return;
 
 			// are we trying to walk into stairs or a slab?
@@ -404,10 +403,8 @@ void LocalPlayer::move(const Vec3& pos)
 				tileOnTop != Tile::stairs_wood->m_ID &&
 				tileOnTop != Tile::stoneSlabHalf->m_ID &&
 				m_pMinecraft->getOptions()->m_autoJump.get())
-			{
 				// Nope, we're walking towards a full block. Trigger an auto jump.
 				m_nAutoJumpFrames = 1;
-			}
 		}
 	}
 }

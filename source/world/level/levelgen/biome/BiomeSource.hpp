@@ -9,36 +9,40 @@
 #pragma once
 
 #include "Biome.hpp"
+#include "common/Random.hpp"
 #include "world/level/levelgen/chunk/ChunkPos.hpp"
 #include "world/level/TilePos.hpp"
 
 class Level;
 class BiomeSource
 {
-private:
-	BiomeSource* init();
+
 public:
-	BiomeSource() { init(); }
+	BiomeSource()
+		: m_temperatureMap(0)
+		, m_downfallMap(0)
+		, m_noiseMap(0)
+	{ }
 	BiomeSource(Level*);
+	float getTemperature(int x, int y);
 	virtual ~BiomeSource();
 
 	virtual Biome* getBiome(const ChunkPos& pos);
-	virtual Biome** getBiomeBlock(const TilePos& pos, int, int);
-	virtual Biome** getBiomeBlock(Biome**, const TilePos& pos, int, int);
-	virtual float* getTemperatureBlock(int, int, int, int);
+	virtual Biome* getBiomeAt(const TilePos& pos);
+	virtual const Biome::Vector& getBiomeBlock(const TilePos& pos, int c, int d);
+	virtual const Biome::Vector& getBiomeBlock(Biome::Vector& biomes, const TilePos& pos, int c, int d);
+	virtual const std::vector<float>& getTemperatureBlock(int a, int b, int c, int d);
 
 public:
-	float* field_4;
-	float* field_8;
-	float* field_C;
-	int field_10;
-	int field_14;
-	int field_18;
-	int field_1C;
-	Biome** field_20;
-	PerlinNoise* m_pPerlinNoise[3];
-	Random m_Random1;
-	Random m_Random2;
-	Random m_Random3;
+	std::vector<float> m_temperatures;
+	std::vector<float> m_downfalls;
+	std::vector<float> m_noises;
+	Biome::Vector m_biomes;
+	Random m_temperatureRandom;
+	Random m_downfallRandom;
+	Random m_noiseRandom;
+	PerlinNoise m_temperatureMap;
+	PerlinNoise m_downfallMap;
+	PerlinNoise m_noiseMap;
 };
 

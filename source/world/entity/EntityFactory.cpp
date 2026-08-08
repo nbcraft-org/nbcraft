@@ -6,12 +6,15 @@
 #include "ItemEntity.hpp"
 #include "PrimedTnt.hpp"
 #include "FallingTile.hpp"
-#include "Arrow.hpp"
-#include "Snowball.hpp"
-#include "ThrownEgg.hpp"
-#include "Fireball.hpp"
-#include "FishingHook.hpp"
-//#include "Painting.hpp"
+#include "projectile/Arrow.hpp"
+#include "projectile/Snowball.hpp"
+#include "projectile/ThrownEgg.hpp"
+#include "projectile/Fireball.hpp"
+#include "projectile/FishingHook.hpp"
+#include "vehicle/Minecart.hpp"
+#include "vehicle/Boat.hpp"
+#include "Painting.hpp"
+#include "LightningBolt.hpp"
 
 #define ENTS ENT(ITEM, ItemEntity) \
              ENT(PRIMED_TNT, PrimedTnt) \
@@ -20,12 +23,15 @@
              ENT(SNOWBALL, Snowball) \
              ENT(THROWN_EGG, ThrownEgg) \
              ENT(LARGE_FIREBALL, Fireball) \
-             ENT(FISHING_HOOK, FishingHook)
-             //ENT(PAINTING, Painting)
+             ENT(FISHING_HOOK, FishingHook) \
+             ENT(MINECART_RIDEABLE, Minecart) \
+             ENT(BOAT, Boat) \
+             ENT(PAINTING, Painting) \
+             ENT(LIGHTNING_BOLT, LightningBolt)
 
-#define ENT(enumType, classType) case EntityType::enumType: return new classType(source);
+#define ENT(enumType, classType) case EntityType::enumType: return new classType(level);
 
-Entity* EntityFactory::CreateEntity(EntityType::ID entityType, TileSource& source)
+Entity* EntityFactory::CreateEntity(EntityType::ID entityType, Level* level)
 {
     switch (entityType)
     {
@@ -36,7 +42,7 @@ Entity* EntityFactory::CreateEntity(EntityType::ID entityType, TileSource& sourc
     }
 }
 
-Entity* EntityFactory::LoadEntity(const CompoundTag& tag, TileSource& source)
+Entity* EntityFactory::LoadEntity(const CompoundTag& tag, Level* level)
 {
     EntityType::ID entityTypeId = (EntityType::ID)tag.getInt32("id");
     if (entityTypeId < 0)
@@ -56,11 +62,11 @@ Entity* EntityFactory::LoadEntity(const CompoundTag& tag, TileSource& source)
 
     if (entityTypeDescriptor->hasCategory(EntityCategories::MOB))
     {
-        entity = MobFactory::CreateMob(entityTypeId, source);
+        entity = MobFactory::CreateMob(entityTypeId, level);
     }
     else
     {
-        entity = EntityFactory::CreateEntity(entityTypeId, source);
+        entity = EntityFactory::CreateEntity(entityTypeId, level);
     }
 
     if (entity)

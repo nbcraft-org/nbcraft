@@ -10,7 +10,7 @@ public:
 	~SlimeRenderer();
 
 protected:
-	int prepareArmor(const Mob& spider, int layer, float a) override;
+	bool prepareArmor(const Mob& spider, int layer, float a) override;
 	void scale(const Mob& mob, Matrix& matrix, float a) override;
 
 private:

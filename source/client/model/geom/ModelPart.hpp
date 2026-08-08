@@ -36,6 +36,7 @@ public:
 	void draw(float scale, const mce::MaterialPtr* materialOverride = nullptr);
 	void mimic(const ModelPart& other);
 	void render(float scale, const mce::MaterialPtr* materialOverride = nullptr);
+	void renderRollable(float scale, const mce::MaterialPtr* materialOverride = nullptr);
 	void setModel(Model* pModel);
 	void setPos(const Vec3& pos);
 	void setPos(float x, float y, float z);

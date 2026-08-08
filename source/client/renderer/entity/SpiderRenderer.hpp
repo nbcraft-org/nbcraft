@@ -9,5 +9,5 @@ public:
 	~SpiderRenderer();
 
 	float getFlipDegrees(const Mob& mob) override { return 180.0f; }
-	int prepareArmor(const Mob& spider, int layer, float a) override;
+	bool prepareArmor(const Mob& spider, int layer, float a) override;
 };

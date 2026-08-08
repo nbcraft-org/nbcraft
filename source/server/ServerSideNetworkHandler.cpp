@@ -11,7 +11,7 @@
 #include "GameMods.hpp"
 #include "network/MinecraftPackets.hpp"
 #include "world/entity/MobFactory.hpp"
-#include "world/level/TileSource.hpp"
+#include "world/entity/EntityFactory.hpp"
 #include "ServerPlayer.hpp"
 
 // How frequently SetTimePackets are sent, in seconds.
@@ -62,7 +62,7 @@ ServerSideNetworkHandler::~ServerSideNetworkHandler()
 	m_onlinePlayers.clear();
 }
 
-Packet* _getPacketForEntity(const Entity& entity)
+Packet* _getPacketForEntity(Entity& entity)
 {
 	if (entity.getDescriptor().isType(EntityType::ITEM))
 	{
@@ -101,8 +101,6 @@ Player* ServerSideNetworkHandler::_getVerifiedPlayer(const RakNet::RakNetGUID& g
 // Java player movement handling from Beta 1.3, rubberbanding included
 void ServerSideNetworkHandler::_handleMovePlayer(Player& player, MovePlayerPacket* packet)
 {
-	TileSource& tileSource = player.getTileSource();
-
 	// Initial positioning
 	Vec3 oPos = player.m_pos;
 	Vec3 pos;
@@ -176,7 +174,7 @@ void ServerSideNetworkHandler::_handleMovePlayer(Player& player, MovePlayerPacke
 
 	AABB aabb(player.m_hitbox);
 	aabb.shrink(shrinkAmount, shrinkAmount, shrinkAmount);
-	bool hasNoCollisionBefore = tileSource.fetchAABBs(aabb).size() == 0;
+	bool hasNoCollisionBefore = m_pLevel->getCubes(&player, aabb)->size() == 0;
 
 	// Apply initial movement
 	player.move(delta);
@@ -205,7 +203,7 @@ void ServerSideNetworkHandler::_handleMovePlayer(Player& player, MovePlayerPacke
 
 	aabb = player.m_hitbox;
 	aabb.shrink(shrinkAmount, shrinkAmount, shrinkAmount);
-	bool hasNoCollisionAfter = tileSource.fetchAABBs(aabb).size() == 0;
+	bool hasNoCollisionAfter = m_pLevel->getCubes(&player, aabb)->size() == 0;
 
 	// Revert movement if illegal collisions or invalid movement occur
 	if (hasNoCollisionBefore && (movedWrongly || !hasNoCollisionAfter) /*&& !player.isSleeping()*/)
@@ -274,7 +272,7 @@ void ServerSideNetworkHandler::onDisconnect(const RakNet::RakNetGUID& guid)
 #endif
 
 		// remove it from our world
-		m_pLevel->removeEntity((Entity*)pPlayer);
+		m_pLevel->removeEntity(pPlayer);
 	}
 	else if ((pPlayer = getPendingPlayerByGUID(guid)))
 	{
@@ -320,12 +318,12 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, LoginPacke
 	}
 #endif
 
-	ServerPlayer* pPlayer = new ServerPlayer(*m_pLevel, m_pLevel->getLevelData()->getGameType());
+	ServerPlayer* pPlayer = new ServerPlayer(m_pLevel, m_pLevel->getLevelData()->getGameType());
 	pPlayer->m_guid = guid;
 	pPlayer->m_name = std::string(packet->m_userName.C_String());
 
 	GameMode* pGameMode = m_pMinecraft->getPlayerGameMode(*pPlayer);
-	pGameMode->initPlayer(*pPlayer);
+	pGameMode->initPlayer(pPlayer);
 
 #ifdef ENH_SAVE_REMOTE_PLAYERS
 	LevelStorage* pLevelStorage = m_pLevel->getLevelStorage();
@@ -413,7 +411,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ReadyPacke
 
 #if NETWORK_PROTOCOL_VERSION >= 3
 	// send the connecting player info about all entities in the world
-	for (Entity::IdMap::iterator it = m_pLevel->m_entities.begin(); it != m_pLevel->m_entities.end(); ++it)
+	for (EntityMap::iterator it = m_pLevel->m_entities.begin(); it != m_pLevel->m_entities.end(); ++it)
 	{
 		Entity* entity = it->second;
 		if (canReplicateEntity(entity))
@@ -528,16 +526,14 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, PlaceBlock
 	Facing::Name face = (Facing::Name)packet->m_face;
 	TileData data = packet->m_data;
 
-	TileSource& tileSource = player.getTileSource();
-
-	if (!tileSource.mayPlace(tileId, pos, face, player, true))
+	if (!m_pLevel->mayPlace(tileId, pos, true))
 		return;
 
-	if (tileSource.setTileAndData(pos, FullTile(tileId, data)))
+	if (m_pLevel->setTileAndData(pos, FullTile(tileId, data)))
 	{
 		Tile* pTile = Tile::tiles[tileId];
-		pTile->setPlacedOnFace(tileSource, pos, face);
-		pTile->setPlacedBy(pos, player);
+		pTile->setPlacedOnFace(m_pLevel, pos, face);
+		pTile->setPlacedBy(m_pLevel, pos, &player);
 
 		const Tile::SoundType* pSound = pTile->m_pSound;
 		m_pLevel->playSound(pos + 0.5f, "step." + pSound->name, 0.5f * (pSound->volume + 1.0f), pSound->pitch * 0.8f);
@@ -554,9 +550,34 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, RemoveBloc
 
 	player.swing();
 
-	GameMode* pGameMode = m_pMinecraft->getPlayerGameMode(player);
-	if (pGameMode->destroyBlock(player, packet->m_pos, Facing::UP))
+	TilePos pos = packet->m_pos;
+	Tile* pTile = Tile::tiles[m_pLevel->getTile(pos)];
+	TileData auxValue = m_pLevel->getData(pos);
+
+	m_pMinecraft->m_pParticleEngine->destroyEffect(pos, FullTile(pTile->m_ID, auxValue));
+
+	bool setTileResult = m_pLevel->setTile(pos, TILE_AIR);
+	if (pTile && setTileResult)
 	{
+		const Tile::SoundType* pSound = pTile->m_pSound;
+		m_pLevel->playSound(pos + 0.5f, "step." + pSound->name, 0.5f * (pSound->volume + 1.0f), pSound->pitch * 0.8f);
+
+		if (player.isSurvival())
+		{
+#ifdef MOD_POCKET_SURVIVAL
+			// 0.2.1
+			ItemStack tileItem(pTile, 1, auxValue);
+			if (pTile == Tile::grass || !player.m_pInventory->hasUnlimitedResource(tileItem))
+			{
+				pTile->spawnResources(m_pLevel, pos, auxValue);
+			}
+#else
+			pTile->spawnResources(m_pLevel, pos, auxValue);
+#endif
+		}
+
+		pTile->destroy(m_pLevel, pos, auxValue);
+
 		// redistribute the packet only if needed
 		redistributePacket(packet, guid);
 	}
@@ -592,11 +613,11 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, InteractPa
 	{
 	case InteractPacket::INTERACT:
 		player.swing();
-		m_pMinecraft->getPlayerGameMode(player)->interact(player, *pTarget);
+		m_pMinecraft->getPlayerGameMode(player)->interact(&player, pTarget);
 		break;
 	case InteractPacket::ATTACK:
 		player.swing();
-		m_pMinecraft->getPlayerGameMode(player)->attack(player, *pTarget);
+		m_pMinecraft->getPlayerGameMode(player)->attack(&player, pTarget);
 		break;
 	default:
 		LOG_W("Received unkown action in InteractPacket: %d", packet->m_actionType);
@@ -612,20 +633,18 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, UseItemPac
 	//puts_ignorable("UseItemPacket");
 	VALIDATE_PLAYER_ACTION(packet->m_entityId);
 
-	TileSource& tileSource = player.getTileSource();
-
 	bool onTile = packet->m_tileFace != 255;
 
 	if (onTile)
 	{
-		Tile* pTile = Tile::tiles[tileSource.getTile(packet->m_tilePos)];
+		Tile* pTile = Tile::tiles[m_pLevel->getTile(packet->m_tilePos)];
 		if (pTile)
 		{
 			if (pTile == Tile::invisible_bedrock)
 				return;
 
 			// Interface with tile instead of using item
-			if (pTile->use(packet->m_tilePos, player))
+			if (pTile->use(m_pLevel, packet->m_tilePos, &player))
 			{
 				player.swing();
 				return;
@@ -646,11 +665,11 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, UseItemPac
 
 	if (onTile)
 	{
-		success = item.useOn(player, packet->m_tilePos, (Facing::Name)packet->m_tileFace);
+		success = item.useOn(&player, m_pLevel, packet->m_tilePos, (Facing::Name)packet->m_tileFace);
 	}
 	else
 	{
-		success = item.use(player);
+		success = item.use(m_pLevel, player);
 	}
 
 	if (success)
@@ -658,19 +677,18 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, UseItemPac
 }
 
 // added specifically to allow Noteblocks to work, but ideally should just be a part of ServerPlayerGameMode
-static bool _startDestroyBlock(Player& player, const TilePos& pos, Facing::Name face)
+bool _startDestroyBlock(Level& level, Player& player, const TilePos& pos, Facing::Name face)
 {
 	ItemStack& item = player.getSelectedItem();
 	if (!item.isEmpty() && item.getItem() == Item::bow)
 		return true;
 
-	TileSource& tileSource = player.getTileSource();
-	TileID tile = tileSource.getTile(pos);
+	TileID tile = level.getTile(pos);
 
 	if (tile <= 0)
 		return false;
 	
-	Tile::tiles[tile]->attack(pos, player);
+	Tile::tiles[tile]->attack(&level, pos, &player);
 
 	return true;
 }
@@ -684,7 +702,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, PlayerActi
 	switch (packet->m_action)
 	{
 	case PlayerActionPacket::START_DESTROY_BLOCK:
-		_startDestroyBlock(player, packet->m_tilePos, packet->m_tileFace);
+		_startDestroyBlock(*m_pLevel, player, packet->m_tilePos, packet->m_tileFace);
 		//m_pMinecraft->getPlayerGameMode(player)->startDestroyBlock(&player, packet->m_tilePos, packet->m_tileFace);
 		break;
 	case PlayerActionPacket::STOP_DESTROY_BLOCK:
@@ -710,10 +728,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, RequestChu
 		return;
 	}
 
-	Dimension& overworld = *m_pLevel->getDimension(DIMENSION_OVERWORLD);
-	TileSource& tileSource = *overworld.getTileSource();
-
-	LevelChunk* pChunk = tileSource.getChunk(packet->m_chunkPos);
+	LevelChunk* pChunk = m_pLevel->getChunk(packet->m_chunkPos);
 	if (!pChunk)
 	{
 		LOG_E("No chunk at %d, %d", packet->m_chunkPos.x, packet->m_chunkPos.z);
@@ -721,7 +736,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, RequestChu
 	}
 
 	// @NOTE: this allows the client to request empty chunks. Is that okay?
-	ChunkDataPacket cdp(pChunk->getPos(), pChunk);
+	ChunkDataPacket cdp(pChunk->m_chunkPos, pChunk);
 	m_pRakNetInstance->send(guid, cdp);
 }
 
@@ -843,12 +858,10 @@ void ServerSideNetworkHandler::tileBrightnessChanged(const TilePos& pos)
 
 void ServerSideNetworkHandler::tileChanged(const TilePos& pos)
 {
-	TileSource& tileSource = *m_pLevel->getDimension(DIMENSION_OVERWORLD)->getTileSource();
-
 	UpdateBlockPacket ubp;
 	ubp.m_pos = pos;
-	ubp.m_tileTypeId = tileSource.getTile(pos);
-	ubp.m_data = tileSource.getData(pos);
+	ubp.m_tileTypeId = m_pLevel->getTile(pos);
+	ubp.m_data = m_pLevel->getData(pos);
 
 	ubp.m_reliability = RELIABLE_ORDERED;
 	ubp.m_channel = CHANNEL_TILE_EVENTS;
@@ -1029,6 +1042,7 @@ void ServerSideNetworkHandler::setupCommands()
 	m_commands["gamemode"] = &ServerSideNetworkHandler::commandGamemode;
 	m_commands["give"]     = &ServerSideNetworkHandler::commandGive;
 	m_commands["clear"]    = &ServerSideNetworkHandler::commandClear;
+	m_commands["toggledownfall"] = &ServerSideNetworkHandler::commandToggledownfall;
 }
 
 bool ServerSideNetworkHandler::_checkPermissions(OnlinePlayer* player)
@@ -1143,7 +1157,7 @@ void ServerSideNetworkHandler::commandTP(OnlinePlayer* player, const std::vector
     
 	if (!_checkPermissions(player)) return;
     
-	Vec3 pos = player->m_pPlayer->getPos();
+	Vec3 pos = player->m_pPlayer->getPos(1.0f);
     
 	std::stringstream ss;
 	if (parms[0] != "~")
@@ -1168,7 +1182,7 @@ void ServerSideNetworkHandler::commandTP(OnlinePlayer* player, const std::vector
 	ss.clear();
     
 	player->m_pPlayer->setPos(pos);
-	pos = player->m_pPlayer->getPos();
+	pos = player->m_pPlayer->getPos(1.0f);
 
 	ss << "Teleported to " << pos.x << ", " << pos.y << ", " << pos.z;
     
@@ -1198,7 +1212,7 @@ void ServerSideNetworkHandler::commandSummon(OnlinePlayer* player, const std::ve
 	const EntityTypeDescriptor* descriptor = EntityTypeDescriptor::GetByEntityTypeName(entityName);
 	if (descriptor != nullptr)
 	{
-		Vec3 pos = player->m_pPlayer->getPos();
+		Vec3 pos = player->m_pPlayer->getPos(1.0f);
 		pos.y -= player->m_pPlayer->m_heightOffset + player->m_pPlayer->m_ySlideOffset;
 
 		if (parmsSize >= 4)
@@ -1238,14 +1252,18 @@ void ServerSideNetworkHandler::commandSummon(OnlinePlayer* player, const std::ve
 
 			for (int i = 0; i++ < amount;)
 			{
-				Mob* mob = MobFactory::CreateMob(descriptor->getEntityType().getId(), player->m_pPlayer->getTileSource());
-				if (mob == nullptr)
+				Entity* entity = MobFactory::CreateMob(descriptor->getEntityType().getId(), m_pLevel);
+
+				if (entity == nullptr)
+					entity = EntityFactory::CreateEntity(descriptor->getEntityType().getId(), m_pLevel);
+
+				if (entity == nullptr)
 				{
 					ss << "Unable to summon object";
 					break;
 				}
-				mob->setPos(pos);
-				m_pLevel->addEntity(mob);
+				entity->setPos(pos);
+				m_pLevel->addEntity(entity);
 				if (!success) success = true;
 			}
 
@@ -1366,4 +1384,12 @@ void ServerSideNetworkHandler::commandClear(OnlinePlayer* player, const std::vec
 
 	sendMessage(player, "Your inventory has been cleared.");
 	return;
+}
+
+void ServerSideNetworkHandler::commandToggledownfall(OnlinePlayer* player, const std::vector<std::string>&)
+{
+	player->m_pPlayer->m_pLevel->toggleRain();
+	std::stringstream ss;
+	ss << "Toggling rain and snow, hold on...";
+	sendMessage(player, ss.str());
 }

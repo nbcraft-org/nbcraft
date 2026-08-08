@@ -9,6 +9,7 @@
 #pragma once
 
 #include <typeinfo>
+#include "Level.hpp"
 #include "TileSource.hpp"
 
 class Region : public TileSource
@@ -26,6 +27,7 @@ public:
 	Material* getMaterial(const TilePos& pos) const override;
 	bool isSolidBlockingTile(const TilePos& pos) const override;
 	bool isSolidRenderTile(const TilePos& pos) const override;
+	bool isSolidTile(const TilePos& pos) const override;
 	BiomeSource* getBiomeSource() const override;
 	TileEntity* getTileEntity(const TilePos& pos) const override;
 
@@ -91,8 +93,8 @@ public:
 	bool mayInteract(Entity* entity, const TilePos& pos) const override { throw std::bad_cast(); }
 	bool mayPlace(TileID tileId, const TilePos& pos, bool ignoreEntities = false) const override { throw std::bad_cast(); }
 	bool mayPlace(TileID tileId, const TilePos& pos, Facing::Name face, Entity& placer, bool ignoreEntities = false, Entity* ignoreEntity = nullptr) const override { throw std::bad_cast(); }
-	void addListener(TileSourceListener& listener) override { throw std::bad_cast(); }
-	void removeListener(TileSourceListener& listener) override { throw std::bad_cast(); }
+	void addListener(LevelListener& listener) override { throw std::bad_cast(); }
+	void removeListener(LevelListener& listener) override { throw std::bad_cast(); }
 
 private:
 	ChunkPos field_4;
@@ -103,4 +105,3 @@ private:
 	const Level* m_pLevel;
 	ChunkPos field_14;
 };
-

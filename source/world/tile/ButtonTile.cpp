@@ -1,14 +1,12 @@
 #include "ButtonTile.hpp"
 #include "world/level/Level.hpp"
-#include "world/level/TileSource.hpp"
-#include "world/level/TileTickingQueue.hpp"
 
 ButtonTile::ButtonTile(TileID id, int texture) : Tile(id, texture, Material::decoration)
 {
 	setTicking(true);
 }
 
-AABB* ButtonTile::getAABB(const TileSource&, const TilePos& pos)
+AABB* ButtonTile::getAABB(const Level*, const TilePos& pos)
 {
 	return nullptr;
 }
@@ -28,98 +26,98 @@ bool ButtonTile::isCubeShaped() const
 	return false;
 }
 
-bool ButtonTile::mayPlace(const TileSource& source, const TilePos& pos) const
+bool ButtonTile::mayPlace(const Level* level, const TilePos& pos) const
 {
-	if (source.isSolidBlockingTile(pos.west())) return true;
-	if (source.isSolidBlockingTile(pos.east())) return true;
-	if (source.isSolidBlockingTile(pos.north())) return true;
-	if (source.isSolidBlockingTile(pos.south())) return true;
+	if (level->isSolidTile(pos.west())) return true;
+	if (level->isSolidTile(pos.east())) return true;
+	if (level->isSolidTile(pos.north())) return true;
+	if (level->isSolidTile(pos.south())) return true;
 
 	return false;
 }
 
-void ButtonTile::setPlacedOnFace(TileSource& source, const TilePos& pos, Facing::Name face)
+void ButtonTile::setPlacedOnFace(Level* level, const TilePos& pos, Facing::Name face)
 {
-	TileData data = source.getData(pos);
+	TileData data = level->getData(pos);
 	int var7 = data & 8;
 	data &= 7;
-	data = unk_h(source, pos);
+	data = unk_h(level, pos);
 
 	switch (face)
 	{
 	case Facing::NORTH:
-		if (source.isSolidBlockingTile(pos.south()))
+		if (level->isSolidTile(pos.south()))
 			data = 4;
 		break;
 	case Facing::SOUTH:
-		if (source.isSolidBlockingTile(pos.north()))
+		if (level->isSolidTile(pos.north()))
 			data = 3;
 		break;
 	case Facing::WEST:
-		if (source.isSolidBlockingTile(pos.east()))
+		if (level->isSolidTile(pos.east()))
 			data = 2;
 		break;
 	case Facing::EAST:
-		if (source.isSolidBlockingTile(pos.west()))
+		if (level->isSolidTile(pos.west()))
 			data = 1;
 		break;
 	default:
 		break;
 	}
 
-	/*if (face == Facing::NORTH && source.isSolidBlockingTile(pos.south()))
+	/*if (face == Facing::NORTH && level->isSolidTile(pos.south()))
 		data = 4;
-	else if (face == Facing::SOUTH && source.isSolidBlockingTile(pos.north()))
+	else if (face == Facing::SOUTH && level->isSolidTile(pos.north()))
 		data = 3;
-	else if (face == Facing::WEST && source.isSolidBlockingTile(pos.east()))
+	else if (face == Facing::WEST && level->isSolidTile(pos.east()))
 		data = 2;
-	else if (face == Facing::EAST && source.isSolidBlockingTile(pos.west()))
+	else if (face == Facing::EAST && level->isSolidTile(pos.west()))
 		data = 1;
 	else
 		data = unk_h(level, pos);*/
 
-	source.setTileAndData(pos, FullTile(this, data + var7));
+	level->setData(pos, data + var7);
 }
 
-int ButtonTile::unk_h(TileSource& source, const TilePos& pos)
+int ButtonTile::unk_h(Level* level, const TilePos& pos)
 {
-	return source.isSolidBlockingTile(pos.west()) ? 1 : (source.isSolidBlockingTile(pos.east()) ? 2 : (source.isSolidBlockingTile(pos.north()) ? 3 : (source.isSolidBlockingTile(pos.south()) ? 4 : 1)));
+	return level->isSolidTile(pos.west()) ? 1 : (level->isSolidTile(pos.east()) ? 2 : (level->isSolidTile(pos.north()) ? 3 : (level->isSolidTile(pos.south()) ? 4 : 1)));
 }
 
-void ButtonTile::neighborChanged(TileSource& source, const TilePos& pos, TileID tile)
+void ButtonTile::neighborChanged(Level* level, const TilePos& pos, TileID tile)
 {
-	if (!checkCanSurvive(source, pos))
+	if (!checkCanSurvive(level, pos))
 		return;
 
-	TileData data = source.getData(pos) & 7;
+	TileData data = level->getData(pos) & 7;
 
 	bool flag = false;
-	if (data == 1 && !source.isSolidBlockingTile(pos.west())) flag = true;
-	else if (data == 2 && !source.isSolidBlockingTile(pos.east())) flag = true;
-	else if (data == 3 && !source.isSolidBlockingTile(pos.north())) flag = true;
-	else if (data == 4 && !source.isSolidBlockingTile(pos.south())) flag = true;
+	if (data == 1 && !level->isSolidTile(pos.west())) flag = true;
+	else if (data == 2 && !level->isSolidTile(pos.east())) flag = true;
+	else if (data == 3 && !level->isSolidTile(pos.north())) flag = true;
+	else if (data == 4 && !level->isSolidTile(pos.south())) flag = true;
 
 	if (!flag)
 		return; // all good
 
-	spawnResources(source, pos, source.getData(pos));
-	source.setTile(pos, TILE_AIR);
+	spawnResources(level, pos, level->getData(pos));
+	level->setTile(pos, TILE_AIR);
 }
 
-bool ButtonTile::checkCanSurvive(TileSource& source, const TilePos& pos)
+bool ButtonTile::checkCanSurvive(Level* level, const TilePos& pos)
 {
-	if (mayPlace(source, pos))
+	if (mayPlace(level, pos))
 		return true;
 
-	spawnResources(source, pos, source.getData(pos));
-	source.setTile(pos, TILE_AIR);
+	spawnResources(level, pos, level->getData(pos));
+	level->setTile(pos, TILE_AIR);
 
 	return false;
 }
 
-void ButtonTile::updateShape(const TileSource& source, const TilePos& pos)
+void ButtonTile::updateShape(const TileSource* level, const TilePos& pos)
 {
-	TileData data = source.getData(pos);
+	TileData data = level->getData(pos);
 	int var6 = data & 7;
 	bool var7 = (data & 8) > 0;
 	float var8 = 6.0f / 16.0f;
@@ -148,17 +146,14 @@ void ButtonTile::updateShape(const TileSource& source, const TilePos& pos)
 	}
 }
 
-void ButtonTile::attack(const TilePos& pos, Player& player)
+void ButtonTile::attack(Level* level, const TilePos& pos, Player* player)
 {
-	use(pos, player);
+	use(level, pos, player);
 }
 
-bool ButtonTile::use(const TilePos& pos, Player& player)
+bool ButtonTile::use(Level* level, const TilePos& pos, Player* player)
 {
-	Level& level = player.getLevel();
-	TileSource& source = player.getTileSource();
-
-	TileData data = source.getData(pos);
+	TileData data = level->getData(pos);
 	int var7 = data & 7;
 	int var8 = 8 - (data & 8);
 	if (var8 == 0)
@@ -167,74 +162,72 @@ bool ButtonTile::use(const TilePos& pos, Player& player)
 	}
 	else
 	{
-		source.setTileAndData(pos, FullTile(this, var7 + var8));
-		source.fireTilesDirty(pos, pos);
-		level.playSound(pos + 0.5f, "random.click", 0.3f, 0.6f);
-		source.updateNeighborsAt(pos, m_ID);
+		level->setData(pos, var7 + var8);
+		level->setTilesDirty(pos, pos);
+		level->playSound(pos + 0.5f, "random.click", 0.3f, 0.6f);
+		level->updateNeighborsAt(pos, m_ID);
 		switch (var7)
 		{
 		case 1:
-			source.updateNeighborsAt(pos.west(), m_ID);
+			level->updateNeighborsAt(pos.west(), m_ID);
 			break;
 		case 2:
-			source.updateNeighborsAt(pos.east(), m_ID);
+			level->updateNeighborsAt(pos.east(), m_ID);
 			break;
 		case 3:
-			source.updateNeighborsAt(pos.north(), m_ID);
+			level->updateNeighborsAt(pos.north(), m_ID);
 			break;
 		case 4:
-			source.updateNeighborsAt(pos.south(), m_ID);
+			level->updateNeighborsAt(pos.south(), m_ID);
 			break;
 		default:
-			source.updateNeighborsAt(pos.below(), m_ID);
+			level->updateNeighborsAt(pos.below(), m_ID);
 			break;
 		}
 
-		TileTickingQueue* pQueue = source.getTickQueue(pos);
-
-		pQueue->add(source, pos, m_ID, getTickDelay());
+		level->addToTickNextTick(pos, m_ID, getTickDelay());
 		return true;
 	}
 }
 
-void ButtonTile::onRemove(TileSource& source, const TilePos& pos)
+void ButtonTile::onRemove(Level* level, const TilePos& pos)
 {
-	TileData data = source.getData(pos);
+	TileData data = level->getData(pos);
 	if ((data & 8) > 0)
 	{
-		source.updateNeighborsAt(pos, m_ID);
+		level->updateNeighborsAt(pos, m_ID);
 		int var6 = data & 7;
 		switch (var6)
 		{
 		case 1:
-			source.updateNeighborsAt(pos.west(), m_ID);
+			level->updateNeighborsAt(pos.west(), m_ID);
 			break;
 		case 2:
-			source.updateNeighborsAt(pos.east(), m_ID);
+			level->updateNeighborsAt(pos.east(), m_ID);
 			break;
 		case 3:
-			source.updateNeighborsAt(pos.north(), m_ID);
+			level->updateNeighborsAt(pos.north(), m_ID);
 			break;
 		case 4:
-			source.updateNeighborsAt(pos.south(), m_ID);
+			level->updateNeighborsAt(pos.south(), m_ID);
 			break;
 		default:
-			source.updateNeighborsAt(pos.below(), m_ID);
+			level->updateNeighborsAt(pos.below(), m_ID);
 			break;
 		}
 	}
 
-	Tile::onRemove(source, pos);
+	Tile::onRemove(level, pos);
 }
 
-int ButtonTile::getSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const
+int ButtonTile::getSignal(const TileSource* level, const TilePos& pos, Facing::Name face) const
 {
-	return (source.getData(pos) & 8) > 0;
+	return (level->getData(pos) & 8) > 0;
 }
 
-int ButtonTile::getDirectSignal(const TileSource& source, const TilePos& pos, Facing::Name face) const
+int ButtonTile::getDirectSignal(const Level* level, const TilePos& pos, Facing::Name face) const
 {
-	TileData data = source.getData(pos);
+	TileData data = level->getData(pos);
 	if ((data & 8) == 0)
 	{
 		return false;
@@ -266,39 +259,37 @@ bool ButtonTile::isSignalSource() const
 	return true;
 }
 
-void ButtonTile::tick(TileSource& source, const TilePos& pos, Random* random)
+void ButtonTile::tick(Level* level, const TilePos& pos, Random* random)
 {
-	Level& level = source.getLevel();
-
-	if (!level.m_bIsClientSide)
+	if (!level->m_bIsClientSide)
 	{
-		int var6 = source.getData(pos);
+		int var6 = level->getData(pos);
 		if ((var6 & 8) != 0)
 		{
-			source.setTileAndData(pos, FullTile(this, var6 & 7));
-			source.updateNeighborsAt(pos, m_ID);
+			level->setData(pos, var6 & 7);
+			level->updateNeighborsAt(pos, m_ID);
 			int var7 = var6 & 7;
 			switch (var7)
 			{
 			case 1:
-				source.updateNeighborsAt(pos.west(), m_ID);
+				level->updateNeighborsAt(pos.west(), m_ID);
 				break;
 			case 2:
-				source.updateNeighborsAt(pos.east(), m_ID);
+				level->updateNeighborsAt(pos.east(), m_ID);
 				break;
 			case 3:
-				source.updateNeighborsAt(pos.north(), m_ID);
+				level->updateNeighborsAt(pos.north(), m_ID);
 				break;
 			case 4:
-				source.updateNeighborsAt(pos.south(), m_ID);
+				level->updateNeighborsAt(pos.south(), m_ID);
 				break;
 			default:
-				source.updateNeighborsAt(pos.below(), m_ID);
+				level->updateNeighborsAt(pos.below(), m_ID);
 				break;
 			}
 
-			level.playSound(pos + 0.5f, "random.click", 0.3f, 0.5f);
-			source.fireTilesDirty(pos, pos);
+			level->playSound(pos + 0.5f, "random.click", 0.3f, 0.5f);
+			level->setTilesDirty(pos, pos);
 		}
 	}
 }

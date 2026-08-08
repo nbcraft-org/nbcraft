@@ -7,9 +7,9 @@
  ********************************************************************/
 
 #include "Feature.hpp"
-#include "world/level/TileSource.hpp"
+#include "world/level/Level.hpp"
 
-bool BirchFeature::place(TileSource& source, Random* random, const TilePos& pos)
+bool BirchFeature::place(Level* level, Random* random, const TilePos& pos)
 {
 	if (pos.y <= C_MIN_Y)
 		return false;
@@ -40,7 +40,7 @@ bool BirchFeature::place(TileSource& source, Random* random, const TilePos& pos)
 					break;
 				}
 
-				TileID tile = source.getTile(tp);
+				TileID tile = level->getTile(tp);
 
 				// other trees can overlap with this one, apparently
 				if (tile != TILE_AIR && tile != Tile::leaves->m_ID)
@@ -56,7 +56,7 @@ bool BirchFeature::place(TileSource& source, Random* random, const TilePos& pos)
 	if (!bCanPlace)
 		return false;
 
-	TileID tileBelow = source.getTile(pos.below());
+	TileID tileBelow = level->getTile(pos.below());
 
 	// If grass or dirt aren't below us, we can't possibly grow!
 	if (tileBelow != Tile::grass->m_ID && tileBelow != Tile::dirt->m_ID)
@@ -66,7 +66,7 @@ bool BirchFeature::place(TileSource& source, Random* random, const TilePos& pos)
 	if (pos.y >= C_MAX_Y - treeHeight)
 		return false;
 
-	source.setTileNoUpdate(pos.below(), Tile::dirt->m_ID);
+	level->setTileNoUpdate(pos.below(), Tile::dirt->m_ID);
 
 	int upperY = pos.y + treeHeight;
 	int lowerY = pos.y + treeHeight - 3;
@@ -86,9 +86,9 @@ bool BirchFeature::place(TileSource& source, Random* random, const TilePos& pos)
 
 			for (tp.z = pos.z - c1; tp.z <= pos.z + c1; tp.z++)
 			{
-                if ((abs(tp.x - pos.x) != c1 || abs(tp.z - pos.z) != c1 || (random->nextInt(2) != 0 && diff != 0)) && !Tile::solid[source.getTile(TilePos(tp.x, i, tp.z))])
+                if ((abs(tp.x - pos.x) != c1 || abs(tp.z - pos.z) != c1 || (random->nextInt(2) != 0 && diff != 0)) && !Tile::solid[level->getTile(TilePos(tp.x, i, tp.z))])
 				{
-					source.setTileAndDataNoUpdate(TilePos(tp.x, i, tp.z), FullTile(Tile::leaves->m_ID, 2));
+					level->setTileAndDataNoUpdate(TilePos(tp.x, i, tp.z), FullTile(Tile::leaves->m_ID, 2));
 				}
 			}
 		}
@@ -97,11 +97,11 @@ bool BirchFeature::place(TileSource& source, Random* random, const TilePos& pos)
 	for (int i = 0; i < treeHeight; i++)
 	{
 		//int y1 = i + pos.y;
-		TileID tile = source.getTile(TilePos(pos.x, pos.y + i, pos.z));
+		TileID tile = level->getTile(TilePos(pos.x, pos.y + i, pos.z));
 		if (tile && tile != Tile::leaves->m_ID)
 			continue;
 
-		source.setTileAndDataNoUpdate(TilePos(pos.x, pos.y + i, pos.z), FullTile(Tile::treeTrunk->m_ID, 2));
+		level->setTileAndDataNoUpdate(TilePos(pos.x, pos.y + i, pos.z), FullTile(Tile::treeTrunk->m_ID, 2));
 	}
 
 	return true;

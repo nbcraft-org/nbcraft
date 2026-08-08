@@ -360,7 +360,7 @@ void OptionsScreen::render(int a, int b, float c)
 
 	fillGradient(0, 0, width, height, 0xC0101010, 0xD0101010);
 
-	if (m_pMinecraft->m_pPlatform->getUserInputStatus() >= 0)
+	if (AppPlatform::singleton()->getUserInputStatus() >= 0)
 	{
 		m_pMinecraft->getScreenChooser()->pushStartScreen();
 	}

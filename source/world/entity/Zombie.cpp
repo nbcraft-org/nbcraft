@@ -1,7 +1,6 @@
 #include "Zombie.hpp"
-#include "world/level/TileSource.hpp"
 
-Zombie::Zombie(TileSource& source) : Monster(source)
+Zombie::Zombie(Level* pLevel) : Monster(pLevel)
 {
 	m_pDescriptor = &EntityTypeDescriptor::zombie;
 	m_renderType = RENDER_ZOMBIE;
@@ -12,11 +11,11 @@ Zombie::Zombie(TileSource& source) : Monster(source)
 
 void Zombie::aiStep()
 {
-	if (m_pTileSource->getDimensionConst().isDay())
+	if (m_pLevel->isDay())
 	{
 		float var1 = getBrightness(1.0f);
 		if (var1 > 0.5f
-			&& m_pTileSource->canSeeSky(this->m_pos)
+			&& m_pLevel->canSeeSky(this->m_pos)
 			&& m_random.nextFloat() * 30.0f < (var1 - 0.4f) * 2.0f)
 		{
 			this->m_fireTicks = 300;

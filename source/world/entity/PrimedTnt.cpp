@@ -22,7 +22,7 @@ void PrimedTnt::_init()
 	m_bMakeStepSound = false;
 }
 
-PrimedTnt::PrimedTnt(TileSource& source, const Vec3& pos) : Entity(source)
+PrimedTnt::PrimedTnt(Level* level, const Vec3& pos) : Entity(level)
 {
 	_init();
 	setPos(pos);

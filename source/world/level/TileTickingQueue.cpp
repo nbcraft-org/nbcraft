@@ -17,7 +17,7 @@ void TileTickingQueue::_tick(TileSource& region, const TilePos& pos, TileID tile
 
 	TileID expectedTileId = region.getTile(pos);
 	if (tileId == expectedTileId)
-		Tile::tiles[tileId]->tick(region, pos, &m_random);
+		Tile::tiles[tileId]->tick(&region.getLevel(), pos, &m_random);
 }
 
 void TileTickingQueue::add(TileSource& region, const TilePos& pos, TileID tileId, int tickDelay)
@@ -39,7 +39,7 @@ bool TileTickingQueue::tickPendingTicks(TileSource& region, Tick_t until, int ma
 {
 	m_instaTick = instaTick;
 
-	int tickLimit = Mth::Min(m_tickData.size(), max);
+	int tickLimit = Mth::Min((int)m_tickData.size(), max);
 	int ticksProcessed = 0;
 
 	bool hasTicked = false;
@@ -68,7 +68,7 @@ bool TileTickingQueue::tickPendingTicks(TileSource& region, int max, bool instaT
 {
 	m_instaTick = instaTick;
 
-	int tickLimit = Mth::Min(m_tickData.size(), max);
+	int tickLimit = Mth::Min((int)m_tickData.size(), max);
 	int ticksProcessed = 0;
 
 	bool hasTicked = false;
@@ -123,7 +123,7 @@ void TileTickingQueue::load(const CompoundTag& tag)
 {
 	const ListTag* list = tag.getList("tickList");
 
-	for (size_t i = 0; i < list->size(); i++)
+	for (size_t i = 0; i < list->rawView().size(); i++)
 	{
 		const CompoundTag* childTag = list->getCompound(i);
 

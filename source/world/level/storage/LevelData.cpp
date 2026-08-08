@@ -25,6 +25,10 @@ void LevelData::_init(const LevelSettings& settings, int storageVersion)
 	m_sizeOnDisk = 0;
 	m_playerTag = nullptr;
 	m_dimensionId = 0;
+	m_bThundering = false;
+	m_thunderTime = 0;
+	m_bRaining = false;
+	m_rainTime = 0;
 	m_gameType = settings.m_gameType;
 	m_storageVersion = storageVersion;
 	m_generatorVersion = 0; // pre-0.2.1 versions used storageVersion instead
@@ -153,6 +157,10 @@ void LevelData::loadTagData(CompoundTag& tag)
     setSizeOnDisk(tag.getInt64("SizeOnDisk"));
     setLevelName(tag.getString("LevelName"));
 	setStorageVersion(tag.getInt32("StorageVersion"));
+	setRainTime(tag.getInt32("rainTime"));
+	setRaining(tag.getBoolean("raining"));
+	setThunderTime(tag.getInt32("thunderTime"));
+	setThundering(tag.getBoolean("thundering"));
 
 	setSpawnMobs(getGameType() == GAME_TYPE_SURVIVAL);
 
@@ -182,6 +190,10 @@ void LevelData::writeTagData(CompoundTag& levelTag, CompoundTag* playerTag) cons
 	tag.putString("LevelName", getLevelName());
 	tag.putInt32("StorageVersion", getStorageVersion());
 	tag.putInt32("Platform", 2); // what's 2? why is it only written and not read? not sure...
+	tag.putInt32("rainTime", m_rainTime);
+	tag.putBoolean("raining", m_bRaining);
+	tag.putInt32("thunderTime", m_thunderTime);
+	tag.putBoolean("thundering", m_bThundering);
 
 	if (playerTag)
 	{

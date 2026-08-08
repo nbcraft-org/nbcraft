@@ -15,11 +15,13 @@ class Minecraft;
 class MouseTurnInput : public ITurnInput
 {
 public:
-	MouseTurnInput();
+	MouseTurnInput(Minecraft*);
 	Vec2 getTurnDelta() override;
 
 private:
 	int m_lastX;
 	int m_lastY;
+
+	Minecraft* m_pMinecraft;
 };
 

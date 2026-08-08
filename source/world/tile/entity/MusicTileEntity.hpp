@@ -13,7 +13,7 @@ public:
 
 public:
     void tune();
-    void play(TileSource& source, const TilePos& pos);
+    void play(Level* pLevel, const TilePos& pos);
 
 public:
     uint8_t m_note;

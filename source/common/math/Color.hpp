@@ -16,7 +16,7 @@ public:
     float a;
 
 private:
-    void _init(float r, float g, float b, float a = 1.0f)
+    void _init(float r, float g, float b, float a)
     {
         this->r = r;
         this->g = g;
@@ -24,7 +24,7 @@ private:
         this->a = a;
     }
 
-    void _init(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255)
+    void _init(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     {
         this->r = float(r) / 255.0f;
         this->g = float(g) / 255.0f;
@@ -34,14 +34,14 @@ private:
 
     void _init(uint8_t r, uint8_t g, uint8_t b, float a)
     {
-        _init(r, g, b);
+        _init(r, g, b, (uint8_t)255);
         this->a = a;
     }
 
 public:
     Color()
     {
-        _init(0.0f, 0.0f, 0.0f, 0.0f);
+		*this = NIL;
     }
 
     Color(float r, float g, float b, float a = 1.0f)
@@ -69,7 +69,7 @@ public:
         _init(GET_RED(c), GET_GREEN(c), GET_BLUE(c), alpha);
     }
 
-    void fromHSB(float h, float s, float b);
+    static Color getHSBColor(float h, float s, float b);
 
     Color& mulRGB(float mul)
     {
@@ -79,24 +79,15 @@ public:
         return *this;
     }
 
-    Color operator+(float f) const
+    Color& withAlpha(int alpha)
     {
-        return Color(r + f, g + f, b + f, a);
+        return withAlpha(alpha / 255.0f);
     }
 
-    Color operator+(const Color& c) const
+    Color& withAlpha(float alpha)
     {
-        return Color(r + c.r, g + c.g, b + c.b, a + c.a);
-    }
-
-    Color operator-(float f) const
-    {
-        return Color(r - f, g - f, b - f, a);
-    }
-
-    Color operator-(const Color& c) const
-    {
-        return Color(r - c.r, g - c.g, b - c.b, a - c.a);
+        a = alpha;
+        return *this;
     }
 
     Color operator*(float f) const
@@ -107,63 +98,6 @@ public:
     Color operator*(const Color& c) const
     {
         return Color(r * c.r, g * c.g, b * c.b, a * c.a);
-    }
-
-    Color operator/(float f) const
-    {
-        return Color(r / f, g / f, b / f, a);
-    }
-
-    Color operator/(const Color& c) const
-    {
-        return Color(r / c.r, g / c.g, b / c.b, a / c.a);
-    }
-
-    Color& operator=(float rgb)
-    {
-        r = rgb;
-        g = rgb;
-        b = rgb;
-        
-        return *this;
-    }
-
-    Color& operator+=(const Color& c)
-    {
-        r += c.r;
-        g += c.g;
-        b += c.b;
-        a += c.a;
-
-        return *this;
-    }
-
-    Color& operator+=(float f)
-    {
-        r += f;
-        g += f;
-        b += f;
-
-        return *this;
-    }
-
-    Color& operator-=(const Color& c)
-    {
-        r -= c.r;
-        g -= c.g;
-        b -= c.b;
-        a -= c.a;
-
-        return *this;
-    }
-
-    Color& operator-=(float f)
-    {
-        r -= f;
-        g -= f;
-        b -= f;
-
-        return *this;
     }
 
     Color& operator*=(const Color& c)
@@ -185,23 +119,14 @@ public:
         return *this;
     }
 
-    Color& operator/=(const Color& c)
+    operator int() const
     {
-        r /= c.r;
-        g /= c.g;
-        b /= c.b;
-        a /= c.a;
-
-        return *this;
-    }
-
-    Color& operator/=(float f)
-    {
-        r /= f;
-        g /= f;
-        b /= f;
-
-        return *this;
+        // Xbox 360 for some reason expects the colors as little-endian
+#if MC_ENDIANNESS_BIG && !defined(_XBOX)
+        return (int(a * 255) | (int(r * 255) << 8) | (int(g * 255) << 16) | (int(b * 255) << 24));
+#else // MC_ENDIANNESS_LITTLE
+        return ((int(a * 255) << 24) | (int(r * 255) << 16) | (int(g * 255) << 8) | int(b * 255));
+#endif
     }
 
     bool operator==(const Color& other) const

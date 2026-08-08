@@ -8,7 +8,7 @@
 #include "Chicken.hpp"
 #include "world/level/Level.hpp"
 
-Chicken::Chicken(TileSource& source) : Animal(source)
+Chicken::Chicken(Level* pLevel) : Animal(pLevel)
 {
 	m_pDescriptor = &EntityTypeDescriptor::chicken;
 	m_renderType = RENDER_CHICKEN;

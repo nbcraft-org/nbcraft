@@ -1,25 +1,24 @@
 #include "FenceGateTile.hpp"
-#include "world/level/TileSource.hpp"
 #include "world/level/Level.hpp"
 
 FenceGateTile::FenceGateTile(int a, int b) : Tile(a, b, Material::wood)
 {
 }
 
-bool FenceGateTile::mayPlace(const TileSource& source, const TilePos& pos) const
+bool FenceGateTile::mayPlace(const Level* level, const TilePos& pos) const
 {
 	TilePos below = pos.below();
-	return source.getTile(below) == m_ID || (Tile::mayPlace(source, pos) && source.getMaterial(below)->isSolid());
+	return level->getTile(below) == m_ID || (Tile::mayPlace(level, pos) && level->getMaterial(below)->isSolid());
 }
 
-AABB* FenceGateTile::getAABB(const TileSource& source, const TilePos& pos)
+AABB* FenceGateTile::getAABB(const Level* pLevel, const TilePos& pos)
 {
-    TileData data = source.getData(pos);
+    int data = pLevel->getData(pos);
     if (isOpen(data))
     {
-        return nullptr;
+        return NULL;
     }
-	AABB* rAABB = Tile::getAABB(source, pos);
+	AABB* rAABB = Tile::getAABB(pLevel, pos);
 	rAABB->max.y += 0.5f;
 	return rAABB;
 }
@@ -39,32 +38,28 @@ eRenderShape FenceGateTile::getRenderShape() const
 	return SHAPE_FENCE_GATE;
 }
 
-void FenceGateTile::setPlacedBy(const TilePos& pos, Mob& mob) 
+void FenceGateTile::setPlacedBy(Level* pLevel, const TilePos& pos, Mob* mob) 
 {
-    TileSource& source = mob.getTileSource();
-
-	int i = (Mth::floor(mob.m_rot.yaw * 4.0f / 360.0f + 0.5) & 3) % 4;
-	source.setTileAndData(pos, FullTile(this, i));
+	int i = (Mth::floor(mob->m_rot.yaw * 4.0f / 360.0f + 0.5) & 3) % 4;
+	pLevel->setData(pos, i);
 }
 
-bool FenceGateTile::use(const TilePos& pos, Player& player)
+bool FenceGateTile::use(Level* pLevel, const TilePos& pos, Player* player)
 {
-    TileSource& source = player.getTileSource();
-
-    setOpen(source, pos, !isOpen(source.getData(pos)), &player);
+    setOpen(pLevel, pos, !isOpen(pLevel->getData(pos)), player);
     return true;
 }
 
-void FenceGateTile::setOpen(TileSource& source, const TilePos& pos, bool bOpen, Player* player)
+void FenceGateTile::setOpen(Level* pLevel, const TilePos& pos, bool bOpen, Player* player)
 {
-    int data = source.getData(pos);
+    int data = pLevel->getData(pos);
 
     if (isOpen(data) == bOpen)
         return;
 
     if (!bOpen)
     {
-        source.setTileAndData(pos, FullTile(this, data & C_CLOSE_MASK));
+        pLevel->setData(pos, data & C_CLOSE_MASK);
     }
     else
     {
@@ -77,22 +72,20 @@ void FenceGateTile::setOpen(TileSource& source, const TilePos& pos, bool bOpen, 
         if (k == (j + 2) % 4)
             data = j;
 
-        source.setTileAndData(pos, FullTile(this, data | C_OPEN_BIT));
+        pLevel->setData(pos, data | C_OPEN_BIT);
     }
 
-    Level& level = source.getLevel();
-
-    level.levelEvent(LevelEvent(LevelEvent::SOUND_DOOR, pos, 0, player));
+    pLevel->levelEvent(LevelEvent(LevelEvent::SOUND_DOOR, pos, 0, player));
 }
 
-void FenceGateTile::neighborChanged(TileSource& source, const TilePos& pos, TileID newTile)
+void FenceGateTile::neighborChanged(Level* level, const TilePos& pos, TileID newTile)
 {
 	if (newTile > 0 && Tile::tiles[newTile]->isSignalSource())
 	{
 		bool bOpen = false;
-		if (source.hasNeighborSignal(pos) || source.hasNeighborSignal(pos.above()))
+		if (level->hasNeighborSignal(pos) || level->hasNeighborSignal(pos.above()))
 			bOpen = true;
 
-		setOpen(source, pos, bOpen);
+		setOpen(level, pos, bOpen);
 	}
 }

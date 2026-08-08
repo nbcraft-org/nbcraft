@@ -85,7 +85,7 @@ void StartMenuScreen::_buttonClicked(Button* pButton)
 #endif
         
 #ifdef DEMO
-		AppPlatform::singleton()->buyGame();
+        AppPlatform::singleton()->buyGame();
 #else
 		m_pMinecraft->quit();
 #endif

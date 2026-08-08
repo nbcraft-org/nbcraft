@@ -1,5 +1,4 @@
 #pragma once
-#include "compat/LegacyCPP.hpp"
 #include "common/Utils.hpp"
 
 class ChunkConstants

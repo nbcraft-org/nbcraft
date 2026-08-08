@@ -13,6 +13,7 @@
 #include "world/level/Level.hpp"
 #include "world/level/Region.hpp"
 #include "TileRenderer.hpp"
+#include "tileentity/TileEntityRenderDispatcher.hpp"
 
 int Chunk::updates;
 
@@ -176,17 +177,14 @@ void Chunk::rebuild()
 
 					if (!layer && Tile::isEntityTile[tile])
 					{
-						/*
-						// @TODO: ADD TILE ENTITY RENDER DISPATCHER
 						TileEntity* et = region.getTileEntity(tp);
 						if (TileEntityRenderDispatcher::getInstance()->hasRenderer(et))
 							m_tileEntities.push_back(et);
-						*/
 					}
 
 					Tile* pTile = Tile::tiles[tile];
 
-					if (layer == pTile->getRenderLayer(*m_pLevel, tp))
+					if (layer == pTile->getRenderLayer())
 					{
 						if (tileRenderer.tesselateInWorld(pTile, tp))
 							rendered = true;
@@ -219,7 +217,7 @@ void Chunk::rebuild()
 	// get TileEntity diff and update m_globalTileEntities (renderable TileEntities) accordingly
 
 	std::set<TileEntity*> newSet(m_tileEntities.begin(), m_tileEntities.end());
-	TileEntity::Vector toAdd, toRemove;
+	TileEntityVector toAdd, toRemove;
 
 	std::set_difference(
 		newSet.begin(), newSet.end(),
@@ -234,15 +232,15 @@ void Chunk::rebuild()
 	);
 
 	// Add
-	for (TileEntity::Vector::iterator it = toAdd.begin(); it != toAdd.end(); ++it)
+	for (TileEntityVector::iterator it = toAdd.begin(); it != toAdd.end(); ++it)
 	{
 		m_globalTileEntities.push_back(*it);
 	}
 
 	// Remove
-	for (TileEntity::Vector::iterator it = toRemove.begin(); it != toRemove.end(); ++it)
+	for (TileEntityVector::iterator it = toRemove.begin(); it != toRemove.end(); ++it)
 	{
-		TileEntity::Vector::iterator f =
+		TileEntityVector::iterator f =
 			std::find(m_globalTileEntities.begin(),
 					m_globalTileEntities.end(),
 					*it);
@@ -255,7 +253,7 @@ void Chunk::rebuild()
 	m_bCompiled = true;
 }
 
-Chunk::Chunk(Level* level, TileEntity::Vector& tileEntities, const TilePos& pos, int size, int lists)
+Chunk::Chunk(Level* level, TileEntityVector& tileEntities, const TilePos& pos, int size, int lists)
 	: m_globalTileEntities(tileEntities)
 {
 	m_bOcclusionVisible = true;

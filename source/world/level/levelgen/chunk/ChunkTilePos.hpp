@@ -14,24 +14,19 @@ private:
 public:
 	ChunkTilePos() { _init(0, 0, 0); }
 	ChunkTilePos(uint8_t _x, uint8_t _y, uint8_t _z) { _init(_x, _y, _z); }
-	ChunkTilePos(const TilePos& pos) { _init(pos.x & (ChunkConstants::XZ_SIZE - 1), pos.y, pos.z & (ChunkConstants::XZ_SIZE - 1)); }
+	ChunkTilePos(const TilePos& pos) { _init(pos.x & 0xF, pos.y, pos.z & 0xF); } // & 0xF on x and y to get them to uint8_t
 
-	ChunkTilePos operator+(const ChunkTilePos& other) const
+	ChunkTilePos operator+(const TilePos& other) const
 	{
 		return ChunkTilePos(x + other.x, y + other.y, z + other.z);
 	}
-
-	TilePos operator+(const TilePos& other) const
-	{
-		return TilePos(x + other.x, y + other.y, z + other.z);
-	}
-
+	
 	bool operator<(const ChunkTilePos& other) const
-	{
-		if (x != other.x) return x < other.x;
-		if (y != other.y) return y < other.y;
-		return z < other.z;
-	}
+    {
+        if (x != other.x) return x < other.x;
+        if (y != other.y) return y < other.y;
+        return z < other.z;
+    }
 
 	int index() const
 	{

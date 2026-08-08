@@ -182,7 +182,7 @@ void OptionList::initDefaultMenu()
 }
 
 #define HEADER(text) do { m_items.push_back(new OptionHeader(text)); currentIndex++; } while (0)
-#define OPTION(name) do { options.name.addGuiElement(m_items, m_uiTheme); currentIndex++; } while (0)
+#define OPTION(name) do { pOptions->name.addGuiElement(m_items, m_uiTheme); currentIndex++; } while (0)
 #define RESET_BTN(category) do \
 { \
 	HEADER(""); \
@@ -193,8 +193,7 @@ void OptionList::initDefaultMenu()
 
 void OptionList::initGameplayMenu()
 {
-	Minecraft& mc = *m_pMinecraft;
-	Options& options = *mc.getOptions();
+	Options* pOptions = m_pMinecraft->getOptions();
 	int currentIndex = -1;
 
 	OPTIONS_LIST_GAMEPLAY_GAME;
@@ -211,24 +210,29 @@ void OptionList::initGameplayMenu()
 
 void OptionList::initControlsMenu()
 {
-	Minecraft& mc = *m_pMinecraft;
-	Options& options = *mc.getOptions();
+	Options* pOptions = m_pMinecraft->getOptions();
 	int currentIndex = -1;
+	int idxSplit = -1, idxSwapJumpSneak = -1, idxDpadSize = -1;
 
 	OPTIONS_LIST_CONTROLS_CONTROLS;
 	OPTIONS_LIST_CONTROLS_FEEDBACK;
 	OPTIONS_LIST_CONTROLS_EXPERIMENTAL;
 
-	RESET_BTN(OC_CONTROLS);
+	if (!m_pMinecraft->useTouchscreen())
+	{
+		m_items[idxSplit]->setEnabled(false);
+		m_items[idxSwapJumpSneak]->setEnabled(false);
+		m_items[idxDpadSize]->setEnabled(false);
+	}
 
-	(void)currentIndex; // compiler will warn about an unused variable sometimes if this isn't here
+	RESET_BTN(OC_CONTROLS);
 }
 
 void OptionList::initVideoMenu()
 {
-	Minecraft& mc = *m_pMinecraft;
-	Options& options = *mc.getOptions();
+	Options* pOptions = m_pMinecraft->getOptions();
 	int currentIndex = -1;
+	int idxPano = -1, idxVSync = -1;
 
 	OPTIONS_LIST_VIDEO_GRAPHICS;
 	OPTIONS_LIST_VIDEO_EXPERIMENTAL;
@@ -240,11 +244,6 @@ void OptionList::initVideoMenu()
 
 	if (!AppPlatform::singleton()->isVSyncSwitchable())
 		m_items[idxVSync]->setEnabled(false);
-
-	// @HACK: 360 is the only platform that supports gamma for the time being
-#if !MC_PLATFORM_XBOX360
-	m_items[idxGamma]->setEnabled(false);
-#endif
 
 	RESET_BTN(OC_VIDEO);
 }

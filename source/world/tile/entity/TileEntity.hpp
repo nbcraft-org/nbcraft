@@ -10,12 +10,11 @@
 class Tile;
 class Level;
 class Packet;
-class TileSource;
 
 class TileEntity
 {
 public:
-    typedef std::vector<TileEntity*> Vector;
+	typedef std::vector<TileEntity*> Vector;
 
 public:
     TileEntity();
@@ -50,6 +49,6 @@ protected:
     bool m_bRemove;
 
 public:
-    TileSource* m_pTileSource;
+    Level* m_pLevel;
     TilePos m_pos;
 };

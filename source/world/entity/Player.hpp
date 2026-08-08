@@ -14,14 +14,14 @@
 #include "world/entity/ItemEntity.hpp"
 #include "world/gamemode/GameType.hpp"
 #include "world/inventory/InventoryMenu.hpp"
-#include "world/entity/FishingHook.hpp"
+#include "world/entity/projectile/FishingHook.hpp"
 
 #define C_PLAYER_FLAG_USING_ITEM (4)
 
 class Inventory; // in case we're included from Inventory.hpp
-class Dimension;
 class FurnaceTileEntity;
 class DispenserTileEntity;
+class SignTileEntity;
 
 class Player : public Mob
 {
@@ -39,7 +39,7 @@ private:
 	void _init();
 
 public:
-	Player(Level& level, GameType gameType);
+	Player(Level* pLevel, GameType gameType);
 	virtual ~Player();
 
 protected:
@@ -81,13 +81,13 @@ public:
 	virtual void openContainer(Container* container);
 	virtual void closeContainer();
 	virtual void openTrap(DispenserTileEntity* tileEntity);
-	//virtual void openTextEdit(SignTileEntity* tileEntity);
+	virtual void openTextEdit(SignTileEntity* tileEntity);
 	virtual bool isLocalPlayer() const { return false; }
 	virtual void take(Entity* pEnt, int count) {}
 
 	int addResource(int);
 	void animateRespawn(Player*, Level*);
-	void attack(Entity& entity);
+	void attack(Entity* pEnt);
 	void useItem(ItemStack& item) const;
 	void releaseUsingItem();
 	void stopUsingItem();
@@ -97,6 +97,7 @@ public:
 	int getInventorySlot(int x) const;
 	TilePos getRespawnPosition() const { return m_respawnPos; }
 	int getScore() const { return m_score; }
+	Dimension* getDimension() const;
 	void prepareCustomTextures();
 	void respawn();
 	void rideTick() override;
@@ -105,7 +106,7 @@ public:
 	void setRespawnPos(const TilePos& pos);
 	inline const Abilities& getAbilities() const { return m_abilities; }
 
-	void touch(Entity& entity);
+	void touch(Entity* pEnt);
 	GameType getPlayerGameType() const { return _playerGameType; }
 	virtual void setPlayerGameType(GameType playerGameType);
 	bool isSurvival() const { return getPlayerGameType() == GAME_TYPE_SURVIVAL; }
@@ -118,7 +119,7 @@ public:
 	// QUIRK: Yes, I did mean it like that, as did Mojang.
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
-	void interact(Entity& entity);
+	void interact(Entity* pEnt);
 #pragma GCC diagnostic pop
 
 protected:
@@ -137,7 +138,7 @@ public:
 	float m_bob;
 	int m_dmgSpill;
 	std::string m_name;
-	DimensionId m_dimension;
+	int m_dimension;
 	RakNet::RakNetGUID m_guid;
 	bool m_bFlying;
 	TilePos m_respawnPos;

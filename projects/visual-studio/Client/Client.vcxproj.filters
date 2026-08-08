@@ -129,6 +129,12 @@
     <Filter Include="Source Files\Locale">
       <UniqueIdentifier>{8d211c71-2764-43ef-8587-7414109f4ff5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Renderer\TileEntity">
+      <UniqueIdentifier>{4fef8064-3b23-4ace-a8df-73c966be2b65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Renderer\TileEntity">
+      <UniqueIdentifier>{72e6422e-e5ae-4bce-b78e-4f7611f22f49}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\client\gui\components\AvailableGamesList.hpp">
@@ -761,6 +767,51 @@
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\TrapScreen_Console.hpp">
       <Filter>Header Files\GUI\Screens\Inventory</Filter>
     </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\BoatRenderer.hpp">
+      <Filter>Header Files\Renderer\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\MinecartRenderer.hpp">
+      <Filter>Header Files\Renderer\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\model\models\MinecartModel.hpp">
+      <Filter>Header Files\Model\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\model\models\BoatModel.hpp">
+      <Filter>Header Files\Model\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\PaintingRenderer.hpp">
+      <Filter>Header Files\Renderer\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\model\models\WolfModel.hpp">
+      <Filter>Header Files\Model\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\WolfRenderer.hpp">
+      <Filter>Header Files\Renderer\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\LightningBoltRenderer.hpp">
+      <Filter>Header Files\Renderer\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\tileentity\TileEntityRenderDispatcher.hpp">
+      <Filter>Header Files\Renderer\TileEntity</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\tileentity\TileEntityRenderer.hpp">
+      <Filter>Header Files\Renderer\TileEntity</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\tileentity\MobSpawnerRenderer.hpp">
+      <Filter>Header Files\Renderer\TileEntity</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\model\models\SignModel.hpp">
+      <Filter>Header Files\Model\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\tileentity\SignRenderer.hpp">
+      <Filter>Header Files\Renderer\TileEntity</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\TextEditScreen.hpp">
+      <Filter>Header Files\GUI\Screens\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\tileentity\PistonRenderer.hpp">
+      <Filter>Header Files\Renderer\TileEntity</Filter>
+    </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\LoadWorldScreen_Console.hpp">
       <Filter>Header Files\GUI\Screens</Filter>
     </ClInclude>
@@ -1386,6 +1437,48 @@
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\TrapScreen_Console.cpp">
       <Filter>Source Files\GUI\Screens\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\MinecartRenderer.cpp">
+      <Filter>Source Files\Renderer\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\BoatRenderer.cpp">
+      <Filter>Source Files\Renderer\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\model\models\BoatModel.cpp">
+      <Filter>Source Files\Model\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\model\models\MinecartModel.cpp">
+      <Filter>Source Files\Model\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\PaintingRenderer.cpp">
+      <Filter>Source Files\Renderer\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\model\models\WolfModel.cpp">
+      <Filter>Source Files\Model\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\WolfRenderer.cpp">
+      <Filter>Source Files\Renderer\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\LightningBoltRenderer.cpp">
+      <Filter>Source Files\Renderer\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\tileentity\TileEntityRenderDispatcher.cpp">
+      <Filter>Source Files\Renderer\TileEntity</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\tileentity\MobSpawnerRenderer.cpp">
+      <Filter>Source Files\Renderer\TileEntity</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\model\models\SignModel.cpp">
+      <Filter>Source Files\Model\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\tileentity\SignRenderer.cpp">
+      <Filter>Source Files\Renderer\TileEntity</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\TextEditScreen.cpp">
+      <Filter>Source Files\GUI\Screens\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\tileentity\PistonRenderer.cpp">
+      <Filter>Source Files\Renderer\TileEntity</Filter>
     </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\LoadWorldScreen_Console.cpp">
       <Filter>Source Files\GUI\Screens</Filter>

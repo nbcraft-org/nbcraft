@@ -1,6 +1,6 @@
 #include "Spider.hpp"
 
-Spider::Spider(TileSource& source) : Monster(source)
+Spider::Spider(Level* pLevel) : Monster(pLevel)
 {
 	m_pDescriptor = &EntityTypeDescriptor::spider;
 	m_renderType = RENDER_SPIDER;

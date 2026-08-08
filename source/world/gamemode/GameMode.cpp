@@ -9,11 +9,11 @@
 #include "GameMode.hpp"
 #include "client/app/Minecraft.hpp"
 #include "network/packets/RemoveBlockPacket.hpp"
-#include "world/level/TileSource.hpp"
 
-GameMode::GameMode(Minecraft* pMinecraft)
-	: m_pMinecraft(pMinecraft)
-	, m_bInstaBuild(false)
+GameMode::GameMode(Minecraft* pMinecraft, Level& level) :
+	_level(level),
+	m_pMinecraft(pMinecraft),
+	m_bInstaBuild(false)
 {
 }
 
@@ -25,46 +25,42 @@ void GameMode::initLevel(Level* pLevel)
 {
 }
 
-bool GameMode::startDestroyBlock(Player& player, const TilePos& pos, Facing::Name face)
+bool GameMode::startDestroyBlock(Player* player, const TilePos& pos, Facing::Name face)
 {
 	//if (!player->getCarriedItem()) // && not a bow
 	return destroyBlock(player, pos, face);
 }
 
-bool GameMode::destroyBlock(Player& player, const TilePos& pos, Facing::Name face)
+bool GameMode::destroyBlock(Player* player, const TilePos& pos, Facing::Name face)
 {
-	TileSource& source = player.getTileSource();
-
-	Tile* oldTile = Tile::tiles[source.getTile(pos)];
+	Tile* oldTile = Tile::tiles[_level.getTile(pos)];
 	if (!oldTile)
 		return false;
 
-	m_pMinecraft->m_pParticleEngine->destroyEffect(player, pos);
+	TileData tileData = _level.getData(pos);
 
-	TileData tileData = source.getData(pos);
+	m_pMinecraft->m_pParticleEngine->destroyEffect(pos, FullTile(oldTile->m_ID, tileData));
 
 	oldTile->playerWillDestroy(player, pos, face);
-
-	bool changed = source.setTile(pos, TILE_AIR);
+	bool changed = _level.setTile(pos, TILE_AIR);
 	if (!changed)
 		return false;
 
-	Level& level = player.getLevel();
 
-	level.playSound(pos + 0.5f, "step." + oldTile->m_pSound->name,
+	_level.playSound(pos + 0.5f, "step." + oldTile->m_pSound->name,
 		(oldTile->m_pSound->volume * 0.5f) + 0.5f, oldTile->m_pSound->pitch * 0.8f);
 
-	oldTile->destroy(source, pos, tileData);
+	oldTile->destroy(&_level, pos, tileData);
 
-	if (m_pMinecraft->isOnline() && player.isLocalPlayer())
+	if (m_pMinecraft->isOnline() && player->isLocalPlayer())
 	{
-		level.m_pRakNetInstance->send(new RemoveBlockPacket(player.m_EntityID, pos));
+		m_pMinecraft->m_pRakNetInstance->send(new RemoveBlockPacket(player->m_EntityID, pos));
 	}
 
 	return true;
 }
 
-bool GameMode::continueDestroyBlock(Player& player, const TilePos& pos, Facing::Name face)
+bool GameMode::continueDestroyBlock(Player* player, const TilePos& pos, Facing::Name face)
 {
 	return false;
 }
@@ -104,12 +100,12 @@ float GameMode::getEntityReachDistance() const
 	return 5.0f;
 }
 
-LocalPlayer* GameMode::createPlayer(Level& level)
+LocalPlayer* GameMode::createPlayer(Level* pLevel)
 {
-	return new LocalPlayer(m_pMinecraft, level, m_pMinecraft->m_pUser, level.getDefaultGameType(), level.getDimension(DIMENSION_OVERWORLD)->getId());
+	return new LocalPlayer(m_pMinecraft, pLevel, m_pMinecraft->m_pUser, pLevel->getDefaultGameType(), _level.m_pDimension->m_id);
 }
 
-void GameMode::initPlayer(Player& pPlayer)
+void GameMode::initPlayer(Player* pPlayer)
 {
 }
 
@@ -122,14 +118,14 @@ bool GameMode::canHurtPlayer()
 	return false;
 }
 
-void GameMode::interact(Player& player, Entity& entity)
+void GameMode::interact(Player* player, Entity* entity)
 {
-	player.interact(entity);
+	player->interact(entity);
 }
 
-void GameMode::attack(Player& player, Entity& entity)
+void GameMode::attack(Player* player, Entity* entity)
 {
-	player.attack(entity);
+	player->attack(entity);
 }
 
 ItemStack GameMode::handleInventoryMouseClick(int containerId, Container::SlotID slotId, MouseButtonType button, bool quick, Player* player)
@@ -137,54 +133,49 @@ ItemStack GameMode::handleInventoryMouseClick(int containerId, Container::SlotID
 	return player->m_pContainerMenu->clicked(slotId, button, quick, player);
 }
 
-void GameMode::handleCloseInventory(int a, Player& player)
+void GameMode::handleCloseInventory(int a, Player* player)
 {
-	player.m_pContainerMenu->removed(player);
-	if (player.m_pContainerMenu != player.m_pInventoryMenu)
+	player->m_pContainerMenu->removed(player);
+	if (player->m_pContainerMenu != player->m_pInventoryMenu)
 	{
-		delete player.m_pContainerMenu;
-		player.m_pContainerMenu = player.m_pInventoryMenu;
+		delete player->m_pContainerMenu;
+		player->m_pContainerMenu = player->m_pInventoryMenu;
 	}
 }
 
-bool GameMode::useItem(Player& player, ItemStack& item)
+bool GameMode::useItem(Player* player, Level* level, ItemStack& item)
 {
-	Level& level = player.getLevel();
-	bool result = item.use(player);
+	bool result = item.use(level, *player);
 
-	if (level.m_bIsClientSide)
+	if (level->m_bIsClientSide)
 	{
-		level.m_pRakNetInstance->send(new UseItemPacket(TilePos::ZERO, 255, player.m_EntityID, item));
+		_level.m_pRakNetInstance->send(new UseItemPacket(TilePos::ZERO, 255, player->m_EntityID, item));
 	}
 
 	return result;
 }
 
-bool GameMode::useItemOn(Player& player, ItemStack& item, const TilePos& pos, Facing::Name face)
+bool GameMode::useItemOn(Player* player, Level* level, ItemStack& item, const TilePos& pos, Facing::Name face)
 {
-	Level& level = player.getLevel();
-
 	// Sending this packet regardless is intentional. PE does this, Java does this.
-	if (level.m_bIsClientSide)
+	if (level->m_bIsClientSide)
 	{
-		level.m_pRakNetInstance->send(new UseItemPacket(pos, face, player.m_EntityID, item));
+		_level.m_pRakNetInstance->send(new UseItemPacket(pos, face, player->m_EntityID, item));
 	}
 
-	TileSource& source = player.getTileSource();
-
-	TileID tile = source.getTile(pos);
+	TileID tile = level->getTile(pos);
 	if (tile == Tile::invisible_bedrock->m_ID)
 		return false;
 
 	bool success = false;
 
-	if (tile > 0 && Tile::tiles[tile]->use(pos, player))
+	if (tile > 0 && Tile::tiles[tile]->use(level, pos, player))
 	{
 		success = true;
 	}
 	else if (!item.isEmpty())
 	{
-		success = item.useOn(player, pos, face);
+		success = item.useOn(player, level, pos, face);
 	}
 
 	return success;
@@ -192,12 +183,10 @@ bool GameMode::useItemOn(Player& player, ItemStack& item, const TilePos& pos, Fa
 
 void GameMode::releaseUsingItem(Player* player)
 {
-	Level& level = player->getLevel();
-
 #if NETWORK_PROTOCOL_VERSION >= 6
-	if (level.m_bIsClientSide)
+	if (m_pMinecraft->isOnlineClient())
 	{
-		level.m_pRakNetInstance->send(new PlayerActionPacket(player->m_EntityID, PlayerActionPacket::STOP_USING_ITEM));
+		m_pMinecraft->m_pRakNetInstance->send(new PlayerActionPacket(player->m_EntityID, PlayerActionPacket::STOP_USING_ITEM));
 	}
 #endif
 

@@ -81,7 +81,8 @@
     "states": [
       "PolygonOffset",
       "Blending",
-	  "EnableAlphaTest"
+      "EnableAlphaTest",
+      "Textured"
     ],
 
     "defines": [

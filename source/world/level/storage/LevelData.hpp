@@ -117,6 +117,18 @@ public:
 	std::string getLevelName() const { return m_levelName; }
 	void setLevelName(const std::string& name) { m_levelName = name; }
 
+	bool isThundering() const { return m_bThundering; }
+	void setThundering(bool thunder) { m_bThundering = thunder; }
+
+	int getThunderTime() const { return m_thunderTime; }
+	void setThunderTime(int time) { m_thunderTime = time; }
+
+	bool isRaining() const { return m_bRaining; }
+	void setRaining(bool raining) { m_bRaining = raining; }
+
+	int getRainTime() const { return m_rainTime; }
+	void setRainTime(int time) { m_rainTime = time; }
+
 	void setLoadedPlayerTo(Player& player) const;
 
 private:
@@ -130,7 +142,10 @@ private:
 	int m_dimensionId;
 	GameType m_gameType;
 	int m_storageVersion;
+	int m_rainTime;
+	bool m_bRaining;
+	int m_thunderTime;
+	bool m_bThundering;
 	bool m_bSpawnMobs;
 	int m_generatorVersion;
 };
-
