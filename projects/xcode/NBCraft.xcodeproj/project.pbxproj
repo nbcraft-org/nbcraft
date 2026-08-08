@@ -728,6 +728,9 @@
 		84BF63A82AF186C8008A9995 /* MemoryLevelStorageSource.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 840DD6C92AC810620006A435 /* MemoryLevelStorageSource.hpp */; };
 		84BF63A92AF186C8008A9995 /* RegionFile.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 840DD6CB2AC810620006A435 /* RegionFile.hpp */; };
 		84BF63AA2AF186C8008A9995 /* TickNextTickData.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 840DD6CD2AC810620006A435 /* TickNextTickData.hpp */; };
+		84BF63462AF18631008A9995 /* TickNextTickData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840DD6CC2AC810620006A435 /* TickNextTickData.cpp */; };
+		84BE45F930107BAB001C93C6 /* MobSpawnerData.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84BE45F830107BAB001C93C6 /* MobSpawnerData.hpp */; };
+		84BE45FB30107BC6001C93C6 /* ChunkConstants.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84BE45FA30107BC6001C93C6 /* ChunkConstants.hpp */; };
 		84BF63AB2AF186C8008A9995 /* Particle.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 840DD6D42AC810620006A435 /* Particle.hpp */; };
 		84BF63AC2AF186C8008A9995 /* ParticleEngine.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 840DD6D62AC810620006A435 /* ParticleEngine.hpp */; };
 		84BF63AD2AF186C8008A9995 /* AABB.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 840DD6DC2AC810620006A435 /* AABB.hpp */; };
@@ -2112,6 +2115,9 @@
 		840DD6CA2AC810620006A435 /* RegionFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegionFile.cpp; sourceTree = "<group>"; };
 		840DD6CB2AC810620006A435 /* RegionFile.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = RegionFile.hpp; sourceTree = "<group>"; };
 		840DD6CD2AC810620006A435 /* TickNextTickData.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TickNextTickData.hpp; sourceTree = "<group>"; };
+		840DD6CC2AC810620006A435 /* TickNextTickData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TickNextTickData.cpp; sourceTree = "<group>"; };
+		84BE45F830107BAB001C93C6 /* MobSpawnerData.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MobSpawnerData.hpp; sourceTree = "<group>"; };
+		84BE45FA30107BC6001C93C6 /* ChunkConstants.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ChunkConstants.hpp; sourceTree = "<group>"; };
 		840DD6CF2AC810620006A435 /* BubbleParticle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BubbleParticle.cpp; sourceTree = "<group>"; };
 		840DD6D02AC810620006A435 /* ExplodeParticle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExplodeParticle.cpp; sourceTree = "<group>"; };
 		840DD6D12AC810620006A435 /* FlameParticle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FlameParticle.cpp; sourceTree = "<group>"; };
@@ -4395,6 +4401,7 @@
 				8470AF2A2BE9B60A00BCA54E /* MobFactory.hpp */,
 				848CCB452F3A38E800031D1F /* MobSpawner.cpp */,
 				848CCB442F3A38E800031D1F /* MobSpawner.hpp */,
+				84BE45F830107BAB001C93C6 /* MobSpawnerData.hpp */,
 				84AA8B6A2B32F3B5003F5B82 /* Monster.cpp */,
 				84AA8B6B2B32F3B5003F5B82 /* Monster.hpp */,
 				84AA8B6C2B32F3B5003F5B82 /* PathfinderMob.cpp */,
@@ -4572,6 +4579,7 @@
 				840DD6B32AC810620006A435 /* Region.cpp */,
 				840DD6B42AC810620006A435 /* Region.hpp */,
 				840DD6B52AC810620006A435 /* storage */,
+				840DD6CC2AC810620006A435 /* TickNextTickData.cpp */,
 				840DD6CD2AC810620006A435 /* TickNextTickData.hpp */,
 				84EE51332E8DCD4900D3DCA2 /* TileChange.hpp */,
 				84DAF5752F3464DD00D67310 /* TileEvent.hpp */,
@@ -4612,6 +4620,7 @@
 			children = (
 				840DD68C2AC810620006A435 /* ChunkCache.cpp */,
 				840DD68D2AC810620006A435 /* ChunkCache.hpp */,
+				84BE45FA30107BC6001C93C6 /* ChunkConstants.hpp */,
 				8477B3AE2C4DC414004E1AC5 /* ChunkPos.cpp */,
 				8477B3AF2C4DC414004E1AC5 /* ChunkPos.hpp */,
 				840DD68E2AC810620006A435 /* ChunkSource.cpp */,
@@ -6856,6 +6865,8 @@
 				84E1C9EA2E7FDC72007D2F5D /* SlabItem.hpp in Headers */,
 				84BF63A92AF186C8008A9995 /* RegionFile.hpp in Headers */,
 				84BF63AA2AF186C8008A9995 /* TickNextTickData.hpp in Headers */,
+				84BE45F930107BAB001C93C6 /* MobSpawnerData.hpp in Headers */,
+				84BE45FB30107BC6001C93C6 /* ChunkConstants.hpp in Headers */,
 				84EE513C2E8DCD4900D3DCA2 /* TileSource.hpp in Headers */,
 				84EE513E2E8DCD4900D3DCA2 /* TileTickingQueue.hpp in Headers */,
 				84EE51402E8DCD4900D3DCA2 /* Brightness.hpp in Headers */,
@@ -8064,6 +8075,7 @@
 				84BF630E2AF18631008A9995 /* ItemEntity.cpp in Sources */,
 				84ED41472FC3EC730038BAC4 /* Snowball.cpp in Sources */,
 				84BF63102AF18631008A9995 /* Mob.cpp in Sources */,
+				84BF63462AF18631008A9995 /* TickNextTickData.cpp in Sources */,
 				84BF63112AF18631008A9995 /* Player.cpp in Sources */,
 				8445E7A52D769329008DC834 /* MobCategory.cpp in Sources */,
 				84ED414C2FC3EC850038BAC4 /* ItemParticle.cpp in Sources */,
