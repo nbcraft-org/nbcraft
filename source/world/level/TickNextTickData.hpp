@@ -1,4 +1,5 @@
 #pragma once
+#include "common/Utils.hpp"
 #include "Tick.hpp"
 #include "world/level/TilePos.hpp"
 
