@@ -37,6 +37,7 @@
 #include "client/player/input/Multitouch.hpp"
 
 #include "world/tile/SandTile.hpp"
+#include "world/level/TileSource.hpp"
 
 #include "client/renderer/GrassColor.hpp"
 #include "client/renderer/FoliageColor.hpp"
@@ -62,7 +63,7 @@ const char* Minecraft::progressMessages[] =
 {
 	"Locating server",
 	"Building terrain",
-	"Preparing",
+	"Preparing", // "Simulating world for a bit" on Java
 	"Saving chunks",
 };
 
@@ -783,7 +784,7 @@ void Minecraft::handleTextPaste(const std::string& text)
 
 void Minecraft::handleTextPaste()
 {
-	std::string text = AppPlatform::singleton()->getClipboardText();
+	std::string text = platform()->getClipboardText();
 	if (!text.empty())
 		handleTextPaste(text);
 }
@@ -1075,7 +1076,7 @@ void Minecraft::prepareLevel(const std::string& unused)
 
 	if (!pLevel->field_B0C)
 	{
-		pLevel->setUpdateLights(0);
+		pLevel->setUpdateLights(false);
 	}
 
 	for (int i = 8, i2 = 0; i != 8 + C_MAX_CHUNKS_X * 16; i += 16)
@@ -1107,7 +1108,7 @@ void Minecraft::prepareLevel(const std::string& unused)
 	//if (startTime != -1.0f)
 	//	getTimeS();
 
-	pLevel->setUpdateLights(1);
+	pLevel->setUpdateLights(true);
 
 	//startTime = float(getTimeS());
 
