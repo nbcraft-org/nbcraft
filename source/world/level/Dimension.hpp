@@ -8,20 +8,12 @@
 
 #pragma once
 
+#include "DimensionId.hpp"
 #include "world/phys/Vec3.hpp"
 
 class Level; // if included from Level.hpp
 class ChunkSource;
 class BiomeSource;
-
-enum DimensionId
-{
-	DIMENSION_OVERWORLD,
-	DIMENSION_NETHER,
-	DIMENSION_THE_END,
-	DIMENSIONS_COUNT,
-	DIMENSION_UNKNOWN
-};
 
 class Dimension
 {

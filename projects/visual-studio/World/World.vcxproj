@@ -114,6 +114,7 @@
     <ClCompile Include="$(MC_ROOT)\source\world\level\storage\MemoryLevelStorage.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\storage\MemoryLevelStorageSource.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\storage\RegionFile.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\level\TickNextTickData.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\particle\BubbleParticle.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\particle\ExplodeParticle.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\particle\FlameParticle.cpp" />
@@ -558,6 +559,11 @@
     <ClInclude Include="$(MC_ROOT)\source\world\tile\PistonHeadTile.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\tile\PortalTile.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\tile\SignTile.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\level\LevelConstants.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\level\levelgen\chunk\ChunkConstants.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\level\Tick.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\entity\MobSpawnerData.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\level\DimensionId.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NBT\NBT.vcxproj">
