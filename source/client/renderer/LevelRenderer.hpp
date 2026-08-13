@@ -9,7 +9,6 @@
 #pragma once
 
 #include <algorithm>
-#include <sstream>
 #include "client/app/AppPlatformListener.hpp"
 #include "renderer/hal/interface/FogState.hpp"
 #include "world/level/LevelListener.hpp"

@@ -8,13 +8,13 @@
 
 #pragma once
 
-#include <sstream>
 #include <stdint.h>
 
 #include <string>
 #include <vector>
 #include <map>
 
+#include "common/Util.hpp"
 #include "common/utility/HashMap.hpp"
 #include "common/threading/AsyncTask.hpp"
 #include "client/player/input/GameController.hpp"
@@ -175,7 +175,7 @@ public:
 	virtual const std::string& getName() const { return m_name; }
 	virtual const std::string& getDisplayName() const;
 	virtual std::string getDisplayValue() const;
-	virtual void save(std::stringstream&) const = 0;
+	virtual void save(std::string&) const = 0;
 	virtual std::string getMessage() const;
 	virtual void load(const std::string& value) = 0;
 	virtual void toggle() {}
@@ -226,7 +226,7 @@ public:
 	BoolOption(const std::string& key, const std::string& name, bool initial = true) : OptionInstance<bool>(key, name, initial) {}
 
 	void load(const std::string& value) override;
-	void save(std::stringstream& ss) const override;
+	void save(std::string& str) const override;
 	void toggle() override { set(get() ^ 1); }
 	std::string getDisplayValue() const override;
 	void addGuiElement(std::vector<GuiElement*>&, UITheme uiTheme) override;
@@ -242,7 +242,7 @@ public:
 	}
 
 	void load(const std::string& value) override;
-	void save(std::stringstream& ss) const override { ss << get(); }
+	void save(std::string& str) const override { str = Util::toString(get()); }
 	void addUnit(int mul) override { set(Mth::clamp(get() + mul * m_unit, 0.0f, 1.0f)); }
 	void fromFloat(float v) override { set(v); }
 	float toFloat() const override { return get(); }
@@ -259,7 +259,7 @@ public:
 	IntOption(const std::string& key, const std::string& name, int initial = 0) : OptionInstance<int>(key, name, initial) {}
 
 	void load(const std::string& value) override;
-	void save(std::stringstream& ss) const override { ss << get(); }
+	void save(std::string& str) const override { str = Util::toString(get()); }
 };
 
 class ThirdPersonOption : public IntOption
@@ -281,7 +281,7 @@ public:
 	StringOption(const std::string& key, const std::string& name, std::string initial = "") : OptionInstance<std::string>(key, name, initial) {}
 
 	void load(const std::string& value) override { set(value); }
-	void save(std::stringstream& ss) const override { ss.str(get()); }
+	void save(std::string& str) const override { str = get(); }
 };
 
 class ValuesBuilder

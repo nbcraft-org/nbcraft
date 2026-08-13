@@ -756,7 +756,7 @@ void LevelRenderer::resortChunks(const TilePos& pos)
 void LevelRenderer::entityAdded(Entity* pEnt)
 {
 	if (pEnt->isPlayer())
-		// @HUH: Why would you do that?
+		// @TODO: Is this even needed at all?? Why would you do that?
 		EntityRenderDispatcher::getInstance()->onGraphicsReset();
 }
 
@@ -764,25 +764,19 @@ std::string LevelRenderer::gatherStats1()
 {
 	//@NOTE: This data is based on the Java Edition pre-1.8 legend. This may not be accurate, but it's a good guideline.
 	//See https://minecraft.fandom.com/wiki/Debug_screen#Pre-1.8_legend
-	std::stringstream ss;
-	ss  << "C: " << m_renderedChunks << "/" << m_totalChunks // Number of chunk sections rendered over total number of chunks.
-		<< ". F: " << m_offscreenChunks // Number of chunk sections loaded outside the viewing distance.
-		<< ", O: " << m_occludedChunks // Number of occluded chunk sections.
-		<< ", E: " << m_emptyChunks // Number of empty chunk sections.
-		<< "\n";
-
-	return ss.str();
+	return  "C: " + Util::toString(m_renderedChunks) + "/" + Util::toString(m_totalChunks) // Number of chunk sections rendered over total number of chunks.
+		+ ". F: " + Util::toString(m_offscreenChunks)                                      // Number of chunk sections loaded outside the viewing distance.
+		+ ", O: " + Util::toString(m_occludedChunks)                                       // Number of occluded chunk sections.
+		+ ", E: " + Util::toString(m_emptyChunks)                                          // Number of empty chunk sections.
+		+ "\n";
 }
 
 std::string LevelRenderer::gatherStats2()
 {
-	std::stringstream ss;
-	ss  << "E: " << m_renderedEntities << "/" << m_totalEntities
-		<< ". B: " << m_culledEntities
-		<< ", I: " << m_totalEntities - m_culledEntities - m_renderedEntities
-		<< "\n";
-
-	return ss.str();
+	return  "E: " + Util::toString(m_renderedEntities) + "/" + Util::toString(m_totalEntities)
+		+ ". B: " + Util::toString(m_culledEntities)
+		+ ", I: " + Util::toString(m_totalEntities - m_culledEntities - m_renderedEntities)
+		+ "\n";
 }
 
 void LevelRenderer::onGraphicsReset()

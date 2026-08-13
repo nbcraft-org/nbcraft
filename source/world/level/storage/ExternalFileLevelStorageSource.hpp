@@ -8,8 +8,7 @@
 
 #pragma once
 
-#include <set>
-#include <sstream>
+#include <vector>
 #include "LevelStorageSource.hpp"
 
 #ifndef DEMO

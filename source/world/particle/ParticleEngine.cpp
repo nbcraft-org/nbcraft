@@ -6,7 +6,6 @@
 	SPDX-License-Identifier: BSD-1-Clause
  ********************************************************************/
 
-#include <sstream>
 #include "ParticleEngine.hpp"
 #include "client/renderer/renderer/RenderMaterialGroup.hpp"
 #include "world/level/TileSource.hpp"
@@ -56,9 +55,7 @@ void ParticleEngine::add(Particle* particle)
 std::string ParticleEngine::countParticles()
 {
 	// @NOTE: For whatever reason this returns a string??
-	std::stringstream ss;
-	ss << (m_particles[0].size() + m_particles[1].size() + m_particles[2].size() + m_particles[3].size());
-	return ss.str();
+	return Util::toString(m_particles[0].size() + m_particles[1].size() + m_particles[2].size() + m_particles[3].size());
 }
 
 void ParticleEngine::crack(Entity& entity, const TilePos& tilePos, Facing::Name face)

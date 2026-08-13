@@ -6,8 +6,6 @@
 	SPDX-License-Identifier: BSD-1-Clause
  ********************************************************************/
 
-#include <sstream>
-
 #include "MobRenderer.hpp"
 #include "client/app/Minecraft.hpp"
 #include "renderer/ShaderConstants.hpp"
@@ -177,9 +175,10 @@ void MobRenderer::renderName(const Mob& mob, const Vec3& pos)
 {
 	if (mob.isPlayer())
 	{
-		const Player& player = (const Player&)mob;
-		if (&player == m_pDispatcher->m_pMinecraft->m_pLocalPlayer)
+		if (&mob == m_pDispatcher->m_pCamera)
 			return;
+
+		const Player& player = (const Player&)mob;
 
 		// @TODO: don't know why but I have to add this correction. look into it and fix it!
 		renderNameTag(mob, player.m_name, Vec3(pos.x, pos.y - 1.5f, pos.z), mob.isSneaking() ? 32 : 64);
@@ -188,9 +187,7 @@ void MobRenderer::renderName(const Mob& mob, const Vec3& pos)
 	{
 		if (m_pDispatcher->m_pOptions->m_debugText.get())
 		{
-			std::stringstream ss;
-			ss << mob.m_EntityID;
-			renderNameTag(mob, ss.str(), pos, 64);
+			renderNameTag(mob, Util::toString(mob.m_EntityID), pos, 64);
 		}
 	}
 }
@@ -200,13 +197,14 @@ void MobRenderer::renderNameTag(const Mob& mob, const std::string& str, const Ve
 	if (mob.distanceToSqr(m_pDispatcher->m_pCamera) > float(a * a))
 		return;
 
-	Font* font = getFont();
+	Font& font = *getFont();
+	Options& options = *m_pDispatcher->m_pMinecraft->getOptions();
 
 	MatrixStack::Ref matrix = MatrixStack::World.push();
 	matrix->translate(Vec3(pos.x + 0.0f, pos.y + 2.3f, pos.z));
 
 	// billboard the name towards the camera
-	matrix->rotate(-m_pDispatcher->m_rot.yaw, Vec3::UNIT_Y);
+	matrix->rotate(-m_pDispatcher->m_rot.yaw,   Vec3::UNIT_Y);
 	matrix->rotate(+m_pDispatcher->m_rot.pitch, Vec3::UNIT_X);
 	matrix->scale(Vec3(-0.026667f, -0.026667f, 0.026667f));
 
@@ -215,7 +213,7 @@ void MobRenderer::renderNameTag(const Mob& mob, const std::string& str, const Ve
 	Tesselator& t = Tesselator::instance;
 	t.begin(4);
 
-	int width = font->width(str);
+	int width = font.width(str);
 	float widthHalf = float(width / 2);
 
 	t.normal(Vec3::UNIT_Y);
@@ -225,11 +223,11 @@ void MobRenderer::renderNameTag(const Mob& mob, const std::string& str, const Ve
 	t.vertex(widthHalf + 1.0f, -1.0f, 0.0f);
 	t.draw(m_materials.name_tag);
 
-	//@TODO: Come back here after implementing line width setting support in HAL.
+	// @TODO: Come back here after implementing line width setting support in HAL.
 
-	if (m_pDispatcher->m_pMinecraft->getUiTheme() == UI_CONSOLE)
+	if (options.getUiTheme() == UI_CONSOLE)
 	{
-		currentShaderColor = Color(0.0f, 1.0f, 0.0f, 1.0f); //@TODO: Currently hardcoded to green, but should be changed to use different colors for players like in Xbox 360 Edition.
+		currentShaderColor = Color::GREEN; // @TODO: Currently hardcoded to green, but should be changed to use different colors for players like in Xbox 360 Edition.
 		t.begin(mce::PRIMITIVE_MODE_LINE_STRIP, 5);
 
 		t.vertex(-1.0f - widthHalf, -1.0f, 0.0f);
@@ -240,6 +238,6 @@ void MobRenderer::renderNameTag(const Mob& mob, const std::string& str, const Ve
 		t.draw(m_materials.name_tag);
 	}
 
-	font->draw(str, -font->width(str) / 2, 0, 0x20FFFFFF);
-	font->draw(str, -font->width(str) / 2, 0, 0xFFFFFFFF);
+	font.draw(str, -font.width(str) / 2, 0, 0x20FFFFFF);
+	font.draw(str, -font.width(str) / 2, 0, 0xFFFFFFFF);
 }

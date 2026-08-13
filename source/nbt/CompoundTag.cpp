@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <sstream>
 
 #include "CompoundTag.hpp"
 #include "common/Util.hpp"
@@ -280,9 +279,7 @@ bool CompoundTag::getBoolean(const std::string& name) const
 
 std::string CompoundTag::toString() const
 {
-	std::ostringstream sstream;
-	sstream << m_tags.size() << " entries";
-	return sstream.str();
+	return Util::toString(m_tags.size()) + " entries";
 }
 
 CompoundTag* CompoundTag::copy() const

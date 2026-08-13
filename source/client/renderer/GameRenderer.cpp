@@ -186,9 +186,8 @@ void GameRenderer::_renderDebugOverlay(float a)
 {
 	Font& font = *m_pMinecraft->m_pFont;
 
-	std::stringstream debugText;
-	debugText << C_GAME_NAME " " << m_pMinecraft->getVersionString();
-	debugText << " (" << m_shownFPS << " fps, " << m_shownChunkUpdates << " chunk updates)" << "\n";
+	std::string debugText = C_GAME_NAME " " + m_pMinecraft->getVersionString();
+	debugText += Util::format(" (%d fps, %d chunk updates)\n", m_shownFPS, m_shownChunkUpdates);
 
 	/*
 	 * The "!m_pMinecraft->m_bPreparingLevel" check *needs* to be here.
@@ -202,39 +201,38 @@ void GameRenderer::_renderDebugOverlay(float a)
 	 * This heap corruption bug, which (only if the F3 menu was open) would cause multiplayer functionality to be entirely
 	 * based on luck, had been around since Commit 53200be, on March 5th of 2025, and was fixed on September 30th of 2025.
 	 */
-	if (m_pMinecraft->m_pLocalPlayer && !m_pMinecraft->m_bPreparingLevel)
+	if (!m_pMinecraft->m_bPreparingLevel && m_pMinecraft->m_pLocalPlayer)
 	{
 		LocalPlayer& player = *m_pMinecraft->m_pLocalPlayer;
-		char posStr[96];
-		Vec3 pos = player.getInterpolatedPosition(a);
-		sprintf(posStr, "%.2f / %.2f / %.2f", pos.x, pos.y, pos.z);
+		Vec3 pos = player.getPos();
 
-		debugText << m_pMinecraft->m_pLevelRenderer->gatherStats1();
-		debugText << m_pMinecraft->m_pLevelRenderer->gatherStats2() << "\n";
-		debugText << "XYZ: " << posStr << "\n";
-		debugText << "Biome: " << player.getTileSource().getBiome(pos).m_name << "\n";
+		debugText += m_pMinecraft->m_pLevelRenderer->gatherStats1();
+		debugText += m_pMinecraft->m_pLevelRenderer->gatherStats2() + "\n";
+		debugText += Util::format("XYZ: %.2f / %.2f / %.2f\n", pos.x, pos.y, pos.z);
+		debugText += "Biome: " + player.getTileSource().getBiome(pos).m_name + "\n";
 	}
 
 #ifdef C_VERTEX_GRAPH_ENABLED
 	extern int g_nVertices; // Tesselator.cpp
-	debugText << "\nverts: " << g_nVertices;
+	debugText += "\nverts: " + Util::toString(g_nVertices);
 
 	_renderVertexGraph(g_nVertices, int(Minecraft::height * Gui::GuiScale));
 #endif
 
-	/*debugText << "\nGameControllerManager::stickValuesX[1]: " << GameControllerManager::stickValuesX[1];
-	debugText << "\nGameControllerManager::stickValuesY[1]: " << GameControllerManager::stickValuesY[1];
-	debugText << "\nGameRenderer::m_turnDelta.x: "      << m_turnDelta.x;
-	debugText << "\nGameRenderer::m_turnDelta.y: "      << m_turnDelta.y;*/
+	/* Game controller debug
+	debugText += "\nGameControllerManager::stickValuesX[1]: " + Util::toString(GameControllerManager::stickValuesX[1]);
+	debugText += "\nGameControllerManager::stickValuesY[1]: " + Util::toString(GameControllerManager::stickValuesY[1]);
+	debugText += "\nGameRenderer::m_turnDelta.x: "            + Util::toString(m_turnDelta.x);
+	debugText += "\nGameRenderer::m_turnDelta.y: "            + Util::toString(m_turnDelta.y);*/
 
 	if (m_pMinecraft->getUiTheme() == UI_CONSOLE)
 	{
-		font.drawScalable(debugText.str(), 46, 40, Color::TEXT_GREY);
-		font.drawScalable(debugText.str(), 44, 38, Color::WHITE);
+		font.drawScalable(debugText, 46, 40, Color::TEXT_GREY);
+		font.drawScalable(debugText, 44, 38, Color::WHITE);
 	}
 	else
 	{
-		font.drawShadow(debugText.str(), 2, 2, Color::WHITE);
+		font.drawShadow(debugText, 2, 2, Color::WHITE);
 	}
 
 #ifdef C_VERTEX_GRAPH_ENABLED

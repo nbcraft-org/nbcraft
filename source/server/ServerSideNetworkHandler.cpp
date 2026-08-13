@@ -464,7 +464,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, MessagePac
 	{
 		LOG_I("CMD: %s: %s", pOP->m_pPlayer->m_name.c_str(), msg.c_str());
 
-		std::stringstream ss(msg);
+		std::istringstream ss(msg);
 		ss.get(); // skip the /
 		std::vector<std::string> parms;
 		std::string currparm, cmdname;
@@ -1060,7 +1060,7 @@ bool ServerSideNetworkHandler::_validateNum(OnlinePlayer* player, int value, int
 
 void ServerSideNetworkHandler::commandHelp(OnlinePlayer* player, const std::vector<std::string>& parms)
 {
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << ">> Available commands:";
 
 	for (CommandMap::iterator it = m_commands.begin(); it != m_commands.end(); ++it)
@@ -1076,7 +1076,7 @@ void ServerSideNetworkHandler::commandStats(OnlinePlayer* player, const std::vec
 	if (!m_pLevel)
 		return;
 
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << "Server uptime: " << getTimeS() << " seconds.\n";
 	ss << "Host's name: " << m_pMinecraft->m_pUser->m_name << "\n";
 
@@ -1112,7 +1112,7 @@ void ServerSideNetworkHandler::commandTime(OnlinePlayer* player, const std::vect
 		return;
 	}
 
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << "In-game time: ";
 	ss << m_pLevel->getTime();
 	ss << ". Day " << m_pLevel->getTime() / 24000;
@@ -1124,7 +1124,7 @@ void ServerSideNetworkHandler::commandSeed(OnlinePlayer* player, const std::vect
 	if (!m_pLevel)
 		return;
 
-	std::stringstream ss;
+	std::ostringstream ss;
 	ss << "World generation seed: ";
 	ss << m_pLevel->getSeed();
 	sendMessage(player, ss.str());
@@ -1287,7 +1287,7 @@ void ServerSideNetworkHandler::commandGamemode(OnlinePlayer* player, const std::
 	if (!_checkPermissions(player)) return;
     
 	GameType gameMode;
-	std::stringstream ss;
+	std::istringstream ss;
 	ss.str(parms[0]);
 	int tmp;
 	ss >> tmp;

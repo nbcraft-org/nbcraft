@@ -424,12 +424,12 @@ std::vector<std::string> Options::getOptionStrings()
 
 #define SO(optname, value) do { vec.push_back(optname); vec.push_back(value); } while (0)
 
-	std::stringstream ss;
+	std::string str;
 	for (HashMap<std::string, OptionEntry*>::iterator it = m_options.begin(); it != m_options.end(); ++it)
 	{
-		ss.str("");
-		it.value()->save(ss);
-		SO(it.key(), ss.str());
+		str.clear();
+		it.value()->save(str);
+		SO(it.key(), str);
 	}
 	SO("gfx_resourcepacks", savePackArray(m_resourcePacks));
 
@@ -696,9 +696,9 @@ const std::string& OptionEntry::getDisplayName() const
 
 std::string OptionEntry::getDisplayValue() const
 {
-	std::stringstream ss;
-	save(ss);
-	return ss.str();
+	std::string str;
+	save(str);
+	return str;
 }
 
 std::string OptionEntry::getMessage() const
@@ -736,9 +736,9 @@ void BoolOption::load(const std::string& value)
 	set(Options::readBool(value));
 }
 
-void BoolOption::save(std::stringstream& ss) const
+void BoolOption::save(std::string& str) const
 {
-	ss << Options::saveBool(get());
+	str = Options::saveBool(get());
 }
 
 std::string BoolOption::getDisplayValue() const

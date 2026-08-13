@@ -1,8 +1,8 @@
 #include <stdint.h>
 #include <assert.h>
-#include <sstream>
 
 #include "Int64ArrayTag.hpp"
+#include "common/Util.hpp"
 
 #define MAX_SIZE 4096 / 2
 #define ELEMENT_SIZE sizeof(int64_t)
@@ -57,9 +57,7 @@ void Int64ArrayTag::load(IDataInput& dis)
 
 std::string Int64ArrayTag::toString() const
 {
-	std::ostringstream sstream("[");
-	sstream << m_data.m_elements << " 64-bit ints]";
-	return sstream.str();
+	return "[" + Util::toString(m_data.m_elements) + " 64-bit ints]";
 }
 
 Tag* Int64ArrayTag::copy() const

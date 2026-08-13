@@ -72,7 +72,7 @@ void Gui::addMessage(const std::string& s)
 	// if the message contains a new line, add each line separately:
 	if (s.find("\n") != std::string::npos)
 	{
-		std::stringstream ss(s);
+		std::istringstream ss(s);
 		std::string line;
 		while (std::getline(ss, line))
 			addMessage(line);
@@ -80,12 +80,15 @@ void Gui::addMessage(const std::string& s)
 		return;
 	}
 
+	Options& options = *m_pMinecraft->getOptions();
+	Font& font = *m_pMinecraft->m_pFont;
+
 	std::string str = s;
 	int maxChatWidth = 320;
-	if (m_pMinecraft->getOptions()->getUiTheme() == UI_CONSOLE)
+	if (options.getUiTheme() == UI_CONSOLE)
 		maxChatWidth = GuiWidth - 50;
 
-	while (m_pMinecraft->m_pFont->width(str) > maxChatWidth)
+	while (font.width(str) > maxChatWidth)
 	{
 		size_t i = 2;
 		for (; i < str.size(); i++)
@@ -93,7 +96,7 @@ void Gui::addMessage(const std::string& s)
 			std::string sstr = str.substr(0, i);
 
 			// this sucks
-			if (m_pMinecraft->m_pFont->width(sstr) > maxChatWidth)
+			if (font.width(sstr) > maxChatWidth)
 				break;
 		}
 

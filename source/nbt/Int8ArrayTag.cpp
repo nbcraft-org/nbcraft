@@ -1,6 +1,5 @@
-#include <sstream>
-
 #include "Int8ArrayTag.hpp"
+#include "common/Util.hpp"
 
 Int8ArrayTag::Int8ArrayTag() {}
 Int8ArrayTag::Int8ArrayTag(const TagMemoryChunk& data)
@@ -32,9 +31,7 @@ void Int8ArrayTag::load(IDataInput& dis)
 
 std::string Int8ArrayTag::toString() const
 {
-	std::ostringstream sstream("[");
-	sstream << m_data.m_elements << " 8-bit ints]";
-	return sstream.str();
+	return "[" + Util::toString(m_data.m_elements) + " 8-bit ints]";
 }
 
 Tag* Int8ArrayTag::copy() const

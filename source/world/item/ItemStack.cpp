@@ -6,7 +6,6 @@
 	SPDX-License-Identifier: BSD-1-Clause
  ********************************************************************/
 
-#include <sstream>
 #include "ItemStack.hpp"
 #include "GameMods.hpp"
 #include "world/tile/Tile.hpp"
@@ -357,10 +356,7 @@ void ItemStack::snap(Player&)
 
 std::string ItemStack::toString() const
 {
-	std::stringstream ss;
-	ss << m_count << "x" << getItem()->getDescriptionId() << "@" << m_auxValue;
-
-	return ss.str();
+	return Util::toString(m_count) + "x" + getItem()->getDescriptionId() + "@" + Util::toString(m_auxValue);
 }
 
 bool ItemStack::use(Mob& mob)

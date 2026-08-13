@@ -1,6 +1,5 @@
-#include <sstream>
-
 #include "FloatTag.hpp"
+#include "common/Util.hpp"
 
 FloatTag::FloatTag() : m_data(0.0f) {}
 FloatTag::FloatTag(float val) : m_data(val) {}
@@ -17,9 +16,7 @@ void FloatTag::load(IDataInput& dis)
 
 std::string FloatTag::toString() const
 {
-	std::ostringstream sstream;
-	sstream << m_data;
-	return sstream.str();
+	return Util::toString(m_data);
 }
 
 Tag* FloatTag::copy() const

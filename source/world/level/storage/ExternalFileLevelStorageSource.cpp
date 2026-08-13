@@ -77,9 +77,7 @@ static char g_EFLSSFilterArray[] = { '/','\n','\r','\x09','\0','\xC','`','?','*'
 
 void ExternalFileLevelStorageSource::deleteLevel(const std::string& levelName)
 {
-	std::stringstream ss;
-	ss << m_worldsPath << "/" << levelName;
-	std::string path = ss.str();
+	std::string path = m_worldsPath + "/" + levelName;
 
 	if (DeleteDirectory(path, true))
 		return;

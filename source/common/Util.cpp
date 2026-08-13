@@ -191,40 +191,78 @@ std::string Util::getExtension(const std::string& path)
 	return path.substr(dotPos + 1);
 }
 
-std::string Util::toString(int32_t value)
-{
-	// Handle zero explicitly
-	if (value == 0)
-		return "0";
+#define _TOSTRING_S(_type, _digits)                                                 \
+std::string Util::toString(_type value)                                             \
+{                                                                                   \
+	if (value == 0)                                                                 \
+		return "0";                                                                 \
+		                                                                            \
+	/* 10 for digits, 1 for sign, 1 for null char */                                \
+	char buffer[_digits + 1 + 1];                                                   \
+                                                                                    \
+	char* ptr = &buffer[sizeof(buffer)];                                            \
+	*(--ptr) = '\0';                                                                \
+                                                                                    \
+	/* Use unsigned to safely handle INT_MIN */                                     \
+	u ## _type absValue = static_cast<u ## _type>(value);                           \
+	if (value < 0)                                                                  \
+		absValue = 0 - absValue;                                                    \
+                                                                                    \
+	/* Build the string backwards (more efficient than calculating powers of 10) */ \
+	while (absValue > 0)                                                            \
+	{                                                                               \
+		*(--ptr) = '0' + (absValue % 10);                                           \
+		absValue /= 10;                                                             \
+	}                                                                               \
+                                                                                    \
+	/* Add sign */                                                                  \
+	if (value < 0)                                                                  \
+		*(--ptr) = '-';                                                             \
+                                                                                    \
+	return std::string(ptr, sizeof(buffer) - (ptr - buffer));                       \
+}                                                                                   \
 
-	// 10 for digits, 1 for sign, 1 for null char
-	char buffer[12];
+#define _TOSTRING_U(_type, _digits)                                                 \
+std::string Util::toString(_type value)                                             \
+{                                                                                   \
+	if (value == 0)                                                                 \
+		return "0";                                                                 \
+		                                                                            \
+	/* 10 for digits, 1 for null char */                                            \
+	char buffer[_digits + 1];                                                       \
+                                                                                    \
+	char* ptr = &buffer[sizeof(buffer)];                                            \
+	*(--ptr) = '\0';                                                                \
+                                                                                    \
+	/* Build the string backwards (more efficient than calculating powers of 10) */ \
+	while (value > 0)                                                               \
+	{                                                                               \
+		*(--ptr) = '0' + (value % 10);                                              \
+		value /= 10;                                                                \
+	}                                                                               \
+                                                                                    \
+	return std::string(ptr, sizeof(buffer) - (ptr - buffer));                       \
+}  
 
-	char* ptr = &buffer[sizeof(buffer)];
-	*(--ptr) = '\0';
+#define _TOSTRING_IMPL(_type, _digits) \
+        _TOSTRING_S   (_type, _digits) \
+        _TOSTRING_U   (u##_type, _digits) \
 
-	// Use unsigned to safely handle INT_MIN
-	uint32_t absValue = static_cast<uint32_t>(value);
-	if (value < 0)
-		absValue = 0 - absValue;
-
-	// Build the string backwards (more efficient than calculating powers of 10)
-	while (absValue > 0)
-	{
-		*(--ptr) = '0' + (absValue % 10);
-		absValue /= 10;
-	}
-
-	// Add sign
-	if (value < 0)
-		*(--ptr) = '-';
-
-	return std::string(ptr, sizeof(buffer) - (ptr - buffer));
-}
+_TOSTRING_IMPL(int8_t,  3)
+_TOSTRING_IMPL(int16_t, 5)
+_TOSTRING_IMPL(int32_t, 10)
+_TOSTRING_IMPL(int64_t, 19)
 
 std::string Util::toString(float value)
 {
-	std::stringstream ss;
+	std::ostringstream ss;
+	ss << value;
+	return ss.str();
+}
+
+std::string Util::toString(double value)
+{
+	std::ostringstream ss;
 	ss << value;
 	return ss.str();
 }

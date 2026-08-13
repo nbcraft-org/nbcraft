@@ -1,5 +1,3 @@
-#include <sstream>
-
 #include "StringTag.hpp"
 
 StringTag::StringTag() {}

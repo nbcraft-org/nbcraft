@@ -1,6 +1,5 @@
-#include <sstream>
-
 #include "DoubleTag.hpp"
+#include "common/Util.hpp"
 
 DoubleTag::DoubleTag() : m_data(0.0) {}
 DoubleTag::DoubleTag(double val) : m_data(val) {}
@@ -17,9 +16,7 @@ void DoubleTag::load(IDataInput& dis)
 
 std::string DoubleTag::toString() const
 {
-	std::ostringstream sstream;
-	sstream << m_data;
-	return sstream.str();
+	return Util::toString(m_data);
 }
 
 Tag* DoubleTag::copy() const

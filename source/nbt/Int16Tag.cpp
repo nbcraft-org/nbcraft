@@ -1,6 +1,5 @@
-#include <sstream>
-
 #include "Int16Tag.hpp"
+#include "common/Util.hpp"
 
 Int16Tag::Int16Tag() : m_data(0) {}
 Int16Tag::Int16Tag(int16_t val) : m_data(val) {}
@@ -17,9 +16,7 @@ void Int16Tag::load(IDataInput& dis)
 
 std::string Int16Tag::toString() const
 {
-	std::ostringstream sstream;
-	sstream << m_data;
-	return sstream.str();
+	return Util::toString(m_data);
 }
 
 Tag* Int16Tag::copy() const

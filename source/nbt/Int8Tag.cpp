@@ -1,6 +1,5 @@
-#include <sstream>
-
 #include "Int8Tag.hpp"
+#include "common/Util.hpp"
 
 Int8Tag::Int8Tag() : m_data(0) {}
 Int8Tag::Int8Tag(int8_t val) : m_data(val) {}
@@ -17,9 +16,7 @@ void Int8Tag::load(IDataInput& dis)
 
 std::string Int8Tag::toString() const
 {
-	std::ostringstream sstream;
-	sstream << m_data;
-	return sstream.str();
+	return Util::toString(m_data);
 }
 
 Tag* Int8Tag::copy() const

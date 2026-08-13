@@ -1,6 +1,5 @@
-#include <sstream>
-
 #include "Int32Tag.hpp"
+#include "common/Util.hpp"
 
 Int32Tag::Int32Tag() : m_data(0) {}
 Int32Tag::Int32Tag(int32_t val) : m_data(val) {}
@@ -17,9 +16,7 @@ void Int32Tag::load(IDataInput& dis)
 
 std::string Int32Tag::toString() const
 {
-	std::ostringstream sstream;
-	sstream << m_data;
-	return sstream.str();
+	return Util::toString(m_data);
 }
 
 Tag* Int32Tag::copy() const

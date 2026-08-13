@@ -1,8 +1,8 @@
 #include <stdint.h>
 #include <assert.h>
-#include <sstream>
 
 #include "Int32ArrayTag.hpp"
+#include "common/Util.hpp"
 
 #define MAX_SIZE 4096
 #define ELEMENT_SIZE sizeof(int32_t)
@@ -57,9 +57,7 @@ void Int32ArrayTag::load(IDataInput& dis)
 
 std::string Int32ArrayTag::toString() const
 {
-	std::ostringstream sstream("[");
-	sstream << m_data.m_elements << " 32-bit ints]";
-	return sstream.str();
+	return "[" + Util::toString(m_data.m_elements) + " 32-bit ints]";
 }
 
 Tag* Int32ArrayTag::copy() const

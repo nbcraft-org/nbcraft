@@ -8,7 +8,6 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <fstream>
-#include <sstream>
 #include <shlobj.h>
 
 #include "AppPlatform_win32.hpp"

@@ -1,6 +1,5 @@
-#include <sstream>
-
 #include "Int64Tag.hpp"
+#include "common/Util.hpp"
 
 Int64Tag::Int64Tag() : m_data(0) {}
 Int64Tag::Int64Tag(int64_t val) : m_data(val) {}
@@ -17,9 +16,7 @@ void Int64Tag::load(IDataInput& dis)
 
 std::string Int64Tag::toString() const
 {
-	std::ostringstream sstream;
-	sstream << m_data;
-	return sstream.str();
+	return Util::toString(m_data);
 }
 
 Tag* Int64Tag::copy() const

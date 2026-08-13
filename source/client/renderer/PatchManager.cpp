@@ -27,7 +27,7 @@ PatchManager::PatchManager()
 
 void PatchManager::LoadPatchData(const std::string& patchData)
 {
-	std::stringstream patchDataStream(patchData);
+	std::istringstream patchDataStream(patchData);
 	std::string currLine;
 
 	while (std::getline(patchDataStream, currLine))
@@ -43,17 +43,10 @@ void PatchManager::LoadPatchData(const std::string& patchData)
 		if (currLine[0] == '#') continue;
 
 		std::string command;
-		std::stringstream lineStream(currLine);
+		std::istringstream lineStream(currLine);
 		// read command type
 		if (!std::getline(lineStream, command, PM_SEPARATOR))
 			continue;
-        
-        /*if (command[0] == '\n')
-        {
-            // We'll end up here if we're on a platform that doesn't use Windows line-endings
-            // So let's just ignore them
-            command = command.erase(0, 1);
-        }*/
 
 		if (command == "stop_now")
 		{

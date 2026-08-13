@@ -6,7 +6,6 @@
 	SPDX-License-Identifier: BSD-1-Clause
  ********************************************************************/
 
-#include <sstream>
 #include "ItemRenderer.hpp"
 #include "EntityRenderDispatcher.hpp"
 #include "client/renderer/TileRenderer.hpp"
@@ -213,9 +212,7 @@ void ItemRenderer::renderGuiItemOverlay(Minecraft& mc, const ItemStack& item, in
 	}
 
 	// Draw num items
-	std::stringstream ss;
-	ss << item.m_count;
-	std::string amtstr = ss.str();
+	std::string amtstr = Util::toString(item.m_count);
 
 	int width = mc.m_pFont->width(amtstr);
 

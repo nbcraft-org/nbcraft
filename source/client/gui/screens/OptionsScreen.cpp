@@ -221,9 +221,7 @@ static std::string ViewDistanceStr(int dist)
 		case 4: return "TINY";
 		default:
 		{
-			std::stringstream ss;
-			ss << dist;
-			return ss.str();
+			return Util::toString(dist);
 		}
 	}
 }

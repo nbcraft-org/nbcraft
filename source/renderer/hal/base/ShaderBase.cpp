@@ -76,9 +76,8 @@ VertexField ShaderBase::getAttributeForName(const std::string& name, unsigned in
     }
     else
     {
-        std::stringstream ss;
-        ss << name << semanticIndex;
-        it = builtinAttributeMap.find(ss.str());
+        std::string fullName = name + Util::toString(semanticIndex);
+        it = builtinAttributeMap.find(fullName);
 
         return it->second;
     }

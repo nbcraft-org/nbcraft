@@ -1,5 +1,3 @@
-#include <sstream>
-
 #include "ListTag.hpp"
 #include "common/Util.hpp"
 #include "FloatTag.hpp"
@@ -49,9 +47,7 @@ void ListTag::load(IDataInput& dis)
 
 std::string ListTag::toString() const
 {
-	std::ostringstream sstream;
-	sstream << m_list.size() << " entries of type " << Tag::getTagName(m_type);
-	return sstream.str();
+	return Util::toString(m_list.size()) + " entries of type " + Tag::getTagName(m_type);
 }
 
 void ListTag::add(Tag* tag)

@@ -103,10 +103,10 @@ void ScreenRenderer::blitTexture(Textures& textures, const std::string& texture,
     textures.loadAndBindTexture(texture);
     Tesselator& t = Tesselator::instance;
     t.begin(4);
-    t.vertexUV(x,         y + height, m_blitOffset, u / textureWidth,             (v + uvHeight) / textureHeight);
+    t.vertexUV(x,         y + height, m_blitOffset,  u            / textureWidth, (v + uvHeight) / textureHeight);
     t.vertexUV(x + width, y + height, m_blitOffset, (u + uvWidth) / textureWidth, (v + uvHeight) / textureHeight);
-    t.vertexUV(x + width, y,          m_blitOffset, (u + uvWidth) / textureWidth, v / textureHeight);
-    t.vertexUV(x,         y,          m_blitOffset, u / textureWidth,             v / textureHeight);
+    t.vertexUV(x + width, y,          m_blitOffset, (u + uvWidth) / textureWidth,  v             / textureHeight);
+    t.vertexUV(x,         y,          m_blitOffset,  u            / textureWidth,  v             / textureHeight);
     t.draw(materialPtr ? *materialPtr : m_materials.ui_textured);
 }
 

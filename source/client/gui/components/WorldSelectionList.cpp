@@ -134,13 +134,11 @@ void WorldSelectionList::touched()
 
 void WorldSelectionList::renderItem(int index, int xPos, int yPos, int width, Tesselator& t)
 {
-    int yPadding = -4;
+    constexpr int yPadding = -4;
     yPos += yPadding; // Move up
     
 	int xCenter = xPos + m_itemWidth / 2;
-	float mult = Mth::Max(1.1f - 0.0055f * float(abs(field_18 / 2 - xCenter)), 0.2f);
-	if (mult > 1.0f)
-		mult = 1.0f;
+	float mult = Mth::clamp(1.1f - 0.0055f * float(abs(field_18 / 2 - xCenter)), 0.2f, 1.0f);
 
 	int color1 = 0x010101 * int(mult * 255.0f);
 	int color2 = 0x010101 * int(mult * 140.0f);
@@ -148,23 +146,25 @@ void WorldSelectionList::renderItem(int index, int xPos, int yPos, int width, Te
 	std::vector<std::string> details = m_vvs[index];
 
     int x = xCenter + 5 - m_itemWidth / 2;
+
+	Font& font = *m_pMinecraft->m_pFont;
+	Textures& textures = *m_pMinecraft->m_pTextures;
+
 	// Draw name
-	drawString(*m_pMinecraft->m_pFont, details[0], x, yPos + 50 + yPadding, color1);
+	drawString(font, details[0], x, yPos + 50 + yPadding, color1);
 	// Draw other details
-	for (unsigned int i = 1; i < details.size()-1; i++)
+	size_t i = 1;
+	for (; i < details.size()-1; i++)
 	{
-		drawString(*m_pMinecraft->m_pFont, details[i], x, yPos + (50 + yPadding + (10 * i)), color2);
+		drawString(font, details[i], x, yPos + (50 + yPadding + (10 * i)), color2);
 	}
     // Draw storage version
-    drawString(*m_pMinecraft->m_pFont, details[details.size()-1], xCenter + 42, yPos + (50 + yPadding + (10 * 3)), color2);
+    drawString(font, details[i], xCenter + 42, yPos + (50 + yPadding + (10 * 3)), color2);
 
-	m_pMinecraft->m_pTextures->loadAndBindTexture(m_previewImages[index]);
-	
-	// @NOTE: useless assignment of color
-	//t.color(0.3f, 1.0f, 0.2f);
+	textures.loadAndBindTexture(m_previewImages[index]);
 
 	t.begin(4);
-	t.color(color1);
+	t.color(color1); // may have been 0.3f, 1.0f, 0.2f pre-release
 	float y = float(yPos) - 6.0f;
 	t.vertexUV(float(xCenter - 32), y,         m_blitOffset, 0.0f, 0.0f);
 	t.vertexUV(float(xCenter - 32), y + 48.0f, m_blitOffset, 0.0f, 1.0f);
@@ -195,9 +195,7 @@ void WorldSelectionList::commit()
 		vs.push_back(AppPlatform::singleton()->getDateString(item.m_lastPlayed));
 		vs.push_back(item.m_fileName);
 		vs.push_back(GameTypeConv::GameTypeToNonLocString(item.m_gameType));
-        std::stringstream ss;
-        ss << "V" << item.m_storageVersion;
-        vs.push_back(ss.str());
+        vs.push_back("V" + Util::toString(item.m_storageVersion));
 		m_vvs.push_back(vs);
 	}
 }
