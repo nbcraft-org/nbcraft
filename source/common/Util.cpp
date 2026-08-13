@@ -197,11 +197,10 @@ std::string Util::toString(_type value)                                         
 	if (value == 0)                                                                 \
 		return "0";                                                                 \
 		                                                                            \
-	/* 10 for digits, 1 for sign, 1 for null char */                                \
-	char buffer[_digits + 1 + 1];                                                   \
+	/* X digits, 1 for sign */                                                      \
+	char buffer[_digits + 1];                                                       \
                                                                                     \
 	char* ptr = &buffer[sizeof(buffer)];                                            \
-	*(--ptr) = '\0';                                                                \
                                                                                     \
 	/* Use unsigned to safely handle INT_MIN */                                     \
 	u ## _type absValue = static_cast<u ## _type>(value);                           \
@@ -228,11 +227,10 @@ std::string Util::toString(_type value)                                         
 	if (value == 0)                                                                 \
 		return "0";                                                                 \
 		                                                                            \
-	/* 10 for digits, 1 for null char */                                            \
-	char buffer[_digits + 1];                                                       \
+	/* X digits */                                                                  \
+	char buffer[_digits];                                                           \
                                                                                     \
 	char* ptr = &buffer[sizeof(buffer)];                                            \
-	*(--ptr) = '\0';                                                                \
                                                                                     \
 	/* Build the string backwards (more efficient than calculating powers of 10) */ \
 	while (value > 0)                                                               \
