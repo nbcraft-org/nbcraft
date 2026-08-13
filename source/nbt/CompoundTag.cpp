@@ -279,7 +279,7 @@ bool CompoundTag::getBoolean(const std::string& name) const
 
 std::string CompoundTag::toString() const
 {
-	return Util::toString((int)m_tags.size()) + " entries";
+	return Util::toString((uint32_t)m_tags.size()) + " entries";
 }
 
 CompoundTag* CompoundTag::copy() const

@@ -47,7 +47,7 @@ void ListTag::load(IDataInput& dis)
 
 std::string ListTag::toString() const
 {
-	return Util::toString(m_list.size()) + " entries of type " + Tag::getTagName(m_type);
+	return Util::toString((uint32_t)m_list.size()) + " entries of type " + Tag::getTagName(m_type);
 }
 
 void ListTag::add(Tag* tag)
