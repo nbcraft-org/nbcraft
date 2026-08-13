@@ -559,9 +559,6 @@ typedef uint8_t TileData;
 #define SAFE_DELETE(ptr) do { if (ptr) delete ptr; } while (0)
 #define SAFE_DELETE_ARRAY(ptr) do { if (ptr) delete[] ptr; } while (0)
 
-#define SSTR( x ) static_cast< const std::ostringstream & >( \
-		( std::ostringstream() << std::dec << x ) ).str()
-
 // functions from Mojang
 time_t getEpochTimeS();
 time_t getRawTimeS();

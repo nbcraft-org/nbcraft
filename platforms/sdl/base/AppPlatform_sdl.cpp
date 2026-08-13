@@ -21,6 +21,7 @@
 #include "AppPlatform_sdl.hpp"
 
 #include "common/Utils.hpp"
+#include "common/Util.hpp"
 #include "compat/KeyCodes.hpp"
 
 #include "CustomSoundSystem.hpp"
@@ -262,11 +263,11 @@ void AppPlatform_sdl::saveScreenshot(const std::string& filename, int glWidth, i
 
 	// Prevent Overwriting Screenshots
 	int num = 1;
-	const std::string path = screenshots + "/";
+	std::string path = screenshots + "/";
 	std::string file = path + time + ".png";
 	while (XPL_ACCESS(file.c_str(), F_OK) != -1)
 	{
-		file = path + SSTR(time << "-" << num << ".png");
+		file = path + Util::format("%s-%d.png", time, num);
 		num++;
 	}
 

@@ -284,7 +284,7 @@ void GameRenderer::_renderVertexGraph(int vertices, int h)
 
 	t.draw(screenRenderer.m_materials.ui_fill_color);
 
-	screenRenderer.drawString(font, SSTR(max), C_VERTEX_GRAPH_WIDTH, h - maxht);
+	screenRenderer.drawString(font, Util::toString(max), C_VERTEX_GRAPH_WIDTH, h - maxht);
 }
 
 void GameRenderer::zoomRegion(float zoom, const Vec2& region)
