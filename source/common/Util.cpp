@@ -242,14 +242,14 @@ std::string Util::toString(_type value)                                         
 	return std::string(ptr, sizeof(buffer) - (ptr - buffer));                       \
 }  
 
-#define _TOSTRING_IMPL(_type, _digits) \
-        _TOSTRING_S   (_type, _digits) \
-        _TOSTRING_U   (u##_type, _digits) \
-
-_TOSTRING_IMPL(int8_t,  3)
-_TOSTRING_IMPL(int16_t, 5)
-_TOSTRING_IMPL(int32_t, 10)
-_TOSTRING_IMPL(int64_t, 19)
+_TOSTRING_S( int8_t,  3)
+_TOSTRING_U(uint8_t,  3)
+_TOSTRING_S( int16_t, 5)
+_TOSTRING_U(uint16_t, 5)
+_TOSTRING_S( int32_t, 10)
+_TOSTRING_U(uint32_t, 10)
+_TOSTRING_S( int64_t, 19)
+_TOSTRING_U(uint64_t, 20)
 
 std::string Util::toString(float value)
 {
