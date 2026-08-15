@@ -360,7 +360,6 @@ void LevelRenderer::_renderSolarSystem(float alpha)
 
 void LevelRenderer::_renderSunAndMoon(float alpha)
 {
-	Tesselator& t = Tesselator::instance;
 	const Dimension& dimension = *m_pDimension;
 
 	Matrix& matrix = MatrixStack::World.getTop();
