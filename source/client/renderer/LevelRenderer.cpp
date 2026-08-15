@@ -364,9 +364,7 @@ void LevelRenderer::_renderSunAndMoon(float alpha)
 
 	Matrix& matrix = MatrixStack::World.getTop();
 
-	Vec3 p = Vec3::ZERO;
-
-	matrix.translate(p);
+	matrix.translate(Vec3::ZERO);
 	matrix.rotate(0.0f, Vec3::UNIT_Z);
 	matrix.rotate(dimension.getTimeOfDay(alpha) * 360.0f, Vec3::UNIT_X);
 
