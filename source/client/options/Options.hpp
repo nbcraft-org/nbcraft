@@ -363,6 +363,7 @@ class FancyGraphicsOption : public GraphicsOption
 public:
 	FancyGraphicsOption(const std::string& key, const std::string& name, bool initial = true) : GraphicsOption(key, name, initial) {}
 
+	void apply() override;
 	std::string getMessage() const override;
 };
 

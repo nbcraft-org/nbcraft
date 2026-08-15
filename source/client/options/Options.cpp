@@ -853,6 +853,11 @@ void GraphicsOption::apply()
 		m_pMinecraft->m_pLevelRenderer->allChanged();
 }
 
+void FancyGraphicsOption::apply()
+{
+	m_pMinecraft->reloadFancy(get());
+}
+
 std::string FancyGraphicsOption::getMessage() const
 {
 	return Util::format(Language::get("options.value").c_str(), Language::get("options.graphics").c_str(), Language::get(get() ? "options.graphics.fancy" : "options.graphics.fast").c_str());

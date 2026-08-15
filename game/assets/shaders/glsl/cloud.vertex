@@ -7,7 +7,9 @@ uniform vec4 FOG_COLOR;
 uniform vec4 CURRENT_COLOR;
 
 attribute POS4 POSITION;
+#ifdef FANCY
 attribute vec4 COLOR;
+#endif
 attribute vec2 TEXCOORD_0;
 
 varying vec4 color;
@@ -23,7 +25,11 @@ void main()
     POS4 pos = WORLDVIEWPROJ * POSITION;
  	gl_Position = pos;
 
+#ifdef FANCY
  	color = COLOR * CURRENT_COLOR;
+#else
+ 	color = CURRENT_COLOR;
+#endif
 
  	float depth = pos.z / RENDER_DISTANCE;
  	float fog = max(depth - fogNear, 0.0);
