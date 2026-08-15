@@ -6,7 +6,6 @@
 			"Textured",
 			"EnableAlphaTest"
 		],
-		"depthFunc": "LessEqual",
 	
 		"defines": [ "ALPHA_TEST" ],
 
