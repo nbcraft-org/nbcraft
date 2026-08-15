@@ -513,39 +513,6 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, MovePlayer
 	}
 }
 
-void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, PlaceBlockPacket* packet)
-{
-	if (!m_pLevel) return;
-	VALIDATE_PLAYER_ACTION(packet->m_entityId);
-
-	TilePos pos = packet->m_pos;
-
-	printf_ignorable("PlaceBlockPacket @ %d, %d, %d", pos.x, pos.y, pos.z);
-
-	player.swing();
-
-	TileID tileId = Tile::TransformToValidBlockId(packet->m_tileTypeId);
-	Facing::Name face = (Facing::Name)packet->m_face;
-	TileData data = packet->m_data;
-
-	TileSource& tileSource = player.getTileSource();
-
-	if (!tileSource.mayPlace(tileId, pos, face, player, true))
-		return;
-
-	if (tileSource.setTileAndData(pos, FullTile(tileId, data)))
-	{
-		Tile* pTile = Tile::tiles[tileId];
-		pTile->setPlacedOnFace(tileSource, pos, face);
-		pTile->setPlacedBy(pos, player);
-
-		const Tile::SoundType* pSound = pTile->m_pSound;
-		m_pLevel->playSound(pos + 0.5f, "step." + pSound->name, 0.5f * (pSound->volume + 1.0f), pSound->pitch * 0.8f);
-	}
-
-	redistributePacket(packet, guid);
-}
-
 void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, RemoveBlockPacket* packet)
 {
 	if (!m_pLevel) return;
