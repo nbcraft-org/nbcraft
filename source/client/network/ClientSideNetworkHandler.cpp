@@ -392,7 +392,9 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, MovePla
 void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, PlaceBlockPacket* pPlaceBlockPkt)
 {
 	puts_ignorable("PlaceBlockPacket");
+	
 	if (!m_pLevel) return;
+	
 	Player* pPlayer = (Player*)m_pLevel->getEntity(pPlaceBlockPkt->m_entityId);
 	if (!pPlayer)
 	{
