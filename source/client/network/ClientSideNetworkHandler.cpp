@@ -415,9 +415,6 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, PlaceBl
 	TileID tileTypeId = pPlaceBlockPkt->m_tileTypeId;
 	Facing::Name face = (Facing::Name)pPlaceBlockPkt->m_face;
 
-	if (!tileSource.mayPlace(tileTypeId, pos, face, *pPlayer, true))
-		return;
-
 	Tile* pTile = Tile::tiles[tileTypeId];
 	if (!tileSource.setTileAndData(pos, FullTile(tileTypeId, pPlaceBlockPkt->m_data)))
 		return;
