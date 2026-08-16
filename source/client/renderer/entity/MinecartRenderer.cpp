@@ -12,43 +12,44 @@ void MinecartRenderer::render(const Entity& entity, const Vec3& pos, float rot, 
 {
     _setupShaderParameters(entity, a);
     const Minecart& cart = (const Minecart&)entity;
-    Vec3 cPos = pos;
     MatrixStack::Ref matrix = MatrixStack::World.push();
-    Vec3 smoothPos = cart.m_oPos + (cart.m_pos - cart.m_oPos) * a;
-    constexpr float r = 0.3f;
-    Vec3* p = cart.getOnRailPos(smoothPos);
-    float xRot = cart.m_oRot.pitch + (cart.m_rot.pitch - cart.m_oRot.pitch) * a;
-    if (p)
+    Vec3 cPos = pos;
+    Vec3 smoothPos = cart.m_oPos.interpolateTo(cart.m_pos, a);
+    float smoothX = Mth::Lerp(cart.m_oRot.pitch, cart.m_rot.pitch, a);
+
+    Vec3* railPos = cart.getOnRailPos(smoothPos);
+    if (railPos)
     {
+        constexpr float r = 0.3f;
         Vec3* p0 = cart.getPosOffs(smoothPos, r);
         Vec3* p1 = cart.getPosOffs(smoothPos, -r);
         if (!p0)
-            p0 = p;
+            p0 = railPos;
 
         if (!p1)
-            p1 = p;
+            p1 = railPos;
 
-        cPos.x += p->x - smoothPos.x;
+        cPos.x += railPos->x - smoothPos.x;
         cPos.y += (p0->y + p1->y) / 2.0f - smoothPos.y;
-        cPos.z += p->z - smoothPos.z;
+        cPos.z += railPos->z - smoothPos.z;
         Vec3 dir = *p1 - *p0;
         if (dir.length() != 0.0f)
         {
             dir = dir.normalize();
             rot = Mth::atan2(dir.z, dir.x) * 180.0f / M_PI;
-            xRot = Mth::atan(dir.y) * 73.0f;
+            smoothX = Mth::atan(dir.y) * 73.0f;
         }
 
-        if (p != p0)
+        if (railPos != p0)
             SAFE_DELETE(p0);
-        if (p != p1)
+        if (railPos != p1)
             SAFE_DELETE(p1);
-        SAFE_DELETE(p);
+        SAFE_DELETE(railPos);
     }
 
     matrix->translate(cPos);
     matrix->rotate(180.0f - rot, Vec3::UNIT_Y);
-    matrix->rotate(-xRot, Vec3::UNIT_Z);
+    matrix->rotate(-smoothX, Vec3::UNIT_Z);
     float hurt = cart.m_hurtTime - a;
     float dmg = cart.m_damage - a;
     if (dmg < 0.0f)
@@ -65,10 +66,11 @@ void MinecartRenderer::render(const Entity& entity, const Vec3& pos, float rot, 
         tileMatrix->scale(ss);
         tileMatrix->translate(Vec3(0.0f, 0.3125f, 0.0f));
         tileMatrix->rotate(90.0f, Vec3::UNIT_Y);
-        if (cart.m_type == 1)
-            m_pDispatcher->m_tileRenderer->renderTile(FullTile(Tile::chest, 0), m_shaderMaterials.entity, entity.getBrightness(a));
-        else if (cart.m_type == 2)
-            m_pDispatcher->m_tileRenderer->renderTile(FullTile(Tile::furnace, 0), m_shaderMaterials.entity, entity.getBrightness(a));
+        m_pDispatcher->m_tileRenderer->renderTile(
+            FullTile(cart.m_type == Minecart::TYPE_CHEST ? Tile::chest : Tile::furnace, 0),
+            m_shaderMaterials.entity,
+            entity.getBrightness(a)
+        );
     }
 
     bindTexture("item/cart.png");

@@ -35,9 +35,7 @@ MinecartModel::MinecartModel() : Model(64, 32)
 MinecartModel::~MinecartModel()
 {
     for (int i = 0; i < 6; ++i)
-    {
         delete m_cubes[i];
-    }
 }
 
 void MinecartModel::render(float time, float r, float bob, float yRot, float xRot, float scale)
@@ -45,7 +43,5 @@ void MinecartModel::render(float time, float r, float bob, float yRot, float xRo
     m_cubes[5]->m_pos.y = 4.0f - bob;
 
     for (int i = 0; i < 6; ++i)
-    {
         m_cubes[i]->render(scale);
-    }
 }

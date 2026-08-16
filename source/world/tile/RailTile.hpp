@@ -8,14 +8,26 @@
 class RailTile : public Tile
 {
 public:
+    enum Face
+    {
+        NORTH_SOUTH = 0,
+        WEST_EAST = 1,
+        WEST_EAST_ABOVE = 2,
+        EAST_WEST_ABOVE = 3,
+        SOUTH_NORTH_ABOVE = 4,
+        NORTH_SOUTH_ABOVE = 5,
+        EAST_SOUTH = 6,
+        WEST_SOUTH = 7,
+        WEST_NORTH = 8,
+        EAST_NORTH = 9
+    };
+
     RailTile(TileID id, int texture, bool isPowered);
 
 private:
     void _updateDir(TileSource&, const TilePos& pos, bool updateNeighbors);
     bool _applyPower(TileSource&, const TilePos& pos, TileData data, bool isForward, int powerDistance);
     bool _canPower(TileSource&, const TilePos& pos, bool isForward, int powerDistance, int var7);
-    inline TileData _getFaceData(TileData data) const { return _m_bIsPowered ? (data & (C_POWERED_BIT - 1)) : data; }
-    inline TileData _getPowered(TileData data) const { return _m_bIsPowered ? (data & C_POWERED_BIT) : 0; }
 	bool _updatePower(TileSource&, const TilePos& pos, TileData data);
 
 public:
@@ -30,12 +42,15 @@ public:
     void setPlacedBy(const TilePos& pos, Mob&) override;
     void onPlace(TileSource&, const TilePos& pos) override;
 
+    inline TileData getFaceData(TileData data) const { return _m_bIsPowered ? (data & (C_POWERED_BIT - 1)) : data; }
+    inline bool getPowered(TileData data) const { return (_m_bIsPowered ? (data & C_POWERED_BIT) : 0) != 0; }
+
     static bool hasRail(TileSource& level, const TilePos& pos)
     {
         return isRail(level.getTile(pos));
     }
 
-    static bool isRail(int id)
+    static bool isRail(TileID id)
     {
         return id == Tile::rail->m_ID || id == Tile::poweredRail->m_ID || id == Tile::detectorRail->m_ID;
     }
@@ -45,7 +60,6 @@ public:
         return tile && tile->m_ID == Tile::poweredRail->m_ID;
     }
 
-    // same as isPoweredRail ?
     static bool isPowered(const Tile* tile)
     {
         if (!tile) return false;

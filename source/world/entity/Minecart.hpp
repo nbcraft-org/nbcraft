@@ -11,11 +11,15 @@ class Minecart : public Entity, SimpleContainer
 {
 private:
 	void _init();
+	void _adjustVelocity(const TilePos& tp, bool& canPush);
+	void _adjustRotation();
 
 public:
 	enum Type
 	{
-		TYPE_DEFAULT, TYPE_CHEST, TYPE_FURNACE
+		TYPE_DEFAULT,
+		TYPE_CHEST,
+		TYPE_FURNACE
 	};
 
 

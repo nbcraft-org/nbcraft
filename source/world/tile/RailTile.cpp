@@ -19,18 +19,18 @@ void RailTile::neighborChanged(TileSource& source, const TilePos& pos, TileID ti
 	if (source.getLevelConst().m_bIsClientSide) return;
 	
 	TileData data = source.getData(pos);
-	TileData faceData = _getFaceData(data);
+	TileData faceData = getFaceData(data);
 
 	bool badNeighbors = false; 
 	if (!source.isSolidBlockingTile(pos.below()))
 		badNeighbors = true;
-	else if (faceData == 2 && !source.isSolidBlockingTile(pos.east()))
+	else if (faceData == RailTile::WEST_EAST_ABOVE && !source.isSolidBlockingTile(pos.east()))
 		badNeighbors = true;
-	else if (faceData == 3 && !source.isSolidBlockingTile(pos.west()))
+	else if (faceData == RailTile::EAST_WEST_ABOVE && !source.isSolidBlockingTile(pos.west()))
 		badNeighbors = true;
-	else if (faceData == 4 && !source.isSolidBlockingTile(pos.north()))
+	else if (faceData == RailTile::SOUTH_NORTH_ABOVE && !source.isSolidBlockingTile(pos.north()))
 		badNeighbors = true;
-	else if (faceData == 5 && !source.isSolidBlockingTile(pos.south()))
+	else if (faceData == RailTile::NORTH_SOUTH_ABOVE && !source.isSolidBlockingTile(pos.south()))
 		badNeighbors = true;
 
 	// if touching a non-solid tile or missing support, break the rail
@@ -41,14 +41,8 @@ void RailTile::neighborChanged(TileSource& source, const TilePos& pos, TileID ti
 		return;
 	}
 
-	if (_updatePower(source, pos, data))
-	{
-		source.updateNeighborsAt(pos.below(), m_ID);
-		if (faceData == 2 || faceData == 3 || faceData == 4 || faceData == 5) {
-			source.updateNeighborsAt(pos.above(), m_ID);
-		}
-	}
-	else if (tile > 0
+	if (!_updatePower(source, pos, data)
+		&& tile > 0
 		&& Tile::tiles[tile]->isSignalSource()
 		&& !_m_bIsPowered
 		&& (Rail(source, pos)).countPotentialConnections() == 3)
@@ -89,15 +83,7 @@ void RailTile::updateShape(const TileSource& source, const TilePos& pos)
 void RailTile::onPlace(TileSource& source, const TilePos& pos)
 {
 	_updateDir(source, pos, true);
-
-	TileData data = source.getData(pos);
-	if (_updatePower(source, pos, data))
-	{
-		TileData faceData = _getFaceData(data);
-		source.updateNeighborsAt(pos.below(), m_ID);
-		if (faceData == 2 || faceData == 3 || faceData == 4 || faceData == 5)
-			source.updateNeighborsAt(pos.above(), m_ID);
-	}
+	_updatePower(source, pos, source.getData(pos));
 }
 
 void RailTile::setPlacedBy(const TilePos& pos, Mob& mob)
@@ -123,29 +109,29 @@ void RailTile::_updateDir(TileSource& source, const TilePos& pos, bool updateNei
 
 int RailTile::getTexture(Facing::Name face, TileData data) const
 {
+	static constexpr int C_TEXTURE_OFFSET = 16;
 	if (_m_bIsPowered)
 	{
-		// TODO: remove isPoweredRail(this); redundant?
-		if (isPoweredRail(this) && _getPowered(data) != 0)
-			return m_TextureFrame + 16;
+		if (getPowered(data))
+			return m_TextureFrame + C_TEXTURE_OFFSET;
 	}
-	else if (data >= 6)
-		return m_TextureFrame - 16; // Powered Rail but not powered?
+	else if (data >= EAST_SOUTH) // curved rail
+		return m_TextureFrame - C_TEXTURE_OFFSET;
 
-	return m_TextureFrame; // Rail
+	return m_TextureFrame;
 }
 
-bool RailTile::_applyPower(TileSource& source, const TilePos& pos, TileData data, bool isForward, int powerDistance) {
+bool RailTile::_applyPower(TileSource& source, const TilePos& pos, TileData data, bool inverted, int powerDistance) {
 	if (powerDistance >= 8)
 		return false;
 
 	TilePos tp(pos);
-	TileData faceData = _getFaceData(data);
+	TileData faceData = getFaceData(data);
 	bool sameHeight = true;
 	switch (faceData) {
 	case 0:
 	{
-		if (isForward)
+		if (inverted)
 			++tp.z;
 		else
 			--tp.z;
@@ -153,7 +139,7 @@ bool RailTile::_applyPower(TileSource& source, const TilePos& pos, TileData data
 	}
 	case 1:
 	{
-		if (isForward)
+		if (inverted)
 			--tp.x;
 		else
 			++tp.x;
@@ -161,7 +147,7 @@ bool RailTile::_applyPower(TileSource& source, const TilePos& pos, TileData data
 	}
 	case 2:
 	{
-		if (isForward)
+		if (inverted)
 			--tp.x;
 		else
 		{
@@ -175,7 +161,7 @@ bool RailTile::_applyPower(TileSource& source, const TilePos& pos, TileData data
 	}
 	case 3:
 	{
-		if (isForward)
+		if (inverted)
 		{
 			--tp.x;
 			++tp.y;
@@ -189,7 +175,7 @@ bool RailTile::_applyPower(TileSource& source, const TilePos& pos, TileData data
 	}
 	case 4:
 	{
-		if (isForward)
+		if (inverted)
 			++tp.z;
 		else
 		{
@@ -203,7 +189,7 @@ bool RailTile::_applyPower(TileSource& source, const TilePos& pos, TileData data
 	}
 	case 5:
 	{
-		if (isForward)
+		if (inverted)
 		{
 			++tp.z;
 			++tp.y;
@@ -216,25 +202,25 @@ bool RailTile::_applyPower(TileSource& source, const TilePos& pos, TileData data
 	}
 	}
 
-	return _canPower(source, tp, isForward, powerDistance, faceData) ? true : sameHeight && _canPower(source, tp.below(), isForward, powerDistance, faceData);
+	return _canPower(source, tp, inverted, powerDistance, faceData) ? true : sameHeight && _canPower(source, tp.below(), inverted, powerDistance, faceData);
 }
 
-bool RailTile::_canPower(TileSource& source, const TilePos& pos, bool isForward, int powerDistance, int var7)
+bool RailTile::_canPower(TileSource& source, const TilePos& pos, bool inverted, int powerDistance, int oFaceData)
 {
 	if (RailTile::isPoweredRail(Tile::tiles[source.getTile(pos)]))
 	{
 		TileData data = source.getData(pos);
-		TileData faceData = _getFaceData(data);
-		if (var7 == 1 && (faceData == 0 || faceData == 4 || faceData == 5))
+		TileData faceData = getFaceData(data);
+		if (oFaceData == WEST_EAST && (faceData == NORTH_SOUTH || faceData == SOUTH_NORTH_ABOVE || faceData == NORTH_SOUTH_ABOVE))
 			return false;
 
-		if (var7 == 0 && (faceData == 1 || faceData == 2 || faceData == 3))
+		if (oFaceData == NORTH_SOUTH && (faceData == WEST_EAST || faceData == WEST_EAST_ABOVE || faceData == EAST_WEST_ABOVE))
 			return false;
 
-		if (_getPowered(data) != 0)
+		if (getPowered(data))
 		{
 			if (!source.hasNeighborSignal(pos) && !source.hasNeighborSignal(pos.above()))
-				return _applyPower(source, pos, data, isForward, powerDistance + 1);
+				return _applyPower(source, pos, data, inverted, powerDistance + 1);
 
 			return true;
 		}
@@ -248,21 +234,23 @@ bool RailTile::_updatePower(TileSource& source, const TilePos& pos, TileData dat
 	if (!isPoweredRail(this))
 		return false;
 
-	TileData faceData = _getFaceData(data);
+	TileData faceData = getFaceData(data);
 	bool hasSignal = source.hasNeighborSignal(pos) || source.hasNeighborSignal(pos.above());
 	hasSignal = hasSignal || _applyPower(source, pos, data, true, 0) || _applyPower(source, pos, data, false, 0);
 	
-	bool updated = false;
-	if (hasSignal && _getPowered(data) == 0)
-	{
+	if (hasSignal && !getPowered(data))
 		source.getLevel().setData(pos, faceData | 8);
-		updated = true;
-	}
-	else if (!hasSignal && _getPowered(data) != 0)
-	{
+	else if (!hasSignal && getPowered(data))
 		source.getLevel().setData(pos, faceData);
-		updated = true;
-	}
+	else
+		return false;
 
-	return updated;
+	source.updateNeighborsAt(pos.below(), m_ID);
+	if (faceData == RailTile::WEST_EAST_ABOVE 
+		|| faceData == RailTile::EAST_WEST_ABOVE 
+		|| faceData == RailTile::SOUTH_NORTH_ABOVE 
+		|| faceData == RailTile::NORTH_SOUTH_ABOVE)
+		source.updateNeighborsAt(pos.above(), m_ID);
+
+	return true;
 }

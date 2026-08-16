@@ -100,34 +100,34 @@ void Rail::connectTo(Rail& other)
 
     int newData = -1;
 
-    if ((n || s) && !w && !e) newData = 0;
-    if ((w || e) && !n && !s) newData = 1;
+    if ((n || s) && !w && !e) newData = RailTile::NORTH_SOUTH;
+    if ((w || e) && !n && !s) newData = RailTile::WEST_EAST;
 
     if (!m_bPowered)
     {
-        if (s && e && !n && !w) newData = 6;
-        if (s && w && !n && !e) newData = 7;
-        if (n && w && !s && !e) newData = 8;
-        if (n && e && !s && !w) newData = 9;
+        if (s && e && !n && !w) newData = RailTile::EAST_SOUTH;
+        if (s && w && !n && !e) newData = RailTile::WEST_SOUTH;
+        if (n && w && !s && !e) newData = RailTile::WEST_NORTH;
+        if (n && e && !s && !w) newData = RailTile::EAST_NORTH;
     }
 
-    if (newData == 0)
+    if (newData == RailTile::NORTH_SOUTH)
     {
-        if (RailTile::hasRail(*m_pLevel, TilePos(m_pos.x, m_pos.y + 1, m_pos.z - 1))) newData = 4;
-        if (RailTile::hasRail(*m_pLevel, TilePos(m_pos.x, m_pos.y + 1, m_pos.z + 1))) newData = 5;
+        if (RailTile::hasRail(*m_pLevel, TilePos(m_pos.x, m_pos.y + 1, m_pos.z - 1))) newData = RailTile::SOUTH_NORTH_ABOVE;
+        if (RailTile::hasRail(*m_pLevel, TilePos(m_pos.x, m_pos.y + 1, m_pos.z + 1))) newData = RailTile::NORTH_SOUTH_ABOVE;
     }
 
-    if (newData == 1)
+    if (newData == RailTile::WEST_EAST)
     {
-        if (RailTile::hasRail(*m_pLevel, TilePos(m_pos.x + 1, m_pos.y + 1, m_pos.z))) newData = 2;
-        if (RailTile::hasRail(*m_pLevel, TilePos(m_pos.x - 1, m_pos.y + 1, m_pos.z))) newData = 3;
+        if (RailTile::hasRail(*m_pLevel, TilePos(m_pos.x + 1, m_pos.y + 1, m_pos.z))) newData = RailTile::WEST_EAST_ABOVE;
+        if (RailTile::hasRail(*m_pLevel, TilePos(m_pos.x - 1, m_pos.y + 1, m_pos.z))) newData = RailTile::EAST_WEST_ABOVE;
     }
 
     if (newData < 0)
         newData = !RailTile::isRail(m_pLevel->getTile(m_pos)) ? 0 : m_pLevel->getData(m_pos);
 
     if (m_bPowered)
-        newData = (m_pLevel->getData(m_pos) & 8) | newData;
+        newData = (m_pLevel->getData(m_pos) & C_POWERED_BIT) | newData;
 
     m_pLevel->setData(m_pos, newData);
 }
@@ -159,7 +159,6 @@ void Rail::place(bool hasSignal, bool checkNeighbors)
     bool e = hasNeighborRail(m_pos.east());
 
     int newData = -1;
-
     if ((n || s) && !w && !e) newData = 0;
     if ((w || e) && !n && !s) newData = 1;
 
@@ -191,7 +190,6 @@ void Rail::place(bool hasSignal, bool checkNeighbors)
                 if (e && n) newData = 9;
                 if (w && s) newData = 7;
                 if (s && e) newData = 6;
-
             }
         }
     }
@@ -214,7 +212,7 @@ void Rail::place(bool hasSignal, bool checkNeighbors)
     updateConnections(newData);
 
     if (m_bPowered)
-        newData = (m_pLevel->getData(m_pos) & 8) | newData;
+        newData = (m_pLevel->getData(m_pos) & C_POWERED_BIT) | newData;
 
     if (checkNeighbors || m_pLevel->getData(m_pos) != newData)
     {
