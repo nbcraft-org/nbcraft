@@ -8,7 +8,7 @@ Rail::Rail(TileSource& source, TilePos pos)
     if (RailTile::isPowered(Tile::tiles[source.getTile(pos)]))
     {
         m_bPowered = true;
-        data &= -9; // clear C_POWERED_BIT
+        data &= ~C_POWERED_BIT;
     }
     else
         m_bPowered = false;

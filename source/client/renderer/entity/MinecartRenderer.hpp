@@ -5,6 +5,9 @@
 
 class MinecartRenderer : public EntityRenderer
 {
+private:
+	void _renderInnerTile(const Entity& entity, Tile* tile, float a);
+
 public:
 	MinecartRenderer();
 

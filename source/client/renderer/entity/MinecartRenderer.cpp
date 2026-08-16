@@ -8,6 +8,21 @@ MinecartRenderer::MinecartRenderer() : m_pModel(new MinecartModel())
 	m_shadowRadius = 0.5f;
 }
 
+void MinecartRenderer::_renderInnerTile(const Entity& entity, Tile* tile, float a)
+{
+    MatrixStack::Ref tileMatrix = MatrixStack::World.push();
+    bindTexture(C_TERRAIN_NAME);
+    constexpr float ss = 0.75f;
+    tileMatrix->scale(ss);
+    tileMatrix->translate(Vec3(0.0f, 0.3125f, 0.0f));
+    tileMatrix->rotate(90.0f, Vec3::UNIT_Y);
+    m_pDispatcher->m_tileRenderer->renderTile(
+        FullTile(tile, 0),
+        m_shaderMaterials.entity,
+        entity.getBrightness(a)
+    );
+}
+
 void MinecartRenderer::render(const Entity& entity, const Vec3& pos, float rot, float a)
 {
     _setupShaderParameters(entity, a);
@@ -50,28 +65,15 @@ void MinecartRenderer::render(const Entity& entity, const Vec3& pos, float rot, 
     matrix->translate(cPos);
     matrix->rotate(180.0f - rot, Vec3::UNIT_Y);
     matrix->rotate(-smoothX, Vec3::UNIT_Z);
-    float hurt = cart.m_hurtTime - a;
-    float dmg = cart.m_damage - a;
-    if (dmg < 0.0f)
-        dmg = 0.0f;
 
+	// bobbing effect
+    float hurt = cart.m_hurtTime - a;
+    float dmg = Mth::Max(cart.m_damage - a, 0.0f);
     if (hurt > 0.0f)
         matrix->rotate(Mth::sin(hurt) * hurt * dmg / 10.0f * cart.m_hurtDir, Vec3::UNIT_X);
 
     if (cart.m_type != Minecart::TYPE_DEFAULT)
-    {
-        MatrixStack::Ref tileMatrix = MatrixStack::World.push();
-        bindTexture(C_TERRAIN_NAME);
-        constexpr float ss = 0.75f;
-        tileMatrix->scale(ss);
-        tileMatrix->translate(Vec3(0.0f, 0.3125f, 0.0f));
-        tileMatrix->rotate(90.0f, Vec3::UNIT_Y);
-        m_pDispatcher->m_tileRenderer->renderTile(
-            FullTile(cart.m_type == Minecart::TYPE_CHEST ? Tile::chest : Tile::furnace, 0),
-            m_shaderMaterials.entity,
-            entity.getBrightness(a)
-        );
-    }
+        _renderInnerTile(entity, cart.m_type == Minecart::TYPE_CHEST ? Tile::chest : Tile::furnace, a);
 
     bindTexture("item/cart.png");
     matrix->scale(Vec3(-1.0f, -1.0f, 1.0f));
