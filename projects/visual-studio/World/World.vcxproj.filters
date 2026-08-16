@@ -833,6 +833,18 @@
     <ClCompile Include="$(MC_ROOT)\source\world\level\Brightness.cpp">
       <Filter>Source Files\Level</Filter>
     </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\entity\Minecart.cpp">
+      <Filter>Source Files\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\RailTile.cpp">
+      <Filter>Source Files\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\Rail.cpp">
+      <Filter>Source Files\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\DetectorRailTile.cpp">
+      <Filter>Source Files\Tile</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Entity.hpp">
@@ -1500,6 +1512,18 @@
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\world\level\DimensionId.hpp">
       <Filter>Header Files\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\entity\Minecart.hpp">
+      <Filter>Header Files\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\RailTile.hpp">
+      <Filter>Header Files\Tile</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\Rail.hpp">
+      <Filter>Header Files\Tile</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\DetectorRailTile.hpp">
+      <Filter>Header Files\Tile</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

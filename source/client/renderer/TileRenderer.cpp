@@ -20,6 +20,7 @@
 #include "world/tile/LeafTile.hpp"
 
 #include "world/tile/FenceTile.hpp"
+#include <world/tile/RailTile.hpp>
 #include "world/level/TileSource.hpp"
 #include "GameMods.hpp"
 
@@ -1235,6 +1236,89 @@ bool TileRenderer::tesselateFenceInWorld(Tile* tile, const TilePos& pos)
 	return bRenderedAnything;
 }
 
+bool TileRenderer::tesselateRailInWorld(Tile* tile, const TilePos& pos)
+{
+	Tesselator& t = Tesselator::instance;
+	TileData data = m_pTileSource->getData(pos);
+	int tex = tile->getTexture(Facing::DOWN, data);
+	if (m_fixedTexture >= 0)
+		tex = m_fixedTexture;
+
+	if (RailTile::isPowered(tile))
+		data &= 7;
+
+	float br = tile->getBrightness(*m_pTileSource, pos);
+	t.color(br, br, br);
+	int xt = (tex & 15) << 4;
+	int yt = tex & 240;
+	static constexpr float C_RATIO = 1.0f / 256.0f;
+	float u0 = xt * C_RATIO;
+	float u1 = (xt + 15.99f) * C_RATIO;
+	float v0 = yt * C_RATIO;
+	float v1 = (yt + 15.99f) * C_RATIO;
+	constexpr float r = 0.0625f;
+	float x0 = (float)(pos.x + 1);
+	float x1 = (float)(pos.x + 1);
+	float x2 = (float)(pos.x + 0);
+	float x3 = (float)(pos.x + 0);
+	float z0 = (float)(pos.z + 0);
+	float z1 = (float)(pos.z + 1);
+	float z2 = (float)(pos.z + 1);
+	float z3 = (float)(pos.z + 0);
+	float y0 = (float)pos.y + r;
+	float y1 = (float)pos.y + r;
+	float y2 = (float)pos.y + r;
+	float y3 = (float)pos.y + r;
+	if (data != 1 && data != 2 && data != 3 && data != 7)
+	{
+		if (data == 8)
+		{
+			x0 = x1 = (float)(pos.x + 0);
+			x2 = x3 = (float)(pos.x + 1);
+			z0 = z3 = (float)(pos.z + 1);
+			z1 = z2 = (float)(pos.z + 0);
+		}
+		else if (data == 9)
+		{
+			x0 = x3 = (float)(pos.x + 0);
+			x1 = x2 = (float)(pos.x + 1);
+			z0 = z1 = (float)(pos.z + 0);
+			z2 = z3 = (float)(pos.z + 1);
+		}
+	}
+	else
+	{
+		x0 = x3 = (float)(pos.x + 1);
+		x1 = x2 = (float)(pos.x + 0);
+		z0 = z1 = (float)(pos.z + 1);
+		z2 = z3 = (float)(pos.z + 0);
+	}
+
+	if (data != 2 && data != 4)
+	{
+		if (data == 3 || data == 5)
+		{
+			++y1;
+			++y2;
+		}
+	}
+	else
+	{
+		++y0;
+		++y3;
+	}
+
+	t.vertexUV(x0, y0, z0, u1, v0);
+	t.vertexUV(x1, y1, z1, u1, v1);
+	t.vertexUV(x2, y2, z2, u0, v1);
+	t.vertexUV(x3, y3, z3, u0, v0);
+	t.vertexUV(x3, y3, z3, u0, v0);
+	t.vertexUV(x2, y2, z2, u0, v1);
+	t.vertexUV(x1, y1, z1, u1, v1);
+	t.vertexUV(x0, y0, z0, u1, v0);
+	return true;
+}
+
 bool TileRenderer::tesselateFenceGateInWorld(Tile* tile, const TilePos& pos)
 {
 	int metadata = m_pTileSource->getData(pos);
@@ -2289,6 +2373,8 @@ bool TileRenderer::tesselateInWorld(Tile* tile, const TilePos& pos)
 			return tesselateStairsInWorld(tile, pos);
 		case SHAPE_FENCE:
 			return tesselateFenceInWorld(tile, pos);
+		case SHAPE_RAIL:
+			return tesselateRailInWorld(tile, pos);
 		case SHAPE_LEVER:
 			return tesselateLeverInWorld(tile, pos);
 		case SHAPE_DIODE:
