@@ -3,7 +3,9 @@
 struct VS_Input
 {
     float3 position : POSITION;
+#ifdef FANCY
     float4 color : COLOR;
+#endif
 	float2 uv : TEXCOORD_0;
 };
 
@@ -23,7 +25,11 @@ static const float ambient = 0.7;
 VS_MAIN_BEGIN
     PSInput.position = mul( WORLDVIEWPROJ, float4( VSInput.position, 1 ) );
 
+#ifdef FANCY
     PSInput.color = VSInput.color * CURRENT_COLOR;
+#else
+    PSInput.color = CURRENT_COLOR;
+#endif
 
     float depth = PSInput.position.z / RENDER_DISTANCE;
     float fog = max( depth - fogNear, 0.0 );

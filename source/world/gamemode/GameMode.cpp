@@ -45,22 +45,21 @@ bool GameMode::destroyBlock(Player& player, const TilePos& pos, Facing::Name fac
 
 	oldTile->playerWillDestroy(player, pos, face);
 
-	bool changed = source.setTile(pos, TILE_AIR);
+	bool changed = source.setTile(pos, TILE_AIR, TileChange::UPDATE_NEIGHBORS);
 	if (!changed)
 		return false;
 
 	Level& level = player.getLevel();
-
 	level.playSound(pos + 0.5f, "step." + oldTile->m_pSound->name,
 		(oldTile->m_pSound->volume * 0.5f) + 0.5f, oldTile->m_pSound->pitch * 0.8f);
 
-	oldTile->destroy(source, pos, tileData);
-
 	if (m_pMinecraft->isOnline() && player.isLocalPlayer())
-	{
 		level.m_pRakNetInstance->send(new RemoveBlockPacket(player.m_EntityID, pos));
-	}
 
+	level.sendTileUpdated(pos);
+
+	oldTile->destroy(source, pos, tileData);
+	
 	return true;
 }
 

@@ -1,6 +1,7 @@
 {
 	"clouds":{
 		"states": [
+			"Blending",
 			"DisableCulling",
 			"Textured",
 			"EnableAlphaTest"

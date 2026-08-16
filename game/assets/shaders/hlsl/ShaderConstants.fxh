@@ -66,7 +66,7 @@ sampler TextureSampler2 : register( s2 );
 
 // D3D9 has OpenGL-like render state alpha testing
 #if _SHADER_TARGET_MAJOR <= 1 // error X3500: asymetric returns from if statements not yet implemented
-#define discard PSOutput.color = float4(0,0,0,0)
+#define discard PSOutput.color = float4(0,0,0,0) // @NOTE: we WILL run bonus code after this, you MUST add a "} else {"
 #else // _SHADER_TARGET_MAJOR >= 2
 #define discard PSOutput.color = float4(0,0,0,0); return PSOutput
 #endif

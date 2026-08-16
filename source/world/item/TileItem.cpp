@@ -54,7 +54,7 @@ bool TileItem::useOn(ItemStack& itemStack, Player& player, const TilePos& pos, F
 
 	Tile* pTile = Tile::tiles[m_tile];
 
-	if (!source.setTileAndData(tp, FullTile(m_tile, getLevelDataForAuxValue(itemStack.getAuxValue()))))
+	if (!source.setTileAndData(tp, FullTile(m_tile, getLevelDataForAuxValue(itemStack.getAuxValue())), TileChange::UPDATE_NEIGHBORS))
 		return true;
 
 	pTile->setPlacedOnFace(source, tp, face);
@@ -69,6 +69,8 @@ bool TileItem::useOn(ItemStack& itemStack, Player& player, const TilePos& pos, F
 
 	if (level.m_pRakNetInstance)
 		level.m_pRakNetInstance->send(new PlaceBlockPacket(player.m_EntityID, tp, (TileID)m_tile, face, itemStack.getAuxValue()));
+
+	level.sendTileUpdated(pos);
 
 	player.useItem(itemStack);
 	return true;

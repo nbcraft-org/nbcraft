@@ -9,7 +9,7 @@
 		"blendDst": "One",
 
 		"vertexShader" : "shaders/uv.vertex",
-		"fragmentShader" : "shaders/texture_ccolor.fragment"
+		"fragmentShader" : "shaders/texture.fragment"
 	},
 
 	"stars": {
