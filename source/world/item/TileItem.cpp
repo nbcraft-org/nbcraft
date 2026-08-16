@@ -54,7 +54,7 @@ bool TileItem::useOn(ItemStack& itemStack, Player& player, const TilePos& pos, F
 
 	Tile* pTile = Tile::tiles[m_tile];
 
-	if (!source.setTileAndData(tp, FullTile(m_tile, getLevelDataForAuxValue(itemStack.getAuxValue())), TileChange::UPDATE_NONE))
+	if (!source.setTileAndData(tp, FullTile(m_tile, getLevelDataForAuxValue(itemStack.getAuxValue())), TileChange::UPDATE_NEIGHBORS))
 		return true;
 
 	pTile->setPlacedOnFace(source, tp, face);

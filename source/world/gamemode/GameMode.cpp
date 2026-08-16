@@ -45,7 +45,7 @@ bool GameMode::destroyBlock(Player& player, const TilePos& pos, Facing::Name fac
 
 	oldTile->playerWillDestroy(player, pos, face);
 
-	bool changed = source.setTile(pos, TILE_AIR, TileChange::UPDATE_NONE);
+	bool changed = source.setTile(pos, TILE_AIR, TileChange::UPDATE_NEIGHBORS);
 	if (!changed)
 		return false;
 
