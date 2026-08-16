@@ -220,6 +220,7 @@
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\CreativeMenu.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\item\DyeColor.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\item\ToolItem.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\item\MinecartItem.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\item\ArmorItem.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\item\HoeItem.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\item\SeedItem.cpp" />
@@ -450,6 +451,7 @@
     <ClInclude Include="$(MC_ROOT)\source\world\item\DyeColor.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\item\Tool.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\item\ToolItem.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\item\MinecartItem.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\item\crafting\FurnaceRecipes.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\item\crafting\Recipe.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\item\crafting\Recipes.hpp" />

@@ -23,6 +23,7 @@
 
 #include "FlintAndSteelItem.hpp"
 #include "HoeItem.hpp"
+#include "MinecartItem.hpp"
 #include "RocketItem.hpp"
 #include "SeedItem.hpp"
 #include "SnowballItem.hpp"
@@ -448,15 +449,15 @@ void Item::initItems()
 		->setDescriptionId("bucketLava")
 		->setCraftingRemainingItem(bucket_empty);
 
-	Item::minecart = NEW_ITEM(ITEM_MINECART)
+	Item::minecart = NEW_X_ITEM(MinecartItem, ITEM_MINECART, Minecart::Type::TYPE_DEFAULT)
 		->setIcon(7, 8)
 		->setDescriptionId("minecart");
 
-	Item::minecart_chest = NEW_ITEM(ITEM_MINECART_CHEST)
+	Item::minecart_chest = NEW_X_ITEM(MinecartItem, ITEM_MINECART_CHEST, Minecart::Type::TYPE_CHEST)
 		->setIcon(7, 9)
 		->setDescriptionId("minecartChest");
 
-	Item::minecart_furnace = NEW_ITEM(ITEM_MINECART_FURNACE)
+	Item::minecart_furnace = NEW_X_ITEM(MinecartItem, ITEM_MINECART_FURNACE, Minecart::Type::TYPE_FURNACE)
 		->setIcon(7, 10)
 		->setDescriptionId("minecartFurnace");
 

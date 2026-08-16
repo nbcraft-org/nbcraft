@@ -29,14 +29,14 @@ void Minecart::_init()
 
 Minecart::Minecart(TileSource& source)
     : Entity(source)
-    , SimpleContainer(27, "gui.chestCart")
+    , SimpleContainer(27, "Minecart")
 {
     _init();
 }
 
 Minecart::Minecart(TileSource& source, const Vec3& pos, Type type)
     : Entity(source)
-    , SimpleContainer(27, "gui.chestCart")
+    , SimpleContainer(27, "Minecart")
 {
     _init();
 	setPos(Vec3(pos.x, pos.y + m_heightOffset, pos.z));
