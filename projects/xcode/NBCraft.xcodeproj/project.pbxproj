@@ -210,6 +210,20 @@
 		8432C4123001A5B8005C8BC9 /* Brightness.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8432C4103001A5B8005C8BC9 /* Brightness.cpp */; };
 		8435BB192DCD47F400D38282 /* SoundStreamOAL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8435BB182DCD47F400D38282 /* SoundStreamOAL.cpp */; };
 		8435BB1A2DCD47F400D38282 /* SoundStreamOAL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8435BB182DCD47F400D38282 /* SoundStreamOAL.cpp */; };
+		843691813031A680009FF2EF /* MinecartModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8436917F3031A680009FF2EF /* MinecartModel.cpp */; };
+		843691823031A680009FF2EF /* MinecartModel.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 843691803031A680009FF2EF /* MinecartModel.hpp */; };
+		843691853031A696009FF2EF /* MinecartRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 843691833031A696009FF2EF /* MinecartRenderer.cpp */; };
+		843691863031A696009FF2EF /* MinecartRenderer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 843691843031A696009FF2EF /* MinecartRenderer.hpp */; };
+		843691893031A6AE009FF2EF /* Minecart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 843691873031A6AE009FF2EF /* Minecart.cpp */; };
+		8436918A3031A6AE009FF2EF /* Minecart.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 843691883031A6AE009FF2EF /* Minecart.hpp */; };
+		8436918D3031A6C2009FF2EF /* MinecartItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8436918B3031A6C2009FF2EF /* MinecartItem.cpp */; };
+		8436918E3031A6C2009FF2EF /* MinecartItem.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8436918C3031A6C2009FF2EF /* MinecartItem.hpp */; };
+		843691953031A6DA009FF2EF /* DetectorRailTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8436918F3031A6DA009FF2EF /* DetectorRailTile.cpp */; };
+		843691963031A6DA009FF2EF /* DetectorRailTile.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 843691903031A6DA009FF2EF /* DetectorRailTile.hpp */; };
+		843691973031A6DA009FF2EF /* Rail.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 843691913031A6DA009FF2EF /* Rail.cpp */; };
+		843691983031A6DA009FF2EF /* Rail.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 843691923031A6DA009FF2EF /* Rail.hpp */; };
+		843691993031A6DA009FF2EF /* RailTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 843691933031A6DA009FF2EF /* RailTile.cpp */; };
+		8436919A3031A6DA009FF2EF /* RailTile.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 843691943031A6DA009FF2EF /* RailTile.hpp */; };
 		8440D0302FED267E00FD4A51 /* ClockTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8440D02D2FED267E00FD4A51 /* ClockTexture.cpp */; };
 		8440D0312FED267E00FD4A51 /* CompassTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8440D02E2FED267E00FD4A51 /* CompassTexture.cpp */; };
 		8440D0322FED267E00FD4A51 /* PortalTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8440D02F2FED267E00FD4A51 /* PortalTexture.cpp */; };
@@ -2446,6 +2460,20 @@
 		84336BA92B1EB9C200097DB0 /* Settings_macOS_Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Settings_macOS_Debug.xcconfig; path = Configuration/Settings_macOS_Debug.xcconfig; sourceTree = "<group>"; };
 		8435BB172DCD47F400D38282 /* SoundStreamOAL.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SoundStreamOAL.hpp; sourceTree = "<group>"; };
 		8435BB182DCD47F400D38282 /* SoundStreamOAL.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SoundStreamOAL.cpp; sourceTree = "<group>"; };
+		8436917F3031A680009FF2EF /* MinecartModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MinecartModel.cpp; sourceTree = "<group>"; };
+		843691803031A680009FF2EF /* MinecartModel.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MinecartModel.hpp; sourceTree = "<group>"; };
+		843691833031A696009FF2EF /* MinecartRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MinecartRenderer.cpp; sourceTree = "<group>"; };
+		843691843031A696009FF2EF /* MinecartRenderer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MinecartRenderer.hpp; sourceTree = "<group>"; };
+		843691873031A6AE009FF2EF /* Minecart.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Minecart.cpp; sourceTree = "<group>"; };
+		843691883031A6AE009FF2EF /* Minecart.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Minecart.hpp; sourceTree = "<group>"; };
+		8436918B3031A6C2009FF2EF /* MinecartItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MinecartItem.cpp; sourceTree = "<group>"; };
+		8436918C3031A6C2009FF2EF /* MinecartItem.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MinecartItem.hpp; sourceTree = "<group>"; };
+		8436918F3031A6DA009FF2EF /* DetectorRailTile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DetectorRailTile.cpp; sourceTree = "<group>"; };
+		843691903031A6DA009FF2EF /* DetectorRailTile.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = DetectorRailTile.hpp; sourceTree = "<group>"; };
+		843691913031A6DA009FF2EF /* Rail.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Rail.cpp; sourceTree = "<group>"; };
+		843691923031A6DA009FF2EF /* Rail.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Rail.hpp; sourceTree = "<group>"; };
+		843691933031A6DA009FF2EF /* RailTile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RailTile.cpp; sourceTree = "<group>"; };
+		843691943031A6DA009FF2EF /* RailTile.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = RailTile.hpp; sourceTree = "<group>"; };
 		8440D02D2FED267E00FD4A51 /* ClockTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClockTexture.cpp; sourceTree = "<group>"; };
 		8440D02E2FED267E00FD4A51 /* CompassTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompassTexture.cpp; sourceTree = "<group>"; };
 		8440D02F2FED267E00FD4A51 /* PortalTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PortalTexture.cpp; sourceTree = "<group>"; };
@@ -4231,6 +4259,8 @@
 				84E8F9F32FEF611800D0669F /* Giant.hpp */,
 				840DD65C2AC810620006A435 /* ItemEntity.cpp */,
 				840DD65D2AC810620006A435 /* ItemEntity.hpp */,
+				843691873031A6AE009FF2EF /* Minecart.cpp */,
+				843691883031A6AE009FF2EF /* Minecart.hpp */,
 				840DD6602AC810620006A435 /* Mob.cpp */,
 				840DD6612AC810620006A435 /* Mob.hpp */,
 				8445E79A2D769329008DC834 /* MobCategory.cpp */,
@@ -4334,6 +4364,8 @@
 				840DD6772AC810620006A435 /* Item.hpp */,
 				84E7BF342F286A6A002D3936 /* ItemStack.cpp */,
 				84E7BF352F286A6A002D3936 /* ItemStack.hpp */,
+				8436918B3031A6C2009FF2EF /* MinecartItem.cpp */,
+				8436918C3031A6C2009FF2EF /* MinecartItem.hpp */,
 				84E8FA0E2FEF614C00D0669F /* RecordingItem.cpp */,
 				84E8FA0F2FEF614C00D0669F /* RecordingItem.hpp */,
 				84E8FA102FEF614C00D0669F /* RedStoneItem.cpp */,
@@ -4574,6 +4606,8 @@
 				84B9D8A22F3BE0B200FD67C4 /* CropsTile.hpp */,
 				84E1C9C12E7FDC26007D2F5D /* DeadBush.cpp */,
 				84E1C9C22E7FDC26007D2F5D /* DeadBush.hpp */,
+				8436918F3031A6DA009FF2EF /* DetectorRailTile.cpp */,
+				843691903031A6DA009FF2EF /* DetectorRailTile.hpp */,
 				84E8FA1C2FEF617F00D0669F /* DiodeTile.cpp */,
 				84E8FA1D2FEF617F00D0669F /* DiodeTile.hpp */,
 				840DD6EA2AC810620006A435 /* DirtTile.cpp */,
@@ -4635,6 +4669,10 @@
 				84E8FA252FEF617F00D0669F /* PressurePlateTile.hpp */,
 				84E1C9C72E7FDC26007D2F5D /* PumpkinTile.cpp */,
 				84E1C9C82E7FDC26007D2F5D /* PumpkinTile.hpp */,
+				843691913031A6DA009FF2EF /* Rail.cpp */,
+				843691923031A6DA009FF2EF /* Rail.hpp */,
+				843691933031A6DA009FF2EF /* RailTile.cpp */,
+				843691943031A6DA009FF2EF /* RailTile.hpp */,
 				84E8FA262FEF617F00D0669F /* RecordPlayerTile.cpp */,
 				84E8FA272FEF617F00D0669F /* RecordPlayerTile.hpp */,
 				84E8FA282FEF617F00D0669F /* RedStoneDustTile.cpp */,
@@ -5336,6 +5374,8 @@
 				84AA8BAF2B32F3F3003F5B82 /* ItemRenderer.hpp */,
 				84AA8BB02B32F3F3003F5B82 /* ItemSpriteRenderer.cpp */,
 				84AA8BB12B32F3F3003F5B82 /* ItemSpriteRenderer.hpp */,
+				843691833031A696009FF2EF /* MinecartRenderer.cpp */,
+				843691843031A696009FF2EF /* MinecartRenderer.hpp */,
 				84AA8BB22B32F3F3003F5B82 /* MobRenderer.cpp */,
 				84AA8BB32B32F3F3003F5B82 /* MobRenderer.hpp */,
 				84AA8BB42B32F3F3003F5B82 /* PigRenderer.cpp */,
@@ -5648,6 +5688,8 @@
 				84E8F9C72FEF60C400D0669F /* GhastModel.hpp */,
 				84EB09AF2EE2CC86008FB007 /* HumanoidModel.cpp */,
 				84EB09B02EE2CC86008FB007 /* HumanoidModel.hpp */,
+				8436917F3031A680009FF2EF /* MinecartModel.cpp */,
+				843691803031A680009FF2EF /* MinecartModel.hpp */,
 				84EB09B12EE2CC86008FB007 /* Model.cpp */,
 				84EB09B22EE2CC86008FB007 /* Model.hpp */,
 				84EB09B32EE2CC86008FB007 /* PigModel.cpp */,
@@ -6373,6 +6415,7 @@
 				84D828802FFA18A000415AB4 /* SavingWorldScreen_Console.hpp in Headers */,
 				8443371C2F405E1C00EB3115 /* ClassicCraftingScreen_Console.hpp in Headers */,
 				84E001362AF39E84009B9555 /* TouchInputHolder.hpp in Headers */,
+				843691823031A680009FF2EF /* MinecartModel.hpp in Headers */,
 				84E001382AF39E84009B9555 /* TouchscreenInput_TestFps.hpp in Headers */,
 				84EE49F22F387DBD00677881 /* SwitchButton.hpp in Headers */,
 				84E8F9E72FEF60F300D0669F /* SlimeRenderer.hpp in Headers */,
@@ -6390,6 +6433,7 @@
 				9DA5C6492F2845F80039B697 /* AppResourceLoader.hpp in Headers */,
 				844337182F405E0600EB3115 /* StartMenuScreen_Console.hpp in Headers */,
 				9DA5C64A2F2845F80039B697 /* ResourceLocation.hpp in Headers */,
+				843691863031A696009FF2EF /* MinecartRenderer.hpp in Headers */,
 				84AA8BF02B32F3F3003F5B82 /* DynamicTexture.hpp in Headers */,
 				84AA8BF22B32F3F3003F5B82 /* ChickenRenderer.hpp in Headers */,
 				84EB09C22EE2CC86008FB007 /* Cube.hpp in Headers */,
@@ -6504,6 +6548,7 @@
 				84BF63862AF186C8008A9995 /* Inventory.hpp in Headers */,
 				8477B3B52C4DC414004E1AC5 /* ChunkTilePos.hpp in Headers */,
 				84BF63872AF186C8008A9995 /* Item.hpp in Headers */,
+				8436918E3031A6C2009FF2EF /* MinecartItem.hpp in Headers */,
 				84E7BF332F286A20002D3936 /* ContainerListener.hpp in Headers */,
 				84E8F9FF2FEF611800D0669F /* FlyingMob.hpp in Headers */,
 				84BF63892AF186C8008A9995 /* TileItem.hpp in Headers */,
@@ -6534,6 +6579,7 @@
 				84BF63942AF186C8008A9995 /* RandomLevelSource.hpp in Headers */,
 				84BF63952AF186C8008A9995 /* TestChunkSource.hpp in Headers */,
 				84DED1AB2F309611004001C5 /* FurnaceRecipes.hpp in Headers */,
+				843691963031A6DA009FF2EF /* DetectorRailTile.hpp in Headers */,
 				84BF63962AF186C8008A9995 /* Feature.hpp in Headers */,
 				8477B3AD2C4DC3F6004E1AC5 /* TilePos.hpp in Headers */,
 				84E2A3D32FBAAC700026780B /* FurnaceResultSlot.hpp in Headers */,
@@ -6572,6 +6618,7 @@
 				84BF63A82AF186C8008A9995 /* MemoryLevelStorageSource.hpp in Headers */,
 				84E1C9EA2E7FDC72007D2F5D /* SlabItem.hpp in Headers */,
 				84BF63A92AF186C8008A9995 /* RegionFile.hpp in Headers */,
+				843691983031A6DA009FF2EF /* Rail.hpp in Headers */,
 				84BF63AA2AF186C8008A9995 /* TickNextTickData.hpp in Headers */,
 				84BF63AB2AF186C8008A9995 /* Particle.hpp in Headers */,
 				84E7BF232F286A08002D3936 /* ResultContainer.hpp in Headers */,
@@ -6614,6 +6661,7 @@
 				8445E7AA2D769329008DC834 /* SynchedEntityData.hpp in Headers */,
 				84E8FA152FEF614C00D0669F /* RedStoneItem.hpp in Headers */,
 				84BF63BF2AF186C9008A9995 /* LeafTile.hpp in Headers */,
+				8436918A3031A6AE009FF2EF /* Minecart.hpp in Headers */,
 				84BF63C02AF186C9008A9995 /* LiquidTile.hpp in Headers */,
 				84EAF8312FE8E19E00D54A38 /* CreativeMenu_Console.hpp in Headers */,
 				84E24C7C2FC969D9004C4D06 /* FurnaceTileEntity.hpp in Headers */,
@@ -6699,6 +6747,7 @@
 				84E1C9E82E7FDC72007D2F5D /* ClothItem.hpp in Headers */,
 				8470AF2B2BE9B60A00BCA54E /* EntityType.hpp in Headers */,
 				84E24C842FC969D9004C4D06 /* FenceGateTile.hpp in Headers */,
+				8436919A3031A6DA009FF2EF /* RailTile.hpp in Headers */,
 				8445E7A42D769329008DC834 /* EntityTypeDescriptor.hpp in Headers */,
 				84B9D89F2F3BE0A900FD67C4 /* ArmorItem.hpp in Headers */,
 				84E2A3F62FBAAD6A0026780B /* EntityTile.hpp in Headers */,
@@ -7537,6 +7586,7 @@
 				84B8AEE82AF1890A008DE93D /* App.cpp in Sources */,
 				84B8AEE92AF1890A008DE93D /* AppPlatform.cpp in Sources */,
 				84E022F32F2A0211003C8FFE /* InventoryScreen.cpp in Sources */,
+				843691853031A696009FF2EF /* MinecartRenderer.cpp in Sources */,
 				84B8AEEA2AF1890A008DE93D /* Minecraft.cpp in Sources */,
 				84B8AEEB2AF1890A008DE93D /* NinecraftApp.cpp in Sources */,
 				84B8AEEC2AF1890A008DE93D /* AvailableGamesList.cpp in Sources */,
@@ -7665,6 +7715,7 @@
 				84D8287D2FFA18A000415AB4 /* LoadWorldScreen_Console.cpp in Sources */,
 				84AA8C202B32F3F3003F5B82 /* GrassColor.cpp in Sources */,
 				845A8D3A2FEBAB3000D26FD2 /* ClientCraftContext.cpp in Sources */,
+				843691813031A680009FF2EF /* MinecartModel.cpp in Sources */,
 				84AA8C222B32F3F3003F5B82 /* ItemInHandRenderer.cpp in Sources */,
 				84AA8C242B32F3F3003F5B82 /* LavaSideTexture.cpp in Sources */,
 				84AA8C252B32F3F3003F5B82 /* LavaTexture.cpp in Sources */,
@@ -7705,6 +7756,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				843691973031A6DA009FF2EF /* Rail.cpp in Sources */,
 				84E7BF322F286A20002D3936 /* ContainerListener.cpp in Sources */,
 				84E8F9FC2FEF611800D0669F /* FishingHook.cpp in Sources */,
 				84BF630C2AF18631008A9995 /* Entity.cpp in Sources */,
@@ -7739,6 +7791,7 @@
 				84BF631D2AF18631008A9995 /* TilePlanterItem.cpp in Sources */,
 				84BF631E2AF18631008A9995 /* Dimension.cpp in Sources */,
 				84E2A3D22FBAAC700026780B /* FurnaceResultSlot.cpp in Sources */,
+				843691993031A6DA009FF2EF /* RailTile.cpp in Sources */,
 				84EAF8302FE8E19E00D54A38 /* CreativeMenu_Console.cpp in Sources */,
 				84BF631F2AF18631008A9995 /* Explosion.cpp in Sources */,
 				84BF63202AF18631008A9995 /* Level.cpp in Sources */,
@@ -7859,6 +7912,7 @@
 				84BF63592AF18631008A9995 /* FarmTile.cpp in Sources */,
 				84BF635A2AF18631008A9995 /* FireTile.cpp in Sources */,
 				84BF635B2AF18631008A9995 /* GlassTile.cpp in Sources */,
+				8436918D3031A6C2009FF2EF /* MinecartItem.cpp in Sources */,
 				84BF635C2AF18631008A9995 /* GrassTile.cpp in Sources */,
 				84BF635D2AF18631008A9995 /* GravelTile.cpp in Sources */,
 				84BF635E2AF18631008A9995 /* HalfTransparentTile.cpp in Sources */,
@@ -7877,6 +7931,7 @@
 				84BF63662AF18631008A9995 /* MetalTile.cpp in Sources */,
 				84BF63672AF18631008A9995 /* ObsidianTile.cpp in Sources */,
 				84E8FA382FEF617F00D0669F /* RecordPlayerTile.cpp in Sources */,
+				843691953031A6DA009FF2EF /* DetectorRailTile.cpp in Sources */,
 				84CCBC932E61880600E251AF /* EntityFactory.cpp in Sources */,
 				84BF63682AF18631008A9995 /* OreTile.cpp in Sources */,
 				84E2A3D52FBAAC860026780B /* NoteParticle.cpp in Sources */,
@@ -7913,6 +7968,7 @@
 				84AA8B562B32F39A003F5B82 /* PathFinder.cpp in Sources */,
 				84E023002F2A0245003C8FFE /* ChestMenu.cpp in Sources */,
 				84E8FA302FEF617F00D0669F /* DispenserTile.cpp in Sources */,
+				843691893031A6AE009FF2EF /* Minecart.cpp in Sources */,
 				84E0230C2F2A0245003C8FFE /* CreativeMenu.cpp in Sources */,
 				8477B3B32C4DC414004E1AC5 /* ChunkPos.cpp in Sources */,
 				8432C40A3001A0D6005C8BC9 /* TileSource.cpp in Sources */,
