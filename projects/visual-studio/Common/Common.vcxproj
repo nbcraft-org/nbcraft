@@ -82,7 +82,6 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="$(MC_ROOT)\source\common\threading\CThread.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\common\Logger.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\common\Mth.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\common\Random.cpp" />
@@ -99,7 +98,6 @@
     <ClCompile Include="$(MC_ROOT)\source\common\utility\ByteBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MC_ROOT)\source\common\threading\CThread.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\common\Logger.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\common\Mth.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\common\Random.hpp" />
@@ -120,6 +118,10 @@
     <ClInclude Include="$(MC_ROOT)\source\common\utility\ByteBuffer.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\common\utility\HashMap.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\common\MovePriorityQueue.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\common\threading\CThread.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\common\threading\CThread_base.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\common\threading\CThread_std.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\common\threading\CThread_win32.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\common\threading\ThreadLocal.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\common\threading\ThreadLocal_fls.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\common\threading\ThreadLocal_tls.hpp" />

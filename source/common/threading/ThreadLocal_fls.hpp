@@ -1,4 +1,5 @@
 #pragma once
+
 #ifdef _XBOX
 #include <xtl.h>
 #else
@@ -13,10 +14,6 @@ class ThreadLocal
 {
 public:
 	typedef T* (*CreatorFunction_t)();
-
-private:
-	DWORD m_key;
-	CreatorFunction_t m_creatorFunction;
 
 private:
 	// disable copy constructors
@@ -94,4 +91,8 @@ public:
 
 		TlsSetValue(m_key, nullptr);
 	}
+
+private:
+	DWORD m_key;
+	CreatorFunction_t m_creatorFunction;
 };

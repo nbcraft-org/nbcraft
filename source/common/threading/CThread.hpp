@@ -1,16 +1,4 @@
-/********************************************************************
-	Minecraft: Pocket Edition - Decompilation Project
-	Copyright (C) 2023 iProgramInCpp
-
-	The following code is licensed under the BSD 1 clause license.
-	SPDX-License-Identifier: BSD-1-Clause
- ********************************************************************/
-
 #pragma once
-
-// CThread - Object oriented pthread wrapper
-
-#include <stdint.h>
 
 #ifdef _WIN32
 
@@ -24,64 +12,30 @@
 #endif
 #endif
 
-#else
+#else // !defined(_WIN32)
 
 #define USE_PTHREADS
 
 #endif
 
 #ifdef USE_CPP11_THREADS
-// C++11
-#include <thread>
+
+// C++11 STL
+#include "CThread_std.hpp"
 
 #elif defined(USE_WIN32_THREADS)
 
-// win32
-#include <stdint.h>
-
-#ifdef _XBOX
-#include <xtl.h>
-#else
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
+// Win32
+#include "CThread_win32.hpp"
 
 #elif defined(XENON)
 
-#include <xenon_soc/xenon_power.h>
+// libxenon
+#include "CThread_xenon.hpp"
 
-#else
+#elif defined(USE_PTHREADS)
 
 // pthreads
-#include <pthread.h>
+#include "CThread_pthread.hpp"
 
 #endif
-
-typedef void* (*CThreadFunction)(void*);
-
-class CThread
-{
-public:
-	CThread(CThreadFunction, void* context);
-	~CThread();
-
-	void join();
-
-	static void sleep(uint32_t ms);
-
-private:
-	bool m_bJoined;
-	CThreadFunction m_func;
-
-#ifdef USE_CPP11_THREADS
-	std::thread m_thrd;
-#elif defined (USE_WIN32_THREADS)
-	HANDLE m_thrd;
-#elif defined(XENON)
-	int m_thrd;
-#else
-	pthread_t m_thrd;
-	pthread_attr_t m_thrd_attr;
-#endif
-};
-

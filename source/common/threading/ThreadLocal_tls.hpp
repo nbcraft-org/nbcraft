@@ -1,9 +1,11 @@
 #pragma once
+
 #include <windows.h>
 #include <cassert>
 #include <stdexcept>
 #include <vector>
 #include <algorithm>
+
 #include "common/threading/Mutex.hpp"
 
 // NOTE: TLS does not destruct objects automatically on thread exit
@@ -15,21 +17,9 @@ public:
 	typedef T* (*CreatorFunction_t)();
 
 private:
-	DWORD m_key;
-	CreatorFunction_t m_creatorFunction;
-	std::vector<T*> m_pool;
-	Mutex m_poolMutex;
-
-private:
 	// disable copy constructors
 	ThreadLocal(const ThreadLocal&);
 	ThreadLocal& operator=(const ThreadLocal&);
-
-private:
-	static T* _Create()
-	{
-		return new T();
-	}
 
 public:
 	ThreadLocal()
@@ -110,4 +100,16 @@ public:
 		delete storedPtr;
 		TlsSetValue(m_key, nullptr);
 	}
+
+private:
+	static T* _Create()
+	{
+		return new T();
+	}
+
+private:
+	DWORD m_key;
+	CreatorFunction_t m_creatorFunction;
+	std::vector<T*> m_pool;
+	Mutex m_poolMutex;
 };
