@@ -145,7 +145,7 @@ void Minecart::tick()
             bool var13 = false;
             if (RailTile::isPoweredRail(Tile::tiles[tile])) 
             {
-                var49 = (data & 8) != 0;
+                var49 = (data & C_POWERED_BIT) != 0;
                 var13 = !var49;
             }
 
