@@ -947,7 +947,6 @@
 		84E0230D2F2A0245003C8FFE /* CreativeMenu.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84E0230B2F2A0245003C8FFE /* CreativeMenu.hpp */; };
 		84E058FC2F383E9200F1E829 /* AsyncTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E058F82F383E9200F1E829 /* AsyncTask.cpp */; };
 		84E058FD2F383E9200F1E829 /* AsyncTask.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84E058F92F383E9200F1E829 /* AsyncTask.hpp */; };
-		84E058FE2F383E9200F1E829 /* CThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E058FA2F383E9200F1E829 /* CThread.cpp */; };
 		84E058FF2F383E9200F1E829 /* CThread.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 84E058FB2F383E9200F1E829 /* CThread.hpp */; };
 		84E105F82E85157F00FAB6C5 /* AppPlatform_sdl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E105F62E85157F00FAB6C5 /* AppPlatform_sdl.cpp */; };
 		84E105F92E85157F00FAB6C5 /* AppPlatform_sdl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E105F62E85157F00FAB6C5 /* AppPlatform_sdl.cpp */; };
@@ -2899,7 +2898,6 @@
 		84E0230B2F2A0245003C8FFE /* CreativeMenu.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CreativeMenu.hpp; sourceTree = "<group>"; };
 		84E058F82F383E9200F1E829 /* AsyncTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncTask.cpp; sourceTree = "<group>"; };
 		84E058F92F383E9200F1E829 /* AsyncTask.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = AsyncTask.hpp; sourceTree = "<group>"; };
-		84E058FA2F383E9200F1E829 /* CThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CThread.cpp; sourceTree = "<group>"; };
 		84E058FB2F383E9200F1E829 /* CThread.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CThread.hpp; sourceTree = "<group>"; };
 		84E105F62E85157F00FAB6C5 /* AppPlatform_sdl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AppPlatform_sdl.cpp; sourceTree = "<group>"; };
 		84E105F72E85157F00FAB6C5 /* AppPlatform_sdl.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = AppPlatform_sdl.hpp; sourceTree = "<group>"; };
@@ -5516,7 +5514,6 @@
 			children = (
 				84E058F82F383E9200F1E829 /* AsyncTask.cpp */,
 				84E058F92F383E9200F1E829 /* AsyncTask.hpp */,
-				84E058FA2F383E9200F1E829 /* CThread.cpp */,
 				84E058FB2F383E9200F1E829 /* CThread.hpp */,
 			);
 			path = threading;
@@ -7983,7 +7980,6 @@
 				84E4BFBB2AE9869A0023E16A /* Timer.cpp in Sources */,
 				84E058FC2F383E9200F1E829 /* AsyncTask.cpp in Sources */,
 				84E4BFBC2AE9869A0023E16A /* Util.cpp in Sources */,
-				84E058FE2F383E9200F1E829 /* CThread.cpp in Sources */,
 				84EB0E0B2EE2D4CA008FB007 /* Color.cpp in Sources */,
 				84EB0E0D2EE2D4D4008FB007 /* AlignmentHelper.cpp in Sources */,
 				84E4BFBD2AE9869A0023E16A /* Utils.cpp in Sources */,
