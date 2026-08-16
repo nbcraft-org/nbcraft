@@ -3,7 +3,6 @@ project(nbcraft-core)
 
 # Build
 add_library(nbcraft-core STATIC
-    common/threading/CThread.cpp
     common/threading/AsyncTask.cpp
     common/DataIO.cpp
     common/Logger.cpp
