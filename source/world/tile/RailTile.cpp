@@ -74,10 +74,10 @@ eRenderShape RailTile::getRenderShape() const
 void RailTile::updateShape(const TileSource& source, const TilePos& pos)
 {
 	TileData data = source.getData(pos);
-	if (data >= 2 && data <= 5)
-		setShape(0.0f, 0.0f, 0.0f, 1.0f, 10.0f / 16.0f, 1.0f);
+	if (data >= RailTile::WEST_EAST_ABOVE && data <= RailTile::NORTH_SOUTH_ABOVE)
+		setShape(0.0f, 0.0f, 0.0f, 1.0f, 10.0f / 16.0f, 1.0f); // Lifted/diagonal rail
 	else
-		setShape(0.0f, 0.0f, 0.0f, 1.0f, 2.0f / 16.0f, 1.0f);
+		setShape(0.0f, 0.0f, 0.0f, 1.0f, 2.0f / 16.0f, 1.0f); // Grounded rail
 }
 
 void RailTile::onPlace(TileSource& source, const TilePos& pos)

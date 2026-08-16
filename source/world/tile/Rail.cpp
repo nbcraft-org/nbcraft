@@ -73,7 +73,7 @@ bool Rail::hasConnection(const TilePos& tp)
 int Rail::countPotentialConnections()
 {
     int count = 0;
-    for (int face = 0; face < 4; ++face)
+    for (int face = 0; face < Facing::WEST; ++face)
         if (hasRail(m_pos.relative(Facing::HORIZONTAL[face]))) ++count;
 
     return count;
