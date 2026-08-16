@@ -17,6 +17,7 @@
 #include "client/renderer/LightLayer.hpp"
 #include "world/level/levelgen/chunk/ChunkPos.hpp"
 #include "world/level/levelgen/chunk/ChunkTilePos.hpp"
+#include "world/entity/EntityCategories.hpp"
 
 class Level;
 class AABB;
@@ -141,9 +142,11 @@ public:
 	virtual bool shouldSave(bool b);
 	virtual void markUnsaved();
 	virtual int  countEntities();
+
 	virtual void getEntities(Entity* pEntExclude, const AABB&, std::vector<Entity*>& out);
 	virtual void getEntities(const EntityType& type, const AABB& aabb, std::vector<Entity*>& output) const;
 	virtual void getEntities(const EntityType& type, const AABB& aabb, Entity* pEntExclude, std::vector<Entity*>& output) const;
+	virtual void getEntitiesOfCategory(EntityCategories::CategoriesMask category, const AABB&, std::vector<Entity*>& out);
 	virtual TileID getTile(const ChunkTilePos& pos);
 	virtual bool setTile(const ChunkTilePos& pos, TileID tile);
 	virtual bool setTileAndData(const ChunkTilePos& pos, TileID tile, TileData data);

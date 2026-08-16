@@ -560,7 +560,7 @@ void LevelChunk::getEntities(Entity* pEntExclude, const AABB& aabb, std::vector<
 	}
 }
 
-void LevelChunk::getEntities(const EntityType& type, const AABB& aabb, Entity::Vector& output) const
+void LevelChunk::getEntities(const EntityType& type, const AABB& aabb, std::vector<Entity*>& output) const
 {
 	int lowerBound = int(floorf((aabb.min.y - 2.0f) / 16.0f));
 	int upperBound = int(floorf((aabb.max.y + 2.0f) / 16.0f));
@@ -570,7 +570,7 @@ void LevelChunk::getEntities(const EntityType& type, const AABB& aabb, Entity::V
 
 	for (int b = lowerBound; b <= upperBound; b++)
 	{
-		for (Entity::Vector::const_iterator it = m_entities[b].begin(); it != m_entities[b].end(); it++)
+		for (std::vector<Entity*>::const_iterator it = m_entities[b].begin(); it != m_entities[b].end(); it++)
 		{
 			Entity* ent = *it;
 			if (!ent->getDescriptor().isType(type))
@@ -584,7 +584,7 @@ void LevelChunk::getEntities(const EntityType& type, const AABB& aabb, Entity::V
 	}
 }
 
-void LevelChunk::getEntities(const EntityType& type, const AABB& aabb, Entity* pEntExclude, Entity::Vector& output) const
+void LevelChunk::getEntities(const EntityType& type, const AABB& aabb, Entity* pEntExclude, std::vector<Entity*>& output) const
 {
 	int lowerBound = int(floorf((aabb.min.y - 2.0f) / 16.0f));
 	int upperBound = int(floorf((aabb.max.y + 2.0f) / 16.0f));
@@ -594,7 +594,7 @@ void LevelChunk::getEntities(const EntityType& type, const AABB& aabb, Entity* p
 
 	for (int b = lowerBound; b <= upperBound; b++)
 	{
-		for (Entity::Vector::const_iterator it = m_entities[b].begin(); it != m_entities[b].end(); it++)
+		for (std::vector<Entity*>::const_iterator it = m_entities[b].begin(); it != m_entities[b].end(); it++)
 		{
 			Entity* ent = *it;
 			if (ent->getDescriptor().isType(type))
@@ -607,6 +607,26 @@ void LevelChunk::getEntities(const EntityType& type, const AABB& aabb, Entity* p
 				continue;
 
 			output.push_back(ent);
+		}
+	}
+}
+
+void LevelChunk::getEntitiesOfCategory(EntityCategories::CategoriesMask category, const AABB& aabb, std::vector<Entity*>& out)
+{
+	int lowerBound = int(floorf((aabb.min.y - 2.0f) / 16.0f));
+	int upperBound = int(floorf((aabb.max.y + 2.0f) / 16.0f));
+
+	if (lowerBound < 0) lowerBound = 0;
+	if (upperBound > 7) upperBound = 7;
+
+	for (int b = lowerBound; b <= upperBound; b++)
+	{
+		for (std::vector<Entity*>::iterator it = m_entities[b].begin(); it != m_entities[b].end(); it++)
+		{
+			Entity* ent = *it;
+			if (!ent->getDescriptor().hasCategory(category) || !aabb.intersect(ent->m_hitbox)) continue;
+
+			out.push_back(ent);
 		}
 	}
 }
