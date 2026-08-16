@@ -6,6 +6,12 @@
 
 class PlaceBlockPacket : public Packet
 {
+private:
+	void _init() {
+		m_reliability = RELIABLE_ORDERED;
+		m_channel = CHANNEL_TILE_EVENTS;
+	}
+
 public:
 	PlaceBlockPacket()
 		: m_entityId(0)
@@ -13,6 +19,7 @@ public:
 		, m_face(0)
 		, m_data(0)
 	{
+		_init();
 	}
 	PlaceBlockPacket(int entityId, const TilePos& pos, TileID tileTypeId, Facing::Name face, TileData data)
 		: m_entityId(entityId)
@@ -21,6 +28,7 @@ public:
 		, m_face(face)
 		, m_data(data)
 	{
+		_init();
 	}
 
 public:
