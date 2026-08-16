@@ -45,7 +45,7 @@ Minecart::Minecart(TileSource& source)
     _init();
 }
 
-Minecart::Minecart(TileSource& source, const Vec3& pos, Type type)
+Minecart::Minecart(TileSource& source, Type type, const Vec3& pos)
     : Entity(source)
     , SimpleContainer(27, "Minecart")
 {

@@ -15,7 +15,7 @@ bool MinecartItem::useOn(ItemStack& instance, Player& player, const TilePos& pos
         return false;
 
     if (!level.m_bIsClientSide)
-        level.addEntity(new Minecart(level, Vec3(pos.x + 0.5f, float(pos.y), pos.z + 0.5f), m_type));
+        level.addEntity(new Minecart(level, m_type, Vec3(pos.x + 0.5f, float(pos.y), pos.z + 0.5f)));
 
     --instance.m_count;
     return true;

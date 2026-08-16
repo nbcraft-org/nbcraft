@@ -24,7 +24,7 @@ public:
 
 
 	Minecart(TileSource&);
-	Minecart(TileSource&, const Vec3& pos, Type);
+	Minecart(TileSource&, Type, const Vec3& pos = Vec3::ZERO);
 
 	const AABB* getCollideBox() const override;
 	AABB* getCollideAgainstBox(Entity* ent) const override;
