@@ -65,9 +65,18 @@
     <ClCompile Include="$(MC_ROOT)\source\common\utility\Singleton.cpp">
       <Filter>Source Files\Utility</Filter>
     </ClCompile>
-    <ClCompile Include="$(MC_ROOT)\source\common\threading\CThread.cpp">
-      <Filter>Source Files\Threading</Filter>
-    </ClCompile>
+    <ClInclude Include="$(MC_ROOT)\source\common\threading\CThread.hpp">
+      <Filter>Header Files\Threading</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\common\threading\CThread_base.hpp">
+      <Filter>Header Files\Threading</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\common\threading\CThread_std.hpp">
+      <Filter>Header Files\Threading</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\common\threading\CThread_win32.hpp">
+      <Filter>Header Files\Threading</Filter>
+    </ClInclude>
     <ClCompile Include="$(MC_ROOT)\source\common\threading\AsyncTask.cpp">
       <Filter>Source Files\Threading</Filter>
     </ClCompile>
