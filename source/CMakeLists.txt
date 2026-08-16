@@ -515,6 +515,7 @@ add_library(nbcraft-core STATIC
     world/tile/PumpkinTile.cpp
     world/tile/Rail.cpp
     world/tile/RailTile.cpp
+    world/tile/DetectorRailTile.cpp
     world/tile/SoulSandTile.cpp
     world/tile/GlowstoneTile.cpp
     world/tile/Web.cpp
