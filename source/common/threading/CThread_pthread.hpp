@@ -16,8 +16,27 @@
 class CThread : public CThread_base
 {
 public:
-	// pthread_id_np_t isn't real apparently
-	typedef int ID;
+	class ID
+    {
+    private:
+        pthread_t _thrd;
+        
+    public:
+        ID(pthread_t thrd)
+            : _thrd(thrd)
+        { }
+        
+    public:
+        bool operator==(const ID& other) const
+        {
+            return pthread_equal(_thrd, other._thrd);
+        }
+        
+        bool operator!=(const ID& other) const
+        {
+            return !(*this == other);
+        }
+    };
 
 public:
 	CThread(Function func, void* context)
@@ -45,7 +64,7 @@ public:
 		m_bJoined = true;
 	}
 
-	static ID GetCurrentThreadId() { return pthread_getthreadid_np(); }
+	static ID GetCurrentThreadId() { return pthread_self(); }
 
 private:
 	pthread_t m_thrd;

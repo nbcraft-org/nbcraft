@@ -14,53 +14,9 @@ public:
 	typedef T* (*CreatorFunction_t)();
 
 private:
-	static std::map<T*, ThreadLocal<T>*> owners;
-	static Mutex ownersMutex;
-
-private:
-	pthread_key_t m_key;
-	CreatorFunction_t m_creatorFunction;
-	std::vector<T*> m_pool;
-	Mutex m_poolMutex;
-
-private:
 	// disable copy constructors
 	ThreadLocal(const ThreadLocal&);
 	ThreadLocal& operator=(const ThreadLocal&);
-
-private:
-	static T* _Create()
-	{
-		return new T();
-	}
-
-	static void _Destroy(void* ptr)
-	{
-		T* obj = reinterpret_cast<T*>(ptr);
-
-		{
-			ThreadLocal<T>* owningLocal;
-
-			{
-				LockGuard<Mutex> lock(ownersMutex);
-
-				typename std::map<T*, ThreadLocal<T>*>::iterator it = owners.find(obj);
-				assert(it != owners.end());
-				owningLocal = it->second;
-				owners.erase(it);
-			}
-
-			{
-				LockGuard<Mutex> lock(owningLocal->m_poolMutex);
-
-				typename std::vector<T*>::iterator it = std::find(owningLocal->m_pool.begin(), owningLocal->m_pool.end(), obj);
-				assert(it != m_pool.end());
-				owningLocal->m_pool.erase(it);
-			}
-		}
-
-		delete obj;
-	}
 
 public:
 	ThreadLocal()
@@ -121,9 +77,9 @@ public:
 		}
 
 		{
-			LockGuard<Mutex> lock(OwnersMutex);
+			LockGuard<Mutex> lock(ownersMutex);
 
-			Owners[ptr] = this;
+			owners[ptr] = this;
 		}
 
 		{
@@ -149,4 +105,54 @@ public:
 
 		pthread_setspecific(m_key, nullptr);
 	}
+    
+private:
+	static T* _Create()
+	{
+		return new T();
+	}
+    
+	static void _Destroy(void* ptr)
+	{
+		T* obj = reinterpret_cast<T*>(ptr);
+        
+		{
+			ThreadLocal<T>* owningLocal;
+            
+			{
+				LockGuard<Mutex> lock(ownersMutex);
+                
+				typename std::map<T*, ThreadLocal<T>*>::iterator it = owners.find(obj);
+				assert(it != owners.end());
+				owningLocal = it->second;
+				owners.erase(it);
+			}
+            
+			{
+				LockGuard<Mutex> lock(owningLocal->m_poolMutex);
+                
+				typename std::vector<T*>::iterator it = std::find(owningLocal->m_pool.begin(), owningLocal->m_pool.end(), obj);
+				assert(it != owningLocal->m_pool.end());
+				owningLocal->m_pool.erase(it);
+			}
+		}
+        
+		delete obj;
+	}
+    
+private:
+	pthread_key_t m_key;
+	CreatorFunction_t m_creatorFunction;
+	std::vector<T*> m_pool;
+	Mutex m_poolMutex;
+    
+private:
+	static std::map<T*, ThreadLocal<T>*> owners;
+	static Mutex ownersMutex;
 };
+
+template<typename T>
+std::map<T*, ThreadLocal<T>*> ThreadLocal<T>::owners;
+
+template<typename T>
+Mutex ThreadLocal<T>::ownersMutex;
