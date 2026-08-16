@@ -718,7 +718,7 @@ void Minecart::lerpMotion(const Vec3& motion)
     m_lPosD = m_vel = motion;
 }
 
-//bool Minecart::stillValid(Player* var1) const
-//{
-//    return !m_bRemoved && !(var1->distanceToSqr(this) > 64.0f);
-//}
+bool Minecart::stillValid(Player& player) const
+{
+    return !m_bRemoved && !(player.distanceToSqr(this) > 64.0f);
+}

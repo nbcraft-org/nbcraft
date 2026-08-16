@@ -42,7 +42,7 @@ public:
 	void push(Entity*) override;
 	void lerpTo(const Vec3& pos, const Rot2& rot, int steps) override;
 	void lerpMotion(const Vec3& vel) override;
-	//bool stillValid(Player* var1) const override;
+	bool stillValid(Player& player) const override;
 	void addAdditionalSaveData(CompoundTag& tag) const override;
 	void readAdditionalSaveData(const CompoundTag& tag) override;
 
