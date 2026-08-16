@@ -16,7 +16,8 @@
 class CThread : public CThread_base
 {
 public:
-	typedef pthread_id_np_t ID;
+	// pthread_id_np_t isn't real apparently
+	typedef int ID;
 
 public:
 	CThread(Function func, void* context)
