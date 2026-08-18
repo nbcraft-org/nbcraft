@@ -188,8 +188,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, AddPlay
 		pAddPlayerPkt->m_pos,
 		pAddPlayerPkt->m_rot);
 
-	pPlayer->m_name = pAddPlayerPkt->m_name;
-	pPlayer->initColor();
+	pPlayer->setName(pAddPlayerPkt->m_name.C_String());
 	pPlayer->m_guid = pAddPlayerPkt->m_guid;
 
 	if (pPlayer->getPlayerGameType() == GAME_TYPE_CREATIVE)
@@ -199,7 +198,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, AddPlay
 
 	pPlayer->m_pInventory->setSelectedItem(ItemStack(pAddPlayerPkt->m_itemId, pAddPlayerPkt->m_itemAuxValue, 63));
 
-	m_pMinecraft->m_pGui->addMessage(pPlayer->m_name + " joined the game");
+	m_pMinecraft->m_pGui->addMessage(pPlayer->getName() + " joined the game");
 }
 
 void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, AddMobPacket* pAddMobPkt)

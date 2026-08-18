@@ -181,7 +181,7 @@ void MobRenderer::renderName(const Mob& mob, const Vec3& pos)
 		const Player& player = (const Player&)mob;
 
 		// @TODO: don't know why but I have to add this correction. look into it and fix it!
-		renderNameTag(mob, player.m_name, Vec3(pos.x, pos.y - 1.5f, pos.z), mob.isSneaking() ? 32 : 64, player.m_color);
+		renderNameTag(mob, player.getName(), Vec3(pos.x, pos.y - 1.5f, pos.z), mob.isSneaking() ? 32 : 64, player.m_color);
 	}
 	else
 	{

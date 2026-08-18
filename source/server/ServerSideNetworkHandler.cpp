@@ -158,7 +158,7 @@ void ServerSideNetworkHandler::_handleMovePlayer(Player& player, MovePlayerPacke
 	/*float stanceHeight = packet->yView - packet->m_pos.y;
 	if (stanceHeight > 1.65f || stanceHeight < 0.1f)
 	{
-		LOG_W("%s had an illegal stance: %f", player.m_name, stanceHeight);
+		LOG_W("%s had an illegal stance: %f", player.getName(), stanceHeight);
 	}*/
 	//}
 
@@ -196,7 +196,7 @@ void ServerSideNetworkHandler::_handleMovePlayer(Player& player, MovePlayerPacke
 	if (sqDistanceDiff > shrinkAmount /*&& !player.isSleeping()*/)
 	{
 		movedWrongly = true;
-		LOG_W("%s moved wrongly!", player.m_name.c_str());
+		LOG_W("%s moved wrongly!", player.getName().c_str());
 		LOG_I("Got position %f, %f, %f", pos.x, pos.y, pos.z);
 		LOG_I("Expected %f, %f, %f", player.m_pos.x, player.m_pos.y, player.m_pos.z);
 	}
@@ -262,7 +262,7 @@ void ServerSideNetworkHandler::onDisconnect(const RakNet::RakNetGUID& guid)
 		// pPlayer is managed by Level
 
 		// tell everyone that they left the game
-		displayGameMessage(pPlayer->m_name + " disconnected from the game");
+		displayGameMessage(pPlayer->getName() + " disconnected from the game");
 
 		m_pRakNetInstance->send(new RemoveEntityPacket(pPlayer->m_EntityID));
 
@@ -322,8 +322,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, LoginPacke
 
 	ServerPlayer* pPlayer = new ServerPlayer(*m_pLevel, m_pLevel->getLevelData()->getGameType());
 	pPlayer->m_guid = guid;
-	pPlayer->m_name = packet->m_userName;
-	pPlayer->initColor();
+	pPlayer->setName(packet->m_userName.C_String());
 
 	GameMode* pGameMode = m_pMinecraft->getPlayerGameMode(*pPlayer);
 	pGameMode->initPlayer(*pPlayer);
@@ -410,7 +409,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, ReadyPacke
 
 	m_pLevel->addEntity(pPlayer);
 
-	m_pMinecraft->m_pGui->addMessage(pPlayer->m_name + " joined the game");
+	m_pMinecraft->m_pGui->addMessage(pPlayer->getName() + " joined the game");
 
 #if NETWORK_PROTOCOL_VERSION >= 3
 	// send the connecting player info about all entities in the world
@@ -463,7 +462,7 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, MessagePac
 
 	if (msg[0] == '/')
 	{
-		LOG_I("CMD: %s: %s", pOP->m_pPlayer->m_name.c_str(), msg.c_str());
+		LOG_I("CMD: %s: %s", pOP->m_pPlayer->getName().c_str(), msg.c_str());
 
 		std::istringstream ss(msg);
 		ss.get(); // skip the /
@@ -490,10 +489,10 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, MessagePac
 		return;
 	}
 
-	LOG_I("MSG: <%s> %s", pOP->m_pPlayer->m_name.c_str(), msg.c_str());
+	LOG_I("MSG: <%s> %s", pOP->m_pPlayer->getName().c_str(), msg.c_str());
 
 	// send everyone the message
-	std::string gameMessage = "<" + pOP->m_pPlayer->m_name + "> " + msg;
+	std::string gameMessage = "<" + pOP->m_pPlayer->getName() + "> " + msg;
 	displayGameMessage(gameMessage);
 }
 
@@ -1350,7 +1349,7 @@ void ServerSideNetworkHandler::commandGive(OnlinePlayer * player, const std::vec
 
 	pInventory->addTestItem(item->m_itemID, amount, auxValue);
 
-	sendMessage(player, Util::format("Given %s (ID %d) * %d to %s", item->getName().c_str(), item->m_itemID, amount, player->m_pPlayer->m_name.c_str()));
+	sendMessage(player, Util::format("Given %s (ID %d) * %d to %s", item->getName().c_str(), item->m_itemID, amount, player->m_pPlayer->getName().c_str()));
 	return;
 }
 

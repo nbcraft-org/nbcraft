@@ -170,7 +170,7 @@ std::string getPlayerFilename(const std::string& basePath, const std::string& pl
 
 bool ExternalFileLevelStorage::load(Player& player)
 {
-	std::string fileName = getPlayerFilename(m_levelDirPath, player.m_name);
+	std::string fileName = getPlayerFilename(m_levelDirPath, player.getName());
 	FILE* pFile = fopen(fileName.c_str(), "rb");
 	if (!pFile)
 		return false;
@@ -247,7 +247,7 @@ bool ExternalFileLevelStorage::save(Player& player)
 	std::string directory = m_levelDirPath + "/players/";
 	createFolderIfNotExists(directory.c_str());
 
-	std::string fileName = getPlayerFilename(m_levelDirPath, player.m_name);
+	std::string fileName = getPlayerFilename(m_levelDirPath, player.getName());
 	std::string tmpFileName = fileName + ".tmp";
 	FILE* pFile = fopen(tmpFileName.c_str(), "wb");
 	if (!pFile)

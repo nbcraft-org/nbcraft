@@ -501,6 +501,20 @@ int Player::getInventorySlot(int x) const
 	return 0;
 }
 
+// Randomly generates a Player's color based on their name
+static const Color& _getPlayerColor(const std::string& name)
+{
+	Random random(Util::hashCode(name));
+	size_t colorIdx = random.nextInt(_playerColorsCount - 1);
+	return _playerColors[colorIdx];
+}
+
+void Player::setName(const std::string& name)
+{
+	m_name = name;
+	m_color = _getPlayerColor(name);
+}
+
 void Player::prepareCustomTextures()
 {
 
@@ -612,14 +626,6 @@ void Player::closeContainer()
 void Player::openTrap(DispenserTileEntity* tileEntity)
 {
 	_handleOpenedContainerMenu();
-}
-
-// Resets the Player's color to a random value based on their name
-void Player::initColor()
-{
-	Random random(Util::hashCode(m_name));
-	size_t colorIdx = random.nextInt(_playerColorsCount - 1);
-	m_color = _playerColors[colorIdx];
 }
 
 void Player::touch(Entity& entity)
