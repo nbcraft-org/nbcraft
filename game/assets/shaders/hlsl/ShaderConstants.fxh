@@ -58,7 +58,11 @@ sampler TextureSampler2 : register( s2 );
 #define CBUFFER_END
 
 #define VS_MAIN_BEGIN PS_Input main( VS_Input VSInput ) { PS_Input PSInput; 
+#ifdef _XBOX
+#define VS_MAIN_END return PSInput; }
+#else
 #define VS_MAIN_END float2 __d3d9offset = (__D3D9_OFFSET_X, __D3D9_OFFSET_Y); PSInput.position.xy += __d3d9offset.xy * PSInput.position.w; return PSInput; }
+#endif
 #define PS_MAIN_BEGIN PS_Output main( PS_Input PSInput ) { PS_Output PSOutput; 
 #define PS_MAIN_END return PSOutput; }
 

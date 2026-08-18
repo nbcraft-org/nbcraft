@@ -123,7 +123,10 @@ void ShaderProgramD3D9::BuildHeader(RenderContext& context, std::ostringstream& 
 
     ShaderProgramD3D::BuildHeader(context, stream);
 
+	// The Xbox 360 has an extension to handle this in the RenderState
+#if !MC_PLATFORM_XBOX360
     // hack to fix dumb D3D9 bullshit: https://www.virtualdub.org/blog2/entry_366.html
     stream << "#define __D3D9_OFFSET_X " << (-1.0f / Minecraft::width) << "\n";
     stream << "#define __D3D9_OFFSET_Y " << (1.0f / Minecraft::height) << "\n";
+#endif
 }

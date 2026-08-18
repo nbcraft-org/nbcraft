@@ -304,7 +304,9 @@ void RenderContextD3D9::createWindowSizeDependentResources(HWND hWnd, unsigned i
 
         m_d3dDevice->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, TRUE);
         m_d3dDevice->SetRenderState(D3DRS_TWOSIDEDSTENCILMODE, TRUE);
-        //m_d3dDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+#if MC_PLATFORM_XBOX360
+        m_d3dDevice->SetRenderState(D3DRS_HALFPIXELOFFSET, TRUE);
+#endif
     }
 
     m_width = width;
