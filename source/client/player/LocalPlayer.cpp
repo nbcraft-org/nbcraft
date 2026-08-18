@@ -53,6 +53,7 @@ LocalPlayer::LocalPlayer(Minecraft* pMinecraft, Level& level, User* pUser, GameT
 
 	m_pMinecraft = pMinecraft;
 	m_name = pUser->m_name;
+	initColor();
 
 	m_dimension = dimensionId;
 	_init();

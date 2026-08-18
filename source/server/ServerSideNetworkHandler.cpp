@@ -322,7 +322,8 @@ void ServerSideNetworkHandler::handle(const RakNet::RakNetGUID& guid, LoginPacke
 
 	ServerPlayer* pPlayer = new ServerPlayer(*m_pLevel, m_pLevel->getLevelData()->getGameType());
 	pPlayer->m_guid = guid;
-	pPlayer->m_name = std::string(packet->m_userName.C_String());
+	pPlayer->m_name = packet->m_userName;
+	pPlayer->initColor();
 
 	GameMode* pGameMode = m_pMinecraft->getPlayerGameMode(*pPlayer);
 	pGameMode->initPlayer(*pPlayer);

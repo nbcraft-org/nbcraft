@@ -189,6 +189,7 @@ void ClientSideNetworkHandler::handle(const RakNet::RakNetGUID& rakGuid, AddPlay
 		pAddPlayerPkt->m_rot);
 
 	pPlayer->m_name = pAddPlayerPkt->m_name;
+	pPlayer->initColor();
 	pPlayer->m_guid = pAddPlayerPkt->m_guid;
 
 	if (pPlayer->getPlayerGameType() == GAME_TYPE_CREATIVE)

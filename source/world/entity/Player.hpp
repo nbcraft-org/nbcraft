@@ -84,6 +84,7 @@ public:
 	//virtual void openTextEdit(SignTileEntity* tileEntity);
 	virtual bool isLocalPlayer() const { return false; }
 	virtual void take(Entity* pEnt, int count) {}
+	virtual void initColor();
 
 	int addResource(int);
 	void animateRespawn(Player*, Level*);
@@ -137,6 +138,7 @@ public:
 	float m_bob;
 	int m_dmgSpill;
 	std::string m_name;
+	Color m_color;
 	DimensionId m_dimension;
 	RakNet::RakNetGUID m_guid;
 	bool m_bFlying;

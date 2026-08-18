@@ -28,7 +28,7 @@ public:
 	virtual float getBob(const Mob& mob, float f);
 	virtual float getFlipDegrees(const Mob& mob);
 	virtual void renderName(const Mob& mob, const Vec3& pos);
-	virtual void renderNameTag(const Mob& mob, const std::string&, const Vec3& pos, int);
+	virtual void renderNameTag(const Mob& mob, const std::string&, const Vec3& pos, int, const Color& outlineColor = Color::BLACK);
 	virtual void additionalRendering(const Mob& mob, float);
 
 public:

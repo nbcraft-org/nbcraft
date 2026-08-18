@@ -181,7 +181,7 @@ void MobRenderer::renderName(const Mob& mob, const Vec3& pos)
 		const Player& player = (const Player&)mob;
 
 		// @TODO: don't know why but I have to add this correction. look into it and fix it!
-		renderNameTag(mob, player.m_name, Vec3(pos.x, pos.y - 1.5f, pos.z), mob.isSneaking() ? 32 : 64);
+		renderNameTag(mob, player.m_name, Vec3(pos.x, pos.y - 1.5f, pos.z), mob.isSneaking() ? 32 : 64, player.m_color);
 	}
 	else
 	{
@@ -192,7 +192,7 @@ void MobRenderer::renderName(const Mob& mob, const Vec3& pos)
 	}
 }
 
-void MobRenderer::renderNameTag(const Mob& mob, const std::string& str, const Vec3& pos, int a)
+void MobRenderer::renderNameTag(const Mob& mob, const std::string& str, const Vec3& pos, int a, const Color& outlineColor)
 {
 	if (mob.distanceToSqr(m_pDispatcher->m_pCamera) > float(a * a))
 		return;
@@ -217,24 +217,24 @@ void MobRenderer::renderNameTag(const Mob& mob, const std::string& str, const Ve
 	float widthHalf = float(width / 2);
 
 	t.normal(Vec3::UNIT_Y);
-	t.vertex(-1.0f - widthHalf, -1.0f, 0.0f);
-	t.vertex(-1.0f - widthHalf, 8.0f, 0.0f);
-	t.vertex(widthHalf + 1.0f, 8.0f, 0.0f);
-	t.vertex(widthHalf + 1.0f, -1.0f, 0.0f);
+	t.vertex(-widthHalf - 1.0f, -1.0f, 0.0f);
+	t.vertex(-widthHalf - 1.0f,  8.0f, 0.0f);
+	t.vertex( widthHalf + 1.0f,  8.0f, 0.0f);
+	t.vertex( widthHalf + 1.0f, -1.0f, 0.0f);
 	t.draw(m_materials.name_tag);
 
 	// @TODO: Come back here after implementing line width setting support in HAL.
 
 	if (options.getUiTheme() == UI_CONSOLE)
 	{
-		currentShaderColor = Color::GREEN; // @TODO: Currently hardcoded to green, but should be changed to use different colors for players like in Xbox 360 Edition.
+		currentShaderColor = outlineColor;
 		t.begin(mce::PRIMITIVE_MODE_LINE_STRIP, 5);
 
-		t.vertex(-1.0f - widthHalf, -1.0f, 0.0f);
-		t.vertex(-1.0f - widthHalf, 8.0f, 0.0f);
-		t.vertex(widthHalf + 1.0f, 8.0f, 0.0f);
-		t.vertex(widthHalf + 1.0f, -1.0f, 0.0f);
-		t.vertex(-1.0f - widthHalf, -1.0f, 0.0f);
+		t.vertex(-widthHalf - 1.0f, -1.0f, 0.0f);
+		t.vertex(-widthHalf - 1.0f,  8.0f, 0.0f);
+		t.vertex( widthHalf + 1.0f,  8.0f, 0.0f);
+		t.vertex( widthHalf + 1.0f, -1.0f, 0.0f);
+		t.vertex(-widthHalf - 1.0f, -1.0f, 0.0f);
 		t.draw(m_materials.name_tag);
 	}
 
