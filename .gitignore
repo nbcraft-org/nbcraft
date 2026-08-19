@@ -143,3 +143,6 @@ xcuserdata/
 
 # Clangd
 .clangd
+
+# Nix derivation result outputs
+[Rr]esult
