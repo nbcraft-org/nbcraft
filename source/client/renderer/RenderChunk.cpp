@@ -31,9 +31,9 @@ void RenderChunk::_init(RenderChunk& other)
 }
 
 RenderChunk::RenderChunk(const TilePos& pos, mce::Mesh& mesh, float lastRebuilt)
-	: m_pos(pos)
+	: m_lastRebuilt(lastRebuilt)
+	, m_pos(pos)
 	, m_mesh(mesh)
-	, m_lastRebuilt(lastRebuilt)
 {
 	//_init();
 }
