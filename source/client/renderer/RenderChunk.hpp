@@ -41,28 +41,25 @@ public:
 	static mce::MaterialPtr fadingChunksMaterial;
 
 private:
-	double m_lastRebuilt;
-public:
-	TilePos m_pos;
-	mce::Mesh m_mesh;
-
-private:
 	void _init();
     void _init(RenderChunk& other);
 
 public:
 	RenderChunk() { _init(); }
 	MC_CTOR_MOVE(RenderChunk);
-	RenderChunk(const TilePos& pos, mce::Mesh& mesh);
+	RenderChunk(const TilePos& pos, mce::Mesh& mesh, float lastRebuilt);
 	
 private:
-	const mce::MaterialPtr& _chooseMaterial(TerrainLayer layer, double a, bool fog);
+	const mce::MaterialPtr& _chooseMaterial(TerrainLayer layer, bool fog);
+	const mce::MaterialPtr& _chooseMaterial(TerrainLayer layer, bool fog, float a);
     
 public:
     void _move(RenderChunk& other);
 	
 public:
-	void render(TerrainLayer layer, double a, bool fog);
+	void render(TerrainLayer layer, bool fog);
+	// with chunk fading
+	void render(TerrainLayer layer, bool fog, float a);
 	void reset();
 	
 public:
@@ -73,5 +70,11 @@ private:
 public:
 	static void InitMaterials();
 	static void SetUnderwater(bool isUnderwater);
+
+private:
+	float m_lastRebuilt;
+public:
+	TilePos m_pos;
+	mce::Mesh m_mesh;
 };
 

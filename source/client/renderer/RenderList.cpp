@@ -116,29 +116,30 @@ void RenderList::render(TerrainLayer layer, bool fog)
 
 void RenderList::renderChunks(TerrainLayer layer, bool fog)
 {
-	double time = getTimeS();
+	if (field_1C <= 0)
+		return;
 
-	if (field_1C > 0)
+	//float timeS = getTimeS();
+
+	for (int i = 0; i < field_1C; i++)
 	{
-		for (int i = 0; i < field_1C; i++)
-		{
-			RenderChunk* chk = field_10[i];
-			if (!chk) continue;
+		RenderChunk* chk = field_10[i];
+		if (!chk) continue;
 
-			MatrixStack::Ref matrix = MatrixStack::World.push();
-			matrix->translate(chk->m_pos);
+		MatrixStack::Ref matrix = MatrixStack::World.push();
+		matrix->translate(chk->m_pos);
 
 #ifdef FEATURE_GFX_SHADERS
-			mce::GlobalConstantBuffers& globalBuffers = mce::GlobalConstantBuffers::getInstance();
-			mce::RenderChunkConstants& chunkConstants = globalBuffers.m_renderChunkConstants;
+		mce::GlobalConstantBuffers& globalBuffers = mce::GlobalConstantBuffers::getInstance();
+		mce::RenderChunkConstants& chunkConstants = globalBuffers.m_renderChunkConstants;
 
-			Vec3 chunkOrigin = chk->m_pos;
-			chunkConstants.CHUNK_ORIGIN->setData(&chunkOrigin);
+		Vec3 chunkOrigin = chk->m_pos;
+		chunkConstants.CHUNK_ORIGIN->setData(&chunkOrigin);
 
-			chunkConstants.sync();
+		chunkConstants.sync();
 #endif
 
-			chk->render(layer, time, fog);
-		}
+		chk->render(layer, fog);
+		//chk->render(layer, fog, timeS);
 	}
 }

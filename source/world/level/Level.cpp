@@ -740,7 +740,7 @@ bool Level::isSkyLit(const TilePos& pos) const
 
 bool Level::setTileAndDataNoUpdate(const TilePos& pos, const FullTile& tile)
 {
-	return setTileAndData(pos, tile, TileChange::UPDATE_LISTENERS);
+	return setTileAndData(pos, tile, TileChange::UPDATE_NONE);
 }
 
 uint8_t Level::getHeightmap(const TilePos& pos) const

@@ -130,6 +130,8 @@ void Chunk::rebuild()
 {
 	if (!m_bDirty)
 		return;
+	
+	float timeS = 0.0f; // getTimeS();
 
 	updates++;
 
@@ -204,7 +206,7 @@ void Chunk::rebuild()
 			mce::Mesh chunkMesh = t.end();
 			RenderChunk* pRChk = &m_renderChunks[layer];
 
-			*pRChk = RenderChunk(m_pos, chunkMesh);
+			*pRChk = RenderChunk(m_pos, chunkMesh, timeS);
 
 			t.setOffset(Vec3::ZERO);
 

@@ -21,7 +21,7 @@ mce::MaterialPtr RenderChunk::fadingChunksMaterial;
 
 void RenderChunk::_init()
 {
-	m_lastRebuilt = 0.0;
+	m_lastRebuilt = 0.0f;
 }
 
 void RenderChunk::_init(RenderChunk& other)
@@ -30,23 +30,33 @@ void RenderChunk::_init(RenderChunk& other)
     _init();
 }
 
-RenderChunk::RenderChunk(const TilePos& pos, mce::Mesh& mesh)
+RenderChunk::RenderChunk(const TilePos& pos, mce::Mesh& mesh, float lastRebuilt)
 	: m_pos(pos)
 	, m_mesh(mesh)
+	, m_lastRebuilt(lastRebuilt)
 {
-	_init();
+	//_init();
 }
 
-const mce::MaterialPtr& RenderChunk::_chooseMaterial(TerrainLayer layer, double a, bool fog)
+const mce::MaterialPtr& RenderChunk::_chooseMaterial(TerrainLayer layer, bool fog)
 {
+#ifdef _DEBUG
 	if (layer < TERRAIN_LAYERS_MIN || layer > TERRAIN_LAYERS_MAX)
 		throw std::out_of_range("Invalid TerrainLayer");
+#endif
+
+	mce::MaterialPtr* map = fog ? fogMaterialMap : materialMap;
+
+	return map[layer] ? map[layer] : materialMap[layer];
+}
+
+const mce::MaterialPtr& RenderChunk::_chooseMaterial(TerrainLayer layer, bool fog, float a)
+{
+	float diff = a - m_lastRebuilt;
     
-	double diff = a - m_lastRebuilt;
-    
-	if (diff < 1.2)
+	if (diff < 1.2f)
 	{
-		currentShaderColor.r = (1.2 - diff) * 0.2;
+		currentShaderColor.r = (1.2f - diff) * 0.2f;
 		switch (layer)
 		{
             case TERRAIN_LAYER_SEASONS_FAR:
@@ -58,26 +68,28 @@ const mce::MaterialPtr& RenderChunk::_chooseMaterial(TerrainLayer layer, double 
 		}
 	}
     
-	mce::MaterialPtr* map;
-	if (fog) 
-		map = fogMaterialMap;
-	else
-		map = materialMap;
-    
-	return map[layer] ? map[layer] : materialMap[layer];
+	return _chooseMaterial(layer, fog);
 }
 
 void RenderChunk::_move(RenderChunk& other)
 {
+	m_lastRebuilt = other.m_lastRebuilt;
     m_pos = other.m_pos;
     m_mesh = other.m_mesh;
 }
 
-void RenderChunk::render(TerrainLayer layer, double a, bool fog)
+void RenderChunk::render(TerrainLayer layer, bool fog)
 {
 	currentShaderColor = Color::WHITE;
 	currentShaderDarkColor = Color::WHITE;
-	m_mesh.render(_chooseMaterial(layer, a, fog));
+	m_mesh.render(_chooseMaterial(layer, fog));
+}
+
+void RenderChunk::render(TerrainLayer layer, bool fog, float a)
+{
+	currentShaderColor = Color::WHITE;
+	currentShaderDarkColor = Color::WHITE;
+	m_mesh.render(_chooseMaterial(layer, fog, a));
 }
 
 void RenderChunk::reset()

@@ -1168,32 +1168,31 @@ bool LevelRenderer::updateDirtyChunks(const Entity& camera, bool force)
 	for (size_t i = 0; i < pendingChunkSize; i++)
 	{
 		Chunk* pChunk = m_dirtyChunks[i];
-		if (!force)
-		{
-			if (pChunk->distanceToSqr(camera) > 1024.0f)
-			{
-				int j;
-				// find place to insert this chunk within the pChunks array
-				for (j = 0; j < C_MAX; j++)
-				{
-					if (pChunks[j] && !dcs(pChunks[j], pChunk))
-						break;
-				}
-				// insert it
-				if (--j <= 0)
-					continue;
-				
-				for (int k = j; --k != 0;)
-				{
-					pChunks[k - 1] = pChunks[k];
-				}
 
-				pChunks[j] = pChunk;
-				continue;
-			}
-		}
-		else if (!pChunk->m_bVisible)
+		if (!force && !pChunk->m_bVisible)
 		{
+			continue;
+		}
+
+		if (pChunk->distanceToSqr(camera) > 1024.0f)
+		{
+			int j;
+			// find place to insert this chunk within the pChunks array
+			for (j = 0; j < C_MAX; j++)
+			{
+				if (pChunks[j] && !dcs(pChunks[j], pChunk))
+					break;
+			}
+			// insert it
+			if (--j <= 0)
+				continue;
+				
+			for (int k = 0; k < j; k++)
+			{
+				pChunks[k] = pChunks[k + 1];
+			}
+
+			pChunks[j] = pChunk;
 			continue;
 		}
 
@@ -1229,7 +1228,7 @@ bool LevelRenderer::updateDirtyChunks(const Entity& camera, bool force)
 		{
 			pChunks[m] = nullptr;
 			pChunks[0] = nullptr;
-			break;
+			continue;
 		}
 
 		pChunks[m]->rebuild();
