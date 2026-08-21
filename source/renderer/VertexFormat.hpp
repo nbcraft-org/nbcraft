@@ -1,8 +1,8 @@
 #pragma once
 
+#include <string.h>
 #define __STDC_LIMIT_MACROS
 #include <stdint.h>
-#include <string.h>
 #include <assert.h>
 
 #include "compat/LegacyCPP.hpp"
