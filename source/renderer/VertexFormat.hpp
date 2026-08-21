@@ -1,11 +1,10 @@
 #pragma once
 
 #include <string.h>
-#define __STDC_LIMIT_MACROS
-#include <stdint.h>
 #include <assert.h>
 
 #include "compat/LegacyCPP.hpp"
+#include "compat/LimitMacros.h"
 #include "renderer/hal/enums/VertexField.hpp"
 #include "VertexFieldFormat.hpp"
 
