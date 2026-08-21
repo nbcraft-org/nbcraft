@@ -3,7 +3,7 @@
 #define __STDC_LIMIT_MACROS
 #include <stdint.h>
 
-#ifndef
+#ifndef UINT8_MAX
 #define UINT8_MAX 0xff
 #endif
 
