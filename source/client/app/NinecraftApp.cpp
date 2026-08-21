@@ -379,6 +379,9 @@ void NinecraftApp::teardownRenderer()
 
 void NinecraftApp::reloadFancy(bool isFancy)
 {
+	if (!m_pLevelRenderer)
+		return;
+
 	m_pLevelRenderer->allChanged();
 	EntityRenderDispatcher::instance->onAppSuspended();
 	_reloadFancy(isFancy);

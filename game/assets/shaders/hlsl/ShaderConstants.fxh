@@ -42,7 +42,7 @@ sampler TextureSampler2 : register( s2 );
 #endif
 #endif
 
-#if defined(LOW_PRECISION) && _SHADER_TARAGET_MAJOR >= 4
+#if defined(LOW_PRECISION) && _SHADER_TARGET_MAJOR >= 4
 #define lpfloat min16float
 #define lpfloat4 min16float4
 #else
@@ -69,6 +69,9 @@ sampler TextureSampler2 : register( s2 );
 #define R8G8B8A8_SNORM_UNSUPPORTED
 
 // D3D9 has OpenGL-like render state alpha testing
+#ifdef ALPHA_TEST
+#undef ALPHA_TEST
+#endif
 #if _SHADER_TARGET_MAJOR <= 1 // error X3500: asymetric returns from if statements not yet implemented
 #define discard PSOutput.color = float4(0,0,0,0) // @NOTE: we WILL run bonus code after this, you MUST add a "} else {"
 #else // _SHADER_TARGET_MAJOR >= 2

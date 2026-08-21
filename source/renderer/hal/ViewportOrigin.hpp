@@ -10,6 +10,11 @@ namespace mce
 		int bottomLeftY; // OpenGL's default
 		int topLeftY; // Direct3D's default
 
-		ViewportOrigin();
+		ViewportOrigin()
+		{
+			leftX = 0;
+			bottomLeftY = 0;
+			topLeftY = 0;
+		}
 	};
 }

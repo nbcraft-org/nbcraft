@@ -124,14 +124,14 @@ void RenderMaterialGroup::_loadList()
     }
 
     rapidjson::Document document;
-    document.Parse(fileContents.c_str());
+    document.Parse<rapidjson::kParseCommentsFlag>(fileContents.c_str());
     const rapidjson::Value::Array root = document.GetArray();
 
     for (rapidjson::Value::ConstValueIterator it = root.Begin(); it != root.End(); it++)
     {
         const rapidjson::Value& value = *it;
 
-        // Only happens on Xenon
+        // Only happens on libXenon
         if (!value.IsObject())
             continue;
 
@@ -174,10 +174,11 @@ void RenderMaterialGroup::_loadList()
             continue;
         }
         rapidjson::Document doc;
-        rapidjson::ParseResult ok = doc.Parse(fileContents.c_str());
+        rapidjson::ParseResult ok = doc.Parse<rapidjson::kParseCommentsFlag>(fileContents.c_str());
         if (!ok)
         {
-            LOG_E("Error parsing \"%s\", offset %zu: %s", path.c_str(), ok.Offset(), rapidjson::GetParseError_En(ok.Code()));
+			// was using %zu here, not anymore, since VS2010 doesn't support it
+            LOG_E("Error parsing \"%s\", offset %d: %s", path.c_str(), ok.Offset(), rapidjson::GetParseError_En(ok.Code()));
             continue;
         }
 

@@ -7,7 +7,7 @@ using namespace mce;
 AlphaStateOGL::AlphaStateOGL()
 {
     m_bAlphaTest = false;
-    m_alphaFunc = GL_NONE;
+    m_alphaFunc = GL_ALWAYS;
     m_alphaRef = 0.0f;
 }
 
@@ -38,7 +38,7 @@ bool AlphaStateOGL::bindAlphaState(RenderContext& context, bool forceBind)
         ctxDesc.enableAlphaTest = m_description.enableAlphaTest;
     }
 
-    if (forceBind || ctxDesc.alphaFunc != m_description.alphaFunc)
+    if (forceBind || ctxDesc.alphaFunc != m_description.alphaFunc || ctxDesc.alphaRef != m_description.alphaRef)
     {
         glAlphaFunc(m_alphaFunc, m_alphaRef);
         ctxDesc.alphaFunc = m_description.alphaFunc;

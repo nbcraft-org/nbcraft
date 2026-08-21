@@ -12,9 +12,28 @@ namespace mce
 		StencilOp stencilPassOp;
 		StencilOp stencilFailOp;
 		
-		StencilFaceDescription();
+		StencilFaceDescription()
+		{
+			stencilFunc = COMPARISON_FUNC_ALWAYS;
+			stencilDepthFailOp = STENCIL_OP_KEEP;
+			stencilPassOp = STENCIL_OP_KEEP;
+			stencilFailOp = STENCIL_OP_KEEP;
+		}
 
-		bool operator==(const StencilFaceDescription& other) const;
-		bool operator!=(const StencilFaceDescription& other) const;
+		bool operator==(const StencilFaceDescription& other) const
+		{
+			return stencilFunc        == other.stencilFunc
+				&& stencilDepthFailOp == other.stencilDepthFailOp
+				&& stencilPassOp      == other.stencilPassOp
+				&& stencilFailOp      == other.stencilFailOp;
+		}
+
+		bool operator!=(const StencilFaceDescription& other) const
+		{
+			return stencilFunc        != other.stencilFunc
+				|| stencilDepthFailOp != other.stencilDepthFailOp
+				|| stencilPassOp      != other.stencilPassOp
+				|| stencilFailOp      != other.stencilFailOp;
+		}
 	};
 }

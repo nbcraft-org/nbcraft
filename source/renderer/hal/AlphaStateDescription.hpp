@@ -10,9 +10,28 @@ namespace mce
 		ComparisonFunc alphaFunc;
 		float alphaRef;
 
-		AlphaStateDescription();
+		AlphaStateDescription()
+		{
+			enableAlphaTest = false;
+			alphaFunc = COMPARISON_FUNC_GREATER_EQUAL;
+			alphaRef = 0.5f;
+			// pre-HAL values
+			/*alphaFunc = COMPARISON_FUNC_GREATER;
+			alphaRef = 0.1f;*/
+		}
 
-		bool operator==(const AlphaStateDescription& other) const;
-		bool operator!=(const AlphaStateDescription& other) const;
+		bool operator==(const AlphaStateDescription& other) const
+		{
+			return enableAlphaTest == other.enableAlphaTest
+				&& alphaFunc       == other.alphaFunc
+				&& alphaRef        == other.alphaRef;
+		}
+
+		bool operator!=(const AlphaStateDescription& other) const
+		{
+			return enableAlphaTest != other.enableAlphaTest
+				|| alphaFunc       != other.alphaFunc
+				|| alphaRef        != other.alphaRef;
+		}
 	};
 }

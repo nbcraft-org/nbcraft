@@ -24,7 +24,7 @@ namespace mce
 
 		bool operator!=(const VertexBufferStateDescription& other) const
 		{
-			return !(*this == other);
+			return vertexFormat != other.vertexFormat;
 		}
 	};
 }

@@ -9,9 +9,22 @@ namespace mce
 		bool enableTexture;
 		bool rescaleNormals;
 
-		RenderStateDescription();
+		RenderStateDescription()
+		{
+			enableTexture = false;
+			rescaleNormals = false;
+		}
 
-		bool operator==(const RenderStateDescription& other) const;
-		bool operator!=(const RenderStateDescription& other) const;
+		bool operator==(const RenderStateDescription& other) const
+		{
+			return enableTexture  == other.enableTexture
+				&& rescaleNormals == other.rescaleNormals;
+		}
+
+		bool operator!=(const RenderStateDescription& other) const
+		{
+			return enableTexture  != other.enableTexture
+				|| rescaleNormals != other.rescaleNormals;
+		}
 	};
 }

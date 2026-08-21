@@ -45,7 +45,7 @@ bool AlphaStateD3D9::bindAlphaState(RenderContext& context, bool forceBind)
 
     if (forceBind || ctxDesc.alphaRef != m_description.alphaRef)
     {
-        d3dDevice->SetRenderState(D3DRS_ALPHAREF, LOWORD(m_alphaRef));
+        d3dDevice->SetRenderState(D3DRS_ALPHAREF, MAKELONG(MAKEWORD(m_alphaRef, 0x0), 0x0));
         ctxDesc.alphaRef = m_description.alphaRef;
     }
 

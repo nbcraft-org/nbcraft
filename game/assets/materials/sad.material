@@ -6,6 +6,7 @@
 			"Textured",
 			"EnableAlphaTest"
 		],
+		"alphaRef": 0.01, // GFX APIs that use shaders, but still use an alpha state (D3D9), will run this against our fog fade
 	
 		"defines": [ "ALPHA_TEST" ],
 

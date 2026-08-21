@@ -10,9 +10,23 @@ namespace mce
         CullMode cullMode;
         bool enableScissorTest;
 	
-		RasterizerStateDescription();
+		RasterizerStateDescription()
+		{
+			depthBias = 0.0f;
+			cullMode = CULL_BACK;
+			enableScissorTest = false;
+		}
 
-		bool operator==(const RasterizerStateDescription& other) const;
-		bool operator!=(const RasterizerStateDescription& other) const;
+		bool operator==(const RasterizerStateDescription& other) const
+		{
+			return depthBias == other.depthBias
+				&& cullMode  == other.cullMode;
+		}
+
+		bool operator!=(const RasterizerStateDescription& other) const
+		{
+			return depthBias != other.depthBias
+				|| cullMode  != other.cullMode;
+		}
 	};
 }
