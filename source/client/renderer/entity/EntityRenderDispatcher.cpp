@@ -33,6 +33,7 @@
 #include "FireballRenderer.hpp"
 #include "GhastRenderer.hpp"
 #include "FishingHookRenderer.hpp"
+#include "MinecartRenderer.hpp"
 
 #include "client/model/models/PigModel.hpp"
 #include "client/model/models/SheepModel.hpp"
@@ -85,6 +86,7 @@ EntityRenderDispatcher::EntityRenderDispatcher()
 	_addRenderer(Entity::RENDER_ROCKET,       new RocketRenderer());
 	_addRenderer(Entity::RENDER_FIREBALL,     new FireballRenderer());
 	_addRenderer(Entity::RENDER_FISHING_HOOK, new FishingHookRenderer());
+	_addRenderer(Entity::RENDER_MINECART,	  new MinecartRenderer());
 }
 
 EntityRenderDispatcher::~EntityRenderDispatcher()

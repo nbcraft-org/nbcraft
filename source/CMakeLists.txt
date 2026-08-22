@@ -50,6 +50,7 @@ add_library(nbcraft-core STATIC
     client/renderer/entity/SheepFurRenderer.cpp
     client/renderer/entity/CreeperRenderer.cpp
     client/renderer/entity/CowRenderer.cpp
+    client/renderer/entity/MinecartRenderer.cpp
     client/renderer/entity/PigRenderer.cpp
     client/renderer/entity/ChickenRenderer.cpp
     client/renderer/entity/RocketRenderer.cpp
@@ -190,6 +191,7 @@ add_library(nbcraft-core STATIC
     client/model/models/CreeperModel.cpp
     client/model/models/CowModel.cpp
     client/model/models/ChickenModel.cpp
+    client/model/models/MinecartModel.cpp
     client/model/models/SquidModel.cpp
     client/model/models/SlimeModel.cpp
     client/model/models/GhastModel.cpp
@@ -327,6 +329,7 @@ add_library(nbcraft-core STATIC
     world/entity/Chicken.cpp
     world/entity/Cow.cpp
     world/entity/Creeper.cpp
+    world/entity/Minecart.cpp
     world/entity/Pig.cpp
     world/entity/Sheep.cpp
     world/entity/SynchedEntityData.cpp
@@ -436,6 +439,7 @@ add_library(nbcraft-core STATIC
     world/item/DyePowderItem.cpp
     world/item/CoalItem.cpp
     world/item/ToolItem.cpp
+    world/item/MinecartItem.cpp
     world/item/WeaponItem.cpp
     world/item/BowItem.cpp
     world/item/AuxTileItem.cpp
@@ -508,6 +512,9 @@ add_library(nbcraft-core STATIC
     world/tile/TallGrass.cpp
     world/tile/DeadBush.cpp
     world/tile/PumpkinTile.cpp
+    world/tile/Rail.cpp
+    world/tile/RailTile.cpp
+    world/tile/DetectorRailTile.cpp
     world/tile/SoulSandTile.cpp
     world/tile/GlowstoneTile.cpp
     world/tile/Web.cpp

@@ -11,6 +11,7 @@
 #include "ThrownEgg.hpp"
 #include "Fireball.hpp"
 #include "FishingHook.hpp"
+#include "Minecart.hpp"
 //#include "Painting.hpp"
 
 #define ENTS ENT(ITEM, ItemEntity) \
@@ -20,7 +21,8 @@
              ENT(SNOWBALL, Snowball) \
              ENT(THROWN_EGG, ThrownEgg) \
              ENT(LARGE_FIREBALL, Fireball) \
-             ENT(FISHING_HOOK, FishingHook)
+             ENT(FISHING_HOOK, FishingHook) \
+             ENT(MINECART_RIDEABLE, Minecart)
              //ENT(PAINTING, Painting)
 
 #define ENT(enumType, classType) case EntityType::enumType: return new classType(source);

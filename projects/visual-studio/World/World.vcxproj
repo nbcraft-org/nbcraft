@@ -173,6 +173,9 @@
     <ClCompile Include="$(MC_ROOT)\source\world\tile\TreeTile.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\tile\Web.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\tile\WireTile.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\Rail.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\RailTile.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\tile\DetectorRailTile.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\path\Node.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\path\Path.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\path\PathFinder.cpp" />
@@ -202,6 +205,7 @@
     <ClCompile Include="$(MC_ROOT)\source\world\entity\Spider.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\entity\Zombie.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\entity\EntityFactory.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\entity\Minecart.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\ContainerListener.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\ContainerMenu.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\Slot.cpp" />
@@ -216,6 +220,7 @@
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\CreativeMenu.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\item\DyeColor.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\item\ToolItem.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\item\MinecartItem.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\item\ArmorItem.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\item\HoeItem.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\item\SeedItem.cpp" />
@@ -393,6 +398,9 @@
     <ClInclude Include="$(MC_ROOT)\source\world\tile\TreeTile.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\tile\Web.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\tile\WireTile.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\Rail.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\RailTile.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\tile\DetectorRailTile.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\level\path\Node.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\level\path\Path.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\level\path\PathFinder.hpp" />
@@ -424,6 +432,7 @@
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Spider.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Zombie.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\entity\EntityFactory.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\entity\Minecart.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\level\TileChange.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\level\LevelEvent.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\inventory\Container.hpp" />
@@ -442,6 +451,7 @@
     <ClInclude Include="$(MC_ROOT)\source\world\item\DyeColor.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\item\Tool.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\item\ToolItem.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\item\MinecartItem.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\item\crafting\FurnaceRecipes.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\item\crafting\Recipe.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\item\crafting\Recipes.hpp" />

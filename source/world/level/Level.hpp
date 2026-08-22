@@ -100,6 +100,7 @@ public:
 	bool setTileNoUpdate(const TilePos& pos, TileID tile) override;
 	bool setTileAndData(const TilePos& pos, const FullTile& tile, TileChange updateFlags = TileChange::UPDATE_ALL) override;
 	bool setTile(const TilePos& pos, TileID tile, TileChange updateFlags = TileChange::UPDATE_ALL) override;
+	bool setData(const TilePos& pos, TileData data, TileChange updateFlags = TileChange::UPDATE_ALL);
 	void sendTileUpdated(const TilePos& pos);
 	void tileUpdated(const TilePos& pos, TileID tile);
 	void updateNeighborsAt(const TilePos& pos, TileID tile) override;
@@ -154,7 +155,7 @@ public:
 	void tickPendingTicks(bool b);
 	void tickTiles();
 	void tickEntities();
-	void addToTickNextTick(const TilePos& tilePos, TileID tileId, int delay);
+	void tickAfterDelay(const TilePos& tilePos, TileID tileId, int delay);
 	void takePicture(TripodCamera* pCamera, Entity* pOwner);
 	void addParticle(const std::string& name, const Vec3& pos, const Vec3& dir = Vec3::ZERO);
 	void playSound(Entity*, const std::string& name, float volume = 1.0f, float pitch = 1.0f);
@@ -180,6 +181,7 @@ public:
 	const Entity::IdMap* getAllEntities() const;
 	Entity::Vector getEntities(Entity* pAvoid, const AABB&) const override;
 	void getEntities(DimensionId dimensionId, const EntityType& type, const AABB& aabb, std::vector<Entity*>& output) const;
+	Entity::Vector getEntitiesOfCategory(EntityCategories::CategoriesMask category, const AABB& aabb) const;
 	BiomeSource* getBiomeSource() const override;
 	LevelStorage* getLevelStorage() const { return m_pLevelStorage; }
 	Dimension* getDimension(DimensionId type) const;

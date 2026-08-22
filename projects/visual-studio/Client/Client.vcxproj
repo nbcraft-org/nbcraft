@@ -188,6 +188,7 @@
     <ClInclude Include="$(MC_ROOT)\source\client\model\models\ChickenModel.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\model\models\CowModel.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\model\models\CreeperModel.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\model\models\MinecartModel.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\model\models\PigModel.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\model\models\SheepFurModel.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\model\models\SheepModel.hpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\ChickenRenderer.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\CowRenderer.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\CreeperRenderer.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\MinecartRenderer.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\PigRenderer.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\SheepFurRenderer.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\renderer\entity\SheepRenderer.hpp" />
@@ -402,6 +404,7 @@
     <ClCompile Include="$(MC_ROOT)\source\client\model\models\ChickenModel.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\model\models\CowModel.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\model\models\CreeperModel.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\model\models\MinecartModel.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\model\models\PigModel.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\model\models\SheepFurModel.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\model\models\SheepModel.cpp" />
@@ -410,6 +413,7 @@
     <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\ChickenRenderer.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\CowRenderer.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\CreeperRenderer.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\MinecartRenderer.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\PigRenderer.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\SheepFurRenderer.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\renderer\entity\SheepRenderer.cpp" />
