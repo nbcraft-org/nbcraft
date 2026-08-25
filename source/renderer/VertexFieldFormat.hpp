@@ -9,7 +9,7 @@ namespace mce
     struct VertexFieldFormat
     {
         VertexFieldType type;
-        size_t size;
+        uint8_t size;
         unsigned int components;
         bool normalized;
     };

@@ -84,8 +84,6 @@ void ItemRenderer::render(const Entity& entity, const Vec3& pos, float rot, floa
 
 	matrix->translate(Vec3(pos.x, pos.y + 0.1f + yOffset * 0.1f, pos.z));
 
-	_setupShaderParameters(entity, Color::NIL, a);
-
 	Tile* pTile = itemStack.getTile();
 	if (pTile && TileRenderer::canRender(pTile->getRenderShape()))
 	{

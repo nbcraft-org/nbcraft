@@ -47,18 +47,18 @@ void TripodCameraRenderer::render(const Entity& entity, const Vec3& pos, float r
 
 	// @TODO: Make this use PolygonQuad and stick it in TripodCameraModel
 
-	float texX = 16 * 3;
-	float texY = 16 * 1;
+	constexpr float texX = 16 * 3;
+	constexpr float texY = 16 * 1;
 
 	// calculate U and V coordinates
-	float texU_l = texX * C_RATIO_X, texU_r = (texX + 15.99f) * C_RATIO_X;
-	float texV_u = texY * C_RATIO_Y, texV_d = (texY + 15.99f) * C_RATIO_Y;
+	constexpr float texU_l = texX * C_RATIO_X, texU_r = (texX + 15.99f) * C_RATIO_X;
+	constexpr float texV_u = texY * C_RATIO_Y, texV_d = (texY + 15.99f) * C_RATIO_Y;
 
-	float cenX = 0.0f, cenZ = 0.0f;
-	float newY = -0.5f;
+	constexpr float cenX = 0.0f, cenZ = 0.0f;
+	constexpr float newY = -0.5f;
 
-	float x1 = cenX - 0.45f, x2 = cenX + 0.45f;
-	float z1 = cenZ - 0.45f, z2 = cenZ + 0.45f;
+	constexpr float x1 = cenX - 0.45f, x2 = cenX + 0.45f;
+	constexpr float z1 = cenZ - 0.45f, z2 = cenZ + 0.45f;
 
 	t.begin(8);
 
@@ -93,7 +93,7 @@ void TripodCameraRenderer::render(const Entity& entity, const Vec3& pos, float r
 		// restore camera flash texture
 		MatrixStack::Ref flashMatrix = MatrixStack::World.push();
 		
-		const float radToDeg = 1.0f / MTH_DEG_TO_RAD;
+		constexpr float radToDeg = 1.0f / MTH_DEG_TO_RAD;
 		
 		float yaw = m_modelPart.m_rot.y;
 		float pitch = m_modelPart.m_rot.x;
@@ -106,20 +106,20 @@ void TripodCameraRenderer::render(const Entity& entity, const Vec3& pos, float r
 		flashMatrix->rotate(pitch * radToDeg, Vec3::UNIT_X);
 		flashMatrix->rotate(90.0f, Vec3::UNIT_X);
 		
-		t.begin(8);
+		t.begin(4);
 		t.normal(Vec3::UNIT_Y);
 		
 		static constexpr float U_RATIO = 1.0f / 64.0f;
 		static constexpr float V_RATIO = 1.0f / 32.0f;
 
 		// calculate U and V coordinates
-		float texU_l = 48.0f * U_RATIO;
-		float texU_r = (48.0f + 15.99f) * U_RATIO;
-		float texV_u = 0.0f * V_RATIO;
-		float texV_d = (0.0f + 15.99f) * V_RATIO;
-		float x1 = -0.5f, x2 = 0.5f;
-		float z1 = -0.5f, z2 = 0.5f;
-		float y  = 0.0f;
+		constexpr float texU_l = 48.0f * U_RATIO;
+		constexpr float texU_r = (48.0f + 15.99f) * U_RATIO;
+		constexpr float texV_u = 0.0f * V_RATIO;
+		constexpr float texV_d = (0.0f + 15.99f) * V_RATIO;
+		constexpr float x1 = -0.5f, x2 = 0.5f;
+		constexpr float z1 = -0.5f, z2 = 0.5f;
+		constexpr float y  = 0.0f;
 		
 		t.vertexUV(x1, y, z2, texU_l, texV_u);
 		t.vertexUV(x1, y, z1, texU_r, texV_u);

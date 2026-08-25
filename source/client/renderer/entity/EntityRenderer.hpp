@@ -54,6 +54,7 @@ public:
 	void init(EntityRenderDispatcher* d);
 	void render(const AABB&, const Vec3& pos);
 	void renderFlat(const AABB&);
+	void preRender(const Entity& entity, const Vec3& pos, float rot, float a);
 	void postRender(const Entity& entity, const Vec3& pos, float rot, float a);
 
 	virtual void render(const Entity& entity, const Vec3& pos, float rot, float a) = 0;

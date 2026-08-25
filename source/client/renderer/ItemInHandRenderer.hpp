@@ -48,6 +48,8 @@ public:
 	void tick();
 	void turn(const Rot2& rot);
 
+	Color getOverlayColor(const Entity& entity, float a) const override;
+
 private:
 	int m_lastSlot;
 	ItemStack m_selectedItem;

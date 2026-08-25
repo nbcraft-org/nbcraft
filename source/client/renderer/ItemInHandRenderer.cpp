@@ -79,6 +79,8 @@ void ItemInHandRenderer::render(float a)
     currentShaderColor = Color::WHITE;
 	currentShaderDarkColor = Color(fBright, fBright, fBright);
 
+	_setupShaderParameters(player, a);
+
 	ItemStack* pItem = &m_selectedItem;
 	if (player.m_pFishing)
     {
@@ -152,8 +154,6 @@ void ItemInHandRenderer::renderItem(const Entity& entity, const ItemStack& item,
 #ifdef ENH_SHADE_HELD_TILES
     float bright = entity.getBrightness(a);
 #endif
-
-    _setupShaderParameters(entity, Color::NIL, a);
 
     Tile* pTile = item.getTile();
     if (pTile && TileRenderer::canRender(pTile->getRenderShape()))
@@ -427,4 +427,10 @@ void ItemInHandRenderer::tick()
 
 void ItemInHandRenderer::turn(const Rot2& rot)
 {
+}
+
+Color ItemInHandRenderer::getOverlayColor(const Entity& entity, float a) const
+{
+	// we don't recolor the first-person hand or item, as cool as it would be
+	return Color::NIL;
 }

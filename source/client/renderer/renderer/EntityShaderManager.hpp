@@ -46,7 +46,7 @@ protected:
 		const Vec2& uvScale);
 
 public:
-	virtual Color getOverlayColor(const Entity& entity, float a);
+	virtual Color getOverlayColor(const Entity& entity, float a) const;
 
 protected:
 	Materials m_shaderMaterials;

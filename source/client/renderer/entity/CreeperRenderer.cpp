@@ -15,7 +15,7 @@ CreeperRenderer::~CreeperRenderer()
 {
 }
 
-Color CreeperRenderer::getOverlayColor(const Entity& entity, float a)
+Color CreeperRenderer::getOverlayColor(const Entity& entity, float a) const
 {
 	const Creeper& creeper = (const Creeper&)entity;
 

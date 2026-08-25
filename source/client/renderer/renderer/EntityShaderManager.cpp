@@ -141,7 +141,7 @@ void EntityShaderManager::_setupShaderParameters(const TileSource& source,
 #endif
 }
 
-Color EntityShaderManager::getOverlayColor(const Entity& entity, float a)
+Color EntityShaderManager::getOverlayColor(const Entity& entity, float a) const
 {
     /*if (entity.isOnFire())
     {

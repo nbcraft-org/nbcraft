@@ -177,7 +177,6 @@ void HumanoidMobRenderer::renderHand(const Entity& entity, float a)
 	m_pHumanoidModel->setBrightness(brightness);
 	m_pHumanoidModel->setupAnim(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0625f);
 
-	_setupShaderParameters(entity, a);
 	m_pHumanoidModel->m_armRight.render(0.0625f);
 
 #ifdef ENH_RENDER_HAND_ARMOR

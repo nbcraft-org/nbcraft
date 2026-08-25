@@ -194,6 +194,15 @@ void EntityRenderer::renderFlat(const AABB& aabb)
 	t.draw(m_shaderMaterials.entity); // t.end() on Java
 }
 
+void EntityRenderer::preRender(const Entity& entity, const Vec3& pos, float rot, float a)
+{
+	float bright = entity.getBrightness(1.0f);
+	currentShaderColor = Color::WHITE;
+	currentShaderDarkColor = Color(bright, bright, bright);
+
+	_setupShaderParameters(entity, a);
+}
+
 void EntityRenderer::postRender(const Entity& entity, const Vec3& pos, float rot, float a)
 {
 	// Java had a rendering bug in the original, caused by the heightOffset being applied to the y position

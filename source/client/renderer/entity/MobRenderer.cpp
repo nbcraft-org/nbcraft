@@ -117,11 +117,9 @@ void MobRenderer::render(const Entity& entity, const Vec3& pos, float rot, float
 			x1 = 1.0f;
 		float x2 = mob.m_walkAnimPos - mob.m_walkAnimSpeed * (1.0f - a);
 
-		_setupShaderParameters(entity, a);
-
 		bindTexture(mob.getTexture());
 
-		m_pModel->setBrightness(entity.getBrightness(1.0f));
+		m_pModel->setBrightness(entity.getBrightness(1.0f)); // does practically nothing
 		m_pModel->prepareMobModel(mob, x2, x1, a);
 		m_pModel->render(x2, x1, fBob, aYaw - fSmth, aPitch, fScale);
 
@@ -142,7 +140,7 @@ void MobRenderer::render(const Entity& entity, const Vec3& pos, float rot, float
 			mce::MaterialPtr* pMaterial = m_pModel->m_pMaterial;
 			m_pModel->m_pMaterial = &m_pModel->m_materials.entity_color_overlay;
 
-			m_pModel->render(x2, x1, fBob, aYaw - fSmth, aPitch, fScale); // same here
+			m_pModel->render(x2, x1, fBob, aYaw - fSmth, aPitch, fScale);
 
 			for (int i = 0; i < 4; i++)
 			{

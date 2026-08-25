@@ -159,10 +159,6 @@ void EntityRenderDispatcher::render(const Entity& entity, float a)
 	Vec3 pos = Vec3(entity.m_posPrev + (entity.m_pos - entity.m_posPrev) * a);
 	float yaw = entity.m_oRot.yaw + a * (entity.m_rot.yaw - entity.m_oRot.yaw);
 
-	float bright = entity.getBrightness(1.0f);
-	currentShaderColor = Color::WHITE;
-	currentShaderDarkColor = Color(bright, bright, bright);
-
 	render(entity, pos - off, yaw, a);
 }
 
@@ -176,6 +172,7 @@ void EntityRenderDispatcher::render(const Entity& entity, const Vec3& pos, float
 		throw std::bad_cast();
 	}
 
+	pRenderer->preRender(entity, pos, rot, a);
 	pRenderer->render(entity, pos, rot, a);
 	pRenderer->postRender(entity, pos, rot, a);
 }
