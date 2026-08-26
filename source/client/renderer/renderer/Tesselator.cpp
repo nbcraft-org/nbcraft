@@ -359,6 +359,7 @@ void Tesselator::normal(float x, float y, float z)
 	int8_t bx = static_cast<int8_t>(ceilf(x * INT8_MAX));
 	int8_t by = static_cast<int8_t>(ceilf(y * INT8_MAX));
 	int8_t bz = static_cast<int8_t>(ceilf(z * INT8_MAX));
+	int8_t bw = 0;
 
 	int8_t* normalarray = reinterpret_cast<int8_t*>(&m_nextVtxNormal);
 #elif MCE_GFX_SUPPORTS_UINT8_4_N
@@ -369,6 +370,7 @@ void Tesselator::normal(float x, float y, float z)
 	uint8_t bx = static_cast<uint8_t>(ceilf(x * UINT8_MAX));
 	uint8_t by = static_cast<uint8_t>(ceilf(y * UINT8_MAX));
 	uint8_t bz = static_cast<uint8_t>(ceilf(z * UINT8_MAX));
+	uint8_t bw = 128; // a post-transformation 0
 
 	uint8_t* normalarray = reinterpret_cast<uint8_t*>(&m_nextVtxNormal);
 #endif
@@ -376,7 +378,7 @@ void Tesselator::normal(float x, float y, float z)
 	normalarray[0] = bx;
 	normalarray[1] = by;
 	normalarray[2] = bz;
-	normalarray[3] = 0;
+	normalarray[3] = bw;
 
 	if (!isFormatFixed())
 	{

@@ -83,22 +83,24 @@ void EntityRenderer::renderFlame(const Entity& entity, const Vec3& pos, float a)
 	matrix->scale(s);
 	matrix->rotate(-m_pDispatcher->m_rot.yaw, Vec3::UNIT_Y);
 	matrix->translate(Vec3(0.0f, 0.0f, -0.4f + (float)((int)h) * 0.02f));
+
+	currentShaderColor = Color::WHITE;
+	_setupShaderParameters(1.0f, Color::NIL);
 	
 	bindTexture(C_TERRAIN_NAME);
 	Tesselator& t = Tesselator::instance;
 	float r = 1.0f;
 	constexpr float xo = 0.5f;
 	float yo = 0.0f;
-	currentShaderColor = Color::WHITE;
-	t.begin(12);
+	t.begin(4 * h);
 	t.normal(Vec3::UNIT_Y); // this is required for HLSL shaders since we're using the entity shader
 
 	while (h > 0.0f)
 	{
-		t.vertexUV(r - xo, 0.0f - yo, 0.0f, u1, v1);
+		t.vertexUV(r    - xo, 0.0f - yo, 0.0f, u1, v1);
 		t.vertexUV(0.0f - xo, 0.0f - yo, 0.0f, u0, v1);
 		t.vertexUV(0.0f - xo, 1.4f - yo, 0.0f, u0, v0);
-		t.vertexUV(r - xo, 1.4f - yo, 0.0f, u1, v0);
+		t.vertexUV(r    - xo, 1.4f - yo, 0.0f, u1, v0);
 		--h;
 		--yo;
 		r *= 0.9f;
