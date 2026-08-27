@@ -24,6 +24,14 @@ protected:
 		Materials();
 	};
 
+public:
+	enum LightingPreset
+	{
+		LIGHTING_PRESET_JAVA,
+		LIGHTING_PRESET_CONSOLE,
+		LIGHTING_PRESETS_COUNT
+	};
+
 private:
 	void _init();
 public:
@@ -32,6 +40,7 @@ public:
 private:
 	void _tex1(const Vec2& uv);
 	Vec2 getLightColor(const Tile* tile, const TilePos& pos);
+	Color _getTileColor(const TilePos& pos, Tile* tile);
 
 public:
 	float getWaterHeight(const TilePos& pos, const Material*);
@@ -71,10 +80,8 @@ public:
 #endif
 	bool tesselateDustInWorld(Tile*, const TilePos& pos);
 
+	void setLightingPreset(LightingPreset preset) { m_lightingPreset = preset; }
 	bool useAmbientOcclusion() const;
-
-protected:
-	Color _getTileColor(const TilePos& pos, Tile* tile);
 
 public:
 	static bool canRender(int renderShape);
@@ -86,6 +93,7 @@ private:
 	bool m_bNoCulling;
 	bool m_bRenderingGui;
 	bool m_ambientOcclusion;
+	LightingPreset m_lightingPreset;
 	float field_C;
 	float field_10;
 	float field_14;

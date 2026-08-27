@@ -25,6 +25,49 @@
 
 #define DEFAULT_LIGHT_COLOR 0xFF00FF
 
+#ifdef FEATURE_GFX_SHADERS
+#define BAKE_LIGHTING
+#endif
+
+static const float _shouldPreshadeFace[Facing::COUNT] = {
+	/* DOWN  */ true,
+	/* UP    */ false,
+	/* NORTH */ true,
+	/* SOUTH */ true,
+	/* WEST  */ true,
+	/* EAST  */ true
+};
+
+static const Vec3* _faceNormals[Facing::COUNT] = {
+	/* DOWN  */ &Vec3::NEG_UNIT_Y,
+	/* UP    */ &Vec3::UNIT_Y,
+	/* NORTH */ &Vec3::NEG_UNIT_Z,
+	/* SOUTH */ &Vec3::UNIT_Z,
+	/* WEST  */ &Vec3::NEG_UNIT_X,
+	/* EAST  */ &Vec3::UNIT_X
+};
+
+static const float _faceShades[TileRenderer::LIGHTING_PRESETS_COUNT][Facing::COUNT] = {
+	/* JAVA */
+	{
+		/* DOWN  */ 0.5f,
+		/* UP    */ 0.0f,
+		/* NORTH */ 0.63f,
+		/* SOUTH */ 0.63f,
+		/* WEST  */ 0.43f,
+		/* EAST  */ 0.43f
+	},
+	/* CONSOLE */
+	{
+		/* DOWN  */ 0.5f,
+		/* UP    */ 0.0f,
+		/* NORTH */ 0.4f,
+		/* SOUTH */ 0.4f,
+		/* WEST  */ 0.74f,
+		/* EAST  */ 0.74f
+	}
+};
+
 TileRenderer::Materials::Materials()
 {
 	MATERIAL_PTR(common, ui_item);
@@ -37,6 +80,7 @@ void TileRenderer::_init()
 	m_bNoCulling = false;
 	m_bRenderingGui = false;
 	m_ambientOcclusion = false;
+	m_lightingPreset = LIGHTING_PRESET_JAVA;
 
 	// AO stuff
 	field_C = 0;
@@ -115,6 +159,16 @@ Vec2 TileRenderer::getLightColor(const Tile* tile, const TilePos& pos)
 
 	float brightness = tile->getBrightness(*m_pTileSource, pos);
 	return Vec2(brightness, brightness);
+}
+
+Color TileRenderer::_getTileColor(const TilePos& pos, Tile* tile)
+{
+	Color color = tile->getColor(*m_pTileSource, pos);
+
+	if (tile->isSeasonTinted())
+		color.b = 1.0f;
+
+	return color;
 }
 
 float TileRenderer::getWaterHeight(const TilePos& pos, const Material* pCheckMtl)
@@ -1683,7 +1737,7 @@ bool TileRenderer::tesselateDiodeInWorld(Tile* tile, const TilePos& pos)
 
 bool TileRenderer::tesselateLeverInWorld(Tile* tile, const TilePos& pos)
 {
-	int data = m_pTileSource->getData(pos);
+	TileData data = m_pTileSource->getData(pos);
 	int dir = data & 7;
 	bool flipped = (data & 8) > 0;
 	Tesselator& t = Tesselator::instance;
@@ -1745,29 +1799,29 @@ bool TileRenderer::tesselateLeverInWorld(Tile* tile, const TilePos& pos)
 	float u1 = ((float)xt + 15.99f) / 256.0f;
 	float v0 = (float)yt / 256.0f;
 	float v1 = ((float)yt + 15.99f) / 256.0f;
-	float xv = 0.0625f;
-	float zv = 0.0625f;
-	float yv = 0.625f;
+	constexpr float xv = 0.0625f;
+	constexpr float zv = 0.0625f;
+	constexpr float yv = 0.625f;
 	Vec3 corners[8] = {
 		Vec3(-xv, 0.0f, -zv),
-		Vec3(xv, 0.0f, -zv),
-		Vec3(xv, 0.0f,  zv),
+		Vec3( xv, 0.0f, -zv),
+		Vec3( xv, 0.0f,  zv),
 		Vec3(-xv, 0.0f,  zv),
-		Vec3(-xv, yv, -zv),
-		Vec3(xv, yv, -zv),
-		Vec3(xv, yv,  zv),
-		Vec3(-xv, yv,  zv)
+		Vec3(-xv, yv,   -zv),
+		Vec3( xv, yv,   -zv),
+		Vec3( xv, yv,    zv),
+		Vec3(-xv, yv,    zv)
 	};
 
 	for (int i = 0; i < 8; ++i) {
 		if (flipped)
 		{
-			corners[i].z -= 0.0625;
+			corners[i].z -= 0.0625f;
 			corners[i].xRot(float(M_PI) * 2.0f / 9.0f);
 		}
 		else
 		{
-			corners[i].z += 0.0625;
+			corners[i].z += 0.0625f;
 			corners[i].xRot(float(-M_PI) * 2.0f / 9.0f);
 		}
 
@@ -1780,35 +1834,29 @@ bool TileRenderer::tesselateLeverInWorld(Tile* tile, const TilePos& pos)
 		{
 			corners[i].y -= 0.375;
 			corners[i].xRot(float(M_PI / 2));
-			if (dir == 4)
+			switch (dir)
 			{
-				corners[i].yRot(0.0f);
-			}
-
-			if (dir == 3)
-			{
-				corners[i].yRot(float(M_PI));
-			}
-
-			if (dir == 2)
-			{
-				corners[i].yRot(float(M_PI / 2));
-			}
-
-			if (dir == 1)
-			{
+			case 1:
 				corners[i].yRot(float(-M_PI / 2));
+				break;
+			case 2:
+				corners[i].yRot(float(M_PI / 2));
+				break;
+			case 3:
+				corners[i].yRot(float(M_PI));
+				break;
+			case 4:
+				corners[i].yRot(0.0f);
+				break;
 			}
 
-			corners[i].x += pos.x + 0.5;
-			corners[i].y += pos.y + 0.5f;
-			corners[i].z += pos.z + 0.5;
+			corners[i] += pos + 0.5f;
 		}
 		else
 		{
-			corners[i].x += pos.x + 0.5;
+			corners[i].x += pos.x + 0.5f;
 			corners[i].y += pos.y + 0.125f;
-			corners[i].z += pos.z + 0.5;
+			corners[i].z += pos.z + 0.5f;
 		}
 	}
 
@@ -1834,47 +1882,44 @@ bool TileRenderer::tesselateLeverInWorld(Tile* tile, const TilePos& pos)
 			v1 = (float(yt + 16) - 0.01f) / 256.0f;
 		}
 
-		if (i == 0)
+		switch (i)
 		{
+		case 0:
 			c0 = corners[0];
 			c1 = corners[1];
 			c2 = corners[2];
 			c3 = corners[3];
-		}
-		else if (i == 1)
-		{
+			break;
+		case 1:
 			c0 = corners[7];
 			c1 = corners[6];
 			c2 = corners[5];
 			c3 = corners[4];
-		}
-		else if (i == 2)
-		{
+			break;
+		case 2:
 			c0 = corners[1];
 			c1 = corners[0];
 			c2 = corners[4];
 			c3 = corners[5];
-		}
-		else if (i == 3)
-		{
+			break;
+		case 3:
 			c0 = corners[2];
 			c1 = corners[1];
 			c2 = corners[5];
 			c3 = corners[6];
-		}
-		else if (i == 4)
-		{
+			break;
+		case 4:
 			c0 = corners[3];
 			c1 = corners[2];
 			c2 = corners[6];
 			c3 = corners[7];
-		}
-		else if (i == 5)
-		{
+			break;
+		case 5:
 			c0 = corners[0];
 			c1 = corners[3];
 			c2 = corners[7];
 			c3 = corners[4];
+			break;
 		}
 
 		t.vertexUV(c0.x, c0.y, c0.z, u0, v1);
@@ -2252,7 +2297,7 @@ bool TileRenderer::tesselateDustInWorld(Tile* tile, const TilePos& pos)
 
 bool TileRenderer::tesselateInWorld(Tile* tile, const TilePos& pos)
 {
-	int shape = tile->getRenderShape();
+	eRenderShape shape = tile->getRenderShape();
 	tile->updateShape(*m_pTileSource, pos);
 
 	_tex1(getLightColor(tile, pos));
@@ -2330,55 +2375,63 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 	renderTile(tile, material, Color(bright, bright, bright), preshade);
 }
 
+#define SET_FACE_COLOR(face) t.color(color * getTileFaceColor(tile, face, _faceShades[m_lightingPreset][face], preshade && _shouldPreshadeFace[face]))
+#define SET_FACE_NORMAL(face) t.normal(*_faceNormals[face])
+#define _RENDER_FACE(face, func) \
+	SET_FACE_COLOR(face); \
+	SET_FACE_NORMAL(face); \
+	func(tileType, Vec3::ZERO, tileType->getTexture(face, tile.data))
+
+#define RENDER_DOWN()  _RENDER_FACE(Facing::DOWN,  renderFaceDown)
+#define RENDER_UP()    _RENDER_FACE(Facing::UP,    renderFaceUp)
+#define RENDER_NORTH() _RENDER_FACE(Facing::NORTH, renderNorth)
+#define RENDER_SOUTH() _RENDER_FACE(Facing::SOUTH, renderSouth)
+#define RENDER_WEST()  _RENDER_FACE(Facing::WEST,  renderWest)
+#define RENDER_EAST()  _RENDER_FACE(Facing::EAST,  renderEast)
+
 void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& material, const Color& color, bool preshade)
 {
 	Tesselator& t = m_tessellator;
 	Tile* tileType = tile.getType();
-#ifndef USE_GL_NORMAL_LIGHTING
+#ifdef BAKE_LIGHTING
 	preshade = true;
 #endif
-	int shape = tileType->getRenderShape();
+	eRenderShape shape = tileType->getRenderShape();
 	tileType->updateDefaultShape();
+
 	switch (shape)
 	{
 		case SHAPE_SOLID:
 		default:
 		{
-			// N.B. If caller passes 255, they only want the face-down face.
-			// This is a hack to accomodate the start menu screen procedurally generated title logo.
-#define IF_NEEDED(x) do { if (tile.data != 255) { (x); } } while (0)
-
 			tileType->updateDefaultShape(); // otherwise pressure plates and buttons in the inventory would look all wonky
 			t.addOffset(-0.5f, -0.5f, -0.5f);
-			t.begin(24); // 4 to 24
-			t.color(color * getTileFaceColor(tile, Facing::UP));
-			t.normal(Vec3::UNIT_Y);
-			renderFaceUp(tileType, Vec3::ZERO, tileType->getTexture(Facing::UP, tile.data));
-			t.color(color * getTileFaceColor(tile, Facing::DOWN, 0.5f, preshade));
-			t.normal(Vec3::NEG_UNIT_Y);
-			IF_NEEDED(renderFaceDown(tileType, Vec3::ZERO, tileType->getTexture(Facing::DOWN, tile.data)));
-			t.color(color * getTileFaceColor(tile, Facing::NORTH, 0.8f, preshade));
-			t.normal(Vec3::NEG_UNIT_Z);
-			IF_NEEDED(renderNorth(tileType, Vec3::ZERO, tileType->getTexture(Facing::NORTH, tile.data)));
-			t.color(color * getTileFaceColor(tile, Facing::SOUTH, 0.8f, preshade));
-			t.normal(Vec3::UNIT_Z);
-			IF_NEEDED(renderSouth(tileType, Vec3::ZERO, tileType->getTexture(Facing::SOUTH, tile.data)));
-			t.color(color * getTileFaceColor(tile, Facing::WEST, 0.6f, preshade));
-			t.normal(Vec3::NEG_UNIT_X);
-			IF_NEEDED(renderWest (tileType, Vec3::ZERO, tileType->getTexture(Facing::WEST, tile.data)));
-			t.normal(Vec3::UNIT_X);
-			t.color(color * getTileFaceColor(tile, Facing::EAST, 0.6f, preshade));
-			IF_NEEDED(renderEast (tileType, Vec3::ZERO, tileType->getTexture(Facing::EAST, tile.data)));
+			t.begin(4 * 6); // 4 to 24
+
+			RENDER_UP();
+
+			// N.B. If caller passes 255, they only want the face-down face.
+			// This is a hack to accomodate the start menu screen procedurally generated title logo.
+			if (tile.data != 255)
+			{
+				RENDER_DOWN();
+				RENDER_NORTH();
+				RENDER_SOUTH();
+				RENDER_WEST();
+				RENDER_EAST();
+			}
+
 			t.draw(material);
 			t.addOffset(0.5f, 0.5f, 0.5f);
 			break;
 		}
 		case SHAPE_CROSS:
 		{
-			// unused as cross items render like regular items in the hand
+			// normally unused as cross items render like regular items in the hand
+			// however, this is used for rendering the TripodCamera's stand
 			t.begin(16);
-			t.color(color * getTileFaceColor(tile, Facing::UP));
-			t.normal(Vec3::UNIT_Y);
+			SET_FACE_COLOR(Facing::UP);
+			SET_FACE_NORMAL(Facing::UP);
 			tesselateCrossTexture(tile, Vec3(-0.5f, -0.5f, -0.5f), true);
 			t.draw(material);
 			break;
@@ -2387,115 +2440,80 @@ void TileRenderer::renderTile(const FullTile& tile, const mce::MaterialPtr& mate
 		{
 			// Fixed version from 0.1.1j+
 			t.addOffset(-0.5f, -0.5f, -0.5f);
+
+			t.begin((4 * 6) * 2);
 			for (int i = 0; i < 2; i++)
 			{
-				if (!i)
+				if (i == 0)
 					tileType->setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.5f);
 				else
 					tileType->setShape(0.0f, 0.0f, 0.5f, 1.0f, 0.5f, 1.0f);
 
-
-				t.begin(24);
-				t.color(color * getTileFaceColor(tile, Facing::DOWN, 0.5f, preshade));
-				t.normal(Vec3::NEG_UNIT_Y);
-				renderFaceDown  (tileType, Vec3::ZERO, tileType->getTexture(Facing::DOWN, tile.data));
-				t.color(color * getTileFaceColor(tile, Facing::UP));
-				t.normal(Vec3::UNIT_Y);
-				renderFaceUp(tileType, Vec3::ZERO, tileType->getTexture(Facing::UP, tile.data));
-				t.color(color * getTileFaceColor(tile, Facing::NORTH, 0.6f, preshade));
-				t.normal(Vec3::NEG_UNIT_Z);
-				renderNorth   (tileType, Vec3::ZERO, tileType->getTexture(Facing::NORTH, tile.data));
-				t.color(color * getTileFaceColor(tile, Facing::SOUTH, 0.6f, preshade));
-				t.normal(Vec3::UNIT_Z);
-				renderSouth   (tileType, Vec3::ZERO, tileType->getTexture(Facing::SOUTH, tile.data));
-				t.color(color * getTileFaceColor(tile, Facing::WEST, 0.8f, preshade));
-				t.normal(Vec3::NEG_UNIT_X);
-				renderWest    (tileType, Vec3::ZERO, tileType->getTexture(Facing::WEST, tile.data));
-				t.color(color * getTileFaceColor(tile, Facing::EAST, 0.8f, preshade));
-				t.normal(Vec3::UNIT_X);
-				renderEast    (tileType, Vec3::ZERO, tileType->getTexture(Facing::EAST, tile.data));
-				t.draw(material);
+				RENDER_DOWN();
+				RENDER_UP();
+				RENDER_NORTH();
+				RENDER_SOUTH();
+				RENDER_WEST();
+				RENDER_EAST();
 			}
+			t.draw(material);
+
 			t.addOffset(0.5f, 0.5f, 0.5f);
 			break;
 		}
 		case SHAPE_FENCE:
 		{
 			t.addOffset(-0.5f, -0.5f, -0.5f);
-			float v5 = 1.0f / 16.0f;
-			float v6 = v5 * 2.0f;
+			constexpr float v5 = 1.0f / 16.0f;
+			constexpr float v6 = v5 * 2.0f;
+
+			t.begin((4 * 6) * 4);
 			for (int i = 0; i < 4; i++)
 			{
 				switch (i)
 				{
-				case 0: tileType->setShape(0.5f - v6, 0.0f, 0.0f, 0.5f + v6, 1.0f, v6 * 2.0f); break;
-				case 1: tileType->setShape(0.5f - v6, 0.0f, 1.0f - (v6 * 2.0f), 0.5f + v6, 1.0f, 1.0f); break;
-				case 2: tileType->setShape(0.5f - v5, 1.0f - v5 * 3.0f, -v5 * 2.0f, 0.5f + v5, 1.0f - v5, 1.0f + v5 * 2.0f); break;
-				case 3: tileType->setShape(0.5f - v5, 0.5f - v5 * 3.0f, -v5 * 2.0f, 0.5f + v5, 0.5f - v5, 1.0f + v5 * 2.0f); break;
+				case 0: tileType->setShape(0.5f - v6, 0.0f,             0.0f,               0.5f + v6, 1.0f,      v6 * 2.0f       ); break;
+				case 1: tileType->setShape(0.5f - v6, 0.0f,             1.0f - (v6 * 2.0f), 0.5f + v6, 1.0f,      1.0f            ); break;
+				case 2: tileType->setShape(0.5f - v5, 1.0f - v5 * 3.0f, -v5 * 2.0f,         0.5f + v5, 1.0f - v5, 1.0f + v5 * 2.0f); break;
+				case 3: tileType->setShape(0.5f - v5, 0.5f - v5 * 3.0f, -v5 * 2.0f,         0.5f + v5, 0.5f - v5, 1.0f + v5 * 2.0f); break;
 				}
 
-				t.begin(24);
-				t.color(color * getTileFaceColor(tile, Facing::UP));
-				t.normal(Vec3::UNIT_Y);
-				renderFaceUp(tileType, Vec3::ZERO, tileType->getTexture(Facing::UP, tile.data));
-				t.color(color * getTileFaceColor(tile, Facing::DOWN, 0.5f, preshade));
-				t.normal(Vec3::NEG_UNIT_Y);
-				renderFaceDown(tileType, Vec3::ZERO, tileType->getTexture(Facing::DOWN, tile.data));
-				t.color(color * getTileFaceColor(tile, Facing::NORTH, 0.8f, preshade));
-				t.normal(Vec3::NEG_UNIT_Z);
-				renderNorth(tileType, Vec3::ZERO, tileType->getTexture(Facing::NORTH, tile.data));
-				t.color(color * getTileFaceColor(tile, Facing::SOUTH, 0.8f, preshade));
-				t.normal(Vec3::UNIT_Z);
-				renderSouth(tileType, Vec3::ZERO, tileType->getTexture(Facing::SOUTH, tile.data));
-				t.color(color* getTileFaceColor(tile, Facing::WEST, 0.6f, preshade));
-				t.normal(Vec3::NEG_UNIT_X);
-				renderWest(tileType, Vec3::ZERO, tileType->getTexture(Facing::WEST, tile.data));
-				t.color(color* getTileFaceColor(tile, Facing::WEST, 0.6f, preshade));
-				t.normal(Vec3::UNIT_X);
-				renderEast(tileType, Vec3::ZERO, tileType->getTexture(Facing::EAST, tile.data));
-				t.draw(material);
+				RENDER_UP();
+				RENDER_DOWN();
+				RENDER_NORTH();
+				RENDER_SOUTH();
+				RENDER_WEST();
+				RENDER_EAST();
 			}
+			t.draw(material);
+
 			t.addOffset(0.5f, 0.5f, 0.5f);
 			tileType->setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 			break;
 		}
 		case SHAPE_FENCE_GATE:
 			t.addOffset(-0.5f, -0.5f, -0.5f);
-			for (int o = 0; o < 3; o++) {
+
+			t.begin((4 * 6) * 3);
+			for (int o = 0; o < 3; o++)
+			{
 				constexpr float r = 0.0625f;
-				if (o == 0) {
-					tileType->setShape(0.5f - r, 0.3f, 0.0f, 0.5f + r, 1.0f, r * 2.0f);
+				switch (o)
+				{
+				case 0: tileType->setShape(0.5f - r, 0.3f, 0.0f,            0.5f + r, 1.0f,     r * 2.0f); break;
+				case 1: tileType->setShape(0.5f - r, 0.3f, 1.0f - r * 2.0f, 0.5f + r, 1.0f,     1.0f    ); break;
+				case 2: tileType->setShape(0.5f - r, 0.5f, 0.0f,            0.5f + r, 1.0f - r, 1.0f    ); break;
 				}
 
-				if (o == 1) {
-					tileType->setShape(0.5f - r, 0.3f, 1.0f - r * 2.0f, 0.5f + r, 1.0f, 1.0f);
-				}
-
-				if (o == 2) {
-					tileType->setShape(0.5f - r, 0.5f, 0.0f, 0.5f + r, 1.0f - r, 1.0f);
-				}
-
-				t.begin(24);
-				t.color(color* getTileFaceColor(tile, Facing::UP, 1.0f, preshade));
-				t.normal(Vec3::UNIT_X);
-				renderFaceUp(tileType, Vec3::ZERO, tileType->getTexture(Facing::UP, tile.data));
-				t.color(color* getTileFaceColor(tile, Facing::DOWN, 1.0f, preshade));
-				t.normal(Vec3::NEG_UNIT_Y);
-				renderFaceDown(tileType, Vec3::ZERO, tileType->getTexture(Facing::DOWN, tile.data));
-				t.color(color* getTileFaceColor(tile, Facing::NORTH, 0.8f, preshade));
-				t.normal(Vec3::NEG_UNIT_Z);
-				renderNorth(tileType, Vec3::ZERO, tileType->getTexture(Facing::NORTH, tile.data));
-				t.color(color* getTileFaceColor(tile, Facing::SOUTH, 0.8f, preshade));
-				t.normal(Vec3::UNIT_Z);
-				renderSouth(tileType, Vec3::ZERO, tileType->getTexture(Facing::SOUTH, tile.data));
-				t.color(color* getTileFaceColor(tile, Facing::WEST, 0.6f, preshade));
-				t.normal(Vec3::NEG_UNIT_X);
-				renderWest(tileType, Vec3::ZERO, tileType->getTexture(Facing::WEST, tile.data));
-				t.color(color* getTileFaceColor(tile, Facing::EAST, 0.6f, preshade));
-				t.normal(Vec3::UNIT_X);
-				renderEast(tileType, Vec3::ZERO, tileType->getTexture(Facing::EAST, tile.data));
-				t.draw(material);
+				RENDER_UP();
+				RENDER_DOWN();
+				RENDER_NORTH();
+				RENDER_SOUTH();
+				RENDER_WEST();
+				RENDER_EAST();
 			}
+			t.draw(material);
+
 			t.addOffset(0.5f, 0.5f, 0.5f);
 			tileType->setShape(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 			break;
@@ -2736,16 +2754,6 @@ bool TileRenderer::tesselateBlockInWorldWithAmbienceOcclusionV2(Tile* tile, cons
 	}
 
 	return true;
-}
-
-Color TileRenderer::_getTileColor(const TilePos& pos, Tile* tile)
-{
-	Color color = tile->getColor(*m_pTileSource, pos);
-
-	if (tile->isSeasonTinted())
-		color.b = 1.0f;
-
-	return color;
 }
 
 bool TileRenderer::useAmbientOcclusion() const

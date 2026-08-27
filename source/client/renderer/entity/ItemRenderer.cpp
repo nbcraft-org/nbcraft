@@ -279,6 +279,7 @@ void ItemRenderer::renderGuiItem(Minecraft& mc, const ItemStack& item, int x, in
 		if (mc.getUiTheme() == UI_CONSOLE)
 		{
 			Lighting::turnOnConsoleUiItems();
+			m_pTileRenderer->setLightingPreset(TileRenderer::LIGHTING_PRESET_CONSOLE); // for baked lighting
 			matrix->translate(Vec3(x, y, 0));
 			matrix->scale(16);
 			matrix->translate(Vec3(0.5f, 0.5f, 0.0f));
@@ -299,6 +300,7 @@ void ItemRenderer::renderGuiItem(Minecraft& mc, const ItemStack& item, int x, in
 		m_pTileRenderer->renderTile(FullTile(pTile, item.getAuxValue()), m_itemMaterials.ui_item, color);
 
 		Lighting::turnOff();
+		m_pTileRenderer->setLightingPreset(TileRenderer::LIGHTING_PRESET_JAVA);
 		#undef PARM_HACK
 #endif
 	}

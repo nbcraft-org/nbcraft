@@ -25,7 +25,6 @@
 	#include <EGL/egl.h>
 #endif
 
-// Disable this on OpenGL ES 2+
 #define USE_GL_NORMAL_LIGHTING
 
 //#define MC_GL_DEBUG_OUTPUT
