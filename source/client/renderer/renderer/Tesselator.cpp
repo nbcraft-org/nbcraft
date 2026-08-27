@@ -352,16 +352,11 @@ void Tesselator::resetScale()
 
 void Tesselator::normal(float x, float y, float z)
 {
-	/*if (!m_bTesselating)
-		LOG_W("But...");*/
-
 #if MCE_GFX_SUPPORTS_SINT8_4_N
 	int8_t bx = static_cast<int8_t>(ceilf(x * INT8_MAX));
 	int8_t by = static_cast<int8_t>(ceilf(y * INT8_MAX));
 	int8_t bz = static_cast<int8_t>(ceilf(z * INT8_MAX));
 	int8_t bw = 0;
-
-	int8_t* normalarray = reinterpret_cast<int8_t*>(&m_nextVtxNormal);
 #elif MCE_GFX_SUPPORTS_UINT8_4_N
 	// transformation is undone by the entity shader in TransformRGBA8_SNORM
 	x = (x + 1.0f) / 2.0f;
@@ -371,14 +366,14 @@ void Tesselator::normal(float x, float y, float z)
 	uint8_t by = static_cast<uint8_t>(ceilf(y * UINT8_MAX));
 	uint8_t bz = static_cast<uint8_t>(ceilf(z * UINT8_MAX));
 	uint8_t bw = 128; // a post-transformation 0
-
-	uint8_t* normalarray = reinterpret_cast<uint8_t*>(&m_nextVtxNormal);
 #endif
 
-	normalarray[0] = bx;
-	normalarray[1] = by;
-	normalarray[2] = bz;
-	normalarray[3] = bw;
+	// The Xbox 360's D3D9 impl expects values as little-endian
+#if MC_ENDIANNESS_BIG && !defined(_XBOX)
+	m_nextVtxNormal = bw | (bz << 8) | (by << 16) | (bx << 24);
+#else // MC_ENDIANNESS_LITTLE
+	m_nextVtxNormal = (bw << 24) | (bz << 16) | (by << 8) | bx;
+#endif
 
 	if (!isFormatFixed())
 	{
