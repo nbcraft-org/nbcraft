@@ -20,7 +20,7 @@ void RasterizerStateD3D9::createRasterizerStateDescription(RenderContext& contex
 {
     RasterizerStateBase::createRasterizerStateDescription(context, desc);
 
-    m_scaledDepthBias = desc.depthBias / 16777215.0f;
+    m_scaledDepthBias = desc.depthBias / 16777215.0f; // for 24-bit depth buffer
 
     if ( !context.m_currentState.m_bBoundRasterizerState )
     {
