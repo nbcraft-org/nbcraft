@@ -39,7 +39,8 @@ void RasterizerStateD3D11::createRasterizerStateDescription(RenderContext& conte
         rasterizerDesc.DepthBiasClamp = 0.0f;
 
         rasterizerDesc.CullMode = cullModeMap[desc.cullMode];
-        rasterizerDesc.DepthBias = 1000 * (int)desc.depthBias; //ceilf(desc.depthBias * 1000.0f);
+        // Mojang *tried* to do this. my theory is that D3D automatically scales this and lets us keep our float precision
+        rasterizerDesc.DepthBias = ceilf(desc.depthBias * 1000.0f);
 
         rasterizerDesc.FrontCounterClockwise = true; // Mojang had this set to false in WP 0.12.1
         rasterizerDesc.MultisampleEnable = false;

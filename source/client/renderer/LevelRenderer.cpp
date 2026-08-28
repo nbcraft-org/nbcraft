@@ -1277,8 +1277,8 @@ void LevelRenderer::renderCracks(const Entity& camera, const HitResult& hr, int 
 		if (m_destroyProgress > 0.0f)
 		{
 			m_pTextures->loadAndBindTexture(C_TERRAIN_NAME);
-			currentShaderColor = Color::WHITE;
-			currentShaderDarkColor = Color(1.0f, 1.0f, 1.0f, 0.5f);
+			currentShaderColor = Color(1.0f, 1.0f, 1.0f, 0.5f);
+			currentShaderDarkColor = Color::WHITE;
 
 			MatrixStack::Ref matrix = MatrixStack::World.push();
 

@@ -91,24 +91,60 @@ bool DepthStencilStateD3D9::bindDepthStencilState(RenderContext& context, bool f
         currentDesc.stencilRef = m_description.stencilRef;
     }
 
-    // Front Face Stencil Operations
-    if (force || currentDesc.frontFace != m_description.frontFace)
+    // Front Face Stencil - Comparison Function
+    if (force || currentDesc.frontFace.stencilFunc != m_description.frontFace.stencilFunc)
     {
-        d3dDevice->SetRenderState(D3DRS_STENCILFUNC,      getComparisonFunc(m_description.frontFace.stencilFunc));
-        d3dDevice->SetRenderState(D3DRS_STENCILPASS,      getStencilOpAction(m_description.frontFace.stencilPassOp));
-        d3dDevice->SetRenderState(D3DRS_STENCILFAIL,      getStencilOpAction(m_description.frontFace.stencilFailOp));
-        d3dDevice->SetRenderState(D3DRS_STENCILZFAIL,     getStencilOpAction(m_description.frontFace.stencilDepthFailOp));
-        currentDesc.frontFace = m_description.frontFace;
+        d3dDevice->SetRenderState(D3DRS_STENCILFUNC, getComparisonFunc(m_description.frontFace.stencilFunc));
+        currentDesc.frontFace.stencilFunc = m_description.frontFace.stencilFunc;
     }
 
-    // Back Face Stencil Operations
-    if (force || currentDesc.backFace != m_description.backFace)
+    // Front Face Stencil - Pass Operation
+    if (force || currentDesc.frontFace.stencilPassOp != m_description.frontFace.stencilPassOp)
     {
-        d3dDevice->SetRenderState(D3DRS_CCW_STENCILFUNC,  getComparisonFunc(m_description.backFace.stencilFunc));
-        d3dDevice->SetRenderState(D3DRS_CCW_STENCILPASS,  getStencilOpAction(m_description.backFace.stencilPassOp));
-        d3dDevice->SetRenderState(D3DRS_CCW_STENCILFAIL,  getStencilOpAction(m_description.backFace.stencilFailOp));
+        d3dDevice->SetRenderState(D3DRS_STENCILPASS, getStencilOpAction(m_description.frontFace.stencilPassOp));
+        currentDesc.frontFace.stencilPassOp = m_description.frontFace.stencilPassOp;
+    }
+
+    // Front Face Stencil - Fail Operation
+    if (force || currentDesc.frontFace.stencilFailOp != m_description.frontFace.stencilFailOp)
+    {
+        d3dDevice->SetRenderState(D3DRS_STENCILFAIL, getStencilOpAction(m_description.frontFace.stencilFailOp));
+        currentDesc.frontFace.stencilFailOp = m_description.frontFace.stencilFailOp;
+    }
+
+    // Front Face Stencil - Depth Fail Operation
+    if (force || currentDesc.frontFace.stencilDepthFailOp != m_description.frontFace.stencilDepthFailOp)
+    {
+        d3dDevice->SetRenderState(D3DRS_STENCILZFAIL, getStencilOpAction(m_description.frontFace.stencilDepthFailOp));
+        currentDesc.frontFace.stencilDepthFailOp = m_description.frontFace.stencilDepthFailOp;
+    }
+
+    // Back Face Stencil - Comparison Function
+    if (force || currentDesc.backFace.stencilFunc != m_description.backFace.stencilFunc)
+    {
+        d3dDevice->SetRenderState(D3DRS_CCW_STENCILFUNC, getComparisonFunc(m_description.backFace.stencilFunc));
+        currentDesc.backFace.stencilFunc = m_description.backFace.stencilFunc;
+    }
+
+    // Back Face Stencil - Pass Operation
+    if (force || currentDesc.backFace.stencilPassOp != m_description.backFace.stencilPassOp)
+    {
+        d3dDevice->SetRenderState(D3DRS_CCW_STENCILPASS, getStencilOpAction(m_description.backFace.stencilPassOp));
+        currentDesc.backFace.stencilPassOp = m_description.backFace.stencilPassOp;
+    }
+
+    // Back Face Stencil - Fail Operation
+    if (force || currentDesc.backFace.stencilFailOp != m_description.backFace.stencilFailOp)
+    {
+        d3dDevice->SetRenderState(D3DRS_CCW_STENCILFAIL, getStencilOpAction(m_description.backFace.stencilFailOp));
+        currentDesc.backFace.stencilFailOp = m_description.backFace.stencilFailOp;
+    }
+
+    // Back Face Stencil - Depth Fail Operation
+    if (force || currentDesc.backFace.stencilDepthFailOp != m_description.backFace.stencilDepthFailOp)
+    {
         d3dDevice->SetRenderState(D3DRS_CCW_STENCILZFAIL, getStencilOpAction(m_description.backFace.stencilDepthFailOp));
-        currentDesc.backFace = m_description.backFace;
+        currentDesc.backFace.stencilDepthFailOp = m_description.backFace.stencilDepthFailOp;
     }
     
     return DepthStencilStateBase::bindDepthStencilState(context);

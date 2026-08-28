@@ -3,6 +3,8 @@
 
 using namespace mce;
 
+#define DEPTHBIAS_SCALE 5.0f
+
 RasterizerStateOGL::RasterizerStateOGL()
     : RasterizerStateBase()
 {
@@ -53,7 +55,7 @@ bool RasterizerStateOGL::bindRasterizerState(RenderContext& context, bool forceB
         {
             glEnable(GL_POLYGON_OFFSET_FILL);
         }
-        glPolygonOffset(m_depthBias * 5.0f, m_depthBias * 5.0f);
+        glPolygonOffset(m_depthBias, m_depthBias);
         ctxDesc.depthBias = m_description.depthBias;
     }
 
@@ -80,7 +82,7 @@ void RasterizerStateOGL::createRasterizerStateDescription(RenderContext& context
             throw std::bad_cast();
     }
 
-    m_depthBias = desc.depthBias;
+    m_depthBias = desc.depthBias * DEPTHBIAS_SCALE;
     if ( !context.m_currentState.m_bBoundRasterizerState )
     {
         bindRasterizerState(context, true);

@@ -13,11 +13,14 @@ const D3DCULL cullModeMap[] = {
 RasterizerStateD3D9::RasterizerStateD3D9()
     : RasterizerStateBase()
 {
+    m_scaledDepthBias = 0.0f;
 }
 
 void RasterizerStateD3D9::createRasterizerStateDescription(RenderContext& context, const RasterizerStateDescription& desc)
 {
     RasterizerStateBase::createRasterizerStateDescription(context, desc);
+
+    m_scaledDepthBias = desc.depthBias / 16777215.0f;
 
     if ( !context.m_currentState.m_bBoundRasterizerState )
     {
@@ -49,9 +52,8 @@ bool RasterizerStateD3D9::bindRasterizerState(RenderContext& context, bool force
     // Depth Bias
     if (forceBind || ctxDesc.depthBias != m_description.depthBias)
     {
-        float correctedDepthBias = m_description.depthBias;
-        d3dDevice->SetRenderState(D3DRS_DEPTHBIAS, *((DWORD*)&correctedDepthBias));
-        d3dDevice->SetRenderState(D3DRS_SLOPESCALEDEPTHBIAS, *((DWORD*)&correctedDepthBias));
+        d3dDevice->SetRenderState(D3DRS_DEPTHBIAS, *((DWORD*)&m_scaledDepthBias));
+        d3dDevice->SetRenderState(D3DRS_SLOPESCALEDEPTHBIAS, *((DWORD*)&m_description.depthBias));
 
         ctxDesc.depthBias = m_description.depthBias;
     }

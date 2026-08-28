@@ -8,6 +8,9 @@ namespace mce
 {
     class RasterizerStateD3D9 : public RasterizerStateBase
     {
+    private:
+        float m_scaledDepthBias;
+
     public:
         RasterizerStateD3D9();
 

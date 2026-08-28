@@ -102,9 +102,10 @@
 	},
 
 	"heavy_tile:entity_static": {
-		"states":["PolygonOffset"],
+		// Mojang put these here, but they just cause falling tiles to sometimes be visible thru terrain
+		//"states":["PolygonOffset"],
 
-		"polygonOffsetLevel":-6
+		//"polygonOffsetLevel":-6
 	},
 
 	"charged_creeper:entity_static": {

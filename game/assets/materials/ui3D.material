@@ -8,6 +8,7 @@
 	
     "defines": [ "ALPHA_TEST" ],
 
+    // was 5, but wasn't visible. -0.6 is derrived from Java's -3.0, since we multiply by 5 before sending it to OpenGL
     "polygonOffsetLevel": -0.6,
 
     "depthFunc": "LessEqual",
@@ -54,8 +55,6 @@
 
     "blendSrc": "DestColor",
     "blendDst": "SourceColor",
-
-    "depthFunc": "LessEqual",
 
     "fragmentShader": "shaders/texture.fragment"
   },
