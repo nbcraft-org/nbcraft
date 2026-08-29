@@ -16,8 +16,64 @@ using namespace mce;
 TextureD3D9::TextureD3D9()
     : TextureBase()
 {
+    // m_samplerState is initialized on createTexture
     m_writeBuffer = nullptr;
     m_writePitch = 0;
+}
+
+void TextureD3D9::_createSamplerState()
+{
+	SamplerState& state = m_samplerState;
+
+    // Address Modes (Wrap/Clamp)
+    state.addr = m_description.bWrap ? D3DTADDRESS_WRAP : D3DTADDRESS_CLAMP;
+
+    // Detailed Filtering Mapping
+    switch (m_description.filteringLevel)
+    {
+    case TEXTURE_FILTERING_POINT:
+        state.minFilter = D3DTEXF_POINT;
+        state.magFilter = D3DTEXF_POINT;
+        state.mipFilter = D3DTEXF_POINT;
+        break;
+
+        // Bilinear = No Mips
+    case TEXTURE_FILTERING_BILINEAR:
+    default:
+        state.minFilter = D3DTEXF_LINEAR;
+        state.magFilter = D3DTEXF_LINEAR;
+        state.mipFilter = D3DTEXF_NONE;
+        break;
+
+        // Mipmap Bilinear = Linear within level, Point between levels
+    case TEXTURE_FILTERING_MIPMAP_BILINEAR:
+        state.minFilter = D3DTEXF_LINEAR;
+        state.magFilter = D3DTEXF_LINEAR;
+        state.mipFilter = D3DTEXF_POINT;
+        break;
+
+        // Trilinear = Linear within level AND between levels
+    case TEXTURE_FILTERING_TRILINEAR:
+        state.minFilter = D3DTEXF_LINEAR;
+        state.magFilter = D3DTEXF_LINEAR;
+        state.mipFilter = D3DTEXF_LINEAR;
+        break;
+    }
+
+    // Hardware check: If the texture has no mips, we must disable mip filtering
+    if (m_description.mipCount <= 1)
+    {
+        state.mipFilter = D3DTEXF_NONE;
+    }
+
+    // The Xbox 360 can actually work just like OpenGL here, the SamplerState is bound to the Texture object
+#ifdef _XBOX
+    // Address Modes (Wrap/Clamp) - AddressW is default
+    XGSetSamplerAddressStates(**m_texture, state.addr, state.addr, D3DTADDRESS_WRAP);
+
+    // Detailed Filtering Mapping - MaxAnisotropy is default
+    XGSetSamplerFilterStates(**m_texture, state.minFilter, state.magFilter, state.mipFilter, 1);
+#endif
 }
 
 void TextureD3D9::deleteTexture()
@@ -31,60 +87,24 @@ void TextureD3D9::bindTexture(RenderContext& context, unsigned int textureUnit, 
 {
     D3DDevice d3dDevice = context.getD3DDevice();
 
+#ifdef _XBOX
+    // Set the Texture w/ SamplerState
+	// @NOTE: "SetTextureFetchConstant does not set the resource's fence, so LockRect, IsBusy, and Release will succeed even if the resource is in use by the GPU.
+	// It is the title's responsibility to ensure that the resource is not in use by the GPU when modifying the texture's contents or releasing the texture."
+    d3dDevice->SetTextureFetchConstant(textureUnit, **m_texture);
+#else
     // Set the Texture
     d3dDevice->SetTexture(textureUnit, **m_texture);
 
     // Address Modes (Wrap/Clamp)
-    D3DTEXTUREADDRESS addr = m_description.bWrap ? D3DTADDRESS_WRAP : D3DTADDRESS_CLAMP;
-    d3dDevice->SetSamplerState(textureUnit, D3DSAMP_ADDRESSU, addr);
-    d3dDevice->SetSamplerState(textureUnit, D3DSAMP_ADDRESSV, addr);
+    d3dDevice->SetSamplerState(textureUnit, D3DSAMP_ADDRESSU, m_samplerState.addr);
+    d3dDevice->SetSamplerState(textureUnit, D3DSAMP_ADDRESSV, m_samplerState.addr);
 
     // Detailed Filtering Mapping
-    D3DTEXTUREFILTERTYPE minFilter = D3DTEXF_LINEAR;
-    D3DTEXTUREFILTERTYPE magFilter = D3DTEXF_LINEAR;
-    D3DTEXTUREFILTERTYPE mipFilter = D3DTEXF_NONE;
-
-    switch (m_description.filteringLevel)
-    {
-    case TEXTURE_FILTERING_POINT:
-        minFilter = D3DTEXF_POINT;
-        magFilter = D3DTEXF_POINT;
-        mipFilter = D3DTEXF_POINT;
-        break;
-
-    case TEXTURE_FILTERING_BILINEAR:
-        minFilter = D3DTEXF_LINEAR;
-        magFilter = D3DTEXF_LINEAR;
-        mipFilter = D3DTEXF_NONE; // Bilinear = No Mips
-        break;
-
-    case TEXTURE_FILTERING_MIPMAP_BILINEAR:
-        minFilter = D3DTEXF_LINEAR;
-        magFilter = D3DTEXF_LINEAR;
-        mipFilter = D3DTEXF_POINT; // Mipmap Bilinear = Linear within level, Point between levels
-        break;
-
-    case TEXTURE_FILTERING_TRILINEAR:
-    case TEXTURE_FILTERING_TEXEL_AA:
-    case TEXTURE_FILTERING_PCF:
-        minFilter = D3DTEXF_LINEAR;
-        magFilter = D3DTEXF_LINEAR;
-        mipFilter = D3DTEXF_LINEAR; // Trilinear = Linear within level AND between levels
-        break;
-    }
-
-    // Hardware check: If the texture has no mips, we must disable mip filtering
-    if (m_description.mipCount <= 1)
-    {
-        mipFilter = D3DTEXF_NONE;
-    }
-
-    d3dDevice->SetSamplerState(textureUnit, D3DSAMP_MINFILTER, minFilter);
-    d3dDevice->SetSamplerState(textureUnit, D3DSAMP_MAGFILTER, magFilter);
-    d3dDevice->SetSamplerState(textureUnit, D3DSAMP_MIPFILTER, mipFilter);
-
-    // Support for Anisotropy (if the engine eventually adds it to the enum)
-    // d3dDevice->SetSamplerState(textureUnit, D3DSAMP_MAXANISOTROPY, 1);
+    d3dDevice->SetSamplerState(textureUnit, D3DSAMP_MINFILTER, m_samplerState.minFilter);
+    d3dDevice->SetSamplerState(textureUnit, D3DSAMP_MAGFILTER, m_samplerState.magFilter);
+    d3dDevice->SetSamplerState(textureUnit, D3DSAMP_MIPFILTER, m_samplerState.mipFilter);
+#endif
 }
 
 void TextureD3D9::convertToMipmapedTexture(RenderContext& context, unsigned int mipmaps)
@@ -233,7 +253,7 @@ void TextureD3D9::createTexture(RenderContext& context, const TextureDescription
         description.width,
         description.height,
         description.mipCount,
-        D3DUSAGE_DYNAMIC, // 360 doesn't respect this, and we're never gonna be running D3D9 on Windows
+        D3DUSAGE_DYNAMIC, // @WARN: BAD WINDOWS PERFORMANCE. 360 doesn't even respect this
         d3dFormat,
         D3DPOOL_DEFAULT,
         *m_texture,
@@ -241,12 +261,15 @@ void TextureD3D9::createTexture(RenderContext& context, const TextureDescription
     );
     
     TextureBase::createTexture(context, description);
+
+	_createSamplerState();
 }
 
 void TextureD3D9::move(TextureD3D9& other)
 {
     TextureBase::move(other);
     std::swap(this->m_texture, other.m_texture);
+    std::swap(this->m_samplerState, other.m_samplerState);
     std::swap(this->m_writeBuffer, other.m_writeBuffer);
     std::swap(this->m_writePitch, other.m_writePitch);
 }
