@@ -71,6 +71,15 @@ public:
 
     void fromHSB(float h, float s, float b);
 
+    /*Color& blend(const Color& other)
+    {
+        r = Mth::Lerp(r, other.r, other.a);
+        g = Mth::Lerp(g, other.g, other.a);
+        b = Mth::Lerp(b, other.b, other.a);
+
+        return *this;
+    }*/
+
     Color& mulRGB(float mul)
     {
         r *= mul;

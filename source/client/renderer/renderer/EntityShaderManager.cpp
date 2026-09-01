@@ -155,7 +155,7 @@ Color EntityShaderManager::getOverlayColor(const Entity& entity, float a) const
         const Mob& mob = (const Mob&)entity;
         if (mob.m_hurtTime > 0 || mob.m_deathTime > 0)
         {
-            // @PARITY: fucked up PE values (20% too red)
+            // @PARITY: fucked up PE values (20% too red), see PARITY comment in vertex shaders
             //return Color(1.0f, 0.0f, 0.0f, 0.6f);
 
             // proper Java values from MobRenderer::render()

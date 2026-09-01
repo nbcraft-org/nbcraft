@@ -75,7 +75,8 @@ VS_MAIN_BEGIN
 #endif
 
 #ifdef USE_OVERLAY
-    L += OVERLAY_COLOR.a * 0.35;
+    // @PARITY: not sure why PE was doing this, but it made the overlay colors inaccurate to Java
+    //L += OVERLAY_COLOR.a * 0.35;
     PSInput.overlayColor = OVERLAY_COLOR;
 #endif
 

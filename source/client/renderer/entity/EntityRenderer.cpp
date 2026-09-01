@@ -199,8 +199,8 @@ void EntityRenderer::renderFlat(const AABB& aabb)
 void EntityRenderer::preRender(const Entity& entity, const Vec3& pos, float rot, float a)
 {
 	float bright = entity.getBrightness(1.0f);
-	currentShaderColor = Color::WHITE;
-	currentShaderDarkColor = Color(bright, bright, bright);
+	currentShaderColor = Color(bright, bright, bright);
+	currentShaderDarkColor = Color::WHITE;
 
 	_setupShaderParameters(entity, a);
 }

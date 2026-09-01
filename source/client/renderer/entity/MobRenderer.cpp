@@ -133,6 +133,9 @@ void MobRenderer::render(const Entity& entity, const Vec3& pos, float rot, float
 
 		additionalRendering(mob, a);
 
+		// This is the only way to do overlay colors in FFP OpenGL afaik
+		// With shaders, we get per-pixel blending on a single mesh, not with FFP
+#ifndef FEATURE_GFX_SHADERS
 		Color overlayColor = getOverlayColor(mob, a);
 		if (overlayColor.a > 0.0f)
 		{
@@ -158,6 +161,7 @@ void MobRenderer::render(const Entity& entity, const Vec3& pos, float rot, float
 
 			m_pModel->m_pMaterial = pMaterial;
 		}
+#endif
 	}
 	renderName(mob, pos);
 }
