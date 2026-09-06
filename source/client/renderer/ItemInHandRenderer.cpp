@@ -76,10 +76,10 @@ void ItemInHandRenderer::render(float a)
 	}
 
 	float fBright = tileSource.getBrightness(player.m_pos);
-    currentShaderColor = Color::WHITE;
-	currentShaderDarkColor = Color(fBright, fBright, fBright);
+    currentShaderColor = Color(fBright, fBright, fBright);
 
-	_setupShaderParameters(player, a);
+    _setupShaderParameters(fBright, Color::NIL);
+	//_setupShaderParameters(player, a);
 
 	ItemStack* pItem = &m_selectedItem;
 	if (player.m_pFishing)
@@ -159,7 +159,6 @@ void ItemInHandRenderer::renderItem(const Entity& entity, const ItemStack& item,
     if (pTile && TileRenderer::canRender(pTile->getRenderShape()))
     {
         currentShaderColor = Color::WHITE;
-        currentShaderDarkColor = Color::WHITE;
         
         m_pMinecraft->m_pTextures->loadAndBindTexture(C_TERRAIN_NAME);
         
@@ -313,7 +312,6 @@ void ItemInHandRenderer::renderWater(float a)
 
     float br = player.getBrightness(a);
     currentShaderColor = Color(br, br, br, 0.5f);
-    currentShaderDarkColor = Color::WHITE;
     MatrixStack::Ref matrix = MatrixStack::World.push();
 
     constexpr float size = 4.0f;
@@ -336,7 +334,6 @@ void ItemInHandRenderer::renderWater(float a)
 void ItemInHandRenderer::renderFire(float a)
 {
     currentShaderColor = Color(1.0f, 1.0f, 1.0f, 0.9f);
-    currentShaderDarkColor = Color::WHITE;
 	for (int i = 0; i < 2; i++)
 	{
         MatrixStack::Ref matrix = MatrixStack::World.push();
@@ -363,7 +360,6 @@ void ItemInHandRenderer::renderTex(float a, int texture)
 	//m_pMinecraft->m_pLocalPlayer->getBrightness(a);
     constexpr float br = 0.1f; // 0.3f on PE 0.12.1
     currentShaderColor = Color(br, br, br); // Java passed 0.5f for transparency, but this never actually worked
-    currentShaderDarkColor = Color::WHITE;
     MatrixStack::Ref matrix = MatrixStack::World.push();
 
 	// @BUG: The texture x/y isn't multiplied by 16. This causes some weird textures to show up instead of the correct ones.

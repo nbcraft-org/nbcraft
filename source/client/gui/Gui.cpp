@@ -123,7 +123,6 @@ void Gui::setNowPlaying(const std::string& str)
 void Gui::renderPumpkin(int var1, int var2)
 {
 	currentShaderColor = Color::WHITE;
-	currentShaderDarkColor = Color::WHITE;
 
 	m_pMinecraft->m_pTextures->setSmoothing(true);
 	m_pMinecraft->m_pTextures->loadAndBindTexture("misc/pumpkinblur.png");
@@ -201,7 +200,6 @@ void Gui::render(float f, bool bHaveScreen)
 	renderProgressIndicator(GuiWidth, GuiHeight, f);
 
 	currentShaderColor = Color::WHITE;
-	currentShaderDarkColor = Color::WHITE;
 
 	MatrixStack::Ref matrix = MatrixStack::World.push();
 	matrix->translate(Vec3(GuiWidth / 2, GuiHeight, 0));
@@ -766,7 +764,6 @@ void Gui::renderProgressIndicator(int width, int height, float f)
 	Textures& textures = *mc.m_pTextures;
 
 	currentShaderColor = Color::WHITE;
-	currentShaderDarkColor = Color::WHITE;
 
 	float breakProgress = m_progress;
 

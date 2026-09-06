@@ -29,7 +29,7 @@ void TakeAnimationParticle::render(Tesselator& t, float f, float a, float b, flo
 	);
 	Vec3 pos = m_pos + (tPos - m_pos) * p;
 	float bright = m_pTileSource->getBrightness(TilePos(pos.x, pos.y + (m_heightOffset / 2.0f), pos.z));
-	currentShaderDarkColor = Color(bright, bright, bright);
+	currentShaderColor = Color(bright, bright, bright);
 	EntityRenderDispatcher::getInstance()->render(*m_pThrowed, Vec3(pos.x - xOff, pos.y - yOff, pos.z - zOff), m_pThrowed->m_rot.yaw, f);
 }
 

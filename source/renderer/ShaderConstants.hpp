@@ -5,7 +5,7 @@
 #include "common/math/Color.hpp"
 
 extern Color currentShaderColor;
-extern Color currentShaderDarkColor;
+extern Color currentShaderDarkColor; // only used for text, nothing else
 
 namespace mce
 {

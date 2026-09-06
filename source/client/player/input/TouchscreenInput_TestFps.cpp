@@ -458,7 +458,6 @@ void TouchscreenInput_TestFps::render(float f)
 	m_pMinecraft->m_pTextures->loadAndBindTexture("gui/gui2.png");
 
     currentShaderColor = Color::WHITE;
-    currentShaderDarkColor = Color::WHITE;
 
 	bool flying = m_pOptions->m_flightHax.get() || m_pMinecraft->m_pLocalPlayer->m_bFlying;
     

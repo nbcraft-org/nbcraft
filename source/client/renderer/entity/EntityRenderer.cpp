@@ -161,7 +161,7 @@ void EntityRenderer::render(const AABB& aabb, const Vec3& pos)
 	t.vertex(aabb.max.x, aabb.min.y, aabb.max.z);
 	
 	t.setOffset(Vec3::ZERO);
-	t.draw(m_shaderMaterials.entity); // t.end() on Java
+	t.draw(m_shaderMaterials.entity);
 }
 
 void EntityRenderer::renderFlat(const AABB& aabb)
@@ -193,16 +193,20 @@ void EntityRenderer::renderFlat(const AABB& aabb)
 	t.vertex(aabb.max.x, aabb.max.y, aabb.min.z);
 	t.vertex(aabb.max.x, aabb.max.y, aabb.max.z);
 	t.vertex(aabb.max.x, aabb.min.y, aabb.max.z);
-	t.draw(m_shaderMaterials.entity); // t.end() on Java
+	t.draw(m_shaderMaterials.entity);
 }
 
 void EntityRenderer::preRender(const Entity& entity, const Vec3& pos, float rot, float a)
 {
 	float bright = entity.getBrightness(1.0f);
-	currentShaderColor = Color(bright, bright, bright);
-	currentShaderDarkColor = Color::WHITE;
 
-	_setupShaderParameters(entity, a);
+#ifdef FEATURE_GFX_SHADERS
+	_setupShaderParameters(bright, getOverlayColor(entity, a));
+
+	//_setupShaderParameters(entity, a); // the more complex impl, but we use none of the params
+#else
+	currentShaderColor = Color(bright, bright, bright);
+#endif
 }
 
 void EntityRenderer::postRender(const Entity& entity, const Vec3& pos, float rot, float a)

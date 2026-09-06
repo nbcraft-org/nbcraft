@@ -152,7 +152,6 @@ void MobRenderer::render(const Entity& entity, const Vec3& pos, float rot, float
 					mce::MaterialPtr* pMaterial = m_pArmorModel->m_pMaterial;
 					m_pArmorModel->m_pMaterial = &m_pArmorModel->m_materials.entity_color_overlay;
 
-					currentShaderColor = overlayColor;
 					m_pArmorModel->render(x2, x1, fBob, aYaw - fSmth, aPitch, fScale);
 
 					m_pArmorModel->m_pMaterial = pMaterial;

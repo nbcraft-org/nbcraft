@@ -1278,7 +1278,6 @@ void LevelRenderer::renderCracks(const Entity& camera, const HitResult& hr, int 
 		{
 			m_pTextures->loadAndBindTexture(C_TERRAIN_NAME);
 			currentShaderColor = Color(1.0f, 1.0f, 1.0f, 0.5f);
-			currentShaderDarkColor = Color::WHITE;
 
 			MatrixStack::Ref matrix = MatrixStack::World.push();
 
@@ -1324,7 +1323,6 @@ void LevelRenderer::renderHitSelect(const Entity& camera, const HitResult& hr, i
 		pTile = Tile::tiles[tileID];
 
 	currentShaderColor = Color(0.65f, 0.65f, 0.65f, 0.65f);
-	currentShaderDarkColor = Color::WHITE;
 
 	MatrixStack::Ref matrix = MatrixStack::World.push();
 
@@ -1356,7 +1354,6 @@ void LevelRenderer::renderHitOutline(const Entity& camera, const HitResult& hr, 
 	TileSource& tileSource = camera.getTileSource();
 
 	currentShaderColor = Color(0.0f, 0.0f, 0.0f, 0.4f);
-	currentShaderDarkColor = Color::WHITE;
 
 	constexpr float distance = 0.002f;
 	float lineWidth = 2.0f * Minecraft::GetRenderScaleMultiplier();
@@ -1902,7 +1899,6 @@ void LevelRenderer::renderAdvancedClouds(float alpha)
 	m_pTextures->loadAndBindTexture("environment/clouds.png");
 
 	currentShaderColor = Color::WHITE;
-	currentShaderDarkColor = Color::WHITE;
 
 	Color cc = dimension.getCloudColor(alpha);
     float uo;

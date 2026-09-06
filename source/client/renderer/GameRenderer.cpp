@@ -259,7 +259,6 @@ void GameRenderer::_renderVertexGraph(int vertices, int h)
 
 	//glClear(GL_DEPTH_BUFFER_BIT);
 	currentShaderColor = Color::WHITE;
-	currentShaderDarkColor = Color::WHITE;
 
 	t.begin(4);
 	t.color(1.0f, 1.0f, 1.0f, 0.15f);
@@ -724,7 +723,6 @@ void GameRenderer::render(const Timer& timer)
 			renderLevel(timer.m_renderTicks);
 
 			currentShaderColor = Color::WHITE;
-			currentShaderDarkColor = Color::WHITE;
 
 			if (m_pMinecraft->getOptions()->m_hideGui.get())
 			{
@@ -895,7 +893,6 @@ void GameRenderer::renderWeather(float f)
 			float f4 = pLevel->getBrightness(tp);
 			t.begin(8);
 			currentShaderColor = Color(f4, f4, f4, (1.0f - f3 * f3) * 0.7f);
-			currentShaderDarkColor = Color::WHITE;
 			t.setOffset(-pos.x, -pos.y, -pos.z);
 			t.vertexUV(float(tp.x + 0), float(minY), float(tp.z + 0), 0.0f * offs + x3, float(minY) * offs / 8.0f + x2 * offs + x4);
 			t.vertexUV(float(tp.x + 1), float(minY), float(tp.z + 1), 1.0f * offs + x3, float(minY) * offs / 8.0f + x2 * offs + x4);

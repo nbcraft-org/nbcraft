@@ -21,8 +21,7 @@ int SpiderRenderer::prepareArmor(const Mob& spider, int layer, float a)
 		return 0;
 
 	float br = (1.0f - spider.getBrightness(1.0f)) * 0.5f;
-	currentShaderColor = Color::WHITE;
-	currentShaderDarkColor = Color(1.0f, 1.0f, 1.0f, br);
+	currentShaderColor = Color(1.0f, 1.0f, 1.0f, br);
 
 	return 1;
 }

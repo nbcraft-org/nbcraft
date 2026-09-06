@@ -86,7 +86,5 @@ void ArrowRenderer::render(const Entity& entity, const Vec3& pos, float rot, flo
     matrix->scale(ARROW_SCALE);
     matrix->translate(Vec3(-4.0f, 0.0f, 0.0f));
 
-    //_setupShaderParameters(ent, Color::NIL, a);
-
     m_mesh.render(m_materials.entity_alphatest_nocull);
 }

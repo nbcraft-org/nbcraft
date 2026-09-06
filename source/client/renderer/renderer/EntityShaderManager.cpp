@@ -159,7 +159,12 @@ Color EntityShaderManager::getOverlayColor(const Entity& entity, float a) const
             //return Color(1.0f, 0.0f, 0.0f, 0.6f);
 
             // proper Java values from MobRenderer::render()
-            float fBright = entity.getBrightness(a);
+			float fBright;
+#ifdef FEATURE_GFX_SHADERS
+			fBright = 1.0f;
+#else
+			fBright = entity.getBrightness(a);
+#endif
             return Color(fBright, 0.0f, 0.0f, 0.4f);
         }
     }

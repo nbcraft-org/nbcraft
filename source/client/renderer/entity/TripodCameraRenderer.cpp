@@ -87,8 +87,7 @@ void TripodCameraRenderer::render(const Entity& entity, const Vec3& pos, float r
 	if (time >= 0.0f)
 	{
 		// pulse effect
-		currentShaderColor = Color::WHITE;
-		currentShaderDarkColor = Color(1.0f, 1.0f, 1.0f, sinf(float(M_PI) * 1.0f * time));
+		currentShaderColor = Color(1.0f, 1.0f, 1.0f, sinf(float(M_PI) * 1.0f * time));
 		
 		// restore camera flash texture
 		MatrixStack::Ref flashMatrix = MatrixStack::World.push();

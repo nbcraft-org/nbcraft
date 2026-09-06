@@ -81,14 +81,12 @@ void RenderChunk::_move(RenderChunk& other)
 void RenderChunk::render(TerrainLayer layer, bool fog)
 {
 	currentShaderColor = Color::WHITE;
-	currentShaderDarkColor = Color::WHITE;
 	m_mesh.render(_chooseMaterial(layer, fog));
 }
 
 void RenderChunk::render(TerrainLayer layer, bool fog, float a)
 {
 	currentShaderColor = Color::WHITE;
-	currentShaderDarkColor = Color::WHITE;
 	m_mesh.render(_chooseMaterial(layer, fog, a));
 }
 
