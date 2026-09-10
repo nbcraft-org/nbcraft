@@ -46,3 +46,5 @@ target_link_libraries(nbcraft nbcraft-core)
 
 # stb_image (If Needed)
 target_link_libraries(nbcraft stb_image)
+
+install(TARGETS nbcraft DESTINATION bin)

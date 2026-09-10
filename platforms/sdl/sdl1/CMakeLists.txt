@@ -60,3 +60,5 @@ if(XENON) # Xbox 360 (libXenon)
         COMMENT "Converting to elf32 and stripping..."
     )
 endif()
+
+install(TARGETS nbcraft DESTINATION bin)
