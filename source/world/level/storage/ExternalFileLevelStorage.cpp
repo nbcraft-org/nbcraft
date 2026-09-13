@@ -439,7 +439,7 @@ void ExternalFileLevelStorage::loadEntities(Level* level, LevelChunk* chunk)
 						const Tag* betterTag = *it;
 						if (!betterTag || betterTag->getId() != Tag::TAG_TYPE_COMPOUND)
 							continue;
-
+						LOG_I("Loading entity %d", ((CompoundTag*)betterTag)->getInt32("id"));
 						Entity* entity = EntityFactory::LoadEntity(*(CompoundTag*)betterTag, *level);
 						if (entity)
 							level->addEntity(entity);

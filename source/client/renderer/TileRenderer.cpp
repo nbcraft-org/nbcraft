@@ -20,6 +20,7 @@
 #include "world/tile/LeafTile.hpp"
 
 #include "world/tile/FenceTile.hpp"
+#include "world/tile/RailTile.hpp"
 #include "world/level/TileSource.hpp"
 #include "GameMods.hpp"
 
@@ -1285,6 +1286,87 @@ bool TileRenderer::tesselateFenceInWorld(Tile* tile, const TilePos& pos)
 	return bRenderedAnything;
 }
 
+bool TileRenderer::tesselateRailInWorld(Tile* tile, const TilePos& pos)
+{
+	static constexpr float C_RATIO = 1.0f / 256.0f;
+	static constexpr float C_RAIL_HEIGHT = 0.0625f;
+	static constexpr float C_TEX_SZ = 15.99f;
+
+	Tesselator& t = Tesselator::instance;
+	TileData data = m_pTileSource->getData(pos);
+	TileData faceData = ((RailTile*)tile)->getFaceData(data);
+
+	int tex = tile->getTexture(Facing::DOWN, data);
+	if (m_fixedTexture >= 0)
+		tex = m_fixedTexture;
+
+	float br = tile->getBrightness(*m_pTileSource, pos);
+	t.color(br, br, br);
+
+	int xt = (tex & 15) << 4;
+	int yt = tex & 240;
+	float u0 = xt * C_RATIO;
+	float u1 = (xt + C_TEX_SZ) * C_RATIO;
+	float v0 = yt * C_RATIO;
+	float v1 = (yt + C_TEX_SZ) * C_RATIO;
+	
+	Vec3 p0 = Vec3(pos.x + 1.0f, pos.y + C_RAIL_HEIGHT, (float)pos.z);
+	Vec3 p1 = Vec3(pos.x + 1.0f, pos.y + C_RAIL_HEIGHT, pos.z + 1.0f);
+	Vec3 p2 = Vec3((float)pos.x, pos.y + C_RAIL_HEIGHT, pos.z + 1.0f);
+	Vec3 p3 = Vec3((float)pos.x, pos.y + C_RAIL_HEIGHT, (float)pos.z);
+	if (faceData != RailTile::WEST_EAST 
+		&& faceData != RailTile::WEST_EAST_ABOVE 
+		&& faceData != RailTile::EAST_WEST_ABOVE 
+		&& faceData != RailTile::WEST_SOUTH)
+	{
+		if (faceData == RailTile::WEST_NORTH)
+		{
+			p0.x = p1.x = pos.x;
+			p2.x = p3.x = pos.x + 1.0f;
+			p0.z = p3.z = pos.z + 1.0f;
+			p1.z = p2.z = pos.z;
+		}
+		else if (faceData == RailTile::EAST_NORTH)
+		{
+			p0.x = p3.x = pos.x;
+			p1.x = p2.x = pos.x + 1.0f;
+			p0.z = p1.z = pos.z;
+			p2.z = p3.z = pos.z + 1.0f;
+		}
+	}
+	else
+	{
+		p0.x = p3.x = pos.x + 1.0f;
+		p1.x = p2.x = pos.x;
+		p0.z = p1.z = pos.z + 1.0f;
+		p2.z = p3.z = pos.z;
+	}
+
+	if (faceData != RailTile::WEST_EAST_ABOVE && faceData != RailTile::SOUTH_NORTH_ABOVE)
+	{
+		if (faceData == RailTile::EAST_WEST_ABOVE || faceData == RailTile::NORTH_SOUTH_ABOVE)
+		{
+			++p1.y;
+			++p2.y;
+		}
+	}
+	else
+	{
+		++p0.y;
+		++p3.y;
+	}
+
+	t.vertexUV(p0, u1, v0);
+	t.vertexUV(p1, u1, v1);
+	t.vertexUV(p2, u0, v1);
+	t.vertexUV(p3, u0, v0);
+	t.vertexUV(p3, u0, v0);
+	t.vertexUV(p2, u0, v1);
+	t.vertexUV(p1, u1, v1);
+	t.vertexUV(p0, u1, v0);
+	return true;
+}
+
 bool TileRenderer::tesselateFenceGateInWorld(Tile* tile, const TilePos& pos)
 {
 	int metadata = m_pTileSource->getData(pos);
@@ -2330,6 +2412,8 @@ bool TileRenderer::tesselateInWorld(Tile* tile, const TilePos& pos)
 			return tesselateStairsInWorld(tile, pos);
 		case SHAPE_FENCE:
 			return tesselateFenceInWorld(tile, pos);
+		case SHAPE_RAIL:
+			return tesselateRailInWorld(tile, pos);
 		case SHAPE_LEVER:
 			return tesselateLeverInWorld(tile, pos);
 		case SHAPE_DIODE:

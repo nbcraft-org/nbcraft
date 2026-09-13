@@ -91,6 +91,15 @@ unsigned Mth::fastRandom()
 	return(x4 = x4 ^ (unsigned(x4) >> 19) ^ x0 ^ (x0 << 11) ^ ((x0 ^ unsigned(x0 << 11)) >> 8));
 }
 
+float Mth::wrapDegrees(float angle)
+{
+	while (angle >= 180.0f)
+		angle -= 360.0f;
+	while (angle < -180.0f)
+		angle += 360.0f;
+	return angle;
+}
+
 float Mth::clamp(float x, float min, float max)
 {
 	if (x > max)

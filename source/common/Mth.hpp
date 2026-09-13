@@ -44,6 +44,7 @@ public:
 	static float random(void);
 	static float sin(float);
 	static unsigned fastRandom();
+	static float wrapDegrees(float);
 
 	static inline float sqrt(float f)
 	{

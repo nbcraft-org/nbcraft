@@ -436,6 +436,29 @@ void Level::getEntities(DimensionId dimensionId, const EntityType& type, const A
 	}
 }
 
+Entity::Vector Level::getEntitiesOfCategory(EntityCategories::CategoriesMask category, const AABB& aabb) const
+{
+	Entity::Vector entities;
+
+	long lowerXBound = floor((aabb.min.x - 2.0f) / 16);
+	long lowerZBound = floor((aabb.min.z - 2.0f) / 16);
+	long upperXBound = floor((aabb.max.x + 2.0f) / 16);
+	long upperZBound = floor((aabb.max.z + 2.0f) / 16);
+
+	for (long z = lowerZBound; z <= upperZBound; z++)
+	{
+		for (long x = lowerXBound; x <= upperXBound; x++)
+		{
+			if (!hasChunk(ChunkPos(x, z))) continue;
+
+			LevelChunk* pChunk = getChunk(ChunkPos(x, z));
+			pChunk->getEntitiesOfCategory(category, aabb, entities);
+		}
+	}
+
+	return entities;
+}
+
 Entity::Vector Level::getEntities(const EntityType& type, const AABB& aabb, Entity* exclude) const
 {
 	Entity::Vector entities;

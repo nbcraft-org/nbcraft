@@ -292,7 +292,10 @@ public: // static variables
 		* dispenser,
 		* recordPlayer,
 		* cake,
-		* trapDoor;
+		* trapDoor,
+		* rail,
+		* poweredRail,
+		* detectorRail;
 
 public:
 	int m_TextureFrame;
