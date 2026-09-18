@@ -138,13 +138,18 @@ void ShaderOGL::bindVertexPointers(const VertexFormat& vertexFormat, const void*
     RenderDevice& device = RenderDevice::getInstance();
     const RenderDeviceBase::AttributeList& attrList = device.getAttributeList(m_attributeListIndex);
 
+    //GLuint location = 0;
+    
     for (size_t i = 0; i < attrList.size(); i++)
     {
         const Attribute& attr = attrList[i];
         
         VertexField vertexField = attr.getVertexField();
         if (!vertexFormat.hasField(vertexField))
+        {
+            assert(false);
             continue;
+        }
 
         GLuint location = attr.getLocation();
         const RenderContextOGL::VertexFieldFormat& format = RenderContextOGL::vertexFieldFormats[vertexField];
@@ -159,6 +164,41 @@ void ShaderOGL::bindVertexPointers(const VertexFormat& vertexFormat, const void*
 
         ErrorHandlerOGL::checkForErrors();
     }
+    
+    /*unsigned int padding = vertexFormat.getVertexPadding();
+    if (padding > 0)
+    {
+        intptr_t fieldOffset = vertexFormat.getVertexSize() - padding;
+        if (vertexData)
+        {
+            fieldOffset += (intptr_t)vertexData;
+        }
+        
+        unsigned int loc = location + 1;
+        for (int i = 0; i < 4; i++)
+        {
+            int components = 4 - i; // 4, 3, 2, 1
+            int fields = Mth::intFloorDiv(padding, components);
+            padding -= fields * components;
+        
+            for (int j = 0; j < fields; j++)
+            {
+                //glVertexAttribPointer (GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer);
+                xglVertexAttribPointer(
+                    loc,
+                    components,
+                    GL_UNSIGNED_BYTE,
+                    false,
+                    vertexFormat.getVertexSize(),
+                    (const void*)fieldOffset
+                );
+                ErrorHandlerOGL::checkForErrors();
+            
+                loc++;
+                fieldOffset += components;
+            }
+        }
+    }*/
 }
 
 void ShaderOGL::bindShader(RenderContext& context, const VertexFormat& format, const void *dataBasePtr, unsigned int shaderStageBits)
@@ -239,6 +279,15 @@ void ShaderOGL::reflectShaderUniforms()
     }
 }
 
+static unsigned int _getVertexFieldPadding(unsigned int totalSize)
+{
+    unsigned int padding = totalSize % 16;
+    if (padding != 0)
+        padding = 16 - padding;
+    
+    return padding;
+}
+
 void ShaderOGL::reflectShaderAttributes()
 {
     RenderDeviceBase::AttributeList attrList;
@@ -252,13 +301,16 @@ void ShaderOGL::reflectShaderAttributes()
         GLsizei nameLen;
         GLint size;
         GLenum type;
+        
+        unsigned int totalSize = 0;
 
         //LOG_I("\nReflecting attributes for shader: %s", m_vertexShader.m_shaderPath.c_str());
 
+        GLint location = 0;
         for (GLint i = 0; i < attrCount; i++)
         {
             xglGetActiveAttrib(m_program, i, sizeof(name), &nameLen, &size, &type, name);
-            GLint location = xglGetAttribLocation(this->m_program, name);
+            location = xglGetAttribLocation(this->m_program, name);
             if (location < 0)
                 continue;
 
@@ -267,12 +319,37 @@ void ShaderOGL::reflectShaderAttributes()
 
             Attribute attr(location, size, vertexField);
             attrList.push_back(attr);
+            
+            totalSize += size;
 
             xglEnableVertexAttribArray(location);
             // from 0.12.1, they removed this by 0.16.1, I have no idea what this is supposed to do, but it seems bad
             //xglVertexAttribPointer(0, 1, GL_UNSIGNED_BYTE, 0, 1, this);
 
             //LOG_I("Reflected attribute: name=%s location=%d", name, location);
+        }
+        
+        if (location >= 0)
+        {
+            unsigned int padding = _getVertexFieldPadding(totalSize);
+            if (padding > 0)
+            {
+                unsigned int loc = location + 1;
+                for (int i = 0; i < 4; i++)
+                {
+                    int components = 4 - i; // 4, 3, 2, 1
+                    int fields = Mth::intFloorDiv(padding, components);
+                    padding -= fields * components;
+                
+                    for (int j = 0; j < fields; j++)
+                    {
+                        Attribute attr(loc, components, VERTEX_FIELD_PADDING);
+                        attrList.push_back(attr);
+                    
+                        loc++;
+                    }
+                }
+            }
         }
     }
 

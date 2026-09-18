@@ -12,7 +12,7 @@ MusicTileEntity::MusicTileEntity() : TileEntity()
 void MusicTileEntity::load(const CompoundTag& tag)
 {
     TileEntity::load(tag);
-    m_note = static_cast<uint8_t>(Mth::clamp(tag.getInt8("note"), 0, 24));
+    m_note = (uint8_t)(Mth::clamp<int8_t>(tag.getInt8("note"), 0, 24));
 }
 
 void MusicTileEntity::save(CompoundTag& tag) const

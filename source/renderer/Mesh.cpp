@@ -112,6 +112,9 @@ void Mesh::render(const MaterialPtr& materialPtr, unsigned int startOffset, unsi
 
     if (!isValid())
         return;
+    
+    // some OpenGL bullshit
+    //assert(m_vertexFormat.getVertexSize() % 16 == 0);
 
     unsigned int vertexCount = (count > 0) ? count : m_vertexCount;
 

@@ -83,7 +83,7 @@ void ModelPart::clear()
 void ModelPart::compile(float scale)
 {
 	Tesselator& t = Tesselator::instance;
-	t.begin(24 * (m_pCubes.size() / 4));
+	t.begin((4 * 6) * m_pCubes.size());
 
 	for (size_t i = 0; i < m_pCubes.size(); i++)
 	{

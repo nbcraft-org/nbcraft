@@ -652,7 +652,7 @@ void Level::updateLight(const LightLayer& ll, const TilePos& lowerPos, const Til
 	if (expand)
 	{
 		size_t size = m_lightUpdates.size();
-		size_t count = Mth::Min(size, 5);
+		size_t count = Mth::Min<size_t>(size, 5);
 
 		// iterate backwards over 5 or less LightUpdates
 		for (size_t i = 0; i < count; i++)

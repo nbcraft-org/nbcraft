@@ -39,7 +39,7 @@ bool TileTickingQueue::tickPendingTicks(TileSource& region, Tick_t until, int ma
 {
 	m_instaTick = instaTick;
 
-	int tickLimit = Mth::Min(m_tickData.size(), max);
+	int tickLimit = Mth::Min<int>(m_tickData.size(), max);
 	int ticksProcessed = 0;
 
 	bool hasTicked = false;
@@ -68,7 +68,7 @@ bool TileTickingQueue::tickPendingTicks(TileSource& region, int max, bool instaT
 {
 	m_instaTick = instaTick;
 
-	int tickLimit = Mth::Min(m_tickData.size(), max);
+	int tickLimit = Mth::Min<int>(m_tickData.size(), max);
 	int ticksProcessed = 0;
 
 	bool hasTicked = false;

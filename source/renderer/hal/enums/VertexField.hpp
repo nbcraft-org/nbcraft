@@ -7,6 +7,7 @@ namespace mce
     // @NOTE: See VertexField.cpp for VertexField types
     enum VertexField
     {
+        VERTEX_FIELD_PADDING,
         VERTEX_FIELD_POSITION,
         VERTEX_FIELD_COLOR,
         VERTEX_FIELD_NORMAL,
@@ -20,7 +21,7 @@ namespace mce
         VERTEX_FIELD_HB_COLOR,
         VERTEX_FIELD_HB_ADDITIONAL,
 
-        VERTEX_FIELDS_MIN = VERTEX_FIELD_POSITION,
+        VERTEX_FIELDS_MIN = VERTEX_FIELD_PADDING,
         VERTEX_FIELDS_MAX = VERTEX_FIELD_BONEID_0,
         VERTEX_FIELDS_COUNT,
 

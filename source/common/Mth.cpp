@@ -6,11 +6,6 @@
 	SPDX-License-Identifier: BSD-1-Clause
  ********************************************************************/
 
-#include <cmath>
-#include <cstring>
-#include <stdint.h>
-#include <stdlib.h>
-
 #include "Mth.hpp"
 #include "Utils.hpp"
 
@@ -32,14 +27,6 @@ void Mth::initMth()
 
 	// We need this for proper random music on the title screen
 	g_Random.setSeed(getRawTimeS());
-}
-
-int Mth::intFloorDiv(int a2, int a3)
-{
-	if (a2 < 0)
-		return ~(~a2 / a3);
-	
-	return a2 / a3;
 }
 
 float Mth::invSqrt(float number)
@@ -89,124 +76,4 @@ unsigned Mth::fastRandom()
 	x2 = x3;
 	x3 = x4;
 	return(x4 = x4 ^ (unsigned(x4) >> 19) ^ x0 ^ (x0 << 11) ^ ((x0 ^ unsigned(x0 << 11)) >> 8));
-}
-
-float Mth::clamp(float x, float min, float max)
-{
-	if (x > max)
-		return max;
-	if (x > min)
-		return x;
-	else
-		return min;
-	return max;
-}
-
-int Mth::clamp(int x, int min, int max)
-{
-	if (x > max)
-		return max;
-	if (x > min)
-		return x;
-	else
-		return min;
-	return max;
-}
-
-uint8_t Mth::clamp(uint8_t x, uint8_t min, uint8_t max)
-{
-	if (x > max)
-		return max;
-	if (x > min)
-		return x;
-	else
-		return min;
-	return max;
-}
-
-int Mth::floor(float f)
-{
-	int result = int(f);
-
-	if (result > f)
-		result--;
-
-	return result;
-}
-
-int Mth::round(float f)
-{
-	return floor(f + 0.5f);
-}
-
-float Mth::atan(float f)
-{
-	return atanf(f);
-}
-
-float Mth::atan2(float y, float x)
-{
-	return atan2f(y, x);
-}
-
-float Mth::Min(float a, float b)
-{
-	return a < b ? a : b;
-}
-
-int Mth::Min(int a, int b)
-{
-	return a < b ? a : b;
-}
-
-float Mth::Max(float a, float b)
-{
-	return a > b ? a : b;
-}
-
-int Mth::Max(int a, int b)
-{
-	return a > b ? a : b;
-}
-
-/*float Mth::abs(float f)
-{
-	if (f < 0.0f)
-		f = -f;
-	return f;
-}*/
-
-int Mth::abs(int d)
-{
-	if (d < 0)
-		d = -d;
-	return d;
-}
-
-float Mth::absMax(float a2, float a3)
-{
-	if (a2 < 0.0f)
-		a2 = -a2;
-	if (a3 < 0.0f)
-		a3 = -a3;
-	if (a2 <= a3)
-		a2 = a3;
-	return a2;
-}
-
-float Mth::absMaxSigned(float a2, float a3)
-{
-	if (abs(a2) <= abs(a2))
-		a2 = a3;
-	return a2;
-}
-
-int Mth::random(int max)
-{
-	return int(g_Random.nextInt(max));
-}
-
-float Mth::random()
-{
-	return g_Random.nextFloat();
 }

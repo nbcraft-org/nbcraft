@@ -266,19 +266,19 @@ void TileRenderer::renderEast(Tile* tile, const Vec3& pos, int texture)
 	if (m_ambientOcclusion)
 	{
 		t.color(m_vtxRed[0], m_vtxGreen[0], m_vtxBlue[0]);
-		_tex1(m_vtxLightTex[0]);
+		//_tex1(m_vtxLightTex[0]);
 		t.vertexUV(aabb.max.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_l, texV_d);
 
 		t.color(m_vtxRed[1], m_vtxGreen[1], m_vtxBlue[1]);
-		_tex1(m_vtxLightTex[1]);
+		//_tex1(m_vtxLightTex[1]);
 		t.vertexUV(aabb.max.x + pos.x, aabb.min.y + pos.y, aabb.min.z + pos.z, texU_r, texV_d);
 
 		t.color(m_vtxRed[2], m_vtxGreen[2], m_vtxBlue[2]);
-		_tex1(m_vtxLightTex[2]);
+		//_tex1(m_vtxLightTex[2]);
 		t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.min.z + pos.z, texU_r, texV_u);
 
 		t.color(m_vtxRed[3], m_vtxGreen[3], m_vtxBlue[3]);
-		_tex1(m_vtxLightTex[3]);
+		//_tex1(m_vtxLightTex[3]);
 		t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_l, texV_u);
 
 		return;
@@ -348,19 +348,19 @@ void TileRenderer::renderWest(Tile* tile, const Vec3& pos, int texture)
 	if (m_ambientOcclusion)
 	{
 		t.color(m_vtxRed[0], m_vtxGreen[0], m_vtxBlue[0]);
-		_tex1(m_vtxLightTex[0]);
+		//_tex1(m_vtxLightTex[0]);
 		t.vertexUV(aabb.min.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_r, texV_u);
 
 		t.color(m_vtxRed[1], m_vtxGreen[1], m_vtxBlue[1]);
-		_tex1(m_vtxLightTex[1]);
+		//_tex1(m_vtxLightTex[1]);
 		t.vertexUV(aabb.min.x + pos.x, aabb.max.y + pos.y, aabb.min.z + pos.z, texU_l, texV_u);
 
 		t.color(m_vtxRed[2], m_vtxGreen[2], m_vtxBlue[2]);
-		_tex1(m_vtxLightTex[2]);
+		//_tex1(m_vtxLightTex[2]);
 		t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.min.z + pos.z, texU_l, texV_d);
 
 		t.color(m_vtxRed[3], m_vtxGreen[3], m_vtxBlue[3]);
-		_tex1(m_vtxLightTex[3]);
+		//_tex1(m_vtxLightTex[3]);
 		t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_r, texV_d);
 
 		return;
@@ -430,19 +430,19 @@ void TileRenderer::renderSouth(Tile* tile, const Vec3& pos, int texture)
 	if (m_ambientOcclusion)
 	{
 		t.color(m_vtxRed[0], m_vtxGreen[0], m_vtxBlue[0]);
-		_tex1(m_vtxLightTex[0]);
+		//_tex1(m_vtxLightTex[0]);
 		t.vertexUV(aabb.min.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_l, texV_u);
 
 		t.color(m_vtxRed[1], m_vtxGreen[1], m_vtxBlue[1]);
-		_tex1(m_vtxLightTex[1]);
+		//_tex1(m_vtxLightTex[1]);
 		t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_l, texV_d);
 
 		t.color(m_vtxRed[2], m_vtxGreen[2], m_vtxBlue[2]);
-		_tex1(m_vtxLightTex[2]);
+		//_tex1(m_vtxLightTex[2]);
 		t.vertexUV(aabb.max.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_r, texV_d);
 
 		t.color(m_vtxRed[3], m_vtxGreen[3], m_vtxBlue[3]);
-		_tex1(m_vtxLightTex[3]);
+		//_tex1(m_vtxLightTex[3]);
 		t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_r, texV_u);
 
 		return;
@@ -512,19 +512,19 @@ void TileRenderer::renderNorth(Tile* tile, const Vec3& pos, int texture)
 	if (m_ambientOcclusion)
 	{
 		t.color(m_vtxRed[0], m_vtxGreen[0], m_vtxBlue[0]);
-		_tex1(m_vtxLightTex[0]);
+		//_tex1(m_vtxLightTex[0]);
 		t.vertexUV(aabb.min.x + pos.x, aabb.max.y + pos.y, aabb.min.z + pos.z, texU_r, texV_u);
 
 		t.color(m_vtxRed[1], m_vtxGreen[1], m_vtxBlue[1]);
-		_tex1(m_vtxLightTex[1]);
+		//_tex1(m_vtxLightTex[1]);
 		t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.min.z + pos.z, texU_l, texV_u);
 
 		t.color(m_vtxRed[2], m_vtxGreen[2], m_vtxBlue[2]);
-		_tex1(m_vtxLightTex[2]);
+		//_tex1(m_vtxLightTex[2]);
 		t.vertexUV(aabb.max.x + pos.x, aabb.min.y + pos.y, aabb.min.z + pos.z, texU_l, texV_d);
 
 		t.color(m_vtxRed[3], m_vtxGreen[3], m_vtxBlue[3]);
-		_tex1(m_vtxLightTex[3]);
+		//_tex1(m_vtxLightTex[3]);
 		t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.min.z + pos.z, texU_r, texV_d);
 
 		return;
@@ -583,19 +583,19 @@ void TileRenderer::renderFaceUp(Tile* tile, const Vec3& pos, int texture)
 	if (m_ambientOcclusion)
 	{
 		t.color(m_vtxRed[0], m_vtxGreen[0], m_vtxBlue[0]);
-		_tex1(m_vtxLightTex[0]);
+		//_tex1(m_vtxLightTex[0]);
 		t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_2, texV_2);
 
 		t.color(m_vtxRed[1], m_vtxGreen[1], m_vtxBlue[1]);
-		_tex1(m_vtxLightTex[1]);
+		//_tex1(m_vtxLightTex[1]);
 		t.vertexUV(aabb.max.x + pos.x, aabb.max.y + pos.y, aabb.min.z + pos.z, texU_2, texV_1);
 
 		t.color(m_vtxRed[2], m_vtxGreen[2], m_vtxBlue[2]);
-		_tex1(m_vtxLightTex[2]);
+		//_tex1(m_vtxLightTex[2]);
 		t.vertexUV(aabb.min.x + pos.x, aabb.max.y + pos.y, aabb.min.z + pos.z, texU_1, texV_1);
 
 		t.color(m_vtxRed[3], m_vtxGreen[3], m_vtxBlue[3]);
-		_tex1(m_vtxLightTex[3]);
+		//_tex1(m_vtxLightTex[3]);
 		t.vertexUV(aabb.min.x + pos.x, aabb.max.y + pos.y, aabb.max.z + pos.z, texU_1, texV_2);
 
 		return;
@@ -654,19 +654,19 @@ void TileRenderer::renderFaceDown(Tile* tile, const Vec3& pos, int texture)
 	if (m_ambientOcclusion)
 	{
 		t.color(m_vtxRed[0], m_vtxGreen[0], m_vtxBlue[0]);
-		_tex1(m_vtxLightTex[0]);
+		//_tex1(m_vtxLightTex[0]);
 		t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_1, texV_2);
 
 		t.color(m_vtxRed[1], m_vtxGreen[1], m_vtxBlue[1]);
-		_tex1(m_vtxLightTex[1]);
+		//_tex1(m_vtxLightTex[1]);
 		t.vertexUV(aabb.min.x + pos.x, aabb.min.y + pos.y, aabb.min.z + pos.z, texU_1, texV_1);
 
 		t.color(m_vtxRed[2], m_vtxGreen[2], m_vtxBlue[2]);
-		_tex1(m_vtxLightTex[2]);
+		//_tex1(m_vtxLightTex[2]);
 		t.vertexUV(aabb.max.x + pos.x, aabb.min.y + pos.y, aabb.min.z + pos.z, texU_2, texV_1);
 
 		t.color(m_vtxRed[3], m_vtxGreen[3], m_vtxBlue[3]);
-		_tex1(m_vtxLightTex[3]);
+		//_tex1(m_vtxLightTex[3]);
 		t.vertexUV(aabb.max.x + pos.x, aabb.min.y + pos.y, aabb.max.z + pos.z, texU_2, texV_2);
 
 		return;
@@ -2296,7 +2296,7 @@ bool TileRenderer::tesselateInWorld(Tile* tile, const TilePos& pos)
 	eRenderShape shape = tile->getRenderShape();
 	tile->updateShape(*m_pTileSource, pos);
 
-	_tex1(getLightColor(tile, pos));
+	//_tex1(getLightColor(tile, pos));
 
 	switch (shape)
 	{

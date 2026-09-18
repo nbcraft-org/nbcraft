@@ -9,6 +9,7 @@ using namespace mce;
 
 // @TODO: have this use mce::VertexFieldFormat
 const RenderContextOGL::VertexFieldFormat RenderContextOGL::vertexFieldFormats[] = {
+    { GL_UNSIGNED_BYTE,  4, GL_FALSE }, // VERTEX_FIELD_PADDING  : VERTEX_FIELD_TYPE_UNKNOWN
     { GL_FLOAT,          3, GL_FALSE }, // VERTEX_FIELD_POSITION : VERTEX_FIELD_TYPE_FLOAT32_3
     { GL_UNSIGNED_BYTE,  4, GL_TRUE  }, // VERTEX_FIELD_COLOR    : VERTEX_FIELD_TYPE_UINT8_4_N
     { GL_BYTE,           4, GL_FALSE }, // VERTEX_FIELD_NORMAL   : VERTEX_FIELD_TYPE_SINT8_4

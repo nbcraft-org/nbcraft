@@ -5,6 +5,7 @@
 namespace mce
 {
     const char* vertexFieldNames[] = {
+        /* PADDING */  "PADDING",
         /* POSITION */ "POSITION",
         /* COLOR*/     "COLOR",
         /* NORMAL*/    "NORMAL",
@@ -18,6 +19,7 @@ namespace mce
     };
 
     const VertexFieldType vertexFieldTypes[] = {
+        /* PADDING */  VERTEX_FIELD_TYPE_UNKNOWN,
         /* POSITION */ VERTEX_FIELD_TYPE_FLOAT32_3,
         /* COLOR*/     VERTEX_FIELD_TYPE_UINT8_4_N,
 #if MCE_GFX_SUPPORTS_SINT8_4_N

@@ -92,7 +92,7 @@ void EntityRenderer::renderFlame(const Entity& entity, const Vec3& pos, float a)
 	float r = 1.0f;
 	constexpr float xo = 0.5f;
 	float yo = 0.0f;
-	t.begin(4 * h);
+	t.begin(4 * ceilf(h));
 	t.normal(Vec3::UNIT_Y); // this is required for HLSL shaders since we're using the entity shader
 
 	while (h > 0.0f)

@@ -21,27 +21,117 @@ class Mth
 	static Random g_Random;
 
 public:
-	static float Max(float, float);
-	static int Max(int, int);
-	static float Min(float, float);
-	static int Min(int, int);
-	static inline float abs(float f) { return fabs(f); }
-	static int abs(int);
-	static float absMax(float, float);
-	static float absMaxSigned(float, float);
-	static float atan(float);
-	static float atan2(float y, float x);
+    template <typename T>
+	static T Max(T a, T b)
+    {
+        return a > b ? a : b;
+    }
+    
+    template <typename T>
+	static T Min(T a, T b)
+    {
+        return a < b ? a : b;
+    }
+    
+	static inline float abs(float f)
+    {
+        /*if (f < 0.0f)
+            f = -f;
+        return f;*/
+        return fabs(f);
+    }
+    
+	static int abs(int d)
+    {
+        if (d < 0)
+            d = -d;
+        return d;
+    }
+    
+	static float absMax(float a2, float a3)
+    {
+        if (a2 < 0.0f)
+            a2 = -a2;
+        if (a3 < 0.0f)
+            a3 = -a3;
+        if (a2 <= a3)
+            a2 = a3;
+        return a2;
+    }
+    
+	static float absMaxSigned(float a2, float a3)
+    {
+        if (abs(a2) <= abs(a2))
+            a2 = a3;
+        return a2;
+    }
+    
+	static float atan(float f)
+    {
+        return atanf(f);
+    }
+    
+	static float atan2(float y, float x)
+    {
+        return atan2f(y, x);
+    }
+    
 	static float cos(float);
-	static float clamp(float x, float min, float max);
-	static int clamp(int x, int min, int max);
-	static uint8_t clamp(uint8_t x, uint8_t min, uint8_t max);
-	static int floor(float);
-	static int round(float);
+    
+    template <typename T>
+	static T clamp(T x, T min, T max)
+    {
+        if (x > max)
+            return max;
+        if (x > min)
+            return x;
+        else
+            return min;
+        return max;
+    }
+    
+	static int floor(float f)
+    {
+        int result = int(f);
+        
+        if (result > f)
+            result--;
+        
+        return result;
+    }
+    
+	static int round(float f)
+    {
+        return floor(f + 0.5f);
+    }
+    
 	static void initMth();
-	static int intFloorDiv(int, int);
+    
+	static int intFloorDiv(int a2, int a3)
+    {
+        if (a2 < 0)
+            return ~(~a2 / a3);
+        
+        return a2 / a3;
+    }
+    
+    static int intCeilDiv(int a, int b)
+    {
+        return (a + b - 1) / b;
+    }
+    
 	static float invSqrt(float);
-	static int random(int);
-	static float random(void);
+    
+	static int random(int max)
+    {
+        return int(g_Random.nextInt(max));
+    }
+    
+	static float random(void)
+    {
+        return g_Random.nextFloat();
+    }
+    
 	static float sin(float);
 	static unsigned fastRandom();
 

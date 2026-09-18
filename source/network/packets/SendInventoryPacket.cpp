@@ -33,7 +33,7 @@ void SendInventoryPacket::read(RakNet::BitStream& bs)
 	bs.Read(m_extra);
 	bs.Read(m_count);
 
-	m_count = Mth::Min(m_count, 512);
+	m_count = Mth::Min<uint16_t>(m_count, 512);
 	m_items.reserve(m_count);
 
 	for (uint16_t i = 0; i < m_count; i++)
