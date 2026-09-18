@@ -19,7 +19,7 @@
 //#define TEST_SURVIVAL_MODE      	 // Test survival mode.
 
 // Features (major changes)
-#define FEATURE_GFX_SHADERS 	           // Loads and uses Shaders from the assets folder for rendering.
+//#define FEATURE_GFX_SHADERS 	           // Loads and uses Shaders from the assets folder for rendering.
 #define FEATURE_NETWORKING                 // Enables multi-player through RakNet
 //#define FEATURE_SERVER_INVENTORIES       // Enables server-sided/server-authoritative player inventories.
 
