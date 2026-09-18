@@ -25,8 +25,6 @@ namespace mce
         uint8_t m_fieldMask;
         uint8_t m_fieldOffset[5];
         uint8_t m_vertexSize;
-        uint8_t m_vertexPadding;
-        bool m_bIsFinalized;
 
     private:
         void _init()
@@ -34,8 +32,6 @@ namespace mce
 			m_fieldMask = 0;
 			memset(m_fieldOffset, UINT8_MAX, sizeof(m_fieldOffset));
 			m_vertexSize = 0;
-            m_vertexPadding = 0;
-            m_bIsFinalized = false;
             
             enableField(VERTEX_FIELD_PADDING);
 		}
@@ -54,28 +50,6 @@ namespace mce
 				m_vertexSize  = 4 * (m_vertexSize >> 2) + 4;
 			m_fieldMask |= (1 << vertexField);
 		}
-        
-        void finalize()
-        {
-            if (m_bIsFinalized)
-            {
-                assert(false);
-                return;
-            }
-            
-            unsigned int padding = m_vertexSize % 16;
-            if (padding != 0)
-            {
-                padding = 16 - padding;
-                m_vertexSize += padding;
-            }
-            
-            m_vertexPadding = padding;
-            
-            m_bIsFinalized = true;
-            
-            return;
-        }
 
         bool hasField(VertexField vertexField) const
 		{
@@ -95,23 +69,19 @@ namespace mce
 
         unsigned int getID() const { return m_fieldMask; }
         unsigned int getVertexSize() const { return m_vertexSize; }
-        unsigned int getVertexPadding() const { return m_vertexPadding; }
-        bool isFinalized() const { return m_bIsFinalized; }
 
         bool operator==(const VertexFormat &other) const
 		{
 			return m_fieldMask  == other.m_fieldMask
 				&& m_vertexSize == other.m_vertexSize
-				&& memcmp(m_fieldOffset, other.m_fieldOffset, sizeof(m_fieldOffset)) == 0
-                && m_bIsFinalized == other.m_bIsFinalized;
+				&& memcmp(m_fieldOffset, other.m_fieldOffset, sizeof(m_fieldOffset)) == 0;
 		}
 
         bool operator!=(const VertexFormat &other) const
 		{
 			return m_fieldMask  != other.m_fieldMask
 				|| m_vertexSize != other.m_vertexSize
-				|| memcmp(m_fieldOffset, other.m_fieldOffset, sizeof(m_fieldOffset)) != 0
-                || m_bIsFinalized != other.m_bIsFinalized;
+				|| memcmp(m_fieldOffset, other.m_fieldOffset, sizeof(m_fieldOffset)) != 0;
 		}
 
         bool operator<(const VertexFormat &other) const
