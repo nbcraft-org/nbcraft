@@ -28,6 +28,7 @@ namespace mce
 
 		VertexField getVertexField() const { return m_vertexField; }
 		unsigned int getLocation() const { return m_location; }
+		unsigned int getCount() const { return m_count; }
 		
 		bool operator==(const Attribute& other) const
 		{

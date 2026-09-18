@@ -69,8 +69,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		case WM_SIZE:
 		{
 			// Prevent creation of a 0x0 window, can cause crashes, like in GLM on the 3D title logo
-			UINT width = Mth::Max(LOWORD(lParam), 1);
-			UINT height = Mth::Max(HIWORD(lParam), 1);
+			UINT width = Mth::Max<UINT>(LOWORD(lParam), 1);
+			UINT height = Mth::Max<UINT>(HIWORD(lParam), 1);
 
 			Minecraft::width  = width;
 			Minecraft::height = height;

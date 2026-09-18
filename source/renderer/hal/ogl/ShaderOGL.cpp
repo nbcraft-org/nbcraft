@@ -138,8 +138,6 @@ void ShaderOGL::bindVertexPointers(const VertexFormat& vertexFormat, const void*
     RenderDevice& device = RenderDevice::getInstance();
     const RenderDeviceBase::AttributeList& attrList = device.getAttributeList(m_attributeListIndex);
 
-    //GLuint location = 0;
-    
     for (size_t i = 0; i < attrList.size(); i++)
     {
         const Attribute& attr = attrList[i];
@@ -155,7 +153,7 @@ void ShaderOGL::bindVertexPointers(const VertexFormat& vertexFormat, const void*
         const RenderContextOGL::VertexFieldFormat& format = RenderContextOGL::vertexFieldFormats[vertexField];
         xglVertexAttribPointer(
             location,
-            format.components,
+            format.components * attr.getCount(), // @NOTE: Mojang did not even use attr.m_count here, we are doing this as a sanity-check so no one breaks anything
             format.componentsType,
             format.normalized,
             vertexFormat.getVertexSize(),
@@ -264,28 +262,35 @@ void ShaderOGL::reflectShaderAttributes()
     {
         char name[1024];
         GLsizei nameLen;
-        GLint size;
+        GLint count;
         GLenum type;
         
         unsigned int totalSize = 0;
 
         //LOG_I("\nReflecting attributes for shader: %s", m_vertexShader.m_shaderPath.c_str());
 
-        GLint location = 0;
+        GLint highestLocation = 0;
         for (GLint i = 0; i < attrCount; i++)
         {
-            xglGetActiveAttrib(m_program, i, sizeof(name), &nameLen, &size, &type, name);
-            location = xglGetAttribLocation(this->m_program, name);
+            xglGetActiveAttrib(m_program, i, sizeof(name), &nameLen, &count, &type, name);
+            GLint location = xglGetAttribLocation(this->m_program, name);
             if (location < 0)
                 continue;
+
+            if (location > highestLocation)
+                highestLocation = location;
 
             std::string attrName(name);
             VertexField vertexField = getAttributeForName(attrName, 0);
 
-            Attribute attr(location, size, vertexField);
+            // whatever you're doing, please make sure the engine can handle it, because afaik it can't
+            assert(count == 1);
+
+            Attribute attr(location, count, vertexField);
             attrList.push_back(attr);
-            
-            totalSize += size;
+
+            const VertexFieldFormat& format = VertexFieldFormats::GetFormatByField(vertexField);
+            totalSize += format.size * count;
 
             xglEnableVertexAttribArray(location);
             // from 0.12.1, they removed this by 0.16.1, I have no idea what this is supposed to do, but it seems bad
@@ -296,12 +301,12 @@ void ShaderOGL::reflectShaderAttributes()
         
         // attribute padding (see PR #235)
         // takes up no space in VBO memory, but somehow makes the shaders run faster
-        if (location >= 0)
+        if (highestLocation >= 0)
         {
             unsigned int padding = _getVertexFieldPadding(totalSize);
             if (padding > 0)
             {
-                unsigned int loc = location + 1;
+                unsigned int loc = highestLocation + 1;
                 for (int i = 0; i < 4; i++)
                 {
                     int components = 4 - i; // 4, 3, 2, 1

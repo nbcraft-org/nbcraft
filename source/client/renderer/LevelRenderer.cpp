@@ -1689,7 +1689,7 @@ void LevelRenderer::renderShadow(const Entity& entity, const Vec3& pos, float r,
 	Vec3 ePosO(pos - ePos);
 
 	Tesselator& tt = Tesselator::instance;
-	tt.begin(16);
+	tt.begin(36);
 	TilePos tp(tpMin);
 	for (tp.x = tpMin.x; tp.x <= tpMax.x; tp.x++)
 	{
@@ -1950,7 +1950,7 @@ void LevelRenderer::renderAdvancedClouds(float alpha)
 #endif
 		}
 
-		t.begin(3216); // it doesn't get any bigger than this
+		t.begin(3360); // it doesn't get any bigger than this
 		for (int xPos = -radius + 1; xPos <= radius; xPos++)
 		{
 			for (int zPos = -radius + 1; zPos <= radius; zPos++)
