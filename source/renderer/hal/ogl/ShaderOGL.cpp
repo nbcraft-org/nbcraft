@@ -164,41 +164,6 @@ void ShaderOGL::bindVertexPointers(const VertexFormat& vertexFormat, const void*
 
         ErrorHandlerOGL::checkForErrors();
     }
-    
-    /*unsigned int padding = vertexFormat.getVertexPadding();
-    if (padding > 0)
-    {
-        intptr_t fieldOffset = vertexFormat.getVertexSize() - padding;
-        if (vertexData)
-        {
-            fieldOffset += (intptr_t)vertexData;
-        }
-        
-        unsigned int loc = location + 1;
-        for (int i = 0; i < 4; i++)
-        {
-            int components = 4 - i; // 4, 3, 2, 1
-            int fields = Mth::intFloorDiv(padding, components);
-            padding -= fields * components;
-        
-            for (int j = 0; j < fields; j++)
-            {
-                //glVertexAttribPointer (GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer);
-                xglVertexAttribPointer(
-                    loc,
-                    components,
-                    GL_UNSIGNED_BYTE,
-                    false,
-                    vertexFormat.getVertexSize(),
-                    (const void*)fieldOffset
-                );
-                ErrorHandlerOGL::checkForErrors();
-            
-                loc++;
-                fieldOffset += components;
-            }
-        }
-    }*/
 }
 
 void ShaderOGL::bindShader(RenderContext& context, const VertexFormat& format, const void *dataBasePtr, unsigned int shaderStageBits)
@@ -329,6 +294,8 @@ void ShaderOGL::reflectShaderAttributes()
             //LOG_I("Reflected attribute: name=%s location=%d", name, location);
         }
         
+        // attribute padding (see PR #235)
+        // takes up no space in VBO memory, but somehow makes the shaders run faster
         if (location >= 0)
         {
             unsigned int padding = _getVertexFieldPadding(totalSize);
