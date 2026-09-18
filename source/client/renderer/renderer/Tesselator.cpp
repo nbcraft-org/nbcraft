@@ -440,9 +440,6 @@ void Tesselator::vertex(float x, float y, float z)
 		return;
 
 	m_count++;
-    
-    //if (!m_vertexFormat.isFinalized())
-    //    m_vertexFormat.finalize();
 
 	unsigned int vertexSize = m_vertexFormat.getVertexSize();
 	const uint8_t* oldIndicesPtr = !m_indices.isEmpty() ? m_indices.getData() : nullptr;
@@ -454,11 +451,14 @@ void Tesselator::vertex(float x, float y, float z)
 	}
 
 	bool didResize = m_indices.resize((m_vertices+1) * vertexSize);
-	(void)didResize; // to silence dumb warnings
 
+#ifdef _DEBUG
 	// useful for finding improperly pre-allocated Tesselator calls, reducing these reduces memcpy calls,
 	// which provides SUBSTANTIAL performace gains
 	assert(!didResize);
+#else
+	(void)didResize; // to silence dumb warnings
+#endif
 
 	// Make sure m_indices front pointer hasn't changed from reallocation as a result of reserve or resize
 	if (isFormatFixed() && oldIndicesPtr == m_indices.getData())
