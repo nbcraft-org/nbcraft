@@ -12,8 +12,8 @@ void _setSize()
 {
     XVIDEO_MODE VideoMode;
     XGetVideoMode(&VideoMode);
-    Minecraft::width  = Mth::Max(VideoMode.dwDisplayWidth, 640);
-    Minecraft::height = Mth::Max(VideoMode.dwDisplayHeight, 480);
+    Minecraft::width  = Mth::Max<int>(VideoMode.dwDisplayWidth, 640);
+    Minecraft::height = Mth::Max<int>(VideoMode.dwDisplayHeight, 480);
 
 	// Hardcoded 1080p check to avoid failed D3D device creation attempt
 	if (Minecraft::width == 1920 && Minecraft::height == 1080)
