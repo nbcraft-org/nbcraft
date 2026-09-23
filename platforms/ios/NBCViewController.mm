@@ -244,7 +244,7 @@ NSThread *G_drawFrameThread = nil;
     app->start();
     
     // Update draw size when device orientation changes (this accounts for typical view resizes)
-    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateDrawSize) name:UIDeviceOrientationDidChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateDrawSize) name:UIDeviceOrientationDidChangeNotification object:nil];
     
     /*Minecraft *mc = (Minecraft *)app;
      mc->selectLevel("TestWorld", "Test", (int)"iOS");*/
