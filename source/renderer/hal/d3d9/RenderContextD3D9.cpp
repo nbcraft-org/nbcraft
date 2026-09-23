@@ -88,7 +88,7 @@ bool RenderContextD3D9::setGamma(Gamma gamma)
         // Scale to 16-bit color range (0 - 65535)
         float scaled = corrected * UINT16_MAX;
 
-        int val = Mth::clamp((int)scaled, 0, UINT16_MAX);
+        int val = Mth::clamp<int>(scaled, 0, UINT16_MAX);
         ramp.red[i]   = (uint16_t)val;
         ramp.green[i] = (uint16_t)val;
         ramp.blue[i]  = (uint16_t)val;

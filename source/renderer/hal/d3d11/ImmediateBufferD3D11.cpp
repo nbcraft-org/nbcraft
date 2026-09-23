@@ -20,7 +20,7 @@ void ImmediateBufferD3D11::updateBuffer(RenderContext& context, unsigned int str
 {
     MapType mapType = MAP_WRITE_NO_OVERWRITE;
 
-    if (m_bufferOffset + count * stride > m_count)
+    if (m_bufferOffset + count * stride > getInternalBufferSize())
     {
         m_bufferOffset = 0;
         mapType = MAP_WRITE_DISCARD;

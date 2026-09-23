@@ -39,7 +39,7 @@ void ImmediateBufferD3D9::updateBuffer(RenderContext& context, unsigned int stri
 
     MapType mapType = MAP_WRITE_NO_OVERWRITE;
 
-    if (m_pBuffer->m_bufferOffset + count * stride > m_pBuffer->m_count)
+    if (m_pBuffer->m_bufferOffset + count * stride > m_pBuffer->getInternalBufferSize())
     {
         m_pBuffer->m_bufferOffset = 0;
         mapType = MAP_WRITE_DISCARD;
