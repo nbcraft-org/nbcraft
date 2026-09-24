@@ -114,6 +114,7 @@ void BufferD3D9::_move(BufferD3D9& other)
         this->m_vertexBuffer._move(other.m_vertexBuffer);
         this->m_indexBuffer._move(other.m_indexBuffer);
         std::swap(this->m_format, other.m_format);
+		std::swap(this->m_bDynamic, other.m_bDynamic);
         std::swap(this->m_bufferOffset, other.m_bufferOffset);
     }
 	
