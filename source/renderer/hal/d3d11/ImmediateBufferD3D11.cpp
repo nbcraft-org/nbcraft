@@ -1,5 +1,3 @@
-#include <stdexcept>
-
 #include "ImmediateBufferD3D11.hpp"
 #include "renderer/hal/interface/RenderContext.hpp"
 #include "BufferD3D11.hpp"
