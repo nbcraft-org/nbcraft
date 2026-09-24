@@ -1,6 +1,7 @@
 #include <typeinfo>
 #include "BufferD3D9.hpp"
 #include "common/Logger.hpp"
+#include "compat/PlatformDefinitions.h"
 #include "renderer/hal/d3d9/helpers/ErrorHandlerD3D9.hpp"
 #include "renderer/hal/interface/RenderContext.hpp"
 
@@ -54,8 +55,9 @@ BufferD3D9::~BufferD3D9()
 void BufferD3D9::_createBuffer(RenderContext& context, unsigned int stride, ByteBuffer& data, unsigned int count, BufferType bufferType, bool isDynamic)
 {
     D3DDevice d3dDevice = context.getD3DDevice();
-    DWORD usage = isDynamic ? D3DUSAGE_DYNAMIC : 0x0;
     unsigned int size = stride * count;
+    DWORD usage = D3DUSAGE_WRITEONLY;
+    if (isDynamic) usage |= D3DUSAGE_DYNAMIC;
 
     m_vertexBuffer.release();
     m_indexBuffer.release();

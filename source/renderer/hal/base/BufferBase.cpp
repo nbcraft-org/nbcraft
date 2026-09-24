@@ -104,17 +104,20 @@ void BufferBase::_updateClientBuffer(RenderContext& context, unsigned int stride
 void BufferBase::releaseBuffer()
 {
     m_clientBuffer.clear();
-    m_stride = 0;
     m_bufferType = BUFFER_TYPE_NONE;
+    m_stride = 0;
     m_count = 0;
+    m_internalSize = 0;
+    m_bufferOffset = 0;
 }
 
 void BufferBase::createBuffer(RenderContext& context, unsigned int stride, ByteBuffer& data, unsigned int count, BufferType bufferType)
 {
+    m_bufferType = bufferType;
     m_stride = stride;
     m_count = count;
     m_internalSize = count * stride;
-    m_bufferType = bufferType;
+    m_bufferOffset = 0;
 }
 
 void BufferBase::createDynamicBuffer(RenderContext& context, unsigned int stride, ByteBuffer& data, unsigned int count, BufferType bufferType)
@@ -130,9 +133,10 @@ void BufferBase::updateBuffer(RenderContext& context, unsigned int stride, ByteB
 
 void BufferBase::copy(BufferBase& other)
 {
-    // make sure this works, this function is never called
+    // this is more of a mimic of the properties than an exact copy
     other.m_bufferType = this->m_bufferType;
     other.m_stride = this->m_stride;
     other.m_count = this->m_count;
     other.m_internalSize = this->m_internalSize;
+    // intentionally not copying the buffer offset
 }
