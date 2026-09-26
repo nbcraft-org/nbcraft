@@ -5,6 +5,19 @@ project(nbcraft)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 
+option(NBC_SYSTEM_STB OFF)
+option(NBC_NIX_BUILD OFF)
+
+if(NBC_NIX_BUILD)
+    if(NOT NBC_SYSTEM_STB)
+        message(SEND_ERROR "Option NBC_NIX_BUILD depends on NBC_SYSTEM_STB, needs to be ON.")
+    endif()
+endif()
+
+if(NBC_SYSTEM_STB)
+    add_compile_definitions(NBC_SYSTEM_STB)
+endif()
+
 # MC_VERSION string is an 7 digit number with 4 components, era, major, minor, and patch.
 # Each component takes 2 digits, except era, which takes 1. Major, minor, and patch are self explanatory,
 # era designates if the version is from alpha, beta, or release. Alpha is 1, beta is 2, and release is 3.

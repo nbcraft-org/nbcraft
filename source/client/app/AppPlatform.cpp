@@ -9,7 +9,11 @@
 #include <fstream>
 #include <time.h>
 
-#include "thirdparty/stb_image/include/stb_image.h"
+#if NBC_SYSTEM_STB
+    #include <stb_image.h>
+#else
+	#include "thirdparty/stb_image/include/stb_image.h"
+#endif
 
 #include "AppPlatform.hpp"
 #include "common/Logger.hpp"
