@@ -23,6 +23,7 @@ if(ANDROID)
     set_target_properties(nbcraft PROPERTIES OUTPUT_NAME main)
 else()
     add_executable(nbcraft ${SOURCES})
+    install(TARGETS nbcraft DESTINATION bin)
 endif()
 
 # Core
