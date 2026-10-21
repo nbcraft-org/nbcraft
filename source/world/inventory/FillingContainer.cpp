@@ -8,6 +8,8 @@
 #include "world/item/crafting/Recipes.hpp"
 
 #define C_INVALID_SLOT UINT16_MAX
+#define C_LINKED_SLOT_ID 255
+#define C_LINKED_SLOT_COUNT 255
 
 FillingContainer::FillingContainer(Size size, Size linkedSlotsCount, bool isUnlimited)
 	: m_linkedSlots(nullptr)
@@ -90,7 +92,7 @@ bool FillingContainer::_linkSlot(int key, StackID value, bool cycleSlots)
 	if (slotId == value)
 		return false;
 
-	LOG_I("shifting linkedSlots: %d, %d, %d, %d, %d, %d, %d, %d, %d", m_linkedSlots[0], m_linkedSlots[1], m_linkedSlots[2], m_linkedSlots[3], m_linkedSlots[4], m_linkedSlots[5], m_linkedSlots[6], m_linkedSlots[7], m_linkedSlots[8]);
+	//LOG_I("shifting linkedSlots: %d, %d, %d, %d, %d, %d, %d, %d, %d", m_linkedSlots[0], m_linkedSlots[1], m_linkedSlots[2], m_linkedSlots[3], m_linkedSlots[4], m_linkedSlots[5], m_linkedSlots[6], m_linkedSlots[7], m_linkedSlots[8]);
 
 	if (cycleSlots)
 	{
@@ -115,7 +117,7 @@ bool FillingContainer::_linkSlot(int key, StackID value, bool cycleSlots)
 
 	slotId = value;
 
-	LOG_I("shifted linkedSlots: %d, %d, %d, %d, %d, %d, %d, %d, %d", m_linkedSlots[0], m_linkedSlots[1], m_linkedSlots[2], m_linkedSlots[3], m_linkedSlots[4], m_linkedSlots[5], m_linkedSlots[6], m_linkedSlots[7], m_linkedSlots[8]);
+	//LOG_I("shifted linkedSlots: %d, %d, %d, %d, %d, %d, %d, %d, %d", m_linkedSlots[0], m_linkedSlots[1], m_linkedSlots[2], m_linkedSlots[3], m_linkedSlots[4], m_linkedSlots[5], m_linkedSlots[6], m_linkedSlots[7], m_linkedSlots[8]);
 
 	return true;
 }
@@ -513,7 +515,7 @@ void FillingContainer::save(ListTag& tag) const
 
 		if (i < m_linkedSlotsCount)
 		{
-			item = ItemStack(255, 255, m_linkedSlots[i]);
+			item = ItemStack(C_LINKED_SLOT_ID, C_LINKED_SLOT_COUNT, m_linkedSlots[i]);
 		}
 		else
 		{
@@ -525,7 +527,8 @@ void FillingContainer::save(ListTag& tag) const
 			item = slotItem;
 		}
 
-		item.m_count = Mth::clamp<ItemStack::Count>(item.m_count, 0, 255);
+		// @NOTE: clamping to uint8_t just like in Java & PE
+		item.m_count = Mth::clamp<ItemStack::Count>(item.m_count, 0, UINT8_MAX);
 
 		CompoundTag* itemTag = new CompoundTag();
 		itemTag->putInt8("Slot", i);
@@ -555,7 +558,7 @@ void FillingContainer::load(const ListTag& tag)
 
 		const CompoundTag* itemTag = (const CompoundTag*)pTag;
 
-		uint8_t slotId = 0;
+		uint8_t slotId = UINT8_MAX; // if we don't know where it's going, write that shit out-of-bounds so it gets dropped "safely" on the ground
 		if (itemTag->contains("Slot", Tag::TAG_TYPE_INT8))
 		{
 			slotId = itemTag->getInt8("Slot");
@@ -564,11 +567,12 @@ void FillingContainer::load(const ListTag& tag)
 		ItemStack item = ItemStack::fromTag(*itemTag);
 		if (!item.isEmpty())
 		{
-			if (slotId < m_linkedSlotsCount)
+			if (item.getId() == C_LINKED_SLOT_ID && item.m_count == C_LINKED_SLOT_COUNT)
 			{
-				if (slotId >= containerSize || item.getId() != 255 || item.m_count != 255)
+				if (slotId >= m_linkedSlotsCount)
 				{
-					LOG_E("Error: Slot %d is selection slot (inventory size: %d) but id/count is %d/%d", slotId, containerSize, item.getId(), item.m_count);
+					//LOG_E("Error: Slot %d is selection slot (inventory size: %d) but id/count is %d/%d", slotId, containerSize, item.getId(), item.m_count);
+					LOG_E("Error: Slot %d is selection slot (inventory size: %d) but is out-of-bounds", slotId, containerSize);
 				}
 				else
 				{
@@ -580,7 +584,7 @@ void FillingContainer::load(const ListTag& tag)
 					}
 				}
 			}
-			else if (slotId >= 0 && slotId < m_items.size())
+			else if (slotId < m_items.size())
 			{
 				ItemStack& slotItem = m_items[slotId];
 				slotItem = item;
