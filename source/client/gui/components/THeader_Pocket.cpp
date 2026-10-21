@@ -1,4 +1,5 @@
 #include "THeader_Pocket.hpp"
+#include "renderer/ShaderConstants.hpp"
 
 void THeader_Pocket::_init()
 {
@@ -41,6 +42,7 @@ void THeader_Pocket::renderBg(Minecraft* mc, const MenuPointer& pointer)
 
 void THeader_Pocket::render( Minecraft* mc, const MenuPointer& pointer)
 {
+	currentShaderColor = Color::WHITE;
 	renderBg(mc, pointer);
 
 	int textPosX = m_textPosX;

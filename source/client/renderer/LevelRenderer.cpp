@@ -1742,6 +1742,8 @@ void LevelRenderer::renderSky(const Entity& camera, float alpha)
 		Fog::disable();
 	}
 
+	currentShaderColor = Color::WHITE;
+
 	_renderSunrise(alpha);
 	_renderSolarSystem(alpha);
 	
