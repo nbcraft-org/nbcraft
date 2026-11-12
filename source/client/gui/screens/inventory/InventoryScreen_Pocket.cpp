@@ -84,7 +84,7 @@ void InventoryScreen_Pocket::init()
 		areaRect,
         m_width,
         4.0f,
-		itemSlotsCount - inventory.getNumLinkedSlots()
+		itemSlotsCount
 	);
 	m_inventoryPane->m_paddingX = v6 / 2;
 	//this->dword184 = containerSize;
@@ -180,13 +180,13 @@ bool InventoryScreen_Pocket::isPauseScreen()
 bool InventoryScreen_Pocket::addItem(const InventoryPane_Pocket& pane, int id)
 {
 	Inventory& inventory = *m_pPlayer->m_pInventory;
-	Container::Size linkedSlotsCount = inventory.getNumLinkedSlots();
+	Container::StackID firstSlot = inventory.getFirstSlot();
 
-	ItemStack& slotItem = inventory.getItem(linkedSlotsCount + id);
+	ItemStack& slotItem = inventory.getItem(firstSlot + id);
 	if (slotItem.isEmpty())
 		return false;
 
-	inventory.moveToSelectionSlot(0, linkedSlotsCount + id, true);
+	inventory.moveToSelectionSlot(0, id, true);
 	inventory.selectSlot(0);
 	m_pMinecraft->m_pSoundEngine->playUI("random.pop", 1.0f, 0.3f);
 	//m_pMinecraft->m_pGui->flashSlot(0);
@@ -200,11 +200,11 @@ std::vector<const ItemStack*> InventoryScreen_Pocket::getItems(const InventoryPa
 
     Inventory& inventory = *m_pPlayer->m_pInventory;
     Container::Size itemSlotsCount = inventory.getNumItemSlots();
-	Container::Size linkedSlotsCount = inventory.getNumLinkedSlots();
+	Container::StackID firstSlot = inventory.getFirstSlot();
 
-	for (Container::StackID stackId = linkedSlotsCount; stackId < itemSlotsCount; stackId++)
+	for (Container::StackID stackId = 0; stackId < itemSlotsCount; stackId++)
 	{
-		result.push_back(&inventory.getItem(stackId));
+		result.push_back(&inventory.getItem(firstSlot + stackId));
 	}
 
 	return result;

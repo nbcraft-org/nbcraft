@@ -10,7 +10,7 @@
 #include "Item.hpp"
 
 Inventory::Inventory(Player* pPlayer)
-	: FillingContainer(C_NUM_INVENTORY_SLOTS + C_MAX_HOTBAR_ITEMS, C_MAX_HOTBAR_ITEMS, false)
+	: FillingContainer(C_NUM_INVENTORY_SLOTS, C_MAX_HOTBAR_ITEMS, false)
 	, m_armor(C_NUM_ARMOR_SLOTS)
 {
 	m_pPlayer = pPlayer;

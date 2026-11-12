@@ -45,6 +45,7 @@ public:
 	void save(ListTag& tag) const;
 	void load(const ListTag& tag);
 	bool contains(const ItemStack& item) const;
+	StackID getFirstSlot() const { return m_linkedSlotsCount; }
 	Size getNumEmptySlots() const;
 	Size getNumLinkedSlots() const { return m_linkedSlotsCount; }
 
