@@ -1,5 +1,6 @@
 #include "Slime.hpp"
 #include "nbt/CompoundTag.hpp"
+#include "world/entity/Player.hpp"
 #include "world/level/Level.hpp"
 #include "world/level/TileSource.hpp"
 

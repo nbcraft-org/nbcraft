@@ -2,6 +2,7 @@
 #include "world/level/Level.hpp"
 #include "world/level/TileSource.hpp"
 #include "world/entity/Fireball.hpp"
+#include "world/entity/Player.hpp"
 
 Ghast::Ghast(TileSource& source) : FlyingMob(source)
 {

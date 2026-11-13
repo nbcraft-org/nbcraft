@@ -17,8 +17,6 @@
 #include "client/gui/screens/inventory/TrapScreen.hpp"
 #include "world/level/TileSource.hpp"
 
-int dword_250ADC, dword_250AE0;
-
 void LocalPlayer::_init()
 {
 	m_nAutoJumpFrames = 0;
@@ -56,6 +54,8 @@ LocalPlayer::LocalPlayer(Minecraft* pMinecraft, Level& level, User* pUser, GameT
 
 	m_dimension = dimensionId;
 	_init();
+	
+	onUiThemeChanged();
 }
 
 LocalPlayer::~LocalPlayer()
@@ -323,6 +323,11 @@ void LocalPlayer::calculateFlight(const Vec3& pos)
 void LocalPlayer::respawn()
 {
 	m_pMinecraft->respawnPlayer();
+}
+
+void LocalPlayer::onUiThemeChanged()
+{
+	m_pInventory->setLinkedSlotsEnabled(m_pMinecraft->getOptions()->getUiTheme() == UI_POCKET);
 }
 
 bool LocalPlayer::isSneaking() const

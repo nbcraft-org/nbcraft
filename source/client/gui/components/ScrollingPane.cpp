@@ -1,17 +1,18 @@
 #include "ScrollingPane.hpp"
 #include "common/Utils.hpp"
+#include "client/app/Minecraft.hpp"
 
 #define C_SCROLLBAR_WIDTH 2.3333f
 #define C_SCROLLBAR_HEIGHT 2.3333f
+#define C_SCROLL_START_DEADZONE 5.0f
 #define C_HOLD_DURATION_MS 150
 
 ScrollingPane::ScrollingPane(Flags flags, const IntRectangle& areaRect, const IntRectangle& a4, int columns, int itemCount, float scale, const IntRectangle& itemRect)
-    : m_flags(flags)
+    : GuiElement(areaRect)
+    , m_flags(flags)
     , m_scale(scale)
     , m_itemCount(itemCount)
-    , m_guiRatio(1.0f / scale)
-    , m_areaRect(areaRect)
-    , m_area(m_areaRect.x, m_areaRect.x + m_areaRect.w, m_areaRect.y, m_areaRect.y + m_areaRect.h)
+    , m_area(m_xPos, m_yPos, m_xPos + m_width, m_yPos + m_height)
     , m_interactArea(m_area)
     , m_bounds(areaRect)
     , m_itemRect(itemRect.w <= 0 ? a4 : itemRect)
@@ -42,7 +43,7 @@ ScrollingPane::ScrollingPane(Flags flags, const IntRectangle& areaRect, const In
 
     if (m_columns <= 0)
     {
-        m_columns = m_areaRect.w / m_itemRect.w;
+        m_columns = m_width / m_itemRect.w;
         if (m_columns <= 0)
         {
             LOG_W("Columns are 0! Area width is smaller than item width. Setting columns to 1.");
@@ -59,12 +60,12 @@ ScrollingPane::ScrollingPane(Flags flags, const IntRectangle& areaRect, const In
     }
 
     m_scrollBarV.size = Vec2(C_SCROLLBAR_WIDTH, C_SCROLLBAR_HEIGHT);
-    m_scrollBarV.pos.x = (float)(m_areaRect.x + m_areaRect.w) - C_SCROLLBAR_WIDTH;
+    m_scrollBarV.pos.x = (float)(m_xPos + m_width) - C_SCROLLBAR_WIDTH;
     m_scrollBarV.pos.y = 0.0f;
 
     m_scrollBarH.size = Vec2(C_SCROLLBAR_WIDTH, C_SCROLLBAR_HEIGHT);
     m_scrollBarH.pos.x = 0.0f;
-    m_scrollBarH.pos.y = (float)(m_areaRect.y + m_areaRect.h) - C_SCROLLBAR_HEIGHT;
+    m_scrollBarH.pos.y = (float)(m_yPos + m_height) - C_SCROLLBAR_HEIGHT;
 }
 
 ScrollingPane::~ScrollingPane()
@@ -76,12 +77,6 @@ void ScrollingPane::_hideScrollIndicators()
 {
     m_scrollBarV.fadeState = ScrollBar::FADE_DISAPPEARING;
     m_scrollBarH.fadeState = ScrollBar::FADE_DISAPPEARING;
-}
-
-void ScrollingPane::_stopDecelerationAnimation()
-{
-    m_bDecelerating = false;
-    m_bAnimating = false;
 }
 
 void ScrollingPane::_onSelect(int id)
@@ -169,7 +164,7 @@ void ScrollingPane::_updateVerticalScrollIndicator()
     }
 
     m_scrollBarV.size.y = v9;
-    m_scrollBarV.pos.y = (float)m_areaRect.y + v11;
+    m_scrollBarV.pos.y = (float)m_yPos + v11;
 }
 
 void ScrollingPane::_updateHorizontalScrollIndicator()
@@ -205,11 +200,12 @@ void ScrollingPane::_updateHorizontalScrollIndicator()
     }
 
     m_scrollBarH.size.x = v9;
-    m_scrollBarH.pos.x = (float)m_areaRect.x + v11;
+    m_scrollBarH.pos.x = (float)m_xPos + v11;
 }
 
-void ScrollingPane::_setContentOffsetWithAnimation(const Vec3& contentOffset, bool ignoreScrollbars)
+void ScrollingPane::_setContentOffsetWithAnimation(const Vec2& contentOffset, bool ignoreScrollbars)
 {
+    m_contentOffset = contentOffset;
     m_inverseContentOffset.x = -m_contentOffset.x;
     m_inverseContentOffset.y = -m_contentOffset.y;
 
@@ -226,25 +222,20 @@ void ScrollingPane::_setContentOffsetWithAnimation(const Vec3& contentOffset, bo
     }
 }
 
-void ScrollingPane::_setContentOffset(const Vec3& contentOffset)
+void ScrollingPane::_setContentOffset(const Vec2& contentOffset)
 {
     _setContentOffsetWithAnimation(contentOffset, false);
 }
 
-void ScrollingPane::_setContentOffset(const Vec2& offset)
-{
-    _setContentOffsetWithAnimation(Vec3(offset.x, offset.y, 0.0f), false);
-}
-
 void ScrollingPane::_adjustContentSize()
 {
-    m_contentWidth  = Mth::Max(m_itemRect.w * m_columns, m_areaRect.w);
-    m_contentHeight = Mth::Max(m_itemRect.h * m_rows,    m_areaRect.h);
+    m_contentWidth  = Mth::Max(m_itemRect.w * m_columns, m_width);
+    m_contentHeight = Mth::Max(m_itemRect.h * m_rows,    m_height);
 }
 
 void ScrollingPane::_snapContentOffsetToBounds(bool ignoreScrollbars)
 {
-    Vec3 offset;
+    Vec2 offset;
 
     if (m_bPagingEnabled)
     {
@@ -253,16 +244,16 @@ void ScrollingPane::_snapContentOffsetToBounds(bool ignoreScrollbars)
     }
     else if (hasBounce())
     {
-        float v7  = Mth::Min(Mth::Max(m_minContentOffset.x, m_contentOffset.x), 0.0f);
-        float v11 = Mth::Min(Mth::Max(m_minContentOffset.y, m_contentOffset.y), 0.0f);
-        if (v7 == m_contentOffset.x && v11 == m_contentOffset.y)
+        offset.x = Mth::clamp(m_contentOffset.x, m_minContentOffset.x, 0.0f);
+        offset.y = Mth::clamp(m_contentOffset.y, m_minContentOffset.y, 0.0f);
+        if (offset == m_contentOffset)
             return;
     }
 
     _setContentOffsetWithAnimation(offset, ignoreScrollbars);
 }
 
-void ScrollingPane::_beginTracking(const Vec2& pos, int time)
+void ScrollingPane::_beginTracking(int time)
 {
     if (m_bTracking)
         return;
@@ -272,13 +263,12 @@ void ScrollingPane::_beginTracking(const Vec2& pos, int time)
 
     m_minContentOffset.x = (float)(m_bounds.w - m_contentWidth);
     m_minContentOffset.y = m_bounds.h - m_contentHeight;
-    m_minContentOffset.z = 0.0f;
 
     _snapContentOffsetToBounds(false);
 
     m_trackingStartContentOffset = m_contentOffset;
 
-    m_trackingStartPos = Vec3(pos.x, pos.y, 0.0f);
+    m_trackingStartPos = m_pointerPos;
     m_trackingStartTime = (float)time;
 
     m_trackingStartContentOffset2 = m_contentOffset;
@@ -286,6 +276,70 @@ void ScrollingPane::_beginTracking(const Vec2& pos, int time)
     m_bDragging = false;
     m_bTracking = true;
     m_bTouchesMoved = false;
+}
+
+void ScrollingPane::_startDecelerationAnimation(bool isSubstep)
+{
+    // Calculate distance traveled during tracking
+    Vec2 delta(m_contentOffset.x - m_trackingStartContentOffset2.x,
+               m_contentOffset.y - m_trackingStartContentOffset2.y);
+
+    // Calculate tracking velocity
+    int currentTime = getTimeMs();
+    float timeFactor = ((float)currentTime - m_trackingStartTime) / 15.0f;
+
+    Vec2 velocity = delta / timeFactor;
+
+    m_scrollVelocity.x = velocity.x;
+    m_scrollVelocity.y = velocity.y;
+
+    // Initialize default deceleration boundaries
+    m_decelLimitMin = m_minContentOffset;
+    m_decelLimitMax = Vec2::ZERO;
+
+    // Calculate clamped page boundaries if paging is enabled
+    if (m_bPagingEnabled)
+    {
+        float w = m_bounds.w;
+        float h = m_bounds.h;
+
+        m_decelLimitMin.x = Mth::Max(m_minContentOffset.x, w * floorf(m_touchesEndedContentOffset.x / w));
+        m_decelLimitMin.y = Mth::Max(m_minContentOffset.y, h * floorf(m_touchesEndedContentOffset.y / h));
+
+        m_decelLimitMax.x = Mth::Min(0.0f, w * ceilf(m_touchesEndedContentOffset.x / w));
+        m_decelLimitMax.y = Mth::Min(0.0f, h * ceilf(m_touchesEndedContentOffset.y / h));
+    }
+
+    // Set up bounce mechanics variables
+    float thresholdVelocity = 0.33333f;
+    m_bounceTension = 0.03f;
+    m_bounceDamping = 0.08f;
+
+    if (m_bPagingEnabled)
+    {
+        thresholdVelocity = 1.3333f;
+        m_bounceTension = 0.15f;
+    }
+
+    // Decelerate if we are in a substep, or if movement speed exceeds the idle threshold
+    bool shouldDecelerate = isSubstep ||
+        (Mth::abs(m_scrollVelocity.x) > thresholdVelocity) ||
+        (Mth::abs(m_scrollVelocity.y) > thresholdVelocity);
+
+    if (shouldDecelerate)
+    {
+        m_bDecelerating = true;
+        m_bAnimating = true;
+        m_timeMs = getTimeMs();
+
+        willBeginDecelerating();
+    }
+}
+
+void ScrollingPane::_stopDecelerationAnimation()
+{
+    m_bDecelerating = false;
+    m_bAnimating = false;
 }
 
 void ScrollingPane::_stepThroughDecelerationAnimation(bool isSubstep)
@@ -307,7 +361,7 @@ void ScrollingPane::_stepThroughDecelerationAnimation(bool isSubstep)
     }
 
     // Calculate new position based on current velocity
-    Vec3 nextOffset = m_contentOffset + m_scrollVelocity;
+    Vec2 nextOffset = m_contentOffset + m_scrollVelocity;
 
     // Handle clamping when bounce limits are disabled
     if (!hasBounce())
@@ -333,7 +387,7 @@ void ScrollingPane::_stepThroughDecelerationAnimation(bool isSubstep)
     }
     else
     {
-        _setContentOffset(Vec2(nextOffset.x, nextOffset.y));
+        _setContentOffset(nextOffset);
     }
 
     // Apply friction/damping to velocity if paging is not enabled
@@ -410,19 +464,77 @@ void ScrollingPane::_stepThroughDecelerationAnimation(bool isSubstep)
     }
 }
 
-void ScrollingPane::_touchesMoved(const Vec2& pos, int time)
+void ScrollingPane::_touchesBegan(int time)
+{
+    if (!m_bCanInteract)
+        return;
+
+    m_touch1 = 1;
+    _beginTracking(time);
+    m_touch2 = 2;
+
+    _updateHighlightItem(m_pointerPos);
+}
+
+void ScrollingPane::_touchesEnded(int time)
+{
+    m_touch1 = 0;
+
+    m_bTracking = false;
+
+    if (m_bDragging)
+    {
+        m_touchesMovedTime = m_touchesMovedTime;
+        m_bDragging = false;
+
+        if ((time - m_touchesMovedTime) <= 100.0f)
+        {
+            m_touchesEndedContentOffset = m_contentOffset;
+            _startDecelerationAnimation(false);
+        }
+        didEndDragging();
+    }
+
+    if (!m_bDecelerating)
+    {
+        float inverseY = m_inverseContentOffset.y;
+        if (inverseY >= 0.0f && inverseY <= m_height)
+        {
+            _snapContentOffsetToBounds(true);
+            _hideScrollIndicators();
+        }
+        else
+        {
+            m_touchesEndedContentOffset = m_contentOffset;
+            _startDecelerationAnimation(true);
+        }
+    }
+
+    if (sqrtf(
+            ((m_trackingStartPos.y - m_pointerPos.y) * (m_trackingStartPos.y - m_pointerPos.y)) +
+            ((m_trackingStartPos.x - m_pointerPos.x) * (m_trackingStartPos.x - m_pointerPos.x))
+        ) <= 6.0f)
+    {
+        if (m_touchedId >= 0)
+            _onSelect(m_touchedId);
+    }
+
+    m_touch2 = 0;
+}
+
+void ScrollingPane::_touchesMoved(int time)
 {
     m_bTouchesMoved = true;
 
-    Vec2 diff(pos.x - m_trackingStartPos.x, pos.y - m_trackingStartPos.y);
+    Vec2 diff = m_pointerPos - m_trackingStartPos;
 
     if (!m_bDragging)
     {
         bool canScrollH = hasHorizontalScrolling();
         bool canScrollV = hasVerticalScrolling();
 
-        bool exceededThresholdH = canScrollH && (Mth::abs(diff.x) >= 5.0f);
-        bool exceededThresholdV = canScrollV && (Mth::abs(diff.y) >= 5.0f);
+        bool exceededThresholdH = canScrollH && (Mth::abs(diff.x) >= C_SCROLL_START_DEADZONE);
+        bool exceededThresholdV = canScrollV && (Mth::abs(diff.y) >= C_SCROLL_START_DEADZONE);
 
         if (exceededThresholdH || exceededThresholdV)
         {
@@ -438,16 +550,17 @@ void ScrollingPane::_touchesMoved(const Vec2& pos, int time)
                     m_scrollBarV.fadeState = ScrollBar::FADE_APPEARING;
             }
         }
-
-        // Do not update offsets if we haven't triggered a dragging state yet
-        if (!m_bDragging)
+        else
+        {
+            // Do not update offsets if we haven't triggered a dragging state yet
             return;
+        }
     }
 
     // Determine raw target offsets based on axis lock flags
     Vec2 target;
     target.x = !hasHorizontalScrolling() ? m_contentOffset.x : (diff.x + m_trackingStartContentOffset.x);
-    target.y = !hasVerticalScrolling()   ? m_contentOffset.y : (diff.y + m_trackingStartContentOffset.y);
+    target.y = !hasVerticalScrolling() ? m_contentOffset.y : (diff.y + m_trackingStartContentOffset.y);
 
     Vec2 offset;
 
@@ -491,9 +604,7 @@ void ScrollingPane::_touchesMoved(const Vec2& pos, int time)
     if (m_bTrackingStartPosNeedsUpdate)
     {
         m_bTrackingStartPosNeedsUpdate = false;
-        m_trackingStartPos.x = pos.x;
-        m_trackingStartPos.y = pos.y;
-        m_trackingStartPos.z = 0.0f;
+        m_trackingStartPos = m_pointerPos;
     }
     else
     {
@@ -502,129 +613,29 @@ void ScrollingPane::_touchesMoved(const Vec2& pos, int time)
     }
 }
 
-void ScrollingPane::_startDecelerationAnimation(bool isSubstep)
+void ScrollingPane::_touchesCancelled(int time)
 {
-    // Calculate distance traveled during tracking
-    Vec2 delta(m_contentOffset.x - m_trackingStartContentOffset2.x,
-               m_contentOffset.y - m_trackingStartContentOffset2.y);
-
-    // Calculate tracking velocity
-    int currentTime = getTimeMs();
-    float timeFactor = ((float)currentTime - m_trackingStartTime) / 15.0f;
-
-    Vec2 velocity = delta / timeFactor;
-
-    m_scrollVelocity.x = velocity.x;
-    m_scrollVelocity.y = velocity.y;
-    m_scrollVelocity.z = 0.0f;
-
-    // Initialize default deceleration boundaries
-    m_decelLimitMin = m_minContentOffset;
-    m_decelLimitMax = Vec3::ZERO;
-
-    // Calculate clamped page boundaries if paging is enabled
-    if (m_bPagingEnabled)
-    {
-        float w = m_bounds.w;
-        float h = m_bounds.h;
-
-        m_decelLimitMin.x = Mth::Max(m_minContentOffset.x, w * floorf(m_touchesEndedContentOffset.x / w));
-        m_decelLimitMin.y = Mth::Max(m_minContentOffset.y, h * floorf(m_touchesEndedContentOffset.y / h));
-
-        m_decelLimitMax.x = Mth::Min(0.0f, w * ceilf(m_touchesEndedContentOffset.x / w));
-        m_decelLimitMax.y = Mth::Min(0.0f, h * ceilf(m_touchesEndedContentOffset.y / h));
-    }
-
-    // Set up bounce mechanics variables
-    float thresholdVelocity = 0.33333f;
-    m_bounceTension = 0.03f;
-    m_bounceDamping = 0.08f;
-
-    if (m_bPagingEnabled)
-    {
-        thresholdVelocity = 1.3333f;
-        m_bounceTension = 0.15f;
-    }
-
-    // Decelerate if we are in a substep, or if movement speed exceeds the idle threshold
-    bool shouldDecelerate = isSubstep ||
-        (Mth::abs(m_scrollVelocity.x) > thresholdVelocity) ||
-        (Mth::abs(m_scrollVelocity.y) > thresholdVelocity);
-
-    if (shouldDecelerate)
-    {
-        m_bDecelerating = true;
-        m_bAnimating = true;
-        m_timeMs = getTimeMs();
-
-        willBeginDecelerating();
-    }
-}
-
-void ScrollingPane::_touchesEnded(const Vec2& pos, int time)
-{
-    m_touch1 = 0;
-
-    m_bTracking = false;
-
-    if (m_bDragging)
-    {
-        m_touchesMovedTime = m_touchesMovedTime;
-        m_bDragging = false;
-
-        if ((time - m_touchesMovedTime) <= 100.0f)
-        {
-            m_touchesEndedContentOffset = m_contentOffset;
-            _startDecelerationAnimation(false);
-        }
-        didEndDragging();
-    }
-
-    if (!m_bDecelerating)
-    {
-        float inverseY = m_inverseContentOffset.y;
-        if (inverseY >= 0.0f && inverseY <= m_areaRect.h)
-        {
-            _snapContentOffsetToBounds(true);
-            _hideScrollIndicators();
-        }
-        else
-        {
-            m_touchesEndedContentOffset = m_contentOffset;
-            _startDecelerationAnimation(true);
-        }
-    }
-
-    if (sqrtf(
-            (
-                ((m_trackingStartPos.y - pos.y) * (m_trackingStartPos.y - pos.y)) +
-                ((m_trackingStartPos.x - pos.x) * (m_trackingStartPos.x - pos.x))
-            )
-            + (m_trackingStartPos.z * m_trackingStartPos.z)
-        ) <= 6.0f)
-    {
-        if (m_touchedId >= 0)
-            _onSelect(m_touchedId);
-    }
-
-    m_touch2 = 0;
-}
-
-void ScrollingPane::_touchesCancelled(const Vec2& pos, int time)
-{
-    _touchesEnded(pos, time);
+    _touchesEnded(time);
 }
 
 ScrollingPane::GridItem ScrollingPane::_getItemForPos(const Vec2& pos, bool b)
 {
     Vec2 nPos = pos;
 
+    /* undoing our basePos math from the render function
+    Vec2 basePos(
+        (startItem.screenPos.x - startItem.x) + ((float)m_xPos - m_inverseContentOffset.x),
+        (startItem.screenPos.y - startItem.y) + ((float)m_yPos - m_inverseContentOffset.y)
+    );
+    */
+
     if (b)
     {
-        nPos.x = pos.x - m_areaRect.x;
-        nPos.y = pos.y - m_areaRect.y;
+        nPos.x -= m_xPos;
+        nPos.y -= m_yPos;
     }
 
+    // from PE 0.3.3, misordered?
     nPos += m_inverseContentOffset;
 
     if (hasHorizontalWrapping())
@@ -638,7 +649,7 @@ ScrollingPane::GridItem ScrollingPane::_getItemForPos(const Vec2& pos, bool b)
     item.screenPos.y = nPos.y / m_itemRect.h;
     item.x = item.screenPos.x;
     item.y = item.screenPos.y;
-    item.id = (int)item.screenPos.x + m_columns * (int)item.screenPos.y;
+    item.id = (int)item.screenPos.x + (int)item.screenPos.y * m_columns;
 
     return item;
 }
@@ -648,6 +659,7 @@ void ScrollingPane::_updateHighlightItem(const Vec2& pos)
     GridItem item = _getItemForPos(pos, true);
     if (item.id >= 0 && item.id < m_itemCount)
     {
+        //LOG_I("touched: %d", item.id);
         m_touchedId = item.id;
         if (!m_interactArea.isInside(pos.x, pos.y))
             m_touchedId = -1;
@@ -664,21 +676,9 @@ void ScrollingPane::_updateHighlightItem(const Vec2& pos)
     }
 }
 
-void ScrollingPane::_touchesBegan(const Vec2& pos, int time)
-{
-    if (!m_bCanInteract)
-        return;
-
-    m_touch1 = 1;
-    _beginTracking(pos, time);
-    m_touch2 = 2;
-
-    _updateHighlightItem(pos);
-}
-
 void ScrollingPane::_handleUserInput(const MenuPointer& pointer)
 {
-    Vec2 pointerPos((float)pointer.x * m_guiRatio, (float)pointer.y * m_guiRatio);
+    Vec2 pointerPos(pointer.x, pointer.y);
     int currentTime = getTimeMs();
 
     bool hasPointerMoved = m_pointerPos != pointerPos;
@@ -691,13 +691,13 @@ void ScrollingPane::_handleUserInput(const MenuPointer& pointer)
     {
         if (!pointer.isPressed)
         {
-            _touchesEnded(pointerPos, currentTime);
+            _touchesEnded(currentTime);
             handledTransition = true;
         }
     }
-    else if (pointer.isPressed && !m_bPressed && m_area.isInside(pointerPos.x, pointerPos.y))
+    else if (pointer.isPressed && !m_bPressed && m_area.isInside(m_pointerPos.x, m_pointerPos.y))
     {
-        _touchesBegan(pointerPos, currentTime);
+        _touchesBegan(currentTime);
         handledTransition = true;
     }
 
@@ -706,7 +706,7 @@ void ScrollingPane::_handleUserInput(const MenuPointer& pointer)
     {
         if (m_touch2 > 0 && hasPointerMoved && pointer.isPressed)
         {
-            _touchesMoved(pointerPos, currentTime);
+            _touchesMoved(currentTime);
         }
     }
 
@@ -747,8 +747,8 @@ void ScrollingPane::setSelected(int id, bool isSelected)
 
 void ScrollingPane::translate(const Vec2& t)
 {
-    m_areaRect.x += t.x;
-    m_areaRect.y += t.y;
+    m_xPos += t.x;
+    m_yPos += t.y;
     /*m_area.left += x;
     m_area.right += x;
     m_area.top += y;
@@ -765,10 +765,10 @@ bool ScrollingPane::getGridItemFor_slow(int id, GridItem& result)
 {
     GridItem topLeftItem = _getItemForPos(Vec2::ZERO, false);
 
-    GridItem v15 = _getItemForPos(Vec2((float)m_areaRect.w - 1.0f, (float)m_areaRect.h - 1.0f), false);
+    GridItem v15 = _getItemForPos(Vec2((float)m_width - 1.0f, (float)m_height - 1.0f), false);
     
-    float v9  = ((float)m_areaRect.x - m_inverseContentOffset.x) + (topLeftItem.screenPos.x - topLeftItem.x);
-    float v10 = ((float)m_areaRect.y - m_inverseContentOffset.y) + (topLeftItem.screenPos.y - topLeftItem.y);
+    float v9  = ((float)m_xPos - m_inverseContentOffset.x) + (topLeftItem.screenPos.x - topLeftItem.x);
+    float v10 = ((float)m_yPos - m_inverseContentOffset.y) + (topLeftItem.screenPos.y - topLeftItem.y);
 
     int width = id % m_columns;
     int height = id / m_columns;
@@ -785,8 +785,10 @@ bool ScrollingPane::getGridItemFor_slow(int id, GridItem& result)
         && height <= v15.y;
 }
 
-void ScrollingPane::render(const MenuPointer& pointer, float a)
+void ScrollingPane::render(Minecraft* pMinecraft, const MenuPointer& pointer)
 {
+    float a = pMinecraft->m_timer.m_partialTicks;
+
     _handleUserInput(pointer);
 
     m_timer.advanceTime(false);
@@ -808,12 +810,12 @@ void ScrollingPane::render(const MenuPointer& pointer, float a)
 
     // Retrieve active grid item positions for rendering bounds
     GridItem startItem = _getItemForPos(Vec2::ZERO, false);
-    GridItem endItem   = _getItemForPos(Vec2(m_areaRect.w - 1, m_areaRect.h - 1), false);
+    GridItem endItem   = _getItemForPos(Vec2(m_width - 1, m_height - 1), false);
 
     // Calculate rendering offsets
     Vec2 basePos(
-        ((float)m_areaRect.x - m_inverseContentOffset.x) + (startItem.screenPos.x - startItem.x),
-        ((float)m_areaRect.y - m_inverseContentOffset.y) + (startItem.screenPos.y - startItem.y)
+        ((float)m_xPos - m_inverseContentOffset.x) + (startItem.screenPos.x - startItem.x),
+        ((float)m_yPos - m_inverseContentOffset.y) + (startItem.screenPos.y - startItem.y)
     );
 
     // Loop through visible grid columns and rows

@@ -1,4 +1,5 @@
 #include "ChestTile.hpp"
+#include "world/entity/Player.hpp"
 #include "world/inventory/CompoundContainer.hpp"
 #include "world/level/Level.hpp"
 #include "world/level/TileSource.hpp"

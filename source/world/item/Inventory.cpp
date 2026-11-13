@@ -4,11 +4,14 @@
 #include "common/Logger.hpp"
 #include "nbt/CompoundTag.hpp"
 #include "network/Packet.hpp"
+#include "world/entity/Player.hpp"
 #include "world/inventory/ContainerContentChangeListener.hpp"
 
 #include "Item.hpp"
 
-Inventory::Inventory(Player* pPlayer) : m_items(C_NUM_INVENTORY_SLOTS), m_armor(C_NUM_ARMOR_SLOTS)
+Inventory::Inventory(Player* pPlayer)
+	: FillingContainer(C_NUM_INVENTORY_SLOTS, C_MAX_HOTBAR_ITEMS, false)
+	, m_armor(C_NUM_ARMOR_SLOTS)
 {
 	m_pPlayer = pPlayer;
 	m_selectedStackId = 0;
@@ -16,6 +19,19 @@ Inventory::Inventory(Player* pPlayer) : m_items(C_NUM_INVENTORY_SLOTS), m_armor(
 
 Inventory::~Inventory()
 {
+}
+
+std::vector<ItemStack>& Inventory::_getSlotList(StackID& stackId)
+{
+	if (size_t(stackId) < m_items.size())
+	{
+		return m_items;
+	}
+	else
+	{
+		stackId -= m_items.size();
+		return m_armor;
+	}
 }
 
 void Inventory::prepareCreativeInventory()
@@ -84,7 +100,7 @@ void Inventory::prepareSurvivalInventory()
 	addCreativeItem(TILE_GLASS);
 	addCreativeItem(TILE_LEAVES);
 
-	if (_getGameMode() == GAME_TYPE_CREATIVE)
+	if (m_pPlayer->getPlayerGameType() == GAME_TYPE_CREATIVE)
 	{
 		addCreativeItem(TILE_BLOCK_GOLD);
 		addCreativeItem(TILE_BLOCK_IRON);
@@ -113,7 +129,7 @@ void Inventory::prepareSurvivalInventory()
 	for (size_t i = 0; i < m_items.size(); i++)
 	{
 		ItemStack& item = m_items[i];
-		if (_getGameMode() == GAME_TYPE_SURVIVAL && !hasUnlimitedResource(item))
+		if (m_pPlayer->getPlayerGameType() == GAME_TYPE_SURVIVAL && !hasUnlimitedResource(item))
 		{
 			item.m_count = 0;
 		}
@@ -121,9 +137,15 @@ void Inventory::prepareSurvivalInventory()
 #endif
 }
 
+std::string Inventory::getName() const
+{
+	//@TODO: Language
+	return "Inventory";
+}
+
 Container::Size Inventory::getContainerSize() const
 {
-	return (Size)(m_items.size() + m_armor.size());
+	return FillingContainer::getContainerSize() + m_armor.size();
 }
 
 void Inventory::clear()
@@ -145,7 +167,7 @@ void Inventory::addCreativeItem(int itemID, int auxValue)
 
 bool Inventory::add(ItemStack& item)
 {
-	if (!item.isDamaged())
+	/*if (!item.isDamaged())
 	{
 		int oldCount;
 		do
@@ -171,7 +193,9 @@ bool Inventory::add(ItemStack& item)
 		return true;
 	}
 
-	return false;
+	return false;*/
+
+	return FillingContainer::add(item);
 }
 
 bool Inventory::contains(const ItemStack& item) const
@@ -192,7 +216,7 @@ bool Inventory::contains(const ItemStack& item) const
 }
 
 // Returns a StackID or -1
-int Inventory::getSlotWithRemainingSpace(const ItemStack& item) const
+/*int Inventory::getSlotWithRemainingSpace(const ItemStack& item) const
 {
 	for (size_t index = 0; index < m_items.size(); ++index)
 	{
@@ -202,10 +226,10 @@ int Inventory::getSlotWithRemainingSpace(const ItemStack& item) const
 	}
 
 	return -1;
-}
+}*/
 
 // Returns a StackID or -1
-int Inventory::getFreeSlot() const
+/*int Inventory::getFreeSlot() const
 {
 	for (size_t i = 0; i < m_items.size(); ++i)
 	{
@@ -214,9 +238,9 @@ int Inventory::getFreeSlot() const
 	}
 
 	return -1;
-}
+}*/
 
-int Inventory::addResource(const ItemStack& item)
+/*int Inventory::addResource(const ItemStack& item)
 {
 	int id = item.getId();
 	int count = item.m_count;
@@ -257,9 +281,9 @@ int Inventory::addResource(const ItemStack& item)
 		setContainerChanged(stackId);
 
 	return count;
-}
+}*/
 
-ItemStack Inventory::removeItem(StackID stackId, int count)
+/*ItemStack Inventory::removeItem(StackID stackId, int count)
 {
 	ItemStack& item = getItem(stackId);
 
@@ -282,10 +306,10 @@ ItemStack Inventory::removeItem(StackID stackId, int count)
 	}
 	
 	return ItemStack::EMPTY;
-}
+}*/
 
 // Returns a StackID or -1
-int Inventory::getSlot(int id) const
+/*int Inventory::getSlot(int id) const
 {
 	for (StackID i = 0; i < m_items.size(); ++i)
 	{
@@ -295,9 +319,9 @@ int Inventory::getSlot(int id) const
 	}
 
 	return -1;
-}
+}*/
 
-bool Inventory::removeResource(int id)
+/*bool Inventory::removeResource(int id)
 {
 	int stackId = getSlot(id);
 	if (stackId < 0)
@@ -309,7 +333,7 @@ bool Inventory::removeResource(int id)
 		slotItem = ItemStack::EMPTY;
 
 	return true;
-}
+}*/
 
 int Inventory::removeIngredient(const ItemStack& ing)
 {
@@ -399,7 +423,7 @@ bool Inventory::hasUnlimitedResource(const ItemStack& item) const
 	return true;
 }
 
-ItemStack& Inventory::getItem(StackID stackId)
+/*ItemStack& Inventory::getItem(StackID stackId)
 {
 	// stackId < getContainerSize() trips when the RemotePlayer dies
 	assert(stackId >= 0 && stackId < getContainerSize());
@@ -408,7 +432,7 @@ ItemStack& Inventory::getItem(StackID stackId)
 		return m_items[stackId];
 	else
 		return m_armor[stackId - m_items.size()];
-}
+}*/
 
 ItemStack& Inventory::getArmor(Item::EquipmentSlot slotNo)
 {
@@ -425,7 +449,7 @@ int Inventory::getSelectedItemId()
 	return getItem(m_selectedStackId).getId();
 }
 
-void Inventory::setItem(StackID stackId, const ItemStack& item)
+/*void Inventory::setItem(StackID stackId, const ItemStack& item)
 {
 	if ((size_t)stackId >= m_items.size())
 	{
@@ -437,7 +461,7 @@ void Inventory::setItem(StackID stackId, const ItemStack& item)
 	}
 
 	setContainerChanged(stackId);
-}
+}*/
 
 void Inventory::setSelectedItem(const ItemStack& item)
 {
@@ -521,6 +545,21 @@ void Inventory::selectSlot(StackID stackId)
 	m_selectedStackId = stackId;
 }
 
+bool Inventory::moveToSelectionSlot(int key, StackID value, bool cycleSlots)
+{
+	return _linkSlot(key, value, cycleSlots);
+}
+
+bool Inventory::moveToSelectedSlot(StackID stackId, bool cycleSlots)
+{
+	return moveToSelectionSlot(m_selectedStackId, stackId, cycleSlots);
+}
+
+bool Inventory::moveToEmptySelectionSlot(StackID stackId)
+{
+	return _linkEmptySlot(stackId);
+}
+
 int Inventory::getAttackDamage(Entity& entity)
 {
 	ItemStack& item = getSelected();
@@ -589,7 +628,7 @@ void Inventory::dropAll(bool onlyClearContainer)
 	}
 }
 
-void Inventory::save(ListTag& tag) const
+/*void Inventory::save(ListTag& tag) const
 {
 	for (size_t i = 0; i < m_items.size(); i++)
 	{
@@ -600,16 +639,6 @@ void Inventory::save(ListTag& tag) const
 
 		CompoundTag* itemTag = new CompoundTag();
 		itemTag->putInt8("Slot", i);
-		/* On PE, Mojang for some reason limited something saved as a 16-bit signed integer to a 0-255 range.
-		if (item.getAuxValue() < 0)
-		{
-			item.setAuxValue(0);
-		}
-		else if (item.getAuxValue > 255)
-		{
-			item.setAuxValue(255);
-		}
-		*/
 		item.save(*itemTag);
 		tag.add(itemTag);
 	}
@@ -659,23 +688,4 @@ void Inventory::load(const ListTag& tag)
 			}
 		}
 	}
-}
-
-void Inventory::setContainerChanged(StackID stackId)
-{
-	for (ContentChangeListeners::iterator it = m_contentChangeListeners.begin(); it != m_contentChangeListeners.end(); ++it)
-	{
-		ContainerContentChangeListener* listener = *it;
-		listener->containerContentChanged(this, stackId);
-	}
-}
-
-void Inventory::addContentChangeListener(ContainerContentChangeListener* listener)
-{
-	m_contentChangeListeners.insert(listener);
-}
-
-void Inventory::removeContentChangeListener(ContainerContentChangeListener* listener)
-{
-	m_contentChangeListeners.erase(listener);
-}
+}*/

@@ -69,26 +69,26 @@ protected:
 	void _addFlags(Flags flags) { m_flags |= flags; }
 	bool _hasFlag(Flag flag) const { return (m_flags & flag) != 0; }
 	void _hideScrollIndicators();
-	void _stopDecelerationAnimation();
 	void _onSelect(int id);
 	void _onHoldItem();
 	void _updateScrollFade(ScrollBar& scrollBar);
 	void _updateVerticalScrollIndicator();
 	void _updateHorizontalScrollIndicator();
-	void _setContentOffsetWithAnimation(const Vec3& offset, bool ignoreScrollbars);
-	void _setContentOffset(const Vec3& offset);
+	void _setContentOffsetWithAnimation(const Vec2& offset, bool ignoreScrollbars);
 	void _setContentOffset(const Vec2& offset);
 	void _adjustContentSize();
 	void _snapContentOffsetToBounds(bool ignoreScrollbars);
-	void _beginTracking(const Vec2& pos, int time);
-	void _stepThroughDecelerationAnimation(bool isSubstep);
-	void _touchesMoved(const Vec2& pos, int time);
+	void _updateTrackingStartPos();
+	void _beginTracking(int time);
 	void _startDecelerationAnimation(bool isSubstep);
-	void _touchesEnded(const Vec2& pos, int time);
-	void _touchesCancelled(const Vec2& pos, int time);
+	void _stopDecelerationAnimation();
+	void _stepThroughDecelerationAnimation(bool isSubstep);
+	void _touchesBegan(int time);
+	void _touchesEnded(int time);
+	void _touchesMoved(int time);
+	void _touchesCancelled(int time);
 	GridItem _getItemForPos(const Vec2& pos, bool b);
 	void _updateHighlightItem(const Vec2& pos);
-	void _touchesBegan(const Vec2& pos, int time);
 	void _handleUserInput(const MenuPointer& pointer);
 
 public:
@@ -96,7 +96,7 @@ public:
 	void setSelected(int id, bool isSelected);
 	void translate(const Vec2& t);
 	bool getGridItemFor_slow(int id, GridItem& result);
-	void render(const MenuPointer& pointer, float a);
+	void render(Minecraft* pMinecraft, const MenuPointer& pointer) override;
 
 	bool hasHorizontalScrolling() const { return !_hasFlag(FLAG_NOSCROLLH); }
 	bool hasVerticalScrolling() const { return !_hasFlag(FLAG_NOSCROLLV); }
@@ -123,8 +123,7 @@ protected:
 	int m_itemCount;
 	Vec2 m_inverseContentOffset;
 	float m_scale;
-	float m_guiRatio;
-	IntRectangle m_areaRect;
+	//float m_guiRatio;
 	IntRectangle m_itemRect;
 	RectangleArea m_area;
 	RectangleArea m_interactArea;
@@ -132,18 +131,18 @@ protected:
 	bool m_bDecelerating;
 	bool m_bTracking;
 	bool m_bPagingEnabled;
-	Vec3 m_contentOffset;
-	Vec3 m_touchesEndedContentOffset;
+	Vec2 m_contentOffset;
+	Vec2 m_touchesEndedContentOffset;
 	int m_touchesMovedTime;
-	Vec3 m_scrollVelocity;
-	Vec3 m_decelLimitMin;
-	Vec3 m_decelLimitMax;
+	Vec2 m_scrollVelocity;
+	Vec2 m_decelLimitMin;
+	Vec2 m_decelLimitMax;
 	float m_bounceTension;
 	float m_bounceDamping;
-	Vec3 m_minContentOffset;
-	Vec3 m_trackingStartContentOffset;
-	Vec3 m_trackingStartPos;
-	Vec3 m_trackingStartContentOffset2;
+	Vec2 m_minContentOffset;
+	Vec2 m_trackingStartContentOffset;
+	Vec2 m_trackingStartPos;
+	Vec2 m_trackingStartContentOffset2;
 	bool m_bTrackingStartPosNeedsUpdate;
 	float m_trackingStartTime;
 	IntRectangle m_bounds;

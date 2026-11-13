@@ -11,11 +11,6 @@ CraftingContainer::~CraftingContainer()
 {
 }
 
-uint16_t CraftingContainer::getContainerSize() const
-{
-    return uint16_t(m_items.size());
-}
-
 ItemStack& CraftingContainer::getItem(StackID stackId)
 {
     return m_items[stackId];
@@ -34,6 +29,11 @@ const ItemStack& CraftingContainer::getItem(int x, int y)
 std::string CraftingContainer::getName() const
 {
     return "Crafting";
+}
+
+uint16_t CraftingContainer::getContainerSize() const
+{
+    return uint16_t(m_items.size());
 }
 
 ItemStack CraftingContainer::removeItem(StackID stackId, int count)

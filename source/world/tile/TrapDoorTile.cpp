@@ -1,4 +1,5 @@
 #include "TrapDoorTile.hpp"
+#include "world/entity/Player.hpp"
 #include "world/item/Item.hpp"
 #include "world/level/Level.hpp"
 #include "world/level/TileSource.hpp"

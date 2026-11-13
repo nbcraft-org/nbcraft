@@ -300,7 +300,7 @@ void LogoRenderer::render3d(float f)
 	if (isPocket || m_width * 3 / 4 < 256) // cramped mode
 		yPos = 80;
 
-	int titleHeight = int(yPos / Gui::GuiScale);
+	int titleHeight = int(yPos / Gui::InvGuiScale);
 
 	if (isConsole)
 		titleHeight *= 2;
@@ -311,7 +311,7 @@ void LogoRenderer::render3d(float f)
 	int yOffset = 0;
 	if (isPocket)
 		yOffset = 18;
-	yOffset /= Gui::GuiScale;
+	yOffset /= Gui::InvGuiScale;
 
 	mce::RenderContext& renderContext = mce::RenderContextImmediate::get();
 

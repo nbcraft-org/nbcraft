@@ -1,16 +1,9 @@
 #include "SimpleContainer.hpp"
-#include "ContainerContentChangeListener.hpp"
-#include "ContainerSizeChangeListener.hpp"
 
 SimpleContainer::SimpleContainer(Size size, const std::string& name)
     : m_items(size)
     , m_name(name)
 {
-}
-
-Container::Size SimpleContainer::getContainerSize() const
-{
-    return (Size)(m_items.size());
 }
 
 ItemStack& SimpleContainer::getItem(StackID index)
@@ -20,20 +13,22 @@ ItemStack& SimpleContainer::getItem(StackID index)
 
 ItemStack SimpleContainer::removeItem(StackID index, int count)
 {
-    if (!m_items[index].isEmpty())
+    ItemStack& itemStack = m_items[index];
+
+    if (!itemStack.isEmpty())
     {
         ItemStack result = ItemStack::EMPTY;
-        if (m_items[index].m_count <= count)
+        if (itemStack.m_count <= count)
         {
-            result = m_items[index];
+            result = itemStack;
             m_items[index] = ItemStack::EMPTY;
             setContainerChanged(index);
             return result;
         }
         else
         {
-            result = m_items[index].remove(count);
-            if (!m_items[index].m_count)
+            result = itemStack.remove(count);
+            if (!itemStack.m_count)
                 m_items[index] = ItemStack::EMPTY;
 
             setContainerChanged(index);
@@ -57,38 +52,9 @@ std::string SimpleContainer::getName() const
     return m_name;
 }
 
-void SimpleContainer::setContainerChanged(StackID stackId)
+Container::Size SimpleContainer::getContainerSize() const
 {
-    for (ContentChangeListeners::iterator it = m_contentChangeListeners.begin(); it != m_contentChangeListeners.end(); it++)
-    {
-        ContainerContentChangeListener* pListener = *it;
-        pListener->containerContentChanged(this, stackId);
-    }
-}
-
-bool SimpleContainer::stillValid(Player& player) const
-{
-    return true;
-}
-
-void SimpleContainer::addContentChangeListener(ContainerContentChangeListener* listener)
-{
-    m_contentChangeListeners.insert(listener);
-}
-
-void SimpleContainer::addSizeChangeListener(ContainerSizeChangeListener* listener)
-{
-    m_sizeChangeListeners.insert(listener);
-}
-
-void SimpleContainer::removeContentChangeListener(ContainerContentChangeListener* listener)
-{
-    m_contentChangeListeners.erase(listener);
-}
-
-void SimpleContainer::removeSizeChangeListener(ContainerSizeChangeListener* listener)
-{
-    m_sizeChangeListeners.erase(listener);
+    return (Size)(m_items.size());
 }
 
 void SimpleContainer::clear()
@@ -114,7 +80,6 @@ void SimpleContainer::load(const CompoundTag& tag)
                 m_items[slot] = item;
         }
     }
-    
 }
 
 void SimpleContainer::save(CompoundTag& tag) const

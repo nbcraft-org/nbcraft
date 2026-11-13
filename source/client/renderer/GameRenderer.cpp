@@ -216,7 +216,7 @@ void GameRenderer::_renderDebugOverlay(float a)
 	extern int g_nVertices; // Tesselator.cpp
 	debugText += "\nverts: " + Util::toString(g_nVertices);
 
-	_renderVertexGraph(g_nVertices, int(Minecraft::height * Gui::GuiScale));
+	_renderVertexGraph(g_nVertices, int(Minecraft::GetHeightL() * Gui::InvGuiScale));
 #endif
 
 	/* Game controller debug

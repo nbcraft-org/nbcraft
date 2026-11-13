@@ -15,11 +15,11 @@ public:
     ~CompoundContainer() override;
 
 public:
-    uint16_t getContainerSize() const override;
-    std::string getName() const override;
     ItemStack& getItem(StackID index) override;
     ItemStack removeItem(StackID index, int count) override;
     void setItem(StackID index, const ItemStack& item) override;
+    std::string getName() const override;
+    uint16_t getContainerSize() const override;
     int getMaxStackSize() const override;
     void setContainerChanged(StackID stackId) override;
     bool stillValid(Player& player) const override;

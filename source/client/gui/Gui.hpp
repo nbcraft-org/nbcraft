@@ -45,6 +45,7 @@ private:
 public:
 	static bool isVignetteAvailable() { return _isVignetteAvailable; }
 	static void setIsVignetteAvailable(bool value) { _isVignetteAvailable = value; }
+	static float FloorAlignToScreenPixel(float f) { return (f * Gui::GuiScale) * Gui::InvGuiScale; }
 
 private:
 	void renderPumpkin(int, int);
@@ -61,6 +62,7 @@ public:
 	void render(float f, bool bHaveScreen);
 	void tick();
 	void renderSlot(int slot, int x, int y, float f);
+	void renderSlotText(int slot, int x, int y, float f);
 	void renderSlotOverlay(int slot, int x, int y, float f);
 	void renderAnimatedCharacter(int x, int y, float);
 	int  getSlotIdAt(int mx, int my);
@@ -82,6 +84,7 @@ public:
 
 public:
 	static float GuiScale;
+	static float InvGuiScale;
 	static int GuiWidth;
 	static int GuiHeight;
     

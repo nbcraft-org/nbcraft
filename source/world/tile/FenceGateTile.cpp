@@ -1,4 +1,5 @@
 #include "FenceGateTile.hpp"
+#include "world/entity/Player.hpp"
 #include "world/level/TileSource.hpp"
 #include "world/level/Level.hpp"
 

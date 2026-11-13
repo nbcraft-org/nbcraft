@@ -1,5 +1,6 @@
 #include "DispenserTile.hpp"
 #include "world/entity/Arrow.hpp"
+#include "world/entity/Player.hpp"
 #include "world/entity/Snowball.hpp"
 #include "world/entity/ThrownEgg.hpp"
 #include "world/tile/entity/DispenserTileEntity.hpp"

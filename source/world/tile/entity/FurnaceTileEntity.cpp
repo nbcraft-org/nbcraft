@@ -149,11 +149,6 @@ void FurnaceTileEntity::save(CompoundTag& tag) const
     SimpleContainer::save(tag);
 }
 
-std::string FurnaceTileEntity::getName() const
-{
-    return "Furnace";
-}
-
 int FurnaceTileEntity::getBurnProgress(int height) 
 {
     return m_tickCount * height / C_BURN_TIME;

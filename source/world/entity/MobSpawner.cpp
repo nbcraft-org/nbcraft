@@ -1,5 +1,6 @@
 #include "world/entity/MobSpawner.hpp"
 #include "world/entity/MobFactory.hpp"
+#include "world/entity/Player.hpp"
 #include "world/level/TileSource.hpp"
 
 #define C_HOSTILE_BRIGHTNESS   7

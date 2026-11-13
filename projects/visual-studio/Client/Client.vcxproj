@@ -293,6 +293,9 @@
     <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\SavingWorldScreen_Console.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\gui\ViewportSize.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\client\app\VirtualKeyboardManager.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\components\InventoryPane_Pocket.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\components\THeader_Pocket.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\client\gui\screens\inventory\InventoryScreen_Pocket.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MC_ROOT)\source\client\app\App.cpp" />
@@ -503,6 +506,10 @@
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\LoadWorldScreen_Console.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\SavingWorldScreen_Console.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\client\app\VirtualKeyboardManager.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\components\InventoryPane_Pocket.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\components\THeader_Pocket.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\IntRectangle.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\client\gui\screens\inventory\InventoryScreen_Pocket.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">

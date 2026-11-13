@@ -2,6 +2,7 @@
 #include "world/item/Inventory.hpp"
 #include "ResultSlot.hpp"
 #include "ArmorSlot.hpp"
+#include "world/entity/Player.hpp"
 #include "world/item/crafting/Recipes.hpp"
 
 InventoryMenu::InventoryMenu(Inventory* inventory, bool active)

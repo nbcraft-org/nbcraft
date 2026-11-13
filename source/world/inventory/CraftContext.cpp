@@ -1,4 +1,5 @@
 #include "CraftContext.hpp"
+#include "world/entity/Player.hpp"
 #include "world/item/crafting/ShapedRecipe.hpp"
 #include "world/item/Inventory.hpp"
 

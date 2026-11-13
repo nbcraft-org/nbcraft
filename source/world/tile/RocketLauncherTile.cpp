@@ -9,6 +9,7 @@
 #include "world/level/Level.hpp"
 #include "world/level/TileSource.hpp"
 #include "world/level/TileTickingQueue.hpp"
+#include "world/entity/Player.hpp"
 #include "world/entity/Rocket.hpp"
 
 #define STATE_RECHARGING (0x1)

@@ -1,4 +1,5 @@
 #include "ContainerMenu.hpp"
+#include "world/entity/Player.hpp"
 #include "world/item/ItemStack.hpp"
 #include "world/item/Inventory.hpp"
 #include "Slot.hpp"

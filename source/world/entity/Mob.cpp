@@ -12,6 +12,7 @@
 #include "network/RakNetInstance.hpp"
 #include "network/packets/MoveEntityPacket_PosRot.hpp"
 #include "network/packets/SetEntityMotionPacket.hpp"
+#include "world/entity/Player.hpp"
 #include "world/level/TileSource.hpp"
 
 void Mob::_init()

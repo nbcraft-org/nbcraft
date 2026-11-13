@@ -20,7 +20,7 @@ const ItemStack ItemStack::EMPTY;
 
 #define C_INVALID_ID 0
 
-void ItemStack::_init(int id, int count, int auxValue)
+void ItemStack::_init(int id, Count count, AuxValue auxValue)
 {
 	m_count = count;
 	m_auxValue = auxValue;
@@ -505,7 +505,7 @@ void ItemStack::setHoverName(const std::string& hoverName)
 void ItemStack::load(const CompoundTag& tag)
 {
 	_setItem(tag.getInt16("id"));
-	m_count = tag.getInt8("Count");
+	m_count = static_cast<uint8_t>(tag.getInt8("Count"));
 	setAuxValue(tag.getInt16("Damage"));
 
 	CompoundTag* userData = nullptr;
@@ -521,7 +521,7 @@ void ItemStack::load(const CompoundTag& tag)
 CompoundTag& ItemStack::save(CompoundTag& tag) const
 {
 	tag.putInt16("id", getId());
-	tag.putInt8("Count", m_count);
+	tag.putInt8("Count", static_cast<int8_t>(m_count));
 	tag.putInt16("Damage", getDamageValue());
 
 	if (hasUserData())

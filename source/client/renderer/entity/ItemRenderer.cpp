@@ -214,41 +214,6 @@ void ItemRenderer::blit(int dx, int dy, int sx, int sy, int tw, int th, const Co
 	t.draw(color == Color::WHITE ? m_itemMaterials.ui_textured : m_itemMaterials.ui_texture_and_color);
 }
 
-void ItemRenderer::renderGuiItemOverlay(Minecraft& mc, const ItemStack& item, int x, int y)
-{
-	if (item.isEmpty())
-		return;
-
-	// Draw damage amount
-	if (item.isDamaged())
-	{
-		int duraWidth = ceilf(13.0f - static_cast<float>(item.getDamageValue()) * 13.0f / static_cast<float>(item.getMaxDamage()));
-		int duraPercent = ceilf(255.0f - static_cast<float>(item.getDamageValue()) * 255.0f / static_cast<float>(item.getMaxDamage()));
-
-
-		int duraBgColor = (((255 - duraPercent) / 4) << 16) | 0x3F00;
-		int duraColor = ((255 - duraPercent) << 16) | (duraPercent << 8);
-		
-		Tesselator& t = Tesselator::instance;
-		
-		blitRect(t, x + 2, y + 13, 13, 2, 0);
-		blitRect(t, x + 2, y + 13, 12, 1, duraBgColor);
-		blitRect(t, x + 2, y + 13, duraWidth, 1, duraColor);
-	}
-
-	if (item.m_count <= 1)
-	{
-		return;
-	}
-
-	// Draw num items
-	std::string amtstr = Util::toString(item.m_count);
-
-	int width = mc.m_pFont->width(amtstr);
-
-	mc.m_pFont->drawShadow(amtstr, x + 17 - width, y + 6 + 3, 0xFFFFFF);
-}
-
 void ItemRenderer::renderGuiItem(Minecraft& mc, const ItemStack& item, int x, int y, const Color& color)
 {
 	// @NOTE: Font unused but would presumably be used to draw the item amount.
@@ -363,4 +328,58 @@ void ItemRenderer::renderGuiItem(Minecraft& mc, const ItemStack& item, int x, in
 			blit(x, y, 16 * (itemIcon % 16), 16 * (itemIcon / 16), 16, 16, color * itemColor);
 		}
 	}
+}
+
+void ItemRenderer::renderGuiItemOverlay(Minecraft& mc, const ItemStack& item, int x, int y)
+{
+	if (item.isEmpty())
+		return;
+
+	// Draw damage amount
+	if (item.isDamaged())
+	{
+		int duraWidth = ceilf(13.0f - static_cast<float>(item.getDamageValue()) * 13.0f / static_cast<float>(item.getMaxDamage()));
+		int duraPercent = ceilf(255.0f - static_cast<float>(item.getDamageValue()) * 255.0f / static_cast<float>(item.getMaxDamage()));
+
+
+		int duraBgColor = (((255 - duraPercent) / 4) << 16) | 0x3F00;
+		int duraColor = ((255 - duraPercent) << 16) | (duraPercent << 8);
+
+		Tesselator& t = Tesselator::instance;
+
+		blitRect(t, x + 2, y + 13, 13, 2, 0);
+		blitRect(t, x + 2, y + 13, 12, 1, duraBgColor);
+		blitRect(t, x + 2, y + 13, duraWidth, 1, duraColor);
+	}
+}
+
+void ItemRenderer::renderGuiItemText(Minecraft& mc, const ItemStack& item, int x, int y, bool isLimited, bool drawShadow)
+{
+	if (item.m_count <= 1)
+		return;
+
+	std::string countStr = isLimited ? Util::toString(item.m_count) : "\x9D";
+
+	Color color = Color::WHITE;
+
+	if (mc.getOptions()->getUiTheme() == UI_POCKET)
+	{
+		if (item.m_count <= 0)
+			color = Color::FromRGBA(204, 204, 204, 96);
+		else
+			color = Color::FromRGB(204, 204, 204);
+	}
+	else
+	{
+		int width = mc.m_pFont->width(countStr);
+		x += 17 - width;
+		y += 6 + 3;
+	}
+
+	currentShaderColor = Color::WHITE;
+
+	if (drawShadow)
+		mc.m_pFont->drawShadow(countStr, x, y, color);
+	else
+		mc.m_pFont->draw(countStr, x, y, color);
 }

@@ -1,4 +1,5 @@
 #include "Spider.hpp"
+#include "world/entity/Player.hpp"
 
 Spider::Spider(TileSource& source) : Monster(source)
 {

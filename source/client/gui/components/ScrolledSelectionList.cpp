@@ -238,8 +238,8 @@ void ScrolledSelectionList::render(Minecraft* pMinecraft, const MenuPointer& poi
 		renderHeader(itemX, scrollY, t);
 
 	// Note, X/Y are the lower left's X/Y coordinates, not the upper left's.
-	int lowerY = (Minecraft::GetHeightL() - int(m_y1 / Gui::GuiScale)) * Minecraft::GetRenderScaleMultiplier();
-	int upperY = (Minecraft::GetHeightL() - int(m_y0 / Gui::GuiScale)) * Minecraft::GetRenderScaleMultiplier();
+	int lowerY = (Minecraft::GetHeightL() - int(m_y1 * Gui::GuiScale)) * Minecraft::GetRenderScaleMultiplier();
+	int upperY = (Minecraft::GetHeightL() - int(m_y0 * Gui::GuiScale)) * Minecraft::GetRenderScaleMultiplier();
 
 	{
 		mce::EnableScissorTest scissor(0, lowerY, Minecraft::GetWidthP(), upperY - lowerY);

@@ -11,5 +11,5 @@ public:
 protected:
 	void _updateLicense();
 	void _setup() override;
-	void _setupPositions();
+	void _setupPositions() override;
 };

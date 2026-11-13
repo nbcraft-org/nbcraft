@@ -10,4 +10,5 @@ public:
 
 public:
     void pushStartScreen() override;
+    void pushInventoryScreen(Player*) override;
 };

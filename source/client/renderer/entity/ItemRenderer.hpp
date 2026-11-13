@@ -44,8 +44,9 @@ public:
 	void blitRect(Tesselator&, int, int, int, int, int);
 	void blit(int dx, int dy, int sx, int sy, int tw, int th, const Color&);
 
-	void renderGuiItem(Minecraft&, const ItemStack&, int, int, const Color& = Color::WHITE);
-	void renderGuiItemOverlay(Minecraft&, const ItemStack&, int, int);
+	void renderGuiItem(Minecraft&, const ItemStack&, int x, int y, const Color& = Color::WHITE);
+	void renderGuiItemText(Minecraft&, const ItemStack&, int x, int y, bool isLimited = true, bool drawShadow = true);
+	void renderGuiItemOverlay(Minecraft&, const ItemStack&, int x, int y);
 
 private:
 	TileRenderer* m_pTileRenderer;

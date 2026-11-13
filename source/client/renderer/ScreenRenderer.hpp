@@ -53,6 +53,8 @@ public:
 	void fill(int left, int top, int right, int bottom, const Color& color);
 	void fillGradient(float left, float top, float right, float bottom, const Color& colorUp, const Color& colorDown);
 	void fillGradient(int left, int top, int right, int bottom, const Color& colorUp, const Color& colorDown);
+	void fillHorizontalGradient(float left, float top, float right, float bottom, const Color& colorLeft, const Color& colorRight);
+	void fillHorizontalGradient(int left, int top, int right, int bottom, const Color& colorLeft, const Color& colorRight);
 
 
 protected:

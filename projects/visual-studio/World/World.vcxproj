@@ -286,6 +286,8 @@
     <ClCompile Include="$(MC_ROOT)\source\world\level\TileSource.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\Brightness.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\TileTickingQueue.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\inventory\BaseContainer.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\inventory\FillingContainer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Entity.hpp" />
@@ -511,6 +513,8 @@
     <ClInclude Include="$(MC_ROOT)\source\world\level\TileTickingQueue.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\entity\MobSpawnerData.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\level\DimensionId.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\inventory\BaseContainer.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\inventory\FillingContainer.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NBT\NBT.vcxproj">

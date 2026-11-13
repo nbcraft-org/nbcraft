@@ -34,10 +34,13 @@ Gui::Materials::Materials()
 }
 
 #ifdef ENH_USE_GUI_SCALE_2
-float Gui::GuiScale = 1.0f / 2.0f;
+float Gui::GuiScale = 2.0f;
 #else
-float Gui::GuiScale = 1.0f / 3.0f;
+float Gui::GuiScale = 3.0f;
 #endif
+
+float Gui::InvGuiScale = 1.0f / Gui::GuiScale;
+
 int Gui::GuiWidth = Minecraft::GetWidthL();
 int Gui::GuiHeight = Minecraft::GetHeightL();
 
@@ -295,6 +298,17 @@ void Gui::renderSlot(int slot, int x, int y, float f)
 	}
 }
 
+void Gui::renderSlotText(int slot, int x, int y, float f)
+{
+	Inventory* pInv = m_pMinecraft->m_pLocalPlayer->m_pInventory;
+
+	ItemStack& item = pInv->getItem(slot);
+	if (item.isEmpty())
+		return;
+
+	ItemRenderer::singleton().renderGuiItemText(*m_pMinecraft, item, x, y);
+}
+
 void Gui::renderSlotOverlay(int slot, int x, int y, float f)
 {
 	Inventory* pInv = m_pMinecraft->m_pLocalPlayer->m_pInventory;
@@ -425,7 +439,7 @@ void Gui::handleClick(int clickID, int mouseX, int mouseY)
 	if (m_pMinecraft->useTouchscreen() && slot == getNumSlots() - 1)
 	{
 		if (m_pMinecraft->getLocalPlayerGameMode()->isSurvivalType())
-			m_pMinecraft->setScreen(new InventoryScreen(m_pMinecraft->m_pLocalPlayer));
+			m_pMinecraft->getScreenChooser()->pushInventoryScreen(m_pMinecraft->m_pLocalPlayer);
 		else
 			m_pMinecraft->getScreenChooser()->pushCreativeScreen(m_pMinecraft->m_pLocalPlayer);
 	}
@@ -468,7 +482,7 @@ void Gui::handleUserAction(const ActionInfo& info)
 
 	if (options->isAction(AID_INVENTORY, info))
 	{
-		m_pMinecraft->setScreen(new InventoryScreen(m_pMinecraft->m_pLocalPlayer));
+		m_pMinecraft->getScreenChooser()->pushInventoryScreen(m_pMinecraft->m_pLocalPlayer);
 		return;
 	}
 
@@ -866,13 +880,15 @@ void Gui::renderExperience()
 
 void Gui::renderToolBar(float f, float alpha)
 {
-	Minecraft* mc = m_pMinecraft;
-	Textures* textures = mc->m_pTextures;
-	LocalPlayer* player = mc->m_pLocalPlayer;
+	Minecraft& mc = *m_pMinecraft;
+	Options& options = *mc.getOptions();
+	Textures& textures = *mc.m_pTextures;
+	LocalPlayer& player = *mc.m_pLocalPlayer;
+	Tesselator& t = Tesselator::instance;
 
 	currentShaderColor.a = alpha;
 
-	textures->loadAndBindTexture("gui/gui.png");
+	textures.loadAndBindTexture("gui/gui.png");
 
 	m_blitOffset = -90.0f;
 
@@ -892,15 +908,15 @@ void Gui::renderToolBar(float f, float alpha)
 	
 	blit(hotbarWidth / 2 - 2, -22, 180, 0, 2, 22, 0, 0);
 
-	Inventory* inventory = player->m_pInventory;
+	Inventory& inventory = *player.m_pInventory;
 
 	// selection mark
-	blit(-1 - hotbarWidth / 2 + 20 * inventory->m_selectedStackId, -23, 0, 22, 24, 22, 0, 0);
+	blit(-1 - hotbarWidth / 2 + 20 * inventory.m_selectedStackId, -23, 0, 22, 24, 22, 0, 0);
 
 	// chat and pause button for mobile devices
-	if (mc->useTouchscreen())
+	if (mc.useTouchscreen())
 	{
-		textures->loadAndBindTexture("gui/gui2.png");
+		textures.loadAndBindTexture("gui/gui2.png");
 		
 		currentShaderColor.a = 0.5f;
 
@@ -910,9 +926,9 @@ void Gui::renderToolBar(float f, float alpha)
 		currentShaderColor.a = alpha;
 	}
 
-	textures->loadAndBindTexture(C_BLOCKS_NAME);
+	textures.loadAndBindTexture(C_BLOCKS_NAME);
 
-	int diff = mc->useTouchscreen();
+	int diff = mc.useTouchscreen() ? 1 : 0;
 
 	int slotX = -hotbarWidth / 2 + 3;
 	for (int i = 0; i < nSlots - diff; i++)
@@ -920,6 +936,27 @@ void Gui::renderToolBar(float f, float alpha)
 		renderSlot(i, slotX, -19, f);
 
 		slotX += 20;
+	}
+
+	{
+		MatrixStack::Ref matrix = MatrixStack::World.push();
+		float posScale = 1.0f;
+		int posY = -19;
+		if (options.getUiTheme() == UI_POCKET)
+		{
+			float mtxScale = Gui::InvGuiScale + Gui::InvGuiScale;
+			posScale = Gui::GuiScale * 0.5f;
+			posY *= posScale;
+			matrix->scale(Vec3(mtxScale, mtxScale, 1.0f));
+		}
+
+		slotX = -hotbarWidth / 2 + 3;
+		for (int i = 0; i < nSlots - diff; i++)
+		{
+			renderSlotText(i, slotX * posScale, posY, f);
+
+			slotX += 20;
+		}
 	}
 
 	slotX = -hotbarWidth / 2 + 3;
@@ -930,14 +967,12 @@ void Gui::renderToolBar(float f, float alpha)
 		slotX += 20;
 	}
 
-#undef DIFF
-
 	field_A3C = false;
 
 	// blit the "more items" button if using touch
-	if (mc->useTouchscreen())
+	if (mc.useTouchscreen())
 	{
-		textures->loadAndBindTexture(C_TERRAIN_NAME);
+		textures.loadAndBindTexture(C_TERRAIN_NAME);
 		blit(hotbarWidth / 2 - 19, -19, 208, 208, 16, 16, 0, 0);
 	}
 }

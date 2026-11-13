@@ -1,6 +1,7 @@
 #include "CraftingMenu.hpp"
 #include "world/item/Inventory.hpp"
 #include "ResultSlot.hpp"
+#include "world/entity/Player.hpp"
 #include "world/item/crafting/Recipes.hpp"
 #include "world/level/Level.hpp"
 #include "world/level/TileSource.hpp"

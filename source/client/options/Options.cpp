@@ -904,4 +904,9 @@ void UIThemeOption::apply()
 	{
 		mc.getOptions()->m_logoType.apply();
 	}
+
+	if (mc.m_pLocalPlayer)
+	{
+		mc.m_pLocalPlayer->onUiThemeChanged();
+	}
 }

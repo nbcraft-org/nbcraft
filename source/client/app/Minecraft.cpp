@@ -545,7 +545,7 @@ void Minecraft::handleBuildAction(const BuildActionIntention& action)
 			{
 				// Try to pick the tile.
 				TileData auxValue = source.getData(m_hitResult.m_tilePos);
-				player->m_pInventory->pickItem(pTile->m_ID, auxValue, C_MAX_HOTBAR_ITEMS);
+				player->m_pInventory->pickItem(pTile->m_ID, auxValue, player->m_pInventory->getNumHotbarSlots());
 			}
 			else if (action.isPlace() && canInteract)
 			{
@@ -1175,12 +1175,13 @@ void Minecraft::sizeUpdate()
 	const ViewportSize& size = GetViewportSize();
 
     // re-calculate the GUI scale.
-	Gui::GuiScale = 1.0f / getBestScaleForThisScreenSize(size.logical.width, size.logical.height);
+	Gui::GuiScale = getBestScaleForThisScreenSize(size.logical.width, size.logical.height);
+	Gui::InvGuiScale = 1.0f / Gui::GuiScale;
 
 	// The ceil gives an extra pixel to the screen's width and height, in case the GUI scale doesn't
 	// divide evenly into width or height, so that none of the game screen is uncovered.
-	float newGuiWidth  = ceilf(size.logical.width  * Gui::GuiScale);
-	float newGuiHeight = ceilf(size.logical.height * Gui::GuiScale);
+	float newGuiWidth  = ceilf(size.logical.width  * Gui::InvGuiScale);
+	float newGuiHeight = ceilf(size.logical.height * Gui::InvGuiScale);
 	
 	// GuiSize did not change, bail out
 	if (newGuiWidth == Gui::GuiWidth && newGuiHeight == Gui::GuiHeight)
@@ -1567,6 +1568,12 @@ void Minecraft::SetViewportSize(unsigned int widthP, unsigned int heightP)
 
 void Minecraft::SetViewportSize(unsigned int widthP, unsigned int heightP, unsigned int widthL, unsigned int heightL)
 {
+	// Prevent creation of a 0x0 window, can cause crashes, like in GLM on the 3D title logo
+	widthP  = Mth::Max<unsigned int>(widthP,  1);
+	heightP = Mth::Max<unsigned int>(heightP, 1);
+	widthL  = Mth::Max<unsigned int>(widthL,  1);
+	heightL = Mth::Max<unsigned int>(heightL, 1);
+
 	Minecraft::_viewportSize.physical.width  = widthP;
 	Minecraft::_viewportSize.physical.height = heightP;
 

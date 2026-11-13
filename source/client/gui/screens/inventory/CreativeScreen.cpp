@@ -157,7 +157,7 @@ void CreativeScreen::tick()
 {
     if (m_pMinecraft->m_pLocalPlayer->isSurvival())
     {
-        m_pMinecraft->setScreen(new InventoryScreen(m_pMinecraft->m_pLocalPlayer));
+        m_pMinecraft->getScreenChooser()->pushInventoryScreen(m_pMinecraft->m_pLocalPlayer);
         return;
     }
 

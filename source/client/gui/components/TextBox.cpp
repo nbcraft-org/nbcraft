@@ -85,10 +85,10 @@ void TextBox::_onFocusChanged()
 		VirtualKeyboard keyboard;
 		IntRectangle& rect = keyboard.rect;
 
-		rect.x = (int)(((float)m_xPos) / Gui::GuiScale);
-		rect.y = (int)(((float)m_yPos) / Gui::GuiScale);
-		rect.w = (int)(((float)m_width) / Gui::GuiScale);
-		rect.h = (int)(((float)m_height) / Gui::GuiScale);
+		rect.x = (int)(((float)m_xPos)   * Gui::GuiScale);
+		rect.y = (int)(((float)m_yPos)   * Gui::GuiScale);
+		rect.w = (int)(((float)m_width)  * Gui::GuiScale);
+		rect.h = (int)(((float)m_height) * Gui::GuiScale);
 
 		keyboard.defaultText = m_text;
 

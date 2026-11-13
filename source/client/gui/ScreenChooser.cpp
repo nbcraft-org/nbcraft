@@ -58,6 +58,11 @@ void ScreenChooser::pushCreativeScreen(Player* player)
 	m_pMinecraft->setScreen(new CreativeScreen(player->m_pInventory));
 }
 
+void ScreenChooser::pushInventoryScreen(Player* player)
+{
+	m_pMinecraft->setScreen(new InventoryScreen(player));
+}
+
 void ScreenChooser::pushPlayerCraftingScreen(Player* player)
 {
 	m_pMinecraft->setScreen(new InventoryScreen(player));

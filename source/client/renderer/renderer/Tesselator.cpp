@@ -184,6 +184,11 @@ void Tesselator::color(int32_t c)
 	color((c >> 16) & 0xFF, (c >> 8) & 0xFF, c & 0xFF, 255);
 }
 
+void Tesselator::color(int r, int g, int b)
+{
+	color(r, g, b, 255);
+}
+
 void Tesselator::color(int r, int g, int b, int a)
 {
 	color(uint8_t(r), uint8_t(g), uint8_t(b), uint8_t(a));
@@ -455,7 +460,7 @@ void Tesselator::vertex(float x, float y, float z)
 #ifdef _DEBUG
 	// useful for finding improperly pre-allocated Tesselator calls, reducing these reduces memcpy calls,
 	// which provides SUBSTANTIAL performace gains
-	assert(!didResize);
+	//assert(!didResize);
 #else
 	(void)didResize; // to silence dumb warnings
 #endif

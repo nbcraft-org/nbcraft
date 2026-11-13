@@ -74,6 +74,13 @@ void Recipes::addOre(const ItemStack& material, Tile* block, int unprocessGroup)
         .add('X', block), GC_DECORATION, unprocessGroup);
 }
 
+bool Recipes::IsAnyAuxValue(int itemId)
+{
+    return itemId <= 255
+        && itemId != Tile::cloth->m_ID
+        && itemId != Tile::stoneSlabHalf->m_ID;
+}
+
 class RecipeSorter
 {
 public:

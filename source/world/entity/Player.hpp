@@ -98,7 +98,7 @@ public:
 	TilePos getRespawnPosition() const { return m_respawnPos; }
 	int getScore() const { return m_score; }
 	void setName(const std::string& name);
-	const std::string getName() const { return m_name; }
+	const std::string& getName() const { return m_name; }
 	void prepareCustomTextures();
 	void respawn();
 	void rideTick() override;

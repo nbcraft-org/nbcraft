@@ -208,6 +208,8 @@ public:
         return ItemStack::EMPTY;
     }
 
+    static bool IsAnyAuxValue(int itemId);
+
 private:
     static Recipes* instance;
 
