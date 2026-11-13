@@ -33,6 +33,7 @@ protected:
 	virtual std::vector<ItemStack>& _getSlotList(StackID& stackId);
 
 public:
+	void setLinkedSlotsEnabled(bool enabled) { m_linkedSlotsCount = enabled ? m_linkedSlotsCapacity : 0; }
 	void replaceSlot(StackID stackId, const ItemStack* pItemStack);
 	void clearSlot(StackID index);
 	bool hasResource(int itemId) const;
@@ -65,6 +66,7 @@ protected:
 	StackID* m_linkedSlots;
 	std::vector<ItemStack> m_items;
 	Size m_size;
+	Size m_linkedSlotsCapacity;
 	Size m_linkedSlotsCount;
 	bool m_bUnlimited;
 };

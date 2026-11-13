@@ -14,13 +14,14 @@
 FillingContainer::FillingContainer(Size size, Size linkedSlotsCount, bool isUnlimited)
 	: m_linkedSlots(nullptr)
 	, m_size(size)
+	, m_linkedSlotsCapacity(linkedSlotsCount)
 	, m_linkedSlotsCount(linkedSlotsCount)
 	, m_bUnlimited(isUnlimited)
 {
-	if (linkedSlotsCount > 0)
+	if (m_linkedSlotsCapacity > 0)
 	{
-		m_linkedSlots = new StackID[m_linkedSlotsCount];
-		std::fill(m_linkedSlots, &m_linkedSlots[m_linkedSlotsCount], C_INVALID_SLOT);
+		m_linkedSlots = new StackID[m_linkedSlotsCapacity];
+		std::fill(m_linkedSlots, &m_linkedSlots[m_linkedSlotsCapacity], C_INVALID_SLOT);
 	}
 
 	m_items.resize(size);
@@ -43,7 +44,7 @@ void FillingContainer::_release(StackID stackId)
 
 void FillingContainer::_clear()
 {
-	for (size_t i = 0; i < m_linkedSlotsCount; i++)
+	for (size_t i = 0; i < m_linkedSlotsCapacity; i++)
 	{
 		m_linkedSlots[i] = i;
 	}
@@ -518,7 +519,7 @@ void FillingContainer::save(ListTag& tag) const
 	if (m_bUnlimited)
 		return;
 
-	for (Container::StackID i = 0; i < getNumLinkedSlots(); i++)
+	for (Container::StackID i = 0; i < m_linkedSlotsCapacity; i++)
 	{
 		ItemStack item(C_LINKED_SLOT_ID, C_LINKED_SLOT_COUNT, m_linkedSlots[i]);
 
@@ -542,6 +543,10 @@ void FillingContainer::load(const ListTag& tag)
 {
 	if (m_bUnlimited)
 		return;
+
+	// temporarily forces writing to the linked slots array
+	Size oldCount = m_linkedSlotsCount;
+	m_linkedSlotsCount = m_linkedSlotsCapacity;
 
 	_clear();
 
@@ -602,6 +607,8 @@ void FillingContainer::load(const ListTag& tag)
 	}
 
 	_compressLinkedSlotList(0);
+
+	m_linkedSlotsCount = oldCount;
 }
 
 bool FillingContainer::contains(const ItemStack& item) const
