@@ -9,7 +9,12 @@
 #include <stdlib.h>
 
 #define STB_VORBIS_HEADER_ONLY
-#include "thirdparty/stb_image/include/stb_vorbis.c"
+
+#if NBC_SYSTEM_STB
+    #include <stb_vorbis.c>
+#else
+    #include "thirdparty/stb_image/include/stb_vorbis.c"
+#endif
 
 #include "SoundData.hpp"
 
