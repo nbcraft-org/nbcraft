@@ -36,14 +36,9 @@ void SpawnEggItem::initTypes()
 	_AddEgg(EntityType::SKELETON,   Color::FromRGB(193, 193, 193), Color::FromRGB( 73,  73,  73));
 	_AddEgg(EntityType::SPIDER,     Color::FromRGB( 52,  45,  38), Color::FromRGB(168,  14,  14));
 	_AddEgg(EntityType::ZOMBIE,     Color::FromRGB(  0, 175, 175), Color::FromRGB(121, 156, 101));
-	_AddEgg(EntityType::SLIME,      Color::FromRGB( 81, 160,  62), Color::FromRGB(126, 191, 110));
-	_AddEgg(EntityType::GHAST,      Color::FromRGB(249, 249, 249), Color::FromRGB(188, 188, 188));
-	_AddEgg(EntityType::PIG_ZOMBIE, Color::FromRGB(234, 147, 147), Color::FromRGB( 76, 113,  41));
+	// Indev mobs only
 	_AddEgg(EntityType::PIG,        Color::FromRGB(240, 165, 162), Color::FromRGB(219,  99,  95));
 	_AddEgg(EntityType::SHEEP,      Color::FromRGB(231, 231, 231), Color::FromRGB(255, 181, 181));
-	_AddEgg(EntityType::COW,        Color::FromRGB( 68,  54,  38), Color::FromRGB(161, 161, 161));
-	_AddEgg(EntityType::CHICKEN,    Color::FromRGB(161, 161, 161), Color::FromRGB(255,   0,   0));
-	_AddEgg(EntityType::SQUID,      Color::FromRGB( 34,  59,  77), Color::FromRGB(112, 136, 153));
 }
 
 SpawnEggItem::SpawnEggItem(int itemID) : Item(itemID)

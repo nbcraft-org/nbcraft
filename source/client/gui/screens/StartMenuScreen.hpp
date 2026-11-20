@@ -43,6 +43,7 @@ protected:
 	Button* m_joinButton;
 	Button* m_optionsButton;
 	Button m_buyButton;
+	Button m_generateButton;
 	Button m_creditsButton;
 	std::string m_watermarkText;
 	int m_watermarkX;

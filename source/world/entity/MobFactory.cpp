@@ -58,16 +58,15 @@ void MobFactory::initMobLists()
     monsterList.insert(std::make_pair(EntityType::ZOMBIE,   10));
     monsterList.insert(std::make_pair(EntityType::SKELETON, 10));
     monsterList.insert(std::make_pair(EntityType::CREEPER,  10));
-    monsterList.insert(std::make_pair(EntityType::SLIME,    10));
+    // Indev: no slimes
 
     mobListsByCategory.insert(std::make_pair(EntityCategories::ANIMAL, &creatureList));
     creatureList.insert(std::make_pair(EntityType::SHEEP,   12));
     creatureList.insert(std::make_pair(EntityType::PIG,     10));
-    creatureList.insert(std::make_pair(EntityType::CHICKEN, 10));
-    creatureList.insert(std::make_pair(EntityType::COW,      8));
+    // Indev: no chickens or cows yet
 	
     mobListsByCategory.insert(std::make_pair(EntityCategories::WATER_ANIMAL, &waterCreatureList));
-    waterCreatureList.insert(std::make_pair(EntityType::SQUID, 10));
+    // Indev: no squids
 }
 
 const std::map<EntityType::ID, int>& MobFactory::GetMobListOfCategory(const EntityCategories& category) 

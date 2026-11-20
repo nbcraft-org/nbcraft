@@ -5,6 +5,7 @@
 #include "world/tile/Tile.hpp"
 #include "world/item/Item.hpp"
 #include "world/item/SpawnEggItem.hpp"
+#include "world/level/levelgen/IndevSettings.hpp"
 
 std::vector<ItemStack> CreativeMenu::creativeItems;
 bool CreativeMenu::initialized = false;
@@ -89,6 +90,10 @@ const TileID creativeTiles[] =
 
 static void _addCreativeTile(std::vector<ItemStack>& items, TileID tileId, Tile* tile)
 {
+    // Only what was around in Indev
+    if (!Indev::IsTileAvailable(tileId))
+        return;
+
     int minAux = 0;
     int maxAux = 0;
     switch (tileId)
@@ -110,6 +115,9 @@ static void _addCreativeTile(std::vector<ItemStack>& items, TileID tileId, Tile*
 
 static void _addCreativeItem(std::vector<ItemStack>& items, int itemId, Item* item)
 {
+    if (!Indev::IsItemAvailable(itemId))
+        return;
+
     int minAux = 0;
     int maxAux = 0;
     switch (itemId)
@@ -153,7 +161,7 @@ void CreativeMenu::initCreativeItems()
     }
 
     Item* dye = Item::items[ITEM_DYE_POWDER];
-    if (dye)
+    if (dye && Indev::IsItemAvailable(ITEM_DYE_POWDER))
     {
         for (int aux = 1; aux < 16; aux++)
             creativeItems.push_back(ItemStack(dye, 1, aux));

@@ -16,9 +16,13 @@ CreateWorldScreen::CreateWorldScreen(Screen* parent) :
 	m_textName(this, 0, 0, 0, 0, "", "Unnamed world"),
 	m_textSeed(this, 0, 0, 0, 0, ""),
 	m_btnGameMode("Game Mode"),
+	m_btnWorldType("Type"),
+	m_btnWorldTheme("Theme"),
 	m_btnBack("Cancel"),
-	m_btnCreate("Create New World"),
-	m_gameMode(GAME_TYPE_SURVIVAL)
+	m_btnCreate("Generate"),
+	m_gameMode(GAME_TYPE_SURVIVAL),
+	m_worldType(INDEV_TYPE_ISLAND),
+	m_worldTheme(INDEV_THEME_NORMAL)
 {
 	m_bDeletePrevious = false;
 }
@@ -84,15 +88,21 @@ void CreateWorldScreen::_buttonClicked(Button* pButton)
 				seed = Util::hashCode(seedThing);
 		}
 
-		LevelSettings levelSettings(seed, m_gameMode);
+		LevelSettings levelSettings(seed, m_gameMode, m_worldType, m_worldTheme);
 		m_pMinecraft->selectLevel(levelUniqueName, levelNickname, levelSettings);
 	}
 
 	if (pButton->getId() == m_btnGameMode.getId())
 		m_gameMode = static_cast<GameType>((static_cast<int>(m_gameMode) + 1) % (GAME_TYPES_MAX + 1));
+
+	if (pButton->getId() == m_btnWorldType.getId())
+		m_worldType = static_cast<IndevWorldType>((static_cast<int>(m_worldType) + 1) % INDEV_TYPE_COUNT);
+
+	if (pButton->getId() == m_btnWorldTheme.getId())
+		m_worldTheme = static_cast<IndevWorldTheme>((static_cast<int>(m_worldTheme) + 1) % INDEV_THEME_COUNT);
 }
 
-#define CRAMPED() (100 + 32 + 58 + 16 > m_height)
+#define CRAMPED() (100 + 32 + 24 + 58 + 16 > m_height)
 
 void CreateWorldScreen::init()
 {
@@ -102,14 +112,16 @@ void CreateWorldScreen::init()
 
 	// provide thicker buttons for pressing on touchscreen and match the rest of the ui
 	if (!touchscreen)
-		m_btnBack.m_height = m_btnCreate.m_height = m_btnGameMode.m_height = m_textName.m_height = m_textSeed.m_height = 20;
+		m_btnBack.m_height = m_btnCreate.m_height = m_btnGameMode.m_height = m_btnWorldType.m_height = m_btnWorldTheme.m_height = m_textName.m_height = m_textSeed.m_height = 20;
 
 	m_textName.m_width  = m_textSeed.m_width  = 200;
 	m_textName.m_xPos   = m_textSeed.m_xPos   = (m_width - 200) / 2;
 	m_textName.m_yPos = 60;
 	m_textSeed.m_yPos = 100;
-	m_btnGameMode.m_yPos  	= 140;
-	m_btnGameMode.m_width   = 150;
+	m_btnWorldType.m_yPos = m_btnWorldTheme.m_yPos = 140;
+	m_btnWorldType.m_width = m_btnWorldTheme.m_width = 98;
+	m_btnGameMode.m_yPos  	= 164;
+	m_btnGameMode.m_width   = 200;
 	m_btnCreate.m_yPos  = m_height - 56;
 	m_btnCreate.m_yPos 	= m_btnBack.m_yPos 	  = m_height - 30 + ((touchscreen) ? 2 : 0); // on touchscreens, align the create/cancel buttons with previous screen's Y values
 	m_btnBack.m_xPos 	= (m_width / 2) + 5;
@@ -117,6 +129,8 @@ void CreateWorldScreen::init()
 
 	_addElement(m_textName);
 	_addElement(m_textSeed);
+	_addElement(m_btnWorldType);
+	_addElement(m_btnWorldTheme);
 	_addElement(m_btnGameMode);
 	_addElement(m_btnCreate);
 	_addElement(m_btnBack);
@@ -133,13 +147,16 @@ void CreateWorldScreen::init()
 		// crush everything down as much as we can
 		m_textName.m_yPos = 34;
 		m_textSeed.m_yPos = 69;
-		m_btnGameMode.m_yPos = m_textSeed.m_yPos + 24;
+		m_btnWorldType.m_yPos = m_btnWorldTheme.m_yPos = m_textSeed.m_yPos + 24;
+		m_btnGameMode.m_yPos = m_btnWorldType.m_yPos + 24;
 		m_btnCreate.m_width -= 50;
 		m_btnBack.m_width -= 50;
 	}
 
 	// calculate after crush
 	m_btnGameMode.m_xPos = m_width / 2 - m_btnGameMode.m_width / 2;
+	m_btnWorldType.m_xPos = m_width / 2 - 100;
+	m_btnWorldTheme.m_xPos = m_width / 2 + 2;
 	m_btnCreate.m_xPos = m_width / 2 - m_btnCreate.m_width - 5;
 }
 
@@ -150,9 +167,11 @@ void CreateWorldScreen::render(float f)
 
 	const std::string gameTypeStr = GameTypeConv::GameTypeDescriptionToNonLocString(m_gameMode);
 	m_btnGameMode.setMessage("Game Mode: " + GameTypeConv::GameTypeToNonLocString(m_gameMode));
+	m_btnWorldType.setMessage(std::string("Type: ") + Indev::GetTypeName(m_worldType));
+	m_btnWorldTheme.setMessage(std::string("Theme: ") + Indev::GetThemeName(m_worldTheme));
 
-	drawCenteredString(*m_pFont, "Create New World", m_width / 2, CRAMPED() ? 10 : 30, 0xFFFFFF);
-	drawString(*m_pFont, "World name",                    m_textName.m_xPos, m_textName.m_yPos - 10, 0xDDDDDD);
+	drawCenteredString(*m_pFont, "Generate new level", m_width / 2, CRAMPED() ? 10 : 30, 0xFFFFFF);
+	drawString(*m_pFont, "Level name",                    m_textName.m_xPos, m_textName.m_yPos - 10, 0xDDDDDD);
 	drawString(*m_pFont, "Seed for the World Generator",  m_textSeed.m_xPos, m_textSeed.m_yPos - 10, 0xDDDDDD);
 	
 	bool crampedMode = CRAMPED();

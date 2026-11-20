@@ -10,6 +10,7 @@
 #include "GameMods.hpp"
 #include "world/level/levelgen/chunk/TestChunkSource.hpp"
 #include "world/level/levelgen/chunk/RandomLevelSource.hpp"
+#include "world/level/levelgen/chunk/IndevLevelSource.hpp"
 #include "world/level/levelgen/chunk/ChunkCache.hpp"
 #include "world/level/levelgen/biome/BiomeSource.hpp"
 #include "world/level/levelgen/chunk/ChunkSource.hpp"
@@ -33,8 +34,26 @@ Dimension* Dimension::createNew(DimensionId type)
 	}
 }
 
+static bool _UsesIndevTheme(const Level* pLevel, IndevThemeColors& outColors)
+{
+	if (!pLevel || !pLevel->getLevelData() || !pLevel->getLevelData()->usesIndevGenerator())
+		return false;
+
+	outColors = Indev::GetThemeColors(pLevel->getLevelData()->getIndevTheme());
+	return true;
+}
+
+static Color _ColorFromHex(uint32_t hex)
+{
+	return Color::FromRGB((hex >> 16) & 0xFF, (hex >> 8) & 0xFF, hex & 0xFF);
+}
+
 Color Dimension::getSkyColor(const Entity& entity, float f) const
 {
+	IndevThemeColors theme;
+	if (_UsesIndevTheme(m_pLevel, theme))
+		return _ColorFromHex(theme.sky);
+
 	Color color;
 	color.a = 1.0f;
 
@@ -58,6 +77,10 @@ Color Dimension::getSkyColor(const Entity& entity, float f) const
 
 Color Dimension::getFogColor(float a) const
 {
+	IndevThemeColors theme;
+	if (_UsesIndevTheme(m_pLevel, theme))
+		return _ColorFromHex(theme.fog);
+
     float time = getTimeOfDay(a);
 	float x1 = cosf(time * M_PI * 2.0f);
 	float x2 = x1 * 2 + 0.5f;
@@ -125,6 +148,10 @@ Color Dimension::getSunriseColor(float a, float b) const
 
 Color Dimension::getCloudColor(float f) const
 {
+	IndevThemeColors theme;
+	if (_UsesIndevTheme(m_pLevel, theme))
+		return _ColorFromHex(theme.cloud);
+
 	Color color = Color::WHITE;
 
 	float fTODCosAng = Mth::cos(getSunAngle(f));
@@ -149,6 +176,11 @@ float Dimension::getSunAngle(float f) const
 
 float Dimension::getTimeOfDay(int32_t l, float f) const
 {
+	// Indev maps have no day/night cycle; the lighting is set by the map's theme.
+	IndevThemeColors theme;
+	if (_UsesIndevTheme(m_pLevel, theme))
+		return 0.0f;
+
 #ifndef ENH_RUN_DAY_NIGHT_CYCLE
 	//@QUIRK: This is a constant.
 	l = 0;
@@ -258,7 +290,11 @@ ChunkSource* Dimension::createRandomLevelSource()
 #ifdef MOD_USE_FLAT_WORLD
 	return new TestChunkSource(m_pLevel);
 #else
-	return new RandomLevelSource(m_pLevel, m_pLevel->getSeed(), m_pLevel->getLevelData()->getGeneratorVersion());
+	const LevelData* pData = m_pLevel->getLevelData();
+	if (pData->usesIndevGenerator())
+		return new IndevLevelSource(m_pLevel, m_pLevel->getSeed(), pData->getIndevType(), pData->getIndevTheme());
+
+	return new RandomLevelSource(m_pLevel, m_pLevel->getSeed(), pData->getGeneratorVersion());
 #endif
 }
 

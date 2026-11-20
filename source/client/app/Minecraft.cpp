@@ -943,7 +943,7 @@ void Minecraft::unloadLevel(bool bCopyMap)
 
 std::string Minecraft::getVersionString(const std::string& str) const
 {
-	return "v0.3.3" + str + " alpha";
+	return "Indev v0.3.3" + str;
 }
 
 void Minecraft::tick()

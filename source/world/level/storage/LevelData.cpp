@@ -30,6 +30,9 @@ void LevelData::_init(const LevelSettings& settings, int storageVersion)
 	m_generatorVersion = 0; // pre-0.2.1 versions used storageVersion instead
 	m_bSpawnMobs = false;
 	m_nPlayers = -1;
+	m_bIndevGenerator = settings.m_bIndevGenerator;
+	m_indevType = settings.m_indevType;
+	m_indevTheme = settings.m_indevTheme;
 }
 
 void LevelData::_init(const LevelSettings& settings, int storageVersion, const std::string& name)
@@ -51,6 +54,9 @@ void LevelData::v1_read(RakNet::BitStream& bs, int storageVersion)
 	bs.Read(m_time);
 	bs.Read(m_sizeOnDisk);
 	bs.Read(m_lastPlayed);
+
+	// v1 worlds predate the Indev generator
+	m_bIndevGenerator = false;
 
 	RakNet::RakString rs;
 	bs.Read(rs);
@@ -156,6 +162,21 @@ void LevelData::loadTagData(CompoundTag& tag)
 
 	setSpawnMobs(getGameType() == GAME_TYPE_SURVIVAL);
 
+	// Worlds without Indev map info were made with the old generator
+	setUsesIndevGenerator(tag.contains("IndevType"));
+	if (usesIndevGenerator())
+	{
+		int type = tag.getInt32("IndevType");
+		int theme = tag.getInt32("IndevTheme");
+		setIndevType((type >= 0 && type < INDEV_TYPE_COUNT) ? (IndevWorldType)type : INDEV_TYPE_ISLAND);
+		setIndevTheme((theme >= 0 && theme < INDEV_THEME_COUNT) ? (IndevWorldTheme)theme : INDEV_THEME_NORMAL);
+	}
+	else
+	{
+		setIndevType(INDEV_TYPE_ISLAND);
+		setIndevTheme(INDEV_THEME_NORMAL);
+	}
+
 	CompoundTag* playerTag = tag.getCompound("Player");
     if (playerTag)
     {
@@ -182,6 +203,12 @@ void LevelData::writeTagData(CompoundTag& levelTag, CompoundTag* playerTag) cons
 	tag.putString("LevelName", getLevelName());
 	tag.putInt32("StorageVersion", getStorageVersion());
 	tag.putInt32("Platform", 2); // what's 2? why is it only written and not read? not sure...
+
+	if (usesIndevGenerator())
+	{
+		tag.putInt32("IndevType", getIndevType());
+		tag.putInt32("IndevTheme", getIndevTheme());
+	}
 
 	if (playerTag)
 	{

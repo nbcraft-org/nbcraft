@@ -12,6 +12,7 @@
 #include "BitStream.h"
 #include "world/phys/Vec3.hpp"
 #include "world/item/Inventory.hpp"
+#include "world/level/levelgen/IndevSettings.hpp"
 
 #define LEVEL_STORAGE_VERSION_DEFAULT 2
 
@@ -34,11 +35,17 @@ struct LevelSettings
 {
 	int32_t m_seed;
 	GameType m_gameType;
+	bool m_bIndevGenerator;
+	IndevWorldType m_indevType;
+	IndevWorldTheme m_indevTheme;
 
-	LevelSettings(int32_t seed = 0, GameType gameType = GAME_TYPE_CREATIVE)
+	LevelSettings(int32_t seed = 0, GameType gameType = GAME_TYPE_CREATIVE, IndevWorldType indevType = INDEV_TYPE_ISLAND, IndevWorldTheme indevTheme = INDEV_THEME_NORMAL)
 	{
 		m_seed = seed;
 		m_gameType = gameType;
+		m_bIndevGenerator = true;
+		m_indevType = indevType;
+		m_indevTheme = indevTheme;
 	}
 };
 
@@ -114,6 +121,15 @@ public:
 	bool getSpawnMobs() const { return m_bSpawnMobs; }
 	void setSpawnMobs(bool spawnMobs) { m_bSpawnMobs = spawnMobs; }
 
+	// Indev map settings. Worlds created before the Indev generator
+	// existed keep using the old infinite-style generator.
+	bool usesIndevGenerator() const { return m_bIndevGenerator; }
+	void setUsesIndevGenerator(bool b) { m_bIndevGenerator = b; }
+	IndevWorldType getIndevType() const { return m_indevType; }
+	void setIndevType(IndevWorldType type) { m_indevType = type; }
+	IndevWorldTheme getIndevTheme() const { return m_indevTheme; }
+	void setIndevTheme(IndevWorldTheme theme) { m_indevTheme = theme; }
+
 	std::string getLevelName() const { return m_levelName; }
 	void setLevelName(const std::string& name) { m_levelName = name; }
 
@@ -132,5 +148,8 @@ private:
 	int m_storageVersion;
 	bool m_bSpawnMobs;
 	int m_generatorVersion;
+	bool m_bIndevGenerator;
+	IndevWorldType m_indevType;
+	IndevWorldTheme m_indevTheme;
 };
 

@@ -615,6 +615,10 @@
 		84BF63252AF18631008A9995 /* LevelChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840DD6902AC810620006A435 /* LevelChunk.cpp */; };
 		84BF63262AF18631008A9995 /* PerformanceTestChunkSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840DD6922AC810620006A435 /* PerformanceTestChunkSource.cpp */; };
 		84BF63272AF18631008A9995 /* RandomLevelSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840DD6942AC810620006A435 /* RandomLevelSource.cpp */; };
+		1D3E5A0000000000A0B1C2D1 /* IndevLevelSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1D3E5A0000000000A0B1C2D0 /* IndevLevelSource.cpp */; };
+		1D3E5A0000000000A0B1C2D3 /* IndevLevelSource.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 1D3E5A0000000000A0B1C2D2 /* IndevLevelSource.hpp */; };
+		1D3E5A0000000000A0B1C2D5 /* IndevSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1D3E5A0000000000A0B1C2D4 /* IndevSettings.cpp */; };
+		1D3E5A0000000000A0B1C2D7 /* IndevSettings.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 1D3E5A0000000000A0B1C2D6 /* IndevSettings.hpp */; };
 		84BF63282AF18631008A9995 /* TestChunkSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840DD6962AC810620006A435 /* TestChunkSource.cpp */; };
 		84BF63292AF18631008A9995 /* BirchFeature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840DD6992AC810620006A435 /* BirchFeature.cpp */; };
 		84BF632A2AF18631008A9995 /* ClayFeature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840DD69A2AC810620006A435 /* ClayFeature.cpp */; };
@@ -1986,6 +1990,10 @@
 		840DD6932AC810620006A435 /* PerformanceTestChunkSource.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = PerformanceTestChunkSource.hpp; sourceTree = "<group>"; };
 		840DD6942AC810620006A435 /* RandomLevelSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RandomLevelSource.cpp; sourceTree = "<group>"; };
 		840DD6952AC810620006A435 /* RandomLevelSource.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = RandomLevelSource.hpp; sourceTree = "<group>"; };
+		1D3E5A0000000000A0B1C2D0 /* IndevLevelSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndevLevelSource.cpp; sourceTree = "<group>"; };
+		1D3E5A0000000000A0B1C2D2 /* IndevLevelSource.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = IndevLevelSource.hpp; sourceTree = "<group>"; };
+		1D3E5A0000000000A0B1C2D4 /* IndevSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndevSettings.cpp; sourceTree = "<group>"; };
+		1D3E5A0000000000A0B1C2D6 /* IndevSettings.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = IndevSettings.hpp; sourceTree = "<group>"; };
 		840DD6962AC810620006A435 /* TestChunkSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestChunkSource.cpp; sourceTree = "<group>"; };
 		840DD6972AC810620006A435 /* TestChunkSource.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TestChunkSource.hpp; sourceTree = "<group>"; };
 		840DD6992AC810620006A435 /* BirchFeature.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BirchFeature.cpp; sourceTree = "<group>"; };
@@ -4420,6 +4428,8 @@
 				840DD68B2AC810620006A435 /* chunk */,
 				840DD6982AC810620006A435 /* feature */,
 				840DD6A82AC810620006A435 /* synth */,
+				1D3E5A0000000000A0B1C2D4 /* IndevSettings.cpp */,
+				1D3E5A0000000000A0B1C2D6 /* IndevSettings.hpp */,
 			);
 			path = levelgen;
 			sourceTree = "<group>";
@@ -4454,6 +4464,8 @@
 				840DD6932AC810620006A435 /* PerformanceTestChunkSource.hpp */,
 				840DD6942AC810620006A435 /* RandomLevelSource.cpp */,
 				840DD6952AC810620006A435 /* RandomLevelSource.hpp */,
+				1D3E5A0000000000A0B1C2D0 /* IndevLevelSource.cpp */,
+				1D3E5A0000000000A0B1C2D2 /* IndevLevelSource.hpp */,
 				840DD6962AC810620006A435 /* TestChunkSource.cpp */,
 				840DD6972AC810620006A435 /* TestChunkSource.hpp */,
 			);
@@ -6551,6 +6563,8 @@
 				845A8D312FEBAB0900D26FD2 /* CraftContext.hpp in Headers */,
 				84B1E03A2E04FD7900ED000A /* Arrow.hpp in Headers */,
 				84BF63942AF186C8008A9995 /* RandomLevelSource.hpp in Headers */,
+				1D3E5A0000000000A0B1C2D3 /* IndevLevelSource.hpp in Headers */,
+				1D3E5A0000000000A0B1C2D7 /* IndevSettings.hpp in Headers */,
 				84BF63952AF186C8008A9995 /* TestChunkSource.hpp in Headers */,
 				84DED1AB2F309611004001C5 /* FurnaceRecipes.hpp in Headers */,
 				84BF63962AF186C8008A9995 /* Feature.hpp in Headers */,
@@ -7779,6 +7793,8 @@
 				84BF63252AF18631008A9995 /* LevelChunk.cpp in Sources */,
 				84BF63262AF18631008A9995 /* PerformanceTestChunkSource.cpp in Sources */,
 				84BF63272AF18631008A9995 /* RandomLevelSource.cpp in Sources */,
+				1D3E5A0000000000A0B1C2D1 /* IndevLevelSource.cpp in Sources */,
+				1D3E5A0000000000A0B1C2D5 /* IndevSettings.cpp in Sources */,
 				84E1C9E72E7FDC72007D2F5D /* ClothItem.cpp in Sources */,
 				84BF63282AF18631008A9995 /* TestChunkSource.cpp in Sources */,
 				84E1C9D12E7FDC26007D2F5D /* DeadBush.cpp in Sources */,

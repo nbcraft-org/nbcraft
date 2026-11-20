@@ -25,6 +25,7 @@
 
 StartMenuScreen::StartMenuScreen()
 	: m_buyButton(0, 0, 78, 22, "Buy")
+	, m_generateButton(0, 0, 200, 20, "Generate new level...")
 	, m_creditsButton(0, 0, 0, 0, "")
 {
 	m_chosenSplash = SplashManager::singleton().getSplash();
@@ -45,11 +46,13 @@ void StartMenuScreen::_updateLicense()
 		m_optionsButton->setEnabled(false);
 		m_startButton->setEnabled(false);
 		m_joinButton->setEnabled(false);
+		m_generateButton.setEnabled(false);
 	}
 	else if (licenseID <= 1)
 	{
 		m_optionsButton->setEnabled(true);
 		m_startButton->setEnabled(true);
+		m_generateButton.setEnabled(true);
 #ifdef FEATURE_NETWORKING
 		m_joinButton->setEnabled(true);
 #else
@@ -71,6 +74,10 @@ void StartMenuScreen::_buttonClicked(Button* pButton)
 #else
 		m_pMinecraft->setScreen(new SelectWorldScreen);
 #endif
+	}
+	else if (pButton->getId() == m_generateButton.getId())
+	{
+		m_pMinecraft->getScreenChooser()->pushCreateWorldScreen(this);
 	}
 	else if (pButton->getId() == m_joinButton->getId())
 	{
@@ -102,9 +109,10 @@ void StartMenuScreen::_buttonClicked(Button* pButton)
 
 void StartMenuScreen::_setup()
 {
-	m_startButton   = new Button(0, 0, 160, 24, "Start Game");
-	m_joinButton    = new Button(0, 0, 160, 0,  "Join Game");
-	m_optionsButton = new Button(0, 0,  78, 0,  "Options");
+	// Indev-style title menu
+	m_startButton   = new Button(0, 0, 200, 20, "Load level...");
+	m_joinButton    = new Button(0, 0, 200, 0,  "Multiplayer...");
+	m_optionsButton = new Button(0, 0,  98, 0,  "Options...");
 
 	_setupPositions();
 }
@@ -121,29 +129,29 @@ void StartMenuScreen::_setupGenericPositions()
 
 void StartMenuScreen::_setupPositions()
 {
-	int yPos = m_height / 2;
+	int yPos = m_height / 4 + 48;
 
-	m_startButton->m_width = m_joinButton->m_width = 160;
-	m_optionsButton->m_width = m_buyButton.m_width = 78;
-    
-    // Sync button heights
-	m_joinButton->m_height = m_optionsButton->m_height = m_buyButton.m_height = m_startButton->m_height;
+	m_generateButton.m_width = m_startButton->m_width = m_joinButton->m_width = 200;
+	m_optionsButton->m_width = m_buyButton.m_width = 98;
 
-	m_joinButton->m_yPos = yPos + 25;
-	m_startButton->m_yPos = yPos - 3;
+	// Sync button heights
+	m_generateButton.m_height = m_joinButton->m_height = m_optionsButton->m_height = m_buyButton.m_height = m_startButton->m_height;
 
-	yPos += 53;
+	m_generateButton.m_yPos = yPos;
+	m_startButton->m_yPos = yPos + 24;
+	m_joinButton->m_yPos = yPos + 48;
+
+	yPos += 84;
 
 	m_optionsButton->m_yPos = yPos;
 	m_buyButton.m_yPos = yPos;
 
-	m_startButton->m_xPos = (m_width - m_startButton->m_width) / 2;
-
 	int x1 = m_width - m_joinButton->m_width;
 
+	m_generateButton.m_xPos = x1 / 2;
+	m_startButton->m_xPos = x1 / 2;
 	m_joinButton->m_xPos = x1 / 2;
 	m_optionsButton->m_xPos = x1 / 2;
-
 	m_buyButton.m_xPos = x1 / 2 + m_optionsButton->m_width + 4;
 
 #if !CAN_QUIT
@@ -166,6 +174,8 @@ void StartMenuScreen::init()
 	m_creditsButton.m_color.a = 0.0f;
 
 	// add the buttons to the screen:
+	if (m_uiTheme != UI_POCKET)
+		_addElement(m_generateButton);
 	_addElement(*m_startButton);
 	_addElement(*m_joinButton);
 	_addElement(*m_optionsButton);
@@ -185,7 +195,8 @@ void StartMenuScreen::init()
 #endif
 		;
 
-	m_versionTextX = (m_width - m_pFont->width(m_versionText)) / 2;
+	m_versionText = C_GAME_NAME " " + m_versionText;
+	m_versionTextX = 2;
 
 #ifndef DEMO
 	m_buyButton.setMessage("Quit");
@@ -221,16 +232,14 @@ void StartMenuScreen::render(float f)
 
 	if (m_uiTheme != UI_CONSOLE)
 	{
-		int height = m_uiTheme == UI_POCKET ? 32 : 56;
-		drawString(*m_pFont, m_versionText, m_versionTextX, (height + titleYPos) + 2, Color(204, 204, 204));
+		// Indev: the version sits in the top-left corner
+		drawString(*m_pFont, m_versionText, m_versionTextX, 2, Color(204, 204, 204));
 		drawString(*m_pFont, m_watermarkText, m_watermarkX, m_height - 10, Color::WHITE);
 	}
 
-	// Draw the splash text, if we have enough room.
-#ifndef TITLE_CROP_MODE
-	if (!crampedMode)
-		drawSplash();
-#endif
+	// Indev had no splash texts
+	(void)crampedMode;
+	(void)titleYPos;
 
 	Screen::render(f);
 }

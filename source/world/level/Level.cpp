@@ -110,6 +110,13 @@ float Level::getTimeOfDay(float f)  const
 
 Brightness_t Level::getSkyDarken() const
 {
+	// Indev maps: constant lighting given by the theme
+	if (m_pLevelData && m_pLevelData->usesIndevGenerator())
+	{
+		int brightness = Indev::GetThemeColors(m_pLevelData->getIndevTheme()).skyBrightness;
+		return Brightness_t(15 - brightness);
+	}
+
 	float x = Mth::cos(getSunAngle(1.0f));
 	float y = 1.0f - (x * 2.0f + 0.5f);
 

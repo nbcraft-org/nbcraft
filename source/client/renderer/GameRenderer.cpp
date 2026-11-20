@@ -763,6 +763,13 @@ void GameRenderer::render(const Timer& timer)
 	{
 		_renderDebugOverlay(timer.m_partialTicks);
 	}
+	else if (m_pMinecraft->m_pLevel && !m_pMinecraft->getOptions()->m_hideGui.get() && m_pMinecraft->getUiTheme() != UI_CONSOLE)
+	{
+		// Indev always showed the version and performance counters in the corner
+		std::string infoText = C_GAME_NAME " " + m_pMinecraft->getVersionString();
+		infoText += Util::format(" (%d fps, %d chunk updates)", m_shownFPS, m_shownChunkUpdates);
+		m_pMinecraft->m_pFont->drawShadow(infoText, 2, 2, Color::WHITE);
+	}
 
 	int timeMs = getTimeMs();
 	if (timeMs - m_lastUpdatedMS >= 1000)

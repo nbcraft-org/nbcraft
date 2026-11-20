@@ -78,6 +78,8 @@
     <ClCompile Include="$(MC_ROOT)\source\world\level\levelgen\chunk\LevelChunk.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\levelgen\chunk\PerformanceTestChunkSource.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\levelgen\chunk\RandomLevelSource.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\level\levelgen\chunk\IndevLevelSource.cpp" />
+    <ClCompile Include="$(MC_ROOT)\source\world\level\levelgen\IndevSettings.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\levelgen\chunk\TestChunkSource.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\levelgen\feature\BirchFeature.cpp" />
     <ClCompile Include="$(MC_ROOT)\source\world\level\levelgen\feature\CactusFeature.cpp" />
@@ -320,6 +322,8 @@
     <ClInclude Include="$(MC_ROOT)\source\world\level\levelgen\chunk\LevelChunk.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\level\levelgen\chunk\PerformanceTestChunkSource.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\level\levelgen\chunk\RandomLevelSource.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\level\levelgen\chunk\IndevLevelSource.hpp" />
+    <ClInclude Include="$(MC_ROOT)\source\world\level\levelgen\IndevSettings.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\level\levelgen\chunk\TestChunkSource.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\level\levelgen\feature\Feature.hpp" />
     <ClInclude Include="$(MC_ROOT)\source\world\level\levelgen\feature\LargeCaveFeature.hpp" />

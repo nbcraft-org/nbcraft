@@ -385,6 +385,8 @@ add_library(nbcraft-core STATIC
     world/level/levelgen/biome/Biome.cpp
     world/level/levelgen/biome/BiomeSource.cpp
     world/level/levelgen/chunk/RandomLevelSource.cpp
+    world/level/levelgen/chunk/IndevLevelSource.cpp
+    world/level/levelgen/IndevSettings.cpp
     world/level/levelgen/chunk/LevelChunk.cpp
     world/level/levelgen/chunk/ChunkCache.cpp
     world/level/levelgen/chunk/ChunkPos.cpp

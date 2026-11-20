@@ -6,6 +6,7 @@
 #include "ShapedRecipe.hpp"
 #include "ShapelessRecipe.hpp"
 #include "world/tile/Tile.hpp"
+#include "world/level/levelgen/IndevSettings.hpp"
 
 class ItemStack;
 
@@ -163,6 +164,13 @@ public:
     //@NOTE: -1 as the group index just adds to the end of the recipe list
     void add(Recipe* recipe, Group_Console group = GC_DECORATION, int slotIndex = -1)
     {
+        // Leave out the recipes of anything that came after Indev
+        if (!Indev::IsItemAvailable(recipe->getResultItem().getId()))
+        {
+            delete recipe;
+            return;
+        }
+
         m_recipes.push_back(recipe);
 
         if (group >= GC_COUNT) return;

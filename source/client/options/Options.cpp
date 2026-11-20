@@ -92,7 +92,7 @@ Options::Options(Minecraft* mc, const std::string& folderPath) :
 	, m_biomeColors("gfx_biomecolors", "options.biomeColors", true)
 	, m_splitControls("ctrl_split", "options.splitControls", false)
 	, m_dynamicHand("gfx_dynamichand", "options.dynamicHand", true)
-	, m_menuPanorama("misc_menupano", "options.menuPanorama", true)
+	, m_menuPanorama("misc_menupano", "options.menuPanorama", false)
 	, m_lang("gfx_lang", "options.lang", "en_us")
 	, m_uiTheme("gfx_uitheme", "options.uiTheme", GetDefaultUiTheme(), ValuesBuilder().add("options.uiTheme.pocket").add("options.uiTheme.java").add("options.uiTheme.console"))
 	, m_logoType("gfx_logotype", "options.logoType", LOGO_AUTO, ValuesBuilder().add("options.logoType.auto").add("options.logoType.pocket").add("options.logoType.java").add("options.logoType.console").add("options.logoType.xbox360").add("options.logoType.logo3d"))

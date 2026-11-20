@@ -11,6 +11,7 @@
 #include "../Screen.hpp"
 #include "client/gui/components/Button.hpp"
 #include "client/gui/components/TextBox.hpp"
+#include "world/level/levelgen/IndevSettings.hpp"
 
 #ifndef ORIGINAL_CODE
 
@@ -36,9 +37,13 @@ public:
 	TextBox m_textName;
 	TextBox m_textSeed;
 	Button m_btnGameMode;
+	Button m_btnWorldType;
+	Button m_btnWorldTheme;
 	Button m_btnBack;
 	Button m_btnCreate;
 	GameType m_gameMode;
+	IndevWorldType m_worldType;
+	IndevWorldTheme m_worldTheme;
 };
 
 #endif

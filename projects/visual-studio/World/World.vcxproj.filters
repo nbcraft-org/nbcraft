@@ -218,6 +218,12 @@
     <ClCompile Include="$(MC_ROOT)\source\world\level\levelgen\chunk\RandomLevelSource.cpp">
       <Filter>Source Files\Level\LevelGen\Chunk</Filter>
     </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\level\levelgen\chunk\IndevLevelSource.cpp">
+      <Filter>Source Files\Level\LevelGen\Chunk</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MC_ROOT)\source\world\level\levelgen\IndevSettings.cpp">
+      <Filter>Source Files\Level\LevelGen\Chunk</Filter>
+    </ClCompile>
     <ClCompile Include="$(MC_ROOT)\source\world\level\levelgen\chunk\TestChunkSource.cpp">
       <Filter>Source Files\Level\LevelGen\Chunk</Filter>
     </ClCompile>
@@ -938,6 +944,12 @@
       <Filter>Header Files\Level\LevelGen\Chunk</Filter>
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\world\level\levelgen\chunk\RandomLevelSource.hpp">
+      <Filter>Header Files\Level\LevelGen\Chunk</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\level\levelgen\chunk\IndevLevelSource.hpp">
+      <Filter>Header Files\Level\LevelGen\Chunk</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MC_ROOT)\source\world\level\levelgen\IndevSettings.hpp">
       <Filter>Header Files\Level\LevelGen\Chunk</Filter>
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\world\level\levelgen\chunk\TestChunkSource.hpp">
