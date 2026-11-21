@@ -715,7 +715,9 @@ void GameRenderer::render(const Timer& timer)
 		bMouseData = true;
 	}
 
-	if (m_pMinecraft->isLevelGenerated())
+	Screen* pScreen = m_pMinecraft->m_pScreen;
+
+	if (m_pMinecraft->isLevelGenerated() && (!pScreen || pScreen->renderGameBehind()))
 	{
 		if (m_keepPic < 0)
 		{
@@ -747,7 +749,6 @@ void GameRenderer::render(const Timer& timer)
 	if (pLocalPlayer && pLocalPlayer->m_pMoveInput)
 		pLocalPlayer->m_pMoveInput->render(timer.m_renderTicks);
 
-	Screen* pScreen = m_pMinecraft->m_pScreen;
 	if (pScreen)
 	{
 		mce::RenderContextImmediate::get().clearDepthStencilBuffer();

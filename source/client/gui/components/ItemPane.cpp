@@ -103,7 +103,7 @@ void ItemPane::renderBatch(std::vector<GridItem>& items, float a)
 
             float x = Gui::FloorAlignToScreenPixel(item.screenPos.x - 1.0f);
             float y = Gui::FloorAlignToScreenPixel(item.screenPos.y);
-            blitNineSlice(textures, "gui/spritesheet.png", x, y, m_width + 4, 22, 3);
+            blitNineSlice(textures, *pSprite, x, y, m_width + 4, 22, 3);
         }
 
         t.voidBeginAndEndCalls(false);
