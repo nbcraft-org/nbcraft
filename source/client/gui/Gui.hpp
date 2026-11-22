@@ -59,6 +59,7 @@ public:
 	void addMessage(const std::string& str);
 	void inventoryUpdated();
 	void setNowPlaying(const std::string& str);
+	void flashSlot(int slotId);
 	void render(float f, bool bHaveScreen);
 	void tick();
 	void renderSlot(int slot, int x, int y, float f);
@@ -102,11 +103,7 @@ public:
 	float m_progress;
 	float m_lastDestroyProgress;
 	float m_destroyProgress;
-	std::string field_C;
 	std::vector<GuiMessage> m_guiMessages;
-	int field_24;
-	int field_28;
-	int field_2C;
 	Random m_random;
 	Minecraft* m_pMinecraft;
 	int m_ticks;
@@ -115,7 +112,9 @@ public:
 	bool field_A1C;
 	float m_tbr;
 	RenderChunk m_renderChunk;
-	bool field_A3C;
+	bool m_bInventoryUpdated;
+	int m_flashingSlotId;
+	float m_flashingSlotStartTime;
 	bool m_bRenderMessages;
     bool m_bRenderHunger;
 };

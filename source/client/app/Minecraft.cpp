@@ -117,8 +117,6 @@ Minecraft::Minecraft()
 	m_bHasQueuedScreen = false;
 	m_pQueuedScreen = nullptr;
 	m_licenseID = -2;
-	m_fLastUpdated = 0;
-	m_fDeltaTime = 0;
 	m_lastInteractTime = 0;
 
 	_singletonPtr = this;
@@ -1061,10 +1059,6 @@ void Minecraft::update()
 	m_pGameRenderer->render(m_timer);
 
 	renderContext.endRender();
-
-	double time = getTimeS();
-	m_fDeltaTime = time - m_fLastUpdated;
-	m_fLastUpdated = time;
 }
 
 void Minecraft::init()

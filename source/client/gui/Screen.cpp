@@ -275,21 +275,24 @@ static float g_panoramaAngle = 0.0f;
 
 void Screen::renderMenuBackground(float f)
 {
+	Minecraft& mc = *m_pMinecraft;
+
 	if (m_uiTheme == UI_CONSOLE)
 	{
 		renderConsolePanorama();
 		return;
 	}
 
-	if (!m_pMinecraft->getOptions()->m_menuPanorama.get())
+	if (!mc.getOptions()->m_menuPanorama.get())
 	{
 		renderDirtBackground(0);
 		return;
 	}
 
-	Textures* pTextures = m_pMinecraft->m_pTextures;
+	Timer& timer = mc.m_timer;
+	Textures& textures = *mc.m_pTextures;
 
-	g_panoramaAngle += float(30.0 * m_pMinecraft->m_fDeltaTime);
+	g_panoramaAngle += float(30.0 * timer.m_deltaTime);
 
 	float aspectRatio = 1.0f;
 	//aspectRatio = float(width) / float(height);
@@ -343,11 +346,11 @@ void Screen::renderMenuBackground(float f)
 			mtx->rotate(ang, Vec3(axis.x, axis.y, 0.0f));
 
 		skip_rotate:
-			pTextures->setSmoothing(true);
-			pTextures->setClampToEdge(true);
-			pTextures->loadAndBindTexture(std::string(g_panoramaList[i]));
-			pTextures->setSmoothing(false);
-			pTextures->setClampToEdge(false);
+			textures.setSmoothing(true);
+			textures.setClampToEdge(true);
+			textures.loadAndBindTexture(std::string(g_panoramaList[i]));
+			textures.setSmoothing(false);
+			textures.setClampToEdge(false);
 
 			Tesselator& t = Tesselator::instance;
 			t.begin(4);

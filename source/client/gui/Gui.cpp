@@ -52,16 +52,14 @@ Gui::Gui(Minecraft* pMinecraft)
 	m_lastProgress = 0;
 	m_lastDestroyProgress = 0;
 	m_destroyProgress = 0;
-	field_C = "";
-	field_24 = 0;
-	field_28 = 0;
-	field_2C = 0;
 	m_ticks = 0;
 	field_A00 = "";
 	field_A18 = 0;
 	field_A1C = false;
 	m_tbr = 1.0f;
-	field_A3C = true;
+	m_bInventoryUpdated = true;
+	m_flashingSlotId = -1;
+	m_flashingSlotStartTime = -1.0f;
 	m_bRenderMessages = true;
     m_bRenderHunger = false;
 	m_feedbackMeshesBuilt = false;
@@ -123,6 +121,12 @@ void Gui::setNowPlaying(const std::string& str)
 	field_A1C = true;
 }
 
+void Gui::flashSlot(int slotId)
+{
+	m_flashingSlotId = slotId;
+	m_flashingSlotStartTime = m_pMinecraft->m_timer.m_lastUpdateTime;
+}
+
 void Gui::renderPumpkin(int var1, int var2)
 {
 	currentShaderColor = Color::WHITE;
@@ -165,7 +169,7 @@ void Gui::renderVignette(float brightness, int width, int height)
 
 void Gui::inventoryUpdated()
 {
-	field_A3C = true;
+	m_bInventoryUpdated = true;
 }
 
 void Gui::render(float f, bool bHaveScreen)
@@ -881,6 +885,7 @@ void Gui::renderExperience()
 void Gui::renderToolBar(float f, float alpha)
 {
 	Minecraft& mc = *m_pMinecraft;
+	Timer& timer = mc.m_timer;
 	Options& options = *mc.getOptions();
 	Textures& textures = *mc.m_pTextures;
 	LocalPlayer& player = *mc.m_pLocalPlayer;
@@ -891,6 +896,9 @@ void Gui::renderToolBar(float f, float alpha)
 	textures.loadAndBindTexture("gui/gui.png");
 
 	m_blitOffset = -90.0f;
+
+	//float v143 = Gui::InvGuiScale * Minecraft::GetHeightP(); // 0.3.3
+	int v22 = /*v143*/ - 19;
 
 	int nSlots = getNumSlots();
 	int hotbarWidth = 2 + nSlots * 20;
@@ -913,6 +921,25 @@ void Gui::renderToolBar(float f, float alpha)
 	// selection mark
 	blit(-1 - hotbarWidth / 2 + 20 * inventory.m_selectedStackId, -23, 0, 22, 24, 22, 0, 0);
 
+	// selected slot flash
+	if (m_flashingSlotId >= 0)
+	{
+		float delta = timer.m_lastUpdateTime - m_flashingSlotStartTime;
+		if (delta <= 0.2f)
+		{
+			int v115 = 20 * m_flashingSlotId + 1 + (hotbarWidth / 2) - 20 * nSlots;
+			float v117 = Mth::cos(delta * 62.8f);
+			fill(v115, v22, v115 + 16, v22 + 16, Color::FromRGBA(255, 255, 255, (v117 * -80.0f) + 81.0f));
+
+			// ScreenRenderer::fill() resets this
+			currentShaderColor.a = alpha;
+		}
+		else
+		{
+			m_flashingSlotId = -1;
+		}
+	}
+
 	// chat and pause button for mobile devices
 	if (mc.useTouchscreen())
 	{
@@ -933,7 +960,7 @@ void Gui::renderToolBar(float f, float alpha)
 	int slotX = -hotbarWidth / 2 + 3;
 	for (int i = 0; i < nSlots - diff; i++)
 	{
-		renderSlot(i, slotX, -19, f);
+		renderSlot(i, slotX, v22, f);
 
 		slotX += 20;
 	}
@@ -967,7 +994,7 @@ void Gui::renderToolBar(float f, float alpha)
 		slotX += 20;
 	}
 
-	field_A3C = false;
+	m_bInventoryUpdated = false;
 
 	// blit the "more items" button if using touch
 	if (mc.useTouchscreen())
