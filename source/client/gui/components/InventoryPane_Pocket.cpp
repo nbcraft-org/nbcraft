@@ -109,28 +109,28 @@ void InventoryPane_Pocket::renderBatch(std::vector<GridItem>& items, float a)
             if (!pItemStack)
                 continue;
 
-            t.enableColor();
+            Color itemColor;
+
             if (m_callback.isAllowed(item.id))
             {
                 if (m_clickAnimTick > 0 && m_selectedId == item.id)
                 {
                     int v27 = 0xFFFFFFF1 * m_clickAnimTick;
-                    t.color(v27 + 255, v27 + 255, v27 + 255, pItemStack->m_count > 0 ? 255 : 96);
+                    itemColor = Color::FromRGBA(v27 + 255, v27 + 255, v27 + 255, pItemStack->m_count > 0 ? 255 : 96);
                 }
                 else
                 {
-                    t.color(255, 255, 255, pItemStack->m_count > 0 ? 255 : 96);
+                    itemColor = Color::FromRGBA(255, 255, 255, pItemStack->m_count > 0 ? 255 : 96);
                 }
             }
             else
             {
-                t.color(64, 64, 64);
+                itemColor = Color::FromRGB(64, 64, 64);
             }
-            t.noColor();
 
             float x = Gui::FloorAlignToScreenPixel(item.screenPos.x + 4.0f + 4.0f);
             float y = Gui::FloorAlignToScreenPixel(item.screenPos.y + 4.0f + 4.0f);
-            ItemRenderer::singleton().renderGuiItem(m_minecraft, *pItemStack, x, y);
+            ItemRenderer::singleton().renderGuiItem(m_minecraft, *pItemStack, x, y, itemColor);
             ItemRenderer::singleton().renderGuiItemOverlay(m_minecraft, *pItemStack, x, y);
         }
 
