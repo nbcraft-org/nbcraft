@@ -17,9 +17,6 @@ protected:
 	void _buttonClicked(Button*) override;
 
 public:
-	bool isAllowed(int slot);
-
-public:
     void init() override;
 
     void render(float a) override;
@@ -28,7 +25,9 @@ public:
 	void handleUserAction(const ActionInfo&) override;
 	bool isPauseScreen() override;
 
-    bool addItem(const InventoryPane_Pocket& pane, int id) override;
+    // InventoryPane_Pocket::ICallback members
+    bool addItem(const InventoryPane_Pocket& pane, Container::StackID stackId) override;
+    bool isAllowed(Container::StackID stackId) override;
     std::vector<const ItemStack*> getItems(const InventoryPane_Pocket& pane) override;
 
 private:

@@ -23,8 +23,8 @@ public:
 	class ICallback
 	{
 	public:
-		virtual bool addItem(const InventoryPane_Pocket& pane, int id) = 0;
-		virtual bool isAllowed(int id) = 0;
+		virtual bool addItem(const InventoryPane_Pocket& pane, Container::StackID stackId) = 0;
+		virtual bool isAllowed(Container::StackID stackId) = 0;
 		virtual std::vector<const ItemStack*> getItems(const InventoryPane_Pocket& pane) = 0;
 	};
 

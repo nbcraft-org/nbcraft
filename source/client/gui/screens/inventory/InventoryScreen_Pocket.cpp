@@ -61,11 +61,6 @@ void InventoryScreen_Pocket::_buttonClicked(Button* pButton)
 		m_pMinecraft->setScreen(new ArmorScreen(m_pPlayer));*/
 }
 
-bool InventoryScreen_Pocket::isAllowed(int slot)
-{
-	return slot >= 0 && slot < int(m_pPlayer->m_pInventory->getContainerSize());
-}
-
 void InventoryScreen_Pocket::init()
 {
     int v4 = m_width - 20;
@@ -177,21 +172,26 @@ bool InventoryScreen_Pocket::isPauseScreen()
 	return false;
 }
 
-bool InventoryScreen_Pocket::addItem(const InventoryPane_Pocket& pane, int id)
+bool InventoryScreen_Pocket::addItem(const InventoryPane_Pocket& pane, Container::StackID stackId)
 {
 	Inventory& inventory = *m_pPlayer->m_pInventory;
 	Container::StackID firstSlot = inventory.getFirstSlot();
 
-	ItemStack& slotItem = inventory.getItem(firstSlot + id);
+	ItemStack& slotItem = inventory.getItem(firstSlot + stackId);
 	if (slotItem.isEmpty())
 		return false;
 
-	inventory.moveToSelectionSlot(0, id, true);
+	inventory.moveToSelectionSlot(0, stackId, true);
 	inventory.selectSlot(0);
 	m_pMinecraft->m_pSoundEngine->playUI("random.pop", 1.0f, 0.3f);
 	m_pMinecraft->m_pGui->flashSlot(0);
 
 	return true;
+}
+
+bool InventoryScreen_Pocket::isAllowed(Container::StackID stackId)
+{
+	return stackId >= 0 && stackId < int(m_pPlayer->m_pInventory->getContainerSize());
 }
 
 std::vector<const ItemStack*> InventoryScreen_Pocket::getItems(const InventoryPane_Pocket& pane)
