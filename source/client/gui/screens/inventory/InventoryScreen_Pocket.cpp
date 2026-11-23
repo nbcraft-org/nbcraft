@@ -1,10 +1,12 @@
 #include "InventoryScreen_Pocket.hpp"
 #include "renderer/ShaderConstants.hpp"
+#include "world/inventory/Slot.hpp"
 
 static const TextureAtlasSprite SPRITE_SCREEN_FRAME = TextureAtlasSprite(130, 139, 24, 24, "gui/gui2.png", 256, 256);
 
 InventoryScreen_Pocket::InventoryScreen_Pocket(Player* player)
     : m_pPlayer(player)
+	, m_pMenu(player->m_pInventoryMenu)
 	, m_header("Select blocks")
 	, m_btnExit("")
 	, m_btnCraft("Craft")
@@ -72,8 +74,8 @@ void InventoryScreen_Pocket::init()
     int v6 = m_width - v5;
 
     IntRectangle areaRect(v6 / 2, 30, v5, m_height - 56);
-	Inventory& inventory = *m_pPlayer->m_pInventory;
-	Container::Size itemSlotsCount = inventory.getNumItemSlots();
+	std::vector<Slot*>& slots = m_pMenu->getSlotsByGroup(Slot::INVENTORY);
+	int itemSlotsCount = slots.size();
 
 	m_inventoryPane = new InventoryPane_Pocket(*this, *m_pMinecraft,
 		areaRect,
@@ -82,8 +84,8 @@ void InventoryScreen_Pocket::init()
 		itemSlotsCount
 	);
 	m_inventoryPane->m_paddingX = v6 / 2;
-	//this->dword184 = containerSize;
-	//this->dword180 = (containerSize - 1) / this->dword188 + 1;
+	//this->dword184 = itemSlotsCount;
+	//this->dword180 = (itemSlotsCount - 1) / this->dword188 + 1;
 
 	ImageDef exitImg;
 	{
@@ -172,16 +174,15 @@ bool InventoryScreen_Pocket::isPauseScreen()
 	return false;
 }
 
-bool InventoryScreen_Pocket::addItem(const InventoryPane_Pocket& pane, Container::StackID stackId)
+bool InventoryScreen_Pocket::addItem(const InventoryPane_Pocket& pane, Container::SlotID slotId)
 {
 	Inventory& inventory = *m_pPlayer->m_pInventory;
-	Container::StackID firstSlot = inventory.getFirstSlot();
 
-	ItemStack& slotItem = inventory.getItem(firstSlot + stackId);
-	if (slotItem.isEmpty())
+	Slot* pSlot = m_pMenu->getSlot(slotId);
+	if (!pSlot || !pSlot->hasItem())
 		return false;
 
-	inventory.moveToSelectionSlot(0, stackId, true);
+	inventory.moveToSelectionSlot(0, pSlot->m_stackId, true);
 	inventory.selectSlot(0);
 	m_pMinecraft->m_pSoundEngine->playUI("random.pop", 1.0f, 0.3f);
 	m_pMinecraft->m_pGui->flashSlot(0);
@@ -189,14 +190,14 @@ bool InventoryScreen_Pocket::addItem(const InventoryPane_Pocket& pane, Container
 	return true;
 }
 
-bool InventoryScreen_Pocket::isAllowed(Container::StackID stackId)
+bool InventoryScreen_Pocket::isAllowed(Container::SlotID slotId)
 {
-	return stackId >= 0 && stackId < int(m_pPlayer->m_pInventory->getContainerSize());
+	return slotId >= 0 && slotId < int(m_pMenu->m_slots.size());
 }
 
-std::vector<const ItemStack*> InventoryScreen_Pocket::getItems(const InventoryPane_Pocket& pane)
+ContainerMenu* InventoryScreen_Pocket::getContainerMenu(const InventoryPane_Pocket& pane)
 {
-	std::vector<const ItemStack*> result;
+	/*std::vector<const ItemStack*> result;
 
     Inventory& inventory = *m_pPlayer->m_pInventory;
     Container::Size itemSlotsCount = inventory.getNumItemSlots();
@@ -207,5 +208,7 @@ std::vector<const ItemStack*> InventoryScreen_Pocket::getItems(const InventoryPa
 		result.push_back(&inventory.getItem(firstSlot + stackId));
 	}
 
-	return result;
+	return result;*/
+
+	return m_pMenu;
 }

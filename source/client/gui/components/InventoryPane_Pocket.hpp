@@ -2,6 +2,7 @@
 
 #include "client/renderer/Textures.hpp"
 #include "world/inventory/Container.hpp"
+#include "world/inventory/ContainerMenu.hpp"
 #include "ScrollingPane.hpp"
 
 class InventoryPane_Pocket : public ScrollingPane
@@ -23,9 +24,9 @@ public:
 	class ICallback
 	{
 	public:
-		virtual bool addItem(const InventoryPane_Pocket& pane, Container::StackID stackId) = 0;
-		virtual bool isAllowed(Container::StackID stackId) = 0;
-		virtual std::vector<const ItemStack*> getItems(const InventoryPane_Pocket& pane) = 0;
+		virtual bool addItem(const InventoryPane_Pocket& pane, Container::SlotID slotId) = 0;
+		virtual bool isAllowed(Container::SlotID slotId) = 0;
+		virtual ContainerMenu* getContainerMenu(const InventoryPane_Pocket& pane) = 0;
 	};
 
 public:

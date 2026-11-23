@@ -16,7 +16,8 @@ public:
         HOTBAR,
         INPUT,
         OUTPUT,
-        ARMOR
+        ARMOR,
+        GROUPS_COUNT
     };
 
     Slot(Container* container, Container::StackID stackId, Group group = CONTAINER);

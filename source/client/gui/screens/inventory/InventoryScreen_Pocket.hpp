@@ -26,12 +26,13 @@ public:
 	bool isPauseScreen() override;
 
     // InventoryPane_Pocket::ICallback members
-    bool addItem(const InventoryPane_Pocket& pane, Container::StackID stackId) override;
-    bool isAllowed(Container::StackID stackId) override;
-    std::vector<const ItemStack*> getItems(const InventoryPane_Pocket& pane) override;
+    bool addItem(const InventoryPane_Pocket& pane, Container::SlotID slotId) override;
+    bool isAllowed(Container::SlotID slotId) override;
+    ContainerMenu* getContainerMenu(const InventoryPane_Pocket& pane) override;
 
 private:
     Player* m_pPlayer;
+    ContainerMenu* m_pMenu;
     InventoryPane_Pocket* m_inventoryPane;
     THeader_Pocket m_header;
     ImageButton m_btnExit;

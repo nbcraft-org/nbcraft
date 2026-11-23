@@ -5,6 +5,7 @@
 #include "client/renderer/renderer/RenderMaterialGroup.hpp"
 #include "renderer/EnableScissorTest.hpp"
 #include "renderer/ShaderConstants.hpp"
+#include "world/inventory/Slot.hpp"
 
 const Color InventoryPane_Pocket::BACKGROUND_COLOR = Color(0xFF333333);
 
@@ -68,7 +69,7 @@ void InventoryPane_Pocket::renderBatch(std::vector<GridItem>& items, float a)
 
     currentShaderColor = Color::WHITE;
 
-    const std::vector<const ItemStack*>& itemStacks = m_callback.getItems(*this);
+    ContainerMenu* pMenu = m_callback.getContainerMenu(*this);
     {
         mce::EnableScissorTest scissor(
             m_scale * m_xPos,
@@ -102,11 +103,17 @@ void InventoryPane_Pocket::renderBatch(std::vector<GridItem>& items, float a)
         /*t.begin(0);
         t.voidBeginAndEndCalls(true);*/
 
+        std::vector<Slot*>& slots = pMenu->getSlotsByGroup(Slot::INVENTORY);
+
         for (size_t i = 0; i < items.size(); i++)
         {
             const GridItem& item = items[i];
-            const ItemStack* pItemStack = itemStacks[item.id];
-            if (!pItemStack)
+            Slot* pSlot = slots[item.id];
+            if (!pSlot)
+                continue;
+
+            ItemStack& itemStack = pSlot->getItem();
+            if (itemStack.isEmpty())
                 continue;
 
             Color itemColor;
@@ -116,11 +123,11 @@ void InventoryPane_Pocket::renderBatch(std::vector<GridItem>& items, float a)
                 if (m_clickAnimTick > 0 && m_selectedId == item.id)
                 {
                     int v27 = 0xFFFFFFF1 * m_clickAnimTick;
-                    itemColor = Color::FromRGBA(v27 + 255, v27 + 255, v27 + 255, pItemStack->m_count > 0 ? 255 : 96);
+                    itemColor = Color::FromRGBA(v27 + 255, v27 + 255, v27 + 255, itemStack.m_count > 0 ? 255 : 96);
                 }
                 else
                 {
-                    itemColor = Color::FromRGBA(255, 255, 255, pItemStack->m_count > 0 ? 255 : 96);
+                    itemColor = Color::FromRGBA(255, 255, 255, itemStack.m_count > 0 ? 255 : 96);
                 }
             }
             else
@@ -130,8 +137,8 @@ void InventoryPane_Pocket::renderBatch(std::vector<GridItem>& items, float a)
 
             float x = Gui::FloorAlignToScreenPixel(item.screenPos.x + 4.0f + 4.0f);
             float y = Gui::FloorAlignToScreenPixel(item.screenPos.y + 4.0f + 4.0f);
-            ItemRenderer::singleton().renderGuiItem(m_minecraft, *pItemStack, x, y, itemColor);
-            ItemRenderer::singleton().renderGuiItemOverlay(m_minecraft, *pItemStack, x, y);
+            ItemRenderer::singleton().renderGuiItem(m_minecraft, itemStack, x, y, itemColor);
+            ItemRenderer::singleton().renderGuiItemOverlay(m_minecraft, itemStack, x, y);
         }
 
         /*t.voidBeginAndEndCalls(false);
@@ -149,13 +156,18 @@ void InventoryPane_Pocket::renderBatch(std::vector<GridItem>& items, float a)
             for (size_t i = 0; i < items.size(); i++)
             {
                 const GridItem& item = items[i];
-                const ItemStack* pItemStack = itemStacks[item.id];
-                if (!pItemStack)
+
+                Slot* pSlot = slots[item.id];
+                if (!pSlot)
+                    continue;
+
+                ItemStack& itemStack = pSlot->getItem();
+                if (itemStack.isEmpty())
                     continue;
 
                 float x = Gui::FloorAlignToScreenPixel((item.screenPos.x + 4.0f + 3.0f) * posScale);
                 float y = Gui::FloorAlignToScreenPixel((item.screenPos.y + 4.0f + 3.0f) * posScale);
-                ItemRenderer::singleton().renderGuiItemText(m_minecraft, *pItemStack, x, y);
+                ItemRenderer::singleton().renderGuiItemText(m_minecraft, itemStack, x, y);
             }
         }
     }
@@ -181,10 +193,22 @@ void InventoryPane_Pocket::renderBatch(std::vector<GridItem>& items, float a)
 
 void InventoryPane_Pocket::onSelect(int id, bool isSelected)
 {
-    if (!m_callback.isAllowed(id) || !isSelected)
+    if (!isSelected)
         return;
 
-    bool success = m_callback.addItem(*this, id);
+    ContainerMenu* pMenu = m_callback.getContainerMenu(*this);
+    std::vector<Slot*>& slots = pMenu->getSlotsByGroup(Slot::INVENTORY);
+
+    Slot* pSlot = slots[id];
+    if (!pSlot)
+        return;
+
+    Container::SlotID slotId = pSlot->m_id;
+
+    if (!m_callback.isAllowed(slotId))
+        return;
+
+    bool success = m_callback.addItem(*this, slotId);
     if (success)
     {
         m_selectedId = id;

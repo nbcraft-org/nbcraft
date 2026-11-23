@@ -638,7 +638,16 @@ ItemStack& FillingContainer::getItem(StackID index)
 	{
 		StackID newIndex = m_linkedSlots[index];
 		if (newIndex != C_INVALID_SLOT)
+		{
 			index = newIndex;
+
+			// copy-paste because I'm lazy
+			if (index >= m_linkedSlotsCount)
+			{
+				// we're outside the bounds of the linked slots, undo the offset to get the real slot ID
+				index -= getFirstSlot();
+			}
+		}
 	}
 	else
 	{
