@@ -197,18 +197,5 @@ bool InventoryScreen_Pocket::isAllowed(Container::SlotID slotId)
 
 ContainerMenu* InventoryScreen_Pocket::getContainerMenu(const InventoryPane_Pocket& pane)
 {
-	/*std::vector<const ItemStack*> result;
-
-    Inventory& inventory = *m_pPlayer->m_pInventory;
-    Container::Size itemSlotsCount = inventory.getNumItemSlots();
-	Container::StackID firstSlot = inventory.getFirstSlot();
-
-	for (Container::StackID stackId = 0; stackId < itemSlotsCount; stackId++)
-	{
-		result.push_back(&inventory.getItem(firstSlot + stackId));
-	}
-
-	return result;*/
-
 	return m_pMenu;
 }
