@@ -842,6 +842,12 @@
     <ClCompile Include="$(MC_ROOT)\source\world\inventory\BaseContainer.cpp">
       <Filter>Source Files\Inventory</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\world\inventory\CreativeMenuBase.cpp">
+      <Filter>Source Files\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\world\inventory\CreativeMenu_Pocket.cpp">
+      <Filter>Source Files\Inventory</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MC_ROOT)\source\world\entity\Entity.hpp">
@@ -1517,6 +1523,12 @@
       <Filter>Header Files\Inventory</Filter>
     </ClInclude>
     <ClInclude Include="$(MC_ROOT)\source\world\inventory\BaseContainer.hpp">
+      <Filter>Header Files\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\world\inventory\CreativeMenuBase.hpp">
+      <Filter>Header Files\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\world\inventory\CreativeMenu_Pocket.hpp">
       <Filter>Header Files\Inventory</Filter>
     </ClInclude>
   </ItemGroup>

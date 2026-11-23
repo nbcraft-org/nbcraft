@@ -34,6 +34,7 @@ protected:
 
 public:
 	void setLinkedSlotsEnabled(bool enabled) { m_linkedSlotsCount = enabled ? m_linkedSlotsCapacity : 0; }
+	StackID getLinkedSlotValue(int linkedIdx) const { return m_linkedSlots[linkedIdx]; }
 	void replaceSlot(StackID stackId, const ItemStack* pItemStack);
 	void clearSlot(StackID index);
 	bool hasResource(int itemId) const;

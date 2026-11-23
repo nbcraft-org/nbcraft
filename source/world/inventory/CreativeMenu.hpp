@@ -1,28 +1,15 @@
 #pragma once
 
-#include <memory>
-#include <vector>
-#include "ContainerMenu.hpp"
-#include "Container.hpp"
+#include "CreativeMenuBase.hpp"
 
-class Player;
-
-class CreativeMenu : public ContainerMenu
+class CreativeMenu : public CreativeMenuBase
 {
 public:
     CreativeMenu(Container* inventory, Container* container);
 
+public:
     void updateScroll(float scroll);
 
-    bool stillValid(Player& player) const override;
-
-    static const std::vector<ItemStack>& GetCreativeItems() { return creativeItems; }
-
 private:
-    static void initCreativeItems();
-
     Container* m_container;
-
-    static std::vector<ItemStack> creativeItems;
-    static bool initialized;
 };

@@ -5,6 +5,7 @@
 #include "nbt/CompoundTag.hpp"
 #include "network/Packet.hpp"
 #include "world/entity/Player.hpp"
+#include "world/inventory/CreativeMenuBase.hpp"
 #include "world/inventory/ContainerContentChangeListener.hpp"
 
 #include "Item.hpp"
@@ -15,6 +16,7 @@ Inventory::Inventory(Player* pPlayer)
 {
 	m_pPlayer = pPlayer;
 	m_selectedStackId = 0;
+	CreativeMenuBase();
 }
 
 Inventory::~Inventory()

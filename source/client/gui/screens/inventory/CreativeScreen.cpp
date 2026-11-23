@@ -14,7 +14,8 @@ CreativeScreen::CreativeScreen(ContainerMenu* menu) : ContainerScreen(menu)
     m_bIsScrolling = false;
 }
 
-CreativeScreen::CreativeScreen(Container* inventory) : ContainerScreen(new CreativeMenu(inventory, creativeGrid))
+CreativeScreen::CreativeScreen(Container* inventory)
+    : ContainerScreen(new CreativeMenu(inventory, creativeGrid))
 {
     m_screenType = SCREEN_GENERIC;
     m_imageHeight = 208;

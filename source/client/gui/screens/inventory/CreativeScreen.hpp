@@ -11,6 +11,7 @@ public:
     CreativeScreen(ContainerMenu* menu);
     CreativeScreen(Container* inventory);
 
+public:
     void tick() override;
     void slotClicked(Slot* slot, Container::SlotID slotId, MouseButtonType button, bool quick) override;
     void pointerPressed(const MenuPointer& pointer, MouseButtonType button) override;

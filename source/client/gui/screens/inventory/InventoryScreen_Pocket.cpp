@@ -1,12 +1,14 @@
 #include "InventoryScreen_Pocket.hpp"
 #include "renderer/ShaderConstants.hpp"
+#include "world/inventory/CreativeMenu_Pocket.hpp"
+#include "world/inventory/SimpleContainer.hpp"
 #include "world/inventory/Slot.hpp"
 
 static const TextureAtlasSprite SPRITE_SCREEN_FRAME = TextureAtlasSprite(130, 139, 24, 24, "gui/gui2.png", 256, 256);
 
 InventoryScreen_Pocket::InventoryScreen_Pocket(Player* player)
     : m_pPlayer(player)
-	, m_pMenu(player->m_pInventoryMenu)
+	, m_pCreativeMenu(new CreativeMenu_Pocket())
 	, m_header("Select blocks")
 	, m_btnExit("")
 	, m_btnCraft("Craft")
@@ -18,6 +20,7 @@ InventoryScreen_Pocket::InventoryScreen_Pocket(Player* player)
 InventoryScreen_Pocket::~InventoryScreen_Pocket()
 {
 	SAFE_DELETE(m_inventoryPane);
+	SAFE_DELETE(m_pCreativeMenu);
 }
 
 void InventoryScreen_Pocket::_setupPositions()
@@ -74,7 +77,7 @@ void InventoryScreen_Pocket::init()
     int v6 = m_width - v5;
 
     IntRectangle areaRect(v6 / 2, 30, v5, m_height - 56);
-	std::vector<Slot*>& slots = m_pMenu->getSlotsByGroup(Slot::INVENTORY);
+	std::vector<Slot*>& slots = _getContainerMenu()->getSlotsByGroup(Slot::INVENTORY);
 	int itemSlotsCount = slots.size();
 
 	m_inventoryPane = new InventoryPane_Pocket(*this, *m_pMinecraft,
@@ -178,11 +181,35 @@ bool InventoryScreen_Pocket::addItem(const InventoryPane_Pocket& pane, Container
 {
 	Inventory& inventory = *m_pPlayer->m_pInventory;
 
-	Slot* pSlot = m_pMenu->getSlot(slotId);
+	Slot* pSlot = _getContainerMenu()->getSlot(slotId);
 	if (!pSlot || !pSlot->hasItem())
 		return false;
 
-	inventory.moveToSelectionSlot(0, pSlot->m_stackId, true);
+	Container::StackID stackId;
+
+	// @HACK: we're not using the linked slots properly here, becuase we can't. the creative items aren't really in our inventory until we select them
+	if (m_pPlayer->isCreative())
+	{
+		ItemStack& itemStack = pSlot->getItem();
+
+		if (inventory.getSelectedItem() != itemStack)
+		{
+			stackId = inventory.getLinkedSlotValue(inventory.getSelectedSlotNo());
+			stackId++;
+			if (stackId > inventory.getNumHotbarSlots())
+				stackId = 0;
+
+			inventory.moveToSelectionSlot(0, stackId, true);
+			inventory.setSelectedItem(itemStack);
+		}
+	}
+	else
+	{
+		stackId = pSlot->m_stackId;
+		inventory.moveToSelectionSlot(0, stackId, true);
+	}
+
+	
 	inventory.selectSlot(0);
 	m_pMinecraft->m_pSoundEngine->playUI("random.pop", 1.0f, 0.3f);
 	m_pMinecraft->m_pGui->flashSlot(0);
@@ -192,10 +219,10 @@ bool InventoryScreen_Pocket::addItem(const InventoryPane_Pocket& pane, Container
 
 bool InventoryScreen_Pocket::isAllowed(Container::SlotID slotId)
 {
-	return slotId >= 0 && slotId < int(m_pMenu->m_slots.size());
+	return slotId >= 0 && slotId < int(_getContainerMenu()->m_slots.size());
 }
 
 ContainerMenu* InventoryScreen_Pocket::getContainerMenu(const InventoryPane_Pocket& pane)
 {
-	return m_pMenu;
+	return _getContainerMenu();
 }

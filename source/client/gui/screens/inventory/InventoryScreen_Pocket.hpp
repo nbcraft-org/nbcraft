@@ -15,6 +15,7 @@ public:
 protected:
     void _setupPositions() override;
 	void _buttonClicked(Button*) override;
+    ContainerMenu* _getContainerMenu() { return m_pPlayer->isCreative() ? m_pCreativeMenu : m_pPlayer->m_pInventoryMenu; }
 
 public:
     void init() override;
@@ -32,7 +33,7 @@ public:
 
 private:
     Player* m_pPlayer;
-    ContainerMenu* m_pMenu;
+    ContainerMenu* m_pCreativeMenu;
     InventoryPane_Pocket* m_inventoryPane;
     THeader_Pocket m_header;
     ImageButton m_btnExit;
