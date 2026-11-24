@@ -419,25 +419,29 @@ ItemStack::Count FillingContainer::addResource(const ItemStack& item)
 
 		slotItem = item;
 		_linkEmptySlot(freeSlot);
+		setContainerChanged(freeSlot);
 
 		return 0;
 	}
 
-	StackID slotId = _getSlotWithRemainingSpace(item);
-	if (slotId == C_INVALID_SLOT)
-		slotId = _getFreeSlot();
+	StackID stackId = _getSlotWithRemainingSpace(item);
+	if (stackId == C_INVALID_SLOT)
+		stackId = _getFreeSlot();
 
-	if (slotId == C_INVALID_SLOT)
+	if (stackId == C_INVALID_SLOT)
 		return remainingCount; // couldn't find an open slot
 
-	ItemStack& slotItem = m_items[slotId];
+	bool slotChanged = false;
+
+	ItemStack& slotItem = m_items[stackId];
 
 	if (slotItem.isEmpty())
 	{
-		m_items[slotId] = ItemStack(item.getId(), 0, item.getAuxValue());
+		slotItem = ItemStack(item.getId(), 0, item.getAuxValue());
+		slotChanged = true;
 	}
 
-	_linkEmptySlot(slotId);
+	_linkEmptySlot(stackId);
 
 	int maxStack = Mth::Min(slotItem.getMaxStackSize(), getMaxStackSize());
 	int availableSpace = maxStack - slotItem.m_count;
@@ -451,7 +455,12 @@ ItemStack::Count FillingContainer::addResource(const ItemStack& item)
 	{
 		remainingCount -= countToAdd;
 		slotItem.m_count += countToAdd;
+		slotItem.m_popTime = C_POP_TIME_DURATION;
+		slotChanged = true;
 	}
+
+	if (slotChanged)
+		setContainerChanged(stackId);
 
 	return remainingCount;
 }
@@ -591,14 +600,13 @@ void FillingContainer::load(const ListTag& tag)
 			}
 			else if (slotId < m_items.size())
 			{
-				ItemStack& slotItem = m_items[slotId];
-				slotItem = item;
-				//_fixBackwardCompabilityItem(slotItem);
+				if (item.isValid())
+				{
+					ItemStack& slotItem = m_items[slotId];
+					slotItem = item;
+					//_fixBackwardCompabilityItem(slotItem);
+				}
 			}
-			/*else if (slotId >= 100 && slotId < m_armor.size() + 100)
-			{
-				m_armor[slotId - 100] = item;
-			}*/
 			else
 			{
 				doDrop(item, true);
@@ -640,19 +648,7 @@ ItemStack& FillingContainer::getItem(StackID index)
 		if (newIndex != C_INVALID_SLOT)
 		{
 			index = newIndex;
-
-			// copy-paste because I'm lazy
-			if (index >= m_linkedSlotsCount)
-			{
-				// we're outside the bounds of the linked slots, undo the offset to get the real slot ID
-				index -= getFirstSlot();
-			}
 		}
-	}
-	else
-	{
-		// we're outside the bounds of the linked slots, undo the offset to get the real slot ID
-		index -= getFirstSlot();
 	}
 
 	if (index >= getContainerSize())
@@ -736,23 +732,27 @@ bool FillingContainer::add(ItemStack& item)
 		if (freeSlot < 0)
 			return false;
 
-		m_items[freeSlot] = item;
+		ItemStack& slotItem = m_items[freeSlot];
+		slotItem = item;
+		slotItem.m_popTime = C_POP_TIME_DURATION;
+
 		_linkEmptySlot(freeSlot);
+
+		setContainerChanged(freeSlot);
 
 		item = ItemStack::EMPTY;
 
 		return true;
 	}
 
-	// some fuck-ass shit
-	ItemStack::Count count;
-	for (ItemStack::Count i = 0; ; i = count)
+	ItemStack::Count oldCount;
+	do
 	{
-		count = addResource(item);
-		item.m_count = count;
-		if (count <= 0 || count >= i)
-			return i > count;
-	}
+		oldCount = item.m_count;
+		item.m_count = addResource(item);
+	} while (item.m_count > 0 && item.m_count < oldCount);
+
+	return item.m_count < oldCount;
 }
 
 void FillingContainer::doDrop(ItemStack& item, bool b)

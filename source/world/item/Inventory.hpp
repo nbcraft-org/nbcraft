@@ -43,18 +43,13 @@ public:
 
 	bool hasUnlimitedResource(const ItemStack& item) const;
 
-	bool add(ItemStack& item);
     void tick();
 
-	//ItemStack& getItem(StackID stackId) override;
 	ItemStack& getArmor(Item::EquipmentSlot slotNo);
 	ItemStack& getSelectedItem();
 	int getSelectedItemId();
 
-	//void setItem(StackID stackId, const ItemStack& item) override;
 	void setSelectedItem(const ItemStack& item);
-	//ItemStack removeItem(StackID stackId, int count) override;
-	//bool removeResource(int id);
 	int removeIngredient(const ItemStack&);
 
 	void setCarried(const ItemStack& item);
@@ -78,8 +73,8 @@ public:
 
 	void dropAll(bool onlyClearContainer = false);
 
-	/*void save(ListTag& tag) const;
-	void load(const ListTag&);*/
+	void save(ListTag& tag) const;
+	void load(const ListTag&);
 
 	bool contains(const ItemStack&) const;
 

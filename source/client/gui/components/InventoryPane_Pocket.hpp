@@ -45,18 +45,14 @@ public:
 
 protected:
 	Materials m_itemMaterials;
-	//IntRectangle m_rect;
 	int m_widthOrSomething;
 	RectangleArea* m_pRectArea;
 	ICallback& m_callback;
 	Minecraft& m_minecraft;
+	Container::SlotID m_startingSlotId;
 public:
 	int m_paddingX;
 	int m_paddingY;
 	int m_selectedId;
 	int m_clickAnimTick;
-	//int m_paneLeftX;
-	//int m_paneLeftY;
-	//int m_paneRightX;
-	//int m_paneRightY;
 };

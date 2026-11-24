@@ -77,8 +77,11 @@ void InventoryScreen_Pocket::init()
     int v6 = m_width - v5;
 
     IntRectangle areaRect(v6 / 2, 30, v5, m_height - 56);
-	std::vector<Slot*>& slots = _getContainerMenu()->getSlotsByGroup(Slot::INVENTORY);
-	int itemSlotsCount = slots.size();
+	ContainerMenu& containerMenu = *_getContainerMenu();
+
+	std::vector<Slot*>& hotbarSlots = containerMenu.getSlotsByGroup(Slot::HOTBAR);
+	std::vector<Slot*>& inventorySlots = containerMenu.getSlotsByGroup(Slot::INVENTORY);
+	int itemSlotsCount = hotbarSlots.size() + inventorySlots.size();
 
 	m_inventoryPane = new InventoryPane_Pocket(*this, *m_pMinecraft,
 		areaRect,

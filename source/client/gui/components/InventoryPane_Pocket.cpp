@@ -19,6 +19,7 @@ InventoryPane_Pocket::InventoryPane_Pocket(ICallback& callback, Minecraft& mc, c
     : ScrollingPane(FLAG_NOSCROLLH | FLAG_SCROLLFADE, areaRect, IntRectangle(0, 0, 32, 32), 0, itemCount, Gui::GuiScale * Minecraft::GetRenderScaleMultiplier(), IntRectangle::ZERO)
     , m_callback(callback)
     , m_minecraft(mc)
+    , m_startingSlotId(0)
 {
     m_widthOrSomething = width;
     m_pRectArea = new RectangleArea(0, 0, 0, 0);
@@ -31,6 +32,18 @@ InventoryPane_Pocket::InventoryPane_Pocket(ICallback& callback, Minecraft& mc, c
     m_area.right = (float)(areaRect.w + areaRect.x) + paddingH;
     m_area.top -= 6.0f;
     m_area.bottom += 6.0;
+
+    ContainerMenu* pMenu = callback.getContainerMenu(*this);
+    if (pMenu)
+    {
+        std::vector<Slot*>& inventorySlots = pMenu->getSlotsByGroup(Slot::INVENTORY);
+        if (!inventorySlots.empty())
+        {
+            Slot* pFirstSlot = inventorySlots[0];
+            if (pFirstSlot)
+                m_startingSlotId = pFirstSlot->m_id;
+        }
+    }
 }
 
 InventoryPane_Pocket::~InventoryPane_Pocket()
@@ -103,12 +116,10 @@ void InventoryPane_Pocket::renderBatch(std::vector<GridItem>& items, float a)
         /*t.begin(0);
         t.voidBeginAndEndCalls(true);*/
 
-        std::vector<Slot*>& slots = pMenu->getSlotsByGroup(Slot::INVENTORY);
-
         for (size_t i = 0; i < items.size(); i++)
         {
             const GridItem& item = items[i];
-            Slot* pSlot = slots[item.id];
+            Slot* pSlot = pMenu->getSlot(m_startingSlotId + item.id);
             if (!pSlot)
                 continue;
 
@@ -157,7 +168,7 @@ void InventoryPane_Pocket::renderBatch(std::vector<GridItem>& items, float a)
             {
                 const GridItem& item = items[i];
 
-                Slot* pSlot = slots[item.id];
+                Slot* pSlot = pMenu->getSlot(m_startingSlotId + item.id);
                 if (!pSlot)
                     continue;
 
@@ -197,9 +208,8 @@ void InventoryPane_Pocket::onSelect(int id, bool isSelected)
         return;
 
     ContainerMenu* pMenu = m_callback.getContainerMenu(*this);
-    std::vector<Slot*>& slots = pMenu->getSlotsByGroup(Slot::INVENTORY);
 
-    Slot* pSlot = slots[id];
+    Slot* pSlot = pMenu->getSlot(m_startingSlotId + id);
     if (!pSlot)
         return;
 
