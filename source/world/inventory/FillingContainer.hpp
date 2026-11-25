@@ -46,7 +46,7 @@ public:
 	void setLinkedSlotsEnabled(bool enabled) { m_linkedSlotsCount = enabled ? m_linkedSlotsCapacity : 0; }
 	StackID tryGetLinkedSlot(StackID stackId) const
 	{
-		if (stackId >= 0 && stackId <= m_linkedSlotsCount)
+		if (stackId >= 0 && stackId < m_linkedSlotsCount)
 		{
 			StackID linkedStack = m_linkedSlots[stackId];
 			if (linkedStack < m_size)
@@ -66,7 +66,7 @@ public:
 	void dropAll(bool onlyClearContainer = false);
 	void replace(const std::vector<ItemStack>& items);
 	void save(ListTag& tag) const;
-	void load(const ListTag& tag);
+	void load(const ListTag& tag, bool dropExtras = true);
 	bool contains(const ItemStack& item) const;
 	StackID getFirstSlot() const { return 0; }
 	Size getNumEmptySlots() const;

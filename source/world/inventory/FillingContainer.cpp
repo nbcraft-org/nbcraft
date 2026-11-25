@@ -55,7 +55,7 @@ ItemStack* FillingContainer::_tryGetLinked(int linkedIdx)
 {
 	StackID stackId = linkedIdx;
 
-	if (linkedIdx >= 0 && linkedIdx <= m_linkedSlotsCount)
+	if (linkedIdx >= 0 && linkedIdx < m_linkedSlotsCount)
 	{
 		stackId = m_linkedSlots[linkedIdx];
 
@@ -74,7 +74,7 @@ bool FillingContainer::_linkSlot(int key, StackID value, bool cycleSlots)
 {
 	if (key < 0)
 		return false;
-	if (key >= m_linkedSlotsCount)
+	if (key > m_linkedSlotsCount)
 		return false;
 	if (value >= this->m_size)
 		return false;
@@ -133,7 +133,7 @@ void FillingContainer::_compressLinkedSlotList(Size toSize)
 
 bool FillingContainer::_linkEmptySlot(StackID stackId)
 {
-	if (m_linkedSlotsCount <= 0)
+	if (m_linkedSlotsCount < 0)
 		return false;
 	if (m_linkedSlots[0] == stackId)
 		return true;
@@ -529,7 +529,7 @@ void FillingContainer::save(ListTag& tag) const
 	}
 }
 
-void FillingContainer::load(const ListTag& tag)
+void FillingContainer::load(const ListTag& tag, bool dropExtras)
 {
 	if (m_bUnlimited)
 		return;
@@ -588,7 +588,7 @@ void FillingContainer::load(const ListTag& tag)
 					//_fixBackwardCompabilityItem(slotItem);
 				}
 			}
-			else
+			else if (dropExtras)
 			{
 				_doDrop(item, true);
 			}

@@ -490,7 +490,7 @@ void Inventory::save(ListTag& tag) const
 
 void Inventory::load(const ListTag& tag)
 {
-	FillingContainer::load(tag);
+	FillingContainer::load(tag, false);
 
 	const std::vector<Tag*>& itemTags = tag.rawView();
 
