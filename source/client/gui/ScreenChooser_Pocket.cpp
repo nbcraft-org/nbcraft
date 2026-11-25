@@ -21,3 +21,8 @@ void ScreenChooser_Pocket::pushInventoryScreen(Player* player)
 {
 	m_pMinecraft->setScreen(new InventoryScreen_Pocket(player));
 }
+
+void ScreenChooser_Pocket::pushCreativeScreen(Player* player)
+{
+	m_pMinecraft->setScreen(new InventoryScreen_Pocket(player));
+}
