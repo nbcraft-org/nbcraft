@@ -1,12 +1,21 @@
 #pragma once
 
 #include <vector>
+#define __STDC_LIMIT_MACROS
+#include <stdint.h>
 
 #include "BaseContainer.hpp"
 #include "nbt/ListTag.hpp"
 
 class FillingContainer : public BaseContainer
 {
+private:
+	enum {
+		INVALID_SLOT = UINT16_MAX,
+		LINKED_SLOT_ID = 255,
+		LINKED_SLOT_COUNT = 255
+	};
+
 public:
 	FillingContainer(Size size, Size linkedSlotsCount, bool isUnlimited);
 	virtual ~FillingContainer();
@@ -40,7 +49,7 @@ public:
 		if (stackId >= 0 && stackId <= m_linkedSlotsCount)
 		{
 			StackID linkedStack = m_linkedSlots[stackId];
-			if (stackId < m_size)
+			if (linkedStack < m_size)
 				return linkedStack;
 		}
 
@@ -73,6 +82,13 @@ public:
 
 public:
 	virtual bool add(ItemStack& item);
+
+public:
+	static bool IsLinkedSlot(const ItemStack& itemStack)
+	{
+		return itemStack.getId() == LINKED_SLOT_ID
+			&& itemStack.m_count == LINKED_SLOT_COUNT;
+	}
 
 protected:
 	StackID* m_linkedSlots;

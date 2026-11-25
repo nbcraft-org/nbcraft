@@ -704,6 +704,7 @@ void Tile::initTiles()
 		->setSoundType(Tile::SOUND_GRASS)
 		->setDescriptionId("leaves");
 
+	// reserved for FillingContainer's linked slots
 	Tile::info_reserved6 = (new Tile(TILE_INFO_RESERVED6, Material::dirt))
 		->init();
 

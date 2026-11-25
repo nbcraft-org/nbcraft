@@ -514,7 +514,7 @@ void Inventory::load(const ListTag& tag)
 		{
 			if (slotId < m_items.size())
 			{
-				if (item.isValid())
+				if (item.isValid() && !FillingContainer::IsLinkedSlot(item))
 				{
 					ItemStack& slotItem = m_items[slotId];
 					slotItem = item;
