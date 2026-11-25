@@ -12,6 +12,7 @@ InventoryScreen_Pocket::InventoryScreen_Pocket(Player* player)
 	, m_header("Select blocks")
 	, m_btnExit("")
 	, m_btnCraft("Craft")
+	, m_btnArmor("Armor")
 	, m_btnMenu("Menu")
 {
 	m_inventoryPane = nullptr;
@@ -30,6 +31,11 @@ void InventoryScreen_Pocket::_setupPositions()
     m_btnCraft.m_width = 48;
 	m_btnCraft.m_height = m_header.m_height;
 
+	m_btnArmor.m_xPos = 48;
+	m_btnArmor.m_yPos = 0;
+	m_btnArmor.m_width = 48;
+	m_btnArmor.m_height = m_header.m_height;
+
     m_btnExit.m_xPos = m_width - m_btnExit.m_width;
     m_btnExit.m_yPos = 0;
 
@@ -42,8 +48,8 @@ void InventoryScreen_Pocket::_setupPositions()
     }
     else
     {
-        m_header.m_xPos = m_btnCraft.m_width;
-        m_header.m_width = m_width - m_btnCraft.m_width;
+        m_header.m_xPos = m_btnCraft.m_width + m_btnArmor.m_width;
+        m_header.m_width = m_width - m_btnCraft.m_width - m_btnArmor.m_width;
     }
 
     m_header.m_textPosX = m_width / 2;
@@ -117,7 +123,12 @@ void InventoryScreen_Pocket::init()
 	_addElement(m_header);
 	_addElement(m_btnExit);
 	if (!m_pPlayer->isCreative())
+	{
+		m_btnCraft.setEnabled(false);
+		m_btnArmor.setEnabled(false);
 		_addElement(m_btnCraft);
+		_addElement(m_btnArmor);
+	}
 	//_addElement(m_btnMenu);
 	_addElement(*m_inventoryPane);
 }

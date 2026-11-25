@@ -38,6 +38,7 @@ private:
     THeader_Pocket m_header;
     ImageButton m_btnExit;
     Button m_btnCraft;
+    Button m_btnArmor;
     Button m_btnMenu;
     IntRectangle m_clippingArea;
 };
