@@ -43,7 +43,7 @@ InventoryPane_Pocket::InventoryPane_Pocket(ICallback& callback, Minecraft& mc, c
             if (pFirstSlot)
                 m_startingSlotId = pFirstSlot->m_id;
         }
-    }
+}
 }
 
 InventoryPane_Pocket::~InventoryPane_Pocket()

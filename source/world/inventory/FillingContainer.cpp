@@ -319,18 +319,18 @@ void FillingContainer::replaceSlot(StackID stackId, const ItemStack* pItemStack)
 
 void FillingContainer::clearSlot(StackID index)
 {
-	if (index < 0)
+	if (index < getFirstSlot())
 		return;
 
-	if (index < m_linkedSlotsCount && m_linkedSlots[index] != C_INVALID_SLOT)
+	/*if (index < m_linkedSlotsCount && m_linkedSlots[index] != C_INVALID_SLOT)
 	{
 		_release(m_linkedSlots[index]);
 		m_linkedSlots[index] = C_INVALID_SLOT;
 	}
 	else
-	{
+	{*/
 		_release(index);
-	}
+	//}
 
 	_compressLinkedSlotList(index);
 }
@@ -642,7 +642,7 @@ Container::Size FillingContainer::getNumEmptySlots() const
 
 ItemStack& FillingContainer::getItem(StackID index)
 {
-	if (index < m_linkedSlotsCount)
+	/*if (index < m_linkedSlotsCount)
 	{
 		StackID newIndex = m_linkedSlots[index];
 		if (newIndex != C_INVALID_SLOT)
@@ -650,6 +650,11 @@ ItemStack& FillingContainer::getItem(StackID index)
 			index = newIndex;
 		}
 	}
+	else
+	{
+		// we're outside the bounds of the linked slots, undo the offset to get the real slot ID
+		index -= getFirstSlot();
+	}*/
 
 	if (index >= getContainerSize())
 	{

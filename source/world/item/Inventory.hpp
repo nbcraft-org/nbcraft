@@ -60,7 +60,7 @@ public:
 	void pickItem(int itemID, int data, int maxHotBarSlot);
 	void selectItem(int itemID, int maxHotBarSlot);
 	void swapItems(StackID stackIdA, StackID stackIdB);
-	void selectSlot(StackID stackId);
+	bool selectSlot(StackID stackId);
 	bool moveToSelectionSlot(int key, StackID value, bool cycleSlots = false);
 	bool moveToSelectedSlot(StackID stackId, bool cycleSlots = false);
 	bool moveToEmptySelectionSlot(StackID stackId);

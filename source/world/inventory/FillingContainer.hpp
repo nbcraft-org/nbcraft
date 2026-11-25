@@ -34,7 +34,18 @@ protected:
 
 public:
 	void setLinkedSlotsEnabled(bool enabled) { m_linkedSlotsCount = enabled ? m_linkedSlotsCapacity : 0; }
-	StackID getLinkedSlotValue(int linkedIdx) const { return m_linkedSlots[linkedIdx]; }
+	StackID tryGetLinkedSlot(StackID stackId) const
+	{
+		if (stackId >= 0 && stackId <= m_linkedSlotsCount)
+		{
+			StackID linkedStack = m_linkedSlots[stackId];
+			if (stackId < m_size)
+				return linkedStack;
+		}
+
+		return stackId;
+	}
+	ItemStack& tryGetLinkedItem(StackID stackId) { return getItem(tryGetLinkedSlot(stackId)); }
 	void replaceSlot(StackID stackId, const ItemStack* pItemStack);
 	void clearSlot(StackID index);
 	bool hasResource(int itemId) const;
@@ -47,7 +58,7 @@ public:
 	void save(ListTag& tag) const;
 	void load(const ListTag& tag);
 	bool contains(const ItemStack& item) const;
-	StackID getFirstSlot() const { return m_linkedSlotsCount; }
+	StackID getFirstSlot() const { return 0; }
 	Size getNumEmptySlots() const;
 	Size getNumLinkedSlots() const { return m_linkedSlotsCount; }
 

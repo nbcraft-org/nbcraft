@@ -203,6 +203,8 @@ int Inventory::removeIngredient(const ItemStack& ing)
 // Doesn't exist in PE
 void Inventory::tick()
 {
+	StackID selectedStackid = tryGetLinkedSlot(m_selectedStackId);
+
     for (StackID i = 0; i < m_items.size(); i++)
     {
 		ItemStack& item = m_items[i];
@@ -211,7 +213,7 @@ void Inventory::tick()
         {
 			if (item.m_popTime > 0)
 				item.m_popTime--;
-			item.getItem()->inventoryTick(&item, m_pPlayer->m_pLevel, m_pPlayer, i, i == m_selectedStackId);
+			item.getItem()->inventoryTick(&item, m_pPlayer->m_pLevel, m_pPlayer, i, i == selectedStackid);
         }
     }
 }
@@ -279,17 +281,21 @@ ItemStack& Inventory::getArmor(Item::EquipmentSlot slotNo)
 
 ItemStack& Inventory::getSelectedItem()
 {
+	ItemStack* pItemStack = _tryGetLinked(m_selectedStackId);
+	if (pItemStack)
+		return *pItemStack;
+
 	return getItem(m_selectedStackId);
 }
 
 int Inventory::getSelectedItemId()
 {
-	return getItem(m_selectedStackId).getId();
+	return getSelectedItem().getId();
 }
 
 void Inventory::setSelectedItem(const ItemStack& item)
 {
-	setItem(m_selectedStackId, item);
+	setItem(tryGetLinkedSlot(m_selectedStackId), item);
 }
 
 void Inventory::setCarried(const ItemStack& carried)
@@ -324,14 +330,14 @@ void Inventory::pickItem(int itemID, int data, int maxHotBarSlot)
 		if (i < size_t(maxHotBarSlot))
 			selectSlot(i);
 		else
-			swapItems(i, m_selectedStackId);
+			swapItems(i, tryGetLinkedSlot(m_selectedStackId));
 		return;
 	}
 
 	if (m_pPlayer->isCreative() && selectItem != nullptr)
 	{
 		ItemStack oldSelected = getSelected();
-		setItem(m_selectedStackId, ItemStack(selectItem, 1, data));
+		setSelectedItem(ItemStack(selectItem, 1, data));
 		if (!oldSelected.isEmpty()) addResource(oldSelected);
 	}
 }
@@ -350,9 +356,9 @@ void Inventory::selectItem(int itemID, int maxHotBarSlot)
 			continue;
 
 		if (i < size_t(maxHotBarSlot))
-			m_selectedStackId = i;
+			moveToSelectedSlot(i, true);
 		else
-			swapItems(i, m_selectedStackId);
+			swapItems(i, tryGetLinkedSlot(m_selectedStackId));
 	}
 }
 
@@ -361,12 +367,14 @@ void Inventory::swapItems(StackID stackIdA, StackID stackIdB)
 	std::swap(getItem(stackIdA), getItem(stackIdB));
 }
 
-void Inventory::selectSlot(StackID stackId)
+bool Inventory::selectSlot(StackID stackId)
 {
 	if (stackId < 0 || stackId >= C_MAX_HOTBAR_ITEMS)
-		return;
+		return false;
 
 	m_selectedStackId = stackId;
+
+	return true;
 }
 
 bool Inventory::moveToSelectionSlot(int key, StackID value, bool cycleSlots)
@@ -376,7 +384,10 @@ bool Inventory::moveToSelectionSlot(int key, StackID value, bool cycleSlots)
 
 bool Inventory::moveToSelectedSlot(StackID stackId, bool cycleSlots)
 {
-	return moveToSelectionSlot(m_selectedStackId, stackId, cycleSlots);
+	if (getNumLinkedSlots() > 0)
+		return moveToSelectionSlot(m_selectedStackId, stackId, cycleSlots);
+	else
+		return selectSlot(stackId);
 }
 
 bool Inventory::moveToEmptySelectionSlot(StackID stackId)

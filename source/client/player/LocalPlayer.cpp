@@ -23,7 +23,7 @@ void LocalPlayer::_init()
 	// multiplayer related
 	m_lastSentPos = Vec3::ZERO;
 	m_lastSentRot = Rot2::ZERO;
-	m_lastSelectedStackId = m_pInventory->m_selectedStackId;
+	m_lastSelectedStackId = m_pInventory->getSelectedSlotNo();
 	m_lastSelectedItemId = 0;
 	m_lastSelectedItemAuxValue = 0;
 	// multiplayer related -- end
