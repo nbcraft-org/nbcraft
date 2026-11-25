@@ -197,7 +197,7 @@ bool InventoryScreen_Pocket::addItem(const InventoryPane_Pocket& pane, Container
 
 		if (inventory.getSelectedItem() != itemStack)
 		{
-			stackId = inventory.getSelectedSlotNo();
+			stackId = inventory.tryGetLinkedSlot(inventory.getSelectedSlotNo());
 			stackId++;
 			if (stackId > inventory.getNumHotbarSlots())
 				stackId = 0;
