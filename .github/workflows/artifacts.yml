@@ -2,7 +2,8 @@ name: 'Build Artifacts'
 
 on:
   push:
-    branches: [ 'master' ]
+    branches: [ 'master', 'claude/redesign-indev-imtv4n' ]
+  workflow_dispatch:
 
 jobs:
     linux:
