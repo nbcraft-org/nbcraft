@@ -305,6 +305,11 @@ std::vector<ItemStack>& FillingContainer::_getSlotList(StackID& stackId)
 	return m_items;
 }
 
+void FillingContainer::_doDrop(ItemStack& item, bool b)
+{
+	item = ItemStack::EMPTY;
+}
+
 void FillingContainer::replaceSlot(StackID stackId, const ItemStack* pItemStack)
 {
 	if (pItemStack)
@@ -319,19 +324,7 @@ void FillingContainer::replaceSlot(StackID stackId, const ItemStack* pItemStack)
 
 void FillingContainer::clearSlot(StackID index)
 {
-	if (index < getFirstSlot())
-		return;
-
-	/*if (index < m_linkedSlotsCount && m_linkedSlots[index] != C_INVALID_SLOT)
-	{
-		_release(m_linkedSlots[index]);
-		m_linkedSlots[index] = C_INVALID_SLOT;
-	}
-	else
-	{*/
-		_release(index);
-	//}
-
+	_release(index);
 	_compressLinkedSlotList(index);
 }
 
@@ -465,16 +458,9 @@ ItemStack::Count FillingContainer::addResource(const ItemStack& item)
 	return remainingCount;
 }
 
-void FillingContainer::dropSlot(StackID index, bool onlyClearContainer, bool b)
+void FillingContainer::dropSlot(StackID stackId, bool onlyClearContainer, bool b)
 {
-	if (index < getFirstSlot())
-		return;
-
-	StackID stackId = m_linkedSlots[index];
-	if (stackId == C_INVALID_SLOT)
-		return;
-
-	ItemStack& slotItem = _getItem(stackId);
+	ItemStack& slotItem = getItem(stackId);
 	if (slotItem.isEmpty())
 		return;
 
@@ -484,10 +470,12 @@ void FillingContainer::dropSlot(StackID index, bool onlyClearContainer, bool b)
 	}
 	else
 	{
-		doDrop(slotItem, b);
+		_doDrop(slotItem, b);
 	}
 
-	_release(stackId);
+	slotItem = ItemStack::EMPTY;
+	// @PARITY-PE?: it seems like PE 0.3.3 mistakenly uses the stack ID instead of the linked slot index,
+	// which results in the linked slots *not* being compressed when an item is dropped
 	_compressLinkedSlotList(stackId);
 }
 
@@ -495,7 +483,7 @@ void FillingContainer::dropAll(bool onlyClearContainer)
 {
 	for (size_t i = 0; i < m_items.size(); i++)
 	{
-		dropSlot(getFirstSlot() + i, onlyClearContainer);
+		dropSlot(i, onlyClearContainer);
 	}
 }
 
@@ -609,7 +597,7 @@ void FillingContainer::load(const ListTag& tag)
 			}
 			else
 			{
-				doDrop(item, true);
+				_doDrop(item, true);
 			}
 		}
 	}
@@ -642,20 +630,6 @@ Container::Size FillingContainer::getNumEmptySlots() const
 
 ItemStack& FillingContainer::getItem(StackID index)
 {
-	/*if (index < m_linkedSlotsCount)
-	{
-		StackID newIndex = m_linkedSlots[index];
-		if (newIndex != C_INVALID_SLOT)
-		{
-			index = newIndex;
-		}
-	}
-	else
-	{
-		// we're outside the bounds of the linked slots, undo the offset to get the real slot ID
-		index -= getFirstSlot();
-	}*/
-
 	if (index >= getContainerSize())
 	{
 		LOG_E("index is invalid for getItem: index=%d size=%d", index, getContainerSize());
@@ -758,9 +732,4 @@ bool FillingContainer::add(ItemStack& item)
 	} while (item.m_count > 0 && item.m_count < oldCount);
 
 	return item.m_count < oldCount;
-}
-
-void FillingContainer::doDrop(ItemStack& item, bool b)
-{
-	item = ItemStack::EMPTY;
 }

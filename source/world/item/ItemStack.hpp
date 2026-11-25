@@ -93,7 +93,7 @@ public:
 	bool use(Mob&);
 	void releaseUsing(Level&, Mob&, int durationLeft);
 	bool useOn(Player&, const TilePos& pos, Facing::Name face);
-	void onCraftedBy(Player*, Level*);
+	void onCraftedBy(Player* player, Level* level) { onCraftedBy(player, level, m_count); }
 	void onCraftedBy(Player*, Level*, int amount);
 
 	// Both need to return non-const pointers since TileRenderer calls setShape on render
@@ -104,7 +104,7 @@ public:
 	// v0.2.0
 	int getAttackDamage(Entity &entity) const;
 	// formerly known as isNull
-	bool isEmpty() const;
+	bool isEmpty() const { return !m_bValid || m_count <= 0 || !m_pItem; }
 	void setEmpty();
 	bool sameIngredient(const ItemStack&) const;
 
@@ -119,7 +119,7 @@ public:
 	CompoundTag& save(CompoundTag& tag) const;
 
 	// formerly known as isNull
-	static bool isEmpty(const ItemStack*);
+	static bool isEmpty(const ItemStack* item) { return item == nullptr || item->isEmpty(); }
 	static bool matches(const ItemStack&, const ItemStack&);
 	static ItemStack fromTag(const CompoundTag& tag);
 

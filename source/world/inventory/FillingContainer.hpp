@@ -31,6 +31,7 @@ protected:
 
 protected:
 	virtual std::vector<ItemStack>& _getSlotList(StackID& stackId);
+	virtual void _doDrop(ItemStack& item, bool b);
 
 public:
 	void setLinkedSlotsEnabled(bool enabled) { m_linkedSlotsCount = enabled ? m_linkedSlotsCapacity : 0; }
@@ -52,7 +53,7 @@ public:
 	bool removeResource(int itemId);
 	bool removeResource(const ItemStack& item);
 	ItemStack::Count addResource(const ItemStack& item);
-	void dropSlot(StackID index, bool onlyClearContainer = false, bool b = false);
+	void dropSlot(StackID stackId, bool onlyClearContainer = false, bool b = false);
 	void dropAll(bool onlyClearContainer = false);
 	void replace(const std::vector<ItemStack>& items);
 	void save(ListTag& tag) const;
@@ -72,7 +73,6 @@ public:
 
 public:
 	virtual bool add(ItemStack& item);
-	virtual void doDrop(ItemStack& item, bool b);
 
 protected:
 	StackID* m_linkedSlots;

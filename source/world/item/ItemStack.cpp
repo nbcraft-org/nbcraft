@@ -379,11 +379,6 @@ bool ItemStack::useOn(Player& player, const TilePos& pos, Facing::Name face)
 	return getItem()->useOn(*this, player, pos, face);
 }
 
-void ItemStack::onCraftedBy(Player* player, Level* level)
-{
-	onCraftedBy(player, level, m_count);
-}
-
 void ItemStack::onCraftedBy(Player* player, Level* level, int amount)
 {
 	//player->awardStat(Stats::itemCrafted[getId()], amount);
@@ -394,19 +389,6 @@ void ItemStack::onCraftedBy(Player* player, Level* level, int amount)
 int ItemStack::getAttackDamage(Entity& entity) const
 {
 	return getItem()->getAttackDamage(entity);
-}
-
-bool ItemStack::isEmpty() const
-{
-	if (!m_bValid)
-		return true;
-
-	return m_count <= 0 || !m_pItem;
-}
-
-bool ItemStack::isEmpty(const ItemStack* item)
-{
-	return item == nullptr || item->isEmpty();
 }
 
 void ItemStack::setEmpty()

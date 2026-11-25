@@ -36,6 +36,12 @@ std::vector<ItemStack>& Inventory::_getSlotList(StackID& stackId)
 	}
 }
 
+void Inventory::_doDrop(ItemStack& item, bool b)
+{
+	m_pPlayer->drop(item);
+	FillingContainer::_doDrop(item, b);
+}
+
 void Inventory::prepareCreativeInventory()
 {
 	addCreativeItem(Tile::rock->m_ID);
@@ -529,7 +535,7 @@ void Inventory::load(const ListTag& tag)
 			}
 			else
 			{
-				doDrop(item, true);
+				_doDrop(item, true);
 			}
 		}
 	}

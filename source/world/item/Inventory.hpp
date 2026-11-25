@@ -27,6 +27,7 @@ public:
 
 protected:
 	std::vector<ItemStack>& _getSlotList(StackID& stackId) override;
+	void _doDrop(ItemStack& item, bool b) override;
 
 public:
 	void prepareCreativeInventory();
