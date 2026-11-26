@@ -127,7 +127,7 @@ void InventoryScreen_Pocket::init()
 		m_btnCraft.setEnabled(false);
 		m_btnArmor.setEnabled(false);
 		_addElement(m_btnCraft);
-		_addElement(m_btnArmor);
+		//_addElement(m_btnArmor); // showing this covers the THeader text
 	}
 	//_addElement(m_btnMenu);
 	_addElement(*m_inventoryPane);

@@ -75,6 +75,6 @@ public:
     int m_containerId;
     Container::Type m_containerType;
     std::vector<Slot*> m_slots;
-    HashMap<uint32_t, std::vector<Slot*>> m_slotsByGroup;
+    HashMap<uint32_t, std::vector<Slot*> > m_slotsByGroup;
     bool m_bBroadcastChanges;
 };
