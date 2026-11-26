@@ -627,8 +627,10 @@ void Minecraft::tickInput()
 			// unintentionally click the hotbar while swinging their fist
 			if (platform()->getRecenterMouseEveryTick() || m_pScreen)
 			{
-				m_pGui->handleClick(1, Mouse::getX(), Mouse::getY());
+				MenuPointer pointer = Gui::CreateMenuPointer(true);
+				m_pGui->handleClick(MOUSE_BUTTON_LEFT, pointer);
 				// Gui:handleClick() pops the current mouse event from the stack, and continuing would mean an over-read
+				// ^ where??
 				continue;
 			}
 		}

@@ -10,6 +10,8 @@
 
 #include "GuiComponent.hpp"
 #include "common/Random.hpp"
+#include "client/gui/MenuPointer.hpp"
+#include "client/player/input/MouseDevice.hpp"
 #include "client/player/input/RectangleArea.hpp"
 #include "client/renderer/RenderChunk.hpp"
 
@@ -46,14 +48,16 @@ public:
 	static bool isVignetteAvailable() { return _isVignetteAvailable; }
 	static void setIsVignetteAvailable(bool value) { _isVignetteAvailable = value; }
 	static float FloorAlignToScreenPixel(float f) { return (f * Gui::GuiScale) * Gui::InvGuiScale; }
+	static MenuPointer CreateMenuPointer(bool isPressed);
+
+public:
+	Gui(Minecraft* pMinecraft);
 
 private:
 	void renderPumpkin(int, int);
 	void renderVignette(float, int, int);
 	void _buildFeedbackMeshes();
-
-public:
-	Gui(Minecraft* pMinecraft);
+	void _tickItemDrop();
 
 public:
 	void addMessage(const std::string& str);
@@ -66,9 +70,9 @@ public:
 	void renderSlotText(int slot, int x, int y, float f);
 	void renderSlotOverlay(int slot, int x, int y, float f);
 	void renderAnimatedCharacter(int x, int y, float);
-	int  getSlotIdAt(int mx, int my);
-	bool isInside(int mx, int my);
-	void handleClick(int id, int mx, int my);
+	int  getSlotIdAt(MenuPointer::Unit x, MenuPointer::Unit y);
+	bool isInside(MenuPointer::Unit x, MenuPointer::Unit y);
+	void handleClick(MouseButtonType button, const MenuPointer& pointer);
 	void handleScrollWheel(bool down);
 	void handleUserAction(const ActionInfo&);
 	void renderMessages(bool bShowAll);
@@ -115,6 +119,8 @@ public:
 	bool m_bInventoryUpdated;
 	int m_flashingSlotId;
 	float m_flashingSlotStartTime;
+	float m_dropProgress;
+	int m_droppingSlotId;
 	bool m_bRenderMessages;
     bool m_bRenderHunger;
 };

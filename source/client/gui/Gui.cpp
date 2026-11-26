@@ -60,12 +60,19 @@ Gui::Gui(Minecraft* pMinecraft)
 	m_bInventoryUpdated = true;
 	m_flashingSlotId = -1;
 	m_flashingSlotStartTime = -1.0f;
+	m_dropProgress = -1.0f;
+	m_droppingSlotId = -1;
 	m_bRenderMessages = true;
     m_bRenderHunger = false;
 	m_feedbackMeshesBuilt = false;
 	m_animatedCharacterTimer = 0;
 
 	m_pMinecraft = pMinecraft;
+}
+
+MenuPointer Gui::CreateMenuPointer(bool isPressed)
+{
+	return MenuPointer(Mouse::getX() * Gui::InvGuiScale, Mouse::getY() * Gui::InvGuiScale, isPressed);
 }
 
 void Gui::addMessage(const std::string& s)
@@ -275,6 +282,13 @@ void Gui::tick()
 		GuiMessage& msg = m_guiMessages[i];
 		msg.field_18++;
 	}
+
+	LocalPlayer* pLocalPlayer = m_pMinecraft->m_pLocalPlayer;
+
+	if (pLocalPlayer && !pLocalPlayer->isCreative())
+	{
+		_tickItemDrop();
+	}
 }
 
 void Gui::renderSlot(int slot, int x, int y, float f)
@@ -387,19 +401,19 @@ void Gui::renderAnimatedCharacter(int x, int y, float partialTick)
 	Lighting::turnOff();
 }
 
-int Gui::getSlotIdAt(int mouseX, int mouseY)
+int Gui::getSlotIdAt(MenuPointer::Unit mouseX, MenuPointer::Unit mouseY)
 {
-	int scaledY = int(GuiScale * mouseY);
-	int scaledHeight = int(GuiScale * Minecraft::GetHeightL());
+	int scaledHeight = int(InvGuiScale * Minecraft::GetHeightL());
 
-	if (scaledY >= scaledHeight)
+	if (mouseY >= scaledHeight)
 		return -1;
-	if (scaledY < scaledHeight - 19)
+	if (mouseY < scaledHeight - 19)
 		return -1;
 
 	int hotbarOffset = getNumSlots() * 20 / 2 - 2;
+	int scaledWidth = int(InvGuiScale * Minecraft::GetWidthL());
 
-	int slotX = (int(GuiScale * mouseX) - int(GuiScale * Minecraft::GetWidthL()) / 2 + hotbarOffset + 20) / 20;
+	int slotX = (int(mouseX) - scaledWidth / 2 + hotbarOffset + 20) / 20;
 
 	if (slotX >= 0)
 		slotX--;
@@ -410,14 +424,14 @@ int Gui::getSlotIdAt(int mouseX, int mouseY)
 	return slotX;
 }
 
-bool Gui::isInside(int mouseX, int mouseY)
+bool Gui::isInside(MenuPointer::Unit mouseX, MenuPointer::Unit mouseY)
 {
 	return getSlotIdAt(mouseX, mouseY) != -1;
 }
 
-void Gui::handleClick(int clickID, int mouseX, int mouseY)
+void Gui::handleClick(MouseButtonType button, const MenuPointer& pointer)
 {
-	if (clickID != 1)
+	if (!pointer.isPressed)
 		return;
 
 	Minecraft& mc = *m_pMinecraft;
@@ -426,16 +440,14 @@ void Gui::handleClick(int clickID, int mouseX, int mouseY)
 	if (mc.useTouchscreen())
     {
 		int cenX = GuiWidth / 2;
-        int scaledMouseX = int(mouseX * GuiScale);
-        int scaledMouseY = int(mouseY * GuiScale);
 
-		if (scaledMouseY >= 1 && scaledMouseY < 19 && scaledMouseX >= cenX - 19 && scaledMouseX < cenX - 1)
+		if (pointer.y >= 1 && pointer.y < 19 && pointer.x >= cenX - 19 && pointer.x < cenX - 1)
 		{
 			mc.setScreen(new ChatScreen(false));
 			return;
 		}
 
-		if (scaledMouseY >= 1 && scaledMouseY < 19 && scaledMouseX >= cenX && scaledMouseX < cenX + 18)
+		if (pointer.y >= 1 && pointer.y < 19 && pointer.x >= cenX && pointer.x < cenX + 18)
 		{
             if (mc.isGamePaused())
                 mc.resumeGame();
@@ -445,7 +457,7 @@ void Gui::handleClick(int clickID, int mouseX, int mouseY)
 		}
 	}
 
-	int slot = getSlotIdAt(mouseX, mouseY);
+	int slot = getSlotIdAt(pointer.x, pointer.y);
 	if (slot == -1)
 		return;
 
@@ -793,6 +805,39 @@ void Gui::_buildFeedbackMeshes()
 	m_feedbackInner = t.end("feedback_inner", false);
 }
 
+void Gui::_tickItemDrop()
+{
+	if (Mouse::isButtonDown(MOUSE_BUTTON_LEFT))
+	{
+		MenuPointer pointer = CreateMenuPointer(true);
+
+		int slotId = getSlotIdAt(pointer.x, pointer.y);
+		if (slotId >= 0 && slotId < getNumSlots() - 1)
+		{
+			if (slotId != m_droppingSlotId)
+			{
+				m_droppingSlotId = slotId;
+				m_dropProgress = 1.0f;
+				return;
+			}
+
+			m_dropProgress += 1.0f;
+			if (m_dropProgress < 40.0f)
+				return;
+
+			Minecraft& mc = *m_pMinecraft;
+			LocalPlayer& player = *mc.m_pLocalPlayer;
+			Inventory& inventory = *player.m_pInventory;
+
+			inventory.dropSlot(inventory.tryGetLinkedSlot(slotId));
+			mc.m_pLevel->playSound(&player, "random.pop", 0.3f);
+		}
+	}
+
+	m_droppingSlotId = -1;
+	m_dropProgress = -1.0f;
+}
+
 void Gui::renderProgressIndicator(int width, int height, float f)
 {
 	Minecraft& mc = *m_pMinecraft;
@@ -910,6 +955,8 @@ void Gui::renderToolBar(float f, float alpha)
 
 	currentShaderColor.a = alpha;
 
+	Color oldColor = currentShaderColor;
+
 	textures.loadAndBindTexture("gui/gui.png");
 
 	m_blitOffset = -90.0f;
@@ -930,10 +977,23 @@ void Gui::renderToolBar(float f, float alpha)
 		int textureUV = 182 - extraWidth;
 		blit(-hotbarWidth / 2 + 180, -22, textureUV, 0, extraWidth, 22, 0, 0);
 	}
-	
-	blit(hotbarWidth / 2 - 2, -22, 180, 0, 2, 22, 0, 0);
 
 	Inventory& inventory = *player.m_pInventory;
+
+	// slot drop progress
+	if (m_droppingSlotId >= 0 && m_droppingSlotId < inventory.getNumHotbarSlots())
+	{
+		if (!inventory.getItem(inventory.tryGetLinkedSlot(m_droppingSlotId)).isEmpty())
+		{
+			int v30 = 20 * m_droppingSlotId + 1 + (hotbarWidth / 2) - 20 * nSlots;
+			fill(v30, int(v22 + 16 - (((f + m_dropProgress) * 17) / 40)), v30 + 16, v22 + 16, 0x8000FF00);
+
+			// ScreenRenderer::fill() resets this
+			currentShaderColor = oldColor;
+		}
+	}
+	
+	blit(hotbarWidth / 2 - 2, -22, 180, 0, 2, 22, 0, 0);
 
 	// selection mark
 	blit(-1 - hotbarWidth / 2 + 20 * inventory.getSelectedSlotNo(), -23, 0, 22, 24, 22, 0, 0);
@@ -949,7 +1009,7 @@ void Gui::renderToolBar(float f, float alpha)
 			fill(v115, v22, v115 + 16, v22 + 16, Color::FromRGBA(255, 255, 255, (v117 * -80.0f) + 81.0f));
 
 			// ScreenRenderer::fill() resets this
-			currentShaderColor.a = alpha;
+			currentShaderColor = oldColor;
 		}
 		else
 		{

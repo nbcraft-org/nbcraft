@@ -87,12 +87,6 @@ public:
 
 	// v0.2.0 name alias
 	ItemStack& getSelected() { return getSelectedItem(); }
-	
-private:
-	/*int getSlotWithRemainingSpace(const ItemStack& item) const;
-	int getFreeSlot() const;
-	int addResource(const ItemStack& item);
-	int getSlot(int id) const;*/
 
 public:
 	Player* m_pPlayer;
