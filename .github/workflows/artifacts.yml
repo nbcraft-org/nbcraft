@@ -38,6 +38,8 @@ jobs:
                     packages: 'libsdl2-dev libopenal-dev'
                     runner: ubuntu-24.04-arm
         name: Linux (${{ matrix.name }})
+        # This branch only builds Windows, iOS and Android
+        if: ${{ github.ref == 'refs/heads/master' }}
         runs-on: ${{ matrix.runner }}
         steps:
           - name: Get Time
@@ -107,6 +109,8 @@ jobs:
                     arch: aarch64
                     runner: ubuntu-24.04-arm
         name: Flatpak (${{ matrix.name }})
+        # This branch only builds Windows, iOS and Android
+        if: ${{ github.ref == 'refs/heads/master' }}
         runs-on: ${{ matrix.runner }}
         steps:
           - name: Get Time
@@ -148,6 +152,8 @@ jobs:
         strategy:
             fail-fast: false
         name: macOS
+        # This branch only builds Windows, iOS and Android
+        if: ${{ github.ref == 'refs/heads/master' }}
         runs-on: macos-26
         steps:
           - name: Checkout Repository
@@ -387,6 +393,8 @@ jobs:
 
     switch:
         name: Nintendo Switch
+        # This branch only builds Windows, iOS and Android
+        if: ${{ github.ref == 'refs/heads/master' }}
         runs-on: ubuntu-24.04
         container:
             image: devkitpro/devkita64@sha256:a52e05e06951c025fe23127252555e2f94d944458ff4f19028ba297e5ffc99fd
