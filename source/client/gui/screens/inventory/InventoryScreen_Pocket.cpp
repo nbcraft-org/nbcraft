@@ -48,8 +48,8 @@ void InventoryScreen_Pocket::_setupPositions()
     }
     else
     {
-        m_header.m_xPos = m_btnCraft.m_width + m_btnArmor.m_width;
-        m_header.m_width = m_width - m_btnCraft.m_width - m_btnArmor.m_width;
+        m_header.m_xPos = m_btnCraft.m_width/* + m_btnArmor.m_width*/;
+        m_header.m_width = m_width - m_btnCraft.m_width/* - m_btnArmor.m_width*/;
     }
 
     m_header.m_textPosX = m_width / 2;
