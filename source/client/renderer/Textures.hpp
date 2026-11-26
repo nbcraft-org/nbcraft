@@ -33,6 +33,7 @@ public:
 	TextureData* loadAndBindTexture(const std::string& name, bool isRequired = true, unsigned int textureUnit = 0);
 	TextureData* getTextureData(const std::string& name, bool isRequired);
 	TextureData* uploadTexture(const std::string& name, TextureData& t);
+	bool hasTexture(const std::string& name) const { return m_textures.find(name) != m_textures.end(); }
 	TextureAtlas* getTextureAtlas(const std::string& name);
 	void unloadAll();
 	void clear();

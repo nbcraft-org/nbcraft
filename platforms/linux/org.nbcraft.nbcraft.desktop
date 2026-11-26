@@ -1,6 +1,6 @@
 [Desktop Entry]
-Name=NBCraft
-GenericName=NBCraft
+Name=SBCraft
+GenericName=SBCraft
 Comment=The ultimate cross-platform mining experience.
 Exec=rungame.sh
 Icon=org.nbcraft.nbcraft

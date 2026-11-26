@@ -100,6 +100,10 @@ Then, copy the assets (including sounds and textures) into the "minecraft" resou
 <br>
 Finally, the "minecraft" resource pack should be automatically enabled by the game, assuming it can find it.
 
+**Indev textures:** to use the textures of Indev (e.g. `in-20100223.jar`) as the default look instead, run
+`python3 tools/extract_indev_jar.py path/to/in-20100223.jar`. It copies them into the "minecraft" resource pack
+under the paths the game expects (Indev stored several of them elsewhere).
+
 ## Prep for Building
 
 Before trying to build:

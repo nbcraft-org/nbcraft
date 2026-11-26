@@ -14,11 +14,11 @@
 #define C_TITLE_PATH_XBOX360  "gui/title_xbox360.png"
 #define C_TITLE_PATH_CONSOLE  "gui/title_console.png"
 
-const char gLogoLine1[] = "?   ? $$$  ### ### ### ### ###";
-const char gLogoLine2[] = "??  ? $  $ #   # # # # #    # ";
-const char gLogoLine3[] = "? ? ? $$$  #   ##  ### ##   # ";
-const char gLogoLine4[] = "?  ?? $  $ #   # # # # #    # ";
-const char gLogoLine5[] = "?   ? $$$  ### # # # # #    # ";
+const char gLogoLine1[] = " ???? $$$  ### ### ### ### ###";
+const char gLogoLine2[] = "?     $  $ #   # # # # #    # ";
+const char gLogoLine3[] = " ???  $$$  #   ##  ### ##   # ";
+const char gLogoLine4[] = "    ? $  $ #   # # # # #    # ";
+const char gLogoLine5[] = "????  $$$  ### # # # # #    # ";
 
 const char* gLogoLines[] = {
 	gLogoLine1,
