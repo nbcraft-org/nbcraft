@@ -45,6 +45,7 @@ public:
 	void teardown();
 	void teardownRenderer();
 	void reloadFancy(bool isFancy) override;
+	void reloadTextures() override;
 
 	int getFpsIntlCounter() override;
     

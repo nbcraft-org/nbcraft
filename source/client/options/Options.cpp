@@ -203,6 +203,25 @@ const AsyncTask& Options::save()
 	return m_saveTask;
 }
 
+std::string Options::getActiveResourcePack() const
+{
+	for (size_t i = 0; i < m_resourcePacks.size(); i++)
+	{
+		if (m_resourcePacks[i].m_name != C_DEFAULT_RESOURCE_PACK)
+			return m_resourcePacks[i].m_name;
+	}
+
+	return "";
+}
+
+void Options::setActiveResourcePack(const std::string& name)
+{
+	m_resourcePacks.clear();
+	if (!name.empty() && name != C_DEFAULT_RESOURCE_PACK)
+		_tryAddResourcePack(name, m_resourcePacks);
+	_tryAddResourcePack(C_DEFAULT_RESOURCE_PACK, m_resourcePacks);
+}
+
 bool Options::_hasResourcePack(const ResourcePack& pack, ResourcePackStack& packs)
 {
 	for (size_t i = 0; i < packs.size(); i++)

@@ -1479,6 +1479,10 @@ void Minecraft::reloadFancy(bool isFancy)
 {
 }
 
+void Minecraft::reloadTextures()
+{
+}
+
 int Minecraft::getFpsIntlCounter()
 {
 	return 0;

@@ -493,6 +493,10 @@ public:
 	void add(OptionsCategory cat, OptionEntry&);
 	const AsyncTask& save();
 	std::vector<std::string> getOptionStrings();
+
+	// Texture packs: one optional pack on top of the default one.
+	std::string getActiveResourcePack() const;
+	void setActiveResourcePack(const std::string& name);
 	
 	int getKey(UserActionID idx) const { return m_inputMappings[idx].info.keyId; }
 	bool isKey(UserActionID idx, int keyCode) const { return getKey(idx) == keyCode; }

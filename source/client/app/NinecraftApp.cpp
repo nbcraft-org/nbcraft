@@ -386,6 +386,20 @@ void NinecraftApp::teardownRenderer()
 	mce::GlobalConstantBufferManager::deleteInstance();
 }
 
+// Used when the texture pack changes
+void NinecraftApp::reloadTextures()
+{
+	m_pTextures->clear();
+	m_pTextures->setupAtlases(true);
+	_reloadTextures();
+	m_pFont->onGraphicsReset();
+
+	if (m_pGameRenderer)
+		m_pGameRenderer->onGraphicsReset();
+
+	EntityRenderDispatcher::getInstance()->onGraphicsReset();
+}
+
 void NinecraftApp::reloadFancy(bool isFancy)
 {
 	if (!m_pLevelRenderer)

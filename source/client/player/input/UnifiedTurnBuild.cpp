@@ -95,8 +95,8 @@ Vec2 UnifiedTurnBuild::getTurnDelta()
 		if (m_touchAreaModel.getPointerId(x, y, finger) == 100)
 		{
 			touched = true;
-			m1 = float(x) * 0.5f;
-			m2 = float(y) * -0.5f;
+			m1 = float(x);
+			m2 = float(-y);
 			break;
 		}
 	}
@@ -129,23 +129,36 @@ Vec2 UnifiedTurnBuild::getTurnDelta()
 
 		if (touched)
 		{
-			xd = field_C4 * linearTransform(m1 - field_78, 0.0f, 1.0f, false);
-			yd = field_C4 * linearTransform(m2 - field_7C, 0.0f, 1.0f, false);
+			// Work relative to the screen size, so that the turning speed is the
+			// same on every device: one screen width of swiping turns about 180 degrees.
+			float screenW = m_screenArea.right - m_screenArea.left;
+			float screenH = m_screenArea.bottom - m_screenArea.top;
+			if (screenW < 1.0f) screenW = 1.0f;
+			if (screenH < 1.0f) screenH = 1.0f;
 
-			float c3 = fabsf(xd) * fabsf(yd);
-			if (field_C0 < c3)
-				c3 = yd = xd = 0.0f;
+			float dx = m1 - field_78;
+			float dy = m2 - field_7C;
 
-			field_BC += c3;
+			// ignore jumps, e.g. when a different finger takes over
+			if (fabsf(dx) > screenW * 0.25f || fabsf(dy) > screenH * 0.25f)
+				dx = dy = 0.0f;
 
-			if (field_D8 == 1 && field_BC >= 20.0f)
+			const float turnScale = field_C4 * 1200.0f / screenW;
+			xd = dx * turnScale;
+			yd = dy * turnScale;
+
+			// distance moved since the touch began, in percent of the screen width
+			field_BC += (fabsf(dx) + fabsf(dy)) * 100.0f / screenW;
+
+			// start turning as soon as the finger clearly moves
+			if (field_D8 == 1 && field_BC >= 1.5f)
 				field_D8 = 2;
 
 			if (field_D8 == 1 && timeS - field_B8 >= 0.4f)
 			{
 				bool check = m_pPlayer && getSpeedSquared(m_pPlayer) > 0.01f;
 
-				if (field_BC > 20.0f || check)
+				if (field_BC > 1.5f || check)
 					field_D8 = 2;
 				else
 					field_D8 = 3;
@@ -187,7 +200,9 @@ Vec2 UnifiedTurnBuild::getTurnDelta()
 
 bool UnifiedTurnBuild::smoothTurning()
 {
-	return true;
+	// Turn immediately every frame instead of once per game tick,
+	// which made touch looking feel slow and laggy.
+	return false;
 }
 
 bool UnifiedTurnBuild::tickBuild(Player* pPlayer, BuildActionIntention* pIntention)
@@ -239,7 +254,7 @@ bool UnifiedTurnBuild::tickBuild(Player* pPlayer, BuildActionIntention* pIntenti
 
 			if (finger == 100)
 			{
-				if (field_BC > 20.0f || pEvent->_buttonState || wroteIntention)
+				if (field_BC > 1.5f || pEvent->_buttonState || wroteIntention)
 				{
 					if (pEvent->_buttonState)
 					{

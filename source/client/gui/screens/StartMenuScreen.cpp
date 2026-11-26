@@ -16,6 +16,7 @@
 #include "InvalidLicenseScreen.hpp"
 #include "SelectWorldScreen.hpp"
 #include "JoinGameScreen.hpp"
+#include "TexturePackScreen.hpp"
 
 #if defined(DEMO) || !MC_PLATFORM_MOBILE
 #define CAN_QUIT 1
@@ -58,6 +59,10 @@ void StartMenuScreen::_updateLicense()
 #else
 		m_joinButton->setEnabled(false);
 #endif
+
+		// the Java-style menu uses this button for texture packs
+		if (m_uiTheme != UI_POCKET)
+			m_joinButton->setEnabled(true);
 	}
 	else
 	{
@@ -78,6 +83,10 @@ void StartMenuScreen::_buttonClicked(Button* pButton)
 	else if (pButton->getId() == m_generateButton.getId())
 	{
 		m_pMinecraft->getScreenChooser()->pushCreateWorldScreen(this);
+	}
+	else if (pButton->getId() == m_joinButton->getId() && m_uiTheme != UI_POCKET)
+	{
+		m_pMinecraft->setScreen(new TexturePackScreen(this));
 	}
 	else if (pButton->getId() == m_joinButton->getId())
 	{
@@ -111,7 +120,7 @@ void StartMenuScreen::_setup()
 {
 	// Indev-style title menu
 	m_startButton   = new Button(0, 0, 200, 20, "Load level...");
-	m_joinButton    = new Button(0, 0, 200, 0,  "Multiplayer...");
+	m_joinButton    = new Button(0, 0, 200, 0,  "Texture Packs...");
 	m_optionsButton = new Button(0, 0,  98, 0,  "Options...");
 
 	_setupPositions();

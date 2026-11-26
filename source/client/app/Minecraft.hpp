@@ -101,6 +101,7 @@ public:
 	void setTextboxText(const std::string& text) override;
 
 	virtual void reloadFancy(bool isFancy);
+	virtual void reloadTextures();
 	virtual int getFpsIntlCounter();
 
 	float getBestScaleForThisScreenSize(unsigned int width, unsigned int height);

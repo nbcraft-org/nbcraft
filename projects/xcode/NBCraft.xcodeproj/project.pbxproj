@@ -1661,6 +1661,8 @@
 		84FFBF022ACA3416005A8CCF /* WSAStartupSingleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 840DD8442AC810630006A435 /* WSAStartupSingleton.cpp */; };
 		9D3996282F10E9C6002945D3 /* CreditsScreen.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 9D3996262F10E9C6002945D3 /* CreditsScreen.hpp */; };
 		9D3996292F10E9C6002945D3 /* CreditsScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D3996272F10E9C6002945D3 /* CreditsScreen.cpp */; };
+		1D3E5A0000000000A0B1C2E2 /* TexturePackScreen.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 1D3E5A0000000000A0B1C2E0 /* TexturePackScreen.hpp */; };
+		1D3E5A0000000000A0B1C2E3 /* TexturePackScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1D3E5A0000000000A0B1C2E1 /* TexturePackScreen.cpp */; };
 		9DA5C6462F2845F80039B697 /* ResourcePackManager.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 9DA5C6432F2845F80039B697 /* ResourcePackManager.hpp */; };
 		9DA5C6472F2845F80039B697 /* Resource.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 9DA5C63D2F2845F80039B697 /* Resource.hpp */; };
 		9DA5C6482F2845F80039B697 /* ResourceLoader.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 9DA5C63F2F2845F80039B697 /* ResourceLoader.hpp */; };
@@ -3512,6 +3514,8 @@
 		84FFBD7E2ACA2876005A8CCF /* libRakNet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRakNet.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D3996262F10E9C6002945D3 /* CreditsScreen.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CreditsScreen.hpp; sourceTree = "<group>"; };
 		9D3996272F10E9C6002945D3 /* CreditsScreen.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CreditsScreen.cpp; sourceTree = "<group>"; };
+		1D3E5A0000000000A0B1C2E1 /* TexturePackScreen.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TexturePackScreen.cpp; sourceTree = "<group>"; };
+		1D3E5A0000000000A0B1C2E0 /* TexturePackScreen.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TexturePackScreen.hpp; sourceTree = "<group>"; };
 		9DA5C63B2F2845F80039B697 /* AppResourceLoader.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AppResourceLoader.hpp; sourceTree = "<group>"; };
 		9DA5C63C2F2845F80039B697 /* AppResourceLoader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AppResourceLoader.cpp; sourceTree = "<group>"; };
 		9DA5C63D2F2845F80039B697 /* Resource.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Resource.hpp; sourceTree = "<group>"; };
@@ -3811,6 +3815,8 @@
 				844336FE2F405E0600EB3115 /* CreateWorldScreen_Console.hpp */,
 				9D3996272F10E9C6002945D3 /* CreditsScreen.cpp */,
 				9D3996262F10E9C6002945D3 /* CreditsScreen.hpp */,
+				1D3E5A0000000000A0B1C2E1 /* TexturePackScreen.cpp */,
+				1D3E5A0000000000A0B1C2E0 /* TexturePackScreen.hpp */,
 				840DD5A32AC810620006A435 /* DeathScreen.cpp */,
 				840DD5A42AC810620006A435 /* DeathScreen.hpp */,
 				84CA11322FD03A7900A83DD3 /* DeathScreen_Console.cpp */,
@@ -6409,6 +6415,7 @@
 				84EB09CB2EE2CC86008FB007 /* CowModel.hpp in Headers */,
 				84E022FD2F2A0230003C8FFE /* Language.hpp in Headers */,
 				9D3996282F10E9C6002945D3 /* CreditsScreen.hpp in Headers */,
+				1D3E5A0000000000A0B1C2E2 /* TexturePackScreen.hpp in Headers */,
 				84E0013A2AF39E84009B9555 /* UnifiedTurnBuild.hpp in Headers */,
 				84EB09D12EE2CC86008FB007 /* Model.hpp in Headers */,
 				84C90EA62AF8861A008973F9 /* OptionList.hpp in Headers */,
@@ -7671,6 +7678,7 @@
 				84AA8C092B32F3F3003F5B82 /* SheepRenderer.cpp in Sources */,
 				84E5A6922FC963B200320694 /* ImageButton.cpp in Sources */,
 				9D3996292F10E9C6002945D3 /* CreditsScreen.cpp in Sources */,
+				1D3E5A0000000000A0B1C2E3 /* TexturePackScreen.cpp in Sources */,
 				84AA8C0D2B32F3F3003F5B82 /* SpiderRenderer.cpp in Sources */,
 				8440D0302FED267E00FD4A51 /* ClockTexture.cpp in Sources */,
 				84E8F9E02FEF60F300D0669F /* FishingHookRenderer.cpp in Sources */,

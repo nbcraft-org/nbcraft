@@ -106,6 +106,7 @@ add_library(nbcraft-core STATIC
     client/gui/ScreenChooser_Console.cpp
     client/gui/ScreenChooser_Pocket.cpp
     client/gui/screens/CreditsScreen.cpp
+    client/gui/screens/TexturePackScreen.cpp
     client/gui/screens/OptionsScreen.cpp
     client/gui/screens/OptionsScreen_Console.cpp
     client/gui/screens/StartMenuScreen.cpp
