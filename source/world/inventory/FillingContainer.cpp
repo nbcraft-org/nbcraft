@@ -127,7 +127,7 @@ void FillingContainer::_compressLinkedSlotList(Size toSize)
 	StackID v6 = i - j;
 	if (v6 < i)
 	{
-		std::fill(&m_linkedSlots[v6], &m_linkedSlots[i+1], INVALID_SLOT);
+		std::fill(&m_linkedSlots[v6], &m_linkedSlots[i+1], (StackID)INVALID_SLOT);
 	}
 }
 
