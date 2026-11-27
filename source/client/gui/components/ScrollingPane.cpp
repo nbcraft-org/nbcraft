@@ -484,7 +484,6 @@ void ScrollingPane::_touchesEnded(int time)
 
     if (m_bDragging)
     {
-        m_touchesMovedTime = m_touchesMovedTime;
         m_bDragging = false;
 
         if ((time - m_touchesMovedTime) <= 100.0f)
