@@ -7,6 +7,8 @@
 
 class InventoryPane_Pocket : public ScrollingPane
 {
+	using GuiElement::tick;
+
 public:
 	static const Color BACKGROUND_COLOR;
 

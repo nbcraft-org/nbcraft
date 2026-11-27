@@ -30,6 +30,10 @@ struct ScrollBar
 
 class ScrollingPane : public GuiElement
 {
+	// compiler is mentally deficient
+	using GuiElement::tick;
+	using GuiElement::setSelected;
+
 protected:
 	typedef uint8_t Flags;
 	enum Flag
