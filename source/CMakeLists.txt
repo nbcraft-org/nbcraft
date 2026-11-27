@@ -142,6 +142,7 @@ add_library(nbcraft-core STATIC
     client/gui/screens/inventory/CreativeScreen.cpp
     client/gui/screens/inventory/CreativeScreen_Console.cpp
     client/gui/screens/inventory/InventoryScreen.cpp
+    client/gui/screens/inventory/InventoryScreen_Pocket.cpp
     client/gui/screens/inventory/CraftingScreen.cpp
     client/gui/screens/inventory/CraftingScreen_Console.cpp
     client/gui/screens/inventory/ClassicCraftingScreen_Console.cpp
@@ -150,6 +151,9 @@ add_library(nbcraft-core STATIC
 	client/gui/screens/inventory/TrapScreen.cpp
     client/gui/screens/inventory/TrapScreen_Console.cpp
     client/gui/screens/inventory/ClientCraftContext.cpp
+    client/gui/components/InventoryPane_Pocket.cpp
+    client/gui/components/ItemPane.cpp
+    client/gui/components/THeader_Pocket.cpp
     client/gui/components/ScrolledSelectionList.cpp
     client/gui/components/AvailableGamesList.cpp
     client/gui/components/RolledSelectionList.cpp
@@ -171,6 +175,7 @@ add_library(nbcraft-core STATIC
     client/gui/Gui.cpp
     client/gui/GuiComponent.cpp
     client/gui/GuiElement.cpp
+    client/gui/IntRectangle.cpp
     client/gui/MenuPointer.cpp
     client/gui/VerticalLayout.cpp
     client/gui/TabLayout.cpp
@@ -404,6 +409,7 @@ add_library(nbcraft-core STATIC
     world/item/crafting/SingleInputRecipe.cpp
     world/item/crafting/ShapedRecipe.cpp
     world/item/crafting/ShapelessRecipe.cpp
+    world/inventory/BaseContainer.cpp
     world/inventory/Container.cpp
     world/inventory/ContainerListener.cpp
     world/inventory/CompoundContainer.cpp
@@ -412,11 +418,14 @@ add_library(nbcraft-core STATIC
     world/inventory/ContainerMenu.cpp
     world/inventory/InventoryMenu.cpp
     world/inventory/CraftingMenu.cpp
+    world/inventory/FillingContainer.cpp
     world/inventory/FurnaceMenu.cpp
     world/inventory/ChestMenu.cpp
     world/inventory/TrapMenu.cpp
     world/inventory/CreativeMenu.cpp
+    world/inventory/CreativeMenuBase.cpp
     world/inventory/CreativeMenu_Console.cpp
+    world/inventory/CreativeMenu_Pocket.cpp
     world/inventory/Slot.cpp
     world/inventory/ResultSlot.cpp
     world/inventory/ArmorSlot.cpp
