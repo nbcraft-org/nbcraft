@@ -10,13 +10,13 @@
 ScrollingPane::ScrollingPane(Flags flags, const IntRectangle& areaRect, const IntRectangle& a4, int columns, int itemCount, float scale, const IntRectangle& itemRect)
     : GuiElement(areaRect)
     , m_flags(flags)
-    , m_scale(scale)
+    , m_columns(columns)
     , m_itemCount(itemCount)
+    , m_scale(scale)
+    , m_itemRect(itemRect.w <= 0 ? a4 : itemRect)
     , m_area(m_xPos, m_yPos, m_xPos + m_width, m_yPos + m_height)
     , m_interactArea(m_area)
     , m_bounds(areaRect)
-    , m_itemRect(itemRect.w <= 0 ? a4 : itemRect)
-    , m_columns(columns)
 {
     m_bDragging = false;
     m_bDecelerating = false;
