@@ -13,7 +13,7 @@ struct ScrollBar
 	{
 		FADE_STOPPED,
 		FADE_DISAPPEARING,
-		FADE_APPEARING,
+		FADE_APPEARING
 	};
 
 	ScrollBar()
@@ -78,7 +78,6 @@ protected:
 	void _setContentOffset(const Vec2& offset);
 	void _adjustContentSize();
 	void _snapContentOffsetToBounds(bool ignoreScrollbars);
-	void _updateTrackingStartPos();
 	void _beginTracking(int time);
 	void _startDecelerationAnimation(bool isSubstep);
 	void _stopDecelerationAnimation();
