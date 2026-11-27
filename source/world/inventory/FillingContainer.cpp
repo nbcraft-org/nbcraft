@@ -14,7 +14,7 @@ FillingContainer::FillingContainer(Size size, Size linkedSlotsCount, bool isUnli
 	if (m_linkedSlotsCapacity > 0)
 	{
 		m_linkedSlots = new StackID[m_linkedSlotsCapacity];
-		std::fill(m_linkedSlots, &m_linkedSlots[m_linkedSlotsCapacity], INVALID_SLOT);
+		std::fill(m_linkedSlots, &m_linkedSlots[m_linkedSlotsCapacity], (StackID)INVALID_SLOT);
 	}
 
 	m_items.resize(size);
