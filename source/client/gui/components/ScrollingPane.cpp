@@ -54,7 +54,7 @@ ScrollingPane::ScrollingPane(Flags flags, const IntRectangle& areaRect, const In
     m_rows = (m_itemCount - 1) / m_columns + 1;
 
     m_selectedById = new bool[m_itemCount];
-    for (size_t i = 0; i < m_itemCount; i++)
+    for (int i = 0; i < m_itemCount; i++)
     {
         m_selectedById[i] = false;
     }
