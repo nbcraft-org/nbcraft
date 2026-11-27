@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "FillingContainer.hpp"
 #include "common/Logger.hpp"
 #include "nbt/CompoundTag.hpp"
