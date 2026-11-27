@@ -540,7 +540,7 @@ void FillingContainer::load(const ListTag& tag, bool dropExtras)
 
 	_clear();
 
-	size_t containerSize = m_items.size();
+	int containerSize = (int)m_items.size();
 
 	const std::vector<Tag*>& itemTags = tag.rawView();
 
