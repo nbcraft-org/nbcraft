@@ -23,6 +23,7 @@ public:
     virtual void pushCreateWorldScreen(Screen*);
     virtual void pushOptionsScreen(Screen*);
     virtual void pushProgressScreen();
+    virtual void pushInventoryScreen(Player*);
     virtual void pushPlayerCraftingScreen(Player*);
     virtual void pushCreativeScreen(Player*);
     virtual void pushCraftingScreen(Player*, const TilePos&); // originally pushWorkbenchScreen

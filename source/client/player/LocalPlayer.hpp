@@ -54,6 +54,7 @@ public:
 
 	void calculateFlight(const Vec3& pos);
 	void respawn();
+	void onUiThemeChanged();
 
 private:
 	// Made these private since they're only accessed by LocalPlayer

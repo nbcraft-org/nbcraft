@@ -1,4 +1,5 @@
 #include "ContainerMenu.hpp"
+#include "world/entity/Player.hpp"
 #include "world/item/ItemStack.hpp"
 #include "world/item/Inventory.hpp"
 #include "Slot.hpp"
@@ -37,6 +38,7 @@ void ContainerMenu::_clearSlots()
     }
 
     m_slots.clear();
+    m_slotsByGroup.clear();
 }
 
 void ContainerMenu::addSlot(Slot* slot)
@@ -44,6 +46,9 @@ void ContainerMenu::addSlot(Slot* slot)
     slot->m_id = m_slots.size();
     m_slots.push_back(slot);
     m_lastSentItems.push_back(ItemStack::EMPTY);
+
+    std::vector<Slot*>& group = getSlotsByGroup(slot->m_group);
+    group.push_back(slot);
 
     // @HACK: holy hack
     Container* pContainer = slot->m_pContainer;

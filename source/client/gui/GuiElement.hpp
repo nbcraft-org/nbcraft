@@ -4,6 +4,7 @@
 #include "client/gui/MenuPointer.hpp"
 #include "GuiComponent.hpp"
 #include "AreaNavigation.hpp"
+#include "IntRectangle.hpp"
 
 #define C_SOUND_UI_BACK      "ui.back"
 #define C_SOUND_UI_FOCUS     "ui.focus"
@@ -28,8 +29,13 @@ public:
 		TYPE_TEXTBOX
 	};
 
-public:
+private:
+	void _init();
+
+protected:
 	GuiElement();
+	GuiElement(int x, int y, int width, int height);
+	GuiElement(const IntRectangle& area);
 
 public:
 	void setBackground(const Color& color);

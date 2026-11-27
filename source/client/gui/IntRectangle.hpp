@@ -2,6 +2,8 @@
 
 struct IntRectangle
 {
+	static const IntRectangle NIL, ZERO;
+
 	int x;
 	int y;
 	int w;

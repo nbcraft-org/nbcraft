@@ -262,11 +262,11 @@ void ScreenRenderer::fillGradient(float left, float top, float right, float bott
     t.begin(4);
 
     t.color(colorUp);
-    t.vertex(left, bottom, 0.0f);
-    t.vertex(right, bottom, 0.0f);
-    t.color(colorDown);
     t.vertex(right, top, 0.0f);
     t.vertex(left, top, 0.0f);
+    t.color(colorDown);
+    t.vertex(left, bottom, 0.0f);
+    t.vertex(right, bottom, 0.0f);
 
     t.draw(m_materials.ui_fill_gradient);
 
@@ -276,4 +276,30 @@ void ScreenRenderer::fillGradient(float left, float top, float right, float bott
 void ScreenRenderer::fillGradient(int left, int top, int right, int bottom, const Color& colorUp, const Color& colorDown)
 {
     fillGradient(float(left), float(top), float(right), float(bottom), colorUp, colorDown);
+}
+
+void ScreenRenderer::fillHorizontalGradient(float left, float top, float right, float bottom, const Color& colorLeft, const Color& colorRight)
+{
+    mce::RenderContext& renderContext = mce::RenderContextImmediate::get();
+    renderContext.setShadeMode(mce::SHADE_MODE_SMOOTH);
+
+    Tesselator& t = Tesselator::instance;
+    t.begin(4);
+
+    t.color(colorRight);
+    t.vertex(right, top, 0.0f);
+    t.color(colorLeft);
+    t.vertex(left, top, 0.0f);
+    t.vertex(left, bottom, 0.0f);
+    t.color(colorRight);
+    t.vertex(right, bottom, 0.0f);
+
+    t.draw(m_materials.ui_fill_gradient);
+
+    renderContext.setShadeMode(mce::SHADE_MODE_FLAT);
+}
+
+void ScreenRenderer::fillHorizontalGradient(int left, int top, int right, int bottom, const Color& colorLeft, const Color& colorRight)
+{
+    fillGradient(float(left), float(top), float(right), float(bottom), colorLeft, colorRight);
 }

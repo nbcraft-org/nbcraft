@@ -1,4 +1,5 @@
 #include "ButtonTile.hpp"
+#include "world/entity/Player.hpp"
 #include "world/level/Level.hpp"
 #include "world/level/TileSource.hpp"
 #include "world/level/TileTickingQueue.hpp"

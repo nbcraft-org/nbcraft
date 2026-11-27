@@ -17,6 +17,7 @@
 #include "nbt/NbtIo.hpp"
 #include "network/RakIO.hpp"
 #include "world/entity/EntityFactory.hpp"
+#include "world/entity/Player.hpp"
 #include "world/level/Level.hpp"
 #include "world/tile/entity/TileEntity.hpp"
 #include "thirdparty/raknet/GetTime.h"

@@ -142,6 +142,7 @@ void Screen::init(Minecraft* pMinecraft, int width, int height)
 	if (m_screenType == SCREEN_UNIVERSAL || (m_screenType == SCREEN_GENERIC && userTheme != UI_CONSOLE))
 		m_uiTheme = userTheme;
 
+	// @TODO: call init here instead
 	setSize(width, height);
 	initMenuPointer();
 	_updateTabButtonSelection();
@@ -274,21 +275,24 @@ static float g_panoramaAngle = 0.0f;
 
 void Screen::renderMenuBackground(float f)
 {
+	Minecraft& mc = *m_pMinecraft;
+
 	if (m_uiTheme == UI_CONSOLE)
 	{
 		renderConsolePanorama();
 		return;
 	}
 
-	if (!m_pMinecraft->getOptions()->m_menuPanorama.get())
+	if (!mc.getOptions()->m_menuPanorama.get())
 	{
 		renderDirtBackground(0);
 		return;
 	}
 
-	Textures* pTextures = m_pMinecraft->m_pTextures;
+	Timer& timer = mc.m_timer;
+	Textures& textures = *mc.m_pTextures;
 
-	g_panoramaAngle += float(30.0 * m_pMinecraft->m_fDeltaTime);
+	g_panoramaAngle += float(30.0 * timer.m_deltaTime);
 
 	float aspectRatio = 1.0f;
 	//aspectRatio = float(width) / float(height);
@@ -342,11 +346,11 @@ void Screen::renderMenuBackground(float f)
 			mtx->rotate(ang, Vec3(axis.x, axis.y, 0.0f));
 
 		skip_rotate:
-			pTextures->setSmoothing(true);
-			pTextures->setClampToEdge(true);
-			pTextures->loadAndBindTexture(std::string(g_panoramaList[i]));
-			pTextures->setSmoothing(false);
-			pTextures->setClampToEdge(false);
+			textures.setSmoothing(true);
+			textures.setClampToEdge(true);
+			textures.loadAndBindTexture(std::string(g_panoramaList[i]));
+			textures.setSmoothing(false);
+			textures.setClampToEdge(false);
 
 			Tesselator& t = Tesselator::instance;
 			t.begin(4);
@@ -358,7 +362,7 @@ void Screen::renderMenuBackground(float f)
 		}
 	}
 
-	fillGradient(0, 0, m_width, m_height, Color(0, 0, 0, 137), Color(255, 255, 255, 137));
+	fillGradient(0, 0, m_width, m_height, Color(255, 255, 255, 137), Color(0, 0, 0, 137));
 }
 
 void Screen::renderConsolePanorama(bool isNight)
@@ -464,6 +468,7 @@ void Screen::setSize(int width, int height)
 	m_width = width;
 	m_height = height;
 
+	// @TODO: should be _setupPositions() instead
 	// not original code. Will need to re-init again
 	m_elements.clear();
 	init();
@@ -572,7 +577,7 @@ int Screen::getYOffset()
 	GuiElement* element = _getSelectedElement();
 	if (element && element->getType() == GuiElement::TYPE_TEXTBOX)
 	{
-		int heightLeft = m_height - int(float(keybOffset) / Minecraft::GetRenderScaleMultiplier() * Gui::GuiScale);
+		int heightLeft = m_height - int(float(keybOffset) / Minecraft::GetRenderScaleMultiplier() * Gui::InvGuiScale);
 
 		// we want to keep the center of the text box in the center of the screen
 		int textCenterY = element->m_yPos + (element->m_height / 2);
@@ -792,11 +797,11 @@ bool Screen::handleBackEvent(bool b)
 
 void Screen::handleRawPointerLocation(unsigned int x, unsigned int y)
 {
-	x = m_width  * x / Minecraft::GetWidthL();
-	y = m_height * y / Minecraft::GetHeightL();
-	y += m_yOffset;
+	float xf = (float)m_width  * x / Minecraft::GetWidthL();
+	float yf = (float)m_height * y / Minecraft::GetHeightL();
+	yf += m_yOffset;
 
-	handlePointerLocation(x, y);
+	handlePointerLocation(xf, yf);
 }
 
 void Screen::handlePointerLocation(MenuPointer::Unit x, MenuPointer::Unit y)
@@ -858,7 +863,7 @@ void Screen::handleControllerStickEvent(const GameController::StickEvent& stick,
 		Vec2 targetVelocity(snap * speed * moveSensitivity);
 		targetVelocity.x = stickAbs.x < C_POINTER_MINIMUM_SPEED ? C_POINTER_MINIMUM_SPEED * Mth::signum(targetVelocity.x) : targetVelocity.x;
 		targetVelocity.y = stickAbs.y < C_POINTER_MINIMUM_SPEED ? C_POINTER_MINIMUM_SPEED * Mth::signum(targetVelocity.y) : targetVelocity.y; // * speedY;
-		targetVelocity *= Gui::GuiScale;
+		targetVelocity *= Gui::InvGuiScale;
 
 		// Multiply by delta for smooth movement
 		Vec2 move = targetVelocity * C_POINTER_FRICTION * deltaTime;
@@ -881,9 +886,9 @@ void Screen::renderBackground(int vo)
 		// draw the background offset by the Y offset so that the smaller virtual
 		// keyboards don't reveal undrawn areas
 		if (m_uiTheme == UI_CONSOLE)
-			fillGradient(0, m_yOffset, m_width, m_height, Color(16, 16, 16, 100), Color(16, 16, 16, 112)); 
+			fillGradient(0, m_yOffset, m_width, m_height, Color(16, 16, 16, 112), Color(16, 16, 16, 100));
 		else
-			fillGradient(0, m_yOffset, m_width, m_height, Color(16, 16, 16, 192), Color(16, 16, 16, 208));
+			fillGradient(0, m_yOffset, m_width, m_height, Color(16, 16, 16, 208), Color(16, 16, 16, 192));
 	}
 	else
 	{

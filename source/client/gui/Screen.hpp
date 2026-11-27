@@ -101,6 +101,7 @@ public:
 	void controllerStickEvent(GameController::StickID stickId, double deltaTime = 0.0);
 
 protected:
+	virtual void _setupPositions() {};
 	virtual bool _areaNavigation(AreaNavigation::Direction);
 	virtual void _processControllerDirection(GameController::StickID stickId);
 	virtual void _controllerDirectionChanged(GameController::StickID stickId, GameController::StickState stickState);
@@ -133,6 +134,7 @@ public:
 	virtual void renderBackground(int vo);
 	virtual void renderBackground();
 	virtual void renderDirtBackground(int vo);
+	virtual bool renderGameBehind() const { return true; }
 	virtual bool isPauseScreen() { return true; }
 	virtual bool isErrorScreen() { return false; }
 	virtual bool isInGameScreen() { return true; }

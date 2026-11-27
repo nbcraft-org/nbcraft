@@ -1,4 +1,5 @@
 #include "world/entity/Monster.hpp"
+#include "world/entity/Player.hpp"
 #include "world/level/TileSource.hpp"
 
 Monster::Monster(TileSource& source) : PathfinderMob(source)

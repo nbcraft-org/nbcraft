@@ -11,6 +11,7 @@
 #include "world/level/TileSource.hpp"
 #include "world/item/TileItem.hpp"
 #include "world/entity/ItemEntity.hpp"
+#include "world/entity/Player.hpp"
 #include "world/item/AuxTileItem.hpp"
 #include "world/item/ClothItem.hpp"
 #include "world/item/SlabItem.hpp"
@@ -703,6 +704,7 @@ void Tile::initTiles()
 		->setSoundType(Tile::SOUND_GRASS)
 		->setDescriptionId("leaves");
 
+	// reserved for FillingContainer's linked slots
 	Tile::info_reserved6 = (new Tile(TILE_INFO_RESERVED6, Material::dirt))
 		->init();
 

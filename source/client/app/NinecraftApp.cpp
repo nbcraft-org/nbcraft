@@ -283,6 +283,7 @@ void NinecraftApp::onAppResumed()
 	m_pTextures->setupAtlases(true);
 	_reloadTextures();
 	m_pFont->onGraphicsReset();
+	m_pGui->inventoryUpdated();
     
 	if (m_pGameRenderer)
 		m_pGameRenderer->onGraphicsReset();

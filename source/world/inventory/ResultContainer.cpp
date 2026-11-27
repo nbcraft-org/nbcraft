@@ -8,11 +8,6 @@ ResultContainer::~ResultContainer()
 {
 }
 
-uint16_t ResultContainer::getContainerSize() const
-{
-    return 1;
-}
-
 ItemStack& ResultContainer::getItem(StackID stackId)
 {
     return m_item;
@@ -21,6 +16,11 @@ ItemStack& ResultContainer::getItem(StackID stackId)
 std::string ResultContainer::getName() const
 {
     return "";
+}
+
+uint16_t ResultContainer::getContainerSize() const
+{
+    return 1;
 }
 
 ItemStack ResultContainer::removeItem(StackID stackId, int)

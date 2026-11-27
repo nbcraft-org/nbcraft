@@ -34,10 +34,13 @@ Gui::Materials::Materials()
 }
 
 #ifdef ENH_USE_GUI_SCALE_2
-float Gui::GuiScale = 1.0f / 2.0f;
+float Gui::GuiScale = 2.0f;
 #else
-float Gui::GuiScale = 1.0f / 3.0f;
+float Gui::GuiScale = 3.0f;
 #endif
+
+float Gui::InvGuiScale = 1.0f / Gui::GuiScale;
+
 int Gui::GuiWidth = Minecraft::GetWidthL();
 int Gui::GuiHeight = Minecraft::GetHeightL();
 
@@ -49,22 +52,27 @@ Gui::Gui(Minecraft* pMinecraft)
 	m_lastProgress = 0;
 	m_lastDestroyProgress = 0;
 	m_destroyProgress = 0;
-	field_C = "";
-	field_24 = 0;
-	field_28 = 0;
-	field_2C = 0;
 	m_ticks = 0;
 	field_A00 = "";
 	field_A18 = 0;
 	field_A1C = false;
 	m_tbr = 1.0f;
-	field_A3C = true;
+	m_bInventoryUpdated = true;
+	m_flashingSlotId = -1;
+	m_flashingSlotStartTime = -1.0f;
+	m_dropProgress = -1.0f;
+	m_droppingSlotId = -1;
 	m_bRenderMessages = true;
     m_bRenderHunger = false;
 	m_feedbackMeshesBuilt = false;
 	m_animatedCharacterTimer = 0;
 
 	m_pMinecraft = pMinecraft;
+}
+
+MenuPointer Gui::CreateMenuPointer(bool isPressed)
+{
+	return MenuPointer(Mouse::getX() * Gui::InvGuiScale, Mouse::getY() * Gui::InvGuiScale, isPressed);
 }
 
 void Gui::addMessage(const std::string& s)
@@ -120,6 +128,12 @@ void Gui::setNowPlaying(const std::string& str)
 	field_A1C = true;
 }
 
+void Gui::flashSlot(int slotId)
+{
+	m_flashingSlotId = slotId;
+	m_flashingSlotStartTime = m_pMinecraft->m_timer.m_lastUpdateTime;
+}
+
 void Gui::renderPumpkin(int var1, int var2)
 {
 	currentShaderColor = Color::WHITE;
@@ -162,7 +176,7 @@ void Gui::renderVignette(float brightness, int width, int height)
 
 void Gui::inventoryUpdated()
 {
-	field_A3C = true;
+	m_bInventoryUpdated = true;
 }
 
 void Gui::render(float f, bool bHaveScreen)
@@ -268,13 +282,22 @@ void Gui::tick()
 		GuiMessage& msg = m_guiMessages[i];
 		msg.field_18++;
 	}
+
+	LocalPlayer* pLocalPlayer = m_pMinecraft->m_pLocalPlayer;
+
+	if (pLocalPlayer && !pLocalPlayer->isCreative())
+	{
+		_tickItemDrop();
+	}
 }
 
 void Gui::renderSlot(int slot, int x, int y, float f)
 {
-	Inventory* pInv = m_pMinecraft->m_pLocalPlayer->m_pInventory;
+	Minecraft& mc = *m_pMinecraft;
+	LocalPlayer& player = *mc.m_pLocalPlayer;
+	Inventory& inventory = *player.m_pInventory;
 
-	ItemStack& item = pInv->getItem(slot);
+	ItemStack& item = inventory.tryGetLinkedItem(slot);
 	if (item.isEmpty())
 		return;
 
@@ -291,31 +314,48 @@ void Gui::renderSlot(int slot, int x, int y, float f)
 			matrix->translate(Vec3(-(x + 8), -(y + 12), 0));
 		}
 
-		ItemRenderer::singleton().renderGuiItem(*m_pMinecraft, item, x, y);
+		ItemRenderer::singleton().renderGuiItem(mc, item, x, y);
 	}
+}
+
+void Gui::renderSlotText(int slot, int x, int y, float f)
+{
+	Minecraft& mc = *m_pMinecraft;
+	LocalPlayer& player = *mc.m_pLocalPlayer;
+	Inventory& inventory = *player.m_pInventory;
+
+	ItemStack& item = inventory.tryGetLinkedItem(slot);
+	if (item.isEmpty())
+		return;
+
+	ItemRenderer::singleton().renderGuiItemText(mc, item, x, y);
 }
 
 void Gui::renderSlotOverlay(int slot, int x, int y, float f)
 {
-	Inventory* pInv = m_pMinecraft->m_pLocalPlayer->m_pInventory;
+	Minecraft& mc = *m_pMinecraft;
+	LocalPlayer& player = *mc.m_pLocalPlayer;
+	Inventory& inventory = *player.m_pInventory;
 
-	ItemStack& item = pInv->getItem(slot);
+	ItemStack& item = inventory.tryGetLinkedItem(slot);
 	if (item.isEmpty())
 		return;
 
-	ItemRenderer::singleton().renderGuiItemOverlay(*m_pMinecraft, item, x, y);
+	ItemRenderer::singleton().renderGuiItemOverlay(mc, item, x, y);
 }
 
 void Gui::renderAnimatedCharacter(int x, int y, float partialTick)
 {
-	if (!m_pMinecraft->m_pLocalPlayer) return;
+	Minecraft& mc = *m_pMinecraft;
 	
-	LocalPlayer* player = m_pMinecraft->m_pLocalPlayer;
-	if (player->isSneaking())
+	if (!mc.m_pLocalPlayer) return;
+
+	LocalPlayer& player = *mc.m_pLocalPlayer;
+	if (player.isSneaking())
 		m_animatedCharacterTimer = 10;
-	else if (player->isSneaking())
+	else if (player.isSneaking())
 		m_animatedCharacterTimer = 10;
-	else if (player->m_bFlying)
+	else if (player.m_bFlying)
 		m_animatedCharacterTimer = 2;
 
 	if (!m_animatedCharacterTimer) return;
@@ -328,9 +368,9 @@ void Gui::renderAnimatedCharacter(int x, int y, float partialTick)
 	matrix->scale(Vec3(-scale, scale, scale));
 	matrix->rotate(180.0f, Vec3(0.0f, 0.0f, 1.0f));
 
-	float prevYRot = player->m_rot.yaw;
-	float prevXRot = player->m_rot.pitch;
-	float prevYORot = player->m_oRot.yaw;
+	float prevYRot = player.m_rot.yaw;
+	float prevXRot = player.m_rot.pitch;
+	float prevYORot = player.m_oRot.yaw;
 
 	constexpr float dx = -40;
 	constexpr float dy = 10;
@@ -340,40 +380,40 @@ void Gui::renderAnimatedCharacter(int x, int y, float partialTick)
 	matrix->rotate(-135.0f, Vec3(0.0f, 1.0f, 0.0f));
 
 	matrix->rotate(-Mth::atan(dy / 40.0f) * 20.0f, Vec3(1.0f, 0.0f, 0.0f));
-	matrix->rotate(player->m_yBodyRot - (Mth::atan(dx / 40.0f) * 20), Vec3(0.0f, 1.0, 0.0f));
-	player->m_rot.yaw = player->m_yBodyRot - 15.0f;
-	player->m_oRot.yaw = player->m_rot.yaw;
-	player->m_rot.pitch = -Mth::atan(dy / 40.0f) * 20.0f;
+	matrix->rotate(player.m_yBodyRot - (Mth::atan(dx / 40.0f) * 20), Vec3(0.0f, 1.0, 0.0f));
+	player.m_rot.yaw = player.m_yBodyRot - 15.0f;
+	player.m_oRot.yaw = player.m_rot.yaw;
+	player.m_rot.pitch = -Mth::atan(dy / 40.0f) * 20.0f;
 
-	EntityRenderer* renderer = EntityRenderDispatcher::instance->getRenderer(player->m_renderType);
+	EntityRenderer* renderer = EntityRenderDispatcher::instance->getRenderer(player.m_renderType);
 	float oldShadowRadius = renderer->m_shadowRadius;
 	renderer->m_shadowRadius = 0.0f;
-	player->m_minBrightness = 1.0f;
+	player.m_minBrightness = 1.0f;
 	currentShaderColor = Color::WHITE;
 	EntityRenderDispatcher::instance->m_rot.yaw = 180.0f;
-	EntityRenderDispatcher::instance->render(*player, Vec3::ZERO, 0.0f, 1.0f);
-	player->m_minBrightness = 0.0f;
+	EntityRenderDispatcher::instance->render(player, Vec3::ZERO, 0.0f, 1.0f);
+	player.m_minBrightness = 0.0f;
 	renderer->m_shadowRadius = oldShadowRadius;
-	player->m_rot.yaw = prevYRot;
-	player->m_oRot.yaw = prevYORot;
-	player->m_rot.pitch = prevXRot;
+	player.m_rot.yaw = prevYRot;
+	player.m_oRot.yaw = prevYORot;
+	player.m_rot.pitch = prevXRot;
 
 	Lighting::turnOff();
 }
 
-int Gui::getSlotIdAt(int mouseX, int mouseY)
+int Gui::getSlotIdAt(MenuPointer::Unit mouseX, MenuPointer::Unit mouseY)
 {
-	int scaledY = int(GuiScale * mouseY);
-	int scaledHeight = int(GuiScale * Minecraft::GetHeightL());
+	int scaledHeight = int(InvGuiScale * Minecraft::GetHeightL());
 
-	if (scaledY >= scaledHeight)
+	if (mouseY >= scaledHeight)
 		return -1;
-	if (scaledY < scaledHeight - 19)
+	if (mouseY < scaledHeight - 19)
 		return -1;
 
 	int hotbarOffset = getNumSlots() * 20 / 2 - 2;
+	int scaledWidth = int(InvGuiScale * Minecraft::GetWidthL());
 
-	int slotX = (int(GuiScale * mouseX) - int(GuiScale * Minecraft::GetWidthL()) / 2 + hotbarOffset + 20) / 20;
+	int slotX = (int(mouseX) - scaledWidth / 2 + hotbarOffset + 20) / 20;
 
 	if (slotX >= 0)
 		slotX--;
@@ -384,58 +424,64 @@ int Gui::getSlotIdAt(int mouseX, int mouseY)
 	return slotX;
 }
 
-bool Gui::isInside(int mouseX, int mouseY)
+bool Gui::isInside(MenuPointer::Unit mouseX, MenuPointer::Unit mouseY)
 {
 	return getSlotIdAt(mouseX, mouseY) != -1;
 }
 
-void Gui::handleClick(int clickID, int mouseX, int mouseY)
+void Gui::handleClick(MouseButtonType button, const MenuPointer& pointer)
 {
-	if (clickID != 1)
+	if (!pointer.isPressed)
 		return;
 
+	Minecraft& mc = *m_pMinecraft;
+
 	// @TODO: add InGamePlayScreen at some point
-	if (m_pMinecraft->useTouchscreen())
+	if (mc.useTouchscreen())
     {
 		int cenX = GuiWidth / 2;
-        int scaledMouseX = int(mouseX * GuiScale);
-        int scaledMouseY = int(mouseY * GuiScale);
 
-		if (scaledMouseY >= 1 && scaledMouseY < 19 && scaledMouseX >= cenX - 19 && scaledMouseX < cenX - 1)
+		if (pointer.y >= 1 && pointer.y < 19 && pointer.x >= cenX - 19 && pointer.x < cenX - 1)
 		{
-			m_pMinecraft->setScreen(new ChatScreen(false));
+			mc.setScreen(new ChatScreen(false));
 			return;
 		}
 
-		if (scaledMouseY >= 1 && scaledMouseY < 19 && scaledMouseX >= cenX && scaledMouseX < cenX + 18)
+		if (pointer.y >= 1 && pointer.y < 19 && pointer.x >= cenX && pointer.x < cenX + 18)
 		{
-            if (m_pMinecraft->isGamePaused())
-                m_pMinecraft->resumeGame();
+            if (mc.isGamePaused())
+                mc.resumeGame();
             else
-                m_pMinecraft->pauseGame();
+                mc.pauseGame();
             return;
 		}
 	}
 
-	int slot = getSlotIdAt(mouseX, mouseY);
+	int slot = getSlotIdAt(pointer.x, pointer.y);
 	if (slot == -1)
 		return;
 
+	LocalPlayer& player = *mc.m_pLocalPlayer;
+
 	// Final slot on touch opens inventory
-	if (m_pMinecraft->useTouchscreen() && slot == getNumSlots() - 1)
+	if (mc.useTouchscreen() && slot == getNumSlots() - 1)
 	{
-		if (m_pMinecraft->getLocalPlayerGameMode()->isSurvivalType())
-			m_pMinecraft->setScreen(new InventoryScreen(m_pMinecraft->m_pLocalPlayer));
+		if (mc.getLocalPlayerGameMode()->isSurvivalType())
+			mc.getScreenChooser()->pushInventoryScreen(&player);
 		else
-			m_pMinecraft->getScreenChooser()->pushCreativeScreen(m_pMinecraft->m_pLocalPlayer);
+			mc.getScreenChooser()->pushCreativeScreen(&player);
 	}
 	else
-		m_pMinecraft->m_pLocalPlayer->m_pInventory->selectSlot(slot);
+		player.m_pInventory->selectSlot(slot);
 }
 
 void Gui::handleScrollWheel(bool down)
 {
-	Container::StackID stackId = m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedStackId;
+	Minecraft& mc = *m_pMinecraft;
+	LocalPlayer& player = *mc.m_pLocalPlayer;
+	Inventory& inventory = *player.m_pInventory;
+
+	Container::StackID stackId = inventory.getSelectedSlotNo();
 
 	int maxItems = getNumUsableSlots() - 1;
 
@@ -450,43 +496,44 @@ void Gui::handleScrollWheel(bool down)
 			stackId = maxItems;
 	}
 
-	m_pMinecraft->m_pLocalPlayer->m_pInventory->selectSlot(stackId);
+	inventory.selectSlot(stackId);
 }
 
 void Gui::handleUserAction(const ActionInfo& info)
 {
-	Options* options = m_pMinecraft->getOptions();
+	Minecraft& mc = *m_pMinecraft;
+	LocalPlayer& player = *mc.m_pLocalPlayer;
+	Options& options = *mc.getOptions();
 
-	if (options->isAction(AID_CRAFTING, info))
+	if (options.isAction(AID_CRAFTING, info))
 	{
-		if (m_pMinecraft->getLocalPlayerGameMode()->isSurvivalType())
-			m_pMinecraft->getScreenChooser()->pushPlayerCraftingScreen(m_pMinecraft->m_pLocalPlayer);
+		if (mc.getLocalPlayerGameMode()->isSurvivalType())
+			mc.getScreenChooser()->pushPlayerCraftingScreen(&player);
 		else
-			m_pMinecraft->getScreenChooser()->pushCreativeScreen(m_pMinecraft->m_pLocalPlayer);
+			mc.getScreenChooser()->pushCreativeScreen(&player);
 		return;
 	}
 
-	if (options->isAction(AID_INVENTORY, info))
+	if (options.isAction(AID_INVENTORY, info))
 	{
-		m_pMinecraft->setScreen(new InventoryScreen(m_pMinecraft->m_pLocalPlayer));
+		mc.getScreenChooser()->pushInventoryScreen(&player);
 		return;
 	}
 
-	if (options->isAction(AID_FOG, info))
+	if (options.isAction(AID_FOG, info))
 	{
-		Options& o = *m_pMinecraft->getOptions();
-		o.m_viewDistance.set((o.m_viewDistance.get() + 1) % 4);
+		options.m_viewDistance.set((options.m_viewDistance.get() + 1) % 4);
 		return;
 	}
 
-	bool slotL = options->isAction(AID_SLOT_L, info);
-	bool slotR = options->isAction(AID_SLOT_R, info);
+	bool slotL = options.isAction(AID_SLOT_L, info);
+	bool slotR = options.isAction(AID_SLOT_R, info);
 	if (slotL || slotR)
 	{
 		int maxItems = getNumSlots() - 1;
-		if (m_pMinecraft->useTouchscreen())
+		if (mc.useTouchscreen())
 			maxItems--;
-		Container::StackID* stackId = &m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedStackId;
+		Container::StackID* stackId = &player.m_pInventory->m_selectedStackId;
 
 		if (slotR)
 		{
@@ -505,10 +552,10 @@ void Gui::handleUserAction(const ActionInfo& info)
 		return;
 	}
 
-	if (options->isAction(AID_CHAT, info) || options->isAction(AID_CHAT_CMD, info))
+	if (options.isAction(AID_CHAT, info) || options.isAction(AID_CHAT_CMD, info))
 	{
-		if (!m_pMinecraft->m_pScreen)
-			m_pMinecraft->setScreen(new ChatScreen(m_pMinecraft->getOptions()->isAction(AID_CHAT_CMD, info)));
+		if (!mc.m_pScreen)
+			mc.setScreen(new ChatScreen(options.isAction(AID_CHAT_CMD, info)));
 	}
 }
 
@@ -758,6 +805,39 @@ void Gui::_buildFeedbackMeshes()
 	m_feedbackInner = t.end("feedback_inner", false);
 }
 
+void Gui::_tickItemDrop()
+{
+	if (Mouse::isButtonDown(MOUSE_BUTTON_LEFT))
+	{
+		MenuPointer pointer = CreateMenuPointer(true);
+
+		int slotId = getSlotIdAt(pointer.x, pointer.y);
+		if (slotId >= 0 && slotId < getNumSlots() - 1)
+		{
+			if (slotId != m_droppingSlotId)
+			{
+				m_droppingSlotId = slotId;
+				m_dropProgress = 1.0f;
+				return;
+			}
+
+			m_dropProgress += 1.0f;
+			if (m_dropProgress < 40.0f)
+				return;
+
+			Minecraft& mc = *m_pMinecraft;
+			LocalPlayer& player = *mc.m_pLocalPlayer;
+			Inventory& inventory = *player.m_pInventory;
+
+			inventory.dropSlot(inventory.tryGetLinkedSlot(slotId));
+			mc.m_pLevel->playSound(&player, "random.pop", 0.3f);
+		}
+	}
+
+	m_droppingSlotId = -1;
+	m_dropProgress = -1.0f;
+}
+
 void Gui::renderProgressIndicator(int width, int height, float f)
 {
 	Minecraft& mc = *m_pMinecraft;
@@ -866,15 +946,22 @@ void Gui::renderExperience()
 
 void Gui::renderToolBar(float f, float alpha)
 {
-	Minecraft* mc = m_pMinecraft;
-	Textures* textures = mc->m_pTextures;
-	LocalPlayer* player = mc->m_pLocalPlayer;
+	Minecraft& mc = *m_pMinecraft;
+	Timer& timer = mc.m_timer;
+	Options& options = *mc.getOptions();
+	Textures& textures = *mc.m_pTextures;
+	LocalPlayer& player = *mc.m_pLocalPlayer;
 
 	currentShaderColor.a = alpha;
 
-	textures->loadAndBindTexture("gui/gui.png");
+	Color oldColor = currentShaderColor;
+
+	textures.loadAndBindTexture("gui/gui.png");
 
 	m_blitOffset = -90.0f;
+
+	//float v143 = Gui::InvGuiScale * Minecraft::GetHeightP(); // 0.3.3
+	int v22 = /*v143*/ - 19;
 
 	int nSlots = getNumSlots();
 	int hotbarWidth = 2 + nSlots * 20;
@@ -889,18 +976,50 @@ void Gui::renderToolBar(float f, float alpha)
 		int textureUV = 182 - extraWidth;
 		blit(-hotbarWidth / 2 + 180, -22, textureUV, 0, extraWidth, 22, 0, 0);
 	}
+
+	Inventory& inventory = *player.m_pInventory;
+
+	// slot drop progress
+	if (m_droppingSlotId >= 0 && m_droppingSlotId < inventory.getNumHotbarSlots())
+	{
+		if (!inventory.getItem(inventory.tryGetLinkedSlot(m_droppingSlotId)).isEmpty())
+		{
+			int v30 = 20 * m_droppingSlotId + 1 + (hotbarWidth / 2) - 20 * nSlots;
+			fill(v30, int(v22 + 16 - (((f + m_dropProgress) * 17) / 40)), v30 + 16, v22 + 16, 0x8000FF00);
+
+			// ScreenRenderer::fill() resets this
+			currentShaderColor = oldColor;
+		}
+	}
 	
 	blit(hotbarWidth / 2 - 2, -22, 180, 0, 2, 22, 0, 0);
 
-	Inventory* inventory = player->m_pInventory;
-
 	// selection mark
-	blit(-1 - hotbarWidth / 2 + 20 * inventory->m_selectedStackId, -23, 0, 22, 24, 22, 0, 0);
+	blit(-1 - hotbarWidth / 2 + 20 * inventory.getSelectedSlotNo(), -23, 0, 22, 24, 22, 0, 0);
+
+	// selected slot flash
+	if (m_flashingSlotId >= 0)
+	{
+		float delta = timer.m_lastUpdateTime - m_flashingSlotStartTime;
+		if (delta <= 0.2f)
+		{
+			int v115 = 20 * m_flashingSlotId + 1 + (hotbarWidth / 2) - 20 * nSlots;
+			float v117 = Mth::cos(delta * 62.8f);
+			fill(v115, v22, v115 + 16, v22 + 16, Color::FromRGBA(255, 255, 255, (v117 * -80.0f) + 81.0f));
+
+			// ScreenRenderer::fill() resets this
+			currentShaderColor = oldColor;
+		}
+		else
+		{
+			m_flashingSlotId = -1;
+		}
+	}
 
 	// chat and pause button for mobile devices
-	if (mc->useTouchscreen())
+	if (mc.useTouchscreen())
 	{
-		textures->loadAndBindTexture("gui/gui2.png");
+		textures.loadAndBindTexture("gui/gui2.png");
 		
 		currentShaderColor.a = 0.5f;
 
@@ -910,16 +1029,37 @@ void Gui::renderToolBar(float f, float alpha)
 		currentShaderColor.a = alpha;
 	}
 
-	textures->loadAndBindTexture(C_BLOCKS_NAME);
+	textures.loadAndBindTexture(C_BLOCKS_NAME);
 
-	int diff = mc->useTouchscreen();
+	int diff = mc.useTouchscreen() ? 1 : 0;
 
 	int slotX = -hotbarWidth / 2 + 3;
 	for (int i = 0; i < nSlots - diff; i++)
 	{
-		renderSlot(i, slotX, -19, f);
+		renderSlot(i, slotX, v22, f);
 
 		slotX += 20;
+	}
+
+	{
+		MatrixStack::Ref matrix = MatrixStack::World.push();
+		float posScale = 1.0f;
+		int posY = -19;
+		if (options.getUiTheme() == UI_POCKET)
+		{
+			float mtxScale = Gui::InvGuiScale + Gui::InvGuiScale;
+			posScale = Gui::GuiScale * 0.5f;
+			posY *= posScale;
+			matrix->scale(Vec3(mtxScale, mtxScale, 1.0f));
+		}
+
+		slotX = -hotbarWidth / 2 + 3;
+		for (int i = 0; i < nSlots - diff; i++)
+		{
+			renderSlotText(i, slotX * posScale, posY, f);
+
+			slotX += 20;
+		}
 	}
 
 	slotX = -hotbarWidth / 2 + 3;
@@ -930,14 +1070,12 @@ void Gui::renderToolBar(float f, float alpha)
 		slotX += 20;
 	}
 
-#undef DIFF
-
-	field_A3C = false;
+	m_bInventoryUpdated = false;
 
 	// blit the "more items" button if using touch
-	if (mc->useTouchscreen())
+	if (mc.useTouchscreen())
 	{
-		textures->loadAndBindTexture(C_TERRAIN_NAME);
+		textures.loadAndBindTexture(C_TERRAIN_NAME);
 		blit(hotbarWidth / 2 - 19, -19, 208, 208, 16, 16, 0, 0);
 	}
 }

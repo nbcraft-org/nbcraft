@@ -23,6 +23,10 @@ class CompoundTag;
 class ItemStack
 {
 public:
+	typedef int16_t Count;
+	typedef int16_t AuxValue;
+
+public:
 	static const std::string TAG_DISPLAY;
 	static const std::string TAG_DISPLAY_NAME;
 	static const std::string TAG_REPAIR_COST;
@@ -31,7 +35,7 @@ public:
 	static const ItemStack EMPTY;
 
 private:
-    void _init(int id = 0, int count = 0, int auxValue = 0);
+    void _init(int id = 0, Count count = 0, AuxValue auxValue = 0);
     
 public:
 	ItemStack();
@@ -53,8 +57,8 @@ public:
 	int getId() const;
 	int getIdAux() const;
 
-    int getAuxValue() const { return m_auxValue; }
-    void setAuxValue(int16_t auxValue) { m_auxValue = auxValue; } // Technically doesn't exist in b1.2_02
+    AuxValue getAuxValue() const { return m_auxValue; }
+    void setAuxValue(AuxValue auxValue) { m_auxValue = auxValue; } // Technically doesn't exist in b1.2_02
     int getDamageValue() const { return m_auxValue; }
 
 	bool hasUserData() const { return m_userData != nullptr; }
@@ -89,7 +93,7 @@ public:
 	bool use(Mob&);
 	void releaseUsing(Level&, Mob&, int durationLeft);
 	bool useOn(Player&, const TilePos& pos, Facing::Name face);
-	void onCraftedBy(Player*, Level*);
+	void onCraftedBy(Player* player, Level* level) { onCraftedBy(player, level, m_count); }
 	void onCraftedBy(Player*, Level*, int amount);
 
 	// Both need to return non-const pointers since TileRenderer calls setShape on render
@@ -100,7 +104,7 @@ public:
 	// v0.2.0
 	int getAttackDamage(Entity &entity) const;
 	// formerly known as isNull
-	bool isEmpty() const;
+	bool isEmpty() const { return !m_bValid || m_count <= 0 || !m_pItem; }
 	void setEmpty();
 	bool sameIngredient(const ItemStack&) const;
 
@@ -115,7 +119,7 @@ public:
 	CompoundTag& save(CompoundTag& tag) const;
 
 	// formerly known as isNull
-	static bool isEmpty(const ItemStack*);
+	static bool isEmpty(const ItemStack* item) { return item == nullptr || item->isEmpty(); }
 	static bool matches(const ItemStack&, const ItemStack&);
 	static ItemStack fromTag(const CompoundTag& tag);
 
@@ -125,11 +129,11 @@ public:
 	operator bool() const;
 
 public:
-	int16_t m_count;
+	Count m_count;
 	int m_popTime;
 
 private:
-    int16_t m_auxValue;
+    AuxValue m_auxValue;
 	CompoundTag* m_userData;
 	Item* m_pItem;
 	Tile* m_pTile;

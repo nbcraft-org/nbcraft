@@ -203,7 +203,6 @@ public:
 	ItemStack m_CurrItemStack;
 
 	// in 0.8. Offset 3368
-	double m_fDeltaTime, m_fLastUpdated;
 	int m_lastInteractTime;
 };
 

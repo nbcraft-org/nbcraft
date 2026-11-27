@@ -14,7 +14,8 @@ CreativeScreen::CreativeScreen(ContainerMenu* menu) : ContainerScreen(menu)
     m_bIsScrolling = false;
 }
 
-CreativeScreen::CreativeScreen(Container* inventory) : ContainerScreen(new CreativeMenu(inventory, creativeGrid))
+CreativeScreen::CreativeScreen(Container* inventory)
+    : ContainerScreen(new CreativeMenu(inventory, creativeGrid))
 {
     m_screenType = SCREEN_GENERIC;
     m_imageHeight = 208;
@@ -157,7 +158,7 @@ void CreativeScreen::tick()
 {
     if (m_pMinecraft->m_pLocalPlayer->isSurvival())
     {
-        m_pMinecraft->setScreen(new InventoryScreen(m_pMinecraft->m_pLocalPlayer));
+        m_pMinecraft->getScreenChooser()->pushInventoryScreen(m_pMinecraft->m_pLocalPlayer);
         return;
     }
 

@@ -1,4 +1,5 @@
 #include "ChestTileEntity.hpp"
+#include "world/entity/Player.hpp"
 #include "world/level/TileSource.hpp"
 
 ChestTileEntity::ChestTileEntity() : SimpleContainer(27, "Chest")

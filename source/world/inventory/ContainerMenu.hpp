@@ -2,14 +2,15 @@
 
 #include <vector>
 #include <set>
-#include "world/item/ItemStack.hpp"
+#include "common/utility/HashMap.hpp"
 #include "client/player/input/MouseDevice.hpp"
+#include "world/item/ItemStack.hpp"
 #include "Container.hpp"
 #include "ContainerContentChangeListener.hpp"
+#include "Slot.hpp"
 
 class Player;
 class Inventory;
-class Slot;
 class ContainerListener;
 
 class ContainerMenu : public ContainerContentChangeListener
@@ -37,6 +38,8 @@ public:
     std::vector<ItemStack> cloneItems(bool all = false);
     Slot* getSlotFor(Container* container, Container::StackID stackId);
     Slot* getSlot(Container::SlotID slotId) { return m_slots[slotId]; }
+    std::vector<Slot*>& getSlotsByGroup(Slot::Group group) { return m_slotsByGroup[(uint32_t)group]; }
+
     virtual ItemStack clicked(Container::SlotID slotId, MouseButtonType mouseButton, bool quickMove, Player* player);
     virtual ItemStack quickMoveStack(Container::SlotID slotId);
     virtual void moveItemStackTo(ItemStack& item, Container::SlotID slotFrom, Container::SlotID slotTo, bool take);
@@ -72,5 +75,6 @@ public:
     int m_containerId;
     Container::Type m_containerType;
     std::vector<Slot*> m_slots;
+    HashMap<uint32_t, std::vector<Slot*> > m_slotsByGroup;
     bool m_bBroadcastChanges;
 };

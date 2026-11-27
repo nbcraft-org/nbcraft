@@ -57,6 +57,8 @@ void StartMenuScreen_Pocket::_setupPositions()
 	m_startButton->m_xPos   = (v6 * 2) + startBtnWidth;
 	m_optionsButton->m_xPos = (v6 * 3) + (startBtnWidth * 2);
 	m_buyButton.m_xPos      = (v6 * 2) + startBtnWidth;
+
+	m_buyButton.m_width = m_startButton->m_width;
     
     _setupGenericPositions();
 }

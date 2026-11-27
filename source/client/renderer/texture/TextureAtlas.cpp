@@ -173,12 +173,12 @@ int TextureAtlas::getHeight() const
     return m_texture.m_imageData.m_height;
 }
 
-TextureAtlasSprite::TextureAtlasSprite(int x, int y, int width, int height, const std::string& atlasName, int atlasWidth, int atlasHeight) :
-    IntRectangle(x, y, width, height),
-    atlasName(atlasName)
+TextureAtlasSprite::TextureAtlasSprite(int x, int y, int width, int height, const std::string& atlasName, int atlasWidth, int atlasHeight)
+    : IntRectangle(x, y, width, height)
+    , atlasName(atlasName)
 {
-    minU = float(x) / atlasWidth;
-    minV = float(y) / atlasHeight;
-    maxU = float(x + width) / atlasWidth;
+    minU = float(x)          / atlasWidth;
+    minV = float(y)          / atlasHeight;
+    maxU = float(x + width)  / atlasWidth;
     maxV = float(y + height) / atlasHeight;
 }

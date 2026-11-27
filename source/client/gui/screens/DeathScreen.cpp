@@ -44,7 +44,7 @@ bool DeathScreen::isPauseScreen()
 
 void DeathScreen::render(float f)
 {
-	fillGradient(0, 0, m_width, m_height, 0xA0303080, 0x60000050);
+	fillGradient(0, 0, m_width, m_height, 0x60000050, 0xA0303080);
 
 	{
 		MatrixStack::Ref matrix = MatrixStack::World.push();

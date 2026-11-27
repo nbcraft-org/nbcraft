@@ -11,6 +11,7 @@
 #include <string>
 #include "BitStream.h"
 #include "world/phys/Vec3.hpp"
+#include "world/phys/Rot2.hpp"
 #include "world/item/Inventory.hpp"
 
 #define LEVEL_STORAGE_VERSION_DEFAULT 2

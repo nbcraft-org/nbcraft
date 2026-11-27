@@ -10,6 +10,8 @@
 
 #include "GuiComponent.hpp"
 #include "common/Random.hpp"
+#include "client/gui/MenuPointer.hpp"
+#include "client/player/input/MouseDevice.hpp"
 #include "client/player/input/RectangleArea.hpp"
 #include "client/renderer/RenderChunk.hpp"
 
@@ -45,27 +47,32 @@ private:
 public:
 	static bool isVignetteAvailable() { return _isVignetteAvailable; }
 	static void setIsVignetteAvailable(bool value) { _isVignetteAvailable = value; }
+	static float FloorAlignToScreenPixel(float f) { return (f * Gui::GuiScale) * Gui::InvGuiScale; }
+	static MenuPointer CreateMenuPointer(bool isPressed);
+
+public:
+	Gui(Minecraft* pMinecraft);
 
 private:
 	void renderPumpkin(int, int);
 	void renderVignette(float, int, int);
 	void _buildFeedbackMeshes();
-
-public:
-	Gui(Minecraft* pMinecraft);
+	void _tickItemDrop();
 
 public:
 	void addMessage(const std::string& str);
 	void inventoryUpdated();
 	void setNowPlaying(const std::string& str);
+	void flashSlot(int slotId);
 	void render(float f, bool bHaveScreen);
 	void tick();
 	void renderSlot(int slot, int x, int y, float f);
+	void renderSlotText(int slot, int x, int y, float f);
 	void renderSlotOverlay(int slot, int x, int y, float f);
 	void renderAnimatedCharacter(int x, int y, float);
-	int  getSlotIdAt(int mx, int my);
-	bool isInside(int mx, int my);
-	void handleClick(int id, int mx, int my);
+	int  getSlotIdAt(MenuPointer::Unit x, MenuPointer::Unit y);
+	bool isInside(MenuPointer::Unit x, MenuPointer::Unit y);
+	void handleClick(MouseButtonType button, const MenuPointer& pointer);
 	void handleScrollWheel(bool down);
 	void handleUserAction(const ActionInfo&);
 	void renderMessages(bool bShowAll);
@@ -82,6 +89,7 @@ public:
 
 public:
 	static float GuiScale;
+	static float InvGuiScale;
 	static int GuiWidth;
 	static int GuiHeight;
     
@@ -99,11 +107,7 @@ public:
 	float m_progress;
 	float m_lastDestroyProgress;
 	float m_destroyProgress;
-	std::string field_C;
 	std::vector<GuiMessage> m_guiMessages;
-	int field_24;
-	int field_28;
-	int field_2C;
 	Random m_random;
 	Minecraft* m_pMinecraft;
 	int m_ticks;
@@ -112,7 +116,11 @@ public:
 	bool field_A1C;
 	float m_tbr;
 	RenderChunk m_renderChunk;
-	bool field_A3C;
+	bool m_bInventoryUpdated;
+	int m_flashingSlotId;
+	float m_flashingSlotStartTime;
+	float m_dropProgress;
+	int m_droppingSlotId;
 	bool m_bRenderMessages;
     bool m_bRenderHunger;
 };

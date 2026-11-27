@@ -18,7 +18,6 @@ public:
     void setContainerChanged(StackID stackId) override;
     void load(const CompoundTag& tag) override;
     void save(CompoundTag& tag) const override;
-    std::string getName() const override;
 
 public:
     int getBurnProgress(int height);

@@ -1,7 +1,7 @@
 #include "GuiElement.hpp"
 #include "client/app/Minecraft.hpp"
 
-GuiElement::GuiElement()
+void GuiElement::_init()
 {
 	m_ID = -1;
 	m_uiTheme = UI_JAVA;
@@ -15,6 +15,31 @@ GuiElement::GuiElement()
 	m_bHasFocus = false;
 	m_bNavigable = true;
 	m_bHasSound = false;
+}
+
+GuiElement::GuiElement()
+{
+	_init();
+}
+
+GuiElement::GuiElement(int x, int y, int width, int height)
+{
+	_init();
+
+	m_width = width;
+	m_height = height;
+	m_xPos = x;
+	m_yPos = y;
+}
+
+GuiElement::GuiElement(const IntRectangle& area)
+{
+	_init();
+
+	m_width = area.w;
+	m_height = area.h;
+	m_xPos = area.x;
+	m_yPos = area.y;
 }
 
 void GuiElement::setBackground(const Color& color)

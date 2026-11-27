@@ -1,6 +1,7 @@
 #include "Sheep.hpp"
-#include "world/level/Level.hpp"
 #include "nbt/CompoundTag.hpp"
+#include "world/entity/Player.hpp"
+#include "world/level/Level.hpp"
 
 #define DATA_WOOL_ID (16)
 

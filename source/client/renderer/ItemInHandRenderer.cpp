@@ -379,11 +379,14 @@ void ItemInHandRenderer::renderTex(float a, int texture)
 
 void ItemInHandRenderer::tick()
 {
+    Minecraft& mc = *m_pMinecraft;
+    LocalPlayer& localPlayer = *mc.m_pLocalPlayer;
+    Inventory& inventory = *localPlayer.m_pInventory;
+
 	m_oHeight = m_height;
 
-	ItemStack& item = m_pMinecraft->m_pLocalPlayer->m_pInventory->getSelectedItem();
-
-	bool bSameItem = m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedStackId == m_lastSlot && m_selectedItem == item;
+	ItemStack& item = inventory.getSelectedItem();
+	bool bSameItem = inventory.getSelectedSlotNo() == m_lastSlot && m_selectedItem == item;
 
 	if (item.isEmpty() && m_selectedItem.isEmpty())
 		bSameItem = true;
@@ -411,7 +414,7 @@ void ItemInHandRenderer::tick()
 	if (m_height < 0.1f)
 	{
 		m_selectedItem = ItemStack(item);
-		m_lastSlot = m_pMinecraft->m_pLocalPlayer->m_pInventory->m_selectedStackId;
+		m_lastSlot = inventory.getSelectedSlotNo();
 	}
 }
 

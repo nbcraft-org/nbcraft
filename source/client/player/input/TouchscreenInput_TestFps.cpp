@@ -452,7 +452,7 @@ void _renderTouchButton(Tesselator* t, PolygonArea* pArea, int srcX, int srcY, i
 			vy = centerY + (vy - centerY) * visualScale;
 		}
 		vy += offsetY;
-		t->vertexUV(Gui::GuiScale * vx, Gui::GuiScale * vy, 0.0f, tc[(2 * i) % 8], tc[(2 * i + 1) % 8]);
+		t->vertexUV(Gui::InvGuiScale * vx, Gui::InvGuiScale * vy, 0.0f, tc[(2 * i) % 8], tc[(2 * i + 1) % 8]);
 	}
 }
 

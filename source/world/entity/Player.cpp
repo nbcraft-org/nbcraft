@@ -285,14 +285,6 @@ void Player::tick()
 
 const ItemStack& Player::getCarriedItem() const
 {
-	// This only gets the first row slot
-	/*ItemStack* item = m_pInventory->getItem(m_pInventory->m_selectedStackId);
-  
-	if (ItemStack::isNull(item))
-		return nullptr;
-
-	return item;*/
-
 	return m_pInventory->getSelected();
 }
 
@@ -552,7 +544,8 @@ void Player::setRespawnPos(const TilePos& pos)
 // @PARITY-PE: From b1.2_02, doesn't exist in PE
 void Player::drop()
 {
-	drop(m_pInventory->removeItem(m_pInventory->getSelectedSlotNo(), 1));
+	Container::StackID selectedStackId = m_pInventory->tryGetLinkedSlot(m_pInventory->getSelectedSlotNo());
+	drop(m_pInventory->removeItem(selectedStackId, 1));
 }
 
 void Player::drop(const ItemStack& item, bool randomly)

@@ -9,6 +9,7 @@
 #include "LevelData.hpp"
 #include "network/RakIO.hpp"
 #include "nbt/NbtIo.hpp"
+#include "world/entity/Player.hpp"
 
 void LevelData::_init()
 {

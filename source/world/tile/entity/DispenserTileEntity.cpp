@@ -1,4 +1,5 @@
 #include "DispenserTileEntity.hpp"
+#include "world/entity/Player.hpp"
 #include "world/level/TileSource.hpp"
 
 DispenserTileEntity::DispenserTileEntity() : SimpleContainer(9, "Dispenser")

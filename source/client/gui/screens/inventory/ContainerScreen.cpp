@@ -58,6 +58,7 @@ void ContainerScreen::_renderSlot(Slot& slot)
         return;
     }
     ItemRenderer::singleton().renderGuiItem(*m_pMinecraft, item, 0, 0);
+    ItemRenderer::singleton().renderGuiItemText(*m_pMinecraft, item, 0 , 0);
     ItemRenderer::singleton().renderGuiItemOverlay(*m_pMinecraft, item, 0, 0);
 
     matrix.release();
@@ -142,6 +143,7 @@ void ContainerScreen::_renderContent(float partialTick)
         if (m_uiTheme == UI_CONSOLE)
             carriedMatrix->scale(3.0f); // 54 / 18.0f
         ItemRenderer::singleton().renderGuiItem(*m_pMinecraft, inv->getCarried(), 0, 0);
+        ItemRenderer::singleton().renderGuiItemText(*m_pMinecraft, inv->getCarried(), 0, 0);
         ItemRenderer::singleton().renderGuiItemOverlay(*m_pMinecraft, inv->getCarried(), 0, 0);
     }
 

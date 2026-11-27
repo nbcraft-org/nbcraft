@@ -42,16 +42,6 @@ CompoundContainer::~CompoundContainer()
     delete m_pRightListener;
 }
 
-uint16_t CompoundContainer::getContainerSize() const
-{
-    return uint16_t(m_pLeftContainer->getContainerSize() + m_pRightContainer->getContainerSize());
-}
-
-std::string CompoundContainer::getName() const
-{
-    return m_name;
-}
-
 ItemStack& CompoundContainer::getItem(StackID index)
 {
     if (index >= m_pLeftContainer->getContainerSize())
@@ -74,6 +64,16 @@ void CompoundContainer::setItem(StackID index, const ItemStack& item)
         m_pRightContainer->setItem(index - m_pLeftContainer->getContainerSize(), item);
     else
         m_pLeftContainer->setItem(index, item);
+}
+
+std::string CompoundContainer::getName() const
+{
+    return m_name;
+}
+
+uint16_t CompoundContainer::getContainerSize() const
+{
+    return uint16_t(m_pLeftContainer->getContainerSize() + m_pRightContainer->getContainerSize());
 }
 
 int CompoundContainer::getMaxStackSize() const

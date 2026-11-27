@@ -47,6 +47,8 @@ TextureData* Textures::loadTexture(const std::string& name, bool bIsRequired)
 			placeholder[2] = 0xff000000;
 #endif
 			t.m_imageData.m_data = (uint8_t*)placeholder;
+
+			LOG_W("Failed to load texture: %s", name.c_str());
 		}
 		else
 		{

@@ -19,6 +19,7 @@
 #include "network/packets/ExplodePacket.hpp"
 #include "world/level/levelgen/chunk/ChunkCache.hpp"
 #include "world/level/levelgen/biome/BiomeSource.hpp"
+#include "world/entity/Player.hpp"
 #include "world/entity/MobSpawner.hpp"
 
 #include "Explosion.hpp"
