@@ -159,6 +159,7 @@ add_library(nbcraft-core STATIC
     client/gui/components/RolledSelectionList.cpp
     client/gui/components/Button.cpp
     client/gui/components/TextBox.cpp
+    client/gui/components/ScrollingPane.cpp
     client/gui/components/SmallButton.cpp
     client/gui/components/SliderButton.cpp
     client/gui/components/SwitchButton.cpp
