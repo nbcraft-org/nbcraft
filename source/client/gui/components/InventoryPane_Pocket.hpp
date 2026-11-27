@@ -7,6 +7,7 @@
 
 class InventoryPane_Pocket : public ScrollingPane
 {
+public:
 	using GuiElement::tick;
 
 public:

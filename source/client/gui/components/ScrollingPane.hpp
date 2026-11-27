@@ -30,6 +30,7 @@ struct ScrollBar
 
 class ScrollingPane : public GuiElement
 {
+public:
 	// compiler is mentally deficient
 	using GuiElement::tick;
 	using GuiElement::setSelected;
