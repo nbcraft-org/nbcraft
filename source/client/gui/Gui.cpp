@@ -951,7 +951,6 @@ void Gui::renderToolBar(float f, float alpha)
 	Options& options = *mc.getOptions();
 	Textures& textures = *mc.m_pTextures;
 	LocalPlayer& player = *mc.m_pLocalPlayer;
-	Tesselator& t = Tesselator::instance;
 
 	currentShaderColor.a = alpha;
 
